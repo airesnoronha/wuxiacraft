@@ -1,0 +1,16 @@
+[
+{
+  "modid": "wuxiacraft",
+  "name": "WuxiaCraft",
+  "description": "A Cultivation mod for us: Minecraft heros.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["AiresNor"],
+  "credits": "Airs which made this whole thing from zero",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

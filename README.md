@@ -14,7 +14,7 @@ The ideia is that as the player cultivates, he/she will progress through many le
 	* Body Refinement
 	* Soul Refinement
 	* Qi Paths Refinement
-	* Dantian Condensing
+	* DanTian Condensing
 * Martial Law (10 Levels each)
 	* Earth Law
 	* Sky Law
@@ -28,7 +28,7 @@ The ideia is that as the player cultivates, he/she will progress through many le
 * Divine Law (20 levels each)
 	* Immortal Martial
 	* Divine Law
-	* Divine Fenomenom
-	* True God
+	* Divine Phenomenon
+	* True God (Infinite Levels)
 
 Each level category will have a different way of cultivating, aiming for more gameplay.
