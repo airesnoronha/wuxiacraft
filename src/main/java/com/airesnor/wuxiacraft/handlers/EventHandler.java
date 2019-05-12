@@ -5,7 +5,9 @@ import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.networking.CultivationMessage;
+import com.airesnor.wuxiacraft.networking.EnergyMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
+import com.airesnor.wuxiacraft.networking.ProgressMessage;
 import net.minecraft.advancements.critereon.PlayerHurtEntityTrigger;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
@@ -46,31 +48,49 @@ public class EventHandler {
 			EntityPlayer player = (EntityPlayer)event.getEntity();
 			ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 			if(cultivation != null) {
-				cultivation.addEnergy(cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()) * 0.0005F );
 
-				playerAddProgress(player, cultivation, 0.1f);
-
-				if(player.capabilities.isFlying) {
-					if (!cultivation.getCurrentLevel().freeFlight) {
-						float fly_cost = 2f;
-						cultivation.remEnergy(fly_cost);
-					}
-					if (player.lastTickPosX != player.posX || player.lastTickPosY != player.posY || player.lastTickPosZ != player.posZ) {
-						float distance = (float) Math.sqrt(Math.pow(player.posX - player.lastTickPosX, 2) + Math.pow(player.posY - player.lastTickPosY, 2) + Math.pow(player.posZ - player.lastTickPosZ, 2));
-						float cost = 0.8f;
-						cultivation.remEnergy(distance * cost);
-					}
-					//I'll give a bonus flying tick to the player
-					player.fallDistance = 0;
-					if (cultivation.getEnergy() <= 0) {
-						player.capabilities.isFlying = false;
-					}
+				if (player.capabilities.isFlying && cultivation.getEnergy() <= 0) {
+					player.capabilities.isFlying = false;
 				}
+
+				//playerAddProgress(player, cultivation, 0.1f);
+				cultivation.addEnergy(cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()) * 0.0005F );
 
 				player.capabilities.setFlySpeed((float)player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
 				player.capabilities.allowFlying = cultivation.getCurrentLevel().canFly;
-				player.stepHeight = player.isSneaking() ? 0.6f+0.1f*cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()): 0.6f;
+				player.stepHeight = !player.isSneaking() ? Math.min(3.1f, 0.6f+0.5f*cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel())): 0.6f;
 				player.sendPlayerAbilities();
+			}
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+		EntityPlayer player = event.player;
+		if(!player.world.isRemote) return;
+		ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+
+		float distance = (float) Math.sqrt(Math.pow(player.lastTickPosX - player.posX, 2) + Math.pow(player.lastTickPosY - player.posY, 2) + Math.pow(player.lastTickPosZ - player.posZ, 2));
+
+		if(cultivation != null) {
+			if(player.capabilities.isFlying) {
+				float totalRem = 0f;
+				if (!cultivation.getCurrentLevel().freeFlight) {
+					float fly_cost = 1f;
+					totalRem+= fly_cost;
+				}
+				if (distance > 0) {
+					WuxiaCraft.logger.info("Fired");
+					float cost = 0.4f;
+					totalRem+=distance*cost;
+				}
+				cultivation.remEnergy(totalRem);
+				NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, totalRem));
+			}
+			else { //flying is not an exercise
+				playerAddProgress(player, cultivation, distance*0.1f);
+				NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0,distance*0.1f));
 			}
 		}
 	}
@@ -104,6 +124,7 @@ public class EventHandler {
 			ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 			if(cultivation != null) {
 				playerAddProgress(player, cultivation,1f* event.getAmount());
+				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy()), (EntityPlayerMP) player);
 			}
 		}
 	}

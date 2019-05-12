@@ -26,6 +26,8 @@ public class CommonProxy {
 		CapabilityManager.INSTANCE.register(ICultivation.class, new CultivationStorage(), new CultivationFactory());
 
 		NetworkWrapper.INSTANCE.registerMessage(new CultivationMessageHandler(), CultivationMessage.class, 167001, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(new EnergyMessageHandler(), EnergyMessage.class, 167002, Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(new ProgressMessageHandler(), ProgressMessage.class, 167003, Side.SERVER);
 
 		MinecraftForge.EVENT_BUS.register(new CapabilitiesHandler());
 		MinecraftForge.EVENT_BUS.register(new RendererHandler());

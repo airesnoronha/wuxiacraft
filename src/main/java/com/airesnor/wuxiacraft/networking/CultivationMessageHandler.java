@@ -24,8 +24,7 @@ public class CultivationMessageHandler implements IMessageHandler {
 						cultivation.setCurrentLevel(cm.messageLevel);
 						cultivation.setCurrentSubLevel(cm.messageSubLevel);
 						cultivation.setProgress(cm.messageProgress);
-						cultivation.addEnergy(cm.messageEnergy);
-						WuxiaCraft.logger.info("He was at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
+						cultivation.setEnergy(cm.messageEnergy);
 					} else {
 						WuxiaCraft.logger.info("He ain't a cultivator. Weeird");
 					}
