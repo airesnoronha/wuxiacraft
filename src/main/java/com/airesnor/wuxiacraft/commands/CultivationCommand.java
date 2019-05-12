@@ -53,6 +53,9 @@ public class CultivationCommand extends CommandBase {
 					message = cultivation != null? String.format("Energy: %d/%d", (int)cultivation.getEnergy(),(int)cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel())) : "You don't cultivate yet";
 					text = new TextComponentString(message);
 					sender.sendMessage(text);
+					message = cultivation != null? String.format("Speed: %d/%d%%", (int)cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()),cultivation.getSpeedHandicap()) : "You don't cultivate yet";
+					text = new TextComponentString(message);
+					sender.sendMessage(text);
 					//message = cultivation != null? String.format("Player->%s Minecraft->%s", player.getUniqueID().toString(), Minecraft.getMinecraft().player.getUniqueID().toString()) : "You don't cultivate yet";
 					//text = new TextComponentString(message);// + Minecraft.getMinecraft().player.getDisplayNameString());
 					//sender.sendMessage(text);

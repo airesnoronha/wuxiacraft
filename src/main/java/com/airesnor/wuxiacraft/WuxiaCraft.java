@@ -12,11 +12,12 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = WuxiaCraft.MODID, name = WuxiaCraft.NAME, version = WuxiaCraft.VERSION)
+@Mod(modid = WuxiaCraft.MODID, name = WuxiaCraft.NAME, version = WuxiaCraft.VERSION, guiFactory = WuxiaCraft.CONFIG_GUI_FACTORY)
 public class WuxiaCraft {
 	public static final String MODID = "wuxiacraft";
 	public static final String NAME = "Wuxia Craft";
 	public static final String VERSION = "@VERSION@";
+	public static final String CONFIG_GUI_FACTORY = "com.airesnor.wuxiacraft.config.WuxiaCraftConfigFactory";
 
 	public static Logger logger;
 
@@ -26,6 +27,7 @@ public class WuxiaCraft {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		logger = event.getModLog();
+		proxy.preInit();
 	}
 
 	@EventHandler

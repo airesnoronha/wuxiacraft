@@ -3,6 +3,7 @@ package com.airesnor.wuxiacraft.proxy;
 import com.airesnor.wuxiacraft.capabilities.CapabilitiesHandler;
 import com.airesnor.wuxiacraft.capabilities.CultivationFactory;
 import com.airesnor.wuxiacraft.capabilities.CultivationStorage;
+import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.handlers.RendererHandler;
@@ -28,10 +29,16 @@ public class CommonProxy {
 		NetworkWrapper.INSTANCE.registerMessage(new CultivationMessageHandler(), CultivationMessage.class, 167001, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new EnergyMessageHandler(), EnergyMessage.class, 167002, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new ProgressMessageHandler(), ProgressMessage.class, 167003, Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(new SpeedHandicapMessageHandler(), SpeedHandicapMessage.class, 167004, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(new SpeedHandicapMessageHandler(), SpeedHandicapMessage.class, 167005, Side.SERVER);
 
 		MinecraftForge.EVENT_BUS.register(new CapabilitiesHandler());
 		MinecraftForge.EVENT_BUS.register(new RendererHandler());
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
+	}
+
+	public void preInit() {
+		WuxiaCraftConfig.preInit();
 	}
 
 }

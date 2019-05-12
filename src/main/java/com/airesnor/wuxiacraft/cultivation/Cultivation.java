@@ -7,12 +7,14 @@ public class Cultivation implements ICultivation {
 	private CultivationLevel level;
 	private int subLevel;
 	private float energy;
+	public int handicap;
 
 	public Cultivation() {
 		this.subLevel = 0;
 		this.progress = 0;
 		this.level = CultivationLevel.BODY_REFINEMENT;
 		this.energy = 0;
+		this.handicap = 100;
 	}
 
 	@Override
@@ -79,5 +81,15 @@ public class Cultivation implements ICultivation {
 	@Override
 	public void setProgress(float amount) {
 		this.progress = Math.min(Math.max(0,amount), this.level.getProgressBySubLevel(this.subLevel));
+	}
+
+	@Override
+	public void setSpeedHandicap(int handicap) {
+		this.handicap = Math.min(100,Math.max(0,handicap));
+	}
+
+	@Override
+	public int getSpeedHandicap() {
+		return this.handicap;
 	}
 }

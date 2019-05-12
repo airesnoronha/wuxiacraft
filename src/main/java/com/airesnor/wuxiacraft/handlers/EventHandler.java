@@ -2,19 +2,20 @@ package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
+import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.networking.CultivationMessage;
-import com.airesnor.wuxiacraft.networking.EnergyMessage;
-import com.airesnor.wuxiacraft.networking.NetworkWrapper;
-import com.airesnor.wuxiacraft.networking.ProgressMessage;
+import com.airesnor.wuxiacraft.networking.*;
 import net.minecraft.advancements.critereon.PlayerHurtEntityTrigger;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -25,11 +26,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @Mod.EventBusSubscriber
 public class EventHandler {
 
-	public static final String strength_mod_name = "wuxiacraft.attack_damage";
-	public static final String speed_mod_name = "wuxiacraft.movement_speed";
-	public static final String armor_mod_name = "wuxiacraft.armor";
-	public static final String attack_speed_mod_name = "wuxiacraft.attack_speed";
-	public static final String health_mod_name = "wuxiacraft.health";
+	private static final String strength_mod_name = "wuxiacraft.attack_damage";
+	private static final String speed_mod_name = "wuxiacraft.movement_speed";
+	private static final String armor_mod_name = "wuxiacraft.armor";
+	private static final String attack_speed_mod_name = "wuxiacraft.attack_speed";
+	private static final String health_mod_name = "wuxiacraft.health";
 
 	@SubscribeEvent
 	public void onPlayerLogIn(PlayerEvent.PlayerLoggedInEvent event) {
@@ -38,6 +39,7 @@ public class EventHandler {
 		if(cultivation != null && !player.world.isRemote) {
 			WuxiaCraft.logger.info("Restoring " + player.getDisplayNameString() + " cultivation.");
 			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy()), (EntityPlayerMP) player);
+			NetworkWrapper.INSTANCE.sendTo(new SpeedHandicapMessage(cultivation.getSpeedHandicap()),(EntityPlayerMP)player);
 			applyModifiers(player, cultivation);
 		}
 	}
@@ -81,7 +83,6 @@ public class EventHandler {
 					totalRem+= fly_cost;
 				}
 				if (distance > 0) {
-					WuxiaCraft.logger.info("Fired");
 					float cost = 0.4f;
 					totalRem+=distance*cost;
 				}
@@ -112,7 +113,7 @@ public class EventHandler {
 			if(cultivation.getCurrentLevel().freeFlight) {
 				event.setCanceled(true);
 			} else {
-				event.setDistance(Math.max(event.getDistance()-cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()),0));
+				//event.setDistance(event.getDistance()-0.5f*cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()));
 			}
 		}
 	}
@@ -123,10 +124,29 @@ public class EventHandler {
 			EntityPlayer player = (EntityPlayer)event.getSource().getTrueSource();
 			ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 			if(cultivation != null) {
-				playerAddProgress(player, cultivation,1f* event.getAmount());
+				playerAddProgress(player, cultivation,0.5f* event.getAmount());
 				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy()), (EntityPlayerMP) player);
 			}
 		}
+	}
+
+	@SubscribeEvent
+	public void onPlayerDigBlock(BlockEvent.HarvestDropsEvent event) {
+		EntityPlayer player = event.getHarvester();
+		if(player!=null) {
+			IBlockState block = event.getState();
+			ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+			if(cultivation !=null) {
+				playerAddProgress(player, cultivation, 0.1f*block.getBlockHardness(event.getWorld(), event.getPos()));
+				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy()), (EntityPlayerMP) player);
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onPlayerBreakSpeed(net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed event) {
+		ICultivation cultivation = event.getEntityPlayer().getCapability(CultivationProvider.CULTIVATION_CAP,null);
+		event.setNewSpeed(event.getNewSpeed()*cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()));
 	}
 
 	/**
@@ -159,6 +179,7 @@ public class EventHandler {
 		ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 		WuxiaCraft.logger.info("Applying " + player.getDisplayNameString() + " cultivation.");
 		NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy()), (EntityPlayerMP) player);
+		NetworkWrapper.INSTANCE.sendTo(new EnergyMessage(),(EntityPlayerMP)player);
 		applyModifiers(player, cultivation);
 	}
 
@@ -166,7 +187,7 @@ public class EventHandler {
 
 		//for some odd reason operation 1 behaves like operation 2, to correct i'll just remove 1 from the math
 		float level_str_mod = cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()) - 1;
-		float level_spd_mod = cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()) - 1;
+		float level_spd_mod = (cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel())- 1)*(cultivation.getSpeedHandicap()/100f) ;
 
 		//I'll use for now strength for increase every other stat, since it's almost the same after all
 		AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, level_str_mod, 1);
