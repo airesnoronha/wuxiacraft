@@ -38,7 +38,7 @@ public class EventHandler {
 		ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 		if(cultivation != null && !player.world.isRemote) {
 			WuxiaCraft.logger.info("Restoring " + player.getDisplayNameString() + " cultivation.");
-			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy()), (EntityPlayerMP) player);
+			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy()), (EntityPlayerMP) player);
 			NetworkWrapper.INSTANCE.sendTo(new SpeedHandicapMessage(cultivation.getSpeedHandicap()),(EntityPlayerMP)player);
 			applyModifiers(player, cultivation);
 		}
@@ -60,7 +60,7 @@ public class EventHandler {
 
 				player.capabilities.setFlySpeed((float)player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
 				player.capabilities.allowFlying = cultivation.getCurrentLevel().canFly;
-				player.stepHeight = !player.isSneaking() ? Math.min(3.1f, 0.6f+0.5f*cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel())): 0.6f;
+				player.stepHeight = !player.isSneaking() ? Math.min(3.1f, 0.6f*cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel())): 0.6f;
 				player.sendPlayerAbilities();
 			}
 		}
@@ -125,7 +125,7 @@ public class EventHandler {
 			ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 			if(cultivation != null) {
 				playerAddProgress(player, cultivation,0.5f* event.getAmount());
-				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy()), (EntityPlayerMP) player);
+				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy()), (EntityPlayerMP) player);
 			}
 		}
 	}
@@ -178,7 +178,7 @@ public class EventHandler {
 		if(player.world.isRemote) return;
 		ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 		WuxiaCraft.logger.info("Applying " + player.getDisplayNameString() + " cultivation.");
-		NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy()), (EntityPlayerMP) player);
+		NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy()), (EntityPlayerMP) player);
 		NetworkWrapper.INSTANCE.sendTo(new EnergyMessage(),(EntityPlayerMP)player);
 		applyModifiers(player, cultivation);
 	}

@@ -4,17 +4,27 @@ import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mod.EventBusSubscriber
 public class RendererHandler {
@@ -29,6 +39,22 @@ public class RendererHandler {
 			return;
 		}
 		drawHudElements();
+	}
+
+	public static void enableBoxRendering() {
+		GlStateManager.disableTexture2D();
+		GlStateManager.disableDepth();
+		GlStateManager.depthMask( false );
+		GlStateManager.blendFunc( GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA );
+		GlStateManager.enableBlend();
+		GlStateManager.glLineWidth( (float) 2f);
+	}
+
+	public static void disableBoxRendering() {
+		GlStateManager.disableBlend();
+		GlStateManager.enableDepth();
+		GlStateManager.depthMask( true );
+		GlStateManager.enableTexture2D();
 	}
 
 	@SideOnly(Side.CLIENT)
