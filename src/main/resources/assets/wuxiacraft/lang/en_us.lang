@@ -1,4 +1,6 @@
 item.crunchy_bar.name=Crunchy Bar
+item.natural_oddity_low.name=Low Tier Natural Oddity
+
 tile.natural_oddity_ore.name=Natural Oddity Ore
 
 gui.config.main_title=WuxiaCraft

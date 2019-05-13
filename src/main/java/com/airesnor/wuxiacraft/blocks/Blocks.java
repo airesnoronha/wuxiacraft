@@ -9,6 +9,6 @@ import java.util.List;
 public class Blocks {
 	public static final List<Block> BLOCKS = new ArrayList<>();
 
-	public static Block NATURAL_ODDITY_ORE = new BlockBase("natural_oddity_ore", Material.ROCK);
+	public static Block NATURAL_ODDITY_ORE = new NaturalOddityOre("natural_oddity_ore");
 
 }

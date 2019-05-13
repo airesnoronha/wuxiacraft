@@ -189,11 +189,12 @@ public class EventHandler {
 		float level_str_mod = cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()) - 1;
 		float level_spd_mod = (cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel())- 1)*(cultivation.getSpeedHandicap()/100f) ;
 
-		//I'll use for now strength for increase every other stat, since it's almost the same after all
-		AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, level_str_mod, 1);
+		//Strength multiplicative also increases weapon damage which is not wanted, so i'll set op to 0
+		AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, level_str_mod, 0);
 		//5% for health because it base is 10, it means it adds a lot of hearts at once
 		AttributeModifier health_mod = new AttributeModifier(health_mod_name, level_str_mod*5/100, 1);
 		//since armor base is 0, it'll add 2*strength as armor
+		//I'll use for now strength for increase every other stat, since it's almost the same after all
 		AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, level_str_mod*2, 0);
 		AttributeModifier speed_mod = new AttributeModifier(speed_mod_name, level_spd_mod, 1);
 		AttributeModifier attack_speed_mod = new AttributeModifier(attack_speed_mod_name, level_spd_mod, 1);

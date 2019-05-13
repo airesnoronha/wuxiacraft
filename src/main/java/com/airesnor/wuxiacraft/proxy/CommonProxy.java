@@ -8,9 +8,11 @@ import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.handlers.RendererHandler;
 import com.airesnor.wuxiacraft.networking.*;
+import com.airesnor.wuxiacraft.world.WorldGen;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
 public class CommonProxy {
@@ -39,6 +41,7 @@ public class CommonProxy {
 
 	public void preInit() {
 		WuxiaCraftConfig.preInit();
+		GameRegistry.registerWorldGenerator(new WorldGen(), 3);
 	}
 
 }
