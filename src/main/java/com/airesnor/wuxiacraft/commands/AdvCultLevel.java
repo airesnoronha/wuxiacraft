@@ -70,7 +70,10 @@ public class AdvCultLevel extends CommandBase {
 
 	@Override
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-		return true;
+		if(sender instanceof EntityPlayerMP) {
+			return ((EntityPlayerMP)sender).isCreative();
+		}
+		return false;
 	}
 
 	@Override
