@@ -10,3 +10,4 @@ gui.config.gameplay.speed_handicap.name=Speed handicap
 key.wuxiacraft.category=WuxiaCraft
 key.wuxiacraft.speed_up=Increase speed handicap
 key.wuxiacraft.speed_down=Decrease speed handicap
+key.wuxiacraft.cult_gui=Introspection

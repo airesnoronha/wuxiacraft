@@ -22,6 +22,9 @@ public class WuxiaCraft {
 
 	public static Logger logger;
 
+	@Mod.Instance(WuxiaCraft.MODID)
+	public static WuxiaCraft instance;
+
 	@SidedProxy(clientSide = "com.airesnor.wuxiacraft.proxy.ClientProxy", serverSide = "com.airesnor.wuxiacraft.proxy.CommonProxy")
 	public static CommonProxy proxy;
 

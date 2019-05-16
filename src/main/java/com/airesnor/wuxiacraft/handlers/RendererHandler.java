@@ -110,7 +110,7 @@ public class RendererHandler {
 		GL11.glEnd();
 
 		GL11.glPopMatrix();
-
+		/*
 		String message = String.format("Energy: %.0f (%.2f%%)",cultivation.getEnergy(), energy_fill);
 		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 20, Integer.parseInt("FFAA00",16));
 
@@ -127,6 +127,7 @@ public class RendererHandler {
 		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 50, Integer.parseInt("FFAA00",16));
 
 		message = String.format("Fall Distance: %.2f",player.fallDistance);
-		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 60, Integer.parseInt("FFAA00",16));
+		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 60, Integer.parseInt("FFAA00",16))
+		*/
 	}
 }

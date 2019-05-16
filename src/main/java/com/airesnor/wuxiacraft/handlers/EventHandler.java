@@ -59,7 +59,7 @@ public class EventHandler {
 				cultivation.addEnergy(cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()) * 0.0005F );
 
 				player.capabilities.setFlySpeed((float)player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
-				player.capabilities.allowFlying = cultivation.getCurrentLevel().canFly;
+				player.capabilities.allowFlying = player.isCreative() || cultivation.getCurrentLevel().canFly;
 				player.stepHeight = !player.isSneaking() ? Math.min(3.1f, 0.6f*cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel())): 0.6f;
 				player.sendPlayerAbilities();
 			}
@@ -86,8 +86,10 @@ public class EventHandler {
 					float cost = 0.4f;
 					totalRem+=distance*cost;
 				}
-				cultivation.remEnergy(totalRem);
-				NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, totalRem));
+				if(!player.isCreative()) {
+					cultivation.remEnergy(totalRem);
+					NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, totalRem));
+				}
 			}
 			else { //flying is not an exercise
 				playerAddProgress(player, cultivation, distance*0.1f);
@@ -100,7 +102,7 @@ public class EventHandler {
 	public void onPlayerJump(LivingEvent.LivingJumpEvent event) {
 		if(event.getEntityLiving() instanceof  EntityPlayer) {
 			ICultivation cultivation = event.getEntity().getCapability(CultivationProvider.CULTIVATION_CAP, null);
-			event.getEntity().motionY += 0.08*cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel());
+			event.getEntity().motionY += 0.08*cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel())*((float)WuxiaCraftConfig.speedHandicap/100f);
 		}
 	}
 
@@ -185,18 +187,17 @@ public class EventHandler {
 
 	public static void applyModifiers(EntityPlayer player, ICultivation cultivation) {
 
-		//for some odd reason operation 1 behaves like operation 2, to correct i'll just remove 1 from the math
+		//as most props are additive, so i'll remove the which is the supposed base
 		float level_str_mod = cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()) - 1;
 		float level_spd_mod = (cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel())- 1)*(cultivation.getSpeedHandicap()/100f) ;
 
-		//Strength multiplicative also increases weapon damage which is not intended, so i'll set op to 0
 		AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, level_str_mod, 0);
 		//5% for health because it base is 10, it means it adds a lot of hearts at once
-		AttributeModifier health_mod = new AttributeModifier(health_mod_name, level_str_mod*5/100, 1);
+		AttributeModifier health_mod = new AttributeModifier(health_mod_name, level_str_mod*5/100, 0);
 		//since armor base is 0, it'll add 2*strength as armor
 		//I'll use for now strength for increase every other stat, since it's almost the same after all
 		AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, level_str_mod*2, 0);
-		AttributeModifier speed_mod = new AttributeModifier(speed_mod_name, level_spd_mod, 1);
+		AttributeModifier speed_mod = new AttributeModifier(speed_mod_name, level_spd_mod*0.1, 0);
 		AttributeModifier attack_speed_mod = new AttributeModifier(attack_speed_mod_name, level_spd_mod, 1);
 
 		//remove any previous strength modifiers

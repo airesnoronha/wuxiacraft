@@ -3,9 +3,12 @@ package com.airesnor.wuxiacraft.handlers;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
+import com.airesnor.wuxiacraft.networking.RequestCultGuiMessage;
 import com.airesnor.wuxiacraft.networking.SpeedHandicapMessage;
 import com.airesnor.wuxiacraft.proxy.ClientProxy;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -28,6 +31,11 @@ public class KeyHandler {
 			WuxiaCraftConfig.speedHandicap = Math.max(0, WuxiaCraftConfig.speedHandicap - 5);
 			WuxiaCraftConfig.syncFromFields();
 			NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap));
+		}
+		if(keyBindings[2].isPressed()) {
+			BlockPos pos = Minecraft.getMinecraft().player.getPosition();
+			Minecraft.getMinecraft().player.openGui(WuxiaCraft.instance, GuiHandler.CULTIVATION_GUI_ID,Minecraft.getMinecraft().player.world,pos.getX(), pos.getY(), pos.getZ());
+			//NetworkWrapper.INSTANCE.sendToServer(new RequestCultGuiMessage(true));
 		}
 	}
 }
