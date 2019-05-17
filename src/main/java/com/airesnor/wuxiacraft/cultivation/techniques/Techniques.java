@@ -31,7 +31,7 @@ public class Techniques {
 	public static Technique BASIC_MEDICINE = new Technique(TechniqueTier.MORTAL, "basic_medicine", new TechniquesModifiers(0f, 0f,0.1f,0f,0f))
 			.addGreatEffect(new PotionEffect(Objects.requireNonNull(Potion.getPotionById(10)), 100, 0))
 			.addPerfectionEffect(new PotionEffect(Objects.requireNonNull(Potion.getPotionById(10)), 100, 0));
-	public static Technique
+	//public static Technique
 
 
 }
