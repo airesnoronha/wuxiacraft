@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.proxy;
 
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
+import com.airesnor.wuxiacraft.items.ItemScroll;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
@@ -24,6 +25,11 @@ public class ClientProxy extends CommonProxy {
 	 */
 	public void registerItemRenderer(Item item, int meta, String id) {
 		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName(), id));
+	}
+
+	@Override
+	public void registerScrollModel(Item item, int meta, String id) {
+		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation("wuxiacraft:scroll", id));
 	}
 
 	@Override

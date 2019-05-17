@@ -1,31 +1,24 @@
 package com.airesnor.wuxiacraft.cultivation;
 
+import net.minecraft.client.resources.I18n;
+
 public enum CultivationCategory {
-	ENERGY_PERCEPTION("Energy Perception", CultivationLevel.BODY_REFINEMENT),
-	MARTIAL_LAW("Martial Law", CultivationLevel.EARTH_LAW),
-	IMMORTAL_FOUNDATION("Immortal Foundation", CultivationLevel.IMMORTALITY_LAW),
-	DIVINE_LAW("Divine Law", CultivationLevel.MARTIAL_IMMORTAL);
+	ENERGY_PERCEPTION("wuxiacraft.category.energy_perception"),
+	MARTIAL_LAW("wuxiacraft.category.martial_law"),
+	IMMORTAL_FOUNDATION("wuxiacraft.category.immortal_foundation"),
+	DIVINE_LAW("wuxiacraft.category.divine_law");
 
 	/**
 	 * Name for displaying
 	 */
-	private String name;
-
-	/**
-	 * A level to return to when dying.
-	 * Which means that upon death players have penalities.
-	 * Only Exception is true god level, after all they're gods
-	 * Which will make then return some levels
-	 */
-	public final CultivationLevel firstLevel;
+	private final String name;
 
 	/**
 	 * Creates a new Level Category
 	 * @param name the name for displaying
 	 */
-	CultivationCategory(String name, CultivationLevel level) {
+	CultivationCategory(String name) {
 		this.name = name;
-		this.firstLevel = level;
 	}
 
 	/**
@@ -33,6 +26,6 @@ public enum CultivationCategory {
 	 * @return the name of this category
 	 */
 	public String getName() {
-		return name;
+		return I18n.format(this.name);
 	}
 }

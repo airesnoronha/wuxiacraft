@@ -25,8 +25,6 @@ public class SpeedHandicapMessageHandler implements IMessageHandler {
 
 				cultivation.setSpeedHandicap(((SpeedHandicapMessage)message).handicap);
 
-				EventHandler.applyModifiers(player, cultivation);
-
 			});
 		}
 		if(ctx.side == Side.CLIENT) {

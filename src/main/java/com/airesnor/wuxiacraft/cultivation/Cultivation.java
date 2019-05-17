@@ -8,6 +8,7 @@ public class Cultivation implements ICultivation {
 	private int subLevel;
 	private float energy;
 	public int handicap;
+	private int timer;
 
 	public Cultivation() {
 		this.subLevel = 0;
@@ -15,6 +16,7 @@ public class Cultivation implements ICultivation {
 		this.level = CultivationLevel.BODY_REFINEMENT;
 		this.energy = 0;
 		this.handicap = 100;
+		this.timer = 0;
 	}
 
 	@Override
@@ -91,5 +93,20 @@ public class Cultivation implements ICultivation {
 	@Override
 	public int getSpeedHandicap() {
 		return this.handicap;
+	}
+
+	@Override
+	public int getUpdateTimer() {
+		return this.timer;
+	}
+
+	@Override
+	public void advTimer() {
+		this.timer++;
+	}
+
+	@Override
+	public void resetTimer() {
+		this.timer = 0;
 	}
 }

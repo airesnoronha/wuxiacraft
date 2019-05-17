@@ -47,4 +47,8 @@ public interface ICultivation {
 
 	void setSpeedHandicap(int handicap);
 	int getSpeedHandicap();
+
+	int getUpdateTimer();
+	void advTimer();
+	void resetTimer();
 }

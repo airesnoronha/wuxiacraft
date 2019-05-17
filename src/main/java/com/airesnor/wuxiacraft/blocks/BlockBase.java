@@ -17,7 +17,7 @@ public class BlockBase extends Block implements IHasModel {
 		this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
 
 		Blocks.BLOCKS.add(this);
-		Items.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));
+		Items.ITEMS.add(new ItemBlock(this).setRegistryName(name));
 	}
 
 	@Override

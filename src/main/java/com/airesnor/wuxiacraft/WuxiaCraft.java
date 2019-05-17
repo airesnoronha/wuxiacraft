@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft;
 
 import com.airesnor.wuxiacraft.commands.AdvCultLevel;
+import com.airesnor.wuxiacraft.commands.CultTechsCommand;
 import com.airesnor.wuxiacraft.commands.CultivationCommand;
 import com.airesnor.wuxiacraft.commands.ResetCultCommand;
 import com.airesnor.wuxiacraft.proxy.CommonProxy;
@@ -37,13 +38,14 @@ public class WuxiaCraft {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		// some example code
-		logger.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+		//logger.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
 		proxy.init();
 	}
 
 	@EventHandler
 	public void onServerStart(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CultivationCommand());
+		event.registerServerCommand(new CultTechsCommand());
 		event.registerServerCommand(new AdvCultLevel());
 		event.registerServerCommand(new ResetCultCommand());
 	}

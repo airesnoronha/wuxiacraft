@@ -1,13 +1,65 @@
+//Items
 item.crunchy_bar.name=Crunchy Bar
 item.natural_oddity_low.name=Low Tier Natural Oddity
 
+//Creative tabs
+itemGroup.wuxiacraft.scrolls=Cultivation Techniques
+
+//Blocks
 tile.natural_oddity_ore.name=Natural Oddity Ore
 
+//Configuration
 gui.config.main_title=WuxiaCraft
 gui.config.category.gameplay=Gameplay
 gui.config.gameplay.speed_handicap.name=Speed handicap
 
+
+//Key bindings
 key.wuxiacraft.category=WuxiaCraft
 key.wuxiacraft.speed_up=Increase speed handicap
 key.wuxiacraft.speed_down=Decrease speed handicap
 key.wuxiacraft.cult_gui=Introspection
+
+//tiers
+wuxiacraft.tier.mortal=Mortal
+wuxiacraft.tier.martial=Martial
+wuxiacraft.tier.Immortal=Immortal
+wuxiacraft.tier.Divine=Divine
+
+//cultivation levels
+wuxiacraft.cultivation.body_refinement=Body Refinement
+wuxiacraft.cultivation.soul_refinement=Soul Refinement
+wuxiacraft.cultivation.qi_paths_refinement=Qi Paths Refinement
+wuxiacraft.cultivation.dantian_condensing=DanTian Condensing
+wuxiacraft.cultivation.earth_law=Earth Law
+wuxiacraft.cultivation.sky_law=Sky Law
+wuxiacraft.cultivation.true_law=True Law
+wuxiacraft.cultivation.martial_law=Martial Law
+wuxiacraft.cultivation.immortality_law=Immortality Law
+wuxiacraft.cultivation.immortality_refinement=Immortality Refinement
+wuxiacraft.cultivation.immortal_foundation=Immortality Foundation
+wuxiacraft.cultivation.true_immortal=True Immortal
+wuxiacraft.cultivation.martial_immortal=Martial Immortal
+wuxiacraft.cultivation.divine_law=Divine Law
+wuxiacraft.cultivation.divine_phenomenon=Divine Phenomenon
+wuxiacraft.cultivation.true_god=True God
+
+//cultivation category
+wuxiacraft.category.energy_perception
+wuxiacraft.category.martial_law
+wuxiacraft.category.immortal_foundation
+wuxiacraft.category.divine_law
+
+//Labels
+wuxiacraft.label.rank=Rank
+wuxiacraft.label.tier=Tier
+wuxiacraft.label.speed=Speed
+wuxiacraft.label.strength=-Strength
+
+//Techniques
+wuxiacraft.techniques.body_strength=Body Strength Manual
+item.body_strength_scroll.name=Body Strength Manual
+wuxiacraft.techniques.light_feet=Light Feet Scroll
+item.light_feet_scroll.name=Light Feet Scroll
+wuxiacraft.techniques.assassin_manual_scroll=Assassin Manual
+item.assassin_manual_scroll.name=Assassin Manual

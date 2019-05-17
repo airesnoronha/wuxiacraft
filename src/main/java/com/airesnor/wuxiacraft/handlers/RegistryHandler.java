@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.handlers;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.Blocks;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.items.IHasModel;
@@ -18,11 +19,14 @@ public class RegistryHandler {
 
 	@SubscribeEvent
 	public static void onItemRegister(RegistryEvent.Register<Item> event) {
+		WuxiaCraft.logger.info("Registering items.");
 		event.getRegistry().registerAll(Items.ITEMS.toArray(new Item[0]));
+
 	}
 
 	@SubscribeEvent
 	public static void onBlockRegister(RegistryEvent.Register<Block> event) {
+		WuxiaCraft.logger.info("Registering blocks.");
 		event.getRegistry().registerAll(Blocks.BLOCKS.toArray(new Block[0]));
 	}
 

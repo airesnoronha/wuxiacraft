@@ -1,18 +1,27 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.capabilities.CultTechProvider;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
+import com.airesnor.wuxiacraft.items.ItemScroll;
+import com.airesnor.wuxiacraft.items.Items;
 import com.airesnor.wuxiacraft.networking.*;
 import net.minecraft.advancements.critereon.PlayerHurtEntityTrigger;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.world.BlockEvent;
@@ -22,6 +31,10 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 @Mod.EventBusSubscriber
 public class EventHandler {
@@ -36,10 +49,12 @@ public class EventHandler {
 	public void onPlayerLogIn(PlayerEvent.PlayerLoggedInEvent event) {
 		EntityPlayer player = event.player;
 		ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-		if(cultivation != null && !player.world.isRemote) {
+		ICultTech cultTech = player.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
+		if(cultivation != null  && cultTech != null && !player.world.isRemote) {
 			WuxiaCraft.logger.info("Restoring " + player.getDisplayNameString() + " cultivation.");
 			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy()), (EntityPlayerMP) player);
 			NetworkWrapper.INSTANCE.sendTo(new SpeedHandicapMessage(cultivation.getSpeedHandicap()),(EntityPlayerMP)player);
+			NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP)player);
 			applyModifiers(player, cultivation);
 		}
 	}
@@ -49,19 +64,32 @@ public class EventHandler {
 		if(event.getEntity() instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer)event.getEntity();
 			ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+			ICultTech cultTech = player.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
 			if(cultivation != null) {
+
+				cultivation.advTimer();
+				if(cultivation.getUpdateTimer() == 20) {
+					if(cultTech != null) {
+						cultTech.updateTechniques(player, cultivation);
+					}
+				}
+				if(cultivation.getUpdateTimer() == 40) {
+					if(!player.world.isRemote) {
+						applyModifiers(player, cultivation);
+					}
+					player.capabilities.setFlySpeed((float)player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
+					cultivation.resetTimer();
+				}
 
 				if (player.capabilities.isFlying && cultivation.getEnergy() <= 0) {
 					player.capabilities.isFlying = false;
 				}
-
-				//playerAddProgress(player, cultivation, 0.1f);
-				cultivation.addEnergy(cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()) * 0.0005F );
-
-				player.capabilities.setFlySpeed((float)player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
 				player.capabilities.allowFlying = player.isCreative() || cultivation.getCurrentLevel().canFly;
 				player.stepHeight = !player.isSneaking() ? Math.min(3.1f, 0.6f*cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel())): 0.6f;
 				player.sendPlayerAbilities();
+
+				//playerAddProgress(player, cultivation, 0.1f);
+				cultivation.addEnergy(cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()) * 0.0005F );
 			}
 		}
 	}
@@ -161,6 +189,8 @@ public class EventHandler {
 		EntityPlayer player = event.getEntityPlayer();
 		ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 		ICultivation old_cultivation = event.getOriginal().getCapability(CultivationProvider.CULTIVATION_CAP, null);
+		ICultTech cultTech = player.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
+		ICultTech oldCultTech = event.getOriginal().getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
 
 		if(cultivation != null) {
 			cultivation.setCurrentLevel(old_cultivation.getCurrentLevel());
@@ -172,6 +202,10 @@ public class EventHandler {
 			}
 			WuxiaCraft.logger.info("Restoring " + player.getDisplayNameString() + " cultivation.");
 		}
+		if(cultTech != null) {
+			cultTech.getKnownTechniques().clear();
+			cultTech.getKnownTechniques().addAll(oldCultTech.getKnownTechniques());
+		}
 	}
 
 	@SubscribeEvent
@@ -179,10 +213,29 @@ public class EventHandler {
 		EntityPlayer player = event.player;
 		if(player.world.isRemote) return;
 		ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+		ICultTech cultTech = player.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
 		WuxiaCraft.logger.info("Applying " + player.getDisplayNameString() + " cultivation.");
 		NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy()), (EntityPlayerMP) player);
 		NetworkWrapper.INSTANCE.sendTo(new EnergyMessage(),(EntityPlayerMP)player);
+		NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP)player);
 		applyModifiers(player, cultivation);
+	}
+
+	@SubscribeEvent
+	public void onMobDrop(LivingDropsEvent event) {
+		if(event.getEntity() instanceof EntityMob) {
+			List<Item> scrolls = new ArrayList<>();
+			for(Item i : Items.ITEMS) {
+				if(i instanceof ItemScroll) {
+					scrolls.add(i);
+				}
+			}
+			Random rnd = new Random();
+			ItemStack drop = new ItemStack(scrolls.get(rnd.nextInt(scrolls.size())), 1);
+			if(rnd.nextInt(30) == 10) {
+				event.getDrops().add(new EntityItem(event.getEntity().world, event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, drop));
+			}
+		}
 	}
 
 	public static void applyModifiers(EntityPlayer player, ICultivation cultivation) {
@@ -192,8 +245,7 @@ public class EventHandler {
 		float level_spd_mod = (cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel())- 1)*(cultivation.getSpeedHandicap()/100f) ;
 
 		AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, level_str_mod, 0);
-		//5% for health because it base is 10, it means it adds a lot of hearts at once
-		AttributeModifier health_mod = new AttributeModifier(health_mod_name, level_str_mod*5/100, 0);
+		AttributeModifier health_mod = new AttributeModifier(health_mod_name, 3*level_str_mod, 0);
 		//since armor base is 0, it'll add 2*strength as armor
 		//I'll use for now strength for increase every other stat, since it's almost the same after all
 		AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, level_str_mod*2, 0);
@@ -242,10 +294,14 @@ public class EventHandler {
 		player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).applyModifier(attack_speed_mod);
 		player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(health_mod);
 
-		WuxiaCraft.logger.info(String.format("Applying %s modifiers from %s.", player.getDisplayNameString(), cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel())));
+		//WuxiaCraft.logger.info(String.format("Applying %s modifiers from %s.", player.getDisplayNameString(), cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel())));
 	}
 
 	public static void playerAddProgress(EntityPlayer player, ICultivation cultivation, float amount) {
+		ICultTech cultTech = player.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
+		if(cultTech != null) {
+			cultTech.progress(amount);
+		}
 		if(cultivation.addProgress(amount)) {
 			if(!player.world.isRemote) {
 				player.sendStatusMessage(new TextComponentString("Congratulations! You now are at" + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel())),false);
