@@ -9,6 +9,7 @@ public class Cultivation implements ICultivation {
 	private float energy;
 	public int handicap;
 	private int timer;
+	private int pelletCooldown;
 
 	public Cultivation() {
 		this.subLevel = 0;
@@ -17,6 +18,7 @@ public class Cultivation implements ICultivation {
 		this.energy = 0;
 		this.handicap = 100;
 		this.timer = 0;
+		this.pelletCooldown = 0;
 	}
 
 	@Override
@@ -108,5 +110,20 @@ public class Cultivation implements ICultivation {
 	@Override
 	public void resetTimer() {
 		this.timer = 0;
+	}
+
+	@Override
+	public int getPelletCooldown() {
+		return this.pelletCooldown;
+	}
+
+	@Override
+	public void lessenPelletCooldown() {
+		this.pelletCooldown = Math.max(this.pelletCooldown -1, 0);
+	}
+
+	@Override
+	public void setPelletCooldown(int cooldown) {
+		this.pelletCooldown = Math.max(0, cooldown);
 	}
 }

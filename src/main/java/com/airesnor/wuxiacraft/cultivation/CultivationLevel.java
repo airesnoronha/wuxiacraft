@@ -4,21 +4,21 @@ import net.minecraft.client.resources.I18n;
 
 public enum CultivationLevel {
 	BODY_REFINEMENT			("wuxiacraft.cultivation.body_refinement", 		5, 1000F, 1.00F,1.00F, CultivationCategory.ENERGY_PERCEPTION),
-	SOUL_REFINEMENT			("wuxiacraft.cultivation.soul_refinement", 		5, 1276.28F, 1.13F,1.28F, CultivationCategory.ENERGY_PERCEPTION),
-	QI_PATHS_REFINEMENT		("wuxiacraft.cultivation.qi_paths_refinement", 	5, 1628.89F, 1.15F,1.63F, CultivationCategory.ENERGY_PERCEPTION),
-	DANTIAN_CONDENSING		("wuxiacraft.cultivation.dantian_condensing", 	5, 2078.93F, 1.27F,2.08F, CultivationCategory.ENERGY_PERCEPTION),
-	EARTH_LAW				("wuxiacraft.cultivation.earth_law", 			10, 2653.30F, 1.42F,2.66F, CultivationCategory.MARTIAL_LAW),
-	SKY_LAW					("wuxiacraft.cultivation.sky_law", 				10, 4321.94F, 1.6F,4.14F, CultivationCategory.MARTIAL_LAW),
-	TRUE_LAW				("wuxiacraft.cultivation.true_law", 				10, 7039.99F, 2F,6.43F, CultivationCategory.MARTIAL_LAW, true, false, false),
-	MARTIAL_LAW				("wuxiacraft.cultivation.martial_law", 			10, 11467.40F, 2.5F,10.00F, CultivationCategory.MARTIAL_LAW, true, false, false),
-	IMMORTALITY_LAW			("wuxiacraft.cultivation.immortality_law", 		15, 18679.19F, 3.13F,15.54F, CultivationCategory.IMMORTAL_FOUNDATION, true, false, false),
-	IMMORTALITY_REFINEMENT	("wuxiacraft.cultivation.immortality_refinement", 15, 38832.69F, 3.91F,28.47F, CultivationCategory.IMMORTAL_FOUNDATION, true, false, false),
-	IMMORTAL_FOUNDATION		("wuxiacraft.cultivation.immortal_foundation", 	15, 80730.37F, 5.38F,52.14F, CultivationCategory.IMMORTAL_FOUNDATION, true, true, false),
-	TRUE_IMMORTAL			("wuxiacraft.cultivation.true_immortal", 		15, 167832.63F, 7.39F,95.51F, CultivationCategory.IMMORTAL_FOUNDATION, true, true, false),
-	MARTIAL_IMMORTAL		("wuxiacraft.cultivation.martial_immortal", 		20, 348911.99F, 10.17F,174.96F, CultivationCategory.DIVINE_LAW, true, true, false),
-	DIVINE_LAW				("wuxiacraft.cultivation.divine_law", 			20, 925767.37F, 20.97F,368.98F, CultivationCategory.DIVINE_LAW, true, true, false),
-	DIVINE_PHENOMENON		("wuxiacraft.cultivation.divine_phenomenon", 	20, 2456336.44F, 31.45F,778.19F, CultivationCategory.DIVINE_LAW, true, true, true),
-	TRUE_GOD				("wuxiacraft.cultivation.true_god", 				1000000, 65117391.84F, 47.18F,1641.20F, CultivationCategory.DIVINE_LAW, true, true, true);
+	SOUL_REFINEMENT			("wuxiacraft.cultivation.soul_refinement", 		5, 1628.89F, 1.20F,1.55F, CultivationCategory.ENERGY_PERCEPTION),
+	QI_PATHS_REFINEMENT		("wuxiacraft.cultivation.qi_paths_refinement", 	5, 2785.96F, 1.46F,2.49F, CultivationCategory.ENERGY_PERCEPTION),
+	DANTIAN_CONDENSING		("wuxiacraft.cultivation.dantian_condensing", 	5, 5003.19F, 1.82F,4.13F, CultivationCategory.ENERGY_PERCEPTION),
+	EARTH_LAW				("wuxiacraft.cultivation.earth_law", 			10, 10401.27F, 2.36F,7.54F, CultivationCategory.MARTIAL_LAW),
+	SKY_LAW					("wuxiacraft.cultivation.sky_law", 				10, 21623.49F, 3.07F,13.75F, CultivationCategory.MARTIAL_LAW),
+	TRUE_LAW				("wuxiacraft.cultivation.true_law", 				10, 47201.37F, 4.05F,25.86F, CultivationCategory.MARTIAL_LAW, true, false, false),
+	MARTIAL_LAW				("wuxiacraft.cultivation.martial_law", 			10, 108186.41F, 5.43F,50.04F, CultivationCategory.MARTIAL_LAW, true, false, false),
+	IMMORTALITY_LAW			("wuxiacraft.cultivation.immortality_law", 		15, 287050.75F, 7.60F,105.07F, CultivationCategory.IMMORTAL_FOUNDATION, true, false, false),
+	IMMORTALITY_REFINEMENT	("wuxiacraft.cultivation.immortality_refinement", 15, 761631.11F, 10.64F,220.66F, CultivationCategory.IMMORTAL_FOUNDATION, true, false, false),
+	IMMORTAL_FOUNDATION		("wuxiacraft.cultivation.immortal_foundation", 	15, 2121875.77F, 15.10F,475.52F, CultivationCategory.IMMORTAL_FOUNDATION, true, true, false),
+	TRUE_IMMORTAL			("wuxiacraft.cultivation.true_immortal", 		15, 6207039.85F, 21.75F,1050.89F, CultivationCategory.IMMORTAL_FOUNDATION, true, true, false),
+	MARTIAL_IMMORTAL		("wuxiacraft.cultivation.martial_immortal", 		20, 21019240.06F, 32.62F,2495.87F, CultivationCategory.DIVINE_LAW, true, true, false),
+	DIVINE_LAW				("wuxiacraft.cultivation.divine_law", 			20, 71178607.43F, 48.93F,5927.68F, CultivationCategory.DIVINE_LAW, true, true, false),
+	DIVINE_PHENOMENON		("wuxiacraft.cultivation.divine_phenomenon", 	20, 253087830.40F, 74.38F,14404.26F, CultivationCategory.DIVINE_LAW, true, true, true),
+	TRUE_GOD				("wuxiacraft.cultivation.true_god", 				1000000, 944892360.52F, 114.55F,35794.59F, CultivationCategory.DIVINE_LAW, true, true, true);
 
 	/**
 	 * The current level name for displaying.
@@ -140,7 +140,7 @@ public enum CultivationLevel {
 	 */
  	public float getSpeedModifierBySubLevel(int subLevel) {
 		if(!(subLevel >= 0 && subLevel < this.subLevels)) {	return 0; }
-		return this.baseSpeedModifier * (1F + 0.025F*subLevel);
+		return this.baseSpeedModifier * (1F + 0.02F*subLevel);
 	}
 
 	/**
@@ -150,12 +150,12 @@ public enum CultivationLevel {
 	 */
 	public float getStrengthModifierBySubLevel(int subLevel) {
 		if(!(subLevel >= 0 && subLevel < this.subLevels)) {	return 0; }
- 		return this.baseStrengthModifier * (1f + 0.0554F*subLevel);
+ 		return this.baseStrengthModifier * (1f + 0.055F*subLevel);
 	}
 
 	public float getMaxEnergyByLevel(int subLevel) {
 		if(!(subLevel >= 0 && subLevel < this.subLevels)) {	return 0; }
-		return 100F *((this.baseStrengthModifier * (1 + 0.0554F*this.subLevels)));
+		return 100F *((this.baseStrengthModifier * (1 + 0.055F*this.subLevels)));
 	}
 
 	public CultivationLevel getNextLevel() {

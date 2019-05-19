@@ -4,11 +4,13 @@ import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.capabilities.CultTechProvider;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.Technique;
+import com.airesnor.wuxiacraft.cultivation.techniques.TechniqueWeapon;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -43,6 +45,11 @@ public class ItemScroll extends Item implements IHasModel {
 
 	@Override
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+		if(this.technique instanceof TechniqueWeapon) {
+			TechniqueWeapon.WeaponType weaponType = ((TechniqueWeapon) this.technique).getWeaponType();
+			String line = TextFormatting.WHITE + weaponType.getName() +" "+ I18n.format("wuxiacraft.label.technique");
+			tooltip.add(line);
+		}
 		if(technique.getBaseModifiers().armor != 0) {
 			float armor = technique.getBaseModifiers().armor;
 			int signals = (int)Math.abs(armor / 0.1f);
@@ -93,8 +100,8 @@ public class ItemScroll extends Item implements IHasModel {
 			}
 			tooltip.add(line);
 		}
-		for(PotionEffect pe : technique.getPerfectionCompletionEffects()) {
-			String line = TextFormatting.GOLD + I18n.format(pe.getEffectName());
+		for(PotionEffect p : technique.getPerfectionCompletionEffects()) {
+			String line = TextFormatting.GOLD + I18n.format(p.getEffectName());
 			tooltip.add(line);
 		}
 	}

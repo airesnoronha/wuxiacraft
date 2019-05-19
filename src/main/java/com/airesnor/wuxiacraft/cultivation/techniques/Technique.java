@@ -1,9 +1,11 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.items.ItemScroll;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 
 import java.util.ArrayList;
@@ -44,18 +46,18 @@ public class Technique {
 		this.perfectionCompletionEffects = new ArrayList<>();
 	}
 
-	Technique addSmallEffect(PotionEffect potionEffect) {
-		this.smallCompletionEffects.add(potionEffect);
+	Technique addSmallEffect(PotionEffect potion) {
+		this.smallCompletionEffects.add(potion);
 		return this;
 	}
 
-	Technique addGreatEffect(PotionEffect potionEffect) {
-		this.greatCompletionEffects.add(potionEffect);
+	Technique addGreatEffect(PotionEffect potion) {
+		this.greatCompletionEffects.add(potion);
 		return this;
 	}
 
-	Technique addPerfectionEffect(PotionEffect potionEffect) {
-		this.perfectionCompletionEffects.add(potionEffect);
+	Technique addPerfectionEffect(PotionEffect potion) {
+		this.perfectionCompletionEffects.add(potion);
 		return this;
 	}
 
@@ -71,8 +73,13 @@ public class Technique {
 		float maxHealth  = this.baseModifiers.maxHealth * strength;
 		float movementSpeed = this.baseModifiers.movementSpeed * strength;
 		float strengthMod = this.baseModifiers.strength * strength;
-		for (PotionEffect pe: smallCompletionEffects ) {
-			player.addPotionEffect(pe);
+		for (PotionEffect p : smallCompletionEffects ) {
+			if(p.getIsAmbient()) {
+				if(player.getActivePotionEffect(p.getPotion()) != null) {
+					continue;
+				}
+			}
+			player.addPotionEffect(new PotionEffect(p.getPotion(), p.getDuration(), p.getAmplifier(), false, p.doesShowParticles()));
 		}
 		return new TechniquesModifiers(armor, attackSpeed, maxHealth, movementSpeed, strengthMod);
 	}
@@ -95,8 +102,13 @@ public class Technique {
 		float strengthMod = this.baseModifiers.strength * strength;
 		strengthMod = strengthMod < 0 ? strengthMod - (strengthMod*0.1f) : strengthMod * 1.1f;
 
-		for (PotionEffect pe: greatCompletionEffects ) {
-			player.addPotionEffect(pe);
+		for (PotionEffect p : greatCompletionEffects ) {
+			if(p.getIsAmbient()) {
+				if(player.getActivePotionEffect(p.getPotion()) != null) {
+					continue;
+				}
+			}
+			player.addPotionEffect(new PotionEffect(p.getPotion(), p.getDuration(), p.getAmplifier(), false, p.doesShowParticles()));
 		}
 		return new TechniquesModifiers(armor, attackSpeed, maxHealth, movementSpeed, strengthMod);
 	}
@@ -116,8 +128,12 @@ public class Technique {
 		float strengthMod = this.baseModifiers.strength * strength;
 		strengthMod = strengthMod < 0 ? strengthMod - (strengthMod*0.25f) : strengthMod * 1.25f;
 
-		for (PotionEffect pe: perfectionCompletionEffects ) {
-			player.addPotionEffect(pe);
+		for (PotionEffect p : perfectionCompletionEffects ) {
+			if(p.getIsAmbient()) {
+				if(player.getActivePotionEffect(p.getPotion()) != null)
+					continue;
+			}
+			player.addPotionEffect(new PotionEffect(p.getPotion(), p.getDuration(), p.getAmplifier(), false, p.doesShowParticles()));
 		}
 		return new TechniquesModifiers(armor, attackSpeed, maxHealth, movementSpeed, strengthMod);
 	}

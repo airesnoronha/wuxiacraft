@@ -48,7 +48,7 @@ public class CultTechsCommand extends CommandBase {
 							String message = "You know " + cultTech.getKnownTechniques().size() + " techniques.";
 							sender.sendMessage(new TextComponentString(message));
 							for(KnownTechnique t : cultTech.getKnownTechniques()) {
-								message = String.format("%s %.0f", Techniques.getTechniqueName(t.getTechnique()), t.getProgress());
+								message = String.format("%s %.0f", t.getTechnique().getName(), t.getProgress());
 								sender.sendMessage(new TextComponentString(message));
 							}
 						}

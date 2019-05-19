@@ -18,6 +18,7 @@ public class CultivationStorage implements Capability.IStorage<ICultivation> {
 		tag.setInteger("subLevel", instance.getCurrentSubLevel());
 		tag.setInteger("progress", (int)instance.getCurrentProgress());
 		tag.setInteger("energy", (int)instance.getEnergy());
+		tag.setInteger("pelletCD", instance.getPelletCooldown());
 		return tag;
 	}
 
@@ -28,5 +29,6 @@ public class CultivationStorage implements Capability.IStorage<ICultivation> {
 		instance.setCurrentSubLevel(tag.getInteger("subLevel"));
 		instance.addProgress(tag.getInteger("progress"));
 		instance.addEnergy(tag.getInteger("energy"));
+		instance.setPelletCooldown(tag.getInteger("pelletCD"));
 	}
 }

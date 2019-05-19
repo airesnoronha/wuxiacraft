@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -7,6 +8,8 @@ import net.minecraft.potion.PotionEffect;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import net.minecraft.init.MobEffects;
 
 public class Techniques {
 
@@ -16,22 +19,35 @@ public class Techniques {
 		TECHNIQUES.add(BODY_STRENGTH);
 		TECHNIQUES.add(LIGHT_FEET);
 		TECHNIQUES.add(ASSASSIN_MANUAL);
+		TECHNIQUES.add(BASIC_MEDICINE);
+		TECHNIQUES.add(SWORD_HEART);
+		TECHNIQUES.add(AXE_RAGE);
 	}
 
-	public static String getTechniqueName(Technique technique) {
-		return I18n.format("wuxiacraft.techniques." + technique.getUName());
+	public static Technique getTechniqueByUName(String uName) {
+		for (Technique t : TECHNIQUES) {
+			if(t.getUName().equals(uName)) {
+				return t;
+			}
+		}
+		return null;
 	}
 
-	public static Technique BODY_STRENGTH = new Technique(TechniqueTier.MORTAL, "body_strength", new TechniquesModifiers(0.1f,0f,0f,-0.1f,0.1f));
-	public static Technique LIGHT_FEET = new Technique(TechniqueTier.MORTAL, "light_feet", new TechniquesModifiers(0f,0f,0f,0.2f,-0.1f));
-	public static Technique ASSASSIN_MANUAL = new Technique(TechniqueTier.MORTAL, "assassin_manual", new TechniquesModifiers(0f,0f,0f,0.1f,0f))
-			.addSmallEffect(new PotionEffect(Objects.requireNonNull(Potion.getPotionById(16)), 420, 0))
-			.addGreatEffect(new PotionEffect(Objects.requireNonNull(Potion.getPotionById(16)), 420, 0))
-			.addPerfectionEffect(new PotionEffect(Objects.requireNonNull(Potion.getPotionById(16)), 420, 0));
-	public static Technique BASIC_MEDICINE = new Technique(TechniqueTier.MORTAL, "basic_medicine", new TechniquesModifiers(0f, 0f,0.1f,0f,0f))
-			.addGreatEffect(new PotionEffect(Objects.requireNonNull(Potion.getPotionById(10)), 100, 0))
-			.addPerfectionEffect(new PotionEffect(Objects.requireNonNull(Potion.getPotionById(10)), 100, 0));
-	//public static Technique
+	//User potion effects
+	private static final PotionEffect REGENERATION_I = new PotionEffect(MobEffects.REGENERATION, 100, 0, true, false);
+	private static final PotionEffect NIGHT_VISION = new PotionEffect(MobEffects.NIGHT_VISION, 410, 0, false, false);
 
+	//Mortal ones
+	public static final Technique BODY_STRENGTH = new Technique(TechniqueTier.MORTAL, "body_strength", new TechniquesModifiers(0.1f,0f,0f,-0.1f,0.1f));
+	public static final Technique LIGHT_FEET = new Technique(TechniqueTier.MORTAL, "light_feet", new TechniquesModifiers(0f,0f,0f,0.2f,-0.1f));
+	public static final Technique ASSASSIN_MANUAL = new Technique(TechniqueTier.MORTAL, "assassin_manual", new TechniquesModifiers(0f,0.01f,-0.1f,0.1f,0f))
+			.addPerfectionEffect(NIGHT_VISION);
+	public static final Technique BASIC_MEDICINE = new Technique(TechniqueTier.MORTAL, "basic_medicine", new TechniquesModifiers(0f, -0.1f,0.1f,0f,-0.1f))
+			.addGreatEffect(REGENERATION_I)
+			.addPerfectionEffect(REGENERATION_I);
+	public static final TechniqueWeapon SWORD_HEART = new TechniqueWeapon(TechniqueTier.MORTAL, "sword_heart",
+			new TechniquesModifiers(0f,0.2f,-0.2f,0.1f,0f), TechniqueWeapon.WeaponType.SWORD);
+	public static final TechniqueWeapon AXE_RAGE = new TechniqueWeapon(TechniqueTier.MORTAL, "axe_rage",
+			new TechniquesModifiers(-0.2f,0.1f,0f,0f,0.2f), TechniqueWeapon.WeaponType.AXE);
 
 }

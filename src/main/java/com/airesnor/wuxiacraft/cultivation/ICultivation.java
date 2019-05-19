@@ -51,4 +51,8 @@ public interface ICultivation {
 	int getUpdateTimer();
 	void advTimer();
 	void resetTimer();
+
+	int getPelletCooldown();
+	void lessenPelletCooldown();
+	void setPelletCooldown(int cooldown);
 }

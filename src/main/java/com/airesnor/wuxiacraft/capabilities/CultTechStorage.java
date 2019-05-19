@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.capabilities;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.techniques.*;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,13 +28,12 @@ public class CultTechStorage implements Capability.IStorage<ICultTech> {
 	public void readNBT(Capability<ICultTech> capability, ICultTech instance, EnumFacing side, NBTBase nbt) {
 		NBTTagCompound tag = (NBTTagCompound) nbt;
 		int i = tag.getInteger("length");
-		for(Technique t : Techniques.TECHNIQUES){
-			for(int j = 0; j < i; j++) {
-				if(t.getUName().equals(tag.getString("tech-"+j))) {
-					float progress = tag.getFloat("prog-"+j);
-					instance.addTechnique(t, progress);
-				}
+		for(int j = 0; j < i; j++) {
+			Technique t = Techniques.getTechniqueByUName(tag.getString("tech-"+j));
+			if(t != null) {
+				float progress = tag.getFloat("prog-"+j);
+				instance.addTechnique(t, progress);
 			}
 		}
-	}
+}
 }

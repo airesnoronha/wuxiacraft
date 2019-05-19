@@ -17,7 +17,7 @@ public class NaturalOddityOre extends BlockBase {
 
 	@Override
 	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-		return Items.NATURAL_ADDITY_LOW;
+		return Items.NATURAL_ODDITY_LOW;
 	}
 
 	@Override

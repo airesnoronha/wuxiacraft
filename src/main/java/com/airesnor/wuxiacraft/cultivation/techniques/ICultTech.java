@@ -17,4 +17,6 @@ public interface ICultTech {
 
 	List<KnownTechnique> getKnownTechniques();
 
+	TechniquesModifiers getOverallModifiers();
+
 }

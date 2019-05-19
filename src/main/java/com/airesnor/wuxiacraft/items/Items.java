@@ -25,10 +25,18 @@ public class Items {
 	/**
 	 * A test item, not in use right now
 	 */
-	public static final Item CRUNCHYBAR = new ItemBase("crunchy_bar");
-	public static final Item NATURAL_ADDITY_LOW = new ItemBase("natural_oddity_low").setCreativeTab(CreativeTabs.MATERIALS);
+	public static final Item NATURAL_ODDITY_LOW = new ItemBase("natural_oddity_low").setCreativeTab(CreativeTabs.MATERIALS);
+
+	//pellets
+	public static final Item BODY_REFINEMENT_PELLET = new ItemProgressPellet("body_refinement_pellet", 30f, 100);
+	public static final Item ENERGY_RECOVERY_PELLET = new ItemEnergyPellet("energy_recovery_pellet", 15f);
+
+	//Scrolls
 	public static final Item BODY_STRENGTH_SCROLL = new ItemScroll(Techniques.BODY_STRENGTH);
 	public static final Item LIGHT_FEET_SCROLL = new ItemScroll(Techniques.LIGHT_FEET);
 	public static final Item ASSASSIN_MANUAL_SCROLL = new ItemScroll(Techniques.ASSASSIN_MANUAL);
+	public static final Item BASIC_MEDICINE_SCROLL = new ItemScroll(Techniques.BASIC_MEDICINE);
+	public static final Item SWORD_HEART_SCROLL = new ItemScroll(Techniques.SWORD_HEART);
+	public static final Item AXE_RAGE_SCROLL = new ItemScroll(Techniques.AXE_RAGE);
 
 }

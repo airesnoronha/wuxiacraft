@@ -39,6 +39,7 @@ public class CultTech implements ICultTech {
 		for(KnownTechnique t : this.knownTechniques) {
 			if(t.getTechnique().equals(technique)) {
 				this.knownTechniques.remove(t);
+				break;
 			}
 		}
 	}
@@ -101,9 +102,9 @@ public class CultTech implements ICultTech {
 				}
 			}
 
-			AttributeModifier armor_mod = new AttributeModifier(ARMOR_MOD, armor+narmor, 0);
+			AttributeModifier armor_mod = new AttributeModifier(ARMOR_MOD, (armor+narmor)*2, 0);
 			AttributeModifier attacak_speed_mod = new AttributeModifier(ATTACK_SPEED_MOD, attackSpeed+nattackSpeed, 0);
-			AttributeModifier max_health_mod = new AttributeModifier(MAX_HEALTH_MOD, maxHealth+nmaxHealth, 0);
+			AttributeModifier max_health_mod = new AttributeModifier(MAX_HEALTH_MOD, (maxHealth+nmaxHealth)*3, 0);
 			AttributeModifier speed_mod = new AttributeModifier(SPEED__MOD, (movementSpeed+nmovementSpeed)*0.1f*(cultivation.getSpeedHandicap()/100f), 0);
 			AttributeModifier strength_mod = new AttributeModifier(STRENGTH_MOD, strength+nstrength, 0);
 
@@ -127,5 +128,27 @@ public class CultTech implements ICultTech {
 	@Override
 	public List<KnownTechnique> getKnownTechniques() {
 		return this.knownTechniques;
+	}
+
+	@Override
+	public TechniquesModifiers getOverallModifiers() {
+		float armor = 0, nArmor = 0;
+		float attackSpped = 0, nAttackSpeed = 0;
+		float maxHealth = 0, nMaxHealth = 0;
+		float speed = 0, nSpeed = 0;
+		float strength = 0, nStrength = 0;
+		for(KnownTechnique t : this.getKnownTechniques()) {
+			if(t.getTechnique().getBaseModifiers().armor > 0) armor = Math.max(armor,t.getTechnique().getBaseModifiers().armor);
+			else nArmor = Math.min(nArmor,t.getTechnique().getBaseModifiers().armor);
+			if(t.getTechnique().getBaseModifiers().attackSpeed > 0) attackSpped = Math.max(attackSpped,t.getTechnique().getBaseModifiers().attackSpeed);
+			else nAttackSpeed = Math.min(nAttackSpeed,t.getTechnique().getBaseModifiers().attackSpeed);
+			if(t.getTechnique().getBaseModifiers().maxHealth > 0) maxHealth = Math.max(maxHealth,t.getTechnique().getBaseModifiers().maxHealth);
+			else nMaxHealth = Math.min(nMaxHealth,t.getTechnique().getBaseModifiers().maxHealth);
+			if(t.getTechnique().getBaseModifiers().movementSpeed > 0) speed = Math.max(speed,t.getTechnique().getBaseModifiers().movementSpeed);
+			else nSpeed = Math.min(nSpeed,t.getTechnique().getBaseModifiers().movementSpeed);
+			if(t.getTechnique().getBaseModifiers().strength > 0) strength = Math.max(strength,t.getTechnique().getBaseModifiers().strength);
+			else nStrength = Math.min(nStrength,t.getTechnique().getBaseModifiers().strength);
+		}
+		return new TechniquesModifiers(armor+nArmor, attackSpped+nAttackSpeed, maxHealth+nMaxHealth, speed+nSpeed, strength + nStrength);
 	}
 }

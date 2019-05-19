@@ -10,12 +10,14 @@ public class CultivationMessage implements IMessage {
 	public int messageSubLevel;
 	public float messageProgress;
 	public float messageEnergy;
+	public int pelletCooldown;
 
-	public CultivationMessage(CultivationLevel messageLevel, int messageSubLevel, float messageProgress, float messageEnergy) {
+	public CultivationMessage(CultivationLevel messageLevel, int messageSubLevel, float messageProgress, float messageEnergy, int pelletCooldown) {
 		this.messageLevel = messageLevel;
 		this.messageSubLevel = messageSubLevel;
 		this.messageProgress = messageProgress;
 		this.messageEnergy = messageEnergy;
+		this.pelletCooldown = pelletCooldown;
 	}
 
 	public CultivationMessage () {
@@ -23,6 +25,7 @@ public class CultivationMessage implements IMessage {
 		this.messageSubLevel = 0;
 		this.messageProgress = 0;
 		this.messageEnergy = 0;
+		this.pelletCooldown = 0;
 	}
 
 	@Override
@@ -30,6 +33,7 @@ public class CultivationMessage implements IMessage {
 		this.messageSubLevel = buf.readInt();
 		this.messageProgress = buf.readFloat();
 		this.messageEnergy = buf.readFloat();
+		this.pelletCooldown = buf.readInt();
 		int length = buf.readInt();
 		byte[] bytes = new byte[30];
 		buf.readBytes(bytes, 0,length);
@@ -44,6 +48,7 @@ public class CultivationMessage implements IMessage {
 		buf.writeInt(this.messageSubLevel);
 		buf.writeFloat(this.messageProgress);
 		buf.writeFloat(this.messageEnergy);
+		buf.writeInt(this.pelletCooldown);
 		buf.writeInt(bytes.length);
 		buf.writeBytes(bytes);
 	}

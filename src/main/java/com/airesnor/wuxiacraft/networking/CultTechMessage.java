@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.networking;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.techniques.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -26,18 +27,17 @@ public class CultTechMessage implements IMessage {
 		float progresses[] = new float[size];
 		for(int i = 0; i < size; i++) {
 			int length = buf.readInt();
-			byte bytes[] = new byte[30];
+			byte bytes[] = new byte[length];
 			buf.readBytes(bytes, 0, length);
 			names.add(new String(bytes));
 			progresses[i] = buf.readFloat();
 		}
 		int i = 0;
-		for(Technique t : Techniques.TECHNIQUES) {
-			for(String name : names) {
-				if(t.getUName().equals(name)) {
-					cultTech.addTechnique(t,progresses[i]);
-					i++;
-				}
+		for(String name : names) {
+			Technique t = Techniques.getTechniqueByUName(name);
+			if(t != null) {
+				cultTech.addTechnique(t,progresses[i]);
+				i++;
 			}
 		}
 	}
