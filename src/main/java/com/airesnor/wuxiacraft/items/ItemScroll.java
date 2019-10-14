@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.capabilities.CultTechProvider;
+import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.Technique;
 import com.airesnor.wuxiacraft.cultivation.techniques.TechniqueWeapon;
@@ -48,6 +49,10 @@ public class ItemScroll extends Item implements IHasModel {
 		if(this.technique instanceof TechniqueWeapon) {
 			TechniqueWeapon.WeaponType weaponType = ((TechniqueWeapon) this.technique).getWeaponType();
 			String line = TextFormatting.WHITE + weaponType.getName() +" "+ I18n.format("wuxiacraft.label.technique");
+			tooltip.add(line);
+		}
+		for(Element el : this.technique.getElements()) {
+			String line = el.getColor() + el.getName();
 			tooltip.add(line);
 		}
 		if(technique.getBaseModifiers().armor != 0) {

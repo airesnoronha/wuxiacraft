@@ -147,10 +147,10 @@ public class EventHandler {
 			EntityPlayer player = (EntityPlayer)event.getEntity();
 			ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 			if(player.world.isRemote || event.getDistance() < 3) return;
-			if(cultivation.getCurrentLevel().freeFlight) {
-				event.setCanceled(true);
+			if(cultivation.getCurrentLevel().canFly) {
+				event.setDistance(0);
 			} else {
-				event.setDistance(event.getDistance()-0.75f*cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()));
+				event.setDistance(event.getDistance()-1.45f*cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()));
 			}
 		}
 	}
@@ -253,6 +253,10 @@ public class EventHandler {
 				event.getDrops().add(new EntityItem(event.getEntity().world, event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, progress));
 			}
 		}
+	}
+
+	public void onBreakScheduledBlocks(TickEvent.PlayerTickEvent event) {
+
 	}
 
 	public static void applyModifiers(EntityPlayer player, ICultivation cultivation) {

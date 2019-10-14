@@ -2,6 +2,8 @@ package com.airesnor.wuxiacraft.cultivation.techniques;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.elements.Element;
+import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -19,7 +21,11 @@ public class Technique {
 	private List<PotionEffect> smallCompletionEffects;
 	private List<PotionEffect> greatCompletionEffects;
 	private List<PotionEffect> perfectionCompletionEffects;
+	private List<Element> elements;
 
+	private List<Skill> smallCompletionSkills;
+	private List<Skill> greatCompletionSkills;
+	private List<Skill> perfectionCompletionSkills;
 
 	public TechniqueTier getTier() {
 		return this.tier;
@@ -44,6 +50,10 @@ public class Technique {
 		this.smallCompletionEffects = new ArrayList<>();
 		this.greatCompletionEffects = new ArrayList<>();
 		this.perfectionCompletionEffects = new ArrayList<>();
+		this.elements = new ArrayList<>();
+		this.smallCompletionSkills = new ArrayList<>();
+		this.greatCompletionSkills = new ArrayList<>();
+		this.perfectionCompletionSkills = new ArrayList<>();
 	}
 
 	Technique addSmallEffect(PotionEffect potion) {
@@ -61,8 +71,32 @@ public class Technique {
 		return this;
 	}
 
+	Technique addSmallSkill(Skill skill) {
+	    this.smallCompletionSkills.add(skill);
+	    return this;
+    }
+
+    Technique addGreatSkill(Skill skill) {
+	    this.greatCompletionSkills.add(skill);
+	    return this;
+    }
+
+    Technique addPerfectSkill(Skill skill) {
+	    this.perfectionCompletionSkills.add(skill);
+	    return this;
+    }
+
+	Technique addElement(Element element) {
+		this.elements.add(element);
+		return this;
+	}
+
 	public List<PotionEffect> getPerfectionCompletionEffects() {
 		return perfectionCompletionEffects;
+	}
+
+	public List<Element> getElements() {
+		return this.elements;
 	}
 
 	public TechniquesModifiers updateSmallSuccess(EntityPlayer player, ICultivation cultivation) {

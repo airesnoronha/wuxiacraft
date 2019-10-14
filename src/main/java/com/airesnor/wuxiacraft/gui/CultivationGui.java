@@ -212,7 +212,7 @@ public class CultivationGui extends GuiScreen {
 		}
 		int pos = 0;
 		for(KnownTechnique t : drawing) {
-			String display = t.getTechnique().getName() + " " + (int)t.getProgress();
+			String display = t.getTechnique().getName();// + " " + (int)t.getProgress();
 			this.fontRenderer.drawString(display, this.guiLeft + 19,this.guiTop + 35 + pos*16 + 2,Integer.parseInt("FFFFFF", 16));
 			pos++;
 		}

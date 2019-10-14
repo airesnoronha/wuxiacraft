@@ -38,5 +38,10 @@ public class Items {
 	public static final Item BASIC_MEDICINE_SCROLL = new ItemScroll(Techniques.BASIC_MEDICINE);
 	public static final Item SWORD_HEART_SCROLL = new ItemScroll(Techniques.SWORD_HEART);
 	public static final Item AXE_RAGE_SCROLL = new ItemScroll(Techniques.AXE_RAGE);
+	public static final Item FIRE_BENDING_SCROLL = new ItemScroll(Techniques.FIRE_BENDING);
+	public static final Item MOUNTAIN_RAISER_SCROLL = new ItemScroll(Techniques.MOUNTAIN_RAISER);
+	public static final Item METAL_MANIPULATION_SCROLL = new ItemScroll(Techniques.METAL_MANIPULATION);
+	public static final Item SURGING_WAVES_SCROLL = new ItemScroll(Techniques.SURGING_WAVES);
+	public static final Item BOTANICAL_GROWTH_SCROLL = new ItemScroll(Techniques.BOTANICAL_GROWTH);
 
 }

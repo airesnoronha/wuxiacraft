@@ -2,6 +2,9 @@ package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
+import com.airesnor.wuxiacraft.cultivation.skills.Skill;
+import com.airesnor.wuxiacraft.cultivation.skills.Skills;
+import com.airesnor.wuxiacraft.networking.ActivateSkillMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.RequestCultGuiMessage;
 import com.airesnor.wuxiacraft.networking.SpeedHandicapMessage;
@@ -36,6 +39,11 @@ public class KeyHandler {
 			BlockPos pos = Minecraft.getMinecraft().player.getPosition();
 			Minecraft.getMinecraft().player.openGui(WuxiaCraft.instance, GuiHandler.CULTIVATION_GUI_ID,Minecraft.getMinecraft().player.world,pos.getX(), pos.getY(), pos.getZ());
 			//NetworkWrapper.INSTANCE.sendToServer(new RequestCultGuiMessage(true));
+		}
+		if(keyBindings[3].isPressed()) {
+			Skill skill = Skills.GATHER_WOOD;
+			NetworkWrapper.INSTANCE.sendToServer(new ActivateSkillMessage(skill));
+			skill.activate(Minecraft.getMinecraft().player);
 		}
 	}
 }

@@ -78,3 +78,25 @@ wuxiacraft.techniques.sword_heart=Sword Heart Manual
 item.sword_heart_scroll.name=Sword Heart Manual
 wuxiacraft.techniques.axe_rage=Axe Rage Journal
 item.axe_rage_scroll.name=Axe Rage Journal
+wuxiacraft.techniques.fire_bending=Fire Bending Manual
+item.fire_bending_scroll.name=Fire Bending Manual
+wuxiacraft.techniques.mountain_raiser=Mountain Raising Scroll
+item.mountain_raiser_scroll.name=Mountain Raising Scroll
+wuxiacraft.techniques.metal_manipulation=Metal Manipulation Manual
+item.metal_manipulation_scroll.name=Metal Manipulation Manual
+wuxiacraft.techniques.surging_waves=Surging Waves Scroll
+item.surging_waves_scroll.name=Surging Waves Scroll
+wuxiacraft.techniques.botanical_growth=Botanical Growth Journal
+item.botanical_growth_scroll.name=Botanical Growth Journal
+
+//Elements
+wuxiacraft.elements.fire=Fire
+wuxiacraft.elements.earth=Earth
+wuxiacraft.elements.metal=Metal
+wuxiacraft.elements.water=Water
+wuxiacraft.elements.wood=Wood
+wuxiacraft.elements.light=Light
+wuxiacraft.elements.dark=Darkness
+wuxiacraft.elements.wind=Wind
+wuxiacraft.elements.lightning=Lightning
+wuxiacraft.elements.ice=Ice

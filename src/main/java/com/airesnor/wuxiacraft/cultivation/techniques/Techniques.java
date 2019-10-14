@@ -1,6 +1,8 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.cultivation.elements.Element;
+import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -22,6 +24,11 @@ public class Techniques {
 		TECHNIQUES.add(BASIC_MEDICINE);
 		TECHNIQUES.add(SWORD_HEART);
 		TECHNIQUES.add(AXE_RAGE);
+		TECHNIQUES.add(FIRE_BENDING);
+		TECHNIQUES.add(MOUNTAIN_RAISER);
+		TECHNIQUES.add(METAL_MANIPULATION);
+		TECHNIQUES.add(SURGING_WAVES);
+		TECHNIQUES.add(BOTANICAL_GROWTH);
 	}
 
 	public static Technique getTechniqueByUName(String uName) {
@@ -49,5 +56,10 @@ public class Techniques {
 			new TechniquesModifiers(0f,0.2f,-0.2f,0.1f,0f), TechniqueWeapon.WeaponType.SWORD);
 	public static final TechniqueWeapon AXE_RAGE = new TechniqueWeapon(TechniqueTier.MORTAL, "axe_rage",
 			new TechniquesModifiers(-0.2f,0.1f,0f,0f,0.2f), TechniqueWeapon.WeaponType.AXE);
+	public static final Technique FIRE_BENDING = new Technique(TechniqueTier.MORTAL,"fire_bending",new TechniquesModifiers(0f,0f,0f,0.1f,0.1f)).addElement(Element.FIRE);
+	public static final Technique MOUNTAIN_RAISER = new Technique(TechniqueTier.MORTAL,"mountain_raiser",new TechniquesModifiers(0.1f,0f,0.1f,0f,0f)).addElement(Element.EARTH);
+	public static final Technique METAL_MANIPULATION = new Technique(TechniqueTier.MORTAL,"metal_manipulation",new TechniquesModifiers(0.1f,0f,0f,0f,0.1f)).addElement(Element.METAL);
+	public static final Technique SURGING_WAVES = new Technique(TechniqueTier.MORTAL,"surging_waves",new TechniquesModifiers(0f,0.1f,0f,0.1f,0f)).addElement(Element.WATER);
+	public static final Technique BOTANICAL_GROWTH = new Technique(TechniqueTier.MORTAL,"botanical_growth",new TechniquesModifiers(0f,0f,0.1f,0f,0.1f)).addElement(Element.WOOD).addSmallSkill(Skills.GATHER_WOOD);
 
 }
