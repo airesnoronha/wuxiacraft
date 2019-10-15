@@ -1,9 +1,6 @@
 package com.airesnor.wuxiacraft;
 
-import com.airesnor.wuxiacraft.commands.AdvCultLevel;
-import com.airesnor.wuxiacraft.commands.CultTechsCommand;
-import com.airesnor.wuxiacraft.commands.CultivationCommand;
-import com.airesnor.wuxiacraft.commands.ResetCultCommand;
+import com.airesnor.wuxiacraft.commands.*;
 import com.airesnor.wuxiacraft.proxy.CommonProxy;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.fml.common.Mod;
@@ -48,5 +45,6 @@ public class WuxiaCraft {
 		event.registerServerCommand(new CultTechsCommand());
 		event.registerServerCommand(new AdvCultLevel());
 		event.registerServerCommand(new ResetCultCommand());
+		event.registerServerCommand(new SkillsCommand());
 	}
 }

@@ -25,6 +25,19 @@ public class Technique {
 
 	private List<Skill> smallCompletionSkills;
 	private List<Skill> greatCompletionSkills;
+
+	public List<Skill> getSmallCompletionSkills() {
+		return smallCompletionSkills;
+	}
+
+	public List<Skill> getGreatCompletionSkills() {
+		return greatCompletionSkills;
+	}
+
+	public List<Skill> getPerfectionCompletionSkills() {
+		return perfectionCompletionSkills;
+	}
+
 	private List<Skill> perfectionCompletionSkills;
 
 	public TechniqueTier getTier() {
