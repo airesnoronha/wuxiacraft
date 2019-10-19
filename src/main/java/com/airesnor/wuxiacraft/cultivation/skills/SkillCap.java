@@ -10,12 +10,16 @@ public class SkillCap implements ISkillCap {
     private Stack<BlockPos> toBreak;
     private float cooldown;
     private float castProgress;
+    private List<Skill> SelectedSkills;
+    private int ActiveSkillIndex;
 
     public SkillCap() {
         this.knownSkills = new ArrayList<>();
         this.toBreak = new Stack<>();
         this.cooldown = 0;
         this.castProgress = 0;
+        this.SelectedSkills = new ArrayList<>();
+        this.ActiveSkillIndex = -1;
     }
 
     @Override
@@ -36,6 +40,11 @@ public class SkillCap implements ISkillCap {
     @Override
     public void addScheduledBlockBreaks(BlockPos pos) {
         this.toBreak.add(pos);
+    }
+
+    @Override
+    public void addAllScheduledBlockBreaks(Stack<BlockPos> pos) {
+        this.toBreak.addAll(pos);
     }
 
     @Override
@@ -71,5 +80,35 @@ public class SkillCap implements ISkillCap {
     @Override
     public void resetCastProgress() {
         this.castProgress = 0;
+    }
+
+    @Override
+    public boolean isScheduledEmpty() {
+        return this.toBreak.isEmpty();
+    }
+
+    @Override
+    public List<Skill> getSelectedSkills() {
+        return this.SelectedSkills;
+    }
+
+    @Override
+    public void addSelectedSkill(Skill skill) {
+        this.SelectedSkills.add(skill);
+    }
+
+    @Override
+    public void remSelectedSkill(Skill skill) {
+        this.SelectedSkills.remove(skill);
+    }
+
+    @Override
+    public int getActiveSkill() {
+        return this.ActiveSkillIndex;
+    }
+
+    @Override
+    public void setActiveSkill(int i) {
+        this.ActiveSkillIndex = i;
     }
 }

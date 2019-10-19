@@ -3,6 +3,7 @@ package com.airesnor.wuxiacraft.cultivation.skills;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
+import java.util.Stack;
 
 public interface ISkillCap {
 
@@ -14,7 +15,11 @@ public interface ISkillCap {
 
     void addScheduledBlockBreaks(BlockPos pos);
 
+    void addAllScheduledBlockBreaks(Stack<BlockPos> pos);
+
     BlockPos popScheduledBlockBreaks();
+
+    boolean isScheduledEmpty();
 
     float getCooldown();
 
@@ -27,5 +32,15 @@ public interface ISkillCap {
     void stepCastProgress(float step);
 
     void resetCastProgress();
+
+    List<Skill> getSelectedSkills();
+
+    void addSelectedSkill(Skill skill);
+
+    void remSelectedSkill(Skill skill);
+
+    int getActiveSkill();
+
+    void setActiveSkill(int i);
 
 }

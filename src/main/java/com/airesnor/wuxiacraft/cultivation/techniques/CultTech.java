@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
@@ -151,4 +152,22 @@ public class CultTech implements ICultTech {
 		}
 		return new TechniquesModifiers(armor+nArmor, attackSpped+nAttackSpeed, maxHealth+nMaxHealth, speed+nSpeed, strength + nStrength);
 	}
+
+    @Override
+    public List<Skill> getTechniqueSkills() {
+        List<Skill> knownSkills = new ArrayList<>();
+        for(KnownTechnique kt : getKnownTechniques()) {
+        	Technique t = kt.getTechnique();
+        	if(kt.getProgress() >= t.getTier().smallProgress) {
+        		knownSkills.addAll(t.getSmallCompletionSkills());
+			}
+        	if(kt.getProgress() >= t.getTier().greatProgress) {
+        		knownSkills.addAll(t.getGreatCompletionSkills());
+			}
+        	if(kt.getProgress() >= t.getTier().perfectionProgress) {
+        		knownSkills.addAll(t.getPerfectionCompletionSkills());
+			}
+		}
+        return knownSkills;
+    }
 }

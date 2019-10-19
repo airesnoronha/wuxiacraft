@@ -1,7 +1,9 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
+import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.networking.ActivateSkillMessage;
@@ -41,9 +43,12 @@ public class KeyHandler {
 			//NetworkWrapper.INSTANCE.sendToServer(new RequestCultGuiMessage(true));
 		}
 		if(keyBindings[3].isPressed()) {
-			Skill skill = Skills.GATHER_WOOD;
-			NetworkWrapper.INSTANCE.sendToServer(new ActivateSkillMessage(skill));
-			skill.activate(Minecraft.getMinecraft().player);
+			ISkillCap skillCap = Minecraft.getMinecraft().player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+			if(skillCap.getActiveSkill() != -1) {
+				Skill skill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
+				NetworkWrapper.INSTANCE.sendToServer(new ActivateSkillMessage(skill));
+				skill.activate(Minecraft.getMinecraft().player);
+			}
 		}
 	}
 }

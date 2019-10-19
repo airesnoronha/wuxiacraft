@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.List;
@@ -18,5 +19,7 @@ public interface ICultTech {
 	List<KnownTechnique> getKnownTechniques();
 
 	TechniquesModifiers getOverallModifiers();
+
+	List<Skill> getTechniqueSkills();
 
 }

@@ -27,7 +27,7 @@ public class SkillsStorage implements Capability.IStorage<ISkillCap> {
 
     @Override
     public void readNBT(Capability<ISkillCap> capability, ISkillCap instance, EnumFacing side, NBTBase nbt) {
-nown skills:        NBTTagCompound tag = (NBTTagCompound) nbt;
+        NBTTagCompound tag = (NBTTagCompound) nbt;
         int length = tag.getInteger("length");
         for(int i = 0; i < length; i ++) {
             int skillId = tag.getInteger("skill-" + i);

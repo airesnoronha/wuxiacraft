@@ -100,3 +100,7 @@ wuxiacraft.elements.dark=Darkness
 wuxiacraft.elements.wind=Wind
 wuxiacraft.elements.lightning=Lightning
 wuxiacraft.elements.ice=Ice
+
+//Skills
+wuxiacraft.skills.gather_wood=Gather Wood
+wuxiacraft.skills.accelerate_growth=Accelerate Growth

@@ -266,8 +266,16 @@ public class EventHandler {
 		}
 	}
 
+	@SubscribeEvent
 	public void onBreakScheduledBlocks(TickEvent.PlayerTickEvent event) {
-
+		ISkillCap skillCap = event.player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+		if(skillCap != null ) {
+			int i = 5;
+			while(!skillCap.isScheduledEmpty() && i >  0) {
+				i--;
+				event.player.world.destroyBlock(skillCap.popScheduledBlockBreaks(), true);
+			}
+		}
 	}
 
 	public static void applyModifiers(EntityPlayer player, ICultivation cultivation) {

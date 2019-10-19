@@ -60,6 +60,7 @@ public class Techniques {
 	public static final Technique MOUNTAIN_RAISER = new Technique(TechniqueTier.MORTAL,"mountain_raiser",new TechniquesModifiers(0.1f,0f,0.1f,0f,0f)).addElement(Element.EARTH);
 	public static final Technique METAL_MANIPULATION = new Technique(TechniqueTier.MORTAL,"metal_manipulation",new TechniquesModifiers(0.1f,0f,0f,0f,0.1f)).addElement(Element.METAL);
 	public static final Technique SURGING_WAVES = new Technique(TechniqueTier.MORTAL,"surging_waves",new TechniquesModifiers(0f,0.1f,0f,0.1f,0f)).addElement(Element.WATER);
-	public static final Technique BOTANICAL_GROWTH = new Technique(TechniqueTier.MORTAL,"botanical_growth",new TechniquesModifiers(0f,0f,0.1f,0f,0.1f)).addElement(Element.WOOD).addSmallSkill(Skills.GATHER_WOOD);
+	public static final Technique BOTANICAL_GROWTH = new Technique(TechniqueTier.MORTAL,"botanical_growth",new TechniquesModifiers(0f,0f,0.1f,0f,0.1f)).addElement(Element.WOOD).
+			addSmallSkill(Skills.GATHER_WOOD).addGreatSkill(Skills.ACCELERATE_GROWTH);
 
 }

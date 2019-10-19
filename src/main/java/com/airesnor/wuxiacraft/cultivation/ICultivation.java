@@ -44,6 +44,7 @@ public interface ICultivation {
 	void setEnergy(float amount);
 	void addEnergy(float amount);
 	void remEnergy(float amount);
+	boolean hasEnergy(float amount);
 
 	void setSpeedHandicap(int handicap);
 	int getSpeedHandicap();

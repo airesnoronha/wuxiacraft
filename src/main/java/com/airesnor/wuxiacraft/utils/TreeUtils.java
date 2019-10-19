@@ -28,25 +28,28 @@ public class TreeUtils {
         //Now it'll check block for block after logs
         Stack<BlockPos> candidates = new Stack<>();
         candidates.add(aux);
+        List<BlockPos> oldCandidates = new ArrayList<>();
         while(!candidates.isEmpty()) {
             aux = candidates.pop();
+            oldCandidates.add(aux);
             if(worldIn.getBlockState(aux).getBlock() == Blocks.LOG) {
                 if(!treeBlocks.contains(aux))
                     treeBlocks.add(aux);
             }
             if(worldIn.getBlockState(aux).getBlock() == Blocks.LOG || worldIn.getBlockState(aux).getBlock() == Blocks.LEAVES) {
-                if(!candidates.contains(aux.north()) && !treeBlocks.contains(aux.north()))
+                if(!candidates.contains(aux.north()) && !treeBlocks.contains(aux.north()) && !oldCandidates.contains(aux.north()))
                     candidates.add(aux.north());
-                if(!candidates.contains(aux.south()) && !treeBlocks.contains(aux.south()))
+                if(!candidates.contains(aux.south()) && !treeBlocks.contains(aux.south()) && !oldCandidates.contains(aux.south()))
                     candidates.add(aux.south());
-                if(!candidates.contains(aux.east()) && !treeBlocks.contains(aux.east()))
+                if(!candidates.contains(aux.east()) && !treeBlocks.contains(aux.east()) && !oldCandidates.contains(aux.east()))
                     candidates.add(aux.east());
-                if(!candidates.contains(aux.west()) && !treeBlocks.contains(aux.west()))
+                if(!candidates.contains(aux.west()) && !treeBlocks.contains(aux.west()) && !oldCandidates.contains(aux.west()))
                     candidates.add(aux.west());
-                if(!candidates.contains(aux.up()) && !treeBlocks.contains(aux.up()))
+                if(!candidates.contains(aux.up()) && !treeBlocks.contains(aux.up()) && !oldCandidates.contains(aux.up()))
                     candidates.add(aux.up());
             }
         }
+        oldCandidates.clear();
         return treeBlocks;
     };
 

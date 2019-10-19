@@ -83,6 +83,11 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
+	public boolean hasEnergy(float amount) {
+		return this.energy >= amount;
+	}
+
+	@Override
 	public void setProgress(float amount) {
 		this.progress = Math.min(Math.max(0,amount), this.level.getProgressBySubLevel(this.subLevel));
 	}
