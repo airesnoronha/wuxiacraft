@@ -188,7 +188,7 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	private void drawForegroundLayer() {
-		this.fontRenderer.drawString(cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()), this.guiLeft + 6,this.guiTop + 7,4210752);
+		this.fontRenderer.drawString(cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()), this.guiLeft + 6,this.guiTop + 7,0x404040);
 
 		//String display = String.format("Speed: %.3f (%d%%)", cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()), WuxiaCraftConfig.speedHandicap);
 		//this.fontRenderer.drawString(display, this.guiLeft + 6,this.guiTop + 35,4210752);
@@ -213,7 +213,7 @@ public class CultivationGui extends GuiScreen {
 		int pos = 0;
 		for(KnownTechnique t : drawing) {
 			String display = t.getTechnique().getName();// + " " + (int)t.getProgress();
-			this.fontRenderer.drawString(display, this.guiLeft + 19,this.guiTop + 35 + pos*16 + 2,Integer.parseInt("FFFFFF", 16));
+			this.fontRenderer.drawString(display, this.guiLeft + 19,this.guiTop + 35 + pos*16 + 2, 0xFFFFFF);
 			pos++;
 		}
 	}
@@ -233,20 +233,20 @@ public class CultivationGui extends GuiScreen {
 				else if(this.cultTech.getKnownTechniques().get(index).getProgress() > this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().smallProgress)
 					line = "Small success";
 				drawFramedBox(mouseX+6, mouseY-1, 8+fontRenderer.getStringWidth(line), 17, 3, 81, 142);
-				this.fontRenderer.drawString(line, mouseX+10, mouseY+3, Integer.parseInt("FFFFFF", 16));
+				this.fontRenderer.drawString(line, mouseX+10, mouseY+3, 0xFFFFFF);
 			}
 		}
 		if(inBounds(mouseX, mouseY, this.guiLeft+6, this.guiTop+26, 133, 3)) {
 			int progress_fill = (int)(cultivation.getCurrentProgress() * 100 / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
 			String line = String.format("%d%%", progress_fill);
 			drawFramedBox(mouseX+6, mouseY-1, 8+fontRenderer.getStringWidth(line), 17, 3, 81, 142);
-			this.fontRenderer.drawString(line, mouseX+10, mouseY+3, Integer.parseInt("FFFFFF", 16));
+			this.fontRenderer.drawString(line, mouseX+10, mouseY+3, 0xFFFFFF);
 		}
 		if(inBounds(mouseX, mouseY, this.guiLeft+185, this.guiTop+5, 10, 33)) {
 			int energy_fill = (int)(cultivation.getEnergy() * 100 / cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()));
 			String line = String.format("%d%%", energy_fill);
 			drawFramedBox(mouseX+6, mouseY-1, 8+fontRenderer.getStringWidth(line), 17, 3, 81, 142);
-			this.fontRenderer.drawString(line, mouseX+10, mouseY+3, Integer.parseInt("FFFFFF", 16));
+			this.fontRenderer.drawString(line, mouseX+10, mouseY+3, 0xFFFFFF);
 		}
 	}
 
