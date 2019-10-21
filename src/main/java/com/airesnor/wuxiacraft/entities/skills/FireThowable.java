@@ -46,7 +46,7 @@ public class FireThowable extends EntityThrowable {
 
         if(this.ticksExisted >= 2 && this.world instanceof WorldServer) {
             WorldServer worldServer = (WorldServer) this.world;
-            worldServer.spawnParticle(EnumParticleTypes.FLAME, true, this.posX, this.posY, this.posZ, 3, this.width / 4, 0, 0, 0.0d, 0);
+            worldServer.spawnParticle(EnumParticleTypes.FLAME, false, this.posX, this.posY, this.posZ, 3, this.motionX, 0, 0, 0.005d, 0);
 
             AxisAlignedBB expandedBoundingBox = this.getEntityBoundingBox().grow(1, 1, 1);
             worldServer.getEntitiesInAABBexcluding(this.owner, expandedBoundingBox, input -> !this.equals(input)).forEach(this::setEntityOnFire);
@@ -59,12 +59,13 @@ public class FireThowable extends EntityThrowable {
         if(!this.world.isRemote) {
             if(result.typeOfHit == RayTraceResult.Type.ENTITY && !result.entityHit.equals(this.owner)) {
                 this.attackEntityOnDirectHit((EntityLivingBase) result.entityHit);
+                this.setDead();
             } else if(result.typeOfHit == RayTraceResult.Type.BLOCK) {
                 this.setHitBlockOnFire(result);
                 if(this.canNotPassThroughHitBlock(result)) {
                     if(this.world instanceof WorldServer) {
                         WorldServer worldServer = (WorldServer) this.world;
-                        worldServer.spawnParticle(EnumParticleTypes.FLAME, true, this.posX, this.posY, this.posZ, 10, this.width, this.height, this.width, this.rand.nextGaussian() / 10, 0);
+                        worldServer.spawnParticle(EnumParticleTypes.FLAME, false, this.posX, this.posY, this.posZ, 10, this.width, this.height, this.width, this.rand.nextGaussian() / 10, 0);
                     }
                     this.setDead();
                 }

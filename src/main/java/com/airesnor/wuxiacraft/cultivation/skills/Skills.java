@@ -9,16 +9,13 @@ import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.TreeUtils;
 import net.minecraft.block.IGrowable;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemDye;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-import java.nio.channels.AcceptPendingException;
 import java.util.*;
 
 public class Skills {
@@ -88,22 +85,19 @@ public class Skills {
         }
     });
 
-    public static final Skill FLAMES = new Skill("flames", 40f, 1.1f).setAction(new ISkillAction() {
+    public static final Skill FLAMES = new Skill("flames", 40f, 1.1f, 8f, 0f).setAction(new ISkillAction() {
         @Override
         public void activate(EntityPlayer actor) {
             ISkillCap skillCap = actor.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
             ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-            if(skillCap.getCastProgress() >= 8f/20f) {
-                if(cultivation.hasEnergy(FLAMES.getCost())) {
-                    for (int i = 0; i < 3; i++) {
-                        FireThowable ft = new FireThowable(actor.world, actor, cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()));
-                        ft.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 1f, 0.4f);
-                        actor.world.spawnEntity(ft);
-                    }
-                    cultivation.remEnergy(FLAMES.getCost());
-                    cultivation.addProgress(FLAMES.getProgress());
-                    skillCap.resetCastProgress();
+            if (cultivation.hasEnergy(FLAMES.getCost())) {
+                for (int i = 0; i < 1; i++) {
+                    FireThowable ft = new FireThowable(actor.world, actor, cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()));
+                    ft.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 1f, 0.4f);
+                    actor.world.spawnEntity(ft);
                 }
+                cultivation.remEnergy(FLAMES.getCost());
+                cultivation.addProgress(FLAMES.getProgress());
             }
         }
     }) ;

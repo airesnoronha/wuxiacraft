@@ -108,7 +108,7 @@ public class EventHandler {
 			EntityPlayer player = (EntityPlayer)event.getEntity();
 			ISkillCap skillCap = player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
 			if(skillCap.getCooldown() >= 0) {
-				skillCap.stepCooldown(-1f/20f);
+				skillCap.stepCooldown(-1f);
 			}
 		}
 	}

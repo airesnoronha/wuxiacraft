@@ -45,6 +45,8 @@ public class SkillCapMessageHandler implements IMessageHandler {
                         for(Skill skill : scm.skillCap.getKnownSkills()) {
                             skillCap.addSkill(skill);
                         }
+                        skillCap.resetCooldown();
+                        skillCap.resetCastProgress();
                         skillCap.stepCooldown(scm.skillCap.getCooldown());
                         skillCap.stepCastProgress(scm.skillCap.getCastProgress());
                         skillCap.getSelectedSkills().clear();

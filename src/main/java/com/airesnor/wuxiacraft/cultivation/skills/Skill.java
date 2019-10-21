@@ -11,6 +11,9 @@ public class Skill {
     private float cost;
     private float progress;
 
+    private float castTime;
+    private float cooldown;
+
     private ISkillAction action;
 
     public String getName() {
@@ -24,6 +27,14 @@ public class Skill {
     public Skill setAction(ISkillAction action) {
         this.action = action;
         return this;
+    }
+
+    public float getCastTime() {
+        return castTime;
+    }
+
+    public float getCooldown() {
+        return cooldown;
     }
 
     public void activate(EntityPlayer actor) {
@@ -42,6 +53,16 @@ public class Skill {
         this.name = name;
         this.cost = cost;
         this.progress = progress;
+        this.castTime = 0;
+        this.cooldown = 0;
+    }
+
+    public Skill(String name, float cost, float progress, float castTime, float cooldown) {
+        this.name = name;
+        this.cost = cost;
+        this.progress = progress;
+        this.castTime = castTime;
+        this.cooldown = cooldown;
     }
 
 }

@@ -84,6 +84,17 @@ public class SkillsCommand extends CommandBase {
                         }
                     }
                 }
+                else if (args.length == 1) {
+                    ISkillCap skillCap = player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+                    if(args[0].equals("reset")) {
+                        skillCap.getKnownSkills().clear();
+                        NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap), player);
+                    }
+                    if(args[0].equals("reset_cd")) {
+                        skillCap.resetCooldown();
+                        NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap), player);
+                    }
+                }
                 else if (args.length == 2) {
                     ISkillCap skillCap = player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
                     if(args[0].equals("add")) {

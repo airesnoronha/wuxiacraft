@@ -9,21 +9,27 @@ public class ActivateSkillMessage implements IMessage {
 
     public int SkillIndex;
 
-    public ActivateSkillMessage(Skill skill) {
+    public float castProgress;
+
+    public ActivateSkillMessage(Skill skill, float castProgress) {
         this.SkillIndex = Skills.SKILLS.indexOf(skill);
+        this.castProgress = castProgress;
     }
 
     public ActivateSkillMessage () {
         this.SkillIndex = -1;
+        this.castProgress = 0;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         this.SkillIndex = buf.readInt();
+        this.castProgress = buf.readFloat();
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(this.SkillIndex);
+        buf.writeFloat(this.castProgress);
     }
 }
