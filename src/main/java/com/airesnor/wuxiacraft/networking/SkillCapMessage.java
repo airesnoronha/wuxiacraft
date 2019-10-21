@@ -28,6 +28,12 @@ public class SkillCapMessage implements IMessage {
             Skill skill = Skills.SKILLS.get(buf.readInt());
             skillCap.addSkill(skill);
         }
+        length = buf.readInt();
+        for(int i = 0; i < length; i++) {
+            Skill skill = Skills.SKILLS.get(buf.readInt());
+            skillCap.addSelectedSkill(skill);
+        }
+        skillCap.setActiveSkill(buf.readInt());
     }
 
     @Override
@@ -39,5 +45,11 @@ public class SkillCapMessage implements IMessage {
             int skillId = Skills.SKILLS.indexOf(skill);
             buf.writeInt(skillId);
         }
+        buf.writeInt(this.skillCap.getSelectedSkills().size());
+        for(Skill skill : skillCap.getSelectedSkills()) {
+            int skillId = Skills.SKILLS.indexOf(skill);
+            buf.writeInt(skillId);
+        }
+        buf.writeInt(skillCap.getActiveSkill());
     }
 }

@@ -5,11 +5,7 @@ import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
-import com.airesnor.wuxiacraft.cultivation.skills.Skills;
-import com.airesnor.wuxiacraft.networking.ActivateSkillMessage;
-import com.airesnor.wuxiacraft.networking.NetworkWrapper;
-import com.airesnor.wuxiacraft.networking.RequestCultGuiMessage;
-import com.airesnor.wuxiacraft.networking.SpeedHandicapMessage;
+import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -19,6 +15,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
 
 @Mod.EventBusSubscriber
 public class KeyHandler {
@@ -44,11 +41,23 @@ public class KeyHandler {
 		}
 		if(keyBindings[3].isPressed()) {
 			ISkillCap skillCap = Minecraft.getMinecraft().player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+			skillCap.stepCastProgress(1f/20f);
+			NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap));
 			if(skillCap.getActiveSkill() != -1) {
 				Skill skill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
 				NetworkWrapper.INSTANCE.sendToServer(new ActivateSkillMessage(skill));
 				skill.activate(Minecraft.getMinecraft().player);
 			}
+		}
+		if(Keyboard.getEventKey() == keyBindings[3].getKeyCode() && !Keyboard.getEventKeyState()) {
+			WuxiaCraft.logger.info("Activate skill released");
+			ISkillCap skillCap = Minecraft.getMinecraft().player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+			skillCap.resetCastProgress();
+			NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap));
+		}
+		if(keyBindings[4].isPressed()) {
+			BlockPos pos = Minecraft.getMinecraft().player.getPosition();
+			Minecraft.getMinecraft().player.openGui(WuxiaCraft.instance, GuiHandler.SKILLS_GUI_ID, Minecraft.getMinecraft().player.world, pos.getX(), pos.getY(), pos.getZ());
 		}
 	}
 }

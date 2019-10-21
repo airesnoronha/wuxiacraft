@@ -21,6 +21,8 @@ key.wuxiacraft.category=WuxiaCraft
 key.wuxiacraft.speed_up=Increase speed handicap
 key.wuxiacraft.speed_down=Decrease speed handicap
 key.wuxiacraft.cult_gui=Introspection
+key.wuxiacraft.activate_skill=Activate Skills
+key.wuxiacraft.skills_gui=See skills
 
 //tiers
 wuxiacraft.tier.mortal=Mortal
@@ -64,6 +66,7 @@ wuxiacraft.label.axe=Axe
 wuxiacraft.label.hoe=Hoe
 wuxiacraft.label.pickaxe=Pickaxe
 wuxiacraft.label.shovel=Shovel
+wuxiacraft.label.skills_gui.title=Skills List
 
 //Techniques
 wuxiacraft.techniques.body_strength=Body Strength Manual
@@ -104,3 +107,4 @@ wuxiacraft.elements.ice=Ice
 //Skills
 wuxiacraft.skills.gather_wood=Gather Wood
 wuxiacraft.skills.accelerate_growth=Accelerate Growth
+wuxiacraft.skills.flames=Throw Flames

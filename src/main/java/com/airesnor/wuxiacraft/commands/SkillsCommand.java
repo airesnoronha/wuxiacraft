@@ -3,10 +3,10 @@ package com.airesnor.wuxiacraft.commands;
 import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommand;
-import net.minecraft.command.ICommandSender;
+import com.airesnor.wuxiacraft.cultivation.skills.Skills;
+import com.airesnor.wuxiacraft.networking.NetworkWrapper;
+import com.airesnor.wuxiacraft.networking.SkillCapMessage;
+import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -32,7 +32,10 @@ public class SkillsCommand extends CommandBase {
 
     @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return true;
+        if(sender instanceof EntityPlayerMP) {
+            return ((EntityPlayerMP)sender).isCreative();
+        }
+        return false;
     }
 
     @Override
@@ -81,8 +84,38 @@ public class SkillsCommand extends CommandBase {
                         }
                     }
                 }
+                else if (args.length == 2) {
+                    ISkillCap skillCap = player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+                    if(args[0].equals("add")) {
+                        for(Skill skill : Skills.SKILLS) {
+                            if(args[1].equals(skill.getUName())) {
+                                skillCap.addSkill(skill);
+                                TextComponentString text = new TextComponentString("Added skill: " + skill.getName());
+                                sender.sendMessage(text);
+                                NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap), player);
+                                break;
+                            }
+                        }
+                    }
+                    if(args[0].equals("rem")) {
+                        for(Skill skill : Skills.SKILLS) {
+                            if(args[1].equals(skill.getUName())) {
+                                if(skillCap.getKnownSkills().contains(skill)) {
+                                    skillCap.removeSkill(skill);
+                                    TextComponentString text = new TextComponentString("Removed skill: " + skill.getName());
+                                    sender.sendMessage(text);
+                                    NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap), player);
+                                } else {
+                                    TextComponentString text = new TextComponentString("You don't even know such skill: " + skill.getName());
+                                    sender.sendMessage(text);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
                 else {
-                    TextComponentString text = new TextComponentString("Invalid arguments, use /cult target_player");
+                    TextComponentString text = new TextComponentString("Invalid arguments, use /skills [add:rem] skill_name");
                     text.getStyle().setColor(TextFormatting.RED);
                     sender.sendMessage(text);
                 }

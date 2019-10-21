@@ -102,6 +102,17 @@ public class EventHandler {
 		}
 	}
 
+	@SubscribeEvent
+	public void onPlayerUpdateReduceCooldown(LivingEvent.LivingUpdateEvent event) {
+		if(event.getEntity() instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer)event.getEntity();
+			ISkillCap skillCap = player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+			if(skillCap.getCooldown() >= 0) {
+				skillCap.stepCooldown(-1f/20f);
+			}
+		}
+	}
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onPlayerTick(TickEvent.PlayerTickEvent event) {

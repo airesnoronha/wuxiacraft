@@ -6,6 +6,7 @@ import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -15,6 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -32,13 +34,24 @@ public class RendererHandler {
 	public static final ResourceLocation bar_bg = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/bar_bg.png");
 	public static final ResourceLocation energy_bar = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/energy_bar.png");
 	public static final ResourceLocation progress_bar = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/progress_bar.png");
+	public static final ResourceLocation life_bar = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/health_bar.png");
 
 	@SubscribeEvent
-	public void onRenderHud(RenderGameOverlayEvent event) {
+	public void onRenderHud(RenderGameOverlayEvent.Post event) {
 		if (event.isCancelable() || event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE) {
 			return;
 		}
 		drawHudElements();
+	}
+
+	@SubscribeEvent
+	public void onRenderHealthBar(RenderGameOverlayEvent.Pre event) {
+		if(event.isCancelable() && event.getType() == RenderGameOverlayEvent.ElementType.HEALTH) {
+			if(Minecraft.getMinecraft().player.getMaxHealth() > 40f) {
+				event.setCanceled(true);
+				drawCustomHealthBar(event.getResolution());
+			}
+		}
 	}
 
 	public static void enableBoxRendering() {
@@ -129,5 +142,41 @@ public class RendererHandler {
 		message = String.format("Fall Distance: %.2f",player.fallDistance);
 		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 60, Integer.parseInt("FFAA00",16))
 		*/
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void drawCustomHealthBar(ScaledResolution res) {
+		int i = res.getScaledWidth()/2 - 91;
+		int j = res.getScaledHeight() - 39;
+		Minecraft mc = Minecraft.getMinecraft();
+		mc.getTextureManager().bindTexture(life_bar);
+		drawTexturedRect(i, j, 81,9, 0, 0, 1f, 0.5f);
+		float max_hp = mc.player.getMaxHealth();
+		float hp = mc.player.getHealth();
+		int fill = (int)Math.ceil((hp/max_hp)*81);
+		drawTexturedRect(i, j, fill,9, 0f, 0.5f, (hp/max_hp), 1f);
+		String life = (int)hp + "/" + (int)max_hp;
+		int width = mc.fontRenderer.getStringWidth(life);
+		mc.fontRenderer.drawString(life, (i + (81-width)/2), j+1, 0xFFFFFF );
+		mc.getTextureManager().bindTexture(Gui.ICONS);
+		GuiIngameForge.left_height += 11;
+	}
+
+	public static void drawTexturedRect(int x, int y, int w, int h) {
+		GL11.glBegin(GL11.GL_QUADS);
+		GL11.glTexCoord2f(0,0); GL11.glVertex2i(x, y);
+		GL11.glTexCoord2f(0,1); GL11.glVertex2i(x, y+h);
+		GL11.glTexCoord2f(1,1); GL11.glVertex2i(x+w, y+h);
+		GL11.glTexCoord2f(1,0); GL11.glVertex2i(x+w, y);
+		GL11.glEnd();
+	}
+
+	public static void drawTexturedRect(int x, int y, int w, int h, float itx, float ity, float ftx, float fty) {
+		GL11.glBegin(GL11.GL_QUADS);
+		GL11.glTexCoord2f(itx,ity); GL11.glVertex2i(x, y);
+		GL11.glTexCoord2f(itx,fty); GL11.glVertex2i(x, y+h);
+		GL11.glTexCoord2f(ftx,fty); GL11.glVertex2i(x+w, y+h);
+		GL11.glTexCoord2f(ftx,ity); GL11.glVertex2i(x+w, y);
+		GL11.glEnd();
 	}
 }

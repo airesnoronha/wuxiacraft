@@ -1,19 +1,19 @@
 package com.airesnor.wuxiacraft.cultivation.skills;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.entities.skills.FireThowable;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
-import com.airesnor.wuxiacraft.networking.CultivationMessage;
-import com.airesnor.wuxiacraft.networking.EnergyMessage;
-import com.airesnor.wuxiacraft.networking.NetworkWrapper;
-import com.airesnor.wuxiacraft.networking.ProgressMessage;
+import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.TreeUtils;
 import net.minecraft.block.IGrowable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemDye;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
@@ -27,9 +27,11 @@ public class Skills {
 
     public static void init() {
         SKILLS.add(GATHER_WOOD);
+        SKILLS.add(ACCELERATE_GROWTH);
+        SKILLS.add(FLAMES);
     }
 
-    public static final Skill GATHER_WOOD = new Skill("gather_wood", 40f, 1.1f)
+    public static final Skill GATHER_WOOD = new Skill("gather_wood", 20f, 1.1f)
             .setAction(new ISkillAction() {
                 @Override
                 public void activate(EntityPlayer actor) {
@@ -49,7 +51,7 @@ public class Skills {
                 }
             });
 
-    public static final Skill ACCELERATE_GROWTH = new Skill("Accelerate growth", 80f, 4.0f).setAction(new ISkillAction() {
+    public static final Skill ACCELERATE_GROWTH = new Skill("accelerate_growth", 40f, 4.0f).setAction(new ISkillAction() {
         @Override
         public void activate(EntityPlayer actor) {
             World worldIn = actor.world;
@@ -77,6 +79,7 @@ public class Skills {
                                 NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, ACCELERATE_GROWTH.getCost()));
                                 EventHandler.playerAddProgress(actor, cultivation, ACCELERATE_GROWTH.getProgress());
                                 NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, ACCELERATE_GROWTH.getProgress()));
+                                ItemDye.spawnBonemealParticles(worldIn, pos, 20);
                             }
                         }
                     }
@@ -84,5 +87,25 @@ public class Skills {
             }
         }
     });
+
+    public static final Skill FLAMES = new Skill("flames", 40f, 1.1f).setAction(new ISkillAction() {
+        @Override
+        public void activate(EntityPlayer actor) {
+            ISkillCap skillCap = actor.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+            ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+            if(skillCap.getCastProgress() >= 8f/20f) {
+                if(cultivation.hasEnergy(FLAMES.getCost())) {
+                    for (int i = 0; i < 3; i++) {
+                        FireThowable ft = new FireThowable(actor.world, actor, cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()));
+                        ft.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 1f, 0.4f);
+                        actor.world.spawnEntity(ft);
+                    }
+                    cultivation.remEnergy(FLAMES.getCost());
+                    cultivation.addProgress(FLAMES.getProgress());
+                    skillCap.resetCastProgress();
+                }
+            }
+        }
+    }) ;
 
 }

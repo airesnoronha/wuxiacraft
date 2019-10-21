@@ -22,6 +22,11 @@ public class SkillsStorage implements Capability.IStorage<ISkillCap> {
         }
         tag.setFloat("cooldown", instance.getCooldown());
         tag.setFloat("castProgress", instance.getCastProgress());
+        tag.setInteger("ks-length", instance.getSelectedSkills().size());
+        for(int i = 0; i < instance.getSelectedSkills().size(); i++) {
+            tag.setInteger("ks-"+ i, Skills.SKILLS.indexOf(instance.getSelectedSkills().get(i)));
+        }
+        tag.setInteger("active", instance.getActiveSkill());
         return tag;
     }
 
@@ -29,6 +34,7 @@ public class SkillsStorage implements Capability.IStorage<ISkillCap> {
     public void readNBT(Capability<ISkillCap> capability, ISkillCap instance, EnumFacing side, NBTBase nbt) {
         NBTTagCompound tag = (NBTTagCompound) nbt;
         int length = tag.getInteger("length");
+        instance.getKnownSkills().clear();
         for(int i = 0; i < length; i ++) {
             int skillId = tag.getInteger("skill-" + i);
             Skill skill = Skills.SKILLS.get(skillId);
@@ -36,5 +42,12 @@ public class SkillsStorage implements Capability.IStorage<ISkillCap> {
         }
         instance.stepCastProgress(tag.getInteger("castProgress"));
         instance.stepCooldown(tag.getInteger("cooldown"));
+        length = tag.getInteger("ks-length");
+        instance.getSelectedSkills().clear();
+        for(int i = 0; i < length; i++) {
+            Skill skill = Skills.SKILLS.get(tag.getInteger("ks-"+i));
+            instance.addSelectedSkill(skill);
+        }
+        instance.setActiveSkill(tag.getInteger("active"));
     }
 }

@@ -17,6 +17,10 @@ public class Skill {
         return I18n.format("wuxiacraft.skills." + this.name);
     }
 
+    public String getUName() {
+        return this.name;
+    }
+
     public Skill setAction(ISkillAction action) {
         this.action = action;
         return this;
