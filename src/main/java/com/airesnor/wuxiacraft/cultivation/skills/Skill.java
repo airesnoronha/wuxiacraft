@@ -37,8 +37,8 @@ public class Skill {
         return cooldown;
     }
 
-    public void activate(EntityPlayer actor) {
-        this.action.activate(actor);
+    public boolean activate(EntityPlayer actor) {
+        return this.action.activate(actor);
     }
 
     public float getCost() {

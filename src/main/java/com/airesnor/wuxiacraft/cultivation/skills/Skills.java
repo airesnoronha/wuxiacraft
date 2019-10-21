@@ -3,8 +3,9 @@ package com.airesnor.wuxiacraft.cultivation.skills;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.entities.skills.FireThowable;
+import com.airesnor.wuxiacraft.entities.skills.FireThrowable;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.TreeUtils;
@@ -28,32 +29,35 @@ public class Skills {
         SKILLS.add(FLAMES);
     }
 
-    public static final Skill GATHER_WOOD = new Skill("gather_wood", 20f, 1.1f)
+    public static final Skill GATHER_WOOD = new Skill("gather_wood", 20f, 11f, 2f, 0f)
             .setAction(new ISkillAction() {
                 @Override
-                public void activate(EntityPlayer actor) {
+                public boolean activate(EntityPlayer actor) {
                     World worldIn = actor.world;
-                    ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
                     ISkillCap skillCap = actor.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
                     RayTraceResult rtr = actor.rayTrace(6f, 1f);
                     BlockPos pos = rtr.getBlockPos();
+                    boolean activated = false;
                     if(worldIn.getBlockState(pos).getBlock() == Blocks.LOG) {
                         Stack<BlockPos> tree = TreeUtils.findTree(worldIn, pos);
-                        while(!tree.isEmpty() && cultivation.hasEnergy(GATHER_WOOD.getCost())) {
-                                skillCap.addScheduledBlockBreaks(tree.pop());
-                                cultivation.remEnergy(GATHER_WOOD.getCost());
-                                EventHandler.playerAddProgress(actor, cultivation, GATHER_WOOD.getProgress());
+                        if(!tree.isEmpty()) {
+                            WuxiaCraft.logger.info("Added block to break");
+                            skillCap.addScheduledBlockBreaks(tree.pop());
+                            activated = true;
                         }
                     }
+                    return activated;
                 }
             });
 
-    public static final Skill ACCELERATE_GROWTH = new Skill("accelerate_growth", 40f, 4.0f).setAction(new ISkillAction() {
+    public static final Skill ACCELERATE_GROWTH = new Skill("accelerate_growth", 40f, 40f, 10f, 0f)
+            .setAction(new ISkillAction() {
         @Override
-        public void activate(EntityPlayer actor) {
+        public boolean activate(EntityPlayer actor) {
             World worldIn = actor.world;
             RayTraceResult rtr = actor.rayTrace(8f, 1f);
             BlockPos pos = rtr.getBlockPos();
+            boolean activated = false;
             if(pos != null) {
                 List<BlockPos> neighbors = new ArrayList<>();
                 neighbors.add(pos);
@@ -68,37 +72,30 @@ public class Skills {
                 for(BlockPos p : neighbors) {
                     if (worldIn.getBlockState(p).getBlock() instanceof IGrowable) {
                         IGrowable iGrowable = (IGrowable) worldIn.getBlockState(p).getBlock();
-                        ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
                         if (iGrowable.canGrow(worldIn, p, worldIn.getBlockState(p), worldIn.isRemote)) {
-                            if(cultivation.hasEnergy(ACCELERATE_GROWTH.getCost())) {
                                 iGrowable.grow(worldIn, worldIn.rand, p, worldIn.getBlockState(p));
-                                cultivation.remEnergy(ACCELERATE_GROWTH.getCost());
-                                NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, ACCELERATE_GROWTH.getCost()));
-                                EventHandler.playerAddProgress(actor, cultivation, ACCELERATE_GROWTH.getProgress());
-                                NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, ACCELERATE_GROWTH.getProgress()));
                                 ItemDye.spawnBonemealParticles(worldIn, pos, 20);
-                            }
+                                activated = true;
                         }
                     }
                 }
             }
+            return activated;
         }
     });
 
-    public static final Skill FLAMES = new Skill("flames", 40f, 1.1f, 8f, 0f).setAction(new ISkillAction() {
+    public static final Skill FLAMES = new Skill("flames", 40f, 10f, 4f, 0f).setAction(new ISkillAction() {
         @Override
-        public void activate(EntityPlayer actor) {
-            ISkillCap skillCap = actor.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
-            ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-            if (cultivation.hasEnergy(FLAMES.getCost())) {
-                for (int i = 0; i < 1; i++) {
-                    FireThowable ft = new FireThowable(actor.world, actor, cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()));
-                    ft.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 1f, 0.4f);
-                    actor.world.spawnEntity(ft);
-                }
-                cultivation.remEnergy(FLAMES.getCost());
-                cultivation.addProgress(FLAMES.getProgress());
+        public boolean activate(EntityPlayer actor) {
+            boolean activated = false;
+            ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP,null);
+            for (int i = 0; i < 1; i++) {
+                FireThrowable ft = new FireThrowable(actor.world, actor, cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()));
+                ft.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 1f, 0.4f);
+                actor.world.spawnEntity(ft);
+                activated = true;
             }
+            return activated;
         }
     }) ;
 

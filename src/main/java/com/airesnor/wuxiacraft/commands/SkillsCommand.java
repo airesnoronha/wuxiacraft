@@ -31,11 +31,8 @@ public class SkillsCommand extends CommandBase {
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        if(sender instanceof EntityPlayerMP) {
-            return ((EntityPlayerMP)sender).isCreative();
-        }
-        return false;
+    public int getRequiredPermissionLevel() {
+        return 2;
     }
 
     @Override

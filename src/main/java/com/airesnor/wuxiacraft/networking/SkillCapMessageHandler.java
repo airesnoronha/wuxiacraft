@@ -21,11 +21,13 @@ public class SkillCapMessageHandler implements IMessageHandler {
                     EntityPlayer player = Minecraft.getMinecraft().player;
                     ISkillCap skillCap = player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
                     if(skillCap != null) {
+                        skillCap.getKnownSkills().clear();
                         for(Skill skill : scm.skillCap.getKnownSkills()) {
                             skillCap.addSkill(skill);
                         }
                         skillCap.stepCooldown(scm.skillCap.getCooldown());
                         skillCap.stepCastProgress(scm.skillCap.getCastProgress());
+                        skillCap.getSelectedSkills().clear();
                         for(Skill skill : scm.skillCap.getSelectedSkills()) {
                             skillCap.addSelectedSkill(skill);
                         }

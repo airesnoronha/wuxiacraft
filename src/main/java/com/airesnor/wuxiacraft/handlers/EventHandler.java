@@ -5,14 +5,19 @@ import com.airesnor.wuxiacraft.capabilities.CultTechProvider;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
+import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.items.ItemScroll;
 import com.airesnor.wuxiacraft.items.Items;
 import com.airesnor.wuxiacraft.networking.*;
+import com.airesnor.wuxiacraft.proxy.ClientProxy;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.EntityItem;
@@ -30,6 +35,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,12 +109,31 @@ public class EventHandler {
 	}
 
 	@SubscribeEvent
-	public void onPlayerUpdateReduceCooldown(LivingEvent.LivingUpdateEvent event) {
+	public void onPlayerProcessSkills(LivingEvent.LivingUpdateEvent event) {
 		if(event.getEntity() instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer)event.getEntity();
 			ISkillCap skillCap = player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
 			if(skillCap.getCooldown() >= 0) {
 				skillCap.stepCooldown(-1f);
+			}
+			if(skillCap.isCasting()) {
+				skillCap.stepCastProgress(1f);
+			} else if (skillCap.isDoneCasting()) {
+				skillCap.setDoneCasting(false);
+			}
+			if(skillCap.getActiveSkill() != -1) {
+				Skill skill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
+				if(skillCap.isCasting() && skillCap.getCastProgress() >= skill.getCastTime() && skillCap.getCooldown() <= 0) {
+					ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+					if(cultivation.hasEnergy(skill.getCost())) {
+						if(skill.activate(player)) {
+							cultivation.remEnergy(skill.getCost());
+							playerAddProgress(player, cultivation, skill.getProgress());
+							skillCap.resetCastProgress();
+							skillCap.stepCooldown(skill.getCooldown());
+						}
+					}
+				}
 			}
 		}
 	}

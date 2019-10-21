@@ -4,6 +4,6 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public interface ISkillAction {
 
-    void activate(EntityPlayer actor);
+    boolean activate(EntityPlayer actor);
 
 }

@@ -43,4 +43,12 @@ public interface ISkillCap {
 
     void setActiveSkill(int i);
 
+    void setCasting(boolean casting);
+
+    boolean isCasting();
+
+    void setDoneCasting(boolean doneCasting);
+
+    boolean isDoneCasting();
+
 }

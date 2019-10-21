@@ -12,6 +12,8 @@ public class SkillCap implements ISkillCap {
     private float castProgress;
     private List<Skill> SelectedSkills;
     private int ActiveSkillIndex;
+    private boolean casting;
+    private boolean doneCasting;
 
     public SkillCap() {
         this.knownSkills = new ArrayList<>();
@@ -20,6 +22,8 @@ public class SkillCap implements ISkillCap {
         this.castProgress = 0;
         this.SelectedSkills = new ArrayList<>();
         this.ActiveSkillIndex = -1;
+        this.casting = false;
+        this.doneCasting = false;
     }
 
     @Override
@@ -110,5 +114,25 @@ public class SkillCap implements ISkillCap {
     @Override
     public void setActiveSkill(int i) {
         this.ActiveSkillIndex = i;
+    }
+
+    @Override
+    public boolean isCasting() {
+        return this.casting;
+    }
+
+    @Override
+    public void setCasting(boolean casting) {
+        this.casting = casting;
+    }
+
+    @Override
+    public boolean isDoneCasting() {
+        return this.doneCasting;
+    }
+
+    @Override
+    public void setDoneCasting(boolean doneCasting) {
+        this.doneCasting = doneCasting;
     }
 }
