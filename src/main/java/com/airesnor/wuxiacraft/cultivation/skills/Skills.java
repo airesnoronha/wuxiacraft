@@ -9,7 +9,10 @@ import com.airesnor.wuxiacraft.entities.skills.FireThrowable;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.TreeUtils;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockLog;
 import net.minecraft.block.IGrowable;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemDye;
@@ -27,9 +30,10 @@ public class Skills {
         SKILLS.add(GATHER_WOOD);
         SKILLS.add(ACCELERATE_GROWTH);
         SKILLS.add(FLAMES);
+        SKILLS.add(FIREBAll);
     }
 
-    public static final Skill GATHER_WOOD = new Skill("gather_wood", 20f, 11f, 2f, 0f)
+    public static final Skill GATHER_WOOD = new Skill("gather_wood", 20f, 2f, 2f, 0f)
             .setAction(new ISkillAction() {
                 @Override
                 public boolean activate(EntityPlayer actor) {
@@ -38,7 +42,11 @@ public class Skills {
                     RayTraceResult rtr = actor.rayTrace(6f, 1f);
                     BlockPos pos = rtr.getBlockPos();
                     boolean activated = false;
-                    if(worldIn.getBlockState(pos).getBlock() == Blocks.LOG) {
+                    IBlockState blockState = worldIn.getBlockState(pos);
+                    List<Block> logs = new ArrayList<>();
+                    logs.add(Blocks.LOG);
+                    logs.add(Blocks.LOG2);
+                    if(logs.contains(blockState.getBlock())) {
                         Stack<BlockPos> tree = TreeUtils.findTree(worldIn, pos);
                         if(!tree.isEmpty()) {
                             WuxiaCraft.logger.info("Added block to break");
@@ -50,7 +58,7 @@ public class Skills {
                 }
             });
 
-    public static final Skill ACCELERATE_GROWTH = new Skill("accelerate_growth", 40f, 40f, 10f, 0f)
+    public static final Skill ACCELERATE_GROWTH = new Skill("accelerate_growth", 40f, 4f, 10f, 0f)
             .setAction(new ISkillAction() {
         @Override
         public boolean activate(EntityPlayer actor) {
@@ -84,19 +92,30 @@ public class Skills {
         }
     });
 
-    public static final Skill FLAMES = new Skill("flames", 40f, 10f, 4f, 0f).setAction(new ISkillAction() {
+    public static final Skill FLAMES = new Skill("flames", 40f, 3f, 4f, 0f).setAction(new ISkillAction() {
         @Override
         public boolean activate(EntityPlayer actor) {
-            boolean activated = false;
             ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP,null);
-            for (int i = 0; i < 1; i++) {
-                FireThrowable ft = new FireThrowable(actor.world, actor, cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()));
+            for (int i = 0; i < 3; i++) {
+                FireThrowable ft = new FireThrowable(actor.world, actor, cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel())/3f);
                 ft.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 1f, 0.4f);
                 actor.world.spawnEntity(ft);
-                activated = true;
             }
-            return activated;
+            return true;
         }
-    }) ;
+    });
+
+    public static final Skill FIREBAll = new Skill("fireball", 120f, 6f, 8f, 0f).setAction(new ISkillAction() {
+        @Override
+        public boolean activate(EntityPlayer actor) {
+            ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP,null);
+            for (int i = 0; i < 5; i++) {
+                FireThrowable ft = new FireThrowable(actor.world, actor, cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()), 300, 20, 0.3f);
+                ft.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 1f, 0.4f);
+                actor.world.spawnEntity(ft);
+            }
+            return true;
+        }
+    });
 
 }

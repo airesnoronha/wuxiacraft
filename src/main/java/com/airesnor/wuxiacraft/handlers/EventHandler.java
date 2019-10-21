@@ -127,7 +127,7 @@ public class EventHandler {
 					ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 					if(cultivation.hasEnergy(skill.getCost())) {
 						if(skill.activate(player)) {
-							cultivation.remEnergy(skill.getCost());
+							if(!player.isCreative()) cultivation.remEnergy(skill.getCost());
 							playerAddProgress(player, cultivation, skill.getProgress());
 							skillCap.resetCastProgress();
 							skillCap.stepCooldown(skill.getCooldown());

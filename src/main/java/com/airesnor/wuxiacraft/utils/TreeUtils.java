@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.utils;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
@@ -15,10 +16,17 @@ public class TreeUtils {
         Stack<BlockPos> treeBlocks = new Stack<>();
         BlockPos aux = pos;
 
+        List<Block> logs = new ArrayList<>();
+        logs.add(Blocks.LOG);
+        logs.add(Blocks.LOG2);
+        List<Block> leaves = new ArrayList<>();
+        leaves.add(Blocks.LEAVES);
+        leaves.add(Blocks.LEAVES2);
+
         //Check if it's the bottom most part of the tree
         boolean isBottomMost = false;
         while(!isBottomMost) {
-            if(worldIn.getBlockState(aux.down()).getBlock() == Blocks.LOG) {
+            if(logs.contains(worldIn.getBlockState(aux.down()).getBlock())) {
                 aux = aux.down();
             } else {
                 isBottomMost = true;
@@ -32,11 +40,11 @@ public class TreeUtils {
         while(!candidates.isEmpty()) {
             aux = candidates.pop();
             oldCandidates.add(aux);
-            if(worldIn.getBlockState(aux).getBlock() == Blocks.LOG) {
+            if(logs.contains(worldIn.getBlockState(aux).getBlock())) {
                 if(!treeBlocks.contains(aux))
                     treeBlocks.add(aux);
             }
-            if(worldIn.getBlockState(aux).getBlock() == Blocks.LOG || worldIn.getBlockState(aux).getBlock() == Blocks.LEAVES) {
+            if(logs.contains(worldIn.getBlockState(aux).getBlock())|| leaves.contains(worldIn.getBlockState(aux).getBlock())) {
                 if(!candidates.contains(aux.north()) && !treeBlocks.contains(aux.north()) && !oldCandidates.contains(aux.north()))
                     candidates.add(aux.north());
                 if(!candidates.contains(aux.south()) && !treeBlocks.contains(aux.south()) && !oldCandidates.contains(aux.south()))

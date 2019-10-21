@@ -10,6 +10,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -22,31 +23,56 @@ public class FireThrowable extends EntityThrowable {
 
     private float damage;
 
+    private int duration;
+
+    private int particles;
+
     public FireThrowable(World worldIn) {
         super(worldIn);
     }
 
     public FireThrowable(World worldIn, EntityPlayer owner, float damage) {
         super(worldIn, owner.posX, owner.posY + owner.getEyeHeight() - 0.1, owner.posZ);
-        this.setSize(0.3f, 0.3f);
+        this.setSize(0.08f, 0.08f);
         this.setNoGravity(true);
         this.owner = owner;
         this.thrower = this.owner;
         this.damage = damage;
+        this.duration = 20;
+        this.particles = 3;
+    }
+
+    public FireThrowable(World worldIn, EntityPlayer owner, float damage, int duration, int particles, float radius) {
+        super(worldIn, owner.posX, owner.posY + owner.getEyeHeight() - 0.1, owner.posZ);
+        this.setSize(radius, radius);
+        this.setNoGravity(true);
+        this.owner = owner;
+        this.thrower = this.owner;
+        this.damage = damage;
+        this.duration = duration;
+        this.particles = particles;
+    }
+
+    @Override
+    public void shoot(Entity entityThrower, float rotationPitchIn, float rotationYawIn, float pitchOffset, float velocity, float inaccuracy) {
+        float f = -MathHelper.sin(rotationYawIn * 0.017453292F) * MathHelper.cos(rotationPitchIn * 0.017453292F);
+        float f1 = -MathHelper.sin((rotationPitchIn + pitchOffset) * 0.017453292F);
+        float f2 = MathHelper.cos(rotationYawIn * 0.017453292F) * MathHelper.cos(rotationPitchIn * 0.017453292F);
+        this.shoot((double)f, (double)f1, (double)f2, velocity, inaccuracy);
     }
 
     @Override
     public void onEntityUpdate() {
         super.onEntityUpdate();
 
-        if(this.ticksExisted >= 15 || this.inWater) {
+        if(this.ticksExisted >= this.duration || this.inWater) {
             this.setDead();
             return;
         }
 
         if(this.ticksExisted >= 2 && this.world instanceof WorldServer) {
             WorldServer worldServer = (WorldServer) this.world;
-            worldServer.spawnParticle(EnumParticleTypes.FLAME, false, this.posX, this.posY, this.posZ, 3, this.motionX, 0, 0, 0.0005d, 0);
+            worldServer.spawnParticle(EnumParticleTypes.FLAME, false, this.posX, this.posY, this.posZ, this.particles, this.width, this.height, this.width, 0.002d, 0);
 
             AxisAlignedBB expandedBoundingBox = this.getEntityBoundingBox().grow(1, 1, 1);
             worldServer.getEntitiesInAABBexcluding(this.owner, expandedBoundingBox, input -> !this.equals(input)).forEach(this::setEntityOnFire);
@@ -65,7 +91,7 @@ public class FireThrowable extends EntityThrowable {
                 if(this.canNotPassThroughHitBlock(result)) {
                     if(this.world instanceof WorldServer) {
                         WorldServer worldServer = (WorldServer) this.world;
-                        worldServer.spawnParticle(EnumParticleTypes.FLAME, false, this.posX, this.posY, this.posZ, 10, this.width, this.height, this.width, this.rand.nextGaussian() / 10, 0);
+                        worldServer.spawnParticle(EnumParticleTypes.FLAME, false, this.posX, this.posY, this.posZ, this.particles*3, this.width, this.height, this.width, this.rand.nextGaussian() / 10, 0);
                     }
                     this.setDead();
                 }
