@@ -85,6 +85,8 @@ public class SkillsCommand extends CommandBase {
                     ISkillCap skillCap = player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
                     if(args[0].equals("reset")) {
                         skillCap.getKnownSkills().clear();
+                        skillCap.getSelectedSkills().clear();
+                        skillCap.setActiveSkill(-1);
                         NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap), player);
                     }
                     if(args[0].equals("reset_cd")) {

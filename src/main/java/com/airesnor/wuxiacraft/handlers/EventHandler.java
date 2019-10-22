@@ -10,6 +10,7 @@ import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
+import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.items.ItemScroll;
 import com.airesnor.wuxiacraft.items.Items;
@@ -98,7 +99,7 @@ public class EventHandler {
 					}
 					player.capabilities.allowFlying = player.isCreative() || cultivation.getCurrentLevel().canFly;
 					player.capabilities.setFlySpeed((float)player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
-					player.stepHeight = !player.isSneaking() ? Math.min(3.1f, 0.6f*cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel())): 0.6f;
+					player.stepHeight = !player.isSneaking() ? Math.min(3.1f, 0.6f*(1+0.55f*cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()))): 0.6f;
 					player.sendPlayerAbilities();
 				}
 
@@ -116,15 +117,17 @@ public class EventHandler {
 			if(skillCap.getCooldown() >= 0) {
 				skillCap.stepCooldown(-1f);
 			}
-			if(skillCap.isCasting()) {
-				skillCap.stepCastProgress(1f);
-			} else if (skillCap.isDoneCasting()) {
-				skillCap.setDoneCasting(false);
-			}
 			if(skillCap.getActiveSkill() != -1) {
+				ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 				Skill skill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
+				if(skillCap.isCasting() && cultivation.hasEnergy(skill.getCost())) {
+					skillCap.stepCastProgress(1f);
+					skill.castingEffect(player);
+				} else if (skillCap.isDoneCasting()) {
+					skillCap.resetCastProgress();
+					skillCap.setDoneCasting(false);
+				}
 				if(skillCap.isCasting() && skillCap.getCastProgress() >= skill.getCastTime() && skillCap.getCooldown() <= 0) {
-					ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 					if(cultivation.hasEnergy(skill.getCost())) {
 						if(skill.activate(player)) {
 							if(!player.isCreative()) cultivation.remEnergy(skill.getCost());
@@ -174,7 +177,7 @@ public class EventHandler {
 	public void onPlayerJump(LivingEvent.LivingJumpEvent event) {
 		if(event.getEntityLiving() instanceof  EntityPlayer) {
 			ICultivation cultivation = event.getEntity().getCapability(CultivationProvider.CULTIVATION_CAP, null);
-			event.getEntity().motionY += 0.08*cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel())*((float)WuxiaCraftConfig.speedHandicap/100f);
+			event.getEntity().motionY += 0.19*cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel())*((float)WuxiaCraftConfig.speedHandicap/100f);
 		}
 	}
 
@@ -324,8 +327,8 @@ public class EventHandler {
 		AttributeModifier health_mod = new AttributeModifier(health_mod_name, 3*level_str_mod, 0);
 		//since armor base is 0, it'll add 2*strength as armor
 		//I'll use for now strength for increase every other stat, since it's almost the same after all
-		AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, level_str_mod*2, 0);
-		AttributeModifier speed_mod = new AttributeModifier(speed_mod_name, level_spd_mod*0.1, 0);
+		AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, level_str_mod*0.7f, 0);
+		AttributeModifier speed_mod = new AttributeModifier(speed_mod_name, level_spd_mod*0.2, 0);
 		AttributeModifier attack_speed_mod = new AttributeModifier(attack_speed_mod_name, level_spd_mod, 1);
 
 		//remove any previous strength modifiers
@@ -380,7 +383,7 @@ public class EventHandler {
 		}
 		if(cultivation.addProgress(amount)) {
 			if(!player.world.isRemote) {
-				player.sendStatusMessage(new TextComponentString("Congratulations! You now are at" + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel())),false);
+				player.sendStatusMessage(new TextComponentString("Congratulations! You now are at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel())),false);
 				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPelletCooldown()), (EntityPlayerMP) player);
 			}
 		}

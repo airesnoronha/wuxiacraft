@@ -2,11 +2,15 @@ package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
+import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
+import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -35,6 +39,7 @@ public class RendererHandler {
 	public static final ResourceLocation energy_bar = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/energy_bar.png");
 	public static final ResourceLocation progress_bar = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/progress_bar.png");
 	public static final ResourceLocation life_bar = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/health_bar.png");
+	public static final ResourceLocation icons = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/icons.png");
 
 	@SubscribeEvent
 	public void onRenderHud(RenderGameOverlayEvent.Post event) {
@@ -42,6 +47,7 @@ public class RendererHandler {
 			return;
 		}
 		drawHudElements();
+		drawCastProgressBar(event.getResolution());
 	}
 
 	@SubscribeEvent
@@ -142,6 +148,24 @@ public class RendererHandler {
 		message = String.format("Fall Distance: %.2f",player.fallDistance);
 		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 60, Integer.parseInt("FFAA00",16))
 		*/
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void drawCastProgressBar(ScaledResolution res) {
+		Minecraft mc = Minecraft.getMinecraft();
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(res.getScaledWidth()/2f -91f, res.getScaledHeight() - 29, 0);
+		Minecraft.getMinecraft().getTextureManager().bindTexture(icons);
+		ISkillCap skillCap = mc.player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+		if(skillCap.isCasting()) {
+			mc.ingameGUI.drawTexturedModalRect(0,0,0,0,182,5);
+			if(skillCap.getActiveSkill() != -1) {
+				Skill skill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
+				int progress = (int)(skillCap.getCastProgress()/skill.getCastTime()*182);
+				mc.ingameGUI.drawTexturedModalRect(0,0,0,5,progress,5);
+			}
+		}
+		GlStateManager.popMatrix();
 	}
 
 	@SideOnly(Side.CLIENT)

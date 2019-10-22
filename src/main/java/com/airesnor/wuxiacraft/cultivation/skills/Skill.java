@@ -15,6 +15,7 @@ public class Skill {
     private float cooldown;
 
     private ISkillAction action;
+    private ISkillAction whenCasting;
 
     public String getName() {
         return I18n.format("wuxiacraft.skills." + this.name);
@@ -29,6 +30,11 @@ public class Skill {
         return this;
     }
 
+    public Skill setWhenCasting(ISkillAction action) {
+        this.whenCasting = action;
+        return this;
+    }
+
     public float getCastTime() {
         return castTime;
     }
@@ -39,6 +45,10 @@ public class Skill {
 
     public boolean activate(EntityPlayer actor) {
         return this.action.activate(actor);
+    }
+
+    public boolean castingEffect(EntityPlayer actor) {
+        return this.whenCasting.activate(actor);
     }
 
     public float getCost() {
@@ -55,6 +65,12 @@ public class Skill {
         this.progress = progress;
         this.castTime = 0;
         this.cooldown = 0;
+        this.whenCasting = new ISkillAction() {
+            @Override
+            public boolean activate(EntityPlayer actor) {
+                return false;
+            }
+        };
     }
 
     public Skill(String name, float cost, float progress, float castTime, float cooldown) {
@@ -63,6 +79,12 @@ public class Skill {
         this.progress = progress;
         this.castTime = castTime;
         this.cooldown = cooldown;
+        this.whenCasting = new ISkillAction() {
+            @Override
+            public boolean activate(EntityPlayer actor) {
+                return false;
+            }
+        };
     }
 
 }

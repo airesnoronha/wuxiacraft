@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.cultivation.elements;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.*;
@@ -9,13 +10,15 @@ public class Element {
     private String name;
     private TextFormatting color;
     private List<Element> counters;
+    private EnumParticleTypes particle;
 
     public static final List<Element> ELEMENTS = new ArrayList<>();
 
-    public Element (String name, TextFormatting tf) {
+    public Element (String name, TextFormatting tf, EnumParticleTypes particle) {
         this.name = name;
         this.color = tf;
         this.counters = new ArrayList<>();
+        this.particle = particle;
         ELEMENTS.add(this);
     }
 
@@ -39,17 +42,21 @@ public class Element {
         return this.color.toString();
     }
 
-    public static final Element FIRE = new Element("fire", TextFormatting.RED);
-    public static final Element EARTH = new Element("earth", TextFormatting.YELLOW);
-    public static final Element METAL = new Element("metal", TextFormatting.GRAY);
-    public static final Element WATER = new Element("water", TextFormatting.AQUA);
-    public static final Element WOOD = new Element("wood", TextFormatting.DARK_GREEN);
-    public static final Element LIGHT = new Element("light", TextFormatting.WHITE);
-    public static final Element DARK = new Element("dark", TextFormatting.DARK_GRAY);
+    public EnumParticleTypes getParticle() {
+        return particle;
+    }
 
-    public static final Element WIND = new Element("wind", TextFormatting.RED);
-    public static final Element LIGHTNING = new Element("lightning", TextFormatting.LIGHT_PURPLE);
-    public static final Element ICE = new Element("ice", TextFormatting.DARK_AQUA);
+    public static final Element FIRE = new Element("fire", TextFormatting.RED, EnumParticleTypes.FLAME);
+    public static final Element EARTH = new Element("earth", TextFormatting.YELLOW, EnumParticleTypes.CRIT);
+    public static final Element METAL = new Element("metal", TextFormatting.GRAY, EnumParticleTypes.SMOKE_NORMAL);
+    public static final Element WATER = new Element("water", TextFormatting.AQUA, EnumParticleTypes.WATER_SPLASH);
+    public static final Element WOOD = new Element("wood", TextFormatting.DARK_GREEN, EnumParticleTypes.VILLAGER_HAPPY);
+    public static final Element LIGHT = new Element("light", TextFormatting.WHITE, EnumParticleTypes.CLOUD);
+    public static final Element DARK = new Element("dark", TextFormatting.DARK_GRAY, EnumParticleTypes.DRAGON_BREATH);
+
+    public static final Element WIND = new Element("wind", TextFormatting.GOLD, EnumParticleTypes.SPELL_MOB_AMBIENT);
+    public static final Element LIGHTNING = new Element("lightning", TextFormatting.LIGHT_PURPLE, EnumParticleTypes.CRIT_MAGIC);
+    public static final Element ICE = new Element("ice", TextFormatting.DARK_AQUA, EnumParticleTypes.DRIP_WATER);
 
     public static void init() {
 

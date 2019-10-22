@@ -1,10 +1,15 @@
 package com.airesnor.wuxiacraft.cultivation.skills;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.capabilities.CultTechProvider;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.elements.Element;
+import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
+import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
+import com.airesnor.wuxiacraft.cultivation.techniques.Technique;
 import com.airesnor.wuxiacraft.entities.skills.FireThrowable;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.networking.*;
@@ -16,6 +21,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemDye;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
@@ -27,13 +33,52 @@ public class Skills {
     public static final List<Skill> SKILLS = new ArrayList<>();
 
     public static void init() {
+        SKILLS.add(CULTIVATE);
         SKILLS.add(GATHER_WOOD);
         SKILLS.add(ACCELERATE_GROWTH);
         SKILLS.add(FLAMES);
-        SKILLS.add(FIREBAll);
+        SKILLS.add(FIRE_BAll);
     }
 
-    public static final Skill GATHER_WOOD = new Skill("gather_wood", 20f, 2f, 2f, 0f)
+    public static final Skill CULTIVATE = new Skill("cultivate", 50f, 10f, 40f, 0f).setAction(new ISkillAction() {
+        @Override
+        public boolean activate(EntityPlayer actor) {
+            ICultTech cultTech = actor.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
+            for(KnownTechnique kt : cultTech.getKnownTechniques()) {
+                for(Element e : kt.getTechnique().getElements()) {
+                    int particles = 10;
+                    for(int i =0; i < particles; i ++){
+                        float randX = 2*(float)actor.world.rand.nextFloat()-1;
+                        float randY = 2*(float)actor.world.rand.nextFloat()-1;
+                        float randZ = 2*(float)actor.world.rand.nextFloat()-1;
+                        float dist = (float)Math.sqrt(randX*randX + randY*randY+randZ*randZ)*30f;
+                        actor.world.spawnParticle(e.getParticle(), false, actor.posX+randX, actor.posY + 0.9f+randY, actor.posZ+randZ, -randX/dist, -randY/dist, -randZ/dist, 0);
+                    }
+                }
+            }
+            return true;
+        }
+    }).setWhenCasting(new ISkillAction() {
+        @Override
+        public boolean activate(EntityPlayer actor) {
+            ICultTech cultTech = actor.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
+            for(KnownTechnique kt : cultTech.getKnownTechniques()) {
+                for(Element e : kt.getTechnique().getElements()) {
+                    int particles = 2;
+                    for(int i =0; i < particles; i ++){
+                        float randX = 2*(float)actor.world.rand.nextFloat()-1;
+                        float randY = 2*(float)actor.world.rand.nextFloat()-1;
+                        float randZ = 2*(float)actor.world.rand.nextFloat()-1;
+                        float dist = (float)Math.sqrt(randX*randX + randY*randY+randZ*randZ)*30f;
+                        actor.world.spawnParticle(e.getParticle(), false, actor.posX+randX, actor.posY + 0.9f+randY, actor.posZ+randZ, -randX/dist, -randY/dist, -randZ/dist, 0);
+                    }
+                }
+            }
+            return true;
+        }
+    });
+
+    public static final Skill GATHER_WOOD = new Skill("gather_wood", 20f, 1f, 2f, 0f)
             .setAction(new ISkillAction() {
                 @Override
                 public boolean activate(EntityPlayer actor) {
@@ -58,7 +103,7 @@ public class Skills {
                 }
             });
 
-    public static final Skill ACCELERATE_GROWTH = new Skill("accelerate_growth", 40f, 4f, 10f, 0f)
+    public static final Skill ACCELERATE_GROWTH = new Skill("accelerate_growth", 40f, 2f, 10f, 0f)
             .setAction(new ISkillAction() {
         @Override
         public boolean activate(EntityPlayer actor) {
@@ -92,7 +137,7 @@ public class Skills {
         }
     });
 
-    public static final Skill FLAMES = new Skill("flames", 40f, 3f, 4f, 0f).setAction(new ISkillAction() {
+    public static final Skill FLAMES = new Skill("flames", 40f, 1.5f, 4f, 0f).setAction(new ISkillAction() {
         @Override
         public boolean activate(EntityPlayer actor) {
             ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP,null);
@@ -105,13 +150,13 @@ public class Skills {
         }
     });
 
-    public static final Skill FIREBAll = new Skill("fireball", 120f, 6f, 8f, 0f).setAction(new ISkillAction() {
+    public static final Skill FIRE_BAll = new Skill("fire_ball", 120f, 3f, 20f, 0f).setAction(new ISkillAction() {
         @Override
         public boolean activate(EntityPlayer actor) {
             ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP,null);
             for (int i = 0; i < 5; i++) {
                 FireThrowable ft = new FireThrowable(actor.world, actor, cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()), 300, 20, 0.3f);
-                ft.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 1f, 0.4f);
+                ft.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 0.3f*cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()), 0.4f);
                 actor.world.spawnEntity(ft);
             }
             return true;
