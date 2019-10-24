@@ -44,7 +44,7 @@ public class TreeUtils {
                 if(!treeBlocks.contains(aux))
                     treeBlocks.add(aux);
             }
-            if(logs.contains(worldIn.getBlockState(aux).getBlock())|| leaves.contains(worldIn.getBlockState(aux).getBlock())) {
+            if(logs.contains(worldIn.getBlockState(aux).getBlock())) {//|| leaves.contains(worldIn.getBlockState(aux).getBlock())) {
                 if(!candidates.contains(aux.north()) && !treeBlocks.contains(aux.north()) && !oldCandidates.contains(aux.north()))
                     candidates.add(aux.north());
                 if(!candidates.contains(aux.south()) && !treeBlocks.contains(aux.south()) && !oldCandidates.contains(aux.south()))

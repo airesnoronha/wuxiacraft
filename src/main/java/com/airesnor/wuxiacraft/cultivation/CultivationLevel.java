@@ -117,7 +117,7 @@ public enum CultivationLevel {
 	 * @return The complete level name.
 	 */
 	public String getLevelName(int subLevel) {
-		if(!(subLevel >= 0 && subLevel < this.subLevels)) {	return this.levelName; }
+		if(!(subLevel >= 0 && subLevel < this.subLevels)) {	return I18n.format(this.levelName); }
 		return String.format("%s %s %d", I18n.format(this.levelName), I18n.format("wuxiacraft.label.rank"), subLevel + 1);
 	}
 
@@ -187,6 +187,19 @@ public enum CultivationLevel {
 			case TRUE_GOD: return TRUE_GOD;
 			default: return BODY_REFINEMENT;
 		}
+	}
+
+	public boolean greaterThan(CultivationLevel level) {
+		boolean found = false;
+		CultivationLevel aux = this;
+		while(aux!=TRUE_GOD) {
+			if(aux == level) {
+				found = true;
+				break;
+			}
+			aux = aux.getNextLevel();
+		}
+		return !found;
 	}
 
 }

@@ -29,7 +29,7 @@ import java.util.*;
 public class SkillsGui extends GuiScreen {
 
 	private static final ResourceLocation gui_texture = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/skills_gui.png");
-	private static final Map<String, ResourceLocation>  skillIcons = new HashMap<>();
+	public static final Map<String, ResourceLocation>  skillIcons = new HashMap<>();
 
 
 	private int xSize = 200;

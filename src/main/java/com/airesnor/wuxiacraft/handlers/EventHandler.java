@@ -11,6 +11,7 @@ import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
+import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.items.ItemScroll;
 import com.airesnor.wuxiacraft.items.Items;
@@ -27,6 +28,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.world.BlockEvent;
@@ -34,13 +36,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Mod.EventBusSubscriber
 public class EventHandler {
@@ -109,6 +110,16 @@ public class EventHandler {
         }
     }
 
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onPlayerRequestLevels(TickEvent.PlayerTickEvent event) {
+        if(event.player.isSneaking()) {
+            EntityPlayer player = event.player;
+            ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+            NetworkWrapper.INSTANCE.sendToServer(new AskCultivationLevelMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), player.getName()));
+        }
+    }
+
     @SubscribeEvent
     public void onPlayerProcessSkills(LivingEvent.LivingUpdateEvent event) {
         if (event.getEntity() instanceof EntityPlayer) {
@@ -121,7 +132,8 @@ public class EventHandler {
                 ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
                 Skill skill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
                 if (skillCap.isCasting() && cultivation.hasEnergy(skill.getCost())) {
-                    skillCap.stepCastProgress(1f);
+                    if (skillCap.getCastProgress() < skill.getCastTime())
+                        skillCap.stepCastProgress(1f);
                     skill.castingEffect(player);
                 } else if (skillCap.isDoneCasting()) {
                     skillCap.resetCastProgress();
@@ -389,4 +401,5 @@ public class EventHandler {
             }
         }
     }
+
 }

@@ -20,7 +20,7 @@ public class SelectSkillMessageHandler implements IMessageHandler {
     }
 
     public static void selectSkill(ISkillCap skillCap, int i) {
-        skillCap.setActiveSkill(Math.min(skillCap.getSelectedSkills().size(), Math.max(0, i)));
+        skillCap.setActiveSkill(Math.min(skillCap.getSelectedSkills().size()-1, Math.max(0, i)));
         if(skillCap.getSelectedSkills().size() == 0) {
             skillCap.setActiveSkill(-1);
         }
