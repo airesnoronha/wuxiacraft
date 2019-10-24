@@ -12,7 +12,9 @@ import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
 import com.airesnor.wuxiacraft.cultivation.techniques.Technique;
 import com.airesnor.wuxiacraft.entities.skills.FireThrowable;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
+import com.airesnor.wuxiacraft.handlers.RendererHandler;
 import com.airesnor.wuxiacraft.networking.*;
+import com.airesnor.wuxiacraft.utils.OreUtils;
 import com.airesnor.wuxiacraft.utils.TreeUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog;
@@ -30,6 +32,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import java.util.*;
+import java.util.concurrent.Callable;
 
 public class Skills {
 
@@ -41,9 +44,10 @@ public class Skills {
         SKILLS.add(ACCELERATE_GROWTH);
         SKILLS.add(FLAMES);
         SKILLS.add(FIRE_BAll);
+        SKILLS.add(METAL_DETECTION);
     }
 
-    public static final Skill CULTIVATE = new Skill("cultivate", 50f, 10f, 40f, 0f).setAction(new ISkillAction() {
+    public static final Skill CULTIVATE = new Skill("cultivate", 50f, 10f, 100f, 0f).setAction(new ISkillAction() {
         @Override
         public boolean activate(EntityPlayer actor) {
             ICultTech cultTech = actor.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
@@ -91,7 +95,7 @@ public class Skills {
         }
     });
 
-    public static final Skill GATHER_WOOD = new Skill("gather_wood", 20f, 1f, 2f, 0f)
+    public static final Skill GATHER_WOOD = new Skill("gather_wood", 20f, 1f, 10f, 0f)
             .setAction(new ISkillAction() {
                 @Override
                 public boolean activate(EntityPlayer actor) {
@@ -118,7 +122,7 @@ public class Skills {
                 }
             });
 
-    public static final Skill ACCELERATE_GROWTH = new Skill("accelerate_growth", 60f, 1f, 10f, 0f)
+    public static final Skill ACCELERATE_GROWTH = new Skill("accelerate_growth", 60f, 1f, 25f, 0f)
             .setAction(new ISkillAction() {
                 @Override
                 public boolean activate(EntityPlayer actor) {
@@ -152,7 +156,7 @@ public class Skills {
                 }
             });
 
-    public static final Skill FLAMES = new Skill("flames", 40f, 1.5f, 4f, 0f).setAction(new ISkillAction() {
+    public static final Skill FLAMES = new Skill("flames", 40f, 1.5f, 5f, 0f).setAction(new ISkillAction() {
         @Override
         public boolean activate(EntityPlayer actor) {
             ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
@@ -165,7 +169,7 @@ public class Skills {
         }
     });
 
-    public static final Skill FIRE_BAll = new Skill("fire_ball", 120f, 3f, 20f, 0f).setAction(new ISkillAction() {
+    public static final Skill FIRE_BAll = new Skill("fire_ball", 120f, 3f, 160f, 0f).setAction(new ISkillAction() {
         @Override
         public boolean activate(EntityPlayer actor) {
             ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
@@ -175,6 +179,29 @@ public class Skills {
                 actor.world.spawnEntity(ft);
             }
             return true;
+        }
+    });
+
+    public static final Skill METAL_DETECTION = new Skill("metal_detection", 10f, 0.6f, 30f, 0f).setAction(new ISkillAction() {
+        @Override
+        public boolean activate(EntityPlayer actor) {
+            if (actor.world.isRemote) {
+                OreUtils.findOres(actor.world, actor.getPosition(), 16);
+                int duration = 10 * 60; // 10 seconds * something is off maybe it has to do with partial ticks, later i'll try understand what it is
+                RendererHandler.worldRenderQueue.add(duration, () -> {
+                    OreUtils.drawFoundOres(actor);
+                    return null;
+                });
+            }
+            return true;
+        }
+    });
+
+    public static final Skill ORE_SUCTION = new Skill("ore_suction", 120f, 0.6f, 40f, 0f).setAction(new ISkillAction() {
+        @Override
+        public boolean activate(EntityPlayer actor) {
+            OreUtils.findOres(actor.world, actor.getPosition(), 8);
+            return false;
         }
     });
 
