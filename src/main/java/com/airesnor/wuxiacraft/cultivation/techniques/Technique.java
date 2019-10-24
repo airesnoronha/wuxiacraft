@@ -22,6 +22,7 @@ public class Technique {
 	private List<PotionEffect> greatCompletionEffects;
 	private List<PotionEffect> perfectionCompletionEffects;
 	private List<Element> elements;
+	private float cultivationSpeed;
 
 	private List<Skill> smallCompletionSkills;
 	private List<Skill> greatCompletionSkills;
@@ -67,6 +68,21 @@ public class Technique {
 		this.smallCompletionSkills = new ArrayList<>();
 		this.greatCompletionSkills = new ArrayList<>();
 		this.perfectionCompletionSkills = new ArrayList<>();
+		this.cultivationSpeed = 0;
+	}
+
+	public Technique(TechniqueTier tier, String uName, TechniquesModifiers baseModifiers, float cultSpeed) {
+		this.tier = tier;
+		this.uName = uName;
+		this.baseModifiers = baseModifiers;
+		this.smallCompletionEffects = new ArrayList<>();
+		this.greatCompletionEffects = new ArrayList<>();
+		this.perfectionCompletionEffects = new ArrayList<>();
+		this.elements = new ArrayList<>();
+		this.smallCompletionSkills = new ArrayList<>();
+		this.greatCompletionSkills = new ArrayList<>();
+		this.perfectionCompletionSkills = new ArrayList<>();
+		this.cultivationSpeed = cultSpeed;
 	}
 
 	Technique addSmallEffect(PotionEffect potion) {
@@ -183,5 +199,9 @@ public class Technique {
 			player.addPotionEffect(new PotionEffect(p.getPotion(), p.getDuration(), p.getAmplifier(), false, p.doesShowParticles()));
 		}
 		return new TechniquesModifiers(armor, attackSpeed, maxHealth, movementSpeed, strengthMod);
+	}
+
+	public float getCultivationSpeed() {
+		return cultivationSpeed;
 	}
 }

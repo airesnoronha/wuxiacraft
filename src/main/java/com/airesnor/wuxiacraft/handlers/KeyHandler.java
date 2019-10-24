@@ -55,6 +55,26 @@ public class KeyHandler {
 			BlockPos pos = Minecraft.getMinecraft().player.getPosition();
 			Minecraft.getMinecraft().player.openGui(WuxiaCraft.instance, GuiHandler.SKILLS_GUI_ID, Minecraft.getMinecraft().player.world, pos.getX(), pos.getY(), pos.getZ());
 		}
+		if(keyBindings[5].isPressed()) {
+			ISkillCap skillCap = Minecraft.getMinecraft().player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+			int next = skillCap.getActiveSkill() + 1;
+			NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next));
+			SelectSkillMessageHandler.selectSkill(skillCap, next);
+		}
+		if(keyBindings[6].isPressed()) {
+			ISkillCap skillCap = Minecraft.getMinecraft().player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+			int next = skillCap.getActiveSkill() - 1;
+			NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next));
+			SelectSkillMessageHandler.selectSkill(skillCap, next);
+		}
+		for(int i = 0; i < 10; i ++) {
+			if(keyBindings[7+i].isPressed()) {
+				ISkillCap skillCap = Minecraft.getMinecraft().player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+				int next = i;
+				NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next));
+				SelectSkillMessageHandler.selectSkill(skillCap, next);
+			}
+		}
 	}
 
 }

@@ -22,4 +22,6 @@ public interface ICultTech {
 
 	List<Skill> getTechniqueSkills();
 
+	float getOverallCultivationSpeed();
+
 }

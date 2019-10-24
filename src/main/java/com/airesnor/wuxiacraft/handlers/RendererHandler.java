@@ -7,6 +7,7 @@ import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
+import com.airesnor.wuxiacraft.proxy.ClientProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -129,6 +130,7 @@ public class RendererHandler {
 		GL11.glEnd();
 
 		GL11.glPopMatrix();
+
 		/*
 		String message = String.format("Energy: %.0f (%.2f%%)",cultivation.getEnergy(), energy_fill);
 		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 20, Integer.parseInt("FFAA00",16));

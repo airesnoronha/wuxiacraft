@@ -45,7 +45,7 @@ public class Techniques {
 	private static final PotionEffect NIGHT_VISION = new PotionEffect(MobEffects.NIGHT_VISION, 410, 0, false, false);
 
 	//Mortal ones
-	public static final Technique BODY_STRENGTH = new Technique(TechniqueTier.MORTAL, "body_strength", new TechniquesModifiers(0.1f,0f,0f,-0.1f,0.1f));
+	public static final Technique BODY_STRENGTH = new Technique(TechniqueTier.MORTAL, "body_strength", new TechniquesModifiers(0.1f,0f,0f,-0.1f,0.1f), 1.07f);
 	public static final Technique LIGHT_FEET = new Technique(TechniqueTier.MORTAL, "light_feet", new TechniquesModifiers(0f,0f,0f,0.2f,-0.1f));
 	public static final Technique ASSASSIN_MANUAL = new Technique(TechniqueTier.MORTAL, "assassin_manual", new TechniquesModifiers(0f,0.01f,-0.1f,0.1f,0f))
 			.addPerfectionEffect(NIGHT_VISION);
@@ -56,11 +56,11 @@ public class Techniques {
 			new TechniquesModifiers(0f,0.2f,-0.2f,0.1f,0f), TechniqueWeapon.WeaponType.SWORD);
 	public static final TechniqueWeapon AXE_RAGE = new TechniqueWeapon(TechniqueTier.MORTAL, "axe_rage",
 			new TechniquesModifiers(-0.2f,0.1f,0f,0f,0.2f), TechniqueWeapon.WeaponType.AXE);
-	public static final Technique FIRE_BENDING = new Technique(TechniqueTier.MORTAL,"fire_bending",new TechniquesModifiers(0f,0f,0f,0.1f,0.1f)).addElement(Element.FIRE);
-	public static final Technique MOUNTAIN_RAISER = new Technique(TechniqueTier.MORTAL,"mountain_raiser",new TechniquesModifiers(0.1f,0f,0.1f,0f,0f)).addElement(Element.EARTH);
-	public static final Technique METAL_MANIPULATION = new Technique(TechniqueTier.MORTAL,"metal_manipulation",new TechniquesModifiers(0.1f,0f,0f,0f,0.1f)).addElement(Element.METAL);
-	public static final Technique SURGING_WAVES = new Technique(TechniqueTier.MORTAL,"surging_waves",new TechniquesModifiers(0f,0.1f,0f,0.1f,0f)).addElement(Element.WATER);
-	public static final Technique BOTANICAL_GROWTH = new Technique(TechniqueTier.MORTAL,"botanical_growth",new TechniquesModifiers(0f,0f,0.1f,0f,0.1f)).addElement(Element.WOOD).
+	public static final Technique FIRE_BENDING = new Technique(TechniqueTier.MORTAL,"fire_bending",new TechniquesModifiers(0f,0f,0f,0.1f,0.1f), 1.1f).addElement(Element.FIRE);
+	public static final Technique MOUNTAIN_RAISER = new Technique(TechniqueTier.MORTAL,"mountain_raiser",new TechniquesModifiers(0.1f,0f,0.1f,0f,0f), 1.1f).addElement(Element.EARTH);
+	public static final Technique METAL_MANIPULATION = new Technique(TechniqueTier.MORTAL,"metal_manipulation",new TechniquesModifiers(0.1f,0f,0f,0f,0.1f), 1.1f).addElement(Element.METAL);
+	public static final Technique SURGING_WAVES = new Technique(TechniqueTier.MORTAL,"surging_waves",new TechniquesModifiers(0f,0.1f,0f,0.1f,0f), 1.1f).addElement(Element.WATER);
+	public static final Technique BOTANICAL_GROWTH = new Technique(TechniqueTier.MORTAL,"botanical_growth",new TechniquesModifiers(0f,0f,0.1f,0f,0.1f), 1.1f).addElement(Element.WOOD).
 			addSmallSkill(Skills.GATHER_WOOD).addGreatSkill(Skills.ACCELERATE_GROWTH);
 
 }

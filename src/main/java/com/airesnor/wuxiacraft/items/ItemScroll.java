@@ -43,12 +43,6 @@ public class ItemScroll extends Item implements IHasModel {
 		ICultTech cultTech = playerIn.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
 		if(cultTech != null) {
 			cultTech.addTechnique(this.technique, 0);
-			if(!this.technique.getSmallCompletionSkills().isEmpty()) {
-				ISkillCap skillCap = playerIn.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
-				for(Skill skill : this.technique.getSmallCompletionSkills()) {
-					skillCap.addSkill(skill);
-				}
-			}
 		}
 		return playerIn.isCreative() ? ActionResult.newResult(EnumActionResult.SUCCESS, new ItemStack(this)): ActionResult.newResult(EnumActionResult.SUCCESS, ItemStack.EMPTY);
 	}

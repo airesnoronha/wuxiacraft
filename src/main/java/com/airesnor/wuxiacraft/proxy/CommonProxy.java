@@ -48,6 +48,8 @@ public class CommonProxy {
 		NetworkWrapper.INSTANCE.registerMessage(new CastSkillMessageHandler(), CastSkillMessage.class, 167009, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new SkillCapMessageHandler(), SkillCapMessage.class, 167010, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new SkillCapMessageHandler(), SkillCapMessage.class, 167011, Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(new SpawnParticleMessageHandler(), SpawnParticleMessage.class, 167012, Side.CLIENT);;
+		NetworkWrapper.INSTANCE.registerMessage(new SelectSkillMessageHandler(), SelectSkillMessage.class, 167013, Side.SERVER);
 
 		MinecraftForge.EVENT_BUS.register(new CapabilitiesHandler());
 		MinecraftForge.EVENT_BUS.register(new RendererHandler());
