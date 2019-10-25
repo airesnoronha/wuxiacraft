@@ -56,4 +56,8 @@ public interface ICultivation {
 	int getPelletCooldown();
 	void lessenPelletCooldown();
 	void setPelletCooldown(int cooldown);
+
+	float getStrengthIncrease();
+	float getSpeedIncrease();
+	float getMaxEnergy();
 }

@@ -3,6 +3,7 @@ package com.airesnor.wuxiacraft.proxy;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.gui.SkillsGui;
 import com.airesnor.wuxiacraft.items.ItemScroll;
+import com.airesnor.wuxiacraft.utils.OreUtils;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
@@ -59,6 +60,7 @@ public class ClientProxy extends CommonProxy {
 	public void init() {
 		super.init();
 		SkillsGui.init();
+		OreUtils.loadOresToFind();
 		keyBindings = new KeyBinding[17];
 		keyBindings[KEY_SPEED_UP] = new KeyBinding("key.wuxiacraft.speed_up", Keyboard.KEY_EQUALS, "key.wuxiacraft.category");
 		keyBindings[KEY_SPEED_DOWN] = new KeyBinding("key.wuxiacraft.speed_down", Keyboard.KEY_MINUS,"key.wuxiacraft.category");

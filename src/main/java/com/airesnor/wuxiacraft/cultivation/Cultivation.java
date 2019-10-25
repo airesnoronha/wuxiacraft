@@ -131,4 +131,19 @@ public class Cultivation implements ICultivation {
 	public void setPelletCooldown(int cooldown) {
 		this.pelletCooldown = Math.max(0, cooldown);
 	}
+
+	@Override
+	public float getStrengthIncrease() {
+		return this.level.getStrengthModifierBySubLevel(this.subLevel);
+	}
+
+	@Override
+	public float getSpeedIncrease() {
+		return this.level.getSpeedModifierBySubLevel(this.subLevel);
+	}
+
+	@Override
+	public float getMaxEnergy() {
+		return this.level.getMaxEnergyByLevel(this.subLevel);
+	}
 }

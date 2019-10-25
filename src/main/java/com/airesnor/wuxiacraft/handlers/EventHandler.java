@@ -20,8 +20,11 @@ import com.airesnor.wuxiacraft.proxy.ClientProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,6 +33,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -105,7 +109,7 @@ public class EventHandler {
                 }
 
                 //playerAddProgress(player, cultivation, 0.1f);
-                cultivation.addEnergy(cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()) * 0.0005F);
+                cultivation.addEnergy(cultivation.getMaxEnergy() * 0.0005F);
             }
         }
     }
@@ -153,9 +157,55 @@ public class EventHandler {
         }
     }
 
+    @SubscribeEvent
+    public void fovChange(FOVUpdateEvent e) {
+        float f = 1.0F;
+        EntityPlayer entity = e.getEntity();
+        if (entity.capabilities.isFlying)
+        {
+            f *= 1.1F;
+        }
+
+        IAttributeInstance iattributeinstance = entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+
+        double cultivation_speed = 0f;
+        for(AttributeModifier mod : iattributeinstance.getModifiers()) {
+            if(mod.getName().equals(speed_mod_name)) {
+                cultivation_speed = mod.getAmount();
+            }
+        }
+
+        f = (float)((double)f * (((iattributeinstance.getAttributeValue()-cultivation_speed) / (double)entity.capabilities.getWalkSpeed() + 1.0D) / 2.0D));
+
+
+        if (entity.capabilities.getWalkSpeed() == 0.0F || Float.isNaN(f) || Float.isInfinite(f))
+        {
+            f = 1.0F;
+        }
+
+        if (entity.isHandActive() && entity.getActiveItemStack().getItem() == net.minecraft.init.Items.BOW)
+        {
+            int i = entity.getItemInUseMaxCount();
+            float f1 = (float)i / 20.0F;
+
+            if (f1 > 1.0F)
+            {
+                f1 = 1.0F;
+            }
+            else
+            {
+                f1 = f1 * f1;
+            }
+
+            f *= 1.0F - f1 * 0.15F;
+        }
+        e.setNewfov(f);
+    }
+
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+
         EntityPlayer player = event.player;
         if (!player.world.isRemote) return;
         ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
@@ -188,7 +238,7 @@ public class EventHandler {
     public void onPlayerJump(LivingEvent.LivingJumpEvent event) {
         if (event.getEntityLiving() instanceof EntityPlayer) {
             ICultivation cultivation = event.getEntity().getCapability(CultivationProvider.CULTIVATION_CAP, null);
-            event.getEntity().motionY += 0.19 * cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()) * ((float) WuxiaCraftConfig.speedHandicap / 100f);
+            event.getEntity().motionY += 0.19 * cultivation.getSpeedIncrease() * ((float) WuxiaCraftConfig.speedHandicap / 100f);
         }
     }
 
@@ -201,7 +251,7 @@ public class EventHandler {
             if (cultivation.getCurrentLevel().canFly) {
                 event.setDistance(0);
             } else {
-                event.setDistance(event.getDistance() - 1.45f * cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()));
+                event.setDistance(event.getDistance() - 1.45f * cultivation.getStrengthIncrease());
             }
         }
     }
@@ -238,7 +288,7 @@ public class EventHandler {
     }
 
     /**
-     * Qhen the player die, he gets punished and loses all sublevels, and energy
+     * When the player die, he gets punished and loses all sublevels, and energy
      * Except true gods that loses 20 levels
      *
      * @param event
@@ -272,6 +322,9 @@ public class EventHandler {
             skillCap.stepCooldown(oldSkillCap.getCooldown());
             skillCap.getKnownSkills().clear();
             skillCap.getKnownSkills().addAll(oldSkillCap.getKnownSkills());
+            skillCap.getSelectedSkills().clear();
+            skillCap.getSelectedSkills().addAll(oldSkillCap.getSelectedSkills());
+            skillCap.setActiveSkill(oldSkillCap.getActiveSkill());
         }
     }
 
@@ -332,8 +385,8 @@ public class EventHandler {
     public static void applyModifiers(EntityPlayer player, ICultivation cultivation) {
 
         //as most props are additive, so i'll remove the which is the supposed base
-        float level_str_mod = cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()) - 1;
-        float level_spd_mod = (cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()) - 1) * (cultivation.getSpeedHandicap() / 100f);
+        float level_str_mod = cultivation.getStrengthIncrease() - 1;
+        float level_spd_mod = (cultivation.getSpeedIncrease()- 1) * (cultivation.getSpeedHandicap() / 100f);
 
         AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, level_str_mod, 0);
         AttributeModifier health_mod = new AttributeModifier(health_mod_name, 3 * level_str_mod, 0);

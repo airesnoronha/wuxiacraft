@@ -39,10 +39,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.Callable;
 
 @Mod.EventBusSubscriber
 public class RendererHandler {
@@ -53,6 +52,59 @@ public class RendererHandler {
     public static final ResourceLocation life_bar = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/health_bar.png");
     public static final ResourceLocation icons = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/icons.png");
     public static final ResourceLocation skills_bg = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/skills_bg.png");
+
+    public static class WorldRenderQueue {
+
+        public class RenderElement {
+            private int duration;
+            private Callable rendering;
+
+            public RenderElement(int duration, Callable rendering) {
+                this.duration = duration;
+                this.rendering = rendering;
+            }
+
+            public boolean call() {
+                try {
+                    rendering.call();
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+                this.duration--;
+                return this.duration <= 0;
+            }
+
+            public int getDuration() {
+                return duration;
+            }
+        }
+
+        private List<RenderElement> drawingQueue;
+
+        public void renderQueue() {
+            List<RenderElement> toRemove = new ArrayList<>();
+            for(RenderElement re : drawingQueue) {
+                if(re.call()) {
+                    toRemove.add(re);
+                }
+            }
+            for(RenderElement re : toRemove) {
+                drawingQueue.remove(re);
+            }
+        }
+
+        public void add(int duration, Callable rendering) {
+            this.drawingQueue.add(new RenderElement(duration, rendering));
+        }
+
+        public WorldRenderQueue() {
+            this.drawingQueue = new ArrayList<>();
+        }
+
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static WorldRenderQueue worldRenderQueue = new WorldRenderQueue();
 
     @SideOnly(Side.CLIENT)
     public static Map<String, ICultivation> knownCultivations = new HashMap<>();
@@ -100,6 +152,12 @@ public class RendererHandler {
                 drawCultivationPlate(cultivation, (float)x, (float)y, (float)z, f, f1, thirdPerson, sneaking);
             }
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onRenderWorldLast(RenderWorldLastEvent event) throws Exception {
+        worldRenderQueue.renderQueue();
     }
 
     public static void enableBoxRendering() {
