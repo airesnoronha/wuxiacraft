@@ -56,35 +56,39 @@ public class RendererHandler {
     public static class WorldRenderQueue {
 
         public class RenderElement {
-            private int duration;
+            private float duration; //in ticks
+            private float prevPartialTicks;
             private Callable rendering;
 
-            public RenderElement(int duration, Callable rendering) {
+            public RenderElement(float duration, Callable rendering) {
                 this.duration = duration;
                 this.rendering = rendering;
+                this.prevPartialTicks = 0;
             }
 
-            public boolean call() {
+            public boolean call(float partialTicks) {
                 try {
                     rendering.call();
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
-                this.duration--;
+                prevPartialTicks = prevPartialTicks > partialTicks ? 0 : prevPartialTicks;
+                this.duration -= partialTicks - prevPartialTicks;
+                //prevPartialTicks = partialTicks;
                 return this.duration <= 0;
             }
 
-            public int getDuration() {
+            public float getDuration() {
                 return duration;
             }
         }
 
         private List<RenderElement> drawingQueue;
 
-        public void renderQueue() {
+        public void renderQueue(float partialTicks) {
             List<RenderElement> toRemove = new ArrayList<>();
             for(RenderElement re : drawingQueue) {
-                if(re.call()) {
+                if(re.call(partialTicks)) {
                     toRemove.add(re);
                 }
             }
@@ -93,7 +97,7 @@ public class RendererHandler {
             }
         }
 
-        public void add(int duration, Callable rendering) {
+        public void add(float duration, Callable rendering) {
             this.drawingQueue.add(new RenderElement(duration, rendering));
         }
 
@@ -157,7 +161,7 @@ public class RendererHandler {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onRenderWorldLast(RenderWorldLastEvent event) throws Exception {
-        worldRenderQueue.renderQueue();
+        worldRenderQueue.renderQueue(event.getPartialTicks());
     }
 
     public static void enableBoxRendering() {

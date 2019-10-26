@@ -41,10 +41,11 @@ public class ItemScroll extends Item implements IHasModel {
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		ICultTech cultTech = playerIn.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
+		boolean success = false;
 		if(cultTech != null) {
-			cultTech.addTechnique(this.technique, 0);
+			success = cultTech.addTechnique(this.technique, 0);
 		}
-		return playerIn.isCreative() ? ActionResult.newResult(EnumActionResult.SUCCESS, new ItemStack(this)): ActionResult.newResult(EnumActionResult.SUCCESS, ItemStack.EMPTY);
+		return playerIn.isCreative() ? ActionResult.newResult(EnumActionResult.SUCCESS, new ItemStack(this)): ActionResult.newResult(EnumActionResult.SUCCESS, success ? ItemStack.EMPTY : new ItemStack(this));
 	}
 
 	@Override

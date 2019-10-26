@@ -37,7 +37,25 @@ public class SkillsCommand extends CommandBase {
 
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
-        return null;
+        List<String> completion = new ArrayList<>();
+        if(args.length == 1) {
+            if("add".startsWith(args[0]))
+                completion.add("add");
+            if("rem".startsWith(args[0]))
+                completion.add("rem");
+            if("reset".startsWith(args[0]))
+                completion.add("reset");
+            if("reset_cd".startsWith(args[0]))
+                completion.add("reset_cd");
+        } else if(args.length == 2) {
+            if(args[0].equals("add") || args[0].equals("rem")) {
+                for(Skill skill : Skills.SKILLS) {
+                    if(skill.getUName().startsWith(args[1]))
+                        completion.add(skill.getUName());
+                }
+            }
+        }
+        return completion;
     }
 
     @Override

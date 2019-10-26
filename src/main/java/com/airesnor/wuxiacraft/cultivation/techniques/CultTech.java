@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -25,15 +26,25 @@ public class CultTech implements ICultTech {
     }
 
     @Override
-    public void addTechnique(Technique technique, float progress) {
+    public boolean addTechnique(Technique technique, float progress) {
         boolean contains = false;
+        boolean elementalReverse = false;
         for (KnownTechnique t : getKnownTechniques()) {
             if (t.getTechnique() == technique) {
                 contains = true;
             }
+            for(Element e : t.getTechnique().getElements()) {
+                for(Element n : technique.getElements()) {
+                    if(e.isCounter(n) || n.isCounter(e))
+                        elementalReverse = true;
+                }
+            }
         }
-        if (!contains)
+        if (!contains && !elementalReverse) {
             this.knownTechniques.add(new KnownTechnique(technique, progress));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -174,14 +185,14 @@ public class CultTech implements ICultTech {
                     }
                 }
             }
-            if (kt.getProgress() >= t.getTier().greatProgress) {
+            if (kt.getProgress() >= t.getTier().smallProgress + t.getTier().greatProgress) {
                 for (Skill skill : t.getGreatCompletionSkills()) {
                     if (!knownSkills.contains(skill)) {
                         knownSkills.add(skill);
                     }
                 }
             }
-            if (kt.getProgress() >= t.getTier().perfectionProgress) {
+            if (kt.getProgress() >= t.getTier().smallProgress + t.getTier().greatProgress + t.getTier().perfectionProgress) {
                 for (Skill skill : t.getPerfectionCompletionSkills()) {
                     if (!knownSkills.contains(skill)) {
                         knownSkills.add(skill);
@@ -222,10 +233,8 @@ public class CultTech implements ICultTech {
                     break;
             }
         }
-        float cultivationSpeed = (mortals > 0 ? fromMortal / mortals : 0) +
-                (martials > 0 ? (fromMartial * 5) / (martials * 5) : 0) +
-                (immortals > 0 ? (fromImmortal * 25) / (immortals * 25) : 0) +
-                (divines > 0 ? (fromDivine * 125) / (divines * 125) : 0);
+        float divider = 1 + mortals + martials*5 + immortals*25 + divines*125;
+        float cultivationSpeed = (1+fromMortal + fromMartial*5 + fromImmortal*25 + fromDivine*125)/divider;
         return cultivationSpeed;
     }
 }

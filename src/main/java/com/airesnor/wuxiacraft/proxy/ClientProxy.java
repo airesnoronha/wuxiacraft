@@ -1,16 +1,24 @@
 package com.airesnor.wuxiacraft.proxy;
 
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
+import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
+import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
+import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterBlade;
+import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterNeedle;
 import com.airesnor.wuxiacraft.gui.SkillsGui;
 import com.airesnor.wuxiacraft.items.ItemScroll;
 import com.airesnor.wuxiacraft.utils.OreUtils;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import org.lwjgl.input.Keyboard;
 
 public class ClientProxy extends CommonProxy {
@@ -54,6 +62,9 @@ public class ClientProxy extends CommonProxy {
 	public void preInit() {
 		super.preInit();
 		WuxiaCraftConfig.clientPreInit();
+
+		RenderingRegistry.registerEntityRenderingHandler(WaterNeedleThrowable.class, RenderWaterNeedle::new);
+		RenderingRegistry.registerEntityRenderingHandler(WaterBladeThrowable.class, RenderWaterBlade::new);
 	}
 
 	@Override
@@ -61,6 +72,7 @@ public class ClientProxy extends CommonProxy {
 		super.init();
 		SkillsGui.init();
 		OreUtils.loadOresToFind();
+
 		keyBindings = new KeyBinding[17];
 		keyBindings[KEY_SPEED_UP] = new KeyBinding("key.wuxiacraft.speed_up", Keyboard.KEY_EQUALS, "key.wuxiacraft.category");
 		keyBindings[KEY_SPEED_DOWN] = new KeyBinding("key.wuxiacraft.speed_down", Keyboard.KEY_MINUS,"key.wuxiacraft.category");

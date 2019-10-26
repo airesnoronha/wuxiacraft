@@ -68,7 +68,7 @@ public class Technique {
 		this.smallCompletionSkills = new ArrayList<>();
 		this.greatCompletionSkills = new ArrayList<>();
 		this.perfectionCompletionSkills = new ArrayList<>();
-		this.cultivationSpeed = 0;
+		this.cultivationSpeed = 1;
 	}
 
 	public Technique(TechniqueTier tier, String uName, TechniquesModifiers baseModifiers, float cultSpeed) {

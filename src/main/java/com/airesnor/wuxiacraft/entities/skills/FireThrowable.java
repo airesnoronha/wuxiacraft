@@ -32,14 +32,7 @@ public class FireThrowable extends EntityThrowable {
     }
 
     public FireThrowable(World worldIn, EntityPlayer owner, float damage) {
-        super(worldIn, owner.posX, owner.posY + owner.getEyeHeight() - 0.1, owner.posZ);
-        this.setSize(0.08f, 0.08f);
-        this.setNoGravity(true);
-        this.owner = owner;
-        this.thrower = this.owner;
-        this.damage = damage;
-        this.duration = 20;
-        this.particles = 3;
+        this(worldIn, owner, damage, 20, 3, 0.08f);
     }
 
     public FireThrowable(World worldIn, EntityPlayer owner, float damage, int duration, int particles, float radius) {

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ICultTech {
 
-	void addTechnique(Technique technique, float progress);
+	boolean addTechnique(Technique technique, float progress);
 
 	void remTechnique(Technique technique);
 

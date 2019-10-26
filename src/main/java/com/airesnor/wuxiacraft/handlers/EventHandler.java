@@ -137,7 +137,7 @@ public class EventHandler {
                 Skill skill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
                 if (skillCap.isCasting() && cultivation.hasEnergy(skill.getCost())) {
                     if (skillCap.getCastProgress() < skill.getCastTime())
-                        skillCap.stepCastProgress(1f);
+                        skillCap.stepCastProgress(cultivation.getSpeedIncrease());
                     skill.castingEffect(player);
                 } else if (skillCap.isDoneCasting()) {
                     skillCap.resetCastProgress();
@@ -284,7 +284,7 @@ public class EventHandler {
     @SubscribeEvent
     public void onPlayerBreakSpeed(net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed event) {
         ICultivation cultivation = event.getEntityPlayer().getCapability(CultivationProvider.CULTIVATION_CAP, null);
-        event.setNewSpeed(event.getNewSpeed() * (1 + 0.5f * cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel())));
+        event.setNewSpeed(event.getOriginalSpeed() + 0.1f * (cultivation.getStrengthIncrease()-1));
     }
 
     /**

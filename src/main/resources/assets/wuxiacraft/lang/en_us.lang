@@ -105,8 +105,16 @@ wuxiacraft.elements.lightning=Lightning
 wuxiacraft.elements.ice=Ice
 
 //Skills
+wuxiacraft.skills.cultivate=Cultivate
 wuxiacraft.skills.gather_wood=Gather Wood
 wuxiacraft.skills.accelerate_growth=Accelerate Growth
 wuxiacraft.skills.flames=Throw Flames
-wuxiacraft.skills.fire_ball=Fireball
-wuxiacraft.skills.cultivate=Cultivate
+wuxiacraft.skills.fire_ball=Fire Ball
+wuxiacraft.skills.earth_suction=Earth Suction
+wuxiacraft.skills.earthly_wall=Earthly Wall
+wuxiacraft.skills.metal_detection=Metal Detection
+wuxiacraft.skills.ore_suction=Ore Suction
+wuxiacraft.skills.water_needle=Water Needle
+wuxiacraft.skills.water_blade=Water Blade
+wuxiacraft.skills.self_healing=Self Healing
+wuxiacraft.skills.healing_hands=Healing Hands
