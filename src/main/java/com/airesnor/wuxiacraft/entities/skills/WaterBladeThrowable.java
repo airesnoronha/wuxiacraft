@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.entities.skills;
 
+import com.airesnor.wuxiacraft.utils.TreeUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -61,6 +62,9 @@ public class WaterBladeThrowable  extends EntityThrowable {
             else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
                 if(canNotPassThroughHitBlock(result)) {
                     this.setDead();
+                }
+                if(TreeUtils.isLog(this.world, result.getBlockPos())) {
+                    this.world.destroyBlock(result.getBlockPos(), true);
                 }
             }
         }

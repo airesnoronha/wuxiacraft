@@ -17,6 +17,7 @@ import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.handlers.RendererHandler;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.OreUtils;
+import com.airesnor.wuxiacraft.utils.SkillUtils;
 import com.airesnor.wuxiacraft.utils.TreeUtils;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -27,6 +28,7 @@ import net.minecraft.block.state.BlockStateBase;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -66,6 +68,7 @@ public class Skills {
         SKILLS.add(WATER_BLADE);
         SKILLS.add(SELF_HEALING);
         SKILLS.add(HEALING_HANDS);
+        SKILLS.add(WALL_CROSSING);
     }
 
     public static final Skill CULTIVATE = new Skill("cultivate", 50f, 10f, 150f, 0f).setAction(new ISkillAction() {
@@ -83,7 +86,7 @@ public class Skills {
                             float randZ = 2 * (float) actor.world.rand.nextFloat() - 1;
                             float dist = (float) Math.sqrt(randX * randX + randY * randY + randZ * randZ) * 30f;
                             SpawnParticleMessage spm = new SpawnParticleMessage(e.getParticle(), false, actor.posX + randX, actor.posY + 0.9f + randY, actor.posZ + randZ, -randX / dist, -randY / dist, -randZ / dist, 0);
-                            sendMessageWithinRange(ws, actor.getPosition(), spm.isIgnoreRange() ? 262144.0D : 1024.0D, spm);
+                            SkillUtils.sendMessageWithinRange(ws, actor.getPosition(), spm.isIgnoreRange() ? 262144.0D : 1024.0D, spm);
                         }
                     }
                 }
@@ -107,7 +110,7 @@ public class Skills {
                             float randZ = 2 * (float) actor.world.rand.nextFloat() - 1;
                             float dist = (float) Math.sqrt(randX * randX + randY * randY + randZ * randZ) * 30f;
                             SpawnParticleMessage spm = new SpawnParticleMessage(e.getParticle(), false, actor.posX + randX, actor.posY + 0.9f + randY, actor.posZ + randZ, -randX / dist, -randY / dist, -randZ / dist, 0);
-                            sendMessageWithinRange(ws, actor.getPosition(), spm.isIgnoreRange() ? 262144.0D : 1024.0D, spm);
+                            SkillUtils.sendMessageWithinRange(ws, actor.getPosition(), spm.isIgnoreRange() ? 262144.0D : 1024.0D, spm);
                         }
                     }
                 }
@@ -325,35 +328,36 @@ public class Skills {
     });
 
     // Credits : My Girlfriend
-    public static Skill WATER_NEEDLE = new Skill("water_needle", 60f, 1.1f, 20f, 0f).setAction(new ISkillAction() {
-        @Override
-        public boolean activate(EntityPlayer actor) {
-            ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-            WaterNeedleThrowable needle = new WaterNeedleThrowable(actor.world, actor, 4+cultivation.getStrengthIncrease()*0.3f, 300);
-            needle.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 1.2f + cultivation.getSpeedIncrease()*0.12f, 0.2f);
-            actor.world.spawnEntity(needle);
-            return true;
-        }
-    });
+    public static Skill WATER_NEEDLE = new Skill("water_needle", 60f, 1.1f, 20f, 0f, "Lysian Prieto")
+            .setAction(new ISkillAction() {
+                @Override
+                public boolean activate(EntityPlayer actor) {
+                    ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+                    WaterNeedleThrowable needle = new WaterNeedleThrowable(actor.world, actor, 4 + cultivation.getStrengthIncrease() * 0.3f, 300);
+                    needle.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 1.2f + cultivation.getSpeedIncrease() * 0.12f, 0.2f);
+                    actor.world.spawnEntity(needle);
+                    return true;
+                }
+            });
 
     public static Skill WATER_BLADE = new Skill("water_blade", 200f, 2.0f, 100f, 0f).setAction(actor -> {
         ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-        WaterBladeThrowable blade = new WaterBladeThrowable(actor.world, actor, 4+cultivation.getStrengthIncrease(), 300);
-        blade.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 0.7f + cultivation.getStrengthIncrease()*0.01f, 0.2f);
+        WaterBladeThrowable blade = new WaterBladeThrowable(actor.world, actor, 4 + cultivation.getStrengthIncrease(), 300);
+        blade.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 0.7f + cultivation.getSpeedIncrease() * 0.5f, 0.2f);
         actor.world.spawnEntity(blade);
         return true;
     });
 
     public static Skill SELF_HEALING = new Skill("self_healing", 80f, 2.0f, 80f, 0f).setAction(actor -> {
-       ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-       actor.heal(Math.max(10f, cultivation.getStrengthIncrease()*0.05f));
-       return true;
+        ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+        actor.heal(Math.max(10f, cultivation.getStrengthIncrease() * 0.05f));
+        return true;
     });
 
     public static Skill HEALING_HANDS = new Skill("healing_hands", 80f, 2.0f, 120f, 0f).setAction(actor -> {
         boolean activated = false;
-        Entity result = rayTraceEntities(actor, 10f, 1f);
-        if(result instanceof EntityLiving) {
+        Entity result = SkillUtils.rayTraceEntities(actor, 10f, 1f);
+        if (result instanceof EntityLiving) {
             EntityLiving entity = (EntityLiving) result;
             ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
             entity.heal(Math.max(10f, cultivation.getStrengthIncrease() * 0.05f));
@@ -363,58 +367,26 @@ public class Skills {
         return activated;
     });
 
-    public static void sendMessageWithinRange(WorldServer worldIn, BlockPos source, double range, IMessage message) {
-        for (int i = 0; i < worldIn.playerEntities.size(); ++i) {
-            EntityPlayerMP player = (EntityPlayerMP) worldIn.playerEntities.get(i);
-            BlockPos destination = player.getPosition();
-            double dist = source.getDistance(destination.getX(), destination.getY(), destination.getZ());
-            if (dist < range) {
-                NetworkWrapper.INSTANCE.sendTo(message, player);
+    //Credits: My Girlfirend
+    public static Skill WALL_CROSSING = new Skill("wall_crossing", 200f, 3.0f, 130f, 0f, "Lysian Prieto").setAction(actor -> {
+        boolean activated = false;
+        BlockPos pos = actor.getPosition();
+        EnumFacing facing = EnumFacing.fromAngle(actor.rotationYaw);
+        RayTraceResult rtr = actor.rayTrace(3f, 1f);
+        if (rtr.typeOfHit == RayTraceResult.Type.BLOCK) {
+            BlockPos block = rtr.getBlockPos();
+            int range = 15;
+            int test = 0;
+            while (!actor.world.isAirBlock(block) && test < range) {
+                block = block.offset(facing);
+                test++;
+            }
+            if (actor.world.isAirBlock(block) && actor.world.isAirBlock(block.up())) {
+                actor.setPositionAndUpdate(block.getX() + 0.5d, block.getY() + 0.1d, block.getZ() + 0.5d);
+                activated = true;
             }
         }
-    }
-
-    private static final Predicate<Entity> SKILL_TARGETS = Predicates.and(EntitySelectors.NOT_SPECTATING, EntitySelectors.IS_ALIVE, new Predicate<Entity>()
-    {
-        public boolean apply(@Nullable Entity p_apply_1_)
-        {
-            return p_apply_1_.canBeCollidedWith();
-        }
+        return activated;
     });
-
-    @Nullable
-    public static Entity rayTraceEntities(EntityPlayer player, float distance, float partialTicks) {
-        Entity entity = null;
-        Vec3d start = player.getPositionEyes(partialTicks);
-        Vec3d eyeRotation = player.getLook(partialTicks);
-        Vec3d end = start.addVector(eyeRotation.x * distance, eyeRotation.y * distance, eyeRotation.z * distance);
-
-        List<Entity> list = player.world.getEntitiesInAABBexcluding(player, new AxisAlignedBB(player.getPosition()).grow(distance+1), SKILL_TARGETS);
-        double targetDistance = 0.0D;
-
-        for (int i = 0; i < list.size(); ++i)
-        {
-            Entity entity1 = list.get(i);
-
-            if (entity1 != player)
-            {
-                AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow(0.30000001192092896D);
-                RayTraceResult raytraceresult = axisalignedbb.calculateIntercept(start, end);
-
-                if (raytraceresult != null)
-                {
-                    double newerDistance = start.squareDistanceTo(raytraceresult.hitVec);
-
-                    if (newerDistance < targetDistance || targetDistance == 0.0D)
-                    {
-                        entity = entity1;
-                        targetDistance = newerDistance;
-                    }
-                }
-            }
-        }
-
-        return entity;
-    }
 
 }

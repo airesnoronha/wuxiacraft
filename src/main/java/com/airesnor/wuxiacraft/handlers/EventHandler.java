@@ -216,11 +216,11 @@ public class EventHandler {
             if (player.capabilities.isFlying) {
                 float totalRem = 0f;
                 if (!cultivation.getCurrentLevel().freeFlight) {
-                    float fly_cost = 1f;
+                    float fly_cost = 4f;
                     totalRem += fly_cost;
                 }
                 if (distance > 0) {
-                    float cost = 0.4f;
+                    float cost = 1f;
                     totalRem += distance * cost;
                 }
                 if (!player.isCreative()) {

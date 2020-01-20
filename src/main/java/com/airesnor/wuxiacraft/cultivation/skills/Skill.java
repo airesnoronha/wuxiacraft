@@ -17,6 +17,8 @@ public class Skill {
     private ISkillAction action;
     private ISkillAction whenCasting;
 
+    private String authorName;
+
     public String getName() {
         return I18n.format("wuxiacraft.skills." + this.name);
     }
@@ -60,20 +62,14 @@ public class Skill {
     }
 
     public Skill(String name, float cost, float progress) {
-        this.name = name;
-        this.cost = cost;
-        this.progress = progress;
-        this.castTime = 0;
-        this.cooldown = 0;
-        this.whenCasting = new ISkillAction() {
-            @Override
-            public boolean activate(EntityPlayer actor) {
-                return false;
-            }
-        };
+        this(name, cost, progress, 0,0);
     }
 
     public Skill(String name, float cost, float progress, float castTime, float cooldown) {
+        this(name, cost, progress, castTime, cooldown, "Aires Adures");
+    }
+
+    public Skill(String name, float cost, float progress, float castTime, float cooldown, String author) {
         this.name = name;
         this.cost = cost;
         this.progress = progress;
@@ -85,6 +81,7 @@ public class Skill {
                 return false;
             }
         };
+        this.authorName = author;
     }
 
 }
