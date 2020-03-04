@@ -104,7 +104,10 @@ public class EventHandler {
                     }
                     player.capabilities.allowFlying = player.isCreative() || cultivation.getCurrentLevel().canFly;
                     player.capabilities.setFlySpeed((float) player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
-                    player.stepHeight = !player.isSneaking() ? Math.min(3.1f, 0.6f * (1 + 0.55f * cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()))) : 0.6f;
+                    player.stepHeight = 0.6f;
+                    if(!player.isSneaking() && WuxiaCraftConfig.disableStepAssist) {
+                        player.stepHeight = Math.min(3.1f, 0.6f * (1 + 0.55f * cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel())));
+                    }
                     player.sendPlayerAbilities();
                 }
 

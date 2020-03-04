@@ -22,6 +22,8 @@ public class WuxiaCraftConfig {
 
 	public static int speedHandicap;
 
+	public static boolean disableStepAssist;
+
 	public static void preInit(){
 		File configFile = new File(Loader.instance().getConfigDir(), "WuxiaCraft.cfg");
 		config = new Configuration(configFile);
@@ -59,15 +61,23 @@ public class WuxiaCraftConfig {
 		propHandicap.setMaxValue(100);
 		propHandicap.setMinValue(0);
 
+		Property propStepAssist = config.get(CATEGORY_GAMEPLAY, "step_assist", true);
+		propStepAssist.setLanguageKey("gui.config.gameplay.step_assist.name");
+		propStepAssist.setComment("If you want to enable step assist gained from cultivation levels");
+		propStepAssist.setDefaultValue(true);
+
 		List<String> propOrder = new ArrayList<>();
 		propOrder.add(propHandicap.getName());
+		propOrder.add(propStepAssist.getName());
 		config.setCategoryPropertyOrder(CATEGORY_GAMEPLAY,propOrder);
 
 		if(readFieldsFromConfig) {
 			speedHandicap = propHandicap.getInt();
+			disableStepAssist = propStepAssist.getBoolean();
 		}
 
 		propHandicap.set(speedHandicap);
+		propStepAssist.set(disableStepAssist);
 
 		if(config.hasChanged())
 			config.save();
