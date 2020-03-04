@@ -37,26 +37,26 @@ public class CommonProxy {
 		CapabilityManager.INSTANCE.register(ICultTech.class, new CultTechStorage(), new CultTechFactory());
 		CapabilityManager.INSTANCE.register(ISkillCap.class, new SkillsStorage(), new SkillsFactory());
 
-		NetworkWrapper.INSTANCE.registerMessage(new CultivationMessageHandler(), CultivationMessage.class, 167001, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new EnergyMessageHandler(), EnergyMessage.class, 167002, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new ProgressMessageHandler(), ProgressMessage.class, 167003, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(new SpeedHandicapMessageHandler(), SpeedHandicapMessage.class, 167004, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new SpeedHandicapMessageHandler(), SpeedHandicapMessage.class, 167005, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new RequestCultGuiMessageHandler(), RequestCultGuiMessage.class, 167006, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(new CultTechMessageHandler(), CultTechMessage.class, 167007, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new RemoveTechniqueMessageHandler(), RemoveTechniqueMessage.class, 167008, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new CastSkillMessageHandler(), CastSkillMessage.class, 167009, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(new SkillCapMessageHandler(), SkillCapMessage.class, 167010, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new SkillCapMessageHandler(), SkillCapMessage.class, 167011, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(new SpawnParticleMessageHandler(), SpawnParticleMessage.class, 167012, Side.CLIENT);;
 		NetworkWrapper.INSTANCE.registerMessage(new SelectSkillMessageHandler(), SelectSkillMessage.class, 167013, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(new AskCultivationLevelMessageHandler(), AskCultivationLevelMessage.class, 167014, Side.CLIENT);
-		NetworkWrapper.INSTANCE.registerMessage(new RespondCultivationLevelMessageHandler(), RespondCultivationLevelMessage.class, 167015, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new AskCultivationLevelMessageHandler(), AskCultivationLevelMessage.class, 167016, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new RespondCultivationLevelMessageHandler(), RespondCultivationLevelMessage.class, 167017, Side.SERVER);
 
+		NetworkWrapper.INSTANCE.registerMessage(new CultivationMessageHandler(), CultivationMessage.class, 167001, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(new SpeedHandicapMessageHandler(), SpeedHandicapMessage.class, 167004, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(new SkillCapMessageHandler(), SkillCapMessage.class, 167010, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(new CultTechMessageHandler(), CultTechMessage.class, 167007, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(new SpawnParticleMessageHandler(), SpawnParticleMessage.class, 167012, Side.CLIENT);;
+		NetworkWrapper.INSTANCE.registerMessage(new RespondCultivationLevelMessageHandler(), RespondCultivationLevelMessage.class, 167015, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(new AskCultivationLevelMessageHandler(), AskCultivationLevelMessage.class, 167014, Side.CLIENT);
+
 		MinecraftForge.EVENT_BUS.register(new CapabilitiesHandler());
-		MinecraftForge.EVENT_BUS.register(new RendererHandler());
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(WuxiaCraft.instance, new GuiHandler());

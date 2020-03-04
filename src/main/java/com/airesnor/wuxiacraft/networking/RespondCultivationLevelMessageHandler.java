@@ -29,14 +29,20 @@ public class RespondCultivationLevelMessageHandler implements IMessageHandler {
             }
         }
         if(ctx.side == Side.CLIENT) {
-            if(message instanceof  RespondCultivationLevelMessage) {
-                RespondCultivationLevelMessage rclm = (RespondCultivationLevelMessage)message;
-                ICultivation cultivation = new Cultivation();
-                cultivation.setCurrentLevel(rclm.responderLevel);
-                cultivation.setCurrentSubLevel(rclm.responderSubLevel);
-                String name = rclm.askerName;
-                RendererHandler.knownCultivations.put(name, cultivation);
-            }
+            return handleMessageClient(message, ctx);
+        }
+        return null;
+    }
+
+    @SideOnly(Side.CLIENT)
+    private IMessage handleMessageClient(IMessage message, MessageContext ctx) {
+        if(message instanceof  RespondCultivationLevelMessage) {
+            RespondCultivationLevelMessage rclm = (RespondCultivationLevelMessage)message;
+            ICultivation cultivation = new Cultivation();
+            cultivation.setCurrentLevel(rclm.responderLevel);
+            cultivation.setCurrentSubLevel(rclm.responderSubLevel);
+            String name = rclm.askerName;
+            RendererHandler.knownCultivations.put(name, cultivation);
         }
         return null;
     }

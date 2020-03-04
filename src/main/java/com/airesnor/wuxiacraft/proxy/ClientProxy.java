@@ -6,7 +6,9 @@ import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterBlade;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterNeedle;
 import com.airesnor.wuxiacraft.gui.SkillsGui;
+import com.airesnor.wuxiacraft.handlers.RendererHandler;
 import com.airesnor.wuxiacraft.items.ItemScroll;
+import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.OreUtils;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
@@ -16,9 +18,11 @@ import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.input.Keyboard;
 
 public class ClientProxy extends CommonProxy {
@@ -70,6 +74,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void init() {
 		super.init();
+
 		SkillsGui.init();
 		OreUtils.loadOresToFind();
 
@@ -88,5 +93,7 @@ public class ClientProxy extends CommonProxy {
 		for(int i = 0; i < keyBindings.length; i ++) {
 			ClientRegistry.registerKeyBinding(keyBindings[i]);
 		}
+
+		MinecraftForge.EVENT_BUS.register(new RendererHandler());
 	}
 }
