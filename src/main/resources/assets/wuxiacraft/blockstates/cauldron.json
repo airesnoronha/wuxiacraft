@@ -1,17 +1,11 @@
 {
 	"forge_maker": 1,
-	"defaults": {
-		"model": "wuxiacraft:cauldron.obj",
-		"textures": {
-			"#Metal": "wuxiacraft:blocks/cauldron"
-		}
-	},
 	"variants": {
 		"normal": {
-			"model": "wuxiacraft:cauldron.obj"
+			"model": "wuxiacraft:obj/cauldron"
 		},
 		"inventory": {
-			"model": "wuxiacraft:cauldron.obj",
+			"model": "wuxiacraft:obj/cauldron"
 		}
 	}
 }

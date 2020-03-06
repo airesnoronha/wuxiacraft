@@ -6,6 +6,7 @@ import com.airesnor.wuxiacraft.items.Items;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -17,12 +18,12 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class Cauldron extends Block implements IHasModel{
+public class Cauldron extends Block implements IHasModel {
 
     public Cauldron (String name) {
         super(Material.IRON);
-        setUnlocalizedName(name);
         setRegistryName(name);
+        setUnlocalizedName(name);
         this.setCreativeTab(CreativeTabs.DECORATIONS);
 
         Blocks.BLOCKS.add(this);
@@ -49,4 +50,6 @@ public class Cauldron extends Block implements IHasModel{
     public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
+
+
 }
