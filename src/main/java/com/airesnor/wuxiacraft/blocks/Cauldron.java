@@ -18,13 +18,18 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.Random;
+
 public class Cauldron extends Block implements IHasModel {
 
     public Cauldron (String name) {
-        super(Material.IRON);
+        super(Materials.CAULDRON);
         setRegistryName(name);
         setUnlocalizedName(name);
-        this.setCreativeTab(CreativeTabs.DECORATIONS);
+        this.setCreativeTab(Blocks.BLOCKS_TAB);
+
+        setHardness(1f);
+        setResistance(25f);
 
         Blocks.BLOCKS.add(this);
         Items.ITEMS.add(new ItemBlock(this).setRegistryName(name));
@@ -51,5 +56,14 @@ public class Cauldron extends Block implements IHasModel {
         return false;
     }
 
+    @Override
+    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+        return ItemBlock.getItemFromBlock(this);
+    }
 
+    @Override
+    public boolean isToolEffective(String type, IBlockState state) {
+        if(type.equals("pickaxe")) return true;
+        else return super.isToolEffective(type, state);
+    }
 }

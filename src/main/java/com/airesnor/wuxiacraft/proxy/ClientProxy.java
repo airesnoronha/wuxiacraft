@@ -66,11 +66,11 @@ public class ClientProxy extends CommonProxy {
     public void preInit() {
         super.preInit();
 
-        MinecraftForge.EVENT_BUS.register(new PreClientEvents());
-
         OBJLoader.INSTANCE.addDomain(WuxiaCraft.MODID);
 
         ModelLoaderRegistry.registerLoader(OBJBlockModelLoader.INSTANCE);
+
+        MinecraftForge.EVENT_BUS.register(new PreClientEvents());
 
         WuxiaCraftConfig.clientPreInit();
 

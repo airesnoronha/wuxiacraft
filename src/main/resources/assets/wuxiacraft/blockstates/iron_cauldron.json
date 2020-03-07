@@ -1,0 +1,17 @@
+{
+	"forge_maker": 1,
+	"variants": {
+		"normal": {
+			"model": "wuxiacraft:obj/iron_cauldron",
+			"textures": {
+				"#Metal": "wuxiacraft:blocks/iron_cauldron"
+			}
+		},
+		"inventory": {
+			"model": "wuxiacraft:obj/iron_cauldron",
+			"textures": {
+				"#Metal": "wuxiacraft:blocks/iron_cauldron"
+			}
+		}
+	}
+}

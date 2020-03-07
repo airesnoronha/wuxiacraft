@@ -1,8 +1,10 @@
 package com.airesnor.wuxiacraft.items;
 
+import com.airesnor.wuxiacraft.blocks.Blocks;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;

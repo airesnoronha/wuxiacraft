@@ -34,8 +34,7 @@ public class BaseModel implements IModel {
         try {
             ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
             builder.put(ModelLoader.White.LOCATION.toString(), ModelLoader.White.INSTANCE);
-            TextureAtlasSprite missing = bakedTextureGetter.apply(new ResourceLocation("missingno"));
-            TextureAtlasSprite teste = bakedTextureGetter.apply(new ResourceLocation("wuxiacraft:blocks/cauldron"));
+
             IModel preModel = OBJBlockModelLoader.INSTANCE.parseOBJ(modelLocation);
             BaseBakedModel model = new BaseBakedModel(preModel.bake(state, format, bakedTextureGetter));
             return model;

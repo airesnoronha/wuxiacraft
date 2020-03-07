@@ -1,6 +1,6 @@
 # Blender v2.79 (sub 0) OBJ File: 'cauldron.blend'
 # www.blender.org
-mtllib cauldron.mtl
+mtllib iron_cauldron.mtl
 o Cylinder
 v 0.505186 0.275836 0.941870
 v 0.505186 0.754304 0.796134
