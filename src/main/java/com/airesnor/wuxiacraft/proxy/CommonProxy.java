@@ -11,6 +11,7 @@ import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
+import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.handlers.GuiHandler;
 import com.airesnor.wuxiacraft.handlers.RendererHandler;
@@ -69,6 +70,8 @@ public class CommonProxy {
 		Techniques.init();
 		Element.init();
 		Skills.init();
+
+		GameRegistry.registerTileEntity(CauldronTileEntity.class, "wuxiacraft:cauldron_tile_entity");
 	}
 
 	public void preInit() {

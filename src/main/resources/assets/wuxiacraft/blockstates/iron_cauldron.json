@@ -1,17 +1,17 @@
 {
 	"forge_maker": 1,
 	"variants": {
-		"normal": {
-			"model": "wuxiacraft:obj/iron_cauldron",
-			"textures": {
-				"#Metal": "wuxiacraft:blocks/iron_cauldron"
-			}
+		"cauldron=0": {
+			"model": "wuxiacraft:obj/iron_cauldron"
+		},
+		"cauldron=1": {
+			"model": "wuxiacraft:iron_cauldron_firewood.obj"
+		},
+		"cauldron=2": {
+			"model": "wuxiacraft:iron_cauldron_water.obj"
 		},
 		"inventory": {
-			"model": "wuxiacraft:obj/iron_cauldron",
-			"textures": {
-				"#Metal": "wuxiacraft:blocks/iron_cauldron"
-			}
+			"model": "wuxiacraft:obj/iron_cauldron"
 		}
 	}
 }
