@@ -1,8 +1,6 @@
 package com.airesnor.wuxiacraft.proxy;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.blocks.Blocks;
-import com.airesnor.wuxiacraft.blocks.Cauldron;
 import com.airesnor.wuxiacraft.blocks.OBJBlockModelLoader;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
@@ -10,6 +8,7 @@ import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterBlade;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterNeedle;
 import com.airesnor.wuxiacraft.gui.SkillsGui;
+import com.airesnor.wuxiacraft.handlers.PreClientEvents;
 import com.airesnor.wuxiacraft.handlers.RendererHandler;
 import com.airesnor.wuxiacraft.utils.OreUtils;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -66,6 +65,8 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit() {
         super.preInit();
+
+        MinecraftForge.EVENT_BUS.register(new PreClientEvents());
 
         OBJLoader.INSTANCE.addDomain(WuxiaCraft.MODID);
 

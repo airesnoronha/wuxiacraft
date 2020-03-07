@@ -9,56 +9,69 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Quat4f;
 import java.util.List;
 
 public class BaseBakedModel implements IBakedModel {
 
-    private IBakedModel model;
+	private IBakedModel model;
 
-    public BaseBakedModel(IBakedModel model) {
-        this.model = model;
-    }
+	public BaseBakedModel(IBakedModel model) {
+		this.model = model;
+	}
 
-    @Override
-    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-      ItemCameraTransforms itemCameraTransforms = model.getItemCameraTransforms();
-      ItemTransformVec3f itemTransformVec3f = itemCameraTransforms.getTransform(cameraTransformType);
-      TRSRTransformation tr = new TRSRTransformation(itemTransformVec3f);
-      Matrix4f mat = null;
-      if (tr != null) { // && tr != TRSRTransformation.identity()) {
-        mat = tr.getMatrix();
-      }
+	@Override
+	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
+		Matrix4f mat = new Matrix4f();
+		Matrix4f aux = new Matrix4f();
+		mat.setIdentity();
+		aux.setIdentity();
+		switch (cameraTransformType) {
+			case GUI:
+				aux.setScale(0.685f);
+				mat.mul(aux);
+				aux.setIdentity();
+				aux.rotX(3.1415f*30f/180f);
+				mat.mul(aux);
+				aux.setIdentity();
+				aux.rotY(3.1415f);
+				mat.mul(aux);
+				break;
+			case GROUND:
+				aux.setScale(0.3f);
+				mat.mul(aux);
+				break;
+		}
+		return Pair.of(this, mat);
+	}
 
-      return Pair.of(this, mat);
-    }
+	@Override
+	public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+		return model.getQuads(state, side, rand);
+	}
 
-    @Override
-    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        return model.getQuads(state, side, rand);
-    }
+	@Override
+	public boolean isAmbientOcclusion() {
+		return model.isAmbientOcclusion();
+	}
 
-    @Override
-    public boolean isAmbientOcclusion() {
-        return model.isAmbientOcclusion();
-    }
+	@Override
+	public boolean isGui3d() {
+		return model.isGui3d();
+	}
 
-    @Override
-    public boolean isGui3d() {
-        return model.isGui3d();
-    }
+	@Override
+	public boolean isBuiltInRenderer() {
+		return model.isBuiltInRenderer();
+	}
 
-    @Override
-    public boolean isBuiltInRenderer() {
-        return model.isBuiltInRenderer();
-    }
+	@Override
+	public TextureAtlasSprite getParticleTexture() {
+		return model.getParticleTexture();
+	}
 
-    @Override
-    public TextureAtlasSprite getParticleTexture() {
-        return model.getParticleTexture();
-    }
-
-    @Override
-    public ItemOverrideList getOverrides() {
-        return model.getOverrides();
-    }
+	@Override
+	public ItemOverrideList getOverrides() {
+		return model.getOverrides();
+	}
 }

@@ -5,9 +5,11 @@ import com.airesnor.wuxiacraft.blocks.models.BaseModel;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.client.resource.IResourceType;
 import org.apache.commons.io.IOUtils;
@@ -29,6 +31,8 @@ public class OBJBlockModelLoader implements ICustomModelLoader {
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager) {
         this.resourceManager = resourceManager;
+        this.errors.clear();
+        this.cache.clear();
     }
 
     @Override
