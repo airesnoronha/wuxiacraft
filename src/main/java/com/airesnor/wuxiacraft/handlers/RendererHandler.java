@@ -1,12 +1,14 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.blocks.Cauldron;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
+import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
 import com.airesnor.wuxiacraft.gui.SkillsGui;
 import com.airesnor.wuxiacraft.networking.RespondCultivationLevelMessageHandler;
 import com.airesnor.wuxiacraft.proxy.ClientProxy;
@@ -27,6 +29,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
@@ -125,6 +128,8 @@ public class RendererHandler {
         drawHudElements();
         drawCastProgressBar(event.getResolution());
         drawSkillsBar(event.getResolution());
+
+        drawCauldronInfo(event.getResolution());
     }
 
     @SubscribeEvent
@@ -335,6 +340,34 @@ public class RendererHandler {
         mc.fontRenderer.drawString(life, (i + (81 - width) / 2), j + 1, 0xFFFFFF);
         mc.getTextureManager().bindTexture(Gui.ICONS);
         GuiIngameForge.left_height += 11;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void drawCauldronInfo(ScaledResolution res) {
+        Minecraft mc = Minecraft.getMinecraft();
+        RayTraceResult rtr = mc.player.rayTrace(4.0, 0);
+        if(rtr.typeOfHit == RayTraceResult.Type.BLOCK) {
+            IBlockState state = mc.player.world.getBlockState(rtr.getBlockPos());
+            if(state.getBlock() instanceof Cauldron) {
+                GlStateManager.pushMatrix();
+
+                CauldronTileEntity te = (CauldronTileEntity) mc.player.world.getTileEntity(rtr.getBlockPos());
+
+
+                List<String> toDisplay = new ArrayList<>();
+                toDisplay.add(String.format("Burn Speed: %.2f", te.getBurnSpeed()));
+                toDisplay.add(String.format("Time lit: %.1f", te.getTimeLit()));
+                toDisplay.add(String.format("Temperature: %.2f/%.2f", te.getTemperature(), te.getMaxTemperature()));
+
+                GlStateManager.translate(res.getScaledWidth()/2f - 200, res.getScaledHeight()/2f - (toDisplay.size()*12)/2f, 0);
+
+                for(String text : toDisplay) {
+                    mc.fontRenderer.drawStringWithShadow(text, 0, 0, 0xFFFFFF);
+                    GlStateManager.translate(0,12,0);
+                }
+                GlStateManager.popMatrix();
+            }
+        }
     }
 
     public static void drawTexturedRect(int x, int y, int w, int h) {

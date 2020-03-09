@@ -4,27 +4,36 @@ import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.entities.tileentity.CauldronTESR;
 import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
 import com.airesnor.wuxiacraft.items.IHasModel;
+import com.airesnor.wuxiacraft.items.ItemFan;
 import com.airesnor.wuxiacraft.items.Items;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockFlowerPot;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.state.BlockStateBase;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -35,7 +44,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class Cauldron extends Block implements IHasModel, ITileEntityProvider {
+public class Cauldron extends BlockContainer implements IHasModel {
 
     public static final IProperty<Integer> CAULDRON = PropertyInteger.create("cauldron", 0, 2);
 
@@ -72,6 +81,11 @@ public class Cauldron extends Block implements IHasModel, ITileEntityProvider {
     @Override
     public boolean isOpaqueCube(IBlockState state) {
         return false;
+    }
+
+    @Override
+    public boolean isTranslucent(IBlockState state) {
+        return true;
     }
 
     @Override
@@ -124,37 +138,25 @@ public class Cauldron extends Block implements IHasModel, ITileEntityProvider {
             if(itemStack.getItem() == net.minecraft.init.Items.STICK) {
                 if(!te.isHasFirewood()) {
                     used = true;
-                    ItemStack newItemStack = ItemStack.EMPTY;
-                    if(itemStack.getCount() > 1) newItemStack = new ItemStack(itemStack.getItem(), itemStack.getCount()-1);
                     te.setHasFirewood(true);
-                    playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, newItemStack);
-                    playerIn.openContainer.detectAndSendChanges();
-                }
-            }
-            if(itemStack.getItem() == net.minecraft.init.Items.WATER_BUCKET) {
-                if(!te.isHasWater()) {
-                    used = true;
-                    ItemStack newItemStack = new ItemStack(net.minecraft.init.Items.BUCKET);
-                    te.setHasWater(true);
-                    playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, newItemStack);
-                    playerIn.openContainer.detectAndSendChanges();
-                }
-            }
-            if(itemStack.getItem() == net.minecraft.init.Items.BUCKET) {
-                if(te.isHasWater()) {
-                    used = true;
-                    ItemStack newItemStack = new ItemStack(net.minecraft.init.Items.BUCKET);
-                    te.setHasWater(true);
-                    playerIn.inventory.setInventorySlotContents(playerIn.inventory.currentItem, newItemStack);
+                    if(!playerIn.isCreative())
+                        itemStack.shrink(1);
                     playerIn.openContainer.detectAndSendChanges();
                 }
             }
             if(itemStack.getItem() == net.minecraft.init.Items.FLINT_AND_STEEL) {
-                if(te.isHasFirewood()) {
+                if(te.isHasFirewood() && !te.isLit()) {
                     used = true;
                     itemStack.damageItem(1, playerIn);
-                    te.setLit(true);
+                    te.setOnFire();
                     playerIn.openContainer.detectAndSendChanges();
+                }
+            }
+            if(itemStack.getItem() instanceof ItemFan) {
+                if(te.isLit()) {
+                    ItemFan item = (ItemFan) itemStack.getItem();
+                    te.wiggleFan(item.getFanStrength(), item.getMaxFanStrength());
+                    used = true;
                 }
             }
         }
@@ -162,12 +164,28 @@ public class Cauldron extends Block implements IHasModel, ITileEntityProvider {
     }
 
     @Override
-    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
-        CauldronTileEntity te = (CauldronTileEntity)world.getTileEntity(pos);
-        try {
-            return te.isLit() ? 15 : 0;
-        } catch(Exception e) {
-            return  0;
-        }
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return EnumBlockRenderType.MODEL;
+    }
+
+    @Override
+    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+        getTE(world,pos).prepareToDie();
+        return super.removedByPlayer(state, world, pos, player, willHarvest);
+    }
+
+	@Override
+	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+        WuxiaCraft.logger.info("Collided with " + entityIn.getName());
+        if(entityIn instanceof EntityItem) {
+            ItemStack stack = ((EntityItem)entityIn).getItem().copy();
+            entityIn.setDead();
+		}
+	}
+
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+        return super.getCollisionBoundingBox(blockState, worldIn, pos).shrink(0.1);
     }
 }
