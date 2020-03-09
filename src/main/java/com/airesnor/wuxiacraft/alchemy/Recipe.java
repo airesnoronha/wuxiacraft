@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.alchemy;
 
 import com.airesnor.wuxiacraft.utils.MathUtils;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -11,9 +12,20 @@ import java.util.List;
 public class Recipe {
 
 	private List<Triple<Float, Float, Item>> recipeOrder;
+	private float cookTemperatureMin;
+	private float cookTemperatureMax;
+	private int cookTime;
 
-	public Recipe() {
+	private String name;
+
+	public Recipe(String name, float tempMin, float tempMax, int cookTime) {
 		recipeOrder = new ArrayList<>();
+		this.name = name;
+		this.cookTemperatureMin = tempMin;
+		this.cookTemperatureMax = tempMax;
+		this.cookTime = cookTime;
+
+		Recipes.RECIPES.add(this);
 	}
 
 	public Recipe addRecipeItem(float minTemperature, float maxTemperature, Item item) {
@@ -33,4 +45,27 @@ public class Recipe {
 		return isThis;
 	}
 
+	public float getCookTemperatureMin() {
+		return cookTemperatureMin;
+	}
+
+	public float getCookTemperatureMax() {
+		return cookTemperatureMax;
+	}
+
+	public int getCookTime() {
+		return cookTime;
+	}
+
+	public String getName() {
+		return I18n.format("wuxiacraft.recipes.name");
+	}
+
+	public String getUnlocalizedName() {
+		return name;
+	}
+
+	public Item getCatalyst() {
+		return recipeOrder.get(recipeOrder.size()-1).getRight();
+	}
 }

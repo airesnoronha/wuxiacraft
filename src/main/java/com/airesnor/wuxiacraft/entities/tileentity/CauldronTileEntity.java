@@ -5,6 +5,7 @@ import com.airesnor.wuxiacraft.networking.SpawnParticleMessage;
 import com.airesnor.wuxiacraft.utils.SkillUtils;
 import net.minecraft.block.BlockFlowerPot;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -14,8 +15,11 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.WorldServer;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class CauldronTileEntity extends TileEntity implements ITickable {
@@ -31,6 +35,8 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 
 	private float maxTemperature;
 
+	private List<Pair<Float, Item>> recipeInputs;
+
 	public CauldronTileEntity() {
 		this.hasFirewood = false;
 		this.hasWater = false;
@@ -39,6 +45,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 		this.temperature = 30f;
 		this.timeLit = 0;
 		this.maxTemperature = 1300f;
+		this.recipeInputs = new ArrayList<>();
 	}
 
 	public float getTimeLit() {
@@ -190,6 +197,10 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 	public void prepareToDie() {
 		world.setLightFor(EnumSkyBlock.BLOCK, getPos(), 0);
 		checkLightAround();
+	}
+
+	public void addRecipeInput(Item item) {
+		this.recipeInputs.add(Pair.of(this.getTemperature(), item));
 	}
 
 }

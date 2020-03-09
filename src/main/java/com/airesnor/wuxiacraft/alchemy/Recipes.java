@@ -20,4 +20,15 @@ public class Recipes {
         return candidates;
     }
 
+    public static Recipe getDefinitiveRecipe(List<Pair<Float, Item>> input) {
+        Recipe definitiveRecipe = null;
+        List<Recipe> candidates = getRecipeCandidatesByInput(input);
+        for(Recipe recipe : candidates) {
+            if(input.get(input.size()-1).getRight() == recipe.getCatalyst()) {
+                definitiveRecipe = recipe;
+            }
+        }
+        return definitiveRecipe;
+    }
+
 }
