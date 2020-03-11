@@ -19,12 +19,12 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemProgressPellet extends ItemBase {
+public class ItemProgressPill extends ItemBase {
 
 	float amount;
 	int cooldown;
 
-	public ItemProgressPellet(String item_name, float amount, int cooldown) {
+	public ItemProgressPill(String item_name, float amount, int cooldown) {
 		super(item_name);
 		this.amount = amount;
 		this.cooldown = cooldown;
@@ -54,7 +54,7 @@ public class ItemProgressPellet extends ItemBase {
 
 	@Override
 	public int getMaxItemUseDuration(ItemStack stack) {
-		return 12;
+		return 30;
 	}
 
 	@Override

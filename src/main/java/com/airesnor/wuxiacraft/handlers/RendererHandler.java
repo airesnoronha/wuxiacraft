@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.alchemy.Recipe;
 import com.airesnor.wuxiacraft.blocks.Cauldron;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
@@ -51,10 +52,11 @@ public class RendererHandler {
 
     public static final ResourceLocation bar_bg = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/bar_bg.png");
     public static final ResourceLocation energy_bar = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/energy_bar.png");
-    public static final ResourceLocation progress_bar = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/progress_bar.png");
+    public static final ResourceLocation hud_bars = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/hud_bars.png");
     public static final ResourceLocation life_bar = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/health_bar.png");
     public static final ResourceLocation icons = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/icons.png");
     public static final ResourceLocation skills_bg = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/skills_bg.png");
+    public static final ResourceLocation cauldron_info = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/cauldron_info.png");
 
     public static class WorldRenderQueue {
 
@@ -125,8 +127,8 @@ public class RendererHandler {
         if (event.isCancelable() || event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE) {
             return;
         }
-        drawHudElements();
         drawCastProgressBar(event.getResolution());
+        drawHudElements(event.getResolution());
         drawSkillsBar(event.getResolution());
 
         drawCauldronInfo(event.getResolution());
@@ -135,6 +137,8 @@ public class RendererHandler {
     @SubscribeEvent
     public void onRenderHealthBar(RenderGameOverlayEvent.Pre event) {
         if (event.isCancelable() && event.getType() == RenderGameOverlayEvent.ElementType.HEALTH) {
+            GuiIngameForge.left_height += 5;
+            GuiIngameForge.right_height += 5;
             if (Minecraft.getMinecraft().player.getMaxHealth() > 40f) {
                 event.setCanceled(true);
                 drawCustomHealthBar(event.getResolution());
@@ -186,70 +190,46 @@ public class RendererHandler {
     }
 
     @SideOnly(Side.CLIENT)
-    public void drawHudElements() {
+    public void drawHudElements(ScaledResolution res) {
         Minecraft mc = Minecraft.getMinecraft();
-        ScaledResolution res = new ScaledResolution(mc);
         int width = res.getScaledWidth();
         int height = res.getScaledHeight();//res.getScaledWidth();
+
 
 
         EntityPlayer player = mc.world.getPlayerEntityByUUID(mc.player.getUniqueID());
         ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 
+        mc.renderEngine.bindTexture(hud_bars);
 
-        float energy_fill = cultivation.getEnergy() * 100 / cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel());
-        float progress_fill = cultivation.getCurrentProgress() * 100 / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
+        float energy_fill = cultivation.getEnergy() / cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel());
+        float progress_fill = cultivation.getCurrentProgress() *  100f / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
 
-        int posX = (width) / 2;
-        int posY = (height) / 2;
+        int middleX = (width) / 2;
 
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glDisable(GL11.GL_LIGHTING);
+        GlStateManager.pushMatrix();
 
-        GL11.glPushMatrix();
-        GL11.glTranslatef(posX, height, 0F);
-        GL11.glScalef(0.3F, 0.3F, 1F);
-        GL11.glTranslatef(-25f, -110f, 0f);
+        //Show spinning dantian
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(middleX, height - 45, 0);
+        float showDiameter = 30;
+        GlStateManager.scale(showDiameter/256f, showDiameter/256f, 1); //scale to certain size
+        GlStateManager.scale(energy_fill, energy_fill, 1); //fill the bar
+        float rotationSpeed = 0.07f;
+        GlStateManager.rotate(((short)System.currentTimeMillis()) * -rotationSpeed, 0,0,1f);
+        mc.ingameGUI.drawTexturedModalRect(-103,-103,0,0,206,206);
+        GlStateManager.popMatrix();
 
-        mc.renderEngine.bindTexture(bar_bg);
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glTexCoord2f(0, 1);
-        GL11.glVertex2f(0, 0);
-        GL11.glTexCoord2f(1, 1);
-        GL11.glVertex2f(50F, 0);
-        GL11.glTexCoord2f(1, 0);
-        GL11.glVertex2f(50, -100);
-        GL11.glTexCoord2f(0, 0);
-        GL11.glVertex2f(0, -100);
-        GL11.glEnd();
+        //Show Progress dragon
+        GlStateManager.pushMatrix();
+        int dragonWidth = 228;
+        GlStateManager.translate(middleX-dragonWidth/2f, height - 40f, 0);
+        GlStateManager.rotate(0.65f, 0,0,1);
+        GlStateManager.scale(1,0.35,1);
+        mc.ingameGUI.drawTexturedModalRect(0,0,5, 206, (int)(dragonWidth*progress_fill/100f), 50);
+        GlStateManager.popMatrix();
 
-        mc.renderEngine.bindTexture(energy_bar);
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glTexCoord2f(0, 1);
-        GL11.glVertex2f(0, 0);
-        GL11.glTexCoord2f(1, 1);
-        GL11.glVertex2f(50F, 0);
-        GL11.glTexCoord2f(1, 1 - (energy_fill / 100));
-        GL11.glVertex2f(50, -(energy_fill));
-        GL11.glTexCoord2f(0, 1 - (energy_fill / 100));
-        GL11.glVertex2f(0, -(energy_fill));
-        GL11.glEnd();
-
-
-        mc.renderEngine.bindTexture(progress_bar);
-
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glTexCoord2f(0, 1);
-        GL11.glVertex2f(0, 0);
-        GL11.glTexCoord2f(1, 1);
-        GL11.glVertex2f(50F, 0);
-        GL11.glTexCoord2f(1, 1 - (progress_fill / 100));
-        GL11.glVertex2f(50, -(progress_fill));
-        GL11.glTexCoord2f(0, 1 - (progress_fill / 100));
-        GL11.glVertex2f(0, -(progress_fill));
-        GL11.glEnd();
-
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
 
 		/*
 		String message = String.format("Energy: %.0f (%.2f%%)",cultivation.getEnergy(), energy_fill);
@@ -326,9 +306,9 @@ public class RendererHandler {
 
     @SideOnly(Side.CLIENT)
     public void drawCustomHealthBar(ScaledResolution res) {
-        int i = res.getScaledWidth() / 2 - 91;
-        int j = res.getScaledHeight() - 39;
         Minecraft mc = Minecraft.getMinecraft();
+        int i = res.getScaledWidth() / 2 - 91;
+        int j = res.getScaledHeight() - GuiIngameForge.left_height;
         mc.getTextureManager().bindTexture(life_bar);
         drawTexturedRect(i, j, 81, 9, 0, 0, 1f, 0.5f);
         float max_hp = mc.player.getMaxHealth();
@@ -346,26 +326,64 @@ public class RendererHandler {
     public void drawCauldronInfo(ScaledResolution res) {
         Minecraft mc = Minecraft.getMinecraft();
         RayTraceResult rtr = mc.player.rayTrace(4.0, 0);
-        if(rtr.typeOfHit == RayTraceResult.Type.BLOCK) {
-            IBlockState state = mc.player.world.getBlockState(rtr.getBlockPos());
-            if(state.getBlock() instanceof Cauldron) {
-                GlStateManager.pushMatrix();
+        if(rtr != null) {
+            if (rtr.typeOfHit == RayTraceResult.Type.BLOCK) {
+                IBlockState state = mc.player.world.getBlockState(rtr.getBlockPos());
+                if (state.getBlock() instanceof Cauldron) {
+                    GlStateManager.pushMatrix();
+                    mc.getTextureManager().bindTexture(cauldron_info);
+                    CauldronTileEntity te = (CauldronTileEntity) mc.player.world.getTileEntity(rtr.getBlockPos());
 
-                CauldronTileEntity te = (CauldronTileEntity) mc.player.world.getTileEntity(rtr.getBlockPos());
+                    float fireStrength = te.getBurnSpeed() / 25f;
+                    float timeLeft = te.getTimeLit() / te.getMaxTimeLit();
+                    float temperature = te.getTemperature() / te.getMaxTemperature();
+
+                    int x = res.getScaledWidth() / 2 - (93 / 2) - 100;
+                    int y = res.getScaledHeight() / 2;
+
+                    int progress = (int) Math.floor(92 * fireStrength);
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(x, y, 0);
+                    GlStateManager.scale(0.5, 0.5, 0);
+                    mc.ingameGUI.drawTexturedModalRect(0, -progress * 2, 0, (92 - progress) * 2, 92 * 2, progress * 2);
+                    //drawTexturedRect(x, y-progress, 92, progress, 0, (1f-fireStrength)*92f/128f,92f/128f, 92f/128f);
+                    GlStateManager.popMatrix();
+
+                    x = res.getScaledWidth() / 2 - (93 / 2);
+                    y = res.getScaledHeight() / 2 + 55;
+
+                    progress = (int) (94 * timeLeft);
+                    drawTexturedRect(x, y, 94, 17, 0, 111f / 128f, 93f / 128f, 128f / 128f);
+                    drawTexturedRect(x, y, progress, 17, 0, 94f / 128f, timeLeft * 93f / 128f, 110f / 128f);
+
+                    x = res.getScaledWidth() / 2 + 120 - (18 / 2);
+                    y = res.getScaledHeight() / 2 + 128 / 2;
+
+                    progress = (int) (128 * temperature);
+                    drawTexturedRect(x + 1, y - progress, 16, progress, 94f / 128f, 1f - temperature, 109f / 128f, 128f / 128f);
+                    drawTexturedRect(x, y - 128, 18, 128, 110f / 128f, 0, 128f / 128f, 128f / 128f);
+
+                    String temp = String.format("%.2f -", te.getTemperature());
+                    int tempWidth = mc.fontRenderer.getStringWidth(temp);
+                    mc.fontRenderer.drawStringWithShadow(temp, x - tempWidth + 10, y - progress - 4, 0xCF9D15);
 
 
-                List<String> toDisplay = new ArrayList<>();
-                toDisplay.add(String.format("Burn Speed: %.2f", te.getBurnSpeed()));
-                toDisplay.add(String.format("Time lit: %.1f", te.getTimeLit()));
-                toDisplay.add(String.format("Temperature: %.2f/%.2f", te.getTemperature(), te.getMaxTemperature()));
+                    //Only show when debugging commentary to debug
+                    if(System.getProperties().contains("debug")) {
+                        if (System.getProperty("debug").equals("true")) {
+                            Recipe recipe = te.getActiveRecipe();
+                            if (recipe != null) {
+                                y = res.getScaledHeight() / 2 - 60;
+                                temp = recipe.getName();
+                                tempWidth = mc.fontRenderer.getStringWidth(temp);
+                                x = res.getScaledWidth() / 2 - tempWidth / 2;
+                                mc.fontRenderer.drawStringWithShadow(temp, x, y, 0xFFFF17);
+                            }
+                        }
+                    }
 
-                GlStateManager.translate(res.getScaledWidth()/2f - 200, res.getScaledHeight()/2f - (toDisplay.size()*12)/2f, 0);
-
-                for(String text : toDisplay) {
-                    mc.fontRenderer.drawStringWithShadow(text, 0, 0, 0xFFFFFF);
-                    GlStateManager.translate(0,12,0);
+                    GlStateManager.popMatrix();
                 }
-                GlStateManager.popMatrix();
             }
         }
     }

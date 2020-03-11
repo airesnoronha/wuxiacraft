@@ -28,6 +28,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -37,6 +38,7 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -46,146 +48,165 @@ import java.util.Random;
 
 public class Cauldron extends BlockContainer implements IHasModel {
 
-    public static final IProperty<Integer> CAULDRON = PropertyInteger.create("cauldron", 0, 2);
+	public static final IProperty<Integer> CAULDRON = PropertyInteger.create("cauldron", 0, 2);
 
-    public Cauldron (String name) {
-        super(Materials.CAULDRON);
-        setRegistryName(name);
-        setUnlocalizedName(name);
-        this.setCreativeTab(Blocks.BLOCKS_TAB);
+	public Cauldron(String name) {
+		super(Materials.CAULDRON);
+		setRegistryName(name);
+		setUnlocalizedName(name);
+		this.setCreativeTab(Blocks.BLOCKS_TAB);
 
-        setHardness(1f);
-        setResistance(25f);
+		setHardness(1f);
+		setResistance(25f);
 
-        Blocks.BLOCKS.add(this);
-        Items.ITEMS.add(new ItemBlock(this).setRegistryName(name));
-    }
+		Blocks.BLOCKS.add(this);
+		Items.ITEMS.add(new ItemBlock(this).setRegistryName(name));
+	}
 
-    @Override
-    public void registerModels() {
-        WuxiaCraft.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
-        ClientRegistry.bindTileEntitySpecialRenderer(CauldronTileEntity.class, new CauldronTESR());
-    }
+	@Override
+	public void registerModels() {
+		WuxiaCraft.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
+		ClientRegistry.bindTileEntitySpecialRenderer(CauldronTileEntity.class, new CauldronTESR());
+	}
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-        return false;
-    }
+	@Override
+	@SideOnly(Side.CLIENT)
+	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+		return false;
+	}
 
-    @Override
-    public boolean isBlockNormalCube(IBlockState state) {
-        return false;
-    }
+	@Override
+	public boolean isBlockNormalCube(IBlockState state) {
+		return false;
+	}
 
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
-    }
+	@Override
+	public boolean isOpaqueCube(IBlockState state) {
+		return false;
+	}
 
-    @Override
-    public boolean isTranslucent(IBlockState state) {
-        return true;
-    }
+	@Override
+	public boolean isTranslucent(IBlockState state) {
+		return true;
+	}
 
-    @Override
-    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-        return ItemBlock.getItemFromBlock(this);
-    }
+	@Override
+	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+		return ItemBlock.getItemFromBlock(this);
+	}
 
-    @Override
-    public boolean isToolEffective(String type, IBlockState state) {
-        if(type.equals("pickaxe")) return true;
-        else return super.isToolEffective(type, state);
-    }
+	@Override
+	public boolean isToolEffective(String type, IBlockState state) {
+		if (type.equals("pickaxe")) return true;
+		else return super.isToolEffective(type, state);
+	}
 
-    @Nullable
-    @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new CauldronTileEntity();
-    }
+	@Nullable
+	@Override
+	public TileEntity createNewTileEntity(World worldIn, int meta) {
+		return new CauldronTileEntity();
+	}
 
-    private CauldronTileEntity getTE(World world, BlockPos pos) {
-        return (CauldronTileEntity) world.getTileEntity(pos);
-    }
+	private CauldronTileEntity getTE(World world, BlockPos pos) {
+		return (CauldronTileEntity) world.getTileEntity(pos);
+	}
 
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, CAULDRON);
-    }
+	@Override
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, CAULDRON);
+	}
 
-    @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        return state.withProperty(CAULDRON, 0);
-    }
+	@Override
+	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+		return state.withProperty(CAULDRON, 0);
+	}
 
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState();
-    }
+	@Override
+	public IBlockState getStateFromMeta(int meta) {
+		return getDefaultState();
+	}
 
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return 0;
-    }
+	@Override
+	public int getMetaFromState(IBlockState state) {
+		return 0;
+	}
 
-    @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        boolean used = false;
-        CauldronTileEntity te = getTE(worldIn, pos);
-        if(!playerIn.getHeldItem(hand).isEmpty()) {
-            ItemStack itemStack = playerIn.getHeldItem(hand);
-            if(itemStack.getItem() == net.minecraft.init.Items.STICK) {
-                if(!te.isHasFirewood()) {
-                    used = true;
-                    te.setHasFirewood(true);
-                    if(!playerIn.isCreative())
-                        itemStack.shrink(1);
-                    playerIn.openContainer.detectAndSendChanges();
-                }
-            }
-            if(itemStack.getItem() == net.minecraft.init.Items.FLINT_AND_STEEL) {
-                if(te.isHasFirewood() && !te.isLit()) {
-                    used = true;
-                    itemStack.damageItem(1, playerIn);
-                    te.setOnFire();
-                    playerIn.openContainer.detectAndSendChanges();
-                }
-            }
-            if(itemStack.getItem() instanceof ItemFan) {
-                if(te.isLit()) {
-                    ItemFan item = (ItemFan) itemStack.getItem();
-                    te.wiggleFan(item.getFanStrength(), item.getMaxFanStrength());
-                    used = true;
-                }
-            }
-        }
-        return used;
-    }
+	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		boolean used = false;
+		CauldronTileEntity te = getTE(worldIn, pos);
+		if (!playerIn.getHeldItem(hand).isEmpty()) {
+			ItemStack itemStack = playerIn.getHeldItem(hand);
+			if (!te.isHasFirewood()) {
+				if (itemStack.getItem() == net.minecraft.init.Items.STICK) {
+					used = true;
+					te.addWood(2000);
+					if (!playerIn.isCreative())
+						itemStack.shrink(1);
+					playerIn.openContainer.detectAndSendChanges();
+				}
+				if (itemStack.getItem() == net.minecraft.init.Items.COAL) {
+					used = true;
+					te.addWood(16000);
+					if (!playerIn.isCreative())
+						itemStack.shrink(1);
+					playerIn.openContainer.detectAndSendChanges();
+				}
+			}
+			if (itemStack.getItem() == net.minecraft.init.Items.FLINT_AND_STEEL) {
+				if (te.isHasFirewood() && !te.isLit()) {
+					used = true;
+					itemStack.damageItem(1, playerIn);
+					te.setOnFire();
+					playerIn.openContainer.detectAndSendChanges();
+				}
+			}
+			if (itemStack.getItem() instanceof ItemFan) {
+				if (te.isLit()) {
+					ItemFan item = (ItemFan) itemStack.getItem();
+					te.wiggleFan(item.getFanStrength(), item.getMaxFanStrength());
+					used = true;
+				}
+			}
+		}
+		if (playerIn.getHeldItem(hand).isEmpty() && playerIn.isSneaking()) {
+			if (te.getCauldronState() == CauldronTileEntity.EnumCauldronState.WRONG_RECIPE && te.isHasWater()) {
+				te.emptyCauldron();
+				used = true;
+			}
+		}
+		return used;
+	}
 
-    @Override
-    public EnumBlockRenderType getRenderType(IBlockState state) {
-        return EnumBlockRenderType.MODEL;
-    }
+	@Override
+	public EnumBlockRenderType getRenderType(IBlockState state) {
+		return EnumBlockRenderType.MODEL;
+	}
 
-    @Override
-    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
-        getTE(world,pos).prepareToDie();
-        return super.removedByPlayer(state, world, pos, player, willHarvest);
-    }
+	@Override
+	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
+		getTE(world, pos).prepareToDie();
+		return super.removedByPlayer(state, world, pos, player, willHarvest);
+	}
 
 	@Override
 	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
-        WuxiaCraft.logger.info("Collided with " + entityIn.getName());
-        if(entityIn instanceof EntityItem) {
-            ItemStack stack = ((EntityItem)entityIn).getItem().copy();
-            entityIn.setDead();
+		//WuxiaCraft.logger.info("Collided with " + entityIn.getName());
+		CauldronTileEntity te = getTE(worldIn, pos);
+		if (entityIn instanceof EntityItem && te.isAcceptingItems()) {
+			ItemStack stack = ((EntityItem) entityIn).getItem().copy();
+			te.addRecipeInput(stack.getItem());
+			stack.shrink(1);
+			if (!worldIn.isRemote) {
+				if (stack.getCount() <= 0) ((EntityItem) entityIn).setDead();
+				else ((EntityItem) entityIn).setItem(stack);
+			}
 		}
 	}
 
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        return super.getCollisionBoundingBox(blockState, worldIn, pos).shrink(0.1);
-    }
+	@Nullable
+	@Override
+	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+		return super.getCollisionBoundingBox(blockState, worldIn, pos).shrink(0.1);
+	}
 }

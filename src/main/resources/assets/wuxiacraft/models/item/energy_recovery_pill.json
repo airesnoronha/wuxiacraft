@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures" : {
-	"layer0": "wuxiacraft:items/body_refinement_pellet"
+	"layer0": "wuxiacraft:items/energy_recovery_pill"
   }
 }

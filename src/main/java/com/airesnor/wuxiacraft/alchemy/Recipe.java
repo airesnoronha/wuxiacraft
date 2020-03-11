@@ -8,6 +8,7 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Recipe {
 
@@ -18,12 +19,19 @@ public class Recipe {
 
 	private String name;
 
-	public Recipe(String name, float tempMin, float tempMax, int cookTime) {
+	private Item output;
+	private int yields;
+	private int yieldRange;
+
+	public Recipe(String name, float tempMin, float tempMax, int cookTime, Item output, int yields, int yieldRange) {
 		recipeOrder = new ArrayList<>();
 		this.name = name;
 		this.cookTemperatureMin = tempMin;
 		this.cookTemperatureMax = tempMax;
 		this.cookTime = cookTime;
+		this.output = output;
+		this.yields = yields;
+		this.yieldRange = yieldRange;
 
 		Recipes.RECIPES.add(this);
 	}
@@ -33,13 +41,18 @@ public class Recipe {
 		return this;
 	}
 
-	public boolean checkRecipe (List<Pair<Float, Item>> inputs) {
+	public boolean checkRecipe(List<Pair<Float, Item>> inputs) {
 		boolean isThis = false;
-		for(int i = 0; i< inputs.size(); i++) {
-			Triple<Float, Float, Item> element = recipeOrder.get(i);
-			Pair<Float, Item> input = inputs.get(i);
-			if(input.getRight() == element.getRight()) {
-				isThis = MathUtils.between(input.getLeft(), element.getLeft(), element.getMiddle());
+		for (int i = 0; i < inputs.size(); i++) {
+			if (inputs.size() <= recipeOrder.size()) {
+				Triple<Float, Float, Item> element = recipeOrder.get(i);
+				Pair<Float, Item> input = inputs.get(i);
+				if (input.getRight() == element.getRight()) {
+					isThis = MathUtils.between(input.getLeft(), element.getLeft(), element.getMiddle());
+				} else {
+					isThis = false;
+					break;
+				}
 			}
 		}
 		return isThis;
@@ -58,7 +71,7 @@ public class Recipe {
 	}
 
 	public String getName() {
-		return I18n.format("wuxiacraft.recipes.name");
+		return I18n.format("wuxiacraft.recipes.name." + this.getUnlocalizedName());
 	}
 
 	public String getUnlocalizedName() {
@@ -66,6 +79,20 @@ public class Recipe {
 	}
 
 	public Item getCatalyst() {
-		return recipeOrder.get(recipeOrder.size()-1).getRight();
+		return recipeOrder.get(recipeOrder.size() - 1).getRight();
+	}
+
+	public Item getOutput() {
+		return this.output;
+	}
+
+	public int getRecipeItemCount() {
+		return this.recipeOrder.size();
+	}
+
+	public int getYieldResult() {
+		Random random = new Random();
+		int range =  random.nextInt(this.yieldRange*2) - this.yieldRange;
+		return this.yields + range;
 	}
 }

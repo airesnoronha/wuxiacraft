@@ -1,29 +1,30 @@
 package com.airesnor.wuxiacraft.items;
 
-import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
-import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.handlers.EventHandler;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ItemEnergyPellet extends ItemBase {
+public class ItemEffectPill extends ItemBase {
 
-	float amount;
+	private List<PotionEffect> effects;
 
-	public ItemEnergyPellet(String item_name, float amount) {
-		super(item_name);
-		this.amount = amount;
+	public ItemEffectPill(String name) {
+		super(name);
+		effects = new ArrayList<>();
+	}
+
+	public ItemEffectPill addEffect(PotionEffect effect) {
+		this.effects.add(effect);
+		return this;
 	}
 
 	@Override
@@ -33,9 +34,9 @@ public class ItemEnergyPellet extends ItemBase {
 			stack.shrink(player.isCreative() ? 0 : 1);
 			if(stack.isEmpty())
 				stack = ItemStack.EMPTY;
-			ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-			assert cultivation != null;
-			cultivation.addEnergy(this.amount);
+			for(PotionEffect effect : effects) {
+				player.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration(), effect.getAmplifier(), false, effect.doesShowParticles()));
+			}
 		}
 		return stack;
 	}
@@ -47,7 +48,7 @@ public class ItemEnergyPellet extends ItemBase {
 
 	@Override
 	public int getMaxItemUseDuration(ItemStack stack) {
-		return 6;
+		return 20;
 	}
 
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)

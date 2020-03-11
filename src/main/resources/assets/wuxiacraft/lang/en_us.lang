@@ -1,14 +1,25 @@
 //Items
 item.crunchy_bar.name=Crunchy Bar
 item.natural_oddity_low.name=Low Tier Natural Oddity
-item.body_refinement_pellet.name=Body Refinement Pellet
-item.energy_recovery_pellet.name=Energy Recovery Pellet
+item.feather_fan.name=Feather Fan
+item.bird_grace_pill.name=Bird Grace Pill
+item.body_refinement_pill.name=Body Refinement Pill
+item.bull_rage_pill.name=Bull Rage Pill
+item.cat_vision_pill.name=Cat Vision Pill
+item.energy_recovery_pill.name=Energy Recovery Pill
+item.fire_walker_pill.name=Fire Walker Pill
+item.fish_soul_pill.name=Fish Soul Pill
+item.minor_healing_pill.name=Minor Healing Pill
+item.minor_recovery_pill.name=Minor Recovery Pill
+item.runners_essence_pill.name=Runner's Essence Pill
+item.turtle_shell_pill.name=Turtle Shell Pill
 
 //Creative tabs
 itemGroup.wuxiacraft.scrolls=Cultivation Techniques
 
 //Blocks
 tile.natural_oddity_ore.name=Natural Oddity Ore
+tile.iron_cauldron.name=Iron Cauldron
 
 //Configuration
 gui.config.main_title=WuxiaCraft
@@ -24,6 +35,18 @@ key.wuxiacraft.speed_down=Decrease speed handicap
 key.wuxiacraft.cult_gui=Introspection
 key.wuxiacraft.activate_skill=Activate Skills
 key.wuxiacraft.skills_gui=See skills
+key.wuxiacraft.select_up=Select Next Skill
+key.wuxiacraft.select_down=Select Previous Skill
+key.wuxiacraft.select_1=Select skill in 1
+key.wuxiacraft.select_2=Select skill in 2
+key.wuxiacraft.select_3=Select skill in 3
+key.wuxiacraft.select_4=Select skill in 4
+key.wuxiacraft.select_5=Select skill in 5
+key.wuxiacraft.select_6=Select skill in 6
+key.wuxiacraft.select_7=Select skill in 7
+key.wuxiacraft.select_8=Select skill in 8
+key.wuxiacraft.select_9=Select skill in 9
+key.wuxiacraft.select_0=Select skill in 10
 
 //tiers
 wuxiacraft.tier.mortal=Mortal
@@ -120,3 +143,16 @@ wuxiacraft.skills.water_blade=Water Blade
 wuxiacraft.skills.self_healing=Self Healing
 wuxiacraft.skills.healing_hands=Healing Hands
 wuxiacraft.skills.wall_crossing=Wall Crossing
+
+//Recipes
+wuxiacraft.recipes.name.body_refinement_pill_recipe=Body Refinement Pill Recipe
+wuxiacraft.recipes.name.energy_recovery_pill_recipe=Energy Recovery Pill Recipe
+wuxiacraft.recipes.name.minor_healing_pill_recipe=Minor Healing Pill Recipe
+wuxiacraft.recipes.name.minor_recovery_pill_recipe=Minor Recovery Pill Recipe
+wuxiacraft.recipes.name.bird_grace_pill_recipe=Bird Grace Pill Recipe
+wuxiacraft.recipes.name.bull_rage_pill_recipe=Bull Rage Pill Recipe
+wuxiacraft.recipes.name.cat_vision_pill_recipe=Cat Vision Pill Recipe
+wuxiacraft.recipes.name.fish_soul_pill_recipe=Fish Soul Pill Recipe
+wuxiacraft.recipes.name.jumping_rabbit_pill_recipe=Jumping Rabbit Pill Recipe
+wuxiacraft.recipes.name.runners_essence_pill_recipe=Runners Essence Pill Recipe
+wuxiacraft.recipes.name.turtle_shell_pill_recipe=Turtle Shell Pill Recipe

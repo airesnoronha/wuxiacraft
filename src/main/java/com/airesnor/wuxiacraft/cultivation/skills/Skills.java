@@ -115,6 +115,8 @@ public class Skills {
                     }
                 }
             }
+            ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+            EventHandler.playerAddProgress(actor, cultivation, cultTech.getOverallCultivationSpeed()*0.06f);
             return true;
         }
     });
