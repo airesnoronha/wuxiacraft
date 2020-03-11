@@ -27,7 +27,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
@@ -68,9 +70,9 @@ public class Skills {
 				for (KnownTechnique kt : cultTech.getKnownTechniques()) {
 					for (Element e : kt.getTechnique().getElements()) {
 						for (int i = 0; i < particles; i++) {
-							float randX = 2 * actor.world.rand.nextFloat() - 1;
-							float randY = 2 * actor.world.rand.nextFloat() - 1;
-							float randZ = 2 * actor.world.rand.nextFloat() - 1;
+							float randX = 2 * (float) actor.world.rand.nextFloat() - 1;
+							float randY = 2 * (float) actor.world.rand.nextFloat() - 1;
+							float randZ = 2 * (float) actor.world.rand.nextFloat() - 1;
 							float dist = (float) Math.sqrt(randX * randX + randY * randY + randZ * randZ) * 30f;
 							SpawnParticleMessage spm = new SpawnParticleMessage(e.getParticle(), false, actor.posX + randX, actor.posY + 0.9f + randY, actor.posZ + randZ, -randX / dist, -randY / dist, -randZ / dist, 0);
 							SkillUtils.sendMessageWithinRange(ws, actor.getPosition(), spm.isIgnoreRange() ? 262144.0D : 1024.0D, spm);
@@ -92,9 +94,9 @@ public class Skills {
 					int particles = 2;
 					for (Element e : kt.getTechnique().getElements()) {
 						for (int i = 0; i < particles; i++) {
-							float randX = 2 * actor.world.rand.nextFloat() - 1;
-							float randY = 2 * actor.world.rand.nextFloat() - 1;
-							float randZ = 2 * actor.world.rand.nextFloat() - 1;
+							float randX = 2 * (float) actor.world.rand.nextFloat() - 1;
+							float randY = 2 * (float) actor.world.rand.nextFloat() - 1;
+							float randZ = 2 * (float) actor.world.rand.nextFloat() - 1;
 							float dist = (float) Math.sqrt(randX * randX + randY * randY + randZ * randZ) * 30f;
 							SpawnParticleMessage spm = new SpawnParticleMessage(e.getParticle(), false, actor.posX + randX, actor.posY + 0.9f + randY, actor.posZ + randZ, -randX / dist, -randY / dist, -randZ / dist, 0);
 							SkillUtils.sendMessageWithinRange(ws, actor.getPosition(), spm.isIgnoreRange() ? 262144.0D : 1024.0D, spm);
@@ -175,20 +177,20 @@ public class Skills {
 			ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 			for (int i = 0; i < 3; i++) {
 				FireThrowable ft = new FireThrowable(actor.world, actor, cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()) / 3f);
-				ft.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 1f, 0.4f);
+				ft.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 1.2f, 0.4f);
 				actor.world.spawnEntity(ft);
 			}
 			return true;
 		}
 	});
 
-	public static final Skill FIRE_BAll = new Skill("fire_ball", 120f, 3f, 120f, 0f).setAction(new ISkillAction() {
+	public static final Skill FIRE_BAll = new Skill("fire_ball", 120f, 3f, 110f, 0f).setAction(new ISkillAction() {
 		@Override
 		public boolean activate(EntityPlayer actor) {
 			ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 			for (int i = 0; i < 5; i++) {
-				FireThrowable ft = new FireThrowable(actor.world, actor, cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()), 400, 30, 0.3f);
-				ft.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 0.8f * cultivation.getSpeedIncrease(), 0.4f);
+				FireThrowable ft = new FireThrowable(actor.world, actor, 4 + cultivation.getStrengthIncrease() * 1.2f, 400, 30, 0.3f);
+				ft.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, Math.min(0.8f * cultivation.getSpeedIncrease() * 0.08f, 2.2f), 0.4f);
 				actor.world.spawnEntity(ft);
 			}
 			return true;
@@ -323,27 +325,31 @@ public class Skills {
 				public boolean activate(EntityPlayer actor) {
 					ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 					WaterNeedleThrowable needle = new WaterNeedleThrowable(actor.world, actor, 4 + cultivation.getStrengthIncrease() * 0.3f, 300);
-					needle.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 1.2f + cultivation.getSpeedIncrease() * 0.12f, 0.2f);
+					needle.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, Math.min(1.8f, 0.8f + cultivation.getSpeedIncrease() * 0.12f), 0.2f);
 					actor.world.spawnEntity(needle);
 					return true;
 				}
 			});
 
-	public static Skill WATER_BLADE = new Skill("water_blade", 200f, 2.0f, 100f, 0f).setAction(actor -> {
+	public static Skill WATER_BLADE = new Skill("water_blade", 200f, 2.0f, 85f, 0f).setAction(actor -> {
 		ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-		WaterBladeThrowable blade = new WaterBladeThrowable(actor.world, actor, 4 + cultivation.getStrengthIncrease(), 300);
-		blade.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 0.7f + cultivation.getSpeedIncrease() * 0.5f, 0.2f);
+		float swordModifier = 1f;
+		if(actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
+			swordModifier = 1.5f;
+		};
+		WaterBladeThrowable blade = new WaterBladeThrowable(actor.world, actor, 8 + cultivation.getStrengthIncrease() * 1.5f*swordModifier, 300);
+		blade.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 0.7f + cultivation.getSpeedIncrease() * 0.5f*swordModifier, 0.2f);
 		actor.world.spawnEntity(blade);
 		return true;
 	});
 
-	public static Skill SELF_HEALING = new Skill("self_healing", 80f, 2.0f, 80f, 0f).setAction(actor -> {
+	public static Skill SELF_HEALING = new Skill("self_healing", 80f, 1f, 80f, 0f).setAction(actor -> {
 		ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 		actor.heal(Math.max(10f, cultivation.getStrengthIncrease() * 0.05f));
 		return true;
 	});
 
-	public static Skill HEALING_HANDS = new Skill("healing_hands", 80f, 2.0f, 120f, 0f).setAction(actor -> {
+	public static Skill HEALING_HANDS = new Skill("healing_hands", 80f, 1.4f, 120f, 0f).setAction(actor -> {
 		boolean activated = false;
 		Entity result = SkillUtils.rayTraceEntities(actor, 10f, 1f);
 		if (result instanceof EntityLiving) {
