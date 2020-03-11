@@ -13,6 +13,7 @@ item.minor_healing_pill.name=Minor Healing Pill
 item.minor_recovery_pill.name=Minor Recovery Pill
 item.runners_essence_pill.name=Runner's Essence Pill
 item.turtle_shell_pill.name=Turtle Shell Pill
+item.minor_fasting_pill.name=Minor Fasting Pill
 
 //Creative tabs
 itemGroup.wuxiacraft.scrolls=Cultivation Techniques
@@ -156,3 +157,4 @@ wuxiacraft.recipes.name.fish_soul_pill_recipe=Fish Soul Pill Recipe
 wuxiacraft.recipes.name.jumping_rabbit_pill_recipe=Jumping Rabbit Pill Recipe
 wuxiacraft.recipes.name.runners_essence_pill_recipe=Runners Essence Pill Recipe
 wuxiacraft.recipes.name.turtle_shell_pill_recipe=Turtle Shell Pill Recipe
+wuxiacraft.recipes.name.minor_fasting_pill_recipe=Minor Fasting Pill Recipe
