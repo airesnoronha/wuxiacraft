@@ -12,10 +12,10 @@ import net.minecraftforge.fml.relauncher.Side;
 public class ProgressMessageHandler implements IMessageHandler {
 	@Override
 	public IMessage onMessage(IMessage message, MessageContext ctx) {
-		if(ctx.side == Side.SERVER){
+		if (ctx.side == Side.SERVER) {
 			ProgressMessage msg = (ProgressMessage) message;
 			EntityPlayerMP player = ctx.getServerHandler().player;
-			player.getServerWorld().addScheduledTask(()->{
+			player.getServerWorld().addScheduledTask(() -> {
 				ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 				switch (msg.op) {
 					case 0:

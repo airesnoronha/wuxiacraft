@@ -8,7 +8,7 @@ public class ProgressMessage implements IMessage {
 	public int op;
 	public float amount;
 
-	public ProgressMessage () {
+	public ProgressMessage() {
 		this.op = 0;
 		this.amount = 0;
 	}

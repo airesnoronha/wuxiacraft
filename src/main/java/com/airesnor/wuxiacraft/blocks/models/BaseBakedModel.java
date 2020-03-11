@@ -1,15 +1,16 @@
 package com.airesnor.wuxiacraft.blocks.models;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.*;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.model.TRSRTransformation;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class BaseBakedModel implements IBakedModel {
 				aux.setScale(0.685f);
 				mat.mul(aux);
 				aux.setIdentity();
-				aux.rotX(3.1415f*30f/180f);
+				aux.rotX(3.1415f * 30f / 180f);
 				mat.mul(aux);
 				aux.setIdentity();
 				aux.rotY(3.1415f);
@@ -44,13 +45,13 @@ public class BaseBakedModel implements IBakedModel {
 				break;
 			case FIRST_PERSON_LEFT_HAND:
 			case FIRST_PERSON_RIGHT_HAND:
-				mat.setTranslation(new Vector3f(0f,0f,-1f));
+				mat.setTranslation(new Vector3f(0f, 0f, -1f));
 				break;
 			case THIRD_PERSON_LEFT_HAND:
 			case THIRD_PERSON_RIGHT_HAND:
-				aux.rotX(3.1415f/2f);
+				aux.rotX(3.1415f / 2f);
 				mat.mul(aux);
-				mat.setTranslation(new Vector3f(0f,0.2f,-0.29f));
+				mat.setTranslation(new Vector3f(0f, 0.2f, -0.29f));
 				break;
 		}
 		return Pair.of(this, mat);

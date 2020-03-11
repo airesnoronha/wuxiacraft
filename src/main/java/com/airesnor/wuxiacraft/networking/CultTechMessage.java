@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.networking;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.techniques.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -16,7 +15,7 @@ public class CultTechMessage implements IMessage {
 		this.cultTech = cultTech;
 	}
 
-	public CultTechMessage () {
+	public CultTechMessage() {
 		this.cultTech = new CultTech();
 	}
 
@@ -24,19 +23,19 @@ public class CultTechMessage implements IMessage {
 	public void fromBytes(ByteBuf buf) {
 		int size = buf.readInt();
 		List<String> names = new ArrayList<>();
-		float progresses[] = new float[size];
-		for(int i = 0; i < size; i++) {
+		float[] progresses = new float[size];
+		for (int i = 0; i < size; i++) {
 			int length = buf.readInt();
-			byte bytes[] = new byte[length];
+			byte[] bytes = new byte[length];
 			buf.readBytes(bytes, 0, length);
 			names.add(new String(bytes));
 			progresses[i] = buf.readFloat();
 		}
 		int i = 0;
-		for(String name : names) {
+		for (String name : names) {
 			Technique t = Techniques.getTechniqueByUName(name);
-			if(t != null) {
-				cultTech.addTechnique(t,progresses[i]);
+			if (t != null) {
+				cultTech.addTechnique(t, progresses[i]);
 				i++;
 			}
 		}
@@ -45,7 +44,7 @@ public class CultTechMessage implements IMessage {
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(this.cultTech.getKnownTechniques().size());
-		for(KnownTechnique t : this.cultTech.getKnownTechniques()) {
+		for (KnownTechnique t : this.cultTech.getKnownTechniques()) {
 			buf.writeInt(t.getTechnique().getUName().length());
 			buf.writeBytes(t.getTechnique().getUName().getBytes());
 			buf.writeFloat(t.getProgress());

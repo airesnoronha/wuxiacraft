@@ -14,7 +14,7 @@ public class ItemSkillPill extends ItemBase {
 
 	private ISkillAction action;
 
-	public ItemSkillPill (String name) {
+	public ItemSkillPill(String name) {
 		super(name);
 		this.action = null;
 	}
@@ -26,9 +26,9 @@ public class ItemSkillPill extends ItemBase {
 
 	@Override
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
-		if(entityLiving instanceof EntityPlayer) {
-			if(this.action != null) {
-				if(this.action.activate((EntityPlayer) entityLiving))
+		if (entityLiving instanceof EntityPlayer) {
+			if (this.action != null) {
+				if (this.action.activate((EntityPlayer) entityLiving))
 					stack.shrink(1);
 			}
 		}
@@ -45,8 +45,7 @@ public class ItemSkillPill extends ItemBase {
 		return 15;
 	}
 
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
-	{
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		playerIn.setActiveHand(handIn);
 		return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
 	}

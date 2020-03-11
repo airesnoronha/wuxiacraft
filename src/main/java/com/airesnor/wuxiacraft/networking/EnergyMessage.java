@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.networking;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 

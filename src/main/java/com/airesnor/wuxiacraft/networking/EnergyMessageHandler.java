@@ -11,8 +11,8 @@ import net.minecraftforge.fml.relauncher.Side;
 public class EnergyMessageHandler implements IMessageHandler {
 	@Override
 	public IMessage onMessage(IMessage message, MessageContext ctx) {
-		if(ctx.side == Side.SERVER) {
-			EnergyMessage msg = (EnergyMessage)message;
+		if (ctx.side == Side.SERVER) {
+			EnergyMessage msg = (EnergyMessage) message;
 			EntityPlayerMP player = ctx.getServerHandler().player;
 			player.getServerWorld().addScheduledTask(() -> {
 				ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);

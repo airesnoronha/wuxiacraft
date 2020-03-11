@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -15,19 +14,17 @@ public class KnownTechnique {
 	}
 
 	public TechniquesModifiers onUpdate(EntityPlayer player, ICultivation cultivation) {
-		if(this.progress >= this.technique.getTier().perfectionProgress + this.technique.getTier().greatProgress + this.technique.getTier().smallProgress) {
+		if (this.progress >= this.technique.getTier().perfectionProgress + this.technique.getTier().greatProgress + this.technique.getTier().smallProgress) {
 			//WuxiaCraft.logger.info("Calling {} perfection update ", technique.getName());
 			return this.technique.updatePerfection(player, cultivation);
-		}
-		else if(this.progress >= this.technique.getTier().greatProgress + this.technique.getTier().smallProgress) {
+		} else if (this.progress >= this.technique.getTier().greatProgress + this.technique.getTier().smallProgress) {
 			//WuxiaCraft.logger.info("Calling {} great update ", technique.getName());
 			return this.technique.updateGreatSuccess(player, cultivation);
-		}
-		else if(this.progress >= this.technique.getTier().smallProgress) {
+		} else if (this.progress >= this.technique.getTier().smallProgress) {
 			//WuxiaCraft.logger.info("Calling {} small update ", technique.getName());
 			return this.technique.updateSmallSuccess(player, cultivation);
 		}
-		return new TechniquesModifiers(0f,0f,0f,0f,0f);
+		return new TechniquesModifiers(0f, 0f, 0f, 0f, 0f);
 	}
 
 	public void progress(float amount) {

@@ -5,23 +5,23 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class CastSkillMessage implements IMessage {
 
-    public boolean casting;
+	public boolean casting;
 
-    public CastSkillMessage() {
-        this.casting = false;
-    }
+	public CastSkillMessage() {
+		this.casting = false;
+	}
 
-    public CastSkillMessage(boolean casting) {
-        this.casting = casting;
-    }
+	public CastSkillMessage(boolean casting) {
+		this.casting = casting;
+	}
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        this.casting = buf.readBoolean();
-    }
+	@Override
+	public void fromBytes(ByteBuf buf) {
+		this.casting = buf.readBoolean();
+	}
 
-    @Override
-    public void toBytes(ByteBuf buf) {
-        buf.writeBoolean(this.casting);
-    }
+	@Override
+	public void toBytes(ByteBuf buf) {
+		buf.writeBoolean(this.casting);
+	}
 }

@@ -11,11 +11,11 @@ import net.minecraftforge.fml.relauncher.Side;
 public class RemoveTechniqueMessageHandler implements IMessageHandler {
 	@Override
 	public IMessage onMessage(IMessage message, MessageContext ctx) {
-		if(ctx.side == Side.SERVER) {
-			ctx.getServerHandler().player.getServerWorld().addScheduledTask(()->{
+		if (ctx.side == Side.SERVER) {
+			ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
 				EntityPlayerMP player = ctx.getServerHandler().player;
 				ICultTech cultTech = player.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
-				cultTech.remTechnique(((RemoveTechniqueMessage)message).toBeRemoved);
+				cultTech.remTechnique(((RemoveTechniqueMessage) message).toBeRemoved);
 			});
 		}
 		return null;

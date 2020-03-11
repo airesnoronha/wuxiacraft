@@ -11,11 +11,11 @@ import net.minecraftforge.fml.relauncher.Side;
 public class RequestCultGuiMessageHandler implements IMessageHandler {
 	@Override
 	public IMessage onMessage(IMessage message, MessageContext ctx) {
-		if(ctx.side == Side.SERVER) {
-			if(((RequestCultGuiMessage)message).requested) {
-				ctx.getServerHandler().player.getServerWorld().addScheduledTask(()-> {
+		if (ctx.side == Side.SERVER) {
+			if (((RequestCultGuiMessage) message).requested) {
+				ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
 					BlockPos pos = ctx.getServerHandler().player.getPosition();
-					ctx.getServerHandler().player.openGui(WuxiaCraft.instance, GuiHandler.CULTIVATION_GUI_ID,ctx.getServerHandler().player.world,pos.getX(), pos.getY(), pos.getZ());
+					ctx.getServerHandler().player.openGui(WuxiaCraft.instance, GuiHandler.CULTIVATION_GUI_ID, ctx.getServerHandler().player.world, pos.getX(), pos.getY(), pos.getZ());
 				});
 			}
 		}

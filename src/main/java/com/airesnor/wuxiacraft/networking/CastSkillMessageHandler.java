@@ -9,22 +9,22 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class CastSkillMessageHandler implements IMessageHandler {
 
-    @Override
-    public IMessage onMessage(IMessage message, MessageContext ctx) {
-        if(ctx.side == Side.SERVER) {
-            if(message instanceof CastSkillMessage) {
-                ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
-                    ISkillCap skillCap = ctx.getServerHandler().player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
-                    CastSkillMessage csm = (CastSkillMessage)message;
-                    if(csm.casting)
-                        skillCap.setCasting(true);
-                    else {
-                        skillCap.setDoneCasting(true);
-                        skillCap.setCasting(false);
-                    }
-                });
-            }
-        }
-        return null;
-    }
+	@Override
+	public IMessage onMessage(IMessage message, MessageContext ctx) {
+		if (ctx.side == Side.SERVER) {
+			if (message instanceof CastSkillMessage) {
+				ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
+					ISkillCap skillCap = ctx.getServerHandler().player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+					CastSkillMessage csm = (CastSkillMessage) message;
+					if (csm.casting)
+						skillCap.setCasting(true);
+					else {
+						skillCap.setDoneCasting(true);
+						skillCap.setCasting(false);
+					}
+				});
+			}
+		}
+		return null;
+	}
 }

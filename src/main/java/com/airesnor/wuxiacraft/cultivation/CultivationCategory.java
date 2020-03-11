@@ -15,6 +15,7 @@ public enum CultivationCategory {
 
 	/**
 	 * Creates a new Level Category
+	 *
 	 * @param name the name for displaying
 	 */
 	CultivationCategory(String name) {
@@ -23,6 +24,7 @@ public enum CultivationCategory {
 
 	/**
 	 * Getter for the category name
+	 *
 	 * @return the name of this category
 	 */
 	public String getName() {

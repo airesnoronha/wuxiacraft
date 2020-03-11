@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.networking;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.capabilities.CultTechProvider;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
@@ -15,7 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class CultTechMessageHandler implements IMessageHandler {
 	@Override
 	public IMessage onMessage(IMessage message, MessageContext ctx) {
-		if(ctx.side == Side.CLIENT){
+		if (ctx.side == Side.CLIENT) {
 			handleMessageClient(message, ctx);
 		}
 		return null;
@@ -23,13 +22,13 @@ public class CultTechMessageHandler implements IMessageHandler {
 
 	@SideOnly(Side.CLIENT)
 	private IMessage handleMessageClient(IMessage message, MessageContext ctx) {
-		Minecraft.getMinecraft().addScheduledTask(()->{
+		Minecraft.getMinecraft().addScheduledTask(() -> {
 			EntityPlayer player = Minecraft.getMinecraft().player;
-			ICultTech cultTech = player.getCapability(CultTechProvider.CULT_TECH_CAPABILITY,null);
-			if(cultTech!=null) {
-				CultTechMessage ctmessage = (CultTechMessage)message;
+			ICultTech cultTech = player.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
+			if (cultTech != null) {
+				CultTechMessage ctmessage = (CultTechMessage) message;
 				cultTech.getKnownTechniques().clear();
-				for(KnownTechnique t : ctmessage.cultTech.getKnownTechniques()) {
+				for (KnownTechnique t : ctmessage.cultTech.getKnownTechniques()) {
 					cultTech.addTechnique(t.getTechnique(), t.getProgress());
 				}
 			}

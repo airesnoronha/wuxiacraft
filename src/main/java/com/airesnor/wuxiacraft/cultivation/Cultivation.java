@@ -1,7 +1,5 @@
 package com.airesnor.wuxiacraft.cultivation;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
-
 public class Cultivation implements ICultivation {
 	private float progress;
 	private CultivationLevel level;
@@ -25,11 +23,11 @@ public class Cultivation implements ICultivation {
 	public boolean addProgress(float amount) {
 		boolean leveled = false;
 		this.progress += amount;
-		while(this.progress >= this.level.getProgressBySubLevel(this.subLevel)) {
+		while (this.progress >= this.level.getProgressBySubLevel(this.subLevel)) {
 			leveled = true;
 			this.progress -= this.level.getProgressBySubLevel(this.subLevel);
 			this.subLevel++;
-			if(this.subLevel >= this.level.subLevels) {
+			if (this.subLevel >= this.level.subLevels) {
 				this.subLevel = 0;
 				this.level = this.level.getNextLevel();
 			}
@@ -89,12 +87,12 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public void setProgress(float amount) {
-		this.progress = Math.min(Math.max(0,amount), this.level.getProgressBySubLevel(this.subLevel));
+		this.progress = Math.min(Math.max(0, amount), this.level.getProgressBySubLevel(this.subLevel));
 	}
 
 	@Override
 	public void setSpeedHandicap(int handicap) {
-		this.handicap = Math.min(100,Math.max(0,handicap));
+		this.handicap = Math.min(100, Math.max(0, handicap));
 	}
 
 	@Override
@@ -124,7 +122,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public void lessenPelletCooldown() {
-		this.pelletCooldown = Math.max(this.pelletCooldown -1, 0);
+		this.pelletCooldown = Math.max(this.pelletCooldown - 1, 0);
 	}
 
 	@Override

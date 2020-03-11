@@ -40,7 +40,7 @@ public class WuxiaCraftConfigFactory implements IModGuiFactory {
 	public static class WuxiaCraftConfigGui extends GuiConfig {
 
 		public WuxiaCraftConfigGui(GuiScreen parentScreen) {
-			super(parentScreen, getConfigElement(),WuxiaCraft.MODID, false, false, I18n.format("gui.config.main_title"));
+			super(parentScreen, getConfigElement(), WuxiaCraft.MODID, false, false, I18n.format("gui.config.main_title"));
 		}
 
 		private static List<IConfigElement> getConfigElement() {

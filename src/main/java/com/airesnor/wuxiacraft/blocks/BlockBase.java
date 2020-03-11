@@ -10,7 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 
 public class BlockBase extends Block implements IHasModel {
-	public BlockBase(String name,Material materialIn) {
+	public BlockBase(String name, Material materialIn) {
 		super(materialIn);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);

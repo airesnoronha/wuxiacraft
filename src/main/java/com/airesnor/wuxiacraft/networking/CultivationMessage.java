@@ -20,7 +20,7 @@ public class CultivationMessage implements IMessage {
 		this.pelletCooldown = pelletCooldown;
 	}
 
-	public CultivationMessage () {
+	public CultivationMessage() {
 		this.messageLevel = CultivationLevel.BODY_REFINEMENT;
 		this.messageSubLevel = 0;
 		this.messageProgress = 0;
@@ -36,9 +36,9 @@ public class CultivationMessage implements IMessage {
 		this.pelletCooldown = buf.readInt();
 		int length = buf.readInt();
 		byte[] bytes = new byte[30];
-		buf.readBytes(bytes, 0,length);
+		buf.readBytes(bytes, 0, length);
 		bytes[length] = '\0';
-		String cultlevelname = new String(bytes,0, length);
+		String cultlevelname = new String(bytes, 0, length);
 		this.messageLevel = CultivationLevel.valueOf(cultlevelname);
 	}
 

@@ -18,7 +18,7 @@ public class GuiHandler implements IGuiHandler {
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		BlockPos pos = new BlockPos(x, y, z);
-		switch(ID) {
+		switch (ID) {
 			case CULTIVATION_GUI_ID:
 			case SKILLS_GUI_ID:
 				return null;

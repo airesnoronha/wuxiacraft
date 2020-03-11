@@ -20,8 +20,8 @@ public class RemoveTechniqueMessage implements IMessage {
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		int length = buf.readInt();
-		if(length > 0) {
-			byte [] bytes = new byte[length];
+		if (length > 0) {
+			byte[] bytes = new byte[length];
 			buf.readBytes(bytes, 0, length);
 			String name = new String(bytes);
 			this.toBeRemoved = Techniques.getTechniqueByUName(name);
@@ -30,7 +30,7 @@ public class RemoveTechniqueMessage implements IMessage {
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		if(this.toBeRemoved != null) {
+		if (this.toBeRemoved != null) {
 			buf.writeInt(this.toBeRemoved.getUName().length());
 			buf.writeBytes(this.toBeRemoved.getUName().getBytes());
 		} else {

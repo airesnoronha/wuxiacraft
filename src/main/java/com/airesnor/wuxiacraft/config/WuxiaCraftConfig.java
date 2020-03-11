@@ -24,7 +24,7 @@ public class WuxiaCraftConfig {
 
 	public static boolean disableStepAssist;
 
-	public static void preInit(){
+	public static void preInit() {
 		File configFile = new File(Loader.instance().getConfigDir(), "WuxiaCraft.cfg");
 		config = new Configuration(configFile);
 		syncFromFiles();
@@ -39,7 +39,7 @@ public class WuxiaCraftConfig {
 	}
 
 	public static void syncFromFiles() {
-		syncConfig(true,true);
+		syncConfig(true, true);
 
 	}
 
@@ -52,7 +52,7 @@ public class WuxiaCraftConfig {
 	}
 
 	private static void syncConfig(boolean loadFromConfigFile, boolean readFieldsFromConfig) {
-		if(loadFromConfigFile)
+		if (loadFromConfigFile)
 			config.load();
 
 		Property propHandicap = config.get(CATEGORY_GAMEPLAY, "speed_handicap", 100);
@@ -69,9 +69,9 @@ public class WuxiaCraftConfig {
 		List<String> propOrder = new ArrayList<>();
 		propOrder.add(propHandicap.getName());
 		propOrder.add(propStepAssist.getName());
-		config.setCategoryPropertyOrder(CATEGORY_GAMEPLAY,propOrder);
+		config.setCategoryPropertyOrder(CATEGORY_GAMEPLAY, propOrder);
 
-		if(readFieldsFromConfig) {
+		if (readFieldsFromConfig) {
 			speedHandicap = propHandicap.getInt();
 			disableStepAssist = propStepAssist.getBoolean();
 		}
@@ -79,14 +79,14 @@ public class WuxiaCraftConfig {
 		propHandicap.set(speedHandicap);
 		propStepAssist.set(disableStepAssist);
 
-		if(config.hasChanged())
+		if (config.hasChanged())
 			config.save();
 	}
 
 	public static class ConfigEventHandler {
 		@SubscribeEvent
-		public void onEvent(ConfigChangedEvent.OnConfigChangedEvent event ) {
-			if(event.getModID().equals(WuxiaCraft.MODID)) {
+		public void onEvent(ConfigChangedEvent.OnConfigChangedEvent event) {
+			if (event.getModID().equals(WuxiaCraft.MODID)) {
 				syncFromGui();
 				WuxiaCraft.logger.info("fired event changed");
 				NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(speedHandicap));

@@ -1,7 +1,5 @@
 package com.airesnor.wuxiacraft.items;
 
-import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
-import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
@@ -21,10 +19,10 @@ public class ItemHealPill extends ItemBase {
 
 	@Override
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
-		if(entityLiving instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer)entityLiving;
+		if (entityLiving instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) entityLiving;
 			stack.shrink(player.isCreative() ? 0 : 1);
-			if(stack.isEmpty())
+			if (stack.isEmpty())
 				stack = ItemStack.EMPTY;
 			player.heal(this.amount);
 		}
@@ -41,8 +39,7 @@ public class ItemHealPill extends ItemBase {
 		return 15;
 	}
 
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
-	{
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		playerIn.setActiveHand(handIn);
 		return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
 	}

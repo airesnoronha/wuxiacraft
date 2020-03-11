@@ -16,8 +16,8 @@ public class CultivationStorage implements Capability.IStorage<ICultivation> {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setString("level", instance.getCurrentLevel().name());
 		tag.setInteger("subLevel", instance.getCurrentSubLevel());
-		tag.setInteger("progress", (int)instance.getCurrentProgress());
-		tag.setInteger("energy", (int)instance.getEnergy());
+		tag.setInteger("progress", (int) instance.getCurrentProgress());
+		tag.setInteger("energy", (int) instance.getEnergy());
 		tag.setInteger("pelletCD", instance.getPelletCooldown());
 		return tag;
 	}

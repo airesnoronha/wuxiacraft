@@ -1,8 +1,6 @@
 package com.airesnor.wuxiacraft.proxy;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.blocks.Blocks;
-import com.airesnor.wuxiacraft.blocks.Cauldron;
 import com.airesnor.wuxiacraft.capabilities.*;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
@@ -14,28 +12,31 @@ import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.handlers.GuiHandler;
-import com.airesnor.wuxiacraft.handlers.RendererHandler;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.world.WorldGen;
-import jdk.nashorn.internal.ir.Block;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 public class CommonProxy {
 
 	/**
 	 * Does in the server so this method is empty because server doesn't need textures i guess
+	 *
 	 * @param item
 	 * @param meta
 	 * @param id
 	 */
-	public void registerItemRenderer(Item item, int meta, String id) { }
+	public void registerItemRenderer(Item item, int meta, String id) {
+	}
 
 	public void init() {
 
@@ -58,7 +59,7 @@ public class CommonProxy {
 		NetworkWrapper.INSTANCE.registerMessage(new SpeedHandicapMessageHandler(), SpeedHandicapMessage.class, 167004, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new SkillCapMessageHandler(), SkillCapMessage.class, 167010, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new CultTechMessageHandler(), CultTechMessage.class, 167007, Side.CLIENT);
-		NetworkWrapper.INSTANCE.registerMessage(new SpawnParticleMessageHandler(), SpawnParticleMessage.class, 167012, Side.CLIENT);;
+		NetworkWrapper.INSTANCE.registerMessage(new SpawnParticleMessageHandler(), SpawnParticleMessage.class, 167012, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new RespondCultivationLevelMessageHandler(), RespondCultivationLevelMessage.class, 167015, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new AskCultivationLevelMessageHandler(), AskCultivationLevelMessage.class, 167014, Side.CLIENT);
 
@@ -75,9 +76,26 @@ public class CommonProxy {
 	}
 
 	public void preInit() {
+		try {
+			Field mf = Field.class.getDeclaredField("modifiers");
+			mf.setAccessible(true);
+
+			Field f = SharedMonsterAttributes.class.getDeclaredField("MAX_HEALTH");
+			f.setAccessible(true);
+
+			mf.set(f, f.getModifiers() & ~Modifier.FINAL);
+			f.set(null, (new RangedAttribute(null, "generic.maxHealth", 20.0D, Float.MIN_VALUE, 10000000.0D)).setDescription("Max Health").setShouldWatch(true));
+
+			mf.set(f, f.getModifiers() & Modifier.FINAL);
+
+			WuxiaCraft.logger.info("Overriding max health succeeded.");
+		} catch (Exception e) {
+			WuxiaCraft.logger.error("Error overriding max health: " + e.getMessage());
+		}
 		WuxiaCraftConfig.preInit();
 		GameRegistry.registerWorldGenerator(new WorldGen(), 3);
 	}
 
-	public void registerScrollModel(Item item, int meta, String id) { }
+	public void registerScrollModel(Item item, int meta, String id) {
+	}
 }

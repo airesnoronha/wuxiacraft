@@ -3,7 +3,6 @@ package com.airesnor.wuxiacraft.items;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,13 +31,13 @@ public class ItemProgressPill extends ItemBase {
 
 	@Override
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
-		if(entityLiving instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer)entityLiving;
+		if (entityLiving instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) entityLiving;
 			ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 			assert cultivation != null;
-			if(cultivation.getPelletCooldown() == 0) {
+			if (cultivation.getPelletCooldown() == 0) {
 				stack.shrink(player.isCreative() ? 0 : 1);
-				if(stack.isEmpty())
+				if (stack.isEmpty())
 					stack = ItemStack.EMPTY;
 				cultivation.setPelletCooldown(cooldown);
 				EventHandler.playerAddProgress(player, cultivation, this.amount);
@@ -60,7 +59,7 @@ public class ItemProgressPill extends ItemBase {
 	@Override
 	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
 		ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-		if(cultivation.getPelletCooldown() != 0) {
+		if (cultivation.getPelletCooldown() != 0) {
 			return EnumActionResult.FAIL;
 		}
 		return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
@@ -73,6 +72,6 @@ public class ItemProgressPill extends ItemBase {
 
 	@Override
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-		tooltip.add(String.format("Cooldown %ds",this.cooldown/20));
+		tooltip.add(String.format("Cooldown %ds", this.cooldown / 20));
 	}
 }

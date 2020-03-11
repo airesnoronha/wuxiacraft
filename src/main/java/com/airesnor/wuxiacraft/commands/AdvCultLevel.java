@@ -8,7 +8,6 @@ import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -40,26 +39,23 @@ public class AdvCultLevel extends CommandBase {
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		if(sender instanceof EntityPlayerMP) {
-			EntityPlayerMP player =  getCommandSenderAsPlayer(sender);
-			if(!player.world.isRemote)
-			{
-				if(args.length == 0) {
+		if (sender instanceof EntityPlayerMP) {
+			EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+			if (!player.world.isRemote) {
+				if (args.length == 0) {
 					ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-					EventHandler.playerAddProgress(player, cultivation, cultivation. getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
-					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int)cultivation.getCurrentProgress(), (int)cultivation.getEnergy(), cultivation.getPelletCooldown()), (EntityPlayerMP) player);
+					EventHandler.playerAddProgress(player, cultivation, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
+					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPelletCooldown()), player);
 					EventHandler.applyModifiers(player, cultivation);
-				}
-				else if(args.length == 1) {
+				} else if (args.length == 1) {
 					int levels = Integer.parseInt(args[0], 10);
 					ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-					for(int i = 0; i < levels; i ++) {
-						EventHandler.playerAddProgress(player, cultivation, cultivation. getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
+					for (int i = 0; i < levels; i++) {
+						EventHandler.playerAddProgress(player, cultivation, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
 					}
-					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int)cultivation.getCurrentProgress(), (int)cultivation.getEnergy(), cultivation.getPelletCooldown()), (EntityPlayerMP) player);
+					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPelletCooldown()), player);
 					EventHandler.applyModifiers(player, cultivation);
-				}
-				else {
+				} else {
 					TextComponentString text = new TextComponentString("Invalid arguments, use /advcult levels");
 					text.getStyle().setColor(TextFormatting.RED);
 					sender.sendMessage(text);

@@ -1,12 +1,10 @@
 package com.airesnor.wuxiacraft.entities.tileentity;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.alchemy.Recipe;
 import com.airesnor.wuxiacraft.alchemy.Recipes;
 import com.airesnor.wuxiacraft.networking.SpawnParticleMessage;
 import com.airesnor.wuxiacraft.utils.MathUtils;
 import com.airesnor.wuxiacraft.utils.SkillUtils;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -135,10 +133,10 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 		burningTime = compound.getInteger("burning_time");
 		int inputsSize = compound.getInteger("inputs_size");
 		this.recipeInputs.clear();
-		for(int i = 0; i < inputsSize; i++) {
-			float temp = compound.getFloat("temp-"+i);
-			Item item = new ItemStack(compound.getCompoundTag("item-"+i)).getItem();
-			this.recipeInputs.add(Pair.of(temp,item));
+		for (int i = 0; i < inputsSize; i++) {
+			float temp = compound.getFloat("temp-" + i);
+			Item item = new ItemStack(compound.getCompoundTag("item-" + i)).getItem();
+			this.recipeInputs.add(Pair.of(temp, item));
 		}
 	}
 
@@ -156,11 +154,11 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 		compound.setInteger("cook_time", cookTime);
 		compound.setInteger("burning_time", burningTime);
 		compound.setInteger("inputs_size", this.recipeInputs.size());
-		for(int i = 0; i < this.recipeInputs.size(); i++) {
-			compound.setFloat("temp-"+i, this.recipeInputs.get(i).getLeft());
+		for (int i = 0; i < this.recipeInputs.size(); i++) {
+			compound.setFloat("temp-" + i, this.recipeInputs.get(i).getLeft());
 			NBTTagCompound tag = new NBTTagCompound();
-			new ItemStack(this.recipeInputs.get(i).getRight(),1).writeToNBT(tag);
-			compound.setTag("item-"+i, tag);
+			new ItemStack(this.recipeInputs.get(i).getRight(), 1).writeToNBT(tag);
+			compound.setTag("item-" + i, tag);
 		}
 		return compound;
 	}
@@ -186,7 +184,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 	@Override
 	public void update() {
 		if (isLit()) {
-			int light = Math.min(15, Math.max(world.getLight(getPos()),(int) this.burnSpeed));
+			int light = Math.min(15, Math.max(world.getLight(getPos()), (int) this.burnSpeed));
 			world.setLightFor(EnumSkyBlock.BLOCK, getPos(), light);
 			this.timeLit -= this.burnSpeed;
 			this.temperature += this.burnSpeed;
@@ -213,24 +211,23 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 
 		this.activeRecipe = null;
 
-		if(!this.recipeInputs.isEmpty()) {
+		if (!this.recipeInputs.isEmpty()) {
 			this.setHasWater(true);
 			List<Recipe> candidates = Recipes.getRecipeCandidatesByInput(recipeInputs);
 			if (!candidates.isEmpty()) {
 				Recipe definitive = Recipes.getDefinitiveRecipe(recipeInputs, candidates);
 				if (definitive != null) {
 					this.activeRecipe = definitive;
-					if(MathUtils.between(this.temperature, definitive.getCookTemperatureMin(), definitive.getCookTemperatureMax()))
-					{
+					if (MathUtils.between(this.temperature, definitive.getCookTemperatureMin(), definitive.getCookTemperatureMax())) {
 						this.cookTime++;
 						this.cauldronState = EnumCauldronState.COOKING;
 						if (this.cookTime >= definitive.getCookTime()) {
 							emptyCauldron();
 							spawnRecipeOutput(definitive);
 						}
-					} else if(this.temperature < definitive.getCookTemperatureMin()) {
+					} else if (this.temperature < definitive.getCookTemperatureMin()) {
 						this.cauldronState = EnumCauldronState.COOLING;
-					} else if(this.temperature > definitive.getCookTemperatureMax()) {
+					} else if (this.temperature > definitive.getCookTemperatureMax()) {
 						this.cauldronState = EnumCauldronState.BURNING;
 						this.burningTime++;
 					}
@@ -239,7 +236,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 				}
 			} else {
 				this.cauldronState = EnumCauldronState.WRONG_RECIPE;
-				if(this.temperature > 0.4f*maxTemperature) {
+				if (this.temperature > 0.4f * maxTemperature) {
 					this.burningTime++;
 				}
 			}
@@ -247,7 +244,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 			this.setHasWater(false);
 			this.cauldronState = EnumCauldronState.EMPTY;
 		}
-		if(this.burningTime > 20*15) {
+		if (this.burningTime > 20 * 15) {
 			this.explode();
 		}
 	}
@@ -303,12 +300,12 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 		return this.cauldronState;
 	}
 
-	public boolean isAcceptingItems () {
+	public boolean isAcceptingItems() {
 		return this.cauldronState != EnumCauldronState.WRONG_RECIPE;
 	}
 
 	private void spawnRecipeOutput(Recipe recipe) {
-		if(!world.isRemote) {
+		if (!world.isRemote) {
 			ItemStack output = new ItemStack(recipe.getOutput(), recipe.getYieldResult());
 			world.spawnEntity(new EntityItem(world, getPos().getX() + 0.5f, getPos().getY() + 2f, getPos().getZ() + 0.5f, output));
 		}
@@ -318,20 +315,20 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 		return maxTimeLit;
 	}
 
-	private void explode () {
-		if(getWorld() instanceof WorldServer) {
+	private void explode() {
+		if (getWorld() instanceof WorldServer) {
 			getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 1.5f, getPos().getZ() + 0.5, 3f, true);
 		}
 		this.emptyCauldron();
 	}
 
 	public enum EnumCauldronState {
-		HAS_RECIPE(0.9f,0.6f,0.2f),
-		BURNING(1f,0.3f,0.3f),
-		COOKING(1f,1f,0f),
-		COOLING(0.35f,0.8f,0.25f),
-		WRONG_RECIPE(1f,0.15f,0.15f),
-		EMPTY(1f,1f,1f);
+		HAS_RECIPE(0.9f, 0.6f, 0.2f),
+		BURNING(1f, 0.3f, 0.3f),
+		COOKING(1f, 1f, 0f),
+		COOLING(0.35f, 0.8f, 0.25f),
+		WRONG_RECIPE(1f, 0.15f, 0.15f),
+		EMPTY(1f, 1f, 1f);
 
 		private Color color;
 

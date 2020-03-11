@@ -38,16 +38,16 @@ public class ResetCultCommand extends CommandBase {
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		if(sender instanceof EntityPlayerMP) {
+		if (sender instanceof EntityPlayerMP) {
 			EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 			if (!player.world.isRemote) {
-				if(args.length == 0) {
+				if (args.length == 0) {
 					ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 					cultivation.setProgress(0);
 					cultivation.setEnergy(0);
 					cultivation.setCurrentSubLevel(0);
 					cultivation.setCurrentLevel(CultivationLevel.BODY_REFINEMENT);
-					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int)cultivation.getCurrentProgress(), (int)cultivation.getEnergy(), cultivation.getPelletCooldown()), (EntityPlayerMP) player);
+					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPelletCooldown()), player);
 					EventHandler.applyModifiers(player, cultivation);
 				}
 			}

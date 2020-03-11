@@ -15,7 +15,7 @@ public class CapabilitiesHandler {
 
 	@SubscribeEvent
 	public void attachCapability(AttachCapabilitiesEvent<Entity> event) {
-		if(!(event.getObject() instanceof EntityPlayer)) return;
+		if (!(event.getObject() instanceof EntityPlayer)) return;
 
 		event.addCapability(CULTIVATION_CAP, new CultivationProvider());
 		event.addCapability(CULT_TECH_CAP, new CultTechProvider());

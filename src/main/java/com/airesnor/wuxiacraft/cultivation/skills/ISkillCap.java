@@ -7,48 +7,48 @@ import java.util.Stack;
 
 public interface ISkillCap {
 
-    List<Skill> getKnownSkills();
+	List<Skill> getKnownSkills();
 
-    void addSkill(Skill skill);
+	void addSkill(Skill skill);
 
-    void removeSkill(Skill skill);
+	void removeSkill(Skill skill);
 
-    void addScheduledBlockBreaks(BlockPos pos);
+	void addScheduledBlockBreaks(BlockPos pos);
 
-    void addAllScheduledBlockBreaks(Stack<BlockPos> pos);
+	void addAllScheduledBlockBreaks(Stack<BlockPos> pos);
 
-    BlockPos popScheduledBlockBreaks();
+	BlockPos popScheduledBlockBreaks();
 
-    boolean isScheduledEmpty();
+	boolean isScheduledEmpty();
 
-    float getCooldown();
+	float getCooldown();
 
-    void stepCooldown(float step);
+	void stepCooldown(float step);
 
-    void resetCooldown();
+	void resetCooldown();
 
-    float getCastProgress();
+	float getCastProgress();
 
-    void stepCastProgress(float step);
+	void stepCastProgress(float step);
 
-    void resetCastProgress();
+	void resetCastProgress();
 
-    List<Skill> getSelectedSkills();
+	List<Skill> getSelectedSkills();
 
-    void addSelectedSkill(Skill skill);
+	void addSelectedSkill(Skill skill);
 
-    void remSelectedSkill(Skill skill);
+	void remSelectedSkill(Skill skill);
 
-    int getActiveSkill();
+	int getActiveSkill();
 
-    void setActiveSkill(int i);
+	void setActiveSkill(int i);
 
-    void setCasting(boolean casting);
+	void setCasting(boolean casting);
 
-    boolean isCasting();
+	boolean isCasting();
 
-    void setDoneCasting(boolean doneCasting);
+	void setDoneCasting(boolean doneCasting);
 
-    boolean isDoneCasting();
+	boolean isDoneCasting();
 
 }

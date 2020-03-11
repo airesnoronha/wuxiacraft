@@ -12,103 +12,98 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
-import java.nio.ByteBuffer;
-import java.util.Random;
-
 public class CauldronTESR extends TileEntitySpecialRenderer<CauldronTileEntity> {
 
-    @Override
-    public void render(CauldronTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-        GlStateManager.pushAttrib();
-        GlStateManager.pushMatrix();
+	@Override
+	public void render(CauldronTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+		GlStateManager.pushAttrib();
+		GlStateManager.pushMatrix();
 
-        GlStateManager.translate(x,y,z);
-        //GlStateManager.disableRescaleNormal();
+		GlStateManager.translate(x, y, z);
+		//GlStateManager.disableRescaleNormal();
 
-        if(te.isHasFirewood()) {
-            renderFirewood(te);
-        }
+		if (te.isHasFirewood()) {
+			renderFirewood(te);
+		}
 
-        if(te.isHasWater()) {
-            renderWater(te);
-        }
+		if (te.isHasWater()) {
+			renderWater(te);
+		}
 
-        GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
-    }
+		GlStateManager.popMatrix();
+		GlStateManager.popAttrib();
+	}
 
-    private void renderFirewood (CauldronTileEntity te) {
-        GlStateManager.pushMatrix();
+	private void renderFirewood(CauldronTileEntity te) {
+		GlStateManager.pushMatrix();
 
-        this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
-        if (Minecraft.isAmbientOcclusionEnabled()) {
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        } else {
-            GlStateManager.shadeModel(GL11.GL_FLAT);
-        }
-        GlStateManager.translate(-te.getPos().getX(), -te.getPos().getY(), -te.getPos().getZ());
+		if (Minecraft.isAmbientOcclusionEnabled()) {
+			GlStateManager.shadeModel(GL11.GL_SMOOTH);
+		} else {
+			GlStateManager.shadeModel(GL11.GL_FLAT);
+		}
+		GlStateManager.translate(-te.getPos().getX(), -te.getPos().getY(), -te.getPos().getZ());
 
-        World world = te.getWorld();
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder builder = tessellator.getBuffer();
-        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+		World world = te.getWorld();
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder builder = tessellator.getBuffer();
+		builder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
 
-        IBlockState state = world.getBlockState(te.getPos()).getBlock().getDefaultState().withProperty(Cauldron.CAULDRON, 1);
-        BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
-        IBakedModel model = dispatcher.getModelForState(state);
-        dispatcher.getBlockModelRenderer().renderModel(world, model, state, te.getPos(), builder, true);
-        tessellator.draw();
+		IBlockState state = world.getBlockState(te.getPos()).getBlock().getDefaultState().withProperty(Cauldron.CAULDRON, 1);
+		BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+		IBakedModel model = dispatcher.getModelForState(state);
+		dispatcher.getBlockModelRenderer().renderModel(world, model, state, te.getPos(), builder, true);
+		tessellator.draw();
 
-        GlStateManager.popMatrix();
-    }
+		GlStateManager.popMatrix();
+	}
 
-    private void renderWater (CauldronTileEntity te) {
-        GlStateManager.pushAttrib();
-        GlStateManager.pushMatrix();
+	private void renderWater(CauldronTileEntity te) {
+		GlStateManager.pushAttrib();
+		GlStateManager.pushMatrix();
 
-        this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
-        if (Minecraft.isAmbientOcclusionEnabled()) {
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        } else {
-            GlStateManager.shadeModel(GL11.GL_FLAT);
-        }
+		if (Minecraft.isAmbientOcclusionEnabled()) {
+			GlStateManager.shadeModel(GL11.GL_SMOOTH);
+		} else {
+			GlStateManager.shadeModel(GL11.GL_FLAT);
+		}
 
-        CauldronTileEntity.EnumCauldronState cauldronState = te.getCauldronState();
+		CauldronTileEntity.EnumCauldronState cauldronState = te.getCauldronState();
 
 
-        World world = te.getWorld();
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder builder = tessellator.getBuffer();
-        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_NORMAL);
-        GlStateManager.color(cauldronState.getColor().getRed()/255f, cauldronState.getColor().getGreen()/255f, cauldronState.getColor().getBlue()/255f, 1f);
+		World world = te.getWorld();
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder builder = tessellator.getBuffer();
+		builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_NORMAL);
+		GlStateManager.color(cauldronState.getColor().getRed() / 255f, cauldronState.getColor().getGreen() / 255f, cauldronState.getColor().getBlue() / 255f, 1f);
 
-        IBlockState state = world.getBlockState(te.getPos()).getBlock().getDefaultState().withProperty(Cauldron.CAULDRON, 2);
-        BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
-        IBakedModel model = dispatcher.getModelForState(state);
-        for(BakedQuad quad : model.getQuads(state, null, 0)) {
-            int [] vdata = new int [builder.getVertexFormat().getIntegerSize()*4];
-            int [] qdata = quad.getVertexData();
-            for(int i = 0; i < 4; i++) {
-                for (int j = 0; j < builder.getVertexFormat().getIntegerSize(); j++) {
-                    int k = j > 2 ? j + 1 : j;
-                    vdata[i*builder.getVertexFormat().getIntegerSize() + j] = qdata[i*quad.getFormat().getIntegerSize()+k];
-                }
-            }
-            builder.addVertexData(vdata);
-        }
+		IBlockState state = world.getBlockState(te.getPos()).getBlock().getDefaultState().withProperty(Cauldron.CAULDRON, 2);
+		BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+		IBakedModel model = dispatcher.getModelForState(state);
+		for (BakedQuad quad : model.getQuads(state, null, 0)) {
+			int[] vdata = new int[builder.getVertexFormat().getIntegerSize() * 4];
+			int[] qdata = quad.getVertexData();
+			for (int i = 0; i < 4; i++) {
+				for (int j = 0; j < builder.getVertexFormat().getIntegerSize(); j++) {
+					int k = j > 2 ? j + 1 : j;
+					vdata[i * builder.getVertexFormat().getIntegerSize() + j] = qdata[i * quad.getFormat().getIntegerSize() + k];
+				}
+			}
+			builder.addVertexData(vdata);
+		}
 
-        tessellator.draw();
+		tessellator.draw();
 
-        GlStateManager.color(1f,1f,1f,1f);
-        GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
-    }
+		GlStateManager.color(1f, 1f, 1f, 1f);
+		GlStateManager.disableBlend();
+		GlStateManager.popMatrix();
+		GlStateManager.popAttrib();
+	}
 }

@@ -19,51 +19,51 @@ import java.util.List;
 
 public class SkillUtils {
 
-    public static void sendMessageWithinRange(WorldServer worldIn, BlockPos source, double range, IMessage message) {
-        for (int i = 0; i < worldIn.playerEntities.size(); ++i) {
-            EntityPlayerMP player = (EntityPlayerMP) worldIn.playerEntities.get(i);
-            BlockPos destination = player.getPosition();
-            double dist = source.getDistance(destination.getX(), destination.getY(), destination.getZ());
-            if (dist < range) {
-                NetworkWrapper.INSTANCE.sendTo(message, player);
-            }
-        }
-    }
+	public static void sendMessageWithinRange(WorldServer worldIn, BlockPos source, double range, IMessage message) {
+		for (int i = 0; i < worldIn.playerEntities.size(); ++i) {
+			EntityPlayerMP player = (EntityPlayerMP) worldIn.playerEntities.get(i);
+			BlockPos destination = player.getPosition();
+			double dist = source.getDistance(destination.getX(), destination.getY(), destination.getZ());
+			if (dist < range) {
+				NetworkWrapper.INSTANCE.sendTo(message, player);
+			}
+		}
+	}
 
-    private static final Predicate<Entity> SKILL_TARGETS = Predicates.and(EntitySelectors.NOT_SPECTATING, EntitySelectors.IS_ALIVE, new Predicate<Entity>() {
-        public boolean apply(@Nullable Entity p_apply_1_) {
-            return p_apply_1_.canBeCollidedWith();
-        }
-    });
+	private static final Predicate<Entity> SKILL_TARGETS = Predicates.and(EntitySelectors.NOT_SPECTATING, EntitySelectors.IS_ALIVE, new Predicate<Entity>() {
+		public boolean apply(@Nullable Entity p_apply_1_) {
+			return p_apply_1_.canBeCollidedWith();
+		}
+	});
 
-    @Nullable
-    public static Entity rayTraceEntities(EntityPlayer player, float distance, float partialTicks) {
-        Entity entity = null;
-        Vec3d start = player.getPositionEyes(partialTicks);
-        Vec3d eyeRotation = player.getLook(partialTicks);
-        Vec3d end = start.addVector(eyeRotation.x * distance, eyeRotation.y * distance, eyeRotation.z * distance);
+	@Nullable
+	public static Entity rayTraceEntities(EntityPlayer player, float distance, float partialTicks) {
+		Entity entity = null;
+		Vec3d start = player.getPositionEyes(partialTicks);
+		Vec3d eyeRotation = player.getLook(partialTicks);
+		Vec3d end = start.addVector(eyeRotation.x * distance, eyeRotation.y * distance, eyeRotation.z * distance);
 
-        List<Entity> list = player.world.getEntitiesInAABBexcluding(player, new AxisAlignedBB(player.getPosition()).grow(distance + 1), SKILL_TARGETS);
-        double targetDistance = 0.0D;
+		List<Entity> list = player.world.getEntitiesInAABBexcluding(player, new AxisAlignedBB(player.getPosition()).grow(distance + 1), SKILL_TARGETS);
+		double targetDistance = 0.0D;
 
-        for (int i = 0; i < list.size(); ++i) {
-            Entity entity1 = list.get(i);
+		for (int i = 0; i < list.size(); ++i) {
+			Entity entity1 = list.get(i);
 
-            if (entity1 != player) {
-                AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow(0.30000001192092896D);
-                RayTraceResult raytraceresult = axisalignedbb.calculateIntercept(start, end);
+			if (entity1 != player) {
+				AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow(0.30000001192092896D);
+				RayTraceResult raytraceresult = axisalignedbb.calculateIntercept(start, end);
 
-                if (raytraceresult != null) {
-                    double newerDistance = start.squareDistanceTo(raytraceresult.hitVec);
+				if (raytraceresult != null) {
+					double newerDistance = start.squareDistanceTo(raytraceresult.hitVec);
 
-                    if (newerDistance < targetDistance || targetDistance == 0.0D) {
-                        entity = entity1;
-                        targetDistance = newerDistance;
-                    }
-                }
-            }
-        }
+					if (newerDistance < targetDistance || targetDistance == 0.0D) {
+						entity = entity1;
+						targetDistance = newerDistance;
+					}
+				}
+			}
+		}
 
-        return entity;
-    }
+		return entity;
+	}
 }
