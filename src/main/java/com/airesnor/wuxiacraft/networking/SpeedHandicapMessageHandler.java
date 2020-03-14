@@ -4,6 +4,7 @@ import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -21,11 +22,26 @@ public class SpeedHandicapMessageHandler implements IMessageHandler {
 				ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 
 				cultivation.setSpeedHandicap(((SpeedHandicapMessage) message).handicap);
+				cultivation.setMaxSpeed(((SpeedHandicapMessage) message).maxSpeed);
+				cultivation.setHasteLimit(((SpeedHandicapMessage) message).hasteLimit);
+				cultivation.setJumpLimit(((SpeedHandicapMessage) message).jumpLimit);
 
 			});
 		}
 		if (ctx.side == Side.CLIENT) {
-			return new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap);
+			Minecraft.getMinecraft().addScheduledTask(new Runnable() {
+				@Override
+				public void run() {
+					ICultivation cultivation = Minecraft.getMinecraft().player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+					if(cultivation != null) {
+						cultivation.setSpeedHandicap(WuxiaCraftConfig.speedHandicap);
+						cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
+						cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
+						cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);
+					}
+				}
+			});
+			return new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.jumpLimit);
 		}
 		return null;
 	}

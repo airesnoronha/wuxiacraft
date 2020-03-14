@@ -1,8 +1,11 @@
 package com.airesnor.wuxiacraft.config;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
+import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.SpeedHandicapMessage;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -23,6 +26,12 @@ public class WuxiaCraftConfig {
 	public static int speedHandicap;
 
 	public static boolean disableStepAssist;
+
+	public static float maxSpeed;
+
+	public static float blockBreakLimit;
+
+	public static float jumpLimit;
 
 	public static void preInit() {
 		File configFile = new File(Loader.instance().getConfigDir(), "WuxiaCraft.cfg");
@@ -61,23 +70,47 @@ public class WuxiaCraftConfig {
 		propHandicap.setMaxValue(100);
 		propHandicap.setMinValue(0);
 
+		Property propMaxSpeed = config.get(CATEGORY_GAMEPLAY, "max_speed", 5.0f);
+		propMaxSpeed.setLanguageKey("gui.config.gameplay.max_speed.name");
+		propMaxSpeed.setComment("Max speed for playing, this will allow you to never go beyond this speed");
+		propMaxSpeed.setDefaultValue(5.0f);
+
 		Property propStepAssist = config.get(CATEGORY_GAMEPLAY, "step_assist", true);
 		propStepAssist.setLanguageKey("gui.config.gameplay.step_assist.name");
 		propStepAssist.setComment("If you want to enable step assist gained from cultivation levels");
 		propStepAssist.setDefaultValue(true);
 
+		Property propBreakSpeed = config.get(CATEGORY_GAMEPLAY, "haste_limit", 10f);
+		propStepAssist.setLanguageKey("gui.config.gameplay.haste_limit.name");
+		propStepAssist.setComment("Set a multiplier to base breaking speed that will be the it's limit gained from cultivation level");
+		propMaxSpeed.setDefaultValue(10.0f);
+
+		Property propJumpLimit = config.get(CATEGORY_GAMEPLAY, "jump_limit", 10f);
+		propStepAssist.setLanguageKey("gui.config.gameplay.jump_limit.name");
+		propStepAssist.setComment("Set a multiplier to base jump height that will be the it's limit gained from cultivation level");
+		propMaxSpeed.setDefaultValue(10.0f);
+
 		List<String> propOrder = new ArrayList<>();
 		propOrder.add(propHandicap.getName());
+		propOrder.add(propMaxSpeed.getName());
 		propOrder.add(propStepAssist.getName());
+		propOrder.add(propBreakSpeed.getName());
+		propOrder.add(propJumpLimit.getName());
 		config.setCategoryPropertyOrder(CATEGORY_GAMEPLAY, propOrder);
 
 		if (readFieldsFromConfig) {
 			speedHandicap = propHandicap.getInt();
+			maxSpeed = (float)propMaxSpeed.getDouble();
 			disableStepAssist = propStepAssist.getBoolean();
+			blockBreakLimit = (float)propBreakSpeed.getDouble();
+			jumpLimit = (float)propJumpLimit.getDouble();
 		}
 
 		propHandicap.set(speedHandicap);
+		propMaxSpeed.set(maxSpeed);
 		propStepAssist.set(disableStepAssist);
+		propBreakSpeed.set(blockBreakLimit);
+		propJumpLimit.set(jumpLimit);
 
 		if (config.hasChanged())
 			config.save();
@@ -88,9 +121,25 @@ public class WuxiaCraftConfig {
 		public void onEvent(ConfigChangedEvent.OnConfigChangedEvent event) {
 			if (event.getModID().equals(WuxiaCraft.MODID)) {
 				syncFromGui();
-				WuxiaCraft.logger.info("fired event changed");
-				NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(speedHandicap));
+				WuxiaCraft.logger.info("Sending a config update to server");
+				syncCultivationFromConfigToClient();
+				NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(speedHandicap, maxSpeed, blockBreakLimit, jumpLimit));
 			}
 		}
+	}
+
+	public static void syncCultivationFromConfigToClient () {
+		Minecraft.getMinecraft().addScheduledTask(new Runnable() {
+			@Override
+			public void run() {
+				ICultivation cultivation = Minecraft.getMinecraft().player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+				if(cultivation != null) {
+					cultivation.setSpeedHandicap(WuxiaCraftConfig.speedHandicap);
+					cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
+					cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
+					cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);
+				}
+			}
+		});
 	}
 }

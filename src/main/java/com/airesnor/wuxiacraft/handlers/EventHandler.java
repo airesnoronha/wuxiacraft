@@ -9,6 +9,7 @@ import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
+import com.airesnor.wuxiacraft.cultivation.techniques.CultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.items.ItemScroll;
 import com.airesnor.wuxiacraft.items.Items;
@@ -59,7 +60,7 @@ public class EventHandler {
 		if (cultivation != null && cultTech != null && skillCap != null && !player.world.isRemote) {
 			WuxiaCraft.logger.info("Restoring " + player.getDisplayNameString() + " cultivation.");
 			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPelletCooldown()), (EntityPlayerMP) player);
-			NetworkWrapper.INSTANCE.sendTo(new SpeedHandicapMessage(cultivation.getSpeedHandicap()), (EntityPlayerMP) player);
+			NetworkWrapper.INSTANCE.sendTo(new SpeedHandicapMessage(cultivation.getSpeedHandicap(), cultivation.getMaxSpeed(), cultivation.getHasteLimit(), cultivation.getJumpLimit()), (EntityPlayerMP) player);
 			NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
 			NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap), (EntityPlayerMP) player);
 		}
@@ -167,7 +168,10 @@ public class EventHandler {
 		double cultivation_speed = 0f;
 		for (AttributeModifier mod : iattributeinstance.getModifiers()) {
 			if (mod.getName().equals(speed_mod_name)) {
-				cultivation_speed = mod.getAmount();
+				cultivation_speed += mod.getAmount();
+			}
+			else if(mod.getName().equals(CultTech.SPEED__MOD)) {
+				cultivation_speed += mod.getAmount();
 			}
 		}
 
@@ -229,7 +233,12 @@ public class EventHandler {
 	public void onPlayerJump(LivingEvent.LivingJumpEvent event) {
 		if (event.getEntityLiving() instanceof EntityPlayer) {
 			ICultivation cultivation = event.getEntity().getCapability(CultivationProvider.CULTIVATION_CAP, null);
-			event.getEntity().motionY += 0.19 * cultivation.getSpeedIncrease() * ((float) WuxiaCraftConfig.speedHandicap / 100f);
+			float baseJumpSpeed = (float) event.getEntity().motionY;
+			float jumpSpeed = 0.19f * cultivation.getSpeedIncrease();
+			if(cultivation.getJumpLimit() >= 0) {
+				jumpSpeed = Math.min(jumpSpeed, cultivation.getJumpLimit()*baseJumpSpeed);
+			}
+			event.getEntity().motionY += jumpSpeed;
 		}
 	}
 
@@ -275,7 +284,11 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onPlayerBreakSpeed(net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed event) {
 		ICultivation cultivation = event.getEntityPlayer().getCapability(CultivationProvider.CULTIVATION_CAP, null);
-		event.setNewSpeed(event.getOriginalSpeed() + 0.1f * (cultivation.getStrengthIncrease() - 1));
+		float hasteModifier = 0.1f * (cultivation.getStrengthIncrease() - 1);
+		if(cultivation.getHasteLimit() >= 0) {
+			hasteModifier = Math.min(hasteModifier, cultivation.getHasteLimit() * event.getOriginalSpeed());
+		}
+		event.setNewSpeed(event.getOriginalSpeed() + hasteModifier);
 	}
 
 	/**
@@ -377,7 +390,12 @@ public class EventHandler {
 
 		//as most props are additive, so i'll remove the which is the supposed base
 		float level_str_mod = cultivation.getStrengthIncrease() - 1;
-		float level_spd_mod = (cultivation.getSpeedIncrease() - 1) * (cultivation.getSpeedHandicap() / 100f);
+		float level_spd_mod = (cultivation.getSpeedIncrease() - 1);
+		if(cultivation.getMaxSpeed() >= 0) {
+			float max_speed = cultivation.getMaxSpeed() * (float)SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue();
+			level_spd_mod = Math.min(cultivation.getMaxSpeed(), level_spd_mod);
+		}
+		level_spd_mod *= (cultivation.getSpeedHandicap() / 100f);
 
 		AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, level_str_mod, 0);
 		AttributeModifier health_mod = new AttributeModifier(health_mod_name, 3 * level_str_mod, 0);

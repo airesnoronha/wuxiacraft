@@ -13,11 +13,11 @@ import java.util.List;
 
 public class CultTech implements ICultTech {
 
-	private static final String ARMOR_MOD = "wuxiacraft.technique.armor";
-	private static final String ATTACK_SPEED_MOD = "wuxiacraft.technique.attack_speed";
-	private static final String MAX_HEALTH_MOD = "wuxiacraft.technique.max_health";
-	private static final String SPEED__MOD = "wuxiacraft.technique.speed";
-	private static final String STRENGTH_MOD = "wuxiacraft.technique.strength";
+	public static final String ARMOR_MOD = "wuxiacraft.technique.armor";
+	public static final String ATTACK_SPEED_MOD = "wuxiacraft.technique.attack_speed";
+	public static final String MAX_HEALTH_MOD = "wuxiacraft.technique.max_health";
+	public static final String SPEED__MOD = "wuxiacraft.technique.speed";
+	public static final String STRENGTH_MOD = "wuxiacraft.technique.strength";
 
 	private List<KnownTechnique> knownTechniques;
 
@@ -116,13 +116,21 @@ public class CultTech implements ICultTech {
 			}
 
 			AttributeModifier armor_mod = new AttributeModifier(ARMOR_MOD, (armor + narmor) * 2, 0);
-			AttributeModifier attacak_speed_mod = new AttributeModifier(ATTACK_SPEED_MOD, attackSpeed + nattackSpeed, 0);
+			AttributeModifier attack_speed_mod = new AttributeModifier(ATTACK_SPEED_MOD, attackSpeed + nattackSpeed, 0);
 			AttributeModifier max_health_mod = new AttributeModifier(MAX_HEALTH_MOD, (maxHealth + nmaxHealth) * 3, 0);
-			AttributeModifier speed_mod = new AttributeModifier(SPEED__MOD, (movementSpeed + nmovementSpeed) * 0.1f * (cultivation.getSpeedHandicap() / 100f), 0);
+			float speedValue = (movementSpeed + nmovementSpeed) * 0.1f * (cultivation.getSpeedHandicap() / 100f);
+			if(cultivation.getMaxSpeed() >= 0) {
+				if(cultivation.getSpeedIncrease()* SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue() * 0.2f < cultivation.getMaxSpeed()) {
+					speedValue = Math.min(cultivation.getMaxSpeed()*(float)SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue(), speedValue);
+				} else {
+					speedValue = 0;
+				}
+			}
+			AttributeModifier speed_mod = new AttributeModifier(SPEED__MOD, speedValue, 0);
 			AttributeModifier strength_mod = new AttributeModifier(STRENGTH_MOD, strength + nstrength, 0);
 
 			player.getEntityAttribute(SharedMonsterAttributes.ARMOR).applyModifier(armor_mod);
-			player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).applyModifier(attacak_speed_mod);
+			player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).applyModifier(attack_speed_mod);
 			player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(max_health_mod);
 			player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(speed_mod);
 			player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).applyModifier(strength_mod);

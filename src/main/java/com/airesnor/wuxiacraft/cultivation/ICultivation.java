@@ -77,4 +77,16 @@ public interface ICultivation {
 	float getSpeedIncrease();
 
 	float getMaxEnergy();
+
+	void setMaxSpeed(float maxSpeed);
+
+	float getMaxSpeed();
+
+	float getHasteLimit();
+
+	void setHasteLimit(float hasteLimit);
+
+	float getJumpLimit();
+
+	void setJumpLimit(float jumpLimit);
 }

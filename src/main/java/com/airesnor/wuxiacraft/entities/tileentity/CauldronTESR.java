@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.entities.tileentity;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.Cauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -16,6 +17,8 @@ import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 public class CauldronTESR extends TileEntitySpecialRenderer<CauldronTileEntity> {
+
+	private static boolean IS_RENDER_ERROR = false;
 
 	@Override
 	public void render(CauldronTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
@@ -40,26 +43,36 @@ public class CauldronTESR extends TileEntitySpecialRenderer<CauldronTileEntity> 
 	private void renderFirewood(CauldronTileEntity te) {
 		GlStateManager.pushMatrix();
 
-		this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-
-		if (Minecraft.isAmbientOcclusionEnabled()) {
-			GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		} else {
-			GlStateManager.shadeModel(GL11.GL_FLAT);
-		}
-		GlStateManager.translate(-te.getPos().getX(), -te.getPos().getY(), -te.getPos().getZ());
-
-		World world = te.getWorld();
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder builder = tessellator.getBuffer();
 		builder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
 
-		IBlockState state = world.getBlockState(te.getPos()).getBlock().getDefaultState().withProperty(Cauldron.CAULDRON, 1);
-		BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
-		IBakedModel model = dispatcher.getModelForState(state);
-		dispatcher.getBlockModelRenderer().renderModel(world, model, state, te.getPos(), builder, true);
-		tessellator.draw();
+		try {
+			this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
+			if (Minecraft.isAmbientOcclusionEnabled()) {
+				GlStateManager.shadeModel(GL11.GL_SMOOTH);
+			} else {
+				GlStateManager.shadeModel(GL11.GL_FLAT);
+			}
+			GlStateManager.translate(-te.getPos().getX(), -te.getPos().getY(), -te.getPos().getZ());
+
+			World world = te.getWorld();
+
+			IBlockState state = world.getBlockState(te.getPos()).getBlock().getDefaultState().withProperty(Cauldron.CAULDRON, 1);
+			BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+			IBakedModel model = dispatcher.getModelForState(state);
+			dispatcher.getBlockModelRenderer().renderModel(world, model, state, te.getPos(), builder, true);
+		}
+		catch(Exception e) {
+			if(!IS_RENDER_ERROR) {
+				WuxiaCraft.logger.error("Error rendering the firewood, something is not right my friend");
+				WuxiaCraft.logger.error(e.getMessage());
+				IS_RENDER_ERROR = true;
+			}
+		} finally {
+			tessellator.draw();
+		}
 		GlStateManager.popMatrix();
 	}
 

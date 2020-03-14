@@ -8,6 +8,9 @@ public class Cultivation implements ICultivation {
 	public int handicap;
 	private int timer;
 	private int pelletCooldown;
+	private float maxSpeed;
+	private float hasteLimit;
+	private float jumpLimit;
 
 	public Cultivation() {
 		this.subLevel = 0;
@@ -17,6 +20,9 @@ public class Cultivation implements ICultivation {
 		this.handicap = 100;
 		this.timer = 0;
 		this.pelletCooldown = 0;
+		this.maxSpeed = 5.0f;
+		this.hasteLimit = 10.0f;
+		this.jumpLimit = 10.0f;
 	}
 
 	@Override
@@ -143,5 +149,35 @@ public class Cultivation implements ICultivation {
 	@Override
 	public float getMaxEnergy() {
 		return this.level.getMaxEnergyByLevel(this.subLevel);
+	}
+
+	@Override
+	public void setMaxSpeed(float maxSpeed) {
+		this.maxSpeed = maxSpeed;
+	}
+
+	@Override
+	public float getMaxSpeed() {
+		return this.maxSpeed;
+	}
+
+	@Override
+	public float getHasteLimit() {
+		return this.hasteLimit;
+	}
+
+	@Override
+	public void setHasteLimit(float hasteLimit) {
+		this.hasteLimit = hasteLimit;
+	}
+
+	@Override
+	public float getJumpLimit() {
+		return this.jumpLimit;
+	}
+
+	@Override
+	public void setJumpLimit(float jumpLimit) {
+		this.jumpLimit = jumpLimit;
 	}
 }

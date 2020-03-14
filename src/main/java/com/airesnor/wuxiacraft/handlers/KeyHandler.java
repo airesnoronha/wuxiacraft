@@ -26,12 +26,12 @@ public class KeyHandler {
 		if (keyBindings[0].isPressed()) {
 			WuxiaCraftConfig.speedHandicap = Math.min(100, WuxiaCraftConfig.speedHandicap + 5);
 			WuxiaCraftConfig.syncFromFields();
-			NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap));
+			NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit));
 		}
 		if (keyBindings[1].isPressed()) {
 			WuxiaCraftConfig.speedHandicap = Math.max(0, WuxiaCraftConfig.speedHandicap - 5);
 			WuxiaCraftConfig.syncFromFields();
-			NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap));
+			NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit));
 		}
 		if (keyBindings[2].isPressed()) {
 			BlockPos pos = Minecraft.getMinecraft().player.getPosition();
@@ -64,6 +64,11 @@ public class KeyHandler {
 			int next = skillCap.getActiveSkill() - 1;
 			NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next));
 			SelectSkillMessageHandler.selectSkill(skillCap, next);
+		}
+		if(keyBindings[17].isPressed()) {
+			WuxiaCraftConfig.maxSpeed = WuxiaCraftConfig.maxSpeed * -1;
+			WuxiaCraftConfig.syncFromFields();
+			NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit));
 		}
 		for (int i = 0; i < 10; i++) {
 			if (keyBindings[7 + i].isPressed()) {

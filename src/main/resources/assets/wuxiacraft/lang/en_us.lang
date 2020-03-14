@@ -48,6 +48,7 @@ key.wuxiacraft.select_7=Select skill in 7
 key.wuxiacraft.select_8=Select skill in 8
 key.wuxiacraft.select_9=Select skill in 9
 key.wuxiacraft.select_0=Select skill in 10
+key.wuxiacraft.unleash_speed=Toggle Speed Limit
 
 //tiers
 wuxiacraft.tier.mortal=Mortal

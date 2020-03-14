@@ -43,6 +43,7 @@ public class ClientProxy extends CommonProxy {
 	public static final int KEY_SELECT_8 = 14;
 	public static final int KEY_SELECT_9 = 15;
 	public static final int KEY_SELECT_0 = 16;
+	public static final int KEY_UNLEASH_SPEED = 17;
 
 	public static KeyBinding[] keyBindings;
 
@@ -85,7 +86,7 @@ public class ClientProxy extends CommonProxy {
 		SkillsGui.init();
 		OreUtils.loadOresToFind();
 
-		keyBindings = new KeyBinding[17];
+		keyBindings = new KeyBinding[18];
 		keyBindings[KEY_SPEED_UP] = new KeyBinding("key.wuxiacraft.speed_up", Keyboard.KEY_EQUALS, "key.wuxiacraft.category");
 		keyBindings[KEY_SPEED_DOWN] = new KeyBinding("key.wuxiacraft.speed_down", Keyboard.KEY_MINUS, "key.wuxiacraft.category");
 		keyBindings[KEY_CULT_GUI] = new KeyBinding("key.wuxiacraft.cult_gui", Keyboard.KEY_K, "key.wuxiacraft.category");
@@ -97,6 +98,7 @@ public class ClientProxy extends CommonProxy {
 			int j = i == 9 ? 0 : (i + 1);
 			keyBindings[KEY_SELECT_1 + i] = new KeyBinding("key.wuxiacraft.select_" + j, KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Keyboard.KEY_1 + i, "key.wuxiacraft.category");
 		}
+		keyBindings[KEY_UNLEASH_SPEED] = new KeyBinding("key.wuxiacraft.unleash_speed", Keyboard.KEY_U, "key.wuxiacraft.category");
 		for (int i = 0; i < keyBindings.length; i++) {
 			ClientRegistry.registerKeyBinding(keyBindings[i]);
 		}

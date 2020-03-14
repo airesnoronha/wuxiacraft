@@ -20,3 +20,6 @@ build
 # other
 eclipse
 run
+
+#Secret
+src/main/java/com/airesnor/wuxiacraft/alchemy/Recipes.java

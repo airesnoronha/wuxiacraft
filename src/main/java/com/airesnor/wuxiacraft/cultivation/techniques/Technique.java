@@ -131,7 +131,7 @@ public class Technique {
 		float armor = this.baseModifiers.armor * strength;
 		float attackSpeed = this.baseModifiers.attackSpeed * speed;
 		float maxHealth = this.baseModifiers.maxHealth * strength;
-		float movementSpeed = this.baseModifiers.movementSpeed * strength;
+		float movementSpeed = this.baseModifiers.movementSpeed * speed;
 		float strengthMod = this.baseModifiers.strength * strength;
 		for (PotionEffect p : smallCompletionEffects) {
 			if (p.getIsAmbient()) {
