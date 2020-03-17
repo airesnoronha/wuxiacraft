@@ -94,7 +94,7 @@ public class EventHandler {
 				}
 				if (player.world.isRemote) {
 
-					if (player.capabilities.isFlying && cultivation.getEnergy() <= 0) {
+					if (player.capabilities.isFlying && cultivation.getEnergy() <= 0 && !cultivation.getCurrentLevel().freeFlight) {
 						player.capabilities.isFlying = false;
 					}
 					player.capabilities.allowFlying = player.isCreative() || cultivation.getCurrentLevel().canFly;
@@ -169,8 +169,7 @@ public class EventHandler {
 		for (AttributeModifier mod : iattributeinstance.getModifiers()) {
 			if (mod.getName().equals(speed_mod_name)) {
 				cultivation_speed += mod.getAmount();
-			}
-			else if(mod.getName().equals(CultTech.SPEED__MOD)) {
+			} else if (mod.getName().equals(CultTech.SPEED__MOD)) {
 				cultivation_speed += mod.getAmount();
 			}
 		}
@@ -210,13 +209,13 @@ public class EventHandler {
 		if (cultivation != null) {
 			if (player.capabilities.isFlying) {
 				float totalRem = 0f;
+				float fly_cost = 1000f;
+				float dist_cost = 660f;
 				if (!cultivation.getCurrentLevel().freeFlight) {
-					float fly_cost = 4f;
 					totalRem += fly_cost;
 				}
 				if (distance > 0) {
-					float cost = 1f;
-					totalRem += distance * cost;
+					totalRem += distance * dist_cost;
 				}
 				if (!player.isCreative()) {
 					cultivation.remEnergy(totalRem);
@@ -235,8 +234,8 @@ public class EventHandler {
 			ICultivation cultivation = event.getEntity().getCapability(CultivationProvider.CULTIVATION_CAP, null);
 			float baseJumpSpeed = (float) event.getEntity().motionY;
 			float jumpSpeed = 0.19f * cultivation.getSpeedIncrease();
-			if(cultivation.getJumpLimit() >= 0) {
-				jumpSpeed = Math.min(jumpSpeed, cultivation.getJumpLimit()*baseJumpSpeed);
+			if (cultivation.getJumpLimit() >= 0) {
+				jumpSpeed = Math.min(jumpSpeed, cultivation.getJumpLimit() * baseJumpSpeed);
 			}
 			event.getEntity().motionY += jumpSpeed;
 		}
@@ -285,7 +284,7 @@ public class EventHandler {
 	public void onPlayerBreakSpeed(net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed event) {
 		ICultivation cultivation = event.getEntityPlayer().getCapability(CultivationProvider.CULTIVATION_CAP, null);
 		float hasteModifier = 0.1f * (cultivation.getStrengthIncrease() - 1);
-		if(cultivation.getHasteLimit() >= 0) {
+		if (cultivation.getHasteLimit() >= 0) {
 			hasteModifier = Math.min(hasteModifier, cultivation.getHasteLimit() * event.getOriginalSpeed());
 		}
 		event.setNewSpeed(event.getOriginalSpeed() + hasteModifier);
@@ -391,8 +390,8 @@ public class EventHandler {
 		//as most props are additive, so i'll remove the which is the supposed base
 		float level_str_mod = cultivation.getStrengthIncrease() - 1;
 		float level_spd_mod = (cultivation.getSpeedIncrease() - 1);
-		if(cultivation.getMaxSpeed() >= 0) {
-			float max_speed = cultivation.getMaxSpeed() * (float)SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue();
+		if (cultivation.getMaxSpeed() >= 0) {
+			float max_speed = cultivation.getMaxSpeed() * (float) SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue();
 			level_spd_mod = Math.min(cultivation.getMaxSpeed(), level_spd_mod);
 		}
 		level_spd_mod *= (cultivation.getSpeedHandicap() / 100f);

@@ -3,13 +3,16 @@ package com.airesnor.wuxiacraft.gui;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.capabilities.CultTechProvider;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
+import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
 import com.airesnor.wuxiacraft.cultivation.techniques.TechniquesModifiers;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.RemoveTechniqueMessage;
+import com.airesnor.wuxiacraft.networking.SpeedHandicapMessage;
 import com.airesnor.wuxiacraft.proxy.ClientProxy;
+import com.airesnor.wuxiacraft.utils.MathUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -81,6 +84,14 @@ public class CultivationGui extends GuiScreen {
 				int index = this.cultTech.getKnownTechniques().size() > 5 ? offset + i : i;
 				NetworkWrapper.INSTANCE.sendToServer(new RemoveTechniqueMessage(cultTech.getKnownTechniques().get(index).getTechnique()));
 				cultTech.getKnownTechniques().remove(index);
+			}
+		}
+		for(int i = 0; i < 4; i ++) {
+			if(inBounds(mouseX, mouseY, this.guiLeft-61+13, this.guiTop+i*15+3, 9,9)) {
+				handleBarButtonClick(i, 0);
+			}
+			else if(inBounds(mouseX, mouseY, this.guiLeft-61+51, this.guiTop+i*15+3, 9,9)) {
+				handleBarButtonClick(i, 1);
 			}
 		}
 	}
@@ -183,6 +194,25 @@ public class CultivationGui extends GuiScreen {
 			pos++;
 		}
 
+		int[] iconPos = new int[]{27, 27, 99, 108};
+		int[] fills = new int[]{
+				Math.min(27,(int)((27f * cultivation.getSpeedHandicap()) / 100f)),
+				Math.min(27,(int)(27f*cultivation.getMaxSpeed()/cultivation.getSpeedIncrease())),
+				Math.min(27,(int)(27f*(cultivation.getHasteLimit()/(0.1f * (cultivation.getStrengthIncrease() - 1))))),
+				Math.min(27,(int)(27f*(cultivation.getJumpLimit())/(0.19f * cultivation.getSpeedIncrease())))
+		};
+
+		//Regulator bars
+		for (int i = 0; i < 4; i++) {
+			drawTexturedModalRect(this.guiLeft - 61, this.guiTop + i * 15, 0, 151, 61, 15); //bg
+			drawTexturedModalRect(this.guiLeft - 61 + 23, this.guiTop + i * 15 + 4, 0, 166, 27, 7); //barbg
+			drawTexturedModalRect(this.guiLeft - 61 + 23, this.guiTop + i * 15 + 4, 27, 166, fills[i], 7); //bar fill
+			drawTexturedModalRect(this.guiLeft - 61 + 13, this.guiTop + i * 15 + 3, 45, 142, 9, 9); //button bg
+			drawTexturedModalRect(this.guiLeft - 61 + 51, this.guiTop + i * 15 + 3, 45, 142, 9, 9); //button bg
+			drawTexturedModalRect(this.guiLeft - 61 + 13, this.guiTop + i * 15 + 3, 72, 142, 9, 9); //button icon -
+			drawTexturedModalRect(this.guiLeft - 61 + 51, this.guiTop + i * 15 + 3, 90, 142, 9, 9); //button icon +
+			drawTexturedModalRect(this.guiLeft - 61 + 3, this.guiTop + i * 15 + 3, iconPos[i], 142, 9, 9); // icon
+		}
 	}
 
 	private void drawForegroundLayer() {
@@ -214,9 +244,20 @@ public class CultivationGui extends GuiScreen {
 			this.fontRenderer.drawString(display, this.guiLeft + 19, this.guiTop + 35 + pos * 16 + 2, 0xFFFFFF);
 			pos++;
 		}
+
+		List<String> barDescriptions = new ArrayList<>();
+		barDescriptions.add(cultivation.getSpeedHandicap() + "%");
+		barDescriptions.add(String.format("%.1f", cultivation.getMaxSpeed()));
+		barDescriptions.add(String.format("%.1f", cultivation.getHasteLimit()));
+		barDescriptions.add(String.format("%.1f", cultivation.getJumpLimit()));
+
+		for(int i = 0; i < 4; i++) {
+			this.fontRenderer.drawString(barDescriptions.get(i), this.guiLeft-61+27, this.guiTop+4+i*15, 0xEFEF00);
+		}
 	}
 
 	private void drawTooltips(int mouseX, int mouseY) {
+		GlStateManager.color(1f,1f,1f,1f);
 		for (int i = 0; i < Math.min(this.cultTech.getKnownTechniques().size(), 5); i++) {
 			int index = this.cultTech.getKnownTechniques().size() > 5 ? offset + i : i;
 			if (inBounds(mouseX, mouseY, this.guiLeft + 19, this.guiTop + 35 + i * 16 + 11, 139, 3)) {
@@ -297,6 +338,30 @@ public class CultivationGui extends GuiScreen {
 		}
 		i = Math.max(0, i - borderSize);
 		drawTexturedModalRect(x + borderSize + i, y + borderSize + j, textureX + borderSize, textureY + borderSize, leftOverX, leftOverY);
+	}
+
+	private void handleBarButtonClick(int prop, int op) {
+		switch (prop) {
+			case 0:
+				if(op==0)WuxiaCraftConfig.speedHandicap = Math.max(0,WuxiaCraftConfig.speedHandicap - 5);
+				if(op==1)WuxiaCraftConfig.speedHandicap = Math.min(100,WuxiaCraftConfig.speedHandicap + 5);
+				break;
+			case 1:
+				if(op==0) WuxiaCraftConfig.maxSpeed -= 1f;
+				if(op==1) WuxiaCraftConfig.maxSpeed += 1f;
+				break;
+			case 2:
+				if(op==0) WuxiaCraftConfig.blockBreakLimit -= 1f;
+				if(op==1) WuxiaCraftConfig.blockBreakLimit += 1f;
+				break;
+			case 3:
+				if(op==0) WuxiaCraftConfig.jumpLimit -= 1f;
+				if(op==1) WuxiaCraftConfig.jumpLimit += 1f;
+				break;
+		}
+		WuxiaCraftConfig.syncFromFields();
+		WuxiaCraftConfig.syncCultivationFromConfigToClient();
+		NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit));
 	}
 
 
