@@ -27,7 +27,9 @@ gui.config.main_title=WuxiaCraft
 gui.config.category.gameplay=Gameplay
 gui.config.gameplay.speed_handicap.name=Speed handicap
 gui.config.gameplay.step_assist.name=Step Assist
-
+gui.config.gameplay.max_speed.name=Max Speed
+gui.config.gameplay.haste_limit.name=Break Block Limit
+gui.config.gameplay.jump_limit.name=Jump Limit
 
 //Key bindings
 key.wuxiacraft.category=WuxiaCraft

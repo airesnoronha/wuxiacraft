@@ -80,15 +80,15 @@ public class WuxiaCraftConfig {
 		propStepAssist.setComment("If you want to enable step assist gained from cultivation levels");
 		propStepAssist.setDefaultValue(true);
 
-		Property propBreakSpeed = config.get(CATEGORY_GAMEPLAY, "haste_limit", 10f);
-		propStepAssist.setLanguageKey("gui.config.gameplay.haste_limit.name");
-		propStepAssist.setComment("Set a multiplier to base breaking speed that will be the it's limit gained from cultivation level");
-		propMaxSpeed.setDefaultValue(10.0f);
+		Property propBreakSpeed = config.get(CATEGORY_GAMEPLAY, "haste_limit", 5f);
+		propBreakSpeed.setLanguageKey("gui.config.gameplay.haste_limit.name");
+		propBreakSpeed.setComment("Set a multiplier to base breaking speed that will be the it's limit gained from cultivation level");
+		propBreakSpeed.setDefaultValue(5.0f);
 
-		Property propJumpLimit = config.get(CATEGORY_GAMEPLAY, "jump_limit", 10f);
-		propStepAssist.setLanguageKey("gui.config.gameplay.jump_limit.name");
-		propStepAssist.setComment("Set a multiplier to base jump height that will be the it's limit gained from cultivation level");
-		propMaxSpeed.setDefaultValue(10.0f);
+		Property propJumpLimit = config.get(CATEGORY_GAMEPLAY, "jump_limit", 5f);
+		propJumpLimit.setLanguageKey("gui.config.gameplay.jump_limit.name");
+		propJumpLimit.setComment("Set a multiplier to base jump height that will be the it's limit gained from cultivation level");
+		propJumpLimit.setDefaultValue(5.0f);
 
 		List<String> propOrder = new ArrayList<>();
 		propOrder.add(propHandicap.getName());
