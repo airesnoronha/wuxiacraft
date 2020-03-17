@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.entities.tileentity;
 
 import com.airesnor.wuxiacraft.alchemy.Recipe;
+import com.airesnor.wuxiacraft.alchemy.Recipes;
 import com.airesnor.wuxiacraft.networking.SpawnParticleMessage;
 import com.airesnor.wuxiacraft.utils.MathUtils;
 import com.airesnor.wuxiacraft.utils.SkillUtils;
