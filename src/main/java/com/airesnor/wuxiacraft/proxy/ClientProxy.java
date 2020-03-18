@@ -3,6 +3,8 @@ package com.airesnor.wuxiacraft.proxy;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.OBJBlockModelLoader;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
+import com.airesnor.wuxiacraft.entities.mobs.GiantAnt;
+import com.airesnor.wuxiacraft.entities.mobs.renders.RenderGiantAnt;
 import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterBlade;
@@ -77,6 +79,7 @@ public class ClientProxy extends CommonProxy {
 
 		RenderingRegistry.registerEntityRenderingHandler(WaterNeedleThrowable.class, RenderWaterNeedle::new);
 		RenderingRegistry.registerEntityRenderingHandler(WaterBladeThrowable.class, RenderWaterBlade::new);
+		RenderingRegistry.registerEntityRenderingHandler(GiantAnt.class, RenderGiantAnt::new);
 	}
 
 	@Override
@@ -102,6 +105,8 @@ public class ClientProxy extends CommonProxy {
 		for (int i = 0; i < keyBindings.length; i++) {
 			ClientRegistry.registerKeyBinding(keyBindings[i]);
 		}
+
+		RenderGiantAnt.init();
 
 		MinecraftForge.EVENT_BUS.register(new RendererHandler());
 	}
