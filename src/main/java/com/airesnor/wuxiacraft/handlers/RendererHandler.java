@@ -5,9 +5,11 @@ import com.airesnor.wuxiacraft.alchemy.Recipe;
 import com.airesnor.wuxiacraft.blocks.Cauldron;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
+import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
 import com.airesnor.wuxiacraft.gui.SkillsGui;
 import net.minecraft.block.state.IBlockState;
@@ -155,6 +157,21 @@ public class RendererHandler {
 				float f1 = mc.getRenderManager().playerViewX;
 				drawCultivationPlate(cultivation, x, y, z, f, f1, thirdPerson, sneaking);
 			}
+		}
+		else if (e.getEntity() instanceof WanderingCultivator) {
+			WanderingCultivator cultivator = (WanderingCultivator) e.getEntity();
+			ICultivation cultivation = new Cultivation();
+			cultivation.setCurrentLevel(cultivator.getCultivationLevel());
+			cultivation.setCurrentSubLevel(cultivator.getCultivationSubLevel());
+			Minecraft mc = Minecraft.getMinecraft();
+			boolean sneaking = cultivator.isSneaking();
+			boolean thirdPerson = mc.getRenderManager().options.thirdPersonView == 2;
+			float x = (float) e.getX();
+			float y = (float) e.getY() + 0.75f + cultivator.height - (sneaking ? 0.25f : 0f);
+			float z = (float) e.getZ();
+			float f = mc.getRenderManager().playerViewY;
+			float f1 = mc.getRenderManager().playerViewX;
+			drawCultivationPlate(cultivation, x, y, z, f, f1, thirdPerson, sneaking);
 		}
 	}
 

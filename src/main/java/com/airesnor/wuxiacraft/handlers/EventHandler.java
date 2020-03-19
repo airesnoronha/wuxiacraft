@@ -11,11 +11,14 @@ import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.CultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
+import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.items.ItemScroll;
 import com.airesnor.wuxiacraft.items.Items;
 import com.airesnor.wuxiacraft.networking.*;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityItem;
@@ -26,10 +29,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.event.FOVUpdateEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -385,6 +385,13 @@ public class EventHandler {
 		}
 	}
 
+	@SubscribeEvent
+	public void onSpawnLiving(LivingSpawnEvent event) {
+		if(event.getEntityLiving() instanceof EntityMob) {
+			((EntityMob) event.getEntityLiving()).targetTasks.addTask(2, new EntityAINearestAttackableTarget((EntityCreature) event.getEntityLiving(), WanderingCultivator.class, true));
+		}
+	}
+
 	public static void applyModifiers(EntityPlayer player, ICultivation cultivation) {
 
 		//as most props are additive, so i'll remove the which is the supposed base
@@ -392,7 +399,7 @@ public class EventHandler {
 		float level_spd_mod = (cultivation.getSpeedIncrease() - 1);
 		if (cultivation.getMaxSpeed() >= 0) {
 			float max_speed = cultivation.getMaxSpeed() * (float) SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue();
-			level_spd_mod = Math.min(cultivation.getMaxSpeed(), level_spd_mod);
+			level_spd_mod = Math.min(max_speed, level_spd_mod);
 		}
 		level_spd_mod *= (cultivation.getSpeedHandicap() / 100f);
 

@@ -3,6 +3,7 @@ package com.airesnor.wuxiacraft.items;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillAction;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
@@ -56,10 +57,13 @@ public class Items {
 	public static final Item MINOR_FASTING_PILL = new ItemSkillPill("minor_fasting_pill")
 			.setAction(new ISkillAction() {
 				@Override
-				public boolean activate(EntityPlayer actor) {
-					actor.getFoodStats().setFoodLevel(20);
-					actor.getFoodStats().setFoodSaturationLevel(50);
-					return true;
+				public boolean activate(EntityLivingBase actor) {
+					if(actor instanceof EntityPlayer) {
+						EntityPlayer player = (EntityPlayer)actor;
+						player.getFoodStats().setFoodLevel(20);
+						player.getFoodStats().setFoodSaturationLevel(50);
+						return true;
+					} else return false;
 				}
 			});
 

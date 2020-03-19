@@ -4,6 +4,7 @@ import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EntitySelectors;
@@ -37,7 +38,7 @@ public class SkillUtils {
 	});
 
 	@Nullable
-	public static Entity rayTraceEntities(EntityPlayer player, float distance, float partialTicks) {
+	public static Entity rayTraceEntities(EntityLivingBase player, float distance, float partialTicks) {
 		Entity entity = null;
 		Vec3d start = player.getPositionEyes(partialTicks);
 		Vec3d eyeRotation = player.getLook(partialTicks);

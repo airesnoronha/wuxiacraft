@@ -4,10 +4,12 @@ import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.capabilities.CultTechProvider;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
+import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.skills.FireThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
@@ -22,6 +24,7 @@ import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -62,7 +65,7 @@ public class Skills {
 
 	public static final Skill CULTIVATE = new Skill("cultivate", 50f, 10f, 150f, 0f).setAction(new ISkillAction() {
 		@Override
-		public boolean activate(EntityPlayer actor) {
+		public boolean activate(EntityLivingBase actor) {
 			ICultTech cultTech = actor.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
 			if (actor.world instanceof WorldServer) {
 				WorldServer ws = (WorldServer) actor.world;
@@ -80,13 +83,15 @@ public class Skills {
 					}
 				}
 			}
-			ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-			EventHandler.playerAddProgress(actor, cultivation, cultTech.getOverallCultivationSpeed());
+			if(actor instanceof EntityPlayer) {
+				ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+				EventHandler.playerAddProgress((EntityPlayer) actor, cultivation, cultTech.getOverallCultivationSpeed());
+			}
 			return true;
 		}
 	}).setWhenCasting(new ISkillAction() {
 		@Override
-		public boolean activate(EntityPlayer actor) {
+		public boolean activate(EntityLivingBase actor) {
 			ICultTech cultTech = actor.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
 			for (KnownTechnique kt : cultTech.getKnownTechniques()) {
 				if (actor.world instanceof WorldServer) {
@@ -104,8 +109,10 @@ public class Skills {
 					}
 				}
 			}
-			ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-			EventHandler.playerAddProgress(actor, cultivation, cultTech.getOverallCultivationSpeed() * 0.06f);
+			if(actor instanceof EntityPlayer) {
+				ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+				EventHandler.playerAddProgress((EntityPlayer) actor, cultivation, cultTech.getOverallCultivationSpeed() * 0.06f);
+			}
 			return true;
 		}
 	});
@@ -113,7 +120,7 @@ public class Skills {
 	public static final Skill GATHER_WOOD = new Skill("gather_wood", 20f, 1f, 6f, 0f)
 			.setAction(new ISkillAction() {
 				@Override
-				public boolean activate(EntityPlayer actor) {
+				public boolean activate(EntityLivingBase actor) {
 					World worldIn = actor.world;
 					ISkillCap skillCap = actor.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
 					RayTraceResult rtr = actor.rayTrace(6f, 1f);
@@ -140,7 +147,7 @@ public class Skills {
 	public static final Skill ACCELERATE_GROWTH = new Skill("accelerate_growth", 60f, 1f, 25f, 0f)
 			.setAction(new ISkillAction() {
 				@Override
-				public boolean activate(EntityPlayer actor) {
+				public boolean activate(EntityLivingBase actor) {
 					World worldIn = actor.world;
 					RayTraceResult rtr = actor.rayTrace(8f, 1f);
 					BlockPos pos = rtr.getBlockPos();
@@ -173,8 +180,15 @@ public class Skills {
 
 	public static final Skill FLAMES = new Skill("flames", 40f, 1.5f, 6f, 0f).setAction(new ISkillAction() {
 		@Override
-		public boolean activate(EntityPlayer actor) {
-			ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+		public boolean activate(EntityLivingBase actor) {
+			ICultivation cultivation;
+			if(actor instanceof EntityPlayer) {
+				cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+			} else if(actor instanceof WanderingCultivator) {
+				cultivation = ((WanderingCultivator)actor).getCultivation();
+			} else {
+				cultivation = new Cultivation();
+			}
 			for (int i = 0; i < 3; i++) {
 				FireThrowable ft = new FireThrowable(actor.world, actor, cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()) / 3f);
 				ft.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 1.2f, 0.4f);
@@ -186,8 +200,15 @@ public class Skills {
 
 	public static final Skill FIRE_BAll = new Skill("fire_ball", 120f, 3f, 110f, 0f).setAction(new ISkillAction() {
 		@Override
-		public boolean activate(EntityPlayer actor) {
-			ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+		public boolean activate(EntityLivingBase actor) {
+			ICultivation cultivation;
+			if(actor instanceof EntityPlayer) {
+				cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+			} else if(actor instanceof WanderingCultivator) {
+				cultivation = ((WanderingCultivator)actor).getCultivation();
+			} else {
+				cultivation = new Cultivation();
+			}
 			for (int i = 0; i < 5; i++) {
 				FireThrowable ft = new FireThrowable(actor.world, actor, 4 + cultivation.getStrengthIncrease() * 1.2f, 400, 30, 0.3f);
 				ft.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, Math.min(0.8f * cultivation.getSpeedIncrease() * 0.08f, 2.2f), 0.4f);
@@ -199,17 +220,19 @@ public class Skills {
 
 	public static final Skill METAL_DETECTION = new Skill("metal_detection", 10f, 0.6f, 10f, 0f).setAction(new ISkillAction() {
 		@Override
-		public boolean activate(EntityPlayer actor) {
+		public boolean activate(EntityLivingBase actor) {
 			if (actor.world.isRemote) {
-				ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-				final int max_range = 128;
-				int range = Math.min(max_range, 16 + (int) (Math.floor(0.2 * (1 - cultivation.getStrengthIncrease()))));
-				OreUtils.findOres(actor.world, actor.getPosition(), range);
-				float duration = 10 * 20; // 10 seconds
-				RendererHandler.worldRenderQueue.add(duration, () -> {
-					OreUtils.drawFoundOres(actor);
-					return null;
-				});
+				if(actor instanceof EntityPlayer) {
+					ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+					final int max_range = 128;
+					int range = Math.min(max_range, 16 + (int) (Math.floor(0.2 * (1 - cultivation.getStrengthIncrease()))));
+					OreUtils.findOres(actor.world, actor.getPosition(), range);
+					float duration = 10 * 20; // 10 seconds
+					RendererHandler.worldRenderQueue.add(duration, () -> {
+						OreUtils.drawFoundOres((EntityPlayer) actor);
+						return null;
+					});
+				}
 			}
 			return true;
 		}
@@ -217,9 +240,16 @@ public class Skills {
 
 	public static final Skill ORE_SUCTION = new Skill("ore_suction", 150f, 2.5f, 160f, 0f).setAction(new ISkillAction() {
 		@Override
-		public boolean activate(EntityPlayer actor) {
+		public boolean activate(EntityLivingBase actor) {
 			boolean activated = false;
-			ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+			ICultivation cultivation;
+			if(actor instanceof EntityPlayer) {
+				cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+			} else if(actor instanceof WanderingCultivator) {
+				cultivation = ((WanderingCultivator)actor).getCultivation();
+			} else {
+				cultivation = new Cultivation();
+			}
 			final int max_range = 64;
 			int range = Math.min(max_range, 8 + (int) (Math.floor(0.1 * (1 - cultivation.getStrengthIncrease()))));
 			List<BlockPos> positions = OreUtils.findOres(actor.world, actor.getPosition(), range);
@@ -229,7 +259,7 @@ public class Skills {
 				item.setCount(block.getBlock().quantityDropped(actor.world.rand));
 				IBlockState stone = Blocks.STONE.getDefaultState();
 				actor.world.setBlockState(pos, stone);
-				EntityItem oreItem = actor.dropItem(item, false);
+				EntityItem oreItem = actor.entityDropItem(item, 0f);
 				oreItem.setNoPickupDelay();
 				oreItem.setOwner(actor.getName());
 				activated = true;
@@ -240,7 +270,7 @@ public class Skills {
 
 	public static final Skill EARTH_SUCTION = new Skill("earth_suction", 20f, 0.8f, 5f, 0f).setAction(new ISkillAction() {
 		@Override
-		public boolean activate(EntityPlayer actor) {
+		public boolean activate(EntityLivingBase actor) {
 			boolean activated = false;
 			RayTraceResult rtr = actor.rayTrace(5, 1f);
 			if (rtr.typeOfHit == RayTraceResult.Type.BLOCK) {
@@ -250,7 +280,7 @@ public class Skills {
 					ItemStack item = new ItemStack(block.getBlock().getItemDropped(block, actor.world.rand, 0));
 					item.setCount(block.getBlock().quantityDropped(actor.world.rand));
 					actor.world.setBlockToAir(pos);
-					EntityItem earthItem = actor.dropItem(item, false);
+					EntityItem earthItem = actor.entityDropItem(item, 0f);
 					earthItem.setNoPickupDelay();
 					earthItem.setOwner(actor.getName());
 					activated = true;
@@ -262,7 +292,7 @@ public class Skills {
 
 	public static final Skill EARTHLY_WALL = new Skill("earthly_wall", 20f, 0.8f, 50f, 0f).setAction(new ISkillAction() {
 		@Override
-		public boolean activate(EntityPlayer actor) {
+		public boolean activate(EntityLivingBase actor) {
 			boolean activated = false;
 			RayTraceResult rtr = actor.rayTrace(5, 1f);
 			if (rtr.typeOfHit == RayTraceResult.Type.BLOCK) {
@@ -322,7 +352,7 @@ public class Skills {
 	public static Skill WATER_NEEDLE = new Skill("water_needle", 60f, 1.1f, 20f, 0f, "Lysian Prieto")
 			.setAction(new ISkillAction() {
 				@Override
-				public boolean activate(EntityPlayer actor) {
+				public boolean activate(EntityLivingBase actor) {
 					ICultivation cultivation = actor.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 					WaterNeedleThrowable needle = new WaterNeedleThrowable(actor.world, actor, 4 + cultivation.getStrengthIncrease() * 0.3f, 300);
 					needle.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, Math.min(1.8f, 0.8f + cultivation.getSpeedIncrease() * 0.12f), 0.2f);

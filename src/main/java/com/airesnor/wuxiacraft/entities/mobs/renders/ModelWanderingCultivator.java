@@ -50,27 +50,29 @@ public class ModelWanderingCultivator extends ModelBiped {
 		this.ponyTail.rotateAngleY = netHeadYaw * 0.017453292F;
 		this.ponyTailExtension.rotateAngleY = netHeadYaw * 0.017453292F;
 
+		float angleX = headPitch * 0.017453292F;
 		if (flag)
 		{
-			this.crown.rotateAngleX = -((float)Math.PI / 4F);
-			this.hairPin.rotateAngleX = -((float)Math.PI / 4F);
-			this.ponyTail.rotateAngleX = -((float)Math.PI / 4F);
-			this.ponyTailExtension.rotateAngleX = -((float)Math.PI / 4F);
+			float rotateAngleX = -((float) Math.PI / 4F);
+			this.crown.rotateAngleX = rotateAngleX;
+			this.hairPin.rotateAngleX = rotateAngleX;
+			this.ponyTail.rotateAngleX = rotateAngleX;
+			this.ponyTailExtension.rotateAngleX = rotateAngleX;
 		}
 		else
 		{
-			this.crown.rotateAngleX = headPitch * 0.017453292F;
-			this.hairPin.rotateAngleX = headPitch * 0.017453292F;
-			this.ponyTail.rotateAngleX = Math.max(0,headPitch * 0.017453292F);
-			this.ponyTailExtension.rotateAngleX = Math.max(0,headPitch * 0.017453292F);
+			this.crown.rotateAngleX = angleX;
+			this.hairPin.rotateAngleX = angleX;
+			this.ponyTail.rotateAngleX = Math.max(0, angleX);
+			this.ponyTailExtension.rotateAngleX = Math.max(0, angleX);
 		}
 		if(headPitch < 0 ) {
-			this.ponyTail.offsetY = (float) (-Math.sin(headPitch * 0.017453292F) * 0.41f);
-			this.ponyTail.offsetZ = (float) (Math.cos(Math.PI / 2f + headPitch * 0.017453292F) * 0.41f);
-			this.ponyTailExtension.offsetY = (float) (-Math.sin(headPitch * 0.017453292F) * 0.41f);
-			this.ponyTailExtension.offsetZ = (float) (Math.cos(Math.PI / 2f + headPitch * 0.017453292F) * 0.41f);
+			float offsetZ = (float) (Math.cos(Math.PI / 2f + angleX) * 0.41f);
+			float offsetY = (float) (-Math.sin(angleX) * 0.41f);
+			this.ponyTail.offsetY = offsetY;
+			this.ponyTail.offsetZ = offsetZ;
+			this.ponyTailExtension.offsetY = offsetY;
+			this.ponyTailExtension.offsetZ = offsetZ;
 		}
-		//this.ponyTailExtension.offsetY = (float) (-Math.sin(headPitch * 0.017453292F) * 0.41f);
-		//this.ponyTailExtension.offsetZ = (float) (Math.cos(Math.PI / 2f + headPitch * 0.017453292F) * 0.41f);
 	}
 }

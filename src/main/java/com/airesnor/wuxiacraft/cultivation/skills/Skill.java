@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.cultivation.skills;
 
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class Skill {
@@ -44,11 +45,11 @@ public class Skill {
 		return cooldown;
 	}
 
-	public boolean activate(EntityPlayer actor) {
+	public boolean activate(EntityLivingBase actor) {
 		return this.action.activate(actor);
 	}
 
-	public boolean castingEffect(EntityPlayer actor) {
+	public boolean castingEffect(EntityLivingBase actor) {
 		return this.whenCasting.activate(actor);
 	}
 
@@ -76,7 +77,7 @@ public class Skill {
 		this.cooldown = cooldown;
 		this.whenCasting = new ISkillAction() {
 			@Override
-			public boolean activate(EntityPlayer actor) {
+			public boolean activate(EntityLivingBase actor) {
 				return false;
 			}
 		};
