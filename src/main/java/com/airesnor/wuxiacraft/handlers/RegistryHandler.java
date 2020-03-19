@@ -3,6 +3,7 @@ package com.airesnor.wuxiacraft.handlers;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.Blocks;
 import com.airesnor.wuxiacraft.entities.mobs.GiantAnt;
+import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
 import com.airesnor.wuxiacraft.items.IHasModel;
 import com.airesnor.wuxiacraft.items.Items;
@@ -55,7 +56,7 @@ public class RegistryHandler {
 
 	@SubscribeEvent
 	public static void onEntityRegister(RegistryEvent.Register<EntityEntry> event) {
-		EntityEntry entity = EntityEntryBuilder.create()
+		EntityEntry giantAntEntity = EntityEntryBuilder.create()
 				.entity(GiantAnt.class)
 				.id(new ResourceLocation(WuxiaCraft.MODID, "giant_ant"),0)
 				.name("giant_ant")
@@ -76,9 +77,33 @@ public class RegistryHandler {
 						Biomes.PLAINS,
 						Biomes.JUNGLE_EDGE,
 						Biomes.MESA
-						)
+				)
 				.build();
-		event.getRegistry().register(entity);
+		EntityEntry wanderingCultivatorEntity = EntityEntryBuilder.create()
+				.entity(WanderingCultivator.class)
+				.id(new ResourceLocation(WuxiaCraft.MODID, "wandering_cultivator"),1)
+				.name("wandering_cultivator")
+				.tracker(80, 3, false)
+				.egg(0x202020, 0xFACB27)
+				/*.spawn(EnumCreatureType.CREATURE, 80, 1, 2,
+						Biomes.BEACH,
+						Biomes.BIRCH_FOREST,
+						Biomes.DESERT,
+						Biomes.DESERT_HILLS,
+						Biomes.COLD_TAIGA,
+						Biomes.EXTREME_HILLS,
+						Biomes.FOREST,
+						Biomes.SAVANNA,
+						Biomes.SAVANNA_PLATEAU,
+						Biomes.TAIGA,
+						Biomes.TAIGA_HILLS,
+						Biomes.PLAINS,
+						Biomes.JUNGLE_EDGE,
+						Biomes.MESA
+				)*/
+				.build();
+		event.getRegistry().register(giantAntEntity);
+		event.getRegistry().register(wanderingCultivatorEntity);
 	}
 
 }
