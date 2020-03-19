@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
+
+import javax.vecmath.Vector3f;
 
 public class OBJModelLoader {
 
@@ -84,9 +87,13 @@ public class OBJModelLoader {
 
 	public static class Part {
 		public List<Face> faces;
+		public Vector3f origin;
+		public String parent;
 
 		public Part() {
 			this.faces = new ArrayList<>();
+			origin = new Vector3f(0,0,0);
+			parent = "";
 		}
 
 		public void draw() {
@@ -94,7 +101,7 @@ public class OBJModelLoader {
 			BufferBuilder builder = tessellator.getBuffer();
 			for(Face f : faces) {
 				GlStateManager.glBegin(f.drawMode);
-				builder.begin(f.drawMode, DefaultVertexFormats.POSITION);
+				builder.begin(f.drawMode, DefaultVertexFormats.POSITION_TEX_NORMAL);
 				for(Vertex v : f.vertices) {
 					v.addToBufferBuilder(builder);
 				}
@@ -137,7 +144,7 @@ public class OBJModelLoader {
 					}
 					Face f = new Face(drawMode);
 					for (int i = 1; i < splitF.length; i++) {
-						String[] splitV = splitF[1].split("/");
+						String[] splitV = splitF[i].split("/");
 						Triple<Float, Float, Float> pos = positions.get(Integer.parseInt(splitV[0])-1);
 						Pair<Float, Float> tex = texCoords.get(Integer.parseInt(splitV[1])-1);
 						Triple<Float, Float, Float> nor = normals.get(Integer.parseInt(splitV[2])-1);
@@ -154,6 +161,26 @@ public class OBJModelLoader {
 				activePartKey = name;
 				Part part = new Part();
 				parts.put(name, part);
+			} else if (line.startsWith("origin ")) {
+				Part part = parts.get(activePartKey);
+				if (part != null) {
+					String[] split = line.split(" ");
+					if(split.length == 2) {
+						Triple<Float, Float, Float> or = positions.get(Integer.parseInt(split[1]));
+						Vector3f origin = new Vector3f(or.getLeft(), or.getMiddle(), or.getRight());
+						part.origin = origin;
+					}
+					else {
+						Vector3f origin = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
+						part.origin = origin;
+					}
+				}
+			} else if (line.startsWith("parent ")) {
+				Part part = parts.get(activePartKey);
+				if (part != null) {
+					String[] split = line.split(" ");
+					part.parent = split[1];
+				}
 			}
 			line = reader.readLine();
 		}

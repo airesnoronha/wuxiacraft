@@ -8,8 +8,11 @@ import com.airesnor.wuxiacraft.items.IHasModel;
 import com.airesnor.wuxiacraft.items.Items;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.init.Biomes;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -58,6 +61,22 @@ public class RegistryHandler {
 				.name("giant_ant")
 				.tracker(80, 3, false)
 				.egg(0xFACB27, 0x202020)
+				.spawn(EnumCreatureType.CREATURE, 80, 1, 2,
+						Biomes.BEACH,
+						Biomes.BIRCH_FOREST,
+						Biomes.DESERT,
+						Biomes.DESERT_HILLS,
+						Biomes.COLD_TAIGA,
+						Biomes.EXTREME_HILLS,
+						Biomes.FOREST,
+						Biomes.SAVANNA,
+						Biomes.SAVANNA_PLATEAU,
+						Biomes.TAIGA,
+						Biomes.TAIGA_HILLS,
+						Biomes.PLAINS,
+						Biomes.JUNGLE_EDGE,
+						Biomes.MESA
+						)
 				.build();
 		event.getRegistry().register(entity);
 	}
