@@ -23,15 +23,19 @@ public class RenderWaterBlade<T extends WaterBladeThrowable> extends Render<T> {
 	public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
 
 		Random rand = entity.world.rand;
+		GlStateManager.pushAttrib();
 		GlStateManager.pushMatrix();
 		GlStateManager.disableCull();
 		GlStateManager.disableTexture2D();
 		GlStateManager.disableLighting();
 		GlStateManager.color(0.2f, 0.3f, 0.8f, 1f);
 
+		float roll = entity.prevRotationRoll + (entity.rotationRoll - entity.prevRotationRoll) * partialTicks;
+
 		GlStateManager.translate(x, y, z);
 		GlStateManager.rotate(entity.rotationYaw, 0, 1, 0);
 		GlStateManager.rotate(-entity.rotationPitch, 1, 0, 0);
+		GlStateManager.rotate(roll, 0, 0, 1);
 
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buf = tessellator.getBuffer();
@@ -42,10 +46,11 @@ public class RenderWaterBlade<T extends WaterBladeThrowable> extends Render<T> {
 		}
 		tessellator.draw();
 
-		GlStateManager.enableTexture2D();
 		GlStateManager.enableCull();
+		GlStateManager.enableTexture2D();
 		GlStateManager.enableLighting();
 		GlStateManager.popMatrix();
+		GlStateManager.popAttrib();
 
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 	}

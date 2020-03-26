@@ -9,23 +9,19 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.lwjgl.opengl.GL11;
 
+import javax.vecmath.Vector3f;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.lwjgl.opengl.GL11;
-
-import javax.vecmath.Vector3f;
 
 public class OBJModelLoader {
 
@@ -89,25 +85,27 @@ public class OBJModelLoader {
 		public List<Face> faces;
 		public Vector3f origin;
 		public String parent;
+		public boolean cull;
 
 		public Part() {
 			this.faces = new ArrayList<>();
 			origin = new Vector3f(0,0,0);
 			parent = "";
+			cull = true;
 		}
 
 		public void draw() {
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder builder = tessellator.getBuffer();
+			if(!cull) GlStateManager.disableCull();
 			for(Face f : faces) {
-				GlStateManager.glBegin(f.drawMode);
 				builder.begin(f.drawMode, DefaultVertexFormats.POSITION_TEX_NORMAL);
 				for(Vertex v : f.vertices) {
 					v.addToBufferBuilder(builder);
 				}
-				GlStateManager.glEnd();
 				tessellator.draw();
 			}
+			if(!cull) GlStateManager.enableCull();
 		}
 	}
 
@@ -180,6 +178,12 @@ public class OBJModelLoader {
 				if (part != null) {
 					String[] split = line.split(" ");
 					part.parent = split[1];
+				}
+			} else if (line.startsWith("cull ")) {
+				Part part = parts.get(activePartKey);
+				if (part != null) {
+					String[] split = line.split(" ");
+					part.cull = !split[1].equals("off");
 				}
 			}
 			line = reader.readLine();

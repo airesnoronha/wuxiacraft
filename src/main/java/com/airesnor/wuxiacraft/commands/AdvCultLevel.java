@@ -5,6 +5,7 @@ import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.networking.CultivationMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -44,14 +45,14 @@ public class AdvCultLevel extends CommandBase {
 			if (!player.world.isRemote) {
 				if (args.length == 0) {
 					ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-					EventHandler.playerAddProgress(player, cultivation, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
+					CultivationUtils.cultivatorAddProgress(player, cultivation, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
 					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPelletCooldown()), player);
 					EventHandler.applyModifiers(player, cultivation);
 				} else if (args.length == 1) {
 					int levels = Integer.parseInt(args[0], 10);
 					ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 					for (int i = 0; i < levels; i++) {
-						EventHandler.playerAddProgress(player, cultivation, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
+						CultivationUtils.cultivatorAddProgress(player, cultivation, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
 					}
 					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPelletCooldown()), player);
 					EventHandler.applyModifiers(player, cultivation);

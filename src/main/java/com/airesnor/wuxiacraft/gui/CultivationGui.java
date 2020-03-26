@@ -12,7 +12,6 @@ import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.RemoveTechniqueMessage;
 import com.airesnor.wuxiacraft.networking.SpeedHandicapMessage;
 import com.airesnor.wuxiacraft.proxy.ClientProxy;
-import com.airesnor.wuxiacraft.utils.MathUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;

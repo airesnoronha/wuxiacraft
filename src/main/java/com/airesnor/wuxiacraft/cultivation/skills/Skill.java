@@ -2,7 +2,6 @@ package com.airesnor.wuxiacraft.cultivation.skills;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 
 public class Skill {
 
@@ -18,6 +17,8 @@ public class Skill {
 	private ISkillAction whenCasting;
 
 	private String authorName;
+
+	boolean aggressive;
 
 	public String getName() {
 		return I18n.format("wuxiacraft.skills." + this.name);
@@ -35,6 +36,10 @@ public class Skill {
 	public Skill setWhenCasting(ISkillAction action) {
 		this.whenCasting = action;
 		return this;
+	}
+
+	public boolean isAggressive() {
+		return this.aggressive;
 	}
 
 	public float getCastTime() {
@@ -61,16 +66,17 @@ public class Skill {
 		return this.progress;
 	}
 
-	public Skill(String name, float cost, float progress) {
-		this(name, cost, progress, 0, 0);
+	public Skill(String name, boolean aggressive, float cost, float progress) {
+		this(name, aggressive, cost, progress, 0, 0);
 	}
 
-	public Skill(String name, float cost, float progress, float castTime, float cooldown) {
-		this(name, cost, progress, castTime, cooldown, "Aires Adures");
+	public Skill(String name, boolean aggressive, float cost, float progress, float castTime, float cooldown) {
+		this(name, aggressive, cost, progress, castTime, cooldown, "Aires Adures");
 	}
 
-	public Skill(String name, float cost, float progress, float castTime, float cooldown, String author) {
+	public Skill(String name, boolean aggressive, float cost, float progress, float castTime, float cooldown, String author) {
 		this.name = name;
+		this.aggressive = aggressive;
 		this.cost = cost;
 		this.progress = progress;
 		this.castTime = castTime;

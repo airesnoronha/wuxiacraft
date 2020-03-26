@@ -2,7 +2,7 @@ package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.handlers.EventHandler;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,7 +40,7 @@ public class ItemProgressPill extends ItemBase {
 				if (stack.isEmpty())
 					stack = ItemStack.EMPTY;
 				cultivation.setPelletCooldown(cooldown);
-				EventHandler.playerAddProgress(player, cultivation, this.amount);
+				CultivationUtils.cultivatorAddProgress(player, cultivation, this.amount);
 			}
 		}
 		return stack;
@@ -65,6 +65,7 @@ public class ItemProgressPill extends ItemBase {
 		return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
 	}
 
+	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		playerIn.setActiveHand(handIn);
 		return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));

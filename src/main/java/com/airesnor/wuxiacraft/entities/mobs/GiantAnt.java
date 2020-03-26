@@ -1,18 +1,20 @@
 package com.airesnor.wuxiacraft.entities.mobs;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
 public class GiantAnt extends EntityMob {
+
+	public static final ResourceLocation DROP_LIST = new ResourceLocation(WuxiaCraft.MODID, "entities/giant_ant");
 
 	public GiantAnt(World worldIn) {
 		super(worldIn);
@@ -27,8 +29,8 @@ public class GiantAnt extends EntityMob {
 		this.tasks.addTask(5, new EntityAIWanderAvoidWater(this, 0.4D));
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		this.tasks.addTask(6, new EntityAILookIdle(this));
-		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false, new Class[0]));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
 	}
 
 	@Override
@@ -52,5 +54,11 @@ public class GiantAnt extends EntityMob {
 		protected double getAttackReachSqr(EntityLivingBase attackTarget) {
 			return range + attackTarget.width + attacker.width;
 		}
+	}
+
+	@Nullable
+	@Override
+	protected ResourceLocation getLootTable() {
+		return DROP_LIST;
 	}
 }

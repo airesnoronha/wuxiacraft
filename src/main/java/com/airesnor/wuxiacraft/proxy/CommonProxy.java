@@ -98,4 +98,7 @@ public class CommonProxy {
 
 	public void registerScrollModel(Item item, int meta, String id) {
 	}
+
+	public void registerCustomModelLocation(Item item, int meta, String id, String location) {
+	}
 }

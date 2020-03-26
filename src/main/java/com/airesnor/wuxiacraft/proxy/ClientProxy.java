@@ -4,11 +4,15 @@ import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.OBJBlockModelLoader;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.entities.mobs.GiantAnt;
+import com.airesnor.wuxiacraft.entities.mobs.GiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.mobs.renders.RenderGiantAnt;
+import com.airesnor.wuxiacraft.entities.mobs.renders.RenderGiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.renders.RenderWanderingCultivator;
+import com.airesnor.wuxiacraft.entities.skills.SwordBeamThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
+import com.airesnor.wuxiacraft.entities.skills.models.RenderSwordBeam;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterBlade;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterNeedle;
 import com.airesnor.wuxiacraft.gui.SkillsGui;
@@ -56,7 +60,7 @@ public class ClientProxy extends CommonProxy {
 	 *
 	 * @param item item to receive the texture
 	 * @param meta perhaps the item texture can be based on its metadata
-	 * @param id   string name of the item
+	 * @param id   string name of the variant
 	 */
 	public void registerItemRenderer(Item item, int meta, String id) {
 		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName(), id));
@@ -65,6 +69,11 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void registerScrollModel(Item item, int meta, String id) {
 		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation("wuxiacraft:scroll", id));
+	}
+
+	@Override
+	public void registerCustomModelLocation(Item item, int meta, String id, String location) {
+		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(location, id));
 	}
 
 	@Override
@@ -81,7 +90,9 @@ public class ClientProxy extends CommonProxy {
 
 		RenderingRegistry.registerEntityRenderingHandler(WaterNeedleThrowable.class, RenderWaterNeedle::new);
 		RenderingRegistry.registerEntityRenderingHandler(WaterBladeThrowable.class, RenderWaterBlade::new);
+		RenderingRegistry.registerEntityRenderingHandler(SwordBeamThrowable.class, RenderSwordBeam::new);
 		RenderingRegistry.registerEntityRenderingHandler(GiantAnt.class, RenderGiantAnt::new);
+		RenderingRegistry.registerEntityRenderingHandler(GiantBee.class, RenderGiantBee::new);
 		RenderingRegistry.registerEntityRenderingHandler(WanderingCultivator.class, RenderWanderingCultivator::new);
 	}
 
@@ -110,6 +121,7 @@ public class ClientProxy extends CommonProxy {
 		}
 
 		RenderGiantAnt.init();
+		RenderGiantBee.init();
 
 		MinecraftForge.EVENT_BUS.register(new RendererHandler());
 	}

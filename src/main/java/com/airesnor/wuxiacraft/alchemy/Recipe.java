@@ -95,4 +95,12 @@ public class Recipe {
 		int range = random.nextInt(this.yieldRange * 2) - this.yieldRange;
 		return this.yields + range;
 	}
+
+	public List<Pair<Float, Item>> getRecipe() {
+		List<Pair<Float, Item>> recipe = new ArrayList<>();
+		for(Triple<Float, Float, Item> item : this.recipeOrder) {
+			recipe.add(Pair.of((item.getLeft() + item.getMiddle())/2f, item.getRight()));
+		}
+		return recipe;
+	}
 }

@@ -2,7 +2,7 @@ package com.airesnor.wuxiacraft.networking;
 
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.handlers.EventHandler;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -19,7 +19,7 @@ public class ProgressMessageHandler implements IMessageHandler {
 				ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 				switch (msg.op) {
 					case 0:
-						EventHandler.playerAddProgress(player, cultivation, msg.amount);
+						CultivationUtils.cultivatorAddProgress(player, cultivation, msg.amount);
 						break;
 					case 1:
 						cultivation.addProgress(-msg.amount);

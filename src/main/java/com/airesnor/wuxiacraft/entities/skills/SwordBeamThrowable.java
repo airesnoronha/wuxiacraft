@@ -5,37 +5,34 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
-public class WaterNeedleThrowable extends EntityThrowable {
+public class SwordBeamThrowable extends EntityThrowable {
+
+	private float damage;
+	public int color;
+	private int duration;
+	public float roll;
 
 	private EntityLivingBase owner;
 
-	private float damage;
-
-	private int duration;
-
-	public WaterNeedleThrowable(World worldIn) {
+	public SwordBeamThrowable(World worldIn) {
 		super(worldIn);
 	}
 
-	public WaterNeedleThrowable(World worldIn, EntityLivingBase owner, float damage) {
-		this(worldIn, owner, damage, 30);
-	}
-
-	public WaterNeedleThrowable(World worldIn, EntityLivingBase owner, float damage, int duration) {
+	public SwordBeamThrowable(World worldIn, EntityLivingBase owner, float damage, int color, int duration) {
 		super(worldIn, owner.posX, owner.posY + owner.getEyeHeight() - 0.1, owner.posZ);
-		this.setSize(0.05f, 0.05f);
-		this.setNoGravity(true);
 		this.owner = owner;
-		this.thrower = this.owner;
 		this.damage = damage;
+		this.color = color;
 		this.duration = duration;
+		this.setNoGravity(true);
+		this.handleWaterMovement();
+		setSize(0.5f,1f);
+		this.roll = -30f + this.world.rand.nextFloat()*60f;
 	}
 
 	@Override
@@ -46,19 +43,37 @@ public class WaterNeedleThrowable extends EntityThrowable {
 		this.shoot(f, f1, f2, velocity, inaccuracy);
 	}
 
+	@Override
+	public void onUpdate() {
+		if(this.inWater) {
+			this.motionX *= 1.0f / 0.81f;
+			this.motionY *= 1.0f / 0.81f;
+			this.motionZ *= 1.0f / 0.81f;
+		}
+		super.onUpdate();
+	}
+
+	@Override
+	public void onEntityUpdate() {
+		super.onEntityUpdate();
+
+		if (this.ticksExisted >= this.duration) {
+			this.setDead();
+		}
+	}
 
 	@Override
 	protected void onImpact(RayTraceResult result) {
-		if (!this.world.isRemote) {
 			if (result.typeOfHit == RayTraceResult.Type.ENTITY && !result.entityHit.equals(this.owner)) {
-				this.attackEntityOnDirectHit((EntityLivingBase) result.entityHit);
+				if(!this.world.isRemote) {
+					this.attackEntityOnDirectHit((EntityLivingBase) result.entityHit);
+				}
 				this.setDead();
 			} else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
 				if (canNotPassThroughHitBlock(result)) {
 					this.setDead();
 				}
 			}
-		}
 	}
 
 	private void attackEntityOnDirectHit(EntityLivingBase hitEntity) {
@@ -72,20 +87,5 @@ public class WaterNeedleThrowable extends EntityThrowable {
 		BlockPos hitBlockPos = result.getBlockPos();
 		IBlockState hitState = this.world.getBlockState(hitBlockPos);
 		return hitState.getMaterial().blocksMovement();
-	}
-
-	@Override
-	public void onEntityUpdate() {
-		super.onEntityUpdate();
-
-		if (this.ticksExisted >= this.duration) {
-			this.setDead();
-			return;
-		}
-
-		if (this.ticksExisted >= 2 && this.world instanceof WorldServer) {
-			WorldServer worldServer = (WorldServer) this.world;
-			worldServer.spawnParticle(EnumParticleTypes.WATER_DROP, false, this.posX, this.posY, this.posZ, 3, this.width, this.height, this.width, 0.005d, 0);
-		}
 	}
 }

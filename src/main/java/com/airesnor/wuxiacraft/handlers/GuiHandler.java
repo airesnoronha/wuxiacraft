@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.gui.CultivationGui;
+import com.airesnor.wuxiacraft.gui.RecipeGui;
 import com.airesnor.wuxiacraft.gui.SkillsGui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -13,6 +14,7 @@ public class GuiHandler implements IGuiHandler {
 
 	public static final int CULTIVATION_GUI_ID = 0;
 	public static final int SKILLS_GUI_ID = 1;
+	public static final int RECIPE_GUI_ID = 2;
 
 	@Nullable
 	@Override
@@ -21,6 +23,7 @@ public class GuiHandler implements IGuiHandler {
 		switch (ID) {
 			case CULTIVATION_GUI_ID:
 			case SKILLS_GUI_ID:
+			case RECIPE_GUI_ID:
 				return null;
 		}
 		return null;
@@ -35,6 +38,8 @@ public class GuiHandler implements IGuiHandler {
 				return new CultivationGui(player);
 			case SKILLS_GUI_ID:
 				return new SkillsGui(player);
+			case RECIPE_GUI_ID:
+				return new RecipeGui(player);
 		}
 		return null;
 	}

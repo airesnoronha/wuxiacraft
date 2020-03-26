@@ -23,6 +23,8 @@ public interface ISkillCap {
 
 	float getCooldown();
 
+	float getMaxCooldown();
+
 	void stepCooldown(float step);
 
 	void resetCooldown();
@@ -50,5 +52,17 @@ public interface ISkillCap {
 	void setDoneCasting(boolean doneCasting);
 
 	boolean isDoneCasting();
+
+	void resetBarrageCounter();
+
+	int getBarrageReleased();
+
+	int getBarrageToRelease();
+
+	void increaseBarrageReleased();
+
+	void increaseBarrageToRelease();
+
+	void resetBarrageToRelease();
 
 }

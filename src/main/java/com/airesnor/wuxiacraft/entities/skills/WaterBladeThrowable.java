@@ -5,6 +5,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
@@ -20,6 +21,9 @@ public class WaterBladeThrowable extends EntityThrowable {
 	private float damage;
 
 	private int duration;
+
+	public float prevRotationRoll;
+	public float rotationRoll;
 
 	public WaterBladeThrowable(World worldIn) {
 		super(worldIn);
@@ -38,6 +42,8 @@ public class WaterBladeThrowable extends EntityThrowable {
 		this.thrower = this.owner;
 		this.damage = damage;
 		this.duration = duration;
+		this.rotationRoll = -90f + this.world.rand.nextFloat()*180f;
+		this.prevRotationRoll = rotationRoll;
 	}
 
 	@Override
@@ -46,7 +52,6 @@ public class WaterBladeThrowable extends EntityThrowable {
 		float f1 = -MathHelper.sin((rotationPitchIn + pitchOffset) * 0.017453292F);
 		float f2 = MathHelper.cos(rotationYawIn * 0.017453292F) * MathHelper.cos(rotationPitchIn * 0.017453292F);
 		this.shoot(f, f1, f2, velocity, inaccuracy);
-		this.rotationPitch = rotationPitchIn;
 		this.posX -= 0.25 * Math.sin(this.rotationYaw / 180f);
 		this.posZ -= 0.25 * Math.cos(this.rotationYaw / 180f);
 	}
@@ -65,12 +70,15 @@ public class WaterBladeThrowable extends EntityThrowable {
 				if (TreeUtils.isLog(this.world, result.getBlockPos())) {
 					this.world.destroyBlock(result.getBlockPos(), true);
 				}
+				else if (this.world.getBlockState(result.getBlockPos()).getBlock().equals(Blocks.CACTUS)) {
+					this.world.destroyBlock(result.getBlockPos(), true);
+				}
 			}
 		}
 	}
 
 	private void attackEntityOnDirectHit(EntityLivingBase hitEntity) {
-		hitEntity.attackEntityFrom(DamageSource.DROWN, this.damage);
+		hitEntity.attackEntityFrom(DamageSource.causeMobDamage(owner).setMagicDamage().setProjectile(), this.damage);
 		if (this.owner != null) {
 			hitEntity.setLastAttackedEntity(this.owner);
 		}
@@ -95,5 +103,13 @@ public class WaterBladeThrowable extends EntityThrowable {
 			WorldServer worldServer = (WorldServer) this.world;
 			worldServer.spawnParticle(EnumParticleTypes.WATER_DROP, false, this.posX, this.posY, this.posZ, 15, this.width, this.height, this.width, 0.005d, 0);
 		}
+
+		this.rotateRoll();
+	}
+
+	private void rotateRoll() {
+		this.prevRotationRoll = this.rotationRoll;
+		this.rotationRoll += 2.5f;
+		if(this.rotationRoll > -180f) this.rotationRoll -= 360f;
 	}
 }

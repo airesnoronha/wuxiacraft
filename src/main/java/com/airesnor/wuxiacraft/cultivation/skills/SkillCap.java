@@ -16,16 +16,21 @@ public class SkillCap implements ISkillCap {
 	private int ActiveSkillIndex;
 	private boolean casting;
 	private boolean doneCasting;
+	private int barrageToRelease;
+	private int barrageReleased;
+	private float maxCooldown;
 
 	public SkillCap() {
 		this.knownSkills = new ArrayList<>();
 		this.toBreak = new Stack<>();
 		this.cooldown = 0;
+		this.maxCooldown = 0;
 		this.castProgress = 0;
 		this.SelectedSkills = new ArrayList<>();
 		this.ActiveSkillIndex = -1;
 		this.casting = false;
 		this.doneCasting = false;
+		this.resetBarrageCounter();
 	}
 
 	@Override
@@ -64,8 +69,15 @@ public class SkillCap implements ISkillCap {
 	}
 
 	@Override
+	public float getMaxCooldown() {
+		return this.maxCooldown;
+	}
+
+	@Override
 	public void stepCooldown(float step) {
 		this.cooldown += step;
+		if(this.cooldown <= 0) this.maxCooldown = 1f;
+		else if(this.cooldown > 0 && this.maxCooldown < step) this.maxCooldown = step;
 	}
 
 	@Override
@@ -126,6 +138,9 @@ public class SkillCap implements ISkillCap {
 	@Override
 	public void setCasting(boolean casting) {
 		this.casting = casting;
+		if(casting == false) {
+			resetBarrageCounter();
+		}
 	}
 
 	@Override
@@ -136,5 +151,36 @@ public class SkillCap implements ISkillCap {
 	@Override
 	public void setDoneCasting(boolean doneCasting) {
 		this.doneCasting = doneCasting;
+	}
+
+	@Override
+	public void resetBarrageCounter() {
+		this.barrageToRelease = 0;
+		this.barrageReleased = 0;
+	}
+
+	@Override
+	public int getBarrageReleased() {
+		return this.barrageReleased;
+	}
+
+	@Override
+	public int getBarrageToRelease() {
+		return this.barrageToRelease;
+	}
+
+	@Override
+	public void increaseBarrageReleased() {
+		this.barrageReleased++;
+	}
+
+	@Override
+	public void increaseBarrageToRelease() {
+		this.barrageToRelease++;
+	}
+
+	@Override
+	public void resetBarrageToRelease() {
+		this.barrageToRelease = 0;
 	}
 }

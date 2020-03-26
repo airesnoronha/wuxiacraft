@@ -3,17 +3,16 @@ package com.airesnor.wuxiacraft.handlers;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.Blocks;
 import com.airesnor.wuxiacraft.entities.mobs.GiantAnt;
+import com.airesnor.wuxiacraft.entities.mobs.GiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
 import com.airesnor.wuxiacraft.items.IHasModel;
 import com.airesnor.wuxiacraft.items.Items;
 import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Biomes;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -61,6 +60,29 @@ public class RegistryHandler {
 				.id(new ResourceLocation(WuxiaCraft.MODID, "giant_ant"),0)
 				.name("giant_ant")
 				.tracker(80, 3, false)
+				.egg(0xDA5917, 0xC35D35)
+				.spawn(EnumCreatureType.CREATURE, 80, 1, 2,
+						Biomes.BEACH,
+						Biomes.BIRCH_FOREST,
+						Biomes.DESERT,
+						Biomes.DESERT_HILLS,
+						Biomes.COLD_TAIGA,
+						Biomes.EXTREME_HILLS,
+						Biomes.FOREST,
+						Biomes.SAVANNA,
+						Biomes.SAVANNA_PLATEAU,
+						Biomes.TAIGA,
+						Biomes.TAIGA_HILLS,
+						Biomes.PLAINS,
+						Biomes.JUNGLE_EDGE,
+						Biomes.MESA
+				)
+				.build();
+		EntityEntry giantBeeEntity = EntityEntryBuilder.create()
+				.entity(GiantBee.class)
+				.id(new ResourceLocation(WuxiaCraft.MODID, "giant_bee"),2)
+				.name("giant_bee")
+				.tracker(80, 3, false)
 				.egg(0xFACB27, 0x202020)
 				.spawn(EnumCreatureType.CREATURE, 80, 1, 2,
 						Biomes.BEACH,
@@ -83,9 +105,9 @@ public class RegistryHandler {
 				.entity(WanderingCultivator.class)
 				.id(new ResourceLocation(WuxiaCraft.MODID, "wandering_cultivator"),1)
 				.name("wandering_cultivator")
-				.tracker(80, 3, false)
+				.tracker(150, 3, false)
 				.egg(0x202020, 0xFACB27)
-				/*.spawn(EnumCreatureType.CREATURE, 80, 1, 2,
+				.spawn(EnumCreatureType.CREATURE, 80, 1, 2,
 						Biomes.BEACH,
 						Biomes.BIRCH_FOREST,
 						Biomes.DESERT,
@@ -100,9 +122,10 @@ public class RegistryHandler {
 						Biomes.PLAINS,
 						Biomes.JUNGLE_EDGE,
 						Biomes.MESA
-				)*/
+				)
 				.build();
 		event.getRegistry().register(giantAntEntity);
+		event.getRegistry().register(giantBeeEntity);
 		event.getRegistry().register(wanderingCultivatorEntity);
 	}
 

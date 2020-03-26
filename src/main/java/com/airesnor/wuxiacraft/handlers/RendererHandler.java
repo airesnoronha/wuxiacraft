@@ -120,6 +120,7 @@ public class RendererHandler {
 		if (event.isCancelable() || event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE) {
 			return;
 		}
+		drawSkillCooldownBar(event.getResolution());
 		drawCastProgressBar(event.getResolution());
 		drawHudElements(event.getResolution());
 		drawSkillsBar(event.getResolution());
@@ -257,6 +258,18 @@ public class RendererHandler {
 		message = String.format("Fall Distance: %.2f",player.fallDistance);
 		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 60, Integer.parseInt("FFAA00",16))
 		*/
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void drawSkillCooldownBar(ScaledResolution res) {
+		Minecraft mc = Minecraft.getMinecraft();
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(res.getScaledWidth() / 2f - 94f, res.getScaledHeight() - 32, 0);
+		Minecraft.getMinecraft().getTextureManager().bindTexture(icons);
+		ISkillCap skillCap = mc.player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+		int coolDownBar = (int)(skillCap.getCooldown()/skillCap.getMaxCooldown() * 188);
+		mc.ingameGUI.drawTexturedModalRect(0, 0, 0, 10, coolDownBar, 11);
+		GlStateManager.popMatrix();
 	}
 
 	@SideOnly(Side.CLIENT)

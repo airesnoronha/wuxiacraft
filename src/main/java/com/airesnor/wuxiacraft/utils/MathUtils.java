@@ -28,4 +28,22 @@ public class MathUtils {
 		if (inclusive) return min <= value && value <= max;
 		else return min < value && value < max;
 	}
+
+	public static float clamp(float value, float min, float max) {
+		value = Math.max(min, value);
+		value = Math.min(value, max);
+		return value;
+	}
+
+	public static int clamp(int value, int min, int max) {
+		value = Math.max(min, value);
+		value = Math.min(value, max);
+		return value;
+	}
+
+	public static double clamp(double value, double min, double max) {
+		value = Math.max(min, value);
+		value = Math.min(value, max);
+		return value;
+	}
 }

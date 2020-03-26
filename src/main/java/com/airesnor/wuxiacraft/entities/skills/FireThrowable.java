@@ -1,9 +1,10 @@
 package com.airesnor.wuxiacraft.entities.skills;
 
+import com.airesnor.wuxiacraft.networking.SpawnParticleMessage;
+import com.airesnor.wuxiacraft.utils.SkillUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.DamageSource;
@@ -32,7 +33,7 @@ public class FireThrowable extends EntityThrowable {
 	}
 
 	public FireThrowable(World worldIn, EntityLivingBase owner, float damage) {
-		this(worldIn, owner, damage, 20, 3, 0.08f);
+		this(worldIn, owner, damage, 20, 3, 0.4f);
 	}
 
 	public FireThrowable(World worldIn, EntityLivingBase owner, float damage, int duration, int particles, float radius) {
@@ -65,7 +66,13 @@ public class FireThrowable extends EntityThrowable {
 
 		if (this.ticksExisted >= 2 && this.world instanceof WorldServer) {
 			WorldServer worldServer = (WorldServer) this.world;
-			worldServer.spawnParticle(EnumParticleTypes.FLAME, false, this.posX, this.posY, this.posZ, this.particles, this.width, this.height, this.width, 0.002d, 0);
+			for(int i = 0; i < particles; i++) {
+				double px = this.posX - this.width/2 + this.world.rand.nextFloat()*this.width;
+				double py = this.posY + this.world.rand.nextFloat()*this.height;
+				double pz = this.posZ - this.width/2 + this.world.rand.nextFloat()*this.width;
+				SpawnParticleMessage spm = new SpawnParticleMessage(EnumParticleTypes.FLAME, false, px,py,pz, this.motionX * 0.1f, this.motionY * 0.1f, this.motionZ * 0.1f, 0);
+				SkillUtils.sendMessageWithinRange(worldServer, getPosition(), 64, spm);
+			}
 
 			AxisAlignedBB expandedBoundingBox = this.getEntityBoundingBox().grow(1, 1, 1);
 			worldServer.getEntitiesInAABBexcluding(this.owner, expandedBoundingBox, input -> !this.equals(input)).forEach(this::setEntityOnFire);
@@ -94,7 +101,7 @@ public class FireThrowable extends EntityThrowable {
 
 	private void attackEntityOnDirectHit(EntityLivingBase hitEntity) {
 		hitEntity.setFire(5);
-		hitEntity.attackEntityFrom(DamageSource.IN_FIRE, this.damage);
+		hitEntity.attackEntityFrom(DamageSource.causeMobDamage(owner).setMagicDamage().setFireDamage().setProjectile(), this.damage);
 		if (this.owner != null) {
 			hitEntity.setLastAttackedEntity(this.owner);
 		}

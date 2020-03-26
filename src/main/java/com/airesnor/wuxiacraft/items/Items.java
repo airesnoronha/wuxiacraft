@@ -1,7 +1,9 @@
 package com.airesnor.wuxiacraft.items;
 
+import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillAction;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,6 +11,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +30,22 @@ public class Items {
 		}
 	};
 
+	public static final CreativeTabs MONSTER_CORES = new CreativeTabs("wuxiacraft.cores") {
+		@Override
+		public ItemStack getTabIconItem() {
+			return new ItemStack(GIANT_ANT_CORE);
+		}
+	};
+
 	/**
 	 * A test item, not in use right now
 	 */
-	public static final Item NATURAL_ODDITY_LOW = new ItemBase("natural_oddity_low").setCreativeTab(CreativeTabs.MATERIALS);
+	public static final Item NATURAL_ODDITY_LOW = new ItemMonsterCore("natural_oddity_low").setUseDuration(100)
+			.setWhenUsing(actor -> {
+				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.56874F);
+				return true;
+			});
 
 	//pellets
 	public static final Item BODY_REFINEMENT_PILL = new ItemProgressPill("body_refinement_pill", 50f, 100);
@@ -79,8 +94,26 @@ public class Items {
 	public static final Item METAL_MANIPULATION_SCROLL = new ItemScroll(Techniques.METAL_MANIPULATION);
 	public static final Item SURGING_WAVES_SCROLL = new ItemScroll(Techniques.SURGING_WAVES);
 	public static final Item BOTANICAL_GROWTH_SCROLL = new ItemScroll(Techniques.BOTANICAL_GROWTH);
+	public static final Item SWORD_FLIGHT_JOURNAL_SCROLL = new ItemScroll(Techniques.SWORD_FLIGHT_JOURNAL);
 
 	//FANS
 	public static final Item FEATHER_FAN = new ItemFan("feather_fan").setMaxStrength(10f).setStrength(1f);
+
+	//Monster cores
+	public static final Item GIANT_ANT_CORE = new ItemMonsterCore("giant_ant_core").setUseDuration(100)
+			.setWhenUsing(actor -> {
+				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.45786f);
+				return true;
+			})
+			.setUseAction(actor -> {
+				if(!actor.world.isRemote) {
+					actor.world.createExplosion(actor, actor.posX, actor.posY, actor.posZ, 5.0f, true);
+				}
+				actor.attackEntityFrom(DamageSource.causeExplosionDamage(actor), 120f);
+				return true;
+			});
+
+	public static final Item RECIPE_SCROLL = new ItemRecipe("recipe_scroll");
 
 }

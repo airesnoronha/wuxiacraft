@@ -45,5 +45,6 @@ public class WuxiaCraft {
 		event.registerServerCommand(new AdvCultLevel());
 		event.registerServerCommand(new ResetCultCommand());
 		event.registerServerCommand(new SkillsCommand());
+		event.registerServerCommand(new CreateRecipeCommand());
 	}
 }
