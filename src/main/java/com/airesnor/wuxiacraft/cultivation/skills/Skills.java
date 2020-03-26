@@ -397,7 +397,7 @@ public class Skills {
 					float sword = ((ItemSword) actor.getHeldItem(EnumHand.MAIN_HAND).getItem()).getAttackDamage();
 					int enchantment = EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, actor.getHeldItem(EnumHand.MAIN_HAND));
 					sword += enchantment > 0 ? 0.5 * (1 + enchantment) : 0;
-					float damage = Math.min(45f, strength * 0.3f + sword);
+					float damage = Math.min(80f, strength + sword);
 					SwordBeamThrowable sbt = new SwordBeamThrowable(actor.world, actor, damage, 0xEF890A, 300);
 					sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.2f, 0f);
 					actor.world.spawnEntity(sbt);
@@ -416,7 +416,7 @@ public class Skills {
 					float sword = ((ItemSword) actor.getHeldItem(EnumHand.MAIN_HAND).getItem()).getAttackDamage() * 2;
 					int enchantment = EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, actor.getHeldItem(EnumHand.MAIN_HAND));
 					sword += enchantment > 0 ? 0.5 * (1 + enchantment) : 0;
-					float damage = Math.min(45f, strength * 0.3f + sword);
+					float damage = Math.min(80f, strength + sword);
 					SwordBeamThrowable sbt = new SwordBeamThrowable(actor.world, actor, damage, 0xEF890A, 300);
 					sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.2f, 0f);
 					actor.world.spawnEntity(sbt);
@@ -440,7 +440,7 @@ public class Skills {
 						float sword = ((ItemSword) actor.getHeldItem(EnumHand.MAIN_HAND).getItem()).getAttackDamage() * 2;
 						int enchantment = EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, actor.getHeldItem(EnumHand.MAIN_HAND));
 						sword += enchantment > 0 ? 0.5 * (1 + enchantment) : 0;
-						float damage = Math.min(25f, strength * 0.08f + sword * 0.3f);
+						float damage = Math.min(25f, strength * 0.3f + sword * 0.3f);
 						SwordBeamThrowable sbt = new SwordBeamThrowable(actor.world, actor, damage, 0x89EF0A, 300);
 						sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.2f, 0f);
 						actor.world.spawnEntity(sbt);
@@ -463,7 +463,8 @@ public class Skills {
 				if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
 					if (cultivation.hasEnergy(9f)) {
 						cultivation.remEnergy(9f);
-						float speed = cultivation.getSpeedIncrease() * 0.5f;
+						float speed = cultivation.getSpeedIncrease() * 0.6f;
+						speed = Math.min(6f, speed);
 						float yaw = actor.rotationYawHead;
 						float pitch = actor.rotationPitch;
 						float x = speed * -MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);

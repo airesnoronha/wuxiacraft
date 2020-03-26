@@ -47,7 +47,7 @@ public class ResetCultCommand extends CommandBase {
 					cultivation.setEnergy(0);
 					cultivation.setCurrentSubLevel(0);
 					cultivation.setCurrentLevel(CultivationLevel.BODY_REFINEMENT);
-					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPelletCooldown()), player);
+					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPillCooldown(), false), player);
 					EventHandler.applyModifiers(player, cultivation);
 				}
 			}

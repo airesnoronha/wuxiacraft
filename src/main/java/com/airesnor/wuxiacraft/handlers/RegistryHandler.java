@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Biomes;
 import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -61,7 +62,7 @@ public class RegistryHandler {
 				.name("giant_ant")
 				.tracker(80, 3, false)
 				.egg(0xDA5917, 0xC35D35)
-				.spawn(EnumCreatureType.CREATURE, 80, 1, 2,
+				.spawn(EnumCreatureType.MONSTER, 35, 1, 2,
 						Biomes.BEACH,
 						Biomes.BIRCH_FOREST,
 						Biomes.DESERT,
@@ -84,7 +85,7 @@ public class RegistryHandler {
 				.name("giant_bee")
 				.tracker(80, 3, false)
 				.egg(0xFACB27, 0x202020)
-				.spawn(EnumCreatureType.CREATURE, 80, 1, 2,
+				.spawn(EnumCreatureType.MONSTER, 35, 1, 2,
 						Biomes.BEACH,
 						Biomes.BIRCH_FOREST,
 						Biomes.DESERT,
@@ -107,7 +108,7 @@ public class RegistryHandler {
 				.name("wandering_cultivator")
 				.tracker(150, 3, false)
 				.egg(0x202020, 0xFACB27)
-				.spawn(EnumCreatureType.CREATURE, 80, 1, 2,
+				.spawn(EnumCreatureType.MONSTER, 5, 1, 1,
 						Biomes.BEACH,
 						Biomes.BIRCH_FOREST,
 						Biomes.DESERT,

@@ -31,6 +31,10 @@ public interface ISkillCap {
 
 	float getCastProgress();
 
+	void setCastProgress(float castProgress);
+
+	void setCooldown(float cooldown);
+
 	void stepCastProgress(float step);
 
 	void resetCastProgress();

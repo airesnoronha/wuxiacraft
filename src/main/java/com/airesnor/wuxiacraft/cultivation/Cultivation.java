@@ -7,10 +7,11 @@ public class Cultivation implements ICultivation {
 	private float energy;
 	public int handicap;
 	private int timer;
-	private int pelletCooldown;
+	private int pillCooldown;
 	private float maxSpeed;
 	private float hasteLimit;
 	private float jumpLimit;
+	private boolean suppress;
 
 	public Cultivation() {
 		this.subLevel = 0;
@@ -19,10 +20,11 @@ public class Cultivation implements ICultivation {
 		this.energy = 0;
 		this.handicap = 100;
 		this.timer = 0;
-		this.pelletCooldown = 0;
+		this.pillCooldown = 0;
 		this.maxSpeed = 5.0f;
 		this.hasteLimit = 10.0f;
 		this.jumpLimit = 10.0f;
+		this.suppress = false;
 	}
 
 	@Override
@@ -122,18 +124,19 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public int getPelletCooldown() {
-		return this.pelletCooldown;
+	public int getPillCooldown() {
+		return this.pillCooldown;
 	}
 
 	@Override
-	public void lessenPelletCooldown() {
-		this.pelletCooldown = Math.max(this.pelletCooldown - 1, 0);
+	public void lessenPillCooldown() {
+		int speed = Math.round(this.getSpeedIncrease());
+		this.pillCooldown = Math.max(this.pillCooldown - speed, 0);
 	}
 
 	@Override
-	public void setPelletCooldown(int cooldown) {
-		this.pelletCooldown = Math.max(0, cooldown);
+	public void setPillCooldown(int cooldown) {
+		this.pillCooldown = Math.max(0, cooldown);
 	}
 
 	@Override
@@ -179,5 +182,15 @@ public class Cultivation implements ICultivation {
 	@Override
 	public void setJumpLimit(float jumpLimit) {
 		this.jumpLimit = jumpLimit;
+	}
+
+	@Override
+	public void setSuppress(boolean suppress) {
+		this.suppress = suppress;
+	}
+
+	@Override
+	public boolean getSuppress() {
+		return this.suppress;
 	}
 }

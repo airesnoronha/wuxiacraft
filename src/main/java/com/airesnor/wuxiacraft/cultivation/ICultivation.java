@@ -66,11 +66,11 @@ public interface ICultivation {
 
 	void resetTimer();
 
-	int getPelletCooldown();
+	int getPillCooldown();
 
-	void lessenPelletCooldown();
+	void lessenPillCooldown();
 
-	void setPelletCooldown(int cooldown);
+	void setPillCooldown(int cooldown);
 
 	float getStrengthIncrease();
 
@@ -89,4 +89,8 @@ public interface ICultivation {
 	float getJumpLimit();
 
 	void setJumpLimit(float jumpLimit);
+
+	void setSuppress(boolean suppress);
+
+	boolean getSuppress();
 }

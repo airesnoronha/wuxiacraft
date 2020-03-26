@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.items;
 
-import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.client.util.ITooltipFlag;
@@ -8,14 +7,13 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 public class ItemProgressPill extends ItemBase {
@@ -30,23 +28,30 @@ public class ItemProgressPill extends ItemBase {
 	}
 
 	@Override
+	@Nonnull
+	@ParametersAreNonnullByDefault
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		if (entityLiving instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) entityLiving;
-			ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-			assert cultivation != null;
-			if (cultivation.getPelletCooldown() == 0) {
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+			if (cultivation.getPillCooldown() == 0) {
 				stack.shrink(player.isCreative() ? 0 : 1);
 				if (stack.isEmpty())
 					stack = ItemStack.EMPTY;
-				cultivation.setPelletCooldown(cooldown);
-				CultivationUtils.cultivatorAddProgress(player, cultivation, this.amount);
+				cultivation.setPillCooldown(cooldown);
+				if(this.amount <= cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.1f) {
+					CultivationUtils.cultivatorAddProgress(player, cultivation, this.amount);
+				} else {
+					worldIn.createExplosion(entityLiving, entityLiving.posX, entityLiving.posY, entityLiving.posZ, 3f, true);
+					entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), this.amount*2);
+				}
 			}
 		}
 		return stack;
 	}
 
 	@Override
+	@Nonnull
 	public EnumAction getItemUseAction(ItemStack stack) {
 		return EnumAction.EAT;
 	}
@@ -57,15 +62,18 @@ public class ItemProgressPill extends ItemBase {
 	}
 
 	@Override
+	@Nonnull
 	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
-		ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-		if (cultivation.getPelletCooldown() != 0) {
+		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+		if (cultivation.getPillCooldown() != 0) {
 			return EnumActionResult.FAIL;
 		}
 		return super.onItemUseFirst(player, world, pos, side, hitX, hitY, hitZ, hand);
 	}
 
 	@Override
+	@Nonnull
+	@ParametersAreNonnullByDefault
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		playerIn.setActiveHand(handIn);
 		return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));

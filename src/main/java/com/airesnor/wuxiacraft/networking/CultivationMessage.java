@@ -11,13 +11,15 @@ public class CultivationMessage implements IMessage {
 	public float messageProgress;
 	public float messageEnergy;
 	public int pelletCooldown;
+	public boolean suppress;
 
-	public CultivationMessage(CultivationLevel messageLevel, int messageSubLevel, float messageProgress, float messageEnergy, int pelletCooldown) {
+	public CultivationMessage(CultivationLevel messageLevel, int messageSubLevel, float messageProgress, float messageEnergy, int pelletCooldown, boolean suppress) {
 		this.messageLevel = messageLevel;
 		this.messageSubLevel = messageSubLevel;
 		this.messageProgress = messageProgress;
 		this.messageEnergy = messageEnergy;
 		this.pelletCooldown = pelletCooldown;
+		this.suppress = suppress;
 	}
 
 	public CultivationMessage() {
@@ -26,10 +28,12 @@ public class CultivationMessage implements IMessage {
 		this.messageProgress = 0;
 		this.messageEnergy = 0;
 		this.pelletCooldown = 0;
+		this.suppress = false;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
+		this.suppress = buf.readBoolean();
 		this.messageSubLevel = buf.readInt();
 		this.messageProgress = buf.readFloat();
 		this.messageEnergy = buf.readFloat();
@@ -45,6 +49,7 @@ public class CultivationMessage implements IMessage {
 	@Override
 	public void toBytes(ByteBuf buf) {
 		byte[] bytes = messageLevel.name().getBytes();
+		buf.writeBoolean(this.suppress);
 		buf.writeInt(this.messageSubLevel);
 		buf.writeFloat(this.messageProgress);
 		buf.writeFloat(this.messageEnergy);

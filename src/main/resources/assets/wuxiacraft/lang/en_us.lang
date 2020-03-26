@@ -16,6 +16,15 @@ item.turtle_shell_pill.name=Turtle Shell Pill
 item.minor_fasting_pill.name=Minor Fasting Pill
 item.giant_ant_core.name=Giant Ant Core
 item.recipe_scroll.name=Recipe Scroll
+item.training_pill.name=Training Pill
+item.reinforcement_pill.name=Reinforcement Pill
+item.body_creation_pill.name=Body Creation Pill
+item.soul_refinement_pill.name=Soul Refinement Pill
+item.soul_aspect_pill.name=Soul Aspect Pill
+item.wandering_ghost_pill.name=Wandering Ghost Pill
+item.qi_paths_refinement_pill.name=Qi Paths Refinement Pill
+item.meridian_injection_pill.name=Meridian Injection Pill
+item.dantian_condensing_pill.name=DanTian Condensing Pill
 
 //Creative tabs
 itemGroup.wuxiacraft.scrolls=Cultivation Techniques

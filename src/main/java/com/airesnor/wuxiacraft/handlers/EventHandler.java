@@ -60,7 +60,7 @@ public class EventHandler {
 		ISkillCap skillCap = player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
 		if (cultivation != null && cultTech != null && skillCap != null && !player.world.isRemote) {
 			WuxiaCraft.logger.info("Restoring " + player.getDisplayNameString() + " cultivation.");
-			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPelletCooldown()), (EntityPlayerMP) player);
+			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
 			NetworkWrapper.INSTANCE.sendTo(new SpeedHandicapMessage(cultivation.getSpeedHandicap(), cultivation.getMaxSpeed(), cultivation.getHasteLimit(), cultivation.getJumpLimit()), (EntityPlayerMP) player);
 			NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
 			NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap), (EntityPlayerMP) player);
@@ -71,17 +71,19 @@ public class EventHandler {
 	public void onPlayerUpdateEvent(LivingEvent.LivingUpdateEvent event) {
 		if (event.getEntity() instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) event.getEntity();
-			ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-			ICultTech cultTech = player.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
+			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 			if (cultivation != null) {
 
 				cultivation.advTimer();
-				cultivation.lessenPelletCooldown();
+				cultivation.lessenPillCooldown();
 				//each 100 ticks will sync the cultivation
 				if (cultivation.getUpdateTimer() == 100) {
 					if (!player.world.isRemote) {
-						NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPelletCooldown()), (EntityPlayerMP) player);
+						NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
 						NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
+						NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap), (EntityPlayerMP) player);
 					}
 					cultivation.resetTimer();
 				}
@@ -264,7 +266,7 @@ public class EventHandler {
 			ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 			if (cultivation != null) {
 				CultivationUtils.cultivatorAddProgress(player, cultivation, 0.5f * event.getAmount());
-				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPelletCooldown()), (EntityPlayerMP) player);
+				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
 			}
 		}
 	}
@@ -277,7 +279,7 @@ public class EventHandler {
 			ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 			if (cultivation != null) {
 				CultivationUtils.cultivatorAddProgress(player, cultivation, 0.1f * block.getBlockHardness(event.getWorld(), event.getPos()));
-				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPelletCooldown()), (EntityPlayerMP) player);
+				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(),cultivation.getSuppress()), (EntityPlayerMP) player);
 			}
 		}
 	}
@@ -335,13 +337,13 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+		if (event.player.world.isRemote) return;
 		EntityPlayer player = event.player;
-		if (player.world.isRemote) return;
-		ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-		ICultTech cultTech = player.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
-		ISkillCap skillCap = player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
+		ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 		WuxiaCraft.logger.info("Applying " + player.getDisplayNameString() + " cultivation.");
-		NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPelletCooldown()), (EntityPlayerMP) player);
+		NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
 		NetworkWrapper.INSTANCE.sendTo(new EnergyMessage(), (EntityPlayerMP) player);
 		NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
 		NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap), (EntityPlayerMP) player);

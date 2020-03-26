@@ -63,15 +63,17 @@ public class CultivationUtils {
 	}
 
 	public static void cultivatorAddProgress(EntityLivingBase player, ICultivation cultivation, float amount) {
-		ICultTech cultTech = getCultTechFromEntity(player);
-		amount *= cultTech.getOverallCultivationSpeed();
-		cultTech.progress(amount);
-		if (cultivation.addProgress(amount)) {
-			if (!player.world.isRemote) {
-				if(player instanceof EntityPlayer) {
-					int msgN = player.world.rand.nextInt(CONGRATS_MESSAGE_COUNT);
-					((EntityPlayer) player).sendStatusMessage(new TextComponentString(I18n.format("wuxiacraft.level_message.congrats_"+msgN)+" "+ cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel())), false);
-					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPelletCooldown()), (EntityPlayerMP) player);
+		if(!cultivation.getSuppress()) {
+			ICultTech cultTech = getCultTechFromEntity(player);
+			amount *= cultTech.getOverallCultivationSpeed();
+			cultTech.progress(amount);
+			if (cultivation.addProgress(amount)) {
+				if (!player.world.isRemote) {
+					if (player instanceof EntityPlayer) {
+						int msgN = player.world.rand.nextInt(CONGRATS_MESSAGE_COUNT);
+						((EntityPlayer) player).sendStatusMessage(new TextComponentString(I18n.format("wuxiacraft.level_message.congrats_" + msgN) + " " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel())), false);
+						NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
+					}
 				}
 			}
 		}

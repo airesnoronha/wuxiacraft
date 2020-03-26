@@ -1,8 +1,6 @@
 package com.airesnor.wuxiacraft.gui;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.capabilities.CultTechProvider;
-import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
@@ -11,7 +9,9 @@ import com.airesnor.wuxiacraft.cultivation.techniques.TechniquesModifiers;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.RemoveTechniqueMessage;
 import com.airesnor.wuxiacraft.networking.SpeedHandicapMessage;
+import com.airesnor.wuxiacraft.networking.SuppressCultivationMessage;
 import com.airesnor.wuxiacraft.proxy.ClientProxy;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,8 +36,8 @@ public class CultivationGui extends GuiScreen {
 	private int offset = 0;
 
 	public CultivationGui(EntityPlayer player) {
-		this.cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-		this.cultTech = player.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
+		this.cultivation = CultivationUtils.getCultivationFromEntity(player);
+		this.cultTech = CultivationUtils.getCultTechFromEntity(player);
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	@Override
-	protected void keyTyped(char typedChar, int keyCode) throws IOException {
+	protected void keyTyped(char typedChar, int keyCode) {
 		if (keyCode == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(keyCode)
 				|| ClientProxy.keyBindings[2].isActiveAndMatches(keyCode)) {
 			this.mc.player.closeScreen();
@@ -74,6 +74,10 @@ public class CultivationGui extends GuiScreen {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 		if (inBounds(mouseX, mouseY, this.guiLeft + 156, this.guiTop + 36, 9, 9)) {
 			this.offset = Math.max(0, this.offset - 1);
+		}
+		if (inBounds(mouseX, mouseY, this.guiLeft + 148, this.guiTop + 23, 9, 9)) {
+			cultivation.setSuppress(!cultivation.getSuppress());
+			NetworkWrapper.INSTANCE.sendToServer(new SuppressCultivationMessage(cultivation.getSuppress()));
 		}
 		if (inBounds(mouseX, mouseY, this.guiLeft + 156, this.guiTop + 106, 9, 9)) {
 			this.offset = Math.min(this.cultTech.getKnownTechniques().size() - 5, this.offset + 1);
@@ -125,9 +129,7 @@ public class CultivationGui extends GuiScreen {
 				counter++;
 			}
 		} else {
-			for (KnownTechnique t : this.cultTech.getKnownTechniques()) {
-				drawing.add(t);
-			}
+			drawing.addAll(this.cultTech.getKnownTechniques());
 		}
 		int pos = 0;
 		for (KnownTechnique t : drawing) {
@@ -201,10 +203,15 @@ public class CultivationGui extends GuiScreen {
 				Math.min(27,(int)(27f*(cultivation.getJumpLimit())/(0.19f * cultivation.getSpeedIncrease())))
 		};
 
+		//cultivation suppressing
+		if(this.cultivation.getSuppress()) {
+			drawTexturedModalRect(this.guiLeft + 148, this.guiTop+23, 117, 142, 9, 9);
+		}
+
 		//Regulator bars
 		for (int i = 0; i < 4; i++) {
 			drawTexturedModalRect(this.guiLeft - 61, this.guiTop + i * 15, 0, 151, 61, 15); //bg
-			drawTexturedModalRect(this.guiLeft - 61 + 23, this.guiTop + i * 15 + 4, 0, 166, 27, 7); //barbg
+			drawTexturedModalRect(this.guiLeft - 61 + 23, this.guiTop + i * 15 + 4, 0, 166, 27, 7); //bar bg
 			drawTexturedModalRect(this.guiLeft - 61 + 23, this.guiTop + i * 15 + 4, 27, 166, fills[i], 7); //bar fill
 			drawTexturedModalRect(this.guiLeft - 61 + 13, this.guiTop + i * 15 + 3, 45, 142, 9, 9); //button bg
 			drawTexturedModalRect(this.guiLeft - 61 + 51, this.guiTop + i * 15 + 3, 45, 142, 9, 9); //button bg
@@ -233,9 +240,7 @@ public class CultivationGui extends GuiScreen {
 				counter++;
 			}
 		} else {
-			for (KnownTechnique t : this.cultTech.getKnownTechniques()) {
-				drawing.add(t);
-			}
+			drawing.addAll(this.cultTech.getKnownTechniques());
 		}
 		int pos = 0;
 		for (KnownTechnique t : drawing) {
@@ -286,6 +291,11 @@ public class CultivationGui extends GuiScreen {
 			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
 			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
 		}
+		if(inBounds(mouseX, mouseY, this.guiLeft+148, this.guiTop+23, 9,9)) {
+			String line = "Suppress Cultivation";
+			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
+			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
+		}
 	}
 
 	public static boolean inBounds(int x, int y, int left, int top, int width, int height) {
@@ -299,7 +309,7 @@ public class CultivationGui extends GuiScreen {
 		drawTexturedModalRect(x + width - borderSize, y, textureX + 2 * borderSize, textureY, borderSize, borderSize);
 		drawTexturedModalRect(x + width - borderSize, y + height - borderSize, textureX + borderSize * 2, textureY + borderSize * 2, borderSize, borderSize);
 		//vertical borders
-		int i = 0;
+		int i;
 		for (i = 0; i < height - 2 * borderSize; i += borderSize) {
 			drawTexturedModalRect(x, y + borderSize + i, textureX, textureY + borderSize, borderSize, borderSize);
 			drawTexturedModalRect(x + width - borderSize, y + borderSize + i, textureX + 2 * borderSize, textureY + borderSize, borderSize, borderSize);
@@ -323,7 +333,7 @@ public class CultivationGui extends GuiScreen {
 			drawTexturedModalRect(x + borderSize + i, y + height - borderSize, textureX + borderSize, textureY + 2 * borderSize, leftOverX, borderSize);
 		}
 		//middle
-		int j = 0;
+		int j;
 		for (j = 0; j < height - 2 * borderSize; j += borderSize) {
 			for (i = 0; i < width - 2 * borderSize; i += borderSize) {
 				drawTexturedModalRect(x + borderSize + i, y + borderSize + j, textureX + borderSize, textureY + borderSize, borderSize, borderSize);

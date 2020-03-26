@@ -1,15 +1,21 @@
 package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 public class ItemEnergyPill extends ItemBase {
 
@@ -21,20 +27,27 @@ public class ItemEnergyPill extends ItemBase {
 	}
 
 	@Override
+	@Nonnull
+	@ParametersAreNonnullByDefault
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		if (entityLiving instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) entityLiving;
 			stack.shrink(player.isCreative() ? 0 : 1);
 			if (stack.isEmpty())
 				stack = ItemStack.EMPTY;
-			ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-			assert cultivation != null;
-			cultivation.addEnergy(this.amount);
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+			if(this.amount < cultivation.getMaxEnergy() * 0.3F) {
+				cultivation.addEnergy(this.amount);
+			} else {
+				worldIn.createExplosion(player, player.posX, player.posY, player.posZ, 3, true);
+				player.attackEntityFrom(DamageSource.causeExplosionDamage(player), this.amount*2);
+			}
 		}
 		return stack;
 	}
 
 	@Override
+	@Nonnull
 	public EnumAction getItemUseAction(ItemStack stack) {
 		return EnumAction.EAT;
 	}
@@ -44,6 +57,9 @@ public class ItemEnergyPill extends ItemBase {
 		return 6;
 	}
 
+	@Override
+	@Nonnull
+	@ParametersAreNonnullByDefault
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		playerIn.setActiveHand(handIn);
 		return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));

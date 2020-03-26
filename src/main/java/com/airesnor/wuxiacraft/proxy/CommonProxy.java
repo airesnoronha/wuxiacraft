@@ -17,6 +17,7 @@ import com.airesnor.wuxiacraft.world.WorldGen;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -54,6 +55,7 @@ public class CommonProxy {
 		NetworkWrapper.INSTANCE.registerMessage(new SelectSkillMessageHandler(), SelectSkillMessage.class, 167013, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new AskCultivationLevelMessageHandler(), AskCultivationLevelMessage.class, 167016, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new RespondCultivationLevelMessageHandler(), RespondCultivationLevelMessage.class, 167017, Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(new SuppressCultivationMessageHandler(), SuppressCultivationMessage.class, 167018, Side.SERVER);
 
 		NetworkWrapper.INSTANCE.registerMessage(new CultivationMessageHandler(), CultivationMessage.class, 167001, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new SpeedHandicapMessageHandler(), SpeedHandicapMessage.class, 167004, Side.CLIENT);
@@ -72,7 +74,7 @@ public class CommonProxy {
 		Element.init();
 		Skills.init();
 
-		GameRegistry.registerTileEntity(CauldronTileEntity.class, "wuxiacraft:cauldron_tile_entity");
+		GameRegistry.registerTileEntity(CauldronTileEntity.class, new ResourceLocation(WuxiaCraft.MODID, "cauldron_tile_entity"));
 	}
 
 	public void preInit() {

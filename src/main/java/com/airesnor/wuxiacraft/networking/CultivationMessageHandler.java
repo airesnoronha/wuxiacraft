@@ -33,7 +33,8 @@ public class CultivationMessageHandler implements IMessageHandler {
 					cultivation.setCurrentSubLevel(cm.messageSubLevel);
 					cultivation.setProgress(cm.messageProgress);
 					cultivation.setEnergy(cm.messageEnergy);
-					cultivation.setPelletCooldown(cm.pelletCooldown);
+					cultivation.setPillCooldown(cm.pelletCooldown);
+					cultivation.setSuppress(cm.suppress);
 				} else {
 					WuxiaCraft.logger.info("He ain't a cultivator. Weeird");
 				}

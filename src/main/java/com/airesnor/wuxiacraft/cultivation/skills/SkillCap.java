@@ -183,4 +183,14 @@ public class SkillCap implements ISkillCap {
 	public void resetBarrageToRelease() {
 		this.barrageToRelease = 0;
 	}
+
+	@Override
+	public void setCastProgress(float castProgress) {
+		this.castProgress = castProgress;
+	}
+
+	@Override
+	public void setCooldown(float Cooldown) {
+		this.cooldown = cooldown;
+	}
 }

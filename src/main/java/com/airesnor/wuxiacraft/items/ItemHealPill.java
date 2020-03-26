@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
@@ -24,7 +25,12 @@ public class ItemHealPill extends ItemBase {
 			stack.shrink(player.isCreative() ? 0 : 1);
 			if (stack.isEmpty())
 				stack = ItemStack.EMPTY;
-			player.heal(this.amount);
+			if(this.amount <= player.getMaxHealth()) {
+				player.heal(this.amount);
+			} else {
+				worldIn.createExplosion(player, player.posX, player.posY, player.posZ, 3f, true);
+				player.attackEntityFrom(DamageSource.causeExplosionDamage(player), this.amount);
+			}
 		}
 		return stack;
 	}

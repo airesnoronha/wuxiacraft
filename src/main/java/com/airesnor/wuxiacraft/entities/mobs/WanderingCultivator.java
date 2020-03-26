@@ -7,15 +7,19 @@ import com.airesnor.wuxiacraft.entities.ai.EntityAIReleaseSkills;
 import com.airesnor.wuxiacraft.utils.MathUtils;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class WanderingCultivator extends EntityCultivator {
+public class WanderingCultivator extends EntityCultivator implements IMob {
 
-	private static final ResourceLocation DROP_TABLE = new ResourceLocation(WuxiaCraft.MODID, "entities/wandering_cultivator");
+	private static final ResourceLocation DROP_TABLE_1 = new ResourceLocation(WuxiaCraft.MODID, "entities/wandering_cultivator_11");
+	private static final ResourceLocation DROP_TABLE_2 = new ResourceLocation(WuxiaCraft.MODID, "entities/wandering_cultivator_l2");
+	private static final ResourceLocation DROP_TABLE_3 = new ResourceLocation(WuxiaCraft.MODID, "entities/wandering_cultivator_l3");
+	private static final ResourceLocation DROP_TABLE_4 = new ResourceLocation(WuxiaCraft.MODID, "entities/wandering_cultivator_l4");
 
 	public WanderingCultivator(World worldIn) {
 		super(worldIn);
@@ -29,13 +33,12 @@ public class WanderingCultivator extends EntityCultivator {
 		this.tasks.addTask(4, new EntityAIAttackMelee(this, 0.6D, false));
 		this.tasks.addTask(5, new EntityAIWanderAvoidWater(this, 0.6D));
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false, new Class[0]));
-		//this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityMob.class, true));
+		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityMob.class, true));
 	}
 
 	@Override
-	protected void applyCultivation(World world) {;
+	protected void applyCultivation(World world) {
 		if(world.provider.getDimensionType().getId() == 0) {
 			int result = world.rand.nextInt(100);
 			if(MathUtils.between(result, 0, 30)) {
@@ -55,7 +58,7 @@ public class WanderingCultivator extends EntityCultivator {
 				if(MathUtils.between(result, 0, 5)) {
 					skillCap.addSkill(Skills.FIRE_BAll);
 				}
-			} else if(result >= 50) {
+			} else {
 				skillCap.addSkill(Skills.WATER_NEEDLE);
 				if(MathUtils.between(result,50, 55)) {
 					skillCap.addSkill(Skills.WATER_BLADE);
@@ -64,9 +67,29 @@ public class WanderingCultivator extends EntityCultivator {
 		}
 	}
 
+	@Override
+	public boolean getCanSpawnHere() {
+		return super.getCanSpawnHere();
+	}
+
 	@Nullable
 	@Override
 	protected ResourceLocation getLootTable() {
-		return DROP_TABLE;
+		ResourceLocation table = DROP_TABLE_1;
+		switch(this.cultivation.getCurrentLevel()) {
+			case BODY_REFINEMENT:
+				table = DROP_TABLE_1;
+				break;
+			case SOUL_REFINEMENT:
+				table = DROP_TABLE_2;
+				break;
+			case QI_PATHS_REFINEMENT:
+				table = DROP_TABLE_3;
+				break;
+			case DANTIAN_CONDENSING:
+				table = DROP_TABLE_4;
+				break;
+		}
+		return table;
 	}
 }

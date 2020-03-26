@@ -51,7 +51,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 		compound.setInteger("subLevel", cultivation.getCurrentSubLevel());
 		compound.setInteger("progress", (int) cultivation.getCurrentProgress());
 		compound.setInteger("energy", (int) cultivation.getEnergy());
-		compound.setInteger("pelletCD", cultivation.getPelletCooldown());
+		compound.setInteger("pelletCD", cultivation.getPillCooldown());
 		compound.setInteger("length", skillCap.getKnownSkills().size());
 		for (int i = 0; i < skillCap.getKnownSkills().size(); i++) {
 			int pos = Skills.SKILLS.indexOf(skillCap.getKnownSkills().get(i));
@@ -73,7 +73,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 		cultivation.setCurrentSubLevel(compound.getInteger("subLevel"));
 		cultivation.addProgress(compound.getInteger("progress"));
 		cultivation.addEnergy(compound.getInteger("energy"));
-		cultivation.setPelletCooldown(compound.getInteger("pelletCD"));
+		cultivation.setPillCooldown(compound.getInteger("pelletCD"));
 		int length = compound.getInteger("length");
 		skillCap.getKnownSkills().clear();
 		for (int i = 0; i < length; i++) {
@@ -176,7 +176,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 		buffer.writeInt(this.cultivation.getCurrentSubLevel());
 		buffer.writeFloat(this.cultivation.getCurrentProgress());
 		buffer.writeFloat(this.cultivation.getEnergy());
-		buffer.writeInt(this.cultivation.getPelletCooldown());
+		buffer.writeInt(this.cultivation.getPillCooldown());
 		buffer.writeInt(bytes.length);
 		buffer.writeBytes(bytes);
 	}
@@ -197,7 +197,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 		this.cultivation.setCurrentSubLevel(subLevel);
 		this.cultivation.setProgress(progress);
 		this.cultivation.setEnergy(energy);
-		this.cultivation.setPelletCooldown(pelletCooldown);
+		this.cultivation.setPillCooldown(pelletCooldown);
 	}
 
 
