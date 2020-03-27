@@ -143,6 +143,17 @@ public class Items {
 				actor.attackEntityFrom(DamageSource.causeExplosionDamage(actor), 120f);
 				return true;
 			});
+	public static final Item GIANT_BEE_CORE = new ItemMonsterCore("giant_bee_core").setUseDuration(80)
+			.setWhenUsing(actor -> {
+				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.45786f);
+				return true;
+			})
+			.setUseAction(actor -> {
+				PotionEffect effect = new PotionEffect(MobEffects.POISON, 20*60*5, 0, false, false);
+				actor.addPotionEffect(effect);
+				return true;
+			});
 
 	public static final Item RECIPE_SCROLL = new ItemRecipe("recipe_scroll");
 

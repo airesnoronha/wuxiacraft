@@ -33,7 +33,7 @@ public class FireThrowable extends EntityThrowable {
 	}
 
 	public FireThrowable(World worldIn, EntityLivingBase owner, float damage) {
-		this(worldIn, owner, damage, 20, 3, 0.4f);
+		this(worldIn, owner, damage, 20, 6, 0.5f);
 	}
 
 	public FireThrowable(World worldIn, EntityLivingBase owner, float damage, int duration, int particles, float radius) {
@@ -67,9 +67,9 @@ public class FireThrowable extends EntityThrowable {
 		if (this.ticksExisted >= 2 && this.world instanceof WorldServer) {
 			WorldServer worldServer = (WorldServer) this.world;
 			for(int i = 0; i < particles; i++) {
-				double px = this.posX - this.width/2 + this.world.rand.nextFloat()*this.width;
-				double py = this.posY + this.world.rand.nextFloat()*this.height;
-				double pz = this.posZ - this.width/2 + this.world.rand.nextFloat()*this.width;
+				double px = this.posX - this.width/2 + this.world.rand.nextFloat()*this.width + this.motionX*this.world.rand.nextFloat();
+				double py = this.posY + this.world.rand.nextFloat()*this.height + this.motionY*this.world.rand.nextFloat();
+				double pz = this.posZ - this.width/2 + this.world.rand.nextFloat()*this.width + this.motionZ*this.world.rand.nextFloat();
 				SpawnParticleMessage spm = new SpawnParticleMessage(EnumParticleTypes.FLAME, false, px,py,pz, this.motionX * 0.1f, this.motionY * 0.1f, this.motionZ * 0.1f, 0);
 				SkillUtils.sendMessageWithinRange(worldServer, getPosition(), 64, spm);
 			}

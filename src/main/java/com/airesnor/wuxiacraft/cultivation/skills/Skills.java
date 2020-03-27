@@ -70,6 +70,7 @@ public class Skills {
 		SKILLS.add(LIGHT_FEET_SKILL);
 		SKILLS.add(MINOR_POWER_PUNCH);
 		SKILLS.add(MINOR_BODY_REINFORCEMENT);
+		SKILLS.add(ADEPT_SWORD_FLIGHT);
 	}
 
 	public static final Skill CULTIVATE = new Skill("cultivate", false, 80f, 10f, 150f, 0f)
@@ -397,9 +398,9 @@ public class Skills {
 					float sword = ((ItemSword) actor.getHeldItem(EnumHand.MAIN_HAND).getItem()).getAttackDamage();
 					int enchantment = EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, actor.getHeldItem(EnumHand.MAIN_HAND));
 					sword += enchantment > 0 ? 0.5 * (1 + enchantment) : 0;
-					float damage = Math.min(80f, strength + sword);
+					float damage = Math.min(60f, strength + sword);
 					SwordBeamThrowable sbt = new SwordBeamThrowable(actor.world, actor, damage, 0xEF890A, 300);
-					sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.2f, 0f);
+					sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.6f, 0f);
 					actor.world.spawnEntity(sbt);
 					actor.swingArm(EnumHand.MAIN_HAND);
 				}
@@ -416,9 +417,9 @@ public class Skills {
 					float sword = ((ItemSword) actor.getHeldItem(EnumHand.MAIN_HAND).getItem()).getAttackDamage() * 2;
 					int enchantment = EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, actor.getHeldItem(EnumHand.MAIN_HAND));
 					sword += enchantment > 0 ? 0.5 * (1 + enchantment) : 0;
-					float damage = Math.min(80f, strength + sword);
+					float damage = Math.min(60f, strength + sword);
 					SwordBeamThrowable sbt = new SwordBeamThrowable(actor.world, actor, damage, 0xEF890A, 300);
-					sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.2f, 0f);
+					sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.6f, 0f);
 					actor.world.spawnEntity(sbt);
 					actor.swingArm(EnumHand.MAIN_HAND);
 					skillCap.resetBarrageCounter();
@@ -440,7 +441,7 @@ public class Skills {
 						float sword = ((ItemSword) actor.getHeldItem(EnumHand.MAIN_HAND).getItem()).getAttackDamage() * 2;
 						int enchantment = EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, actor.getHeldItem(EnumHand.MAIN_HAND));
 						sword += enchantment > 0 ? 0.5 * (1 + enchantment) : 0;
-						float damage = Math.min(25f, strength * 0.3f + sword * 0.3f);
+						float damage = Math.min(20f, strength * 0.3f + sword * 0.3f);
 						SwordBeamThrowable sbt = new SwordBeamThrowable(actor.world, actor, damage, 0x89EF0A, 300);
 						sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.2f, 0f);
 						actor.world.spawnEntity(sbt);
@@ -453,7 +454,7 @@ public class Skills {
 				return activated;
 			});
 
-	public static Skill WEAK_SWORD_FLIGHT = new Skill("weak_sword_flight", false, 1f, 0.1f, 500f, 200f)
+	public static Skill WEAK_SWORD_FLIGHT = new Skill("weak_sword_flight", false, 9f, 0.1f, 500f, 200f)
 			.setAction(actor -> {
 				actor.swingArm(EnumHand.MAIN_HAND);
 				return true;
@@ -464,7 +465,7 @@ public class Skills {
 					if (cultivation.hasEnergy(9f)) {
 						cultivation.remEnergy(9f);
 						float speed = cultivation.getSpeedIncrease() * 0.6f;
-						speed = Math.min(6f, speed);
+						speed = Math.min(1.5f, speed);
 						float yaw = actor.rotationYawHead;
 						float pitch = actor.rotationPitch;
 						float x = speed * -MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
@@ -476,8 +477,6 @@ public class Skills {
 						actor.fallDistance = 0;
 						//swinging
 						actor.swingingHand = EnumHand.MAIN_HAND;
-						//actor.prevSwingProgress = 0.3f;
-						//actor.swingProgress = 0.3f;
 						actor.swingProgressInt = 2;
 						actor.isSwingInProgress = true;
 					}
@@ -537,6 +536,36 @@ public class Skills {
 			.setAction(actor -> {
 				PotionEffect effect = new PotionEffect(MobEffects.STRENGTH, 1800,  2, false, true);
 				actor.addPotionEffect(effect);
+				return true;
+			});
+
+	public static Skill ADEPT_SWORD_FLIGHT = new Skill("adept_sword_flight", false, 26f, 0.1f, 2000f, 100f)
+			.setAction(actor -> {
+				actor.swingArm(EnumHand.MAIN_HAND);
+				return true;
+			})
+			.setWhenCasting(actor -> {
+				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
+				if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
+					if (cultivation.hasEnergy(26f)) {
+						cultivation.remEnergy(26f);
+						float speed = cultivation.getSpeedIncrease() * 0.8f;
+						speed = Math.min(3.5f, speed);
+						float yaw = actor.rotationYawHead;
+						float pitch = actor.rotationPitch;
+						float x = speed * -MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
+						float y = speed * -MathHelper.sin((pitch) * 0.017453292F);
+						float z = speed * MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
+						actor.motionX = x;
+						actor.motionY = y;
+						actor.motionZ = z;
+						actor.fallDistance = 0;
+						//swinging
+						actor.swingingHand = EnumHand.MAIN_HAND;
+						actor.swingProgressInt = 2;
+						actor.isSwingInProgress = true;
+					}
+				}
 				return true;
 			});
 }

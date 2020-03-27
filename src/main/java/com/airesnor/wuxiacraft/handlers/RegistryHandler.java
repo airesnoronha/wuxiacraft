@@ -62,7 +62,7 @@ public class RegistryHandler {
 				.name("giant_ant")
 				.tracker(80, 3, false)
 				.egg(0xDA5917, 0xC35D35)
-				.spawn(EnumCreatureType.MONSTER, 35, 1, 2,
+				.spawn(EnumCreatureType.MONSTER, 35, 1, 3,
 						Biomes.BEACH,
 						Biomes.BIRCH_FOREST,
 						Biomes.DESERT,

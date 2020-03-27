@@ -133,7 +133,7 @@ wuxiacraft.techniques.assassin_manual=Assassin Manual
 item.assassin_manual_scroll.name=Assassin Manual
 wuxiacraft.techniques.basic_medicine=Basic Medicine Guide
 item.basic_medicine_scroll.name=Basic Medicine Guide
-wuxiacraft.techniques.sword_heart=Sword Heart Manual
+wuxiacraft.techniques.sword_heart=Sword Heart Technique
 item.sword_heart_scroll.name=Sword Heart Manual
 wuxiacraft.techniques.axe_rage=Axe Rage Journal
 item.axe_rage_scroll.name=Axe Rage Journal
@@ -141,7 +141,7 @@ wuxiacraft.techniques.fire_bending=Fire Bending Manual
 item.fire_bending_scroll.name=Fire Bending Manual
 wuxiacraft.techniques.mountain_raiser=Mountain Raising Scroll
 item.mountain_raiser_scroll.name=Mountain Raising Scroll
-wuxiacraft.techniques.metal_manipulation=Metal Manipulation Manual
+wuxiacraft.techniques.metal_manipulation=Metal Manipulation
 item.metal_manipulation_scroll.name=Metal Manipulation Manual
 wuxiacraft.techniques.surging_waves=Surging Waves Scroll
 item.surging_waves_scroll.name=Surging Waves Scroll
@@ -149,6 +149,8 @@ wuxiacraft.techniques.botanical_growth=Botanical Growth Journal
 item.botanical_growth_scroll.name=Botanical Growth Journal
 wuxiacraft.techniques.sword_flight_journal=Sword Flight Journal
 item.sword_flight_journal_scroll.name=Sword Flight Journal
+wuxiacraft.techniques.sky_cross_technique=Sky Cross Technique
+item.sky_cross_technique_scroll.name=Sky Cross Technique Manual
 
 //Elements
 wuxiacraft.elements.fire=Fire
@@ -184,6 +186,7 @@ wuxiacraft.skills.light_feet_skill=Light Feet Skill
 wuxiacraft.skills.light_feet_leap=Light Feet Leap
 wuxiacraft.skills.minor_body_reinforcement=Minor Body Reinforcement
 wuxiacraft.skills.minor_power_punch=Minor Power Punch
+wuxiacraft.skills.adept_sword_flight=Adept Sword Flight
 
 //Recipes
 wuxiacraft.recipes.name.body_refinement_pill_recipe=Body Refinement Pill Recipe

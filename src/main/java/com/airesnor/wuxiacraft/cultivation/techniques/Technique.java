@@ -201,4 +201,9 @@ public class Technique {
 	public float getCultivationSpeed() {
 		return cultivationSpeed;
 	}
+
+	public Technique setCultivationSpeed(float speed) {
+		this.cultivationSpeed = speed;
+		return this;
+	}
 }

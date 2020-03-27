@@ -25,6 +25,7 @@ public class Techniques {
 		TECHNIQUES.add(SURGING_WAVES);
 		TECHNIQUES.add(BOTANICAL_GROWTH);
 		TECHNIQUES.add(SWORD_FLIGHT_JOURNAL);
+		TECHNIQUES.add(SKY_CROSSER_SWORD);
 	}
 
 	public static Technique getTechniqueByUName(String uName) {
@@ -83,5 +84,8 @@ public class Techniques {
 	public static final Technique SWORD_FLIGHT_JOURNAL = new TechniqueWeapon(TechniqueTier.MORTAL, "sword_flight_journal",
 			new TechniquesModifiers(0f, 0f, 0, 0.3f, 0f), TechniqueWeapon.WeaponType.SWORD)
 			.addGreatSkill(Skills.WEAK_SWORD_FLIGHT);
+	public static final Technique SKY_CROSSER_SWORD = new TechniqueWeapon(TechniqueTier.MORTAL, "sky_crosser_sword",
+			new TechniquesModifiers(0f, 0f, 0, 0.5f, 0f), TechniqueWeapon.WeaponType.SWORD)
+			.addGreatSkill(Skills.ADEPT_SWORD_FLIGHT).setCultivationSpeed(1.1f);
 
 }
