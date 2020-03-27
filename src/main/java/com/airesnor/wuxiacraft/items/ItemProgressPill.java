@@ -25,6 +25,7 @@ public class ItemProgressPill extends ItemBase {
 		super(item_name);
 		this.amount = amount;
 		this.cooldown = cooldown;
+		setCreativeTab(Items.PILLS);
 	}
 
 	@Override

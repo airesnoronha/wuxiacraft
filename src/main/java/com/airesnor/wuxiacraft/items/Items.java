@@ -37,6 +37,14 @@ public class Items {
 		}
 	};
 
+	public static final CreativeTabs PILLS = new CreativeTabs("wuxiacraft.pills") {
+		@Override
+		public ItemStack getTabIconItem() {
+			return new ItemStack(TRAINING_PILL);
+		}
+	};
+
+
 	/**
 	 * A test item, not in use right now
 	 */

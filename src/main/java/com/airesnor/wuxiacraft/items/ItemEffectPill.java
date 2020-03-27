@@ -29,6 +29,7 @@ public class ItemEffectPill extends ItemBase {
 		super(name);
 		effects = new ArrayList<>();
 		this.amount = amount;
+		setCreativeTab(Items.PILLS);
 	}
 
 	public ItemEffectPill addEffect(PotionEffect effect) {

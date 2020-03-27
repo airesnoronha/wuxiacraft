@@ -24,6 +24,7 @@ public class ItemSkillPill extends ItemBase {
 		super(name);
 		this.action = null;
 		this.amount = amount;
+		setCreativeTab(Items.PILLS);
 	}
 
 	public ItemSkillPill setAction(ISkillAction acton) {

@@ -1,0 +1,6 @@
+{
+	"parent": "item/generated",
+	"textures" : {
+		"layer0": "wuxiacraft:items/small_healing_pill"
+	}
+}

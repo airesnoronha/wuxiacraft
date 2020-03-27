@@ -24,6 +24,7 @@ public class ItemEnergyPill extends ItemBase {
 	public ItemEnergyPill(String item_name, float amount) {
 		super(item_name);
 		this.amount = amount;
+		setCreativeTab(Items.PILLS);
 	}
 
 	@Override
