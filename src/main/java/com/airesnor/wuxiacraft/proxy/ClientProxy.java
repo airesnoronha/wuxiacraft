@@ -94,6 +94,8 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerEntityRenderingHandler(GiantAnt.class, RenderGiantAnt::new);
 		RenderingRegistry.registerEntityRenderingHandler(GiantBee.class, RenderGiantBee::new);
 		RenderingRegistry.registerEntityRenderingHandler(WanderingCultivator.class, RenderWanderingCultivator::new);
+
+		MinecraftForge.EVENT_BUS.register(new RendererHandler());
 	}
 
 	@Override
@@ -122,7 +124,5 @@ public class ClientProxy extends CommonProxy {
 
 		RenderGiantAnt.init();
 		RenderGiantBee.init();
-
-		MinecraftForge.EVENT_BUS.register(new RendererHandler());
 	}
 }

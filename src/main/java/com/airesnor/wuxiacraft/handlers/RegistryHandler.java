@@ -37,7 +37,7 @@ public class RegistryHandler {
 		WuxiaCraft.logger.info("Registering blocks.");
 		event.getRegistry().registerAll(Blocks.BLOCKS.toArray(new Block[0]));
 
-		GameRegistry.registerTileEntity(CauldronTileEntity.class, new ResourceLocation("wuxiacraft", "cauldron_tile_entity"));
+		GameRegistry.registerTileEntity(CauldronTileEntity.class, new ResourceLocation(WuxiaCraft.MODID, "cauldron_tile_entity"));
 	}
 
 	@SubscribeEvent

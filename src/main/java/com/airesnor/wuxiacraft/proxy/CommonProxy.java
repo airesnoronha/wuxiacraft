@@ -74,7 +74,7 @@ public class CommonProxy {
 		Element.init();
 		Skills.init();
 
-		GameRegistry.registerTileEntity(CauldronTileEntity.class, new ResourceLocation(WuxiaCraft.MODID, "cauldron_tile_entity"));
+		//GameRegistry.registerTileEntity(CauldronTileEntity.class, new ResourceLocation(WuxiaCraft.MODID, "cauldron_tile_entity"));
 	}
 
 	public void preInit() {

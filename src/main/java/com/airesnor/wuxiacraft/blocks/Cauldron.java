@@ -50,6 +50,7 @@ public class Cauldron extends BlockContainer implements IHasModel {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void registerModels() {
 		WuxiaCraft.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
 		ClientRegistry.bindTileEntitySpecialRenderer(CauldronTileEntity.class, new CauldronTESR());
