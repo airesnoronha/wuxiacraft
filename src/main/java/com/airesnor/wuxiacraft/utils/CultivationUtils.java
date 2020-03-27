@@ -25,12 +25,12 @@ public class CultivationUtils {
 	@Nonnull
 	public static ICultivation getCultivationFromEntity(EntityLivingBase entityIn) {
 		ICultivation cultivation = null;
-		if(entityIn instanceof EntityPlayer) {
+		if (entityIn instanceof EntityPlayer) {
 			cultivation = entityIn.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-		}
-		else if (entityIn instanceof EntityCultivator) {
+		} else if (entityIn instanceof EntityCultivator) {
 			cultivation = ((EntityCultivator) entityIn).getCultivation();
-		}if(cultivation == null) {
+		}
+		if (cultivation == null) {
 			cultivation = new Cultivation();
 		}
 		return cultivation;
@@ -39,10 +39,10 @@ public class CultivationUtils {
 	@Nonnull
 	public static ICultTech getCultTechFromEntity(EntityLivingBase entityIn) {
 		ICultTech cultTech = null;
-		if(entityIn instanceof EntityPlayer) {
+		if (entityIn instanceof EntityPlayer) {
 			cultTech = entityIn.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
 		}
-		if(cultTech == null) {
+		if (cultTech == null) {
 			cultTech = new CultTech();
 		}
 		return cultTech;
@@ -51,22 +51,22 @@ public class CultivationUtils {
 	@Nonnull
 	public static ISkillCap getSkillCapFromEntity(EntityLivingBase entityIn) {
 		ISkillCap skillCap = null;
-		if(entityIn instanceof EntityPlayer) {
+		if (entityIn instanceof EntityPlayer) {
 			skillCap = entityIn.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
-		} else if(entityIn instanceof EntityCultivator) {
+		} else if (entityIn instanceof EntityCultivator) {
 			skillCap = ((EntityCultivator) entityIn).getSkillCap();
 		}
-		if(skillCap == null) {
+		if (skillCap == null) {
 			skillCap = new SkillCap();
 		}
 		return skillCap;
 	}
 
 	public static void cultivatorAddProgress(EntityLivingBase player, ICultivation cultivation, float amount) {
-		if(!cultivation.getSuppress()) {
-			ICultTech cultTech = getCultTechFromEntity(player);
-			amount *= cultTech.getOverallCultivationSpeed();
-			cultTech.progress(amount);
+		ICultTech cultTech = getCultTechFromEntity(player);
+		amount *= cultTech.getOverallCultivationSpeed();
+		cultTech.progress(amount);
+		if (!cultivation.getSuppress()) {
 			if (cultivation.addProgress(amount)) {
 				if (!player.world.isRemote) {
 					if (player instanceof EntityPlayer) {
