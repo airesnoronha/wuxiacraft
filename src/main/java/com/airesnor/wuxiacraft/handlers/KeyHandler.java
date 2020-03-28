@@ -6,6 +6,7 @@ import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.proxy.ClientProxy;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.math.BlockPos;
@@ -40,13 +41,13 @@ public class KeyHandler {
 			Minecraft.getMinecraft().player.openGui(WuxiaCraft.instance, GuiHandler.CULTIVATION_GUI_ID, Minecraft.getMinecraft().player.world, pos.getX(), pos.getY(), pos.getZ());
 			//NetworkWrapper.INSTANCE.sendToServer(new RequestCultGuiMessage(true));
 		}
-		if (keyBindings[3].isPressed() && Keyboard.getEventKeyState()) {
-			ISkillCap skillCap = Minecraft.getMinecraft().player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+		if (Keyboard.getEventKey() == keyBindings[3].getKeyCode() && Keyboard.getEventKeyState()) {
+			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
 			skillCap.setCasting(true);
 			NetworkWrapper.INSTANCE.sendToServer(new CastSkillMessage(true));
 		}
 		if (Keyboard.getEventKey() == keyBindings[3].getKeyCode() && !Keyboard.getEventKeyState()) {
-			ISkillCap skillCap = Minecraft.getMinecraft().player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
 			skillCap.setCasting(false);
 			skillCap.setDoneCasting(true);
 			NetworkWrapper.INSTANCE.sendToServer(new CastSkillMessage(false));
@@ -56,13 +57,13 @@ public class KeyHandler {
 			Minecraft.getMinecraft().player.openGui(WuxiaCraft.instance, GuiHandler.SKILLS_GUI_ID, Minecraft.getMinecraft().player.world, pos.getX(), pos.getY(), pos.getZ());
 		}
 		if (keyBindings[5].isPressed()) {
-			ISkillCap skillCap = Minecraft.getMinecraft().player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
 			int next = skillCap.getActiveSkill() + 1;
 			NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next));
 			SelectSkillMessageHandler.selectSkill(skillCap, next);
 		}
 		if (keyBindings[6].isPressed()) {
-			ISkillCap skillCap = Minecraft.getMinecraft().player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
 			int next = skillCap.getActiveSkill() - 1;
 			NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next));
 			SelectSkillMessageHandler.selectSkill(skillCap, next);
@@ -75,12 +76,12 @@ public class KeyHandler {
 		}
 		for (int i = 0; i < 10; i++) {
 			if (keyBindings[7 + i].isPressed()) {
-				ISkillCap skillCap = Minecraft.getMinecraft().player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
-				int next = i;
-				NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next));
-				SelectSkillMessageHandler.selectSkill(skillCap, next);
+				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
+				NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(i));
+				SelectSkillMessageHandler.selectSkill(skillCap, i);
 			}
 		}
+
 	}
 
 }

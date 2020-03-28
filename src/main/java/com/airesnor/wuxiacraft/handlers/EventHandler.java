@@ -15,6 +15,7 @@ import com.airesnor.wuxiacraft.items.Items;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
@@ -207,6 +208,13 @@ public class EventHandler {
 		EntityPlayer player = event.player;
 		if (!player.world.isRemote) return;
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+
+		if(!Minecraft.getMinecraft().inGameHasFocus) {
+			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
+			skillCap.setCasting(false);
+			skillCap.setDoneCasting(true);
+			NetworkWrapper.INSTANCE.sendToServer(new CastSkillMessage(false));
+		}
 
 		float distance = (float) Math.sqrt(Math.pow(player.lastTickPosX - player.posX, 2) + Math.pow(player.lastTickPosY - player.posY, 2) + Math.pow(player.lastTickPosZ - player.posZ, 2));
 
