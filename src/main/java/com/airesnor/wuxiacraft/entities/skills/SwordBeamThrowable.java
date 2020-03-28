@@ -66,9 +66,11 @@ public class SwordBeamThrowable extends EntityThrowable {
 	protected void onImpact(RayTraceResult result) {
 			if (result.typeOfHit == RayTraceResult.Type.ENTITY && !result.entityHit.equals(this.owner)) {
 				if(!this.world.isRemote) {
-					this.attackEntityOnDirectHit((EntityLivingBase) result.entityHit);
+					if(result.entityHit instanceof EntityLivingBase) {
+						this.attackEntityOnDirectHit((EntityLivingBase) result.entityHit);
+						this.setDead();
+					}
 				}
-				this.setDead();
 			} else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
 				if (canNotPassThroughHitBlock(result)) {
 					this.setDead();

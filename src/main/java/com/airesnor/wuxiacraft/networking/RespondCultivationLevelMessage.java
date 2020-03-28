@@ -8,12 +8,12 @@ public class RespondCultivationLevelMessage implements IMessage {
 
 	public CultivationLevel responderLevel;
 	public int responderSubLevel;
-	public String askerName;
+	public String responderName;
 
-	public RespondCultivationLevelMessage(CultivationLevel responderLevel, int responderSubLevel, String askerName) {
+	public RespondCultivationLevelMessage(CultivationLevel responderLevel, int responderSubLevel, String responderName) {
 		this.responderLevel = responderLevel;
 		this.responderSubLevel = responderSubLevel;
-		this.askerName = askerName;
+		this.responderName = responderName;
 	}
 
 	public RespondCultivationLevelMessage() {
@@ -32,7 +32,7 @@ public class RespondCultivationLevelMessage implements IMessage {
 		bytes = new byte[50];
 		buf.readBytes(bytes, 0, length);
 		bytes[length] = '\0';
-		this.askerName = new String(bytes, 0, length);
+		this.responderName = new String(bytes, 0, length);
 
 	}
 
@@ -42,7 +42,7 @@ public class RespondCultivationLevelMessage implements IMessage {
 		byte[] bytes = this.responderLevel.name().getBytes();
 		buf.writeInt(bytes.length);
 		buf.writeBytes(bytes);
-		bytes = this.askerName.getBytes();
+		bytes = this.responderName.getBytes();
 		buf.writeInt(bytes.length);
 		buf.writeBytes(bytes);
 	}

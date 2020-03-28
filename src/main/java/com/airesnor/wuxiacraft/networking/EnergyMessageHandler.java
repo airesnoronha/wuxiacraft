@@ -8,23 +8,22 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class EnergyMessageHandler implements IMessageHandler {
+public class EnergyMessageHandler implements IMessageHandler<EnergyMessage, IMessage> {
 	@Override
-	public IMessage onMessage(IMessage message, MessageContext ctx) {
+	public IMessage onMessage(EnergyMessage message, MessageContext ctx) {
 		if (ctx.side == Side.SERVER) {
-			EnergyMessage msg = (EnergyMessage) message;
 			EntityPlayerMP player = ctx.getServerHandler().player;
 			player.getServerWorld().addScheduledTask(() -> {
 				ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-				switch (msg.op) {
+				switch (message.op) {
 					case 0:
-						cultivation.addEnergy(msg.amount);
+						cultivation.addEnergy(message.amount);
 						break;
 					case 1:
-						cultivation.remEnergy(msg.amount);
+						cultivation.remEnergy(message.amount);
 						break;
 					case 2:
-						cultivation.setEnergy(msg.amount);
+						cultivation.setEnergy(message.amount);
 						break;
 				}
 			});

@@ -51,8 +51,10 @@ public class WaterNeedleThrowable extends EntityThrowable {
 	protected void onImpact(RayTraceResult result) {
 		if (!this.world.isRemote) {
 			if (result.typeOfHit == RayTraceResult.Type.ENTITY && !result.entityHit.equals(this.owner)) {
-				this.attackEntityOnDirectHit((EntityLivingBase) result.entityHit);
-				this.setDead();
+				if(result.entityHit instanceof EntityLivingBase) {
+					this.attackEntityOnDirectHit((EntityLivingBase) result.entityHit);
+					this.setDead();
+				}
 			} else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
 				if (canNotPassThroughHitBlock(result)) {
 					this.setDead();

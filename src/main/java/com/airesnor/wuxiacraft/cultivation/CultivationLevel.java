@@ -1,6 +1,6 @@
 package com.airesnor.wuxiacraft.cultivation;
 
-import net.minecraft.client.resources.I18n;
+import com.airesnor.wuxiacraft.utils.TranslateUtils;
 
 public enum CultivationLevel {
 	BODY_REFINEMENT("body_refinement", 5, 1000F, 1.00F, 1.00F, CultivationCategory.ENERGY_PERCEPTION),
@@ -121,9 +121,9 @@ public enum CultivationLevel {
 	 */
 	public String getLevelName(int subLevel) {
 		if (!(subLevel >= 0 && subLevel < this.subLevels)) {
-			return I18n.format("wuxiacraft.cultivation." + this.levelName);
+			return TranslateUtils.translateKey("wuxiacraft.cultivation." + this.levelName);
 		}
-		return String.format("%s %s %d", I18n.format("wuxiacraft.cultivation." + this.levelName), I18n.format("wuxiacraft.label.rank"), subLevel + 1);
+		return String.format("%s %s %d", TranslateUtils.translateKey("wuxiacraft.cultivation." + this.levelName), TranslateUtils.translateKey("wuxiacraft.label.rank"), subLevel + 1);
 	}
 
 	public String getUName() {
@@ -187,7 +187,7 @@ public enum CultivationLevel {
 	/**
 	 * Get the next cultivation level for when leveling up
 	 *
-	 * @return
+	 * @return the next cultivation level
 	 */
 	public CultivationLevel getNextLevel() {
 		switch (this) {

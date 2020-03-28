@@ -180,7 +180,7 @@ public class Skills {
 				return activated;
 			});
 
-	public static final Skill FLAMES = new Skill("flames", true, 120f, 1.5f, 20f, 0f)
+	public static final Skill FLAMES = new Skill("flames", true, 80f, 1.5f, 20f, 0f)
 			.setAction(actor -> {
 				float shootPitch = actor.rotationPitch;
 				float shootYaw = actor.rotationYawHead;
@@ -323,7 +323,7 @@ public class Skills {
 	});
 
 	// Credits : My Girlfriend
-	public static Skill WATER_NEEDLE = new Skill("water_needle", true, 240f, 1.1f, 20f, 0f, "Lysian Prieto")
+	public static Skill WATER_NEEDLE = new Skill("water_needle", true, 100f, 1.1f, 20f, 0f, "Lysian Prieto")
 			.setAction(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 				WaterNeedleThrowable needle = new WaterNeedleThrowable(actor.world, actor, Math.min(17f, 4 + cultivation.getStrengthIncrease() * 0.3f), 300);
@@ -332,7 +332,7 @@ public class Skills {
 				return true;
 			});
 
-	public static Skill WATER_BLADE = new Skill("water_blade", true, 580f, 2.0f, 120f, 0f).setAction(actor -> {
+	public static Skill WATER_BLADE = new Skill("water_blade", true, 480f, 2.0f, 120f, 0f).setAction(actor -> {
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 		ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
 		float swordModifier = 1f;
@@ -353,7 +353,7 @@ public class Skills {
 		return true;
 	});
 
-	public static Skill HEALING_HANDS = new Skill("healing_hands", false, 200f, 1.4f, 120f, 0f).setAction(actor -> {
+	public static Skill HEALING_HANDS = new Skill("healing_hands", false, 220f, 1.4f, 120f, 0f).setAction(actor -> {
 		boolean activated = false;
 		Entity result = SkillUtils.rayTraceEntities(actor, 10f, 1f);
 		if (result instanceof EntityLiving) {
@@ -389,7 +389,7 @@ public class Skills {
 		return activated;
 	});
 
-	public static Skill WEAK_SWORD_BEAM = new Skill("weak_sword_beam", true, 250f, 2.5f, 40f, 0f)
+	public static Skill WEAK_SWORD_BEAM = new Skill("weak_sword_beam", true, 180f, 2.5f, 40f, 0f)
 			.setAction(actor -> {
 				boolean activated = false;
 				if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {

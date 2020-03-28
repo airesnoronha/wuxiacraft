@@ -2,18 +2,20 @@ package com.airesnor.wuxiacraft.networking;
 
 import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
-public class SelectSkillMessageHandler implements IMessageHandler {
+public class SelectSkillMessageHandler implements IMessageHandler<SelectSkillMessage, IMessage> {
 
 	@Override
-	public IMessage onMessage(IMessage message, MessageContext ctx) {
-		if (message instanceof SelectSkillMessage) {
+	public IMessage onMessage(SelectSkillMessage message, MessageContext ctx) {
+		if (ctx.side == Side.SERVER) {
 			ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
-				ISkillCap skillCap = ctx.getServerHandler().player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
-				selectSkill(skillCap, ((SelectSkillMessage) message).selectSkill);
+				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(ctx.getServerHandler().player);
+				selectSkill(skillCap, message.selectSkill);
 			});
 		}
 		return null;

@@ -11,57 +11,53 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class SkillCapMessageHandler implements IMessageHandler {
+public class SkillCapMessageHandler implements IMessageHandler<SkillCapMessage, IMessage> {
 	@Override
-	public IMessage onMessage(IMessage message, MessageContext ctx) {
+	public IMessage onMessage(SkillCapMessage message, MessageContext ctx) {
 		if (ctx.side == Side.CLIENT) {
 			handleClientMessage(message, ctx);
 		} else if (ctx.side == Side.SERVER) {
-			if (message instanceof SkillCapMessage) {
 				ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
-					SkillCapMessage scm = (SkillCapMessage) message;
 					EntityPlayer player = ctx.getServerHandler().player;
 					ISkillCap skillCap = player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
 					if (skillCap != null) {
 						skillCap.getKnownSkills().clear();
-						for (Skill skill : scm.skillCap.getKnownSkills()) {
+						for (Skill skill : message.skillCap.getKnownSkills()) {
 							skillCap.addSkill(skill);
 						}
 						skillCap.resetCooldown();
 						skillCap.resetCastProgress();
-						skillCap.setCooldown(scm.skillCap.getCooldown());
-						skillCap.setCastProgress(scm.skillCap.getCastProgress());
+						skillCap.setCooldown(message.skillCap.getCooldown());
+						skillCap.setCastProgress(message.skillCap.getCastProgress());
 						skillCap.getSelectedSkills().clear();
-						for (Skill skill : scm.skillCap.getSelectedSkills()) {
+						for (Skill skill : message.skillCap.getSelectedSkills()) {
 							skillCap.addSelectedSkill(skill);
 						}
-						skillCap.setActiveSkill(scm.skillCap.getActiveSkill());
+						skillCap.setActiveSkill(message.skillCap.getActiveSkill());
 					}
 				});
-			}
 		}
 		return null;
 	}
 
 	@SideOnly(Side.CLIENT)
-	private void handleClientMessage(IMessage message, MessageContext ctx) {
+	private void handleClientMessage(SkillCapMessage message, MessageContext ctx) {
 		if (message instanceof SkillCapMessage) {
 			Minecraft.getMinecraft().addScheduledTask(() -> {
-				SkillCapMessage scm = (SkillCapMessage) message;
 				EntityPlayer player = Minecraft.getMinecraft().player;
 				ISkillCap skillCap = player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
 				if (skillCap != null) {
 					skillCap.getKnownSkills().clear();
-					for (Skill skill : scm.skillCap.getKnownSkills()) {
+					for (Skill skill : message.skillCap.getKnownSkills()) {
 						skillCap.addSkill(skill);
 					}
-					skillCap.setCooldown(scm.skillCap.getCooldown());
-					skillCap.setCastProgress(scm.skillCap.getCastProgress());
+					skillCap.setCooldown(message.skillCap.getCooldown());
+					skillCap.setCastProgress(message.skillCap.getCastProgress());
 					skillCap.getSelectedSkills().clear();
-					for (Skill skill : scm.skillCap.getSelectedSkills()) {
+					for (Skill skill : message.skillCap.getSelectedSkills()) {
 						skillCap.addSelectedSkill(skill);
 					}
-					skillCap.setActiveSkill(scm.skillCap.getActiveSkill());
+					skillCap.setActiveSkill(message.skillCap.getActiveSkill());
 				}
 			});
 		}

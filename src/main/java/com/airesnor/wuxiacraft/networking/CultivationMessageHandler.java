@@ -11,9 +11,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class CultivationMessageHandler implements IMessageHandler {
+public class CultivationMessageHandler implements IMessageHandler<CultivationMessage, IMessage> {
 	@Override
-	public IMessage onMessage(IMessage message, MessageContext ctx) {
+	public IMessage onMessage(CultivationMessage message, MessageContext ctx) {
 		if (ctx.side == Side.CLIENT) {
 			return handleClientMessage(message, ctx);
 		}
@@ -22,24 +22,21 @@ public class CultivationMessageHandler implements IMessageHandler {
 	}
 
 	@SideOnly(Side.CLIENT)
-	private IMessage handleClientMessage(IMessage message, MessageContext ctx) {
-		if (message instanceof CultivationMessage) {
-			Minecraft.getMinecraft().addScheduledTask(() -> {
-				CultivationMessage cm = (CultivationMessage) message;
-				EntityPlayer player = Minecraft.getMinecraft().player;
-				ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-				if (cultivation != null) {
-					cultivation.setCurrentLevel(cm.messageLevel);
-					cultivation.setCurrentSubLevel(cm.messageSubLevel);
-					cultivation.setProgress(cm.messageProgress);
-					cultivation.setEnergy(cm.messageEnergy);
-					cultivation.setPillCooldown(cm.pelletCooldown);
-					cultivation.setSuppress(cm.suppress);
-				} else {
-					WuxiaCraft.logger.info("He ain't a cultivator. Weeird");
-				}
-			});
-		}
+	private IMessage handleClientMessage(CultivationMessage message, MessageContext ctx) {
+		Minecraft.getMinecraft().addScheduledTask(() -> {
+			EntityPlayer player = Minecraft.getMinecraft().player;
+			ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+			if (cultivation != null) {
+				cultivation.setCurrentLevel(message.messageLevel);
+				cultivation.setCurrentSubLevel(message.messageSubLevel);
+				cultivation.setProgress(message.messageProgress);
+				cultivation.setEnergy(message.messageEnergy);
+				cultivation.setPillCooldown(message.pelletCooldown);
+				cultivation.setSuppress(message.suppress);
+			} else {
+				WuxiaCraft.logger.info("He ain't a cultivator. Weeird");
+			}
+		});
 		return null;
 	}
 }

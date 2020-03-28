@@ -6,20 +6,17 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class SpawnParticleMessageHandler implements IMessageHandler {
+public class SpawnParticleMessageHandler implements IMessageHandler<SpawnParticleMessage, IMessage> {
 	@Override
-	public IMessage onMessage(IMessage message, MessageContext ctx) {
+	public IMessage onMessage(SpawnParticleMessage message, MessageContext ctx) {
 		if (ctx.side == Side.CLIENT) {
-			if (message instanceof SpawnParticleMessage) {
-				Minecraft.getMinecraft().addScheduledTask(() -> {
-					SpawnParticleMessage spm = (SpawnParticleMessage) message;
-					Minecraft.getMinecraft().world.spawnParticle(spm.getParticleType(),
-							spm.isIgnoreRange(),
-							spm.getPosX(), spm.getPosY(), spm.getPosZ(),
-							spm.getMotionX(), spm.getMotionY(), spm.getMotionZ(),
-							spm.getArguments());
-				});
-			}
+			Minecraft.getMinecraft().addScheduledTask(() -> {
+				Minecraft.getMinecraft().world.spawnParticle(message.getParticleType(),
+						message.isIgnoreRange(),
+						message.getPosX(), message.getPosY(), message.getPosZ(),
+						message.getMotionX(), message.getMotionY(), message.getMotionZ(),
+						message.getArguments());
+			});
 		}
 		return null;
 	}

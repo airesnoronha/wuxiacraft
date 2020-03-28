@@ -9,23 +9,22 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class ProgressMessageHandler implements IMessageHandler {
+public class ProgressMessageHandler implements IMessageHandler<ProgressMessage, IMessage> {
 	@Override
-	public IMessage onMessage(IMessage message, MessageContext ctx) {
+	public IMessage onMessage(ProgressMessage message, MessageContext ctx) {
 		if (ctx.side == Side.SERVER) {
-			ProgressMessage msg = (ProgressMessage) message;
 			EntityPlayerMP player = ctx.getServerHandler().player;
 			player.getServerWorld().addScheduledTask(() -> {
 				ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-				switch (msg.op) {
+				switch (message.op) {
 					case 0:
-						CultivationUtils.cultivatorAddProgress(player, cultivation, msg.amount);
+						CultivationUtils.cultivatorAddProgress(player, cultivation, message.amount);
 						break;
 					case 1:
-						cultivation.addProgress(-msg.amount);
+						cultivation.addProgress(-message.amount);
 						break;
 					case 2:
-						cultivation.setProgress(msg.amount);
+						cultivation.setProgress(message.amount);
 				}
 			});
 		}
