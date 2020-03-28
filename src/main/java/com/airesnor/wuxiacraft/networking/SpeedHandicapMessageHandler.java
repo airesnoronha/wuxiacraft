@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class SpeedHandicapMessageHandler implements IMessageHandler<SpeedHandicapMessage, SpeedHandicapMessage> {
 	@Override
@@ -30,15 +31,20 @@ public class SpeedHandicapMessageHandler implements IMessageHandler<SpeedHandica
 			});
 		}
 		if (ctx.side == Side.CLIENT) {
-			Minecraft.getMinecraft().addScheduledTask(() -> {
-				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
-				cultivation.setSpeedHandicap(WuxiaCraftConfig.speedHandicap);
-				cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
-				cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
-				cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);
-			});
-			return new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.jumpLimit);
+			return handleClientMessage(message, ctx);
 		}
 		return null;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static SpeedHandicapMessage handleClientMessage(SpeedHandicapMessage message, MessageContext ctx) {
+		Minecraft.getMinecraft().addScheduledTask(() -> {
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
+			cultivation.setSpeedHandicap(WuxiaCraftConfig.speedHandicap);
+			cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
+			cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
+			cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);
+		});
+		return new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.jumpLimit);
 	}
 }

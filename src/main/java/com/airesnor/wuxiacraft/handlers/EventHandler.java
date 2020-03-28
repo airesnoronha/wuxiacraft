@@ -123,7 +123,6 @@ public class EventHandler {
 	/**
 	 * A toggle for not spamming messages
 	 */
-	@SideOnly(Side.CLIENT)
 	private boolean toggleSneaking = false;
 
 	/**
@@ -228,7 +227,6 @@ public class EventHandler {
 	/**
 	 * A toggle for not spamming messages
 	 */
-	@SideOnly(Side.CLIENT)
 	private boolean toggleHasInGameFocus = false;
 
 	/**
