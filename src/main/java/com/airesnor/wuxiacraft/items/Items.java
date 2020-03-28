@@ -1,11 +1,9 @@
 package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.cultivation.skills.ISkillAction;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
@@ -53,7 +51,8 @@ public class Items {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.56874F);
 				return true;
-			});
+			})
+			.setMaxStackSize(64);
 
 	//pills
 	public static final Item BODY_REFINEMENT_PILL = new ItemProgressPill("body_refinement_pill", 50f, 200);

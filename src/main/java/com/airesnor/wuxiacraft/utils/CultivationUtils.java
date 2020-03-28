@@ -66,7 +66,9 @@ public class CultivationUtils {
 		amount *= cultTech.getOverallCultivationSpeed();
 		cultTech.progress(amount);
 		if (!cultivation.getSuppress()) {
-			if (cultivation.addProgress(amount)) {
+			float progressRel = cultivation.getCurrentProgress() / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
+			float bottleneckAmount = amount * Math.min(1.0f, 1.2f - progressRel);
+			if (cultivation.addProgress(bottleneckAmount)) {
 				if (!player.world.isRemote) {
 					if (player instanceof EntityPlayer) {
 						int msgN = player.world.rand.nextInt(CONGRATS_MESSAGE_COUNT);

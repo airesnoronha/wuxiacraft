@@ -30,9 +30,9 @@ public class CommonProxy {
 	/**
 	 * Does in the server so this method is empty because server doesn't need textures i guess
 	 *
-	 * @param item
-	 * @param meta
-	 * @param id
+	 * @param item The item to be rendered
+	 * @param meta The item meta to be rendered
+	 * @param id the block state variation
 	 */
 	public void registerItemRenderer(Item item, int meta, String id) {
 	}
@@ -69,8 +69,6 @@ public class CommonProxy {
 		Techniques.init();
 		Element.init();
 		Skills.init();
-
-		//GameRegistry.registerTileEntity(CauldronTileEntity.class, new ResourceLocation(WuxiaCraft.MODID, "cauldron_tile_entity"));
 	}
 
 	public void preInit() {

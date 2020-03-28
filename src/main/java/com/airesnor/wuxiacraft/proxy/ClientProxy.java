@@ -32,25 +32,18 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import org.lwjgl.input.Keyboard;
 
+import java.util.Objects;
+
 public class ClientProxy extends CommonProxy {
 
 	public static final int KEY_SPEED_UP = 0;
 	public static final int KEY_SPEED_DOWN = 1;
 	public static final int KEY_CULT_GUI = 2;
-	public static final int KEY_ACIVATE_SKILL = 3;
+	public static final int KEY_ACTIVATE_SKILL = 3;
 	public static final int KEY_SKILLS_GUI = 4;
 	public static final int KEY_SELECT_UP = 5;
 	public static final int KEY_SELECT_DOWN = 6;
 	public static final int KEY_SELECT_1 = 7;
-	public static final int KEY_SELECT_2 = 8;
-	public static final int KEY_SELECT_3 = 9;
-	public static final int KEY_SELECT_4 = 10;
-	public static final int KEY_SELECT_5 = 11;
-	public static final int KEY_SELECT_6 = 12;
-	public static final int KEY_SELECT_7 = 13;
-	public static final int KEY_SELECT_8 = 14;
-	public static final int KEY_SELECT_9 = 15;
-	public static final int KEY_SELECT_0 = 16;
 	public static final int KEY_UNLEASH_SPEED = 17;
 
 	public static KeyBinding[] keyBindings;
@@ -63,7 +56,7 @@ public class ClientProxy extends CommonProxy {
 	 * @param id   string name of the variant
 	 */
 	public void registerItemRenderer(Item item, int meta, String id) {
-		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName(), id));
+		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(Objects.requireNonNull(item.getRegistryName()), id));
 	}
 
 	@Override
@@ -109,7 +102,7 @@ public class ClientProxy extends CommonProxy {
 		keyBindings[KEY_SPEED_UP] = new KeyBinding("key.wuxiacraft.speed_up", Keyboard.KEY_EQUALS, "key.wuxiacraft.category");
 		keyBindings[KEY_SPEED_DOWN] = new KeyBinding("key.wuxiacraft.speed_down", Keyboard.KEY_MINUS, "key.wuxiacraft.category");
 		keyBindings[KEY_CULT_GUI] = new KeyBinding("key.wuxiacraft.cult_gui", Keyboard.KEY_K, "key.wuxiacraft.category");
-		keyBindings[KEY_ACIVATE_SKILL] = new KeyBinding("key.wuxiacraft.activate_skill", Keyboard.KEY_F, "key.wuxiacraft.category");
+		keyBindings[KEY_ACTIVATE_SKILL] = new KeyBinding("key.wuxiacraft.activate_skill", Keyboard.KEY_F, "key.wuxiacraft.category");
 		keyBindings[KEY_SKILLS_GUI] = new KeyBinding("key.wuxiacraft.skills_gui", Keyboard.KEY_L, "key.wuxiacraft.category");
 		keyBindings[KEY_SELECT_UP] = new KeyBinding("key.wuxiacraft.select_up", Keyboard.KEY_V, "key.wuxiacraft.category");
 		keyBindings[KEY_SELECT_DOWN] = new KeyBinding("key.wuxiacraft.select_down", Keyboard.KEY_C, "key.wuxiacraft.category");
@@ -118,8 +111,8 @@ public class ClientProxy extends CommonProxy {
 			keyBindings[KEY_SELECT_1 + i] = new KeyBinding("key.wuxiacraft.select_" + j, KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Keyboard.KEY_1 + i, "key.wuxiacraft.category");
 		}
 		keyBindings[KEY_UNLEASH_SPEED] = new KeyBinding("key.wuxiacraft.unleash_speed", Keyboard.KEY_U, "key.wuxiacraft.category");
-		for (int i = 0; i < keyBindings.length; i++) {
-			ClientRegistry.registerKeyBinding(keyBindings[i]);
+		for (KeyBinding keyBinding : keyBindings) {
+			ClientRegistry.registerKeyBinding(keyBinding);
 		}
 
 		RenderGiantAnt.init();

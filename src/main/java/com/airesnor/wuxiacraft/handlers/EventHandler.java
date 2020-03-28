@@ -272,8 +272,8 @@ public class EventHandler {
 				NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, totalRem));
 			}
 		} else { //flying is not an exercise
-			CultivationUtils.cultivatorAddProgress(player, cultivation, distance * 0.1f);
-			NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, distance * 0.1f));
+			//CultivationUtils.cultivatorAddProgress(player, cultivation, distance * 0.1f);
+			//NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, distance * 0.1f));
 		}
 	}
 
