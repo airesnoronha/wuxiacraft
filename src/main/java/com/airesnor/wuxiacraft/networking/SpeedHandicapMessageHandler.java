@@ -1,13 +1,9 @@
 package com.airesnor.wuxiacraft.networking;
-
-import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -19,7 +15,6 @@ public class SpeedHandicapMessageHandler implements IMessageHandler<SpeedHandica
 		if (ctx.side == Side.SERVER) {
 			EntityPlayerMP player = ctx.getServerHandler().player;
 			player.getServerWorld().addScheduledTask(() -> {
-				WuxiaCraft.logger.info("Receiving speed handicap " +  message.handicap + " for player " + player.getDisplayNameString());
 
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 

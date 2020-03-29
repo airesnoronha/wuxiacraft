@@ -3,6 +3,7 @@ package com.airesnor.wuxiacraft.cultivation.techniques;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
+import com.airesnor.wuxiacraft.utils.TranslateUtils;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.PotionEffect;
@@ -43,7 +44,7 @@ public class Technique {
 	}
 
 	public String getName() {
-		return I18n.format("wuxiacraft.techniques." + this.uName);
+		return TranslateUtils.translateKey("wuxiacraft.techniques." + this.uName);
 	}
 
 	public String getUName() {

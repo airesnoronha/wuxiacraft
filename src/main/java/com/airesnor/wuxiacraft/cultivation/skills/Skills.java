@@ -10,6 +10,7 @@ import com.airesnor.wuxiacraft.entities.skills.SwordBeamThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
 import com.airesnor.wuxiacraft.handlers.RendererHandler;
+import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.SpawnParticleMessage;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import com.airesnor.wuxiacraft.utils.OreUtils;
@@ -27,13 +28,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
-import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
@@ -122,14 +123,12 @@ public class Skills {
 				return true;
 			});
 
-	public static final Skill GATHER_WOOD = new Skill("gather_wood", false, 180f, 1f, 6f, 0f)
+	public static final Skill GATHER_WOOD = new Skill("gather_wood", false, 180f, 1f, 20f, 0f)
 			.setAction(actor -> {
 				World worldIn = actor.world;
-				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
-				RayTraceResult rtr = actor.rayTrace(6f, 1f);
 				boolean activated = false;
-				if (rtr != null) {
-					BlockPos pos = rtr.getBlockPos();
+				BlockPos pos = SkillUtils.rayTraceBlock(actor, 5, 1f);
+				if (pos != null) {
 					IBlockState blockState = worldIn.getBlockState(pos);
 					List<Block> logs = new ArrayList<>();
 					logs.add(Blocks.LOG);
@@ -137,10 +136,19 @@ public class Skills {
 					if (logs.contains(blockState.getBlock())) {
 						Stack<BlockPos> tree = TreeUtils.findTree(worldIn, pos);
 						if (!tree.isEmpty()) {
-							WuxiaCraft.logger.info("Added block to break");
+							//WuxiaCraft.logger.info("Added block to break");
 							BlockPos pos2 = tree.pop();
-							skillCap.addScheduledBlockBreaks(pos2);
-							ItemDye.spawnBonemealParticles(worldIn, pos2, 10);
+							if(!actor.world.isRemote) {
+								actor.world.destroyBlock(pos2, true);
+								for (int i = 0; i < 10; i++) {
+									double x = pos.getX() + actor.getRNG().nextFloat();
+									double y = pos.getY() + actor.getRNG().nextFloat();
+									double z = pos.getZ() + actor.getRNG().nextFloat();
+									double my = 0.05 + actor.getRNG().nextFloat()*0.08;
+									SpawnParticleMessage spm = new SpawnParticleMessage(EnumParticleTypes.VILLAGER_HAPPY, false, x, y,z, 0,my,0, 0);
+									SkillUtils.sendMessageWithinRange((WorldServer) actor.world, pos2, 64, spm);
+								}
+							}
 							activated = true;
 						}
 					}
@@ -148,14 +156,12 @@ public class Skills {
 				return activated;
 			});
 
-	public static final Skill ACCELERATE_GROWTH = new Skill("accelerate_growth", false, 280f, 1f, 25f, 0f)
+	public static final Skill ACCELERATE_GROWTH = new Skill("accelerate_growth", false, 280f, 1f, 60f, 0f)
 			.setAction(actor -> {
 				World worldIn = actor.world;
-				RayTraceResult rtr = actor.rayTrace(8f, 1f);
-				BlockPos pos;
+				BlockPos pos = SkillUtils.rayTraceBlock(actor, 6, 1f);
 				boolean activated = false;
-				if (rtr != null) {
-					pos = rtr.getBlockPos();
+				if (pos != null) {
 					List<BlockPos> neighbors = new ArrayList<>();
 					neighbors.add(pos);
 					neighbors.add(pos.north());
@@ -171,7 +177,16 @@ public class Skills {
 							IGrowable iGrowable = (IGrowable) worldIn.getBlockState(p).getBlock();
 							if (iGrowable.canGrow(worldIn, p, worldIn.getBlockState(p), worldIn.isRemote)) {
 								iGrowable.grow(worldIn, worldIn.rand, p, worldIn.getBlockState(p));
-								ItemDye.spawnBonemealParticles(worldIn, pos, 20);
+								if(!actor.world.isRemote) {
+									for (int i = 0; i < 20; i++) {
+										double x = pos.getX() + actor.getRNG().nextFloat();
+										double y = pos.getY() + actor.getRNG().nextFloat();
+										double z = pos.getZ() + actor.getRNG().nextFloat();
+										double my = 0.05 + actor.getRNG().nextFloat()*0.08;
+										SpawnParticleMessage spm = new SpawnParticleMessage(EnumParticleTypes.VILLAGER_HAPPY, false, x, y,z, 0,my,0, 0);
+										NetworkWrapper.INSTANCE.sendToAll(spm);
+									}
+								}
 								activated = true;
 							}
 						}
@@ -246,10 +261,8 @@ public class Skills {
 
 	public static final Skill EARTH_SUCTION = new Skill("earth_suction", false, 60f, 0.8f, 5f, 0f).setAction(actor -> {
 		boolean activated = false;
-		RayTraceResult rtr = actor.rayTrace(5, 1f);
-		if (rtr != null) {
-			if (rtr.typeOfHit == RayTraceResult.Type.BLOCK) {
-				BlockPos pos = rtr.getBlockPos();
+		BlockPos pos = SkillUtils.rayTraceBlock(actor, 5f, 1f);
+		if (pos != null) {
 				if (OreUtils.earthTypes.contains(actor.world.getBlockState(pos).getBlock())) {
 					IBlockState block = actor.world.getBlockState(pos);
 					ItemStack item = new ItemStack(block.getBlock().getItemDropped(block, actor.world.rand, 0));
@@ -262,16 +275,14 @@ public class Skills {
 						activated = true;
 					}
 				}
-			}
 		}
 		return activated;
 	});
 
 	public static final Skill EARTHLY_WALL = new Skill("earthly_wall", false, 320f, 0.8f, 50f, 0f).setAction(actor -> {
 		boolean activated = false;
-		RayTraceResult rtr = actor.rayTrace(5, 1f);
-		if (rtr != null && rtr.typeOfHit == RayTraceResult.Type.BLOCK) {
-			BlockPos pos = rtr.getBlockPos();
+		BlockPos pos = SkillUtils.rayTraceBlock(actor, 5f, 1f);
+		if(pos!=null) {
 			if (OreUtils.earthTypes.contains(actor.world.getBlockState(pos).getBlock())) {
 				IBlockState block = actor.world.getBlockState(pos);
 				IBlockState newBlock;
@@ -341,7 +352,8 @@ public class Skills {
 			actor.swingArm(EnumHand.MAIN_HAND);
 			skillCap.stepCastProgress(cultivation.getSpeedIncrease() * 0.5f);
 		}
-		WaterBladeThrowable blade = new WaterBladeThrowable(actor.world, actor, Math.min(60f, 8 + cultivation.getStrengthIncrease() * 1.5f * swordModifier), 300);
+		float damage = Math.min(60f, 8 + cultivation.getStrengthIncrease() * 1.5f * swordModifier);
+		WaterBladeThrowable blade = new WaterBladeThrowable(actor.world, actor, damage, 300);
 		blade.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 0.7f + cultivation.getSpeedIncrease() * 0.5f * swordModifier, 0.2f);
 		actor.world.spawnEntity(blade);
 		return true;
@@ -349,7 +361,7 @@ public class Skills {
 
 	public static Skill SELF_HEALING = new Skill("self_healing", false, 160f, 1f, 80f, 0f).setAction(actor -> {
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-		actor.heal(Math.max(10f, cultivation.getStrengthIncrease() * 0.05f));
+		actor.heal(Math.max(15f, cultivation.getStrengthIncrease() * 0.05f));
 		return true;
 	});
 
@@ -359,7 +371,7 @@ public class Skills {
 		if (result instanceof EntityLiving) {
 			EntityLiving entity = (EntityLiving) result;
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-			entity.heal(Math.max(10f, cultivation.getStrengthIncrease() * 0.05f));
+			entity.heal(Math.max(18f, cultivation.getStrengthIncrease() * 0.05f));
 			WuxiaCraft.logger.info("Healing a " + entity + "by " + ((int) Math.max(10f, cultivation.getStrengthIncrease() * 0.05f)));
 			activated = true;
 		}
@@ -370,21 +382,18 @@ public class Skills {
 	public static Skill WALL_CROSSING = new Skill("wall_crossing", false, 400f, 3.0f, 130f, 0f, "Lysian Prieto").setAction(actor -> {
 		boolean activated = false;
 		EnumFacing facing = EnumFacing.fromAngle(actor.rotationYaw);
-		RayTraceResult rtr = actor.rayTrace(3f, 1f);
-		if (rtr != null) {
-			if (rtr.typeOfHit == RayTraceResult.Type.BLOCK) {
-				BlockPos block = rtr.getBlockPos();
+		BlockPos pos = SkillUtils.rayTraceBlock(actor, 4f, 1f);
+		if (pos != null) {
 				int range = 15;
 				int test = 0;
-				while (!actor.world.isAirBlock(block) && test < range) {
-					block = block.offset(facing);
+				while (!actor.world.isAirBlock(pos) && test < range) {
+					pos = pos.offset(facing);
 					test++;
 				}
-				if (actor.world.isAirBlock(block) && actor.world.isAirBlock(block.up())) {
-					actor.setPositionAndUpdate(block.getX() + 0.5d, block.getY() + 0.1d, block.getZ() + 0.5d);
+				if (actor.world.isAirBlock(pos) && actor.world.isAirBlock(pos.up())) {
+					actor.setPositionAndUpdate(pos.getX() + 0.5d, pos.getY() + 0.1d, pos.getZ() + 0.5d);
 					activated = true;
 				}
-			}
 		}
 		return activated;
 	});

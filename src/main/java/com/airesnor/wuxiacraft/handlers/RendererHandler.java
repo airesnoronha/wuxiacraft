@@ -335,7 +335,7 @@ public class RendererHandler {
 		float hp = mc.player.getHealth();
 		int fill = (int) Math.ceil((hp / max_hp) * 81);
 		drawTexturedRect(i, j, fill, 9, 0f, 0.5f, (hp / max_hp), 1f);
-		String life = (int) hp + "/" + (int) max_hp;
+		String life = getShortHealthAmount((int) hp) + "/" + getShortHealthAmount((int) max_hp);
 		int width = mc.fontRenderer.getStringWidth(life);
 		mc.fontRenderer.drawString(life, (i + (81 - width) / 2), j + 1, 0xFFFFFF);
 		mc.getTextureManager().bindTexture(Gui.ICONS);
@@ -476,5 +476,41 @@ public class RendererHandler {
 		GlStateManager.disableBlend();
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.popMatrix();
+	}
+
+	public static String getShortHealthAmount(int amount) {
+		String value = "";
+		if(amount < 0) {
+			value += "-";
+		}
+		amount = Math.abs(amount);
+		if(amount < 1000) {
+			value += amount;
+		}
+		else if(amount < 10000) {
+			float mills =  amount / 1000f;
+			value += String.format("%.1fk", mills);
+		}
+		else if(amount < 100000) {
+			float mills =  amount / 1000f;
+			value += String.format("%.0fk", mills);
+		}
+		else if(amount < 1000000) {
+			float mills =  amount / 1000000f;
+			value += String.format("%.2fM", mills);
+		}
+		else if(amount < 10000000) {
+			float mills =  amount / 1000000f;
+			value += String.format("%.1fM", mills);
+		}
+		else if(amount < 100000000) {
+			float mills =  amount / 1000000f;
+			value += String.format("%.0fM", mills);
+		}
+		else if(amount < 1000000000) {
+			float mills =  amount / 1000000000f;
+			value += String.format("%.2fG", mills);
+		}
+		return value;
 	}
 }

@@ -18,7 +18,6 @@ import java.util.List;
 
 public class OreUtils {
 
-	@SideOnly(Side.CLIENT)
 	public static final List<BlockPos> foundOres = new ArrayList<>();
 
 	public static final List<Block> oresToFind = new ArrayList<>();

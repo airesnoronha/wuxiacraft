@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.cultivation.skills;
 
+import com.airesnor.wuxiacraft.utils.TranslateUtils;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 
@@ -21,7 +22,7 @@ public class Skill {
 	boolean aggressive;
 
 	public String getName() {
-		return I18n.format("wuxiacraft.skills." + this.name);
+		return TranslateUtils.translateKey("wuxiacraft.skills." + this.name);
 	}
 
 	public String getUName() {

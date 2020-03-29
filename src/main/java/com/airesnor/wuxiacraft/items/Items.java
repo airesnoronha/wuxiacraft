@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.items;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
@@ -10,7 +11,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.FoodStats;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,7 +110,15 @@ public class Items {
 				if(actor instanceof EntityPlayer) {
 					EntityPlayer player = (EntityPlayer)actor;
 					player.getFoodStats().setFoodLevel(20);
-					player.getFoodStats().setFoodSaturationLevel(50);
+					try {
+						Field foodStats = ReflectionHelper.findField(player.getFoodStats().getClass(), "foodSaturationLevel");
+						foodStats.setAccessible(true);
+						foodStats.setFloat(player.getFoodStats(), 50f);
+						foodStats.setAccessible(false);
+					} catch (Exception e) {
+						WuxiaCraft.logger.error("Couldn't help with food, sorry!");
+						e.printStackTrace();
+					}
 					return true;
 				} else return false;
 			});

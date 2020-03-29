@@ -90,4 +90,5 @@ public class WaterNeedleThrowable extends EntityThrowable {
 			worldServer.spawnParticle(EnumParticleTypes.WATER_DROP, false, this.posX, this.posY, this.posZ, 3, this.width, this.height, this.width, 0.005d, 0);
 		}
 	}
+
 }

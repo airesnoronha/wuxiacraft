@@ -11,10 +11,12 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SkillUtils {
@@ -43,7 +45,7 @@ public class SkillUtils {
 		Vec3d eyeRotation = player.getLook(partialTicks);
 		Vec3d end = start.addVector(eyeRotation.x * distance, eyeRotation.y * distance, eyeRotation.z * distance);
 
-		List<Entity> list = player.world.getEntitiesInAABBexcluding(player, new AxisAlignedBB(player.getPosition()).grow(distance + 1), SKILL_TARGETS);
+		List<Entity> list = player.world.getEntitiesInAABBexcluding(player, new AxisAlignedBB(player.getPosition()).grow(distance + 1), SKILL_TARGETS::test);
 		double targetDistance = 0.0D;
 
 		for (int i = 0; i < list.size(); ++i) {
@@ -65,5 +67,20 @@ public class SkillUtils {
 		}
 
 		return entity;
+	}
+
+	public static BlockPos rayTraceBlock(EntityLivingBase player, float distance, float partialTicks) {
+		BlockPos pos = null;
+		Vec3d start = player.getPositionEyes(partialTicks);
+		Vec3d eyeRotation = player.getLook(partialTicks);
+		Vec3d end = start.addVector(eyeRotation.x * distance, eyeRotation.y * distance, eyeRotation.z * distance);
+
+		RayTraceResult result =  player.world.rayTraceBlocks(start, end);
+		if(result != null) {
+			if(result.typeOfHit == RayTraceResult.Type.BLOCK) {
+				pos = result.getBlockPos();
+			}
+		}
+		return pos;
 	}
 }
