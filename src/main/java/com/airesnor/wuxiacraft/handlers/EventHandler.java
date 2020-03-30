@@ -270,10 +270,10 @@ public class EventHandler {
 				cultivation.remEnergy(totalRem);
 				NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, totalRem));
 			}
-		} else { //flying is not an exercise
+		} /*else { //flying is not an exercise
 			//CultivationUtils.cultivatorAddProgress(player, cultivation, distance * 0.1f);
 			//NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, distance * 0.1f));
-		}
+		}*/
 	}
 
 	/**
@@ -429,6 +429,7 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onMobDrop(LivingDropsEvent event) {
 		if (event.getEntity() instanceof WanderingCultivator) {
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.getEntityLiving());
 			//scrolls
 			List<Item> scrolls = new ArrayList<>();
 			for (Item i : Items.ITEMS) {
@@ -438,7 +439,11 @@ public class EventHandler {
 			}
 			Random rnd = event.getEntity().world.rand;
 			ItemStack drop = new ItemStack(scrolls.get(rnd.nextInt(scrolls.size())), 1);
-			if (rnd.nextInt(50) == 1) {
+			int bound = 40;
+			if(cultivation.getCurrentLevel() == CultivationLevel.SOUL_REFINEMENT) bound  = 30;
+			if(cultivation.getCurrentLevel() == CultivationLevel.QI_PATHS_REFINEMENT) bound  = 15;
+			if(cultivation.getCurrentLevel() == CultivationLevel.DANTIAN_CONDENSING) bound  = 5;
+			if (rnd.nextInt(bound) == 1) {
 				event.getDrops().add(new EntityItem(event.getEntity().world, event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, drop));
 			}
 			for (EntityItem item : event.getDrops()) {

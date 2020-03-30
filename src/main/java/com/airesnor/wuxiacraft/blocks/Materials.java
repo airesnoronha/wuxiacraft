@@ -5,6 +5,11 @@ import net.minecraft.block.material.Material;
 
 public class Materials {
 
-	public static Material CAULDRON = new Material(MapColor.IRON);
+	public static Material CAULDRON = new Material(MapColor.IRON) {
+		@Override
+		public boolean blocksMovement() {
+			return false;
+		}
+	};
 
 }

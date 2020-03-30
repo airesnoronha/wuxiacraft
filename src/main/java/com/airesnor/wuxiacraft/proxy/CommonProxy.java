@@ -53,6 +53,8 @@ public class CommonProxy {
 		NetworkWrapper.INSTANCE.registerMessage(new SelectSkillMessageHandler(), SelectSkillMessage.class, 167013, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new AskCultivationLevelMessageHandler(), AskCultivationLevelMessage.class, 167016, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new SuppressCultivationMessageHandler(), SuppressCultivationMessage.class, 167018, Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(new AddRecipeItemMessageHandler(), AddRecipeItemMessage.class, 167019, Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(new ShrinkEntityItemMessageHandler(), ShrinkEntityItemMessage.class, 167020, Side.SERVER);
 
 		NetworkWrapper.INSTANCE.registerMessage(new CultivationMessageHandler(), CultivationMessage.class, 167001, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new SpeedHandicapMessageHandler(), SpeedHandicapMessage.class, 167004, Side.CLIENT);

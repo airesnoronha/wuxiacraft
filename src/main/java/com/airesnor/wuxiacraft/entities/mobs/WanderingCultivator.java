@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 
 public class WanderingCultivator extends EntityCultivator implements IMob {
 
-	private static final ResourceLocation DROP_TABLE_1 = new ResourceLocation(WuxiaCraft.MODID, "entities/wandering_cultivator_11");
+	private static final ResourceLocation DROP_TABLE_1 = new ResourceLocation(WuxiaCraft.MODID, "entities/wandering_cultivator_l1");
 	private static final ResourceLocation DROP_TABLE_2 = new ResourceLocation(WuxiaCraft.MODID, "entities/wandering_cultivator_l2");
 	private static final ResourceLocation DROP_TABLE_3 = new ResourceLocation(WuxiaCraft.MODID, "entities/wandering_cultivator_l3");
 	private static final ResourceLocation DROP_TABLE_4 = new ResourceLocation(WuxiaCraft.MODID, "entities/wandering_cultivator_l4");

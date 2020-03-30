@@ -7,12 +7,12 @@
 				{
 					"type": "item",
 					"name": "wuxiacraft:natural_oddity_low",
-					"weight": 1
+					"weight": 15
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:body_refinement_pill",
-					"weight": 3,
+					"weight": 10,
 					"functions": [
 						{
 							"function": "set_count",
@@ -210,7 +210,7 @@
 				{
 					"type": "item",
 					"name": "wuxiacraft:natural_oddity_low",
-					"weight": 5,
+					"weight": 15,
 					"functions": [
 						{
 							"function": "set_count",
@@ -224,7 +224,7 @@
 				{
 					"type": "item",
 					"name": "wuxiacraft:giant_ant_core",
-					"weight": 3,
+					"weight": 9,
 					"functions": [
 						{
 							"function": "set_count",
@@ -238,18 +238,18 @@
 				{
 					"type": "item",
 					"name": "wuxiacraft:recipe_scroll",
-					"weight": 2
+					"weight": 7
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:training_pill",
-					"weight": 3,
+					"weight": 8,
 					"functions": [
 						{
 							"function": "set_count",
 							"count": {
 								"min": 1,
-								"max": 2
+								"max": 3
 							}
 						}
 					]
@@ -257,17 +257,17 @@
 				{
 					"type": "item",
 					"name": "wuxiacraft:reinforcement_pill",
-					"weight": 3
+					"weight": 5
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:body_creation_pill",
-					"weight": 3
+					"weight": 5
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:soul_refinement_pill",
-					"weight": 5,
+					"weight": 8,
 					"functions": [
 						{
 							"function": "set_count",
@@ -281,7 +281,7 @@
 				{
 					"type": "item",
 					"name": "wuxiacraft:qi_paths_refinement_pill",
-					"weight": 2,
+					"weight": 5,
 					"functions": [
 						{
 							"function": "set_count",
@@ -295,22 +295,22 @@
 				{
 					"type": "item",
 					"name": "wuxiacraft:soul_aspect_pill",
-					"weight": 3
+					"weight": 5
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:wandering_ghost_pill",
-					"weight": 3
+					"weight": 5
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:meridian_injection_pill",
-					"weight": 1
+					"weight": 3
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:minor_energy_replenishing_pill",
-					"weight": 5,
+					"weight": 8,
 					"functions": [
 						{
 							"function": "set_count",
@@ -324,22 +324,22 @@
 				{
 					"type": "item",
 					"name": "wuxiacraft:energy_stream_pill",
-					"weight": 3
+					"weight": 5
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:lesser_energy_replenishing_pill",
-					"weight": 1
+					"weight": 3
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:earth_qi_pill",
-					"weight": 1
+					"weight": 3
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:invigorate_blood_pill",
-					"weight": 5,
+					"weight": 8,
 					"functions": [
 						{
 							"function": "set_count",
@@ -353,17 +353,17 @@
 				{
 					"type": "item",
 					"name": "wuxiacraft:lesser_healing_pill",
-					"weight": 3
+					"weight": 5
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:reconstruct_body_pill",
-					"weight": 1
+					"weight": 5
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:smaller_healing_pill",
-					"weight": 1
+					"weight": 5
 				}
 			]
 		}

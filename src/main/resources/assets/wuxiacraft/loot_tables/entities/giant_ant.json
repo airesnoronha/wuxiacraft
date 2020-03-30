@@ -17,7 +17,7 @@
 				{
 					"type": "item",
 					"name": "wuxiacraft:natural_oddity_low",
-					"weight": 10,
+					"weight": 20,
 					"functions": [
 						{
 							"function": "set_count",
@@ -31,7 +31,7 @@
 				{
 					"type": "item",
 					"name": "wuxiacraft:giant_ant_core",
-					"weight": 5
+					"weight": 15
 				}
 			]
 		}

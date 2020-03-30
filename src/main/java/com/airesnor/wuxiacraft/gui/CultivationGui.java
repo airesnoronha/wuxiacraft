@@ -195,6 +195,7 @@ public class CultivationGui extends GuiScreen {
 			pos++;
 		}
 
+		GL11.glColor4f(1f, 1f, 1f, 1f);
 		int[] iconPos = new int[]{27, 27, 99, 108};
 		int[] fills = new int[]{
 				Math.min(27,(int)((27f * cultivation.getSpeedHandicap()) / 100f)),

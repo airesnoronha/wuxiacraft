@@ -6,7 +6,11 @@ import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
 import com.airesnor.wuxiacraft.items.IHasModel;
 import com.airesnor.wuxiacraft.items.ItemFan;
 import com.airesnor.wuxiacraft.items.Items;
+import com.airesnor.wuxiacraft.networking.NetworkWrapper;
+import com.airesnor.wuxiacraft.networking.ShrinkEntityItemMessage;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockHopper;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
@@ -30,9 +34,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Random;
 
 public class Cauldron extends BlockContainer implements IHasModel {
+
+	private static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0,0,0,1,0.81, 1);
 
 	public static final IProperty<Integer> CAULDRON = PropertyInteger.create("cauldron", 0, 2);
 
@@ -59,6 +66,11 @@ public class Cauldron extends BlockContainer implements IHasModel {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+		return false;
+	}
+
+	@Override
+	public boolean isFullBlock(IBlockState state) {
 		return false;
 	}
 
@@ -178,22 +190,20 @@ public class Cauldron extends BlockContainer implements IHasModel {
 
 	@Override
 	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
-		//WuxiaCraft.logger.info("Collided with " + entityIn.getName());
-		CauldronTileEntity te = getTE(worldIn, pos);
-		if (entityIn instanceof EntityItem && te.isAcceptingItems()) {
-			ItemStack stack = ((EntityItem) entityIn).getItem().copy();
-			te.addRecipeInput(stack.getItem());
-			stack.shrink(1);
-			if (!worldIn.isRemote) {
-				if (stack.getCount() <= 0) entityIn.setDead();
-				else ((EntityItem) entityIn).setItem(stack);
+		if(worldIn.isRemote) {
+			CauldronTileEntity te = getTE(worldIn, pos);
+			if (entityIn instanceof EntityItem && te.isAcceptingItems()) {
+				ItemStack stack = ((EntityItem) entityIn).getItem().copy();
+				te.addRecipeInput(stack.getItem());
+				NetworkWrapper.INSTANCE.sendToServer(new ShrinkEntityItemMessage(entityIn.getUniqueID().toString()));
+				stack.shrink(1);
+				if(stack.isEmpty()) entityIn.setDead();
 			}
 		}
 	}
 
-	@Nullable
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-		return super.getCollisionBoundingBox(blockState, worldIn, pos).shrink(0.1);
+	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
+		addCollisionBoxToList(pos, entityBox, collidingBoxes, COLLISION_BOX);
 	}
 }

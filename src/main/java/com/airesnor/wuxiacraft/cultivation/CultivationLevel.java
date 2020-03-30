@@ -230,6 +230,7 @@ public enum CultivationLevel {
 	public boolean greaterThan(CultivationLevel level) {
 		boolean found = false;
 		CultivationLevel aux = this;
+		if(aux == TRUE_GOD) found = true;
 		while (aux != TRUE_GOD) {
 			if (aux == level) {
 				found = true;

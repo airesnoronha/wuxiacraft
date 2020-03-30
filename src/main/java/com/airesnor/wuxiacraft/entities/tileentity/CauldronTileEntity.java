@@ -1,7 +1,10 @@
 package com.airesnor.wuxiacraft.entities.tileentity;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.alchemy.Recipe;
 import com.airesnor.wuxiacraft.alchemy.Recipes;
+import com.airesnor.wuxiacraft.networking.AddRecipeItemMessage;
+import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.SpawnParticleMessage;
 import com.airesnor.wuxiacraft.utils.MathUtils;
 import com.airesnor.wuxiacraft.utils.SkillUtils;
@@ -293,7 +296,18 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 	}
 
 	public void addRecipeInput(Item item) {
-		this.recipeInputs.add(Pair.of(this.getTemperature(), item));
+		if(this.world.isRemote) {
+			float temperature  = this.getTemperature();
+			this.recipeInputs.add(Pair.of(temperature, item));
+			WuxiaCraft.logger.info("Adding item at " + String.format("%.2f degrees", temperature));
+			NetworkWrapper.INSTANCE.sendToServer(new AddRecipeItemMessage(this.getPos(), item, temperature));
+		}
+	}
+	public void addServerRecipeInput(Item item, float temperature) {
+		if(!this.world.isRemote) {
+			this.recipeInputs.add(Pair.of(temperature, item));
+			WuxiaCraft.logger.info("Adding item on server at " + String.format("%.2f degrees",temperature));
+		}
 	}
 
 	public EnumCauldronState getCauldronState() {
