@@ -4,6 +4,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
@@ -88,6 +89,14 @@ public class WaterNeedleThrowable extends EntityThrowable {
 		if (this.ticksExisted >= 2 && this.world instanceof WorldServer) {
 			WorldServer worldServer = (WorldServer) this.world;
 			worldServer.spawnParticle(EnumParticleTypes.WATER_DROP, false, this.posX, this.posY, this.posZ, 3, this.width, this.height, this.width, 0.005d, 0);
+		}
+
+		if(this.world instanceof WorldServer) {
+			WorldServer worldServer = (WorldServer) this.world;
+			if(worldServer.getBlockState(this.getPosition()).getBlock() == Blocks.FIRE) {
+				this.world.setBlockToAir(this.getPosition());
+				this.setDead();
+			}
 		}
 	}
 

@@ -8,6 +8,7 @@ import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
@@ -75,9 +76,6 @@ public class WaterBladeThrowable extends EntityThrowable {
 				else if (this.world.getBlockState(result.getBlockPos()).getBlock().equals(Blocks.CACTUS)) {
 					this.world.destroyBlock(result.getBlockPos(), true);
 				}
-				else if (this.world.getBlockState(result.getBlockPos()).getBlock().equals(Blocks.FIRE)) {
-					this.world.setBlockToAir(result.getBlockPos());
-				}
 				else if(this.world.getBlockState(result.getBlockPos()).getBlock().equals(Blocks.GRASS)) {
 					this.world.setBlockState(result.getBlockPos(), Blocks.DIRT.getDefaultState());
 				}
@@ -113,6 +111,14 @@ public class WaterBladeThrowable extends EntityThrowable {
 		}
 
 		this.rotateRoll();
+
+		if(this.world instanceof WorldServer) {
+			WorldServer worldServer = (WorldServer) this.world;
+			if(worldServer.getBlockState(this.getPosition()).getBlock() == Blocks.FIRE) {
+				this.world.setBlockToAir(this.getPosition());
+				this.setDead();
+			}
+		}
 	}
 
 	private void rotateRoll() {
