@@ -1,10 +1,12 @@
 package com.airesnor.wuxiacraft.entities.skills;
 
+import com.airesnor.wuxiacraft.entities.mobs.EntityCultivator;
 import com.airesnor.wuxiacraft.networking.SpawnParticleMessage;
 import com.airesnor.wuxiacraft.utils.SkillUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.DamageSource;
@@ -17,6 +19,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 public class FireThrowable extends EntityThrowable {
 
@@ -66,11 +69,11 @@ public class FireThrowable extends EntityThrowable {
 
 		if (this.ticksExisted >= 2 && this.world instanceof WorldServer) {
 			WorldServer worldServer = (WorldServer) this.world;
-			for(int i = 0; i < particles; i++) {
-				double px = this.posX - this.width/2 + this.world.rand.nextFloat()*this.width + this.motionX*this.world.rand.nextFloat();
-				double py = this.posY + this.world.rand.nextFloat()*this.height + this.motionY*this.world.rand.nextFloat();
-				double pz = this.posZ - this.width/2 + this.world.rand.nextFloat()*this.width + this.motionZ*this.world.rand.nextFloat();
-				SpawnParticleMessage spm = new SpawnParticleMessage(EnumParticleTypes.FLAME, false, px,py,pz, this.motionX * 0.1f, this.motionY * 0.1f, this.motionZ * 0.1f, 0);
+			for (int i = 0; i < particles; i++) {
+				double px = this.posX - this.width / 2 + this.world.rand.nextFloat() * this.width + this.motionX * this.world.rand.nextFloat();
+				double py = this.posY + this.world.rand.nextFloat() * this.height + this.motionY * this.world.rand.nextFloat();
+				double pz = this.posZ - this.width / 2 + this.world.rand.nextFloat() * this.width + this.motionZ * this.world.rand.nextFloat();
+				SpawnParticleMessage spm = new SpawnParticleMessage(EnumParticleTypes.FLAME, false, px, py, pz, this.motionX * 0.1f, this.motionY * 0.1f, this.motionZ * 0.1f, 0);
 				SkillUtils.sendMessageWithinRange(worldServer, getPosition(), 64, spm);
 			}
 
@@ -81,15 +84,28 @@ public class FireThrowable extends EntityThrowable {
 	}
 
 	@Override
+	@ParametersAreNonnullByDefault
 	protected void onImpact(RayTraceResult result) {
 		if (!this.world.isRemote) {
 			if (result.typeOfHit == RayTraceResult.Type.ENTITY && !result.entityHit.equals(this.owner)) {
-				if(result.entityHit instanceof EntityLivingBase) {
+				if (result.entityHit instanceof EntityLivingBase) {
 					this.attackEntityOnDirectHit((EntityLivingBase) result.entityHit);
 					this.setDead();
 				}
 			} else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
-				this.setHitBlockOnFire(result);
+				boolean canSetFire = false;
+				if (this.owner instanceof EntityPlayer) {
+					if (this.world.getGameRules().hasRule("doPlayerSkillSetFire")) {
+						canSetFire = this.world.getGameRules().getBoolean("doPlayerSkillSetFire");
+					}
+				} else if (this.owner instanceof EntityCultivator) {
+					if (this.world.getGameRules().hasRule("doMobSkillSetFire") && this.world.getGameRules().hasRule("mobGriefing")) {
+						canSetFire = this.world.getGameRules().getBoolean("doMobSkillSetFire") && this.world.getGameRules().getBoolean("mobGriefing");
+					}
+				}
+				if (canSetFire) {
+					this.setHitBlockOnFire(result);
+				}
 				if (this.canNotPassThroughHitBlock(result)) {
 					if (this.world instanceof WorldServer) {
 						WorldServer worldServer = (WorldServer) this.world;
@@ -126,8 +142,10 @@ public class FireThrowable extends EntityThrowable {
 	}
 
 	private void setEntityOnFire(@Nullable Entity target) {
-		if (!target.isImmuneToFire() && !target.equals(this.owner)) {
-			target.setFire(5);
+		if(target!=null) {
+			if (!target.isImmuneToFire() && !target.equals(this.owner)) {
+				target.setFire(5);
+			}
 		}
 	}
 

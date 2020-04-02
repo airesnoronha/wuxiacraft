@@ -7,9 +7,9 @@ public interface ICultivation {
 	 *
 	 * @param amount
 	 */
-	boolean addProgress(float amount);
+	boolean addProgress(double amount);
 
-	void setProgress(float amount);
+	void setProgress(double amount);
 
 	/**
 	 * Gets The current major level
@@ -30,7 +30,7 @@ public interface ICultivation {
 	 *
 	 * @return The current progress.
 	 */
-	float getCurrentProgress();
+	double getCurrentProgress();
 
 	/**
 	 * Changes the current level.

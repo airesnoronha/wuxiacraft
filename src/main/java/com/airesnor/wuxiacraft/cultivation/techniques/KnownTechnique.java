@@ -6,9 +6,9 @@ import net.minecraft.entity.player.EntityPlayer;
 public class KnownTechnique {
 
 	private Technique technique;
-	private float progress;
+	private double progress;
 
-	public KnownTechnique(Technique technique, float progress) {
+	public KnownTechnique(Technique technique, double progress) {
 		this.technique = technique;
 		this.progress = progress;
 	}
@@ -27,11 +27,11 @@ public class KnownTechnique {
 		return new TechniquesModifiers(0f, 0f, 0f, 0f, 0f);
 	}
 
-	public void progress(float amount) {
+	public void progress(double amount) {
 		this.progress = Math.min(Math.max(0, this.progress + amount), this.technique.getTier().smallProgress + this.technique.getTier().greatProgress + this.technique.getTier().perfectionProgress + 10f);
 	}
 
-	public float getProgress() {
+	public double getProgress() {
 		return this.progress;
 	}
 

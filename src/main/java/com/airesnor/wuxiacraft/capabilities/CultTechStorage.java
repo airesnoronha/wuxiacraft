@@ -20,7 +20,7 @@ public class CultTechStorage implements Capability.IStorage<ICultTech> {
 		int i = 0;
 		for (KnownTechnique t : instance.getKnownTechniques()) {
 			tag.setString("tech-" + i, t.getTechnique().getUName());
-			tag.setFloat("prog-" + i, t.getProgress());
+			tag.setDouble("prog-" + i, t.getProgress());
 			i++;
 		}
 		return tag;

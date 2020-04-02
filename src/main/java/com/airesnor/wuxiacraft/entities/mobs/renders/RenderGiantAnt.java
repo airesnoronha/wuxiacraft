@@ -18,8 +18,8 @@ import java.util.Map;
 
 public class RenderGiantAnt<T extends GiantAnt> extends Render<T> {
 
-	private static final ResourceLocation GIANT_ANT_TEXTURE = new ResourceLocation(WuxiaCraft.MODID, "textures/entities/giant_ant.png");
-	private static final ResourceLocation GIANT_ANT_MODEL_LOCATION = new ResourceLocation(WuxiaCraft.MODID, "models/entity/giant_ant.obj");
+	private static final ResourceLocation GIANT_ANT_TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/entities/giant_ant.png");
+	private static final ResourceLocation GIANT_ANT_MODEL_LOCATION = new ResourceLocation(WuxiaCraft.MOD_ID, "models/entity/giant_ant.obj");
 
 	private static Map<String, OBJModelLoader.Part>  GIANT_ANT_MODEL;
 

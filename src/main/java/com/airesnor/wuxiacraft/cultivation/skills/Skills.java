@@ -10,7 +10,9 @@ import com.airesnor.wuxiacraft.entities.skills.SwordBeamThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
 import com.airesnor.wuxiacraft.handlers.RendererHandler;
+import com.airesnor.wuxiacraft.networking.EnergyMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
+import com.airesnor.wuxiacraft.networking.ProgressMessage;
 import com.airesnor.wuxiacraft.networking.SpawnParticleMessage;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import com.airesnor.wuxiacraft.utils.OreUtils;
@@ -37,7 +39,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -74,56 +75,41 @@ public class Skills {
 		SKILLS.add(ADEPT_SWORD_FLIGHT);
 	}
 
-	public static final Skill CULTIVATE = new Skill("cultivate", false, 80f, 10f, 150f, 0f)
-			.setAction(actor -> {
+	public static final Skill CULTIVATE = new Skill("cultivate", false, 1f, 10f, 300f, 0f)
+			.setAction(actor -> true)
+			.setWhenCasting(actor -> {
+				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
-				if (actor.world instanceof WorldServer) {
-					WorldServer ws = (WorldServer) actor.world;
-					int particles = 10;
-					for (KnownTechnique kt : cultTech.getKnownTechniques()) {
-						for (Element e : kt.getTechnique().getElements()) {
-							for (int i = 0; i < particles; i++) {
-								float randX = 2 * actor.world.rand.nextFloat() - 1;
-								float randY = 2 * actor.world.rand.nextFloat() - 1;
-								float randZ = 2 * actor.world.rand.nextFloat() - 1;
-								float dist = (float) Math.sqrt(randX * randX + randY * randY + randZ * randZ) * 30f;
-								SpawnParticleMessage spm = new SpawnParticleMessage(e.getParticle(), false, actor.posX + randX, actor.posY + 0.9f + randY, actor.posZ + randZ, -randX / dist, -randY / dist, -randZ / dist, 0);
-								SkillUtils.sendMessageWithinRange(ws, actor.getPosition(), spm.isIgnoreRange() ? 262144.0D : 1024.0D, spm);
-							}
-						}
-					}
-				}
-				if (actor instanceof EntityPlayer) {
-					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-					CultivationUtils.cultivatorAddProgress(actor, cultivation, cultTech.getOverallCultivationSpeed());
-				}
-				return true;
-			}).setWhenCasting(actor -> {
-				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
+				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
+				skillCap.stepCastProgress(-cultivation.getSpeedIncrease() + 1);
 				for (KnownTechnique kt : cultTech.getKnownTechniques()) {
-					if (actor.world instanceof WorldServer) {
-						WorldServer ws = (WorldServer) actor.world;
-						int particles = 2;
-						for (Element e : kt.getTechnique().getElements()) {
-							for (int i = 0; i < particles; i++) {
-								float randX = 2 * actor.world.rand.nextFloat() - 1;
-								float randY = 2 * actor.world.rand.nextFloat() - 1;
-								float randZ = 2 * actor.world.rand.nextFloat() - 1;
-								float dist = (float) Math.sqrt(randX * randX + randY * randY + randZ * randZ) * 30f;
-								SpawnParticleMessage spm = new SpawnParticleMessage(e.getParticle(), false, actor.posX + randX, actor.posY + 0.9f + randY, actor.posZ + randZ, -randX / dist, -randY / dist, -randZ / dist, 0);
-								SkillUtils.sendMessageWithinRange(ws, actor.getPosition(), spm.isIgnoreRange() ? 262144.0D : 1024.0D, spm);
-							}
+					int particles = 2;
+					for (Element e : kt.getTechnique().getElements()) {
+						for (int i = 0; i < particles; i++) {
+							float randX = 2 * actor.world.rand.nextFloat() - 1;
+							float randY = 2 * actor.world.rand.nextFloat() - 1;
+							float randZ = 2 * actor.world.rand.nextFloat() - 1;
+							float dist = (float) Math.sqrt(randX * randX + randY * randY + randZ * randZ) * 30f;
+							SpawnParticleMessage spm = new SpawnParticleMessage(e.getParticle(), false, actor.posX + randX, actor.posY + 0.9f + randY, actor.posZ + randZ, -randX / dist, -randY / dist, -randZ / dist, 0);
+							NetworkWrapper.INSTANCE.sendToServer(spm);
 						}
 					}
 				}
 				if (actor instanceof EntityPlayer) {
-					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-					CultivationUtils.cultivatorAddProgress(actor, cultivation, cultTech.getOverallCultivationSpeed() * 0.06f);
+					double amount = cultTech.getOverallCultivationSpeed() * 0.15;
+					float energy = cultTech.getOverallCultivationSpeed() * 0.45f;
+					if (cultivation.hasEnergy(energy)) {
+						CultivationUtils.cultivatorAddProgress(actor, cultivation, amount);
+						ProgressMessage pm = new ProgressMessage(0, amount);
+						NetworkWrapper.INSTANCE.sendToServer(pm);
+						cultivation.remEnergy(energy);
+						NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, energy));
+					}
 				}
 				return true;
 			});
 
-	public static final Skill GATHER_WOOD = new Skill("gather_wood", false, 180f, 1f, 20f, 0f)
+	public static final Skill GATHER_WOOD = new Skill("gather_wood", false, 80f, 3f, 20f, 0f)
 			.setAction(actor -> {
 				World worldIn = actor.world;
 				boolean activated = false;
@@ -138,14 +124,14 @@ public class Skills {
 						if (!tree.isEmpty()) {
 							//WuxiaCraft.logger.info("Added block to break");
 							BlockPos pos2 = tree.pop();
-							if(!actor.world.isRemote) {
+							if (!actor.world.isRemote) {
 								actor.world.destroyBlock(pos2, true);
 								for (int i = 0; i < 10; i++) {
-									double x = pos.getX() + actor.getRNG().nextFloat();
-									double y = pos.getY() + actor.getRNG().nextFloat();
-									double z = pos.getZ() + actor.getRNG().nextFloat();
-									double my = 0.05 + actor.getRNG().nextFloat()*0.08;
-									SpawnParticleMessage spm = new SpawnParticleMessage(EnumParticleTypes.VILLAGER_HAPPY, false, x, y,z, 0,my,0, 0);
+									double x = pos2.getX() + actor.getRNG().nextFloat();
+									double y = pos2.getY() + actor.getRNG().nextFloat();
+									double z = pos2.getZ() + actor.getRNG().nextFloat();
+									double my = 0.05 + actor.getRNG().nextFloat() * 0.08;
+									SpawnParticleMessage spm = new SpawnParticleMessage(EnumParticleTypes.VILLAGER_HAPPY, false, x, y, z, 0, my, 0, 0);
 									SkillUtils.sendMessageWithinRange((WorldServer) actor.world, pos2, 64, spm);
 								}
 							}
@@ -156,7 +142,7 @@ public class Skills {
 				return activated;
 			});
 
-	public static final Skill ACCELERATE_GROWTH = new Skill("accelerate_growth", false, 280f, 1f, 60f, 0f)
+	public static final Skill ACCELERATE_GROWTH = new Skill("accelerate_growth", false, 120f, 1f, 60f, 0f)
 			.setAction(actor -> {
 				World worldIn = actor.world;
 				BlockPos pos = SkillUtils.rayTraceBlock(actor, 6, 1f);
@@ -177,13 +163,13 @@ public class Skills {
 							IGrowable iGrowable = (IGrowable) worldIn.getBlockState(p).getBlock();
 							if (iGrowable.canGrow(worldIn, p, worldIn.getBlockState(p), worldIn.isRemote)) {
 								iGrowable.grow(worldIn, worldIn.rand, p, worldIn.getBlockState(p));
-								if(!actor.world.isRemote) {
+								if (!actor.world.isRemote) {
 									for (int i = 0; i < 20; i++) {
 										double x = pos.getX() + actor.getRNG().nextFloat();
 										double y = pos.getY() + actor.getRNG().nextFloat();
 										double z = pos.getZ() + actor.getRNG().nextFloat();
-										double my = 0.05 + actor.getRNG().nextFloat()*0.08;
-										SpawnParticleMessage spm = new SpawnParticleMessage(EnumParticleTypes.VILLAGER_HAPPY, false, x, y,z, 0,my,0, 0);
+										double my = 0.05 + actor.getRNG().nextFloat() * 0.08;
+										SpawnParticleMessage spm = new SpawnParticleMessage(EnumParticleTypes.VILLAGER_HAPPY, false, x, y, z, 0, my, 0, 0);
 										NetworkWrapper.INSTANCE.sendToAll(spm);
 									}
 								}
@@ -219,7 +205,7 @@ public class Skills {
 				return true;
 			});
 
-	public static final Skill METAL_DETECTION = new Skill("metal_detection", false, 400f, 0.6f, 10f, 0f)
+	public static final Skill METAL_DETECTION = new Skill("metal_detection", false, 400f, 0.6f, 180f, 0f)
 			.setAction(actor -> {
 				if (actor.world.isRemote) {
 					if (actor instanceof EntityPlayer) {
@@ -244,37 +230,46 @@ public class Skills {
 		int range = Math.min(max_range, 8 + (int) (Math.floor(0.1 * (1 - cultivation.getStrengthIncrease()))));
 		List<BlockPos> positions = OreUtils.findOres(actor.world, actor.getPosition(), range);
 		for (BlockPos pos : positions) {
-			IBlockState block = actor.world.getBlockState(pos);
-			ItemStack item = new ItemStack(block.getBlock().getItemDropped(block, actor.world.rand, 0));
-			item.setCount(block.getBlock().quantityDropped(actor.world.rand));
-			IBlockState stone = Blocks.STONE.getDefaultState();
-			actor.world.setBlockState(pos, stone);
-			EntityItem oreItem = actor.entityDropItem(item, 0f);
-			if (oreItem != null) {
+			if (!actor.world.isRemote) {
+				IBlockState block = actor.world.getBlockState(pos);
+				IBlockState stone = Blocks.STONE.getDefaultState();
+				actor.world.setBlockState(pos, stone);
+				ItemStack item = new ItemStack(block.getBlock().getItemDropped(block, actor.world.rand, 0));
+				item.setCount(block.getBlock().quantityDropped(actor.world.rand));
+				EntityItem oreItem = new EntityItem(actor.world, actor.posX, actor.posY, actor.posZ, item);
 				oreItem.setNoPickupDelay();
 				oreItem.setOwner(actor.getName());
-				activated = true;
+				actor.world.spawnEntity(oreItem);
 			}
+			activated = true;
 		}
 		return activated;
 	});
 
-	public static final Skill EARTH_SUCTION = new Skill("earth_suction", false, 60f, 0.8f, 5f, 0f).setAction(actor -> {
+	public static final Skill EARTH_SUCTION = new Skill("earth_suction", false, 60f, 0.8f, 20f, 0f).setAction(actor -> {
 		boolean activated = false;
 		BlockPos pos = SkillUtils.rayTraceBlock(actor, 5f, 1f);
 		if (pos != null) {
-				if (OreUtils.earthTypes.contains(actor.world.getBlockState(pos).getBlock())) {
+			if (OreUtils.earthTypes.contains(actor.world.getBlockState(pos).getBlock())) {
+				if (!actor.world.isRemote) {
 					IBlockState block = actor.world.getBlockState(pos);
+					actor.world.setBlockToAir(pos);
 					ItemStack item = new ItemStack(block.getBlock().getItemDropped(block, actor.world.rand, 0));
 					item.setCount(block.getBlock().quantityDropped(actor.world.rand));
-					actor.world.setBlockToAir(pos);
-					EntityItem earthItem = actor.entityDropItem(item, 0f);
-					if (earthItem != null) {
-						earthItem.setNoPickupDelay();
-						earthItem.setOwner(actor.getName());
-						activated = true;
-					}
+					double dx = actor.posX - (pos.getX() + 0.5);
+					double dy = (actor.posY + actor.getEyeHeight()) - (pos.getY() + 0.5);
+					double dz = actor.posZ - (pos.getZ() + 0.5);
+					double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+					EntityItem earthItem = new EntityItem(actor.world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, item);
+					earthItem.motionX = dx / dist * 0.6f;
+					earthItem.motionY = dy / dist * 0.6f;
+					earthItem.motionZ = dz / dist * 0.6f;
+					earthItem.setNoPickupDelay();
+					earthItem.setOwner(actor.getName());
+					actor.world.spawnEntity(earthItem);
 				}
+				activated = true;
+			}
 		}
 		return activated;
 	});
@@ -282,7 +277,7 @@ public class Skills {
 	public static final Skill EARTHLY_WALL = new Skill("earthly_wall", false, 320f, 0.8f, 50f, 0f).setAction(actor -> {
 		boolean activated = false;
 		BlockPos pos = SkillUtils.rayTraceBlock(actor, 5f, 1f);
-		if(pos!=null) {
+		if (pos != null) {
 			if (OreUtils.earthTypes.contains(actor.world.getBlockState(pos).getBlock())) {
 				IBlockState block = actor.world.getBlockState(pos);
 				IBlockState newBlock;
@@ -384,16 +379,16 @@ public class Skills {
 		EnumFacing facing = EnumFacing.fromAngle(actor.rotationYaw);
 		BlockPos pos = SkillUtils.rayTraceBlock(actor, 4f, 1f);
 		if (pos != null) {
-				int range = 15;
-				int test = 0;
-				while (!actor.world.isAirBlock(pos) && test < range) {
-					pos = pos.offset(facing);
-					test++;
-				}
-				if (actor.world.isAirBlock(pos) && actor.world.isAirBlock(pos.up())) {
-					actor.setPositionAndUpdate(pos.getX() + 0.5d, pos.getY() + 0.1d, pos.getZ() + 0.5d);
-					activated = true;
-				}
+			int range = 15;
+			int test = 0;
+			while (!actor.world.isAirBlock(pos) && test < range) {
+				pos = pos.offset(facing);
+				test++;
+			}
+			if (actor.world.isAirBlock(pos) && actor.world.isAirBlock(pos.up())) {
+				actor.setPositionAndUpdate(pos.getX() + 0.5d, pos.getY() + 0.1d, pos.getZ() + 0.5d);
+				activated = true;
+			}
 		}
 		return activated;
 	});
@@ -456,6 +451,7 @@ public class Skills {
 						actor.world.spawnEntity(sbt);
 						actor.swingArm(EnumHand.MAIN_HAND);
 						CultivationUtils.getCultivationFromEntity(actor).remEnergy(180f);
+						NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, 180f));
 					}
 					skillCap.increaseBarrageReleased();
 				}
@@ -470,6 +466,9 @@ public class Skills {
 			})
 			.setWhenCasting(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
+				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
+				skillCap.stepCastProgress(-cultivation.getSpeedIncrease());
+				skillCap.stepCastProgress(1.0f);
 				if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
 					if (cultivation.hasEnergy(9f)) {
 						cultivation.remEnergy(9f);
@@ -503,7 +502,7 @@ public class Skills {
 	public static final Skill LIGHT_FEET_LEAP = new Skill("light_feet_leap", false, 90f, 1.2f, 30f, 20f)
 			.setAction(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				float speed = Math.min(cultivation.getSpeedIncrease() * 6f, 30f);
+				float speed = Math.min(cultivation.getSpeedIncrease() * 6f, 12f);
 				float yaw = actor.rotationYawHead;
 				float pitch = actor.rotationPitch;
 				float x = speed * -MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
@@ -521,7 +520,7 @@ public class Skills {
 				boolean activated = false;
 				Entity target = SkillUtils.rayTraceEntities(actor, 3f, 1f);
 				if (target != null) {
-					if(target instanceof EntityLivingBase) {
+					if (target instanceof EntityLivingBase) {
 						activated = true;
 						actor.swingArm(EnumHand.MAIN_HAND);
 						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
@@ -543,7 +542,7 @@ public class Skills {
 
 	public static final Skill MINOR_BODY_REINFORCEMENT = new Skill("minor_body_reinforcement", false, 120f, 1.2f, 180f, 20f)
 			.setAction(actor -> {
-				PotionEffect effect = new PotionEffect(MobEffects.STRENGTH, 1800,  2, false, true);
+				PotionEffect effect = new PotionEffect(MobEffects.STRENGTH, 1800, 2, false, true);
 				actor.addPotionEffect(effect);
 				return true;
 			});
@@ -555,6 +554,9 @@ public class Skills {
 			})
 			.setWhenCasting(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
+				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
+				skillCap.stepCastProgress(-cultivation.getSpeedIncrease());
+				skillCap.stepCastProgress(1.0f);
 				if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
 					if (cultivation.hasEnergy(26f)) {
 						cultivation.remEnergy(26f);

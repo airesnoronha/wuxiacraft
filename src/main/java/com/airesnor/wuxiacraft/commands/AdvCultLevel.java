@@ -43,14 +43,13 @@ public class AdvCultLevel extends CommandBase {
 		if (sender instanceof EntityPlayerMP) {
 			EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 			if (!player.world.isRemote) {
+				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				if (args.length == 0) {
-					ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 					CultivationUtils.cultivatorAddProgress(player, cultivation, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
 					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), player);
 					EventHandler.applyModifiers(player, cultivation);
 				} else if (args.length == 1) {
 					int levels = Integer.parseInt(args[0], 10);
-					ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 					for (int i = 0; i < levels; i++) {
 						CultivationUtils.cultivatorAddProgress(player, cultivation, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
 					}

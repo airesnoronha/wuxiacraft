@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface ICultTech {
 
-	boolean addTechnique(Technique technique, float progress);
+	boolean addTechnique(Technique technique, double progress);
 
 	void remTechnique(Technique technique);
 
 	void updateTechniques(EntityPlayer player, ICultivation cultivation);
 
-	void progress(float amount);
+	void progress(double amount);
 
 	List<KnownTechnique> getKnownTechniques();
 

@@ -10,17 +10,21 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 public class SkillCapMessage implements IMessage {
 
 	public ISkillCap skillCap;
+	public boolean shouldUpdateCPaCD;
 
 	public SkillCapMessage() {
 		this.skillCap = new SkillCap();
+		this.shouldUpdateCPaCD = false;
 	}
 
-	public SkillCapMessage(ISkillCap skillCap) {
+	public SkillCapMessage(ISkillCap skillCap, boolean shouldUpdateCPaCD) {
 		this.skillCap = skillCap;
+		this.shouldUpdateCPaCD = shouldUpdateCPaCD;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
+		this.shouldUpdateCPaCD = buf.readBoolean();
 		this.skillCap.stepCooldown(buf.readFloat());
 		this.skillCap.stepCastProgress(buf.readFloat());
 		int length = buf.readInt();
@@ -38,6 +42,7 @@ public class SkillCapMessage implements IMessage {
 
 	@Override
 	public void toBytes(ByteBuf buf) {
+		buf.writeBoolean(this.shouldUpdateCPaCD);
 		buf.writeFloat(this.skillCap.getCooldown());
 		buf.writeFloat(this.skillCap.getCastProgress());
 		buf.writeInt(this.skillCap.getKnownSkills().size());

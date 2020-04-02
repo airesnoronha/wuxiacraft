@@ -174,7 +174,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	public void writeSpawnData(ByteBuf buffer) {
 		byte[] bytes = this.getCultivationLevel().name().getBytes();
 		buffer.writeInt(this.cultivation.getCurrentSubLevel());
-		buffer.writeFloat(this.cultivation.getCurrentProgress());
+		buffer.writeDouble(this.cultivation.getCurrentProgress());
 		buffer.writeFloat(this.cultivation.getEnergy());
 		buffer.writeInt(this.cultivation.getPillCooldown());
 		buffer.writeInt(bytes.length);
@@ -184,7 +184,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	@Override
 	public void readSpawnData(ByteBuf additionalData) {
 		int subLevel = additionalData.readInt();
-		float progress = additionalData.readFloat();
+		double progress = additionalData.readDouble();
 		float energy = additionalData.readFloat();
 		int pelletCooldown = additionalData.readInt();
 		int length = additionalData.readInt();
@@ -227,7 +227,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 				.applyModifier(new AttributeModifier(MOB_A_SPEED_MOD_NAME, speedMod, 1));
 		this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE)
 				.applyModifier(new AttributeModifier(MOB_DAMAGE_MOD_NAME, strengthMod, 0));
-		this.heal(1000f);
+		this.heal(100000f);
 	}
 
 	public CultivationLevel getCultivationLevel() {

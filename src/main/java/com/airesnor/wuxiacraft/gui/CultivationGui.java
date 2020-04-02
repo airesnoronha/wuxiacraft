@@ -24,7 +24,7 @@ import java.util.List;
 
 public class CultivationGui extends GuiScreen {
 
-	private static final ResourceLocation gui_texture = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/cult_gui.png");
+	private static final ResourceLocation gui_texture = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/cult_gui.png");
 
 	private int xSize = 200;
 	private int ySize = 133;

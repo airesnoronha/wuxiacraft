@@ -23,7 +23,7 @@ public class BaseModel implements IModel {
 	private ModelResourceLocation modelLocation;
 
 	public BaseModel(String ModelName) {
-		this.modelLocation = new ModelResourceLocation(WuxiaCraft.MODID + ":models/block/" + ModelName + ".obj");
+		this.modelLocation = new ModelResourceLocation(WuxiaCraft.MOD_ID + ":models/block/" + ModelName + ".obj");
 		WuxiaCraft.logger.info("Found a model:" + ModelName);
 	}
 

@@ -119,7 +119,7 @@ public class WuxiaCraftConfig {
 	public static class ConfigEventHandler {
 		@SubscribeEvent
 		public void onEvent(ConfigChangedEvent.OnConfigChangedEvent event) {
-			if (event.getModID().equals(WuxiaCraft.MODID)) {
+			if (event.getModID().equals(WuxiaCraft.MOD_ID)) {
 				syncFromGui();
 				WuxiaCraft.logger.info("Sending a config update to server");
 				syncCultivationFromConfigToClient();

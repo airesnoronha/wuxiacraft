@@ -1,7 +1,7 @@
 package com.airesnor.wuxiacraft.cultivation;
 
 public class Cultivation implements ICultivation {
-	private float progress;
+	private double progress;
 	private CultivationLevel level;
 	private int subLevel;
 	private float energy;
@@ -28,7 +28,7 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public boolean addProgress(float amount) {
+	public boolean addProgress(double amount) {
 		boolean leveled = false;
 		this.progress += amount;
 		while (this.progress >= this.level.getProgressBySubLevel(this.subLevel)) {
@@ -54,7 +54,7 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public float getCurrentProgress() {
+	public double getCurrentProgress() {
 		return this.progress;
 	}
 
@@ -94,7 +94,7 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public void setProgress(float amount) {
+	public void setProgress(double amount) {
 		this.progress = Math.min(Math.max(0, amount), this.level.getProgressBySubLevel(this.subLevel));
 	}
 

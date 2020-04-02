@@ -18,9 +18,9 @@ import java.util.Map;
 
 public class RenderGiantBee extends Render<GiantBee> {
 
-	public static final ResourceLocation BEE_TEXTURE = new ResourceLocation(WuxiaCraft.MODID, "textures/entities/giant_bee.png");
+	public static final ResourceLocation BEE_TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/entities/giant_bee.png");
 
-	public static final ResourceLocation BEE_MODEL_LOCATION = new ResourceLocation(WuxiaCraft.MODID, "models/entity/giant_bee.obj");
+	public static final ResourceLocation BEE_MODEL_LOCATION = new ResourceLocation(WuxiaCraft.MOD_ID, "models/entity/giant_bee.obj");
 
 	private static Map<String, OBJModelLoader.Part>  GIANT_BEE_MODEL;
 

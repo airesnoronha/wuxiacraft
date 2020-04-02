@@ -9,6 +9,10 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class CastSkillMessageHandler implements IMessageHandler<CastSkillMessage, IMessage> {
 
+	/**
+	 * Server must know this only because of storage
+	 * Cooldown is set by ActivateSkillMessageHandler
+	 */
 	@Override
 	public IMessage onMessage(CastSkillMessage message, MessageContext ctx) {
 		if (ctx.side == Side.SERVER) {
@@ -17,8 +21,8 @@ public class CastSkillMessageHandler implements IMessageHandler<CastSkillMessage
 				if (message.casting)
 					skillCap.setCasting(true);
 				else {
-					skillCap.setDoneCasting(true);
 					skillCap.setCasting(false);
+					skillCap.resetCastProgress();
 				}
 			});
 		}

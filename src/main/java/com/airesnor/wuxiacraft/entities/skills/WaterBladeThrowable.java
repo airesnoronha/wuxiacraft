@@ -75,6 +75,12 @@ public class WaterBladeThrowable extends EntityThrowable {
 				else if (this.world.getBlockState(result.getBlockPos()).getBlock().equals(Blocks.CACTUS)) {
 					this.world.destroyBlock(result.getBlockPos(), true);
 				}
+				else if (this.world.getBlockState(result.getBlockPos()).getBlock().equals(Blocks.FIRE)) {
+					this.world.setBlockToAir(result.getBlockPos());
+				}
+				else if(this.world.getBlockState(result.getBlockPos()).getBlock().equals(Blocks.GRASS)) {
+					this.world.setBlockState(result.getBlockPos(), Blocks.DIRT.getDefaultState());
+				}
 			}
 		}
 	}

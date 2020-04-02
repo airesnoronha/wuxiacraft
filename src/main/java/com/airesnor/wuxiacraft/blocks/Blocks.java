@@ -21,5 +21,6 @@ public class Blocks {
 
 	public static Block NATURAL_ODDITY_ORE = new NaturalOddityOre("natural_oddity_ore");
 	public static Block IRON_CAULDRON = new Cauldron("iron_cauldron");
+	public static Block SPIRIT_STONE_STACK_BLOCK = new SpiritStoneStackBlock("spirit_stone_stack_block");
 
 }

@@ -111,7 +111,7 @@ public class Items {
 					EntityPlayer player = (EntityPlayer)actor;
 					player.getFoodStats().setFoodLevel(20);
 					try {
-						Field foodStats = ReflectionHelper.findField(player.getFoodStats().getClass(), "foodSaturationLevel");
+						Field foodStats = ReflectionHelper.findField(player.getFoodStats().getClass(), "foodSaturationLevel", "field_75125_b");
 						foodStats.setAccessible(true);
 						foodStats.setFloat(player.getFoodStats(), 50f);
 						foodStats.setAccessible(false);
@@ -136,6 +136,7 @@ public class Items {
 	public static final Item SURGING_WAVES_SCROLL = new ItemScroll(Techniques.SURGING_WAVES);
 	public static final Item BOTANICAL_GROWTH_SCROLL = new ItemScroll(Techniques.BOTANICAL_GROWTH);
 	public static final Item SWORD_FLIGHT_JOURNAL_SCROLL = new ItemScroll(Techniques.SWORD_FLIGHT_JOURNAL);
+	public static final Item SKY_CROSSER_SWORD_SCROLL = new ItemScroll(Techniques.SKY_CROSSER_SWORD);
 
 	//FANS
 	public static final Item FEATHER_FAN = new ItemFan("feather_fan").setMaxStrength(10f).setStrength(1f);
@@ -167,5 +168,7 @@ public class Items {
 			});
 
 	public static final Item RECIPE_SCROLL = new ItemRecipe("recipe_scroll");
+
+	public static final Item SPIRIT_STONE = new ItemSpiritStone("spirit_stone");
 
 }

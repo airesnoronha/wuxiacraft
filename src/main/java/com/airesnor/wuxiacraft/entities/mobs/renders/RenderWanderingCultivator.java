@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 
 public class RenderWanderingCultivator<T extends WanderingCultivator> extends RenderBiped<T> {
 
-	private static final ResourceLocation WANDERING_CULTIVATOR_TEXTURE = new ResourceLocation(WuxiaCraft.MODID, "textures/entities/wandering_cultivator.png");
+	private static final ResourceLocation WANDERING_CULTIVATOR_TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/entities/wandering_cultivator.png");
 
 	public RenderWanderingCultivator(RenderManager renderManagerIn) {
 		super(renderManagerIn, new ModelWanderingCultivator(), 0.5f);

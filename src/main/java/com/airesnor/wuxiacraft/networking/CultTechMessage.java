@@ -23,13 +23,13 @@ public class CultTechMessage implements IMessage {
 	public void fromBytes(ByteBuf buf) {
 		int size = buf.readInt();
 		List<String> names = new ArrayList<>();
-		float[] progresses = new float[size];
+		double[] progresses = new double[size];
 		for (int i = 0; i < size; i++) {
 			int length = buf.readInt();
 			byte[] bytes = new byte[length];
 			buf.readBytes(bytes, 0, length);
 			names.add(new String(bytes));
-			progresses[i] = buf.readFloat();
+			progresses[i] = buf.readDouble();
 		}
 		int i = 0;
 		for (String name : names) {
@@ -47,7 +47,7 @@ public class CultTechMessage implements IMessage {
 		for (KnownTechnique t : this.cultTech.getKnownTechniques()) {
 			buf.writeInt(t.getTechnique().getUName().length());
 			buf.writeBytes(t.getTechnique().getUName().getBytes());
-			buf.writeFloat(t.getProgress());
+			buf.writeDouble(t.getProgress());
 		}
 	}
 }

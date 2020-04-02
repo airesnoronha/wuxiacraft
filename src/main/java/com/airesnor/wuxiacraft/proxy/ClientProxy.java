@@ -15,6 +15,7 @@ import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderSwordBeam;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterBlade;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterNeedle;
+import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTESR;
 import com.airesnor.wuxiacraft.gui.SkillsGui;
 import com.airesnor.wuxiacraft.handlers.PreClientEvents;
 import com.airesnor.wuxiacraft.handlers.RendererHandler;
@@ -73,7 +74,7 @@ public class ClientProxy extends CommonProxy {
 	public void preInit() {
 		super.preInit();
 
-		OBJLoader.INSTANCE.addDomain(WuxiaCraft.MODID);
+		OBJLoader.INSTANCE.addDomain(WuxiaCraft.MOD_ID);
 
 		ModelLoaderRegistry.registerLoader(OBJBlockModelLoader.INSTANCE);
 
@@ -96,7 +97,6 @@ public class ClientProxy extends CommonProxy {
 		super.init();
 
 		SkillsGui.init();
-		OreUtils.loadOresToFind();
 
 		keyBindings = new KeyBinding[18];
 		keyBindings[KEY_SPEED_UP] = new KeyBinding("key.wuxiacraft.speed_up", Keyboard.KEY_EQUALS, "key.wuxiacraft.category");
@@ -117,5 +117,6 @@ public class ClientProxy extends CommonProxy {
 
 		RenderGiantAnt.init();
 		RenderGiantBee.init();
+		SpiritStoneStackTESR.init();
 	}
 }

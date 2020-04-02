@@ -11,6 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class OreUtils {
 
-	public static final List<BlockPos> foundOres = new ArrayList<>();
+	public static final List<Pair<BlockPos, Block>> foundOres = new ArrayList<>();
 
 	public static final List<Block> oresToFind = new ArrayList<>();
 
@@ -31,6 +32,7 @@ public class OreUtils {
 		oresToFind.add(Blocks.DIAMOND_ORE);
 		oresToFind.add(Blocks.EMERALD_ORE);
 		oresToFind.add(Blocks.QUARTZ_ORE);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.NATURAL_ODDITY_ORE);
 		earthTypes.add(Blocks.DIRT);
 		earthTypes.add(Blocks.SAND);
 		earthTypes.add(Blocks.STONE);
@@ -54,7 +56,7 @@ public class OreUtils {
 				for (int y = minY; y < minY + 2 * radius; y++) {
 					BlockPos aux = new BlockPos(x, y, z);
 					if (oresToFind.contains(world.getBlockState(aux).getBlock())) {
-						foundOres.add(aux);
+						foundOres.add(Pair.of(aux, world.getBlockState(aux).getBlock()));
 						found.add(aux);
 					}
 				}
@@ -71,7 +73,8 @@ public class OreUtils {
 		apply();
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-		for (BlockPos pos : foundOres) {
+		for (Pair<BlockPos, Block> pair : foundOres) {
+			BlockPos pos = pair.getLeft();
 			final float size = 1.0f;
 			float x = pos.getX() - (float) player.posX;
 			float y = pos.getY() - (float) player.posY;
@@ -80,6 +83,41 @@ public class OreUtils {
 			float green = 0f;
 			float blue = 0f;
 			float opacity = 1f;
+			if(pair.getValue() == Blocks.IRON_ORE) {
+				red = 0.889f;
+				green = 0.622f;
+				blue = 0.227f;
+			}
+			else if(pair.getValue() == Blocks.COAL_ORE) {
+				red = 0.05f;
+				green = 0.05f;
+				blue = 0.05f;
+			}
+			else if(pair.getValue() == Blocks.GOLD_ORE) {
+				red = 0.862f;
+				green = 0.817f;
+				blue = 0.075f;
+			}
+			else if(pair.getValue() == Blocks.DIAMOND_ORE) {
+				red = 0.365f;
+				green = 0.735f;
+				blue = 0.812f;
+			}
+			else if(pair.getValue() == Blocks.EMERALD_ORE) {
+				red = 0.114f;
+				green = 0.655f;
+				blue = 0.214f;
+			}
+			else if(pair.getValue() == Blocks.QUARTZ_ORE) {
+				red = 0.816f;
+				green = 0.816f;
+				blue = 0.816f;
+			}
+			else if(pair.getValue() == com.airesnor.wuxiacraft.blocks.Blocks.NATURAL_ODDITY_ORE) {
+				red = 0.828f;
+				green = 0.044f;
+				blue = 0.044f;
+			}
 			//x faze z:0
 			buffer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
 			buffer.pos(x, y, z).color(red, green, blue, opacity).endVertex();

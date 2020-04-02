@@ -43,13 +43,13 @@ import java.util.concurrent.Callable;
 @Mod.EventBusSubscriber
 public class RendererHandler {
 
-	public static final ResourceLocation bar_bg = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/bar_bg.png");
-	public static final ResourceLocation energy_bar = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/energy_bar.png");
-	public static final ResourceLocation hud_bars = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/hud_bars.png");
-	public static final ResourceLocation life_bar = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/health_bar.png");
-	public static final ResourceLocation icons = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/icons.png");
-	public static final ResourceLocation skills_bg = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/skills_bg.png");
-	public static final ResourceLocation cauldron_info = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/overlay/cauldron_info.png");
+	public static final ResourceLocation bar_bg = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/bar_bg.png");
+	public static final ResourceLocation energy_bar = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/energy_bar.png");
+	public static final ResourceLocation hud_bars = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/hud_bars.png");
+	public static final ResourceLocation life_bar = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/health_bar.png");
+	public static final ResourceLocation icons = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/icons.png");
+	public static final ResourceLocation skills_bg = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/skills_bg.png");
+	public static final ResourceLocation cauldron_info = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/cauldron_info.png");
 
 	public static class WorldRenderQueue {
 
@@ -211,7 +211,7 @@ public class RendererHandler {
 		mc.renderEngine.bindTexture(hud_bars);
 
 		float energy_fill = cultivation.getEnergy() / cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel());
-		float progress_fill = cultivation.getCurrentProgress() * 100f / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
+		double progress_fill = cultivation.getCurrentProgress() * 100f / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
 
 		int middleX = (width) / 2;
 

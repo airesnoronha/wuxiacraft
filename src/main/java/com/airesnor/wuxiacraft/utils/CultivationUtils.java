@@ -61,13 +61,13 @@ public class CultivationUtils {
 		return skillCap;
 	}
 
-	public static void cultivatorAddProgress(EntityLivingBase player, ICultivation cultivation, float amount) {
+	public static void cultivatorAddProgress(EntityLivingBase player, ICultivation cultivation, double amount) {
 		ICultTech cultTech = getCultTechFromEntity(player);
 		amount *= cultTech.getOverallCultivationSpeed();
 		cultTech.progress(amount);
 		if (!cultivation.getSuppress()) {
-			float progressRel = cultivation.getCurrentProgress() / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
-			float bottleneckAmount = amount * Math.min(1.0f, 1.2f - progressRel);
+			double progressRel = cultivation.getCurrentProgress() / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
+			double bottleneckAmount = amount * Math.min(1.0f, 1.2f - progressRel);
 			if (cultivation.addProgress(bottleneckAmount)) {
 				if (!player.world.isRemote) {
 					if (player instanceof EntityPlayer) {

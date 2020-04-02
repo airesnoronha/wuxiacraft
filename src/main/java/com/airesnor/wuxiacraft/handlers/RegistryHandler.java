@@ -6,13 +6,13 @@ import com.airesnor.wuxiacraft.entities.mobs.GiantAnt;
 import com.airesnor.wuxiacraft.entities.mobs.GiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
+import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
 import com.airesnor.wuxiacraft.items.IHasModel;
 import com.airesnor.wuxiacraft.items.Items;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Biomes;
 import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -37,7 +37,8 @@ public class RegistryHandler {
 		WuxiaCraft.logger.info("Registering blocks.");
 		event.getRegistry().registerAll(Blocks.BLOCKS.toArray(new Block[0]));
 
-		GameRegistry.registerTileEntity(CauldronTileEntity.class, new ResourceLocation(WuxiaCraft.MODID, "cauldron_tile_entity"));
+		GameRegistry.registerTileEntity(CauldronTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "cauldron_tile_entity"));
+		GameRegistry.registerTileEntity(SpiritStoneStackTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "spirit_stone_stack_tile_entity"));
 	}
 
 	@SubscribeEvent
@@ -58,7 +59,7 @@ public class RegistryHandler {
 	public static void onEntityRegister(RegistryEvent.Register<EntityEntry> event) {
 		EntityEntry giantAntEntity = EntityEntryBuilder.create()
 				.entity(GiantAnt.class)
-				.id(new ResourceLocation(WuxiaCraft.MODID, "giant_ant"),0)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "giant_ant"),0)
 				.name("giant_ant")
 				.tracker(80, 3, false)
 				.egg(0xDA5917, 0xC35D35)
@@ -81,7 +82,7 @@ public class RegistryHandler {
 				.build();
 		EntityEntry giantBeeEntity = EntityEntryBuilder.create()
 				.entity(GiantBee.class)
-				.id(new ResourceLocation(WuxiaCraft.MODID, "giant_bee"),2)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "giant_bee"),2)
 				.name("giant_bee")
 				.tracker(80, 3, false)
 				.egg(0xFACB27, 0x202020)
@@ -104,7 +105,7 @@ public class RegistryHandler {
 				.build();
 		EntityEntry wanderingCultivatorEntity = EntityEntryBuilder.create()
 				.entity(WanderingCultivator.class)
-				.id(new ResourceLocation(WuxiaCraft.MODID, "wandering_cultivator"),1)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "wandering_cultivator"),1)
 				.name("wandering_cultivator")
 				.tracker(150, 3, false)
 				.egg(0x202020, 0xFACB27)

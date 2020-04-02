@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.blocks.Blocks;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
@@ -9,11 +10,14 @@ import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.CultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
+import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
 import com.airesnor.wuxiacraft.items.ItemRecipe;
 import com.airesnor.wuxiacraft.items.ItemScroll;
 import com.airesnor.wuxiacraft.items.Items;
+import com.airesnor.wuxiacraft.items.ItemSpiritStone;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityCreature;
@@ -27,6 +31,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.world.BlockEvent;
@@ -52,6 +59,7 @@ public class EventHandler {
 
 	/**
 	 * It gives the client side information about cultivation which i stored server side
+	 *
 	 * @param event Description of whats happening
 	 */
 	@SubscribeEvent
@@ -65,13 +73,14 @@ public class EventHandler {
 			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
 			NetworkWrapper.INSTANCE.sendTo(new SpeedHandicapMessage(cultivation.getSpeedHandicap(), cultivation.getMaxSpeed(), cultivation.getHasteLimit(), cultivation.getJumpLimit()), (EntityPlayerMP) player);
 			NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
-			NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap), (EntityPlayerMP) player);
+			NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true), (EntityPlayerMP) player);
 		}
 	}
 
 	/**
 	 * The big great logic behind cultivation happens here
 	 * This is the DanTian dark matter
+	 *
 	 * @param event Description of whats happening
 	 */
 	@SubscribeEvent
@@ -89,7 +98,7 @@ public class EventHandler {
 				if (!player.world.isRemote) {
 					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
 					NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
-					NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap), (EntityPlayerMP) player);
+					NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false), (EntityPlayerMP) player);
 					NetworkWrapper.INSTANCE.sendTo(new SpeedHandicapMessage(cultivation.getSpeedHandicap(), cultivation.getMaxSpeed(), cultivation.getHasteLimit(), cultivation.getJumpLimit()), (EntityPlayerMP) player);
 				}
 				cultivation.resetTimer();
@@ -128,6 +137,7 @@ public class EventHandler {
 
 	/**
 	 * Handles whenever a player sneak it will get nearby players cultivation
+	 *
 	 * @param event Description of whats happening
 	 */
 	@SideOnly(Side.CLIENT)
@@ -145,43 +155,50 @@ public class EventHandler {
 
 	/**
 	 * Handles the skills logic, cooldown and casting
+	 * New casting logic: client handles cooldown and cast progress, client/server activates skills
+	 *
 	 * @param event Description of whats happening
 	 */
 	@SubscribeEvent
 	public void onPlayerProcessSkills(LivingEvent.LivingUpdateEvent event) {
 		if (event.getEntity() instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) event.getEntity();
-			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-			if (skillCap.getCooldown() > 0) {
-				skillCap.stepCooldown(-1f - cultivation.getSpeedIncrease() * 0.002f);
-			} else if (skillCap.getActiveSkill() != -1) {
-				Skill skill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
-				if (skillCap.isCasting() && cultivation.hasEnergy(skill.getCost())) {
-					if (skillCap.getCastProgress() < skill.getCastTime())
-						skillCap.stepCastProgress(cultivation.getSpeedIncrease());
-					skill.castingEffect(player);
-				} else if (skillCap.isDoneCasting()) {
-					skillCap.resetCastProgress();
-					skillCap.setDoneCasting(false);
-				}
-				if (skillCap.isCasting() && skillCap.getCastProgress() >= skill.getCastTime() && skillCap.getCooldown() <= 0) {
-					if (cultivation.hasEnergy(skill.getCost())) {
-						if (skill.activate(player)) {
-							if (!player.isCreative()) cultivation.remEnergy(skill.getCost());
-							CultivationUtils.cultivatorAddProgress(player, cultivation, skill.getProgress());
-							skillCap.stepCooldown(skill.getCooldown());
+			if (player.world.isRemote) {
+				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
+				if(skillCap.getActiveSkill() >= 0 && !skillCap.getSelectedSkills().isEmpty()) {
+					Skill selectedSkill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
+					if (selectedSkill != null) {
+						if (skillCap.isCasting()) {
+							if (cultivation.hasEnergy(selectedSkill.getCost())) {
+								if (skillCap.getCastProgress() < selectedSkill.getCastTime()) {
+									skillCap.stepCastProgress(cultivation.getSpeedIncrease());
+									selectedSkill.castingEffect(player);
+								}
+								if (skillCap.getCastProgress() >= selectedSkill.getCastTime()) {
+									if (selectedSkill.activate(player)) {
+										skillCap.resetCastProgress();
+										if (!player.isCreative())
+											cultivation.remEnergy(selectedSkill.getCost());
+										NetworkWrapper.INSTANCE.sendToServer(new ActivateSkillMessage());
+										cultivation.addProgress(selectedSkill.getProgress());
+									}
+								}
+							}
+						}
+						if (skillCap.isDoneCasting()) {
+							skillCap.setDoneCasting(false);
 							skillCap.resetCastProgress();
 						}
 					}
 				}
 			}
-			if (skillCap.getCooldown() < 0) skillCap.resetCooldown();
 		}
 	}
 
 	/**
 	 * Desperate tentative of not increasing the FOV, reduced a lot
+	 *
 	 * @param e Description of whats happening
 	 */
 	@SubscribeEvent
@@ -234,6 +251,7 @@ public class EventHandler {
 	 * Client side logic on every tick update
 	 * It seems flight is only calculated client side
 	 * Lame
+	 *
 	 * @param event Description of whats happening
 	 */
 	@SideOnly(Side.CLIENT)
@@ -244,13 +262,13 @@ public class EventHandler {
 		if (!player.world.isRemote) return;
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 
-		if(!Minecraft.getMinecraft().inGameHasFocus && !toggleHasInGameFocus) {
+		if (!Minecraft.getMinecraft().inGameHasFocus && !toggleHasInGameFocus) {
 			toggleHasInGameFocus = true;
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
 			skillCap.setCasting(false);
 			skillCap.setDoneCasting(true);
 			NetworkWrapper.INSTANCE.sendToServer(new CastSkillMessage(false));
-		} else if(toggleHasInGameFocus) {
+		} else if (toggleHasInGameFocus) {
 			toggleHasInGameFocus = false;
 		}
 
@@ -278,11 +296,12 @@ public class EventHandler {
 
 	/**
 	 * Whe a player jump, the get jump bonus base on its cultivation speed bonus
+	 *
 	 * @param event Description of whats happening
 	 */
 	@SubscribeEvent
 	public void onPlayerJump(LivingEvent.LivingJumpEvent event) {
-		if(event.getEntityLiving() instanceof EntityPlayer) {
+		if (event.getEntityLiving() instanceof EntityPlayer) {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.getEntityLiving());
 			float baseJumpSpeed = (float) event.getEntity().motionY;
 			float jumpSpeed = 0.88f * (cultivation.getSpeedIncrease() - 1f);
@@ -295,6 +314,7 @@ public class EventHandler {
 
 	/**
 	 * When a cultivator fall they'll have some fall height removed before damage is calculated
+	 *
 	 * @param event Description of whats happening
 	 */
 	@SubscribeEvent
@@ -310,13 +330,14 @@ public class EventHandler {
 
 	/**
 	 * When the player hits an entity, gain a little progress, but i'm regretting
+	 *
 	 * @param event Description of whats happening
 	 */
 	@SubscribeEvent
 	public void onPlayerHitEntity(LivingDamageEvent event) {
 		if (event.getSource().getTrueSource() instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) event.getSource().getTrueSource();
-			if(!player.world.isRemote) {
+			if (!player.world.isRemote) {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				CultivationUtils.cultivatorAddProgress(player, cultivation, 0.25f);
 				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
@@ -326,6 +347,7 @@ public class EventHandler {
 
 	/**
 	 * When they break some block, they gain a little progress based on the blocks hardness
+	 *
 	 * @param event Description of whats happening
 	 */
 	@SubscribeEvent
@@ -341,6 +363,7 @@ public class EventHandler {
 
 	/**
 	 * Increases a little the players break speed based on its strength
+	 *
 	 * @param event Description of whats happening
 	 */
 	@SubscribeEvent
@@ -370,7 +393,7 @@ public class EventHandler {
 		ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 		ISkillCap oldSkillCap = CultivationUtils.getSkillCapFromEntity(original);
 		cultivation.setCurrentLevel(old_cultivation.getCurrentLevel());
-		if(event.isWasDeath()) {
+		if (event.isWasDeath()) {
 
 			if (old_cultivation.getCurrentLevel() == CultivationLevel.TRUE_GOD) {
 				cultivation.setCurrentSubLevel(Math.max(0, old_cultivation.getCurrentSubLevel() - 20));
@@ -405,6 +428,7 @@ public class EventHandler {
 
 	/**
 	 * Restores the players cultivation when they respawn
+	 *
 	 * @param event Description of whats happening
 	 */
 	@SubscribeEvent
@@ -418,12 +442,13 @@ public class EventHandler {
 		NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
 		NetworkWrapper.INSTANCE.sendTo(new EnergyMessage(), (EntityPlayerMP) player);
 		NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
-		NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap), (EntityPlayerMP) player);
+		NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false), (EntityPlayerMP) player);
 		applyModifiers(player, cultivation);
 	}
 
 	/**
 	 * When a mob dies and we get it's loot table and add another loot
+	 *
 	 * @param event Description of whats happening
 	 */
 	@SubscribeEvent
@@ -440,9 +465,9 @@ public class EventHandler {
 			Random rnd = event.getEntity().world.rand;
 			ItemStack drop = new ItemStack(scrolls.get(rnd.nextInt(scrolls.size())), 1);
 			int bound = 40;
-			if(cultivation.getCurrentLevel() == CultivationLevel.SOUL_REFINEMENT) bound  = 30;
-			if(cultivation.getCurrentLevel() == CultivationLevel.QI_PATHS_REFINEMENT) bound  = 15;
-			if(cultivation.getCurrentLevel() == CultivationLevel.DANTIAN_CONDENSING) bound  = 5;
+			if (cultivation.getCurrentLevel() == CultivationLevel.SOUL_REFINEMENT) bound = 30;
+			if (cultivation.getCurrentLevel() == CultivationLevel.QI_PATHS_REFINEMENT) bound = 15;
+			if (cultivation.getCurrentLevel() == CultivationLevel.DANTIAN_CONDENSING) bound = 5;
 			if (rnd.nextInt(bound) == 1) {
 				event.getDrops().add(new EntityItem(event.getEntity().world, event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, drop));
 			}
@@ -458,6 +483,7 @@ public class EventHandler {
 
 	/**
 	 * Destroys scheduled blocks from players skills, only 5 blocks per tick
+	 *
 	 * @param event Description of whats happening
 	 */
 	@SubscribeEvent
@@ -471,7 +497,8 @@ public class EventHandler {
 	}
 
 	/**
-	 *  When a mob spawn, it also searches for wandering cultivators
+	 * When a mob spawn, it also searches for wandering cultivators
+	 *
 	 * @param event Description of whats happening
 	 */
 	@SubscribeEvent
@@ -482,8 +509,34 @@ public class EventHandler {
 	}
 
 	/**
+	 * This will get EntityItems that are from spirit stones and turn them into a stock pile;
+	 *
+	 * @param event Description of what is happening
+	 */
+	@SubscribeEvent
+	public void onSpiritStoneStackFloats(TickEvent.WorldTickEvent event) {
+		if (event.side == Side.SERVER) {
+			List<EntityItem> items = event.world.getEntities(EntityItem.class, input -> input.getItem().getItem() instanceof ItemSpiritStone && input.ticksExisted >= 40); // 2 seconds existing right
+			for (EntityItem item : items) {
+				ItemStack stack = item.getItem();
+				BlockPos pos = item.getPosition();
+				Block spiritStones = Blocks.SPIRIT_STONE_STACK_BLOCK;
+				if (event.world.mayPlace(spiritStones, pos, true, EnumFacing.NORTH, item)) {
+					event.world.setBlockState(pos, spiritStones.getDefaultState());
+					SpiritStoneStackTileEntity te = (SpiritStoneStackTileEntity) event.world.getTileEntity(pos);
+					if (te != null) {
+						te.stack = stack;
+					}
+					item.setDead();
+				}
+			}
+		}
+	}
+
+	/**
 	 * Applies the modifiers to the corresponding player based on its cultivation
-	 * @param player Player to be applied
+	 *
+	 * @param player      Player to be applied
 	 * @param cultivation Cultivation for reference
 	 */
 	public static void applyModifiers(EntityPlayer player, ICultivation cultivation) {

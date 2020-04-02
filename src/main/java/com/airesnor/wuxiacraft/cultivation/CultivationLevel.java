@@ -33,7 +33,7 @@ public enum CultivationLevel {
 	/**
 	 * Progress needed to accomplish to get to next level, similar to Experience.
 	 */
-	private final float baseProgress;
+	private final double baseProgress;
 
 	/**
 	 * The amount of speed the player gets on the level.
@@ -136,12 +136,12 @@ public enum CultivationLevel {
 	 * @param subLevel The current sub level.
 	 * @return The amount needed to progress this sub level.
 	 */
-	public float getProgressBySubLevel(int subLevel) {
+	public double getProgressBySubLevel(int subLevel) {
 		if (!(subLevel >= 0 && subLevel < this.subLevels)) {
 			return 0;
 		}
 
-		return this.baseProgress * (float) Math.pow(1.06F, subLevel);
+		return this.baseProgress * Math.pow(1.06F, subLevel);
 
 	}
 

@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.blocks;
 
-import com.airesnor.wuxiacraft.items.Items;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
@@ -8,22 +7,31 @@ import net.minecraft.item.Item;
 import javax.annotation.Nonnull;
 import java.util.Random;
 
-public class NaturalOddityOre extends BlockBase {
-	public NaturalOddityOre(String name) {
-		super(name, Material.ROCK);
-		this.setHardness(50f);
+public class SpiritVeinOre extends BlockBase {
+
+	private Item droppedItem;
+
+	public SpiritVeinOre(String name, Material materialIn) {
+		super(name, materialIn);
 		this.setResistance(25f);
-		this.setHarvestLevel("pickaxe", 2);
+		this.setLightLevel(3f);
+		this.setHardness(120f);
+		this.setHarvestLevel("pickaxe", 3);
 	}
 
 	@Override
 	@Nonnull
 	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-		return Items.NATURAL_ODDITY_LOW;
+		return this.droppedItem;
 	}
 
 	@Override
 	public int quantityDropped(Random random) {
-		return random.nextInt(10) == 1 ? 2 : 1;
+		return super.quantityDropped(random);
+	}
+
+	public SpiritVeinOre setDroppedItem(Item drop) {
+		this.droppedItem = drop;
+		return this;
 	}
 }

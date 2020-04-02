@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class RecipeGui extends GuiScreen {
 
-	private static final ResourceLocation RECIPE_GUI_TEXTURE = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/recipe_gui.png");
+	private static final ResourceLocation RECIPE_GUI_TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/recipe_gui.png");
 
 	private ItemStack itemRecipe = null;
 

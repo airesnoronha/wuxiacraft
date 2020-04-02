@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.networking;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class SpawnParticleMessage implements IMessage {
@@ -101,5 +102,9 @@ public class SpawnParticleMessage implements IMessage {
 
 	public int[] getArguments() {
 		return arguments;
+	}
+
+	public BlockPos getPos() {
+		return new BlockPos(this.posX, this.posY, this.posZ);
 	}
 }

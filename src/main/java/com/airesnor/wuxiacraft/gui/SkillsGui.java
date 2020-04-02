@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class SkillsGui extends GuiScreen {
 
-	private static final ResourceLocation gui_texture = new ResourceLocation(WuxiaCraft.MODID, "textures/gui/skills_gui.png");
+	private static final ResourceLocation gui_texture = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/skills_gui.png");
 	public static final Map<String, ResourceLocation> skillIcons = new HashMap<>();
 
 
@@ -40,7 +40,7 @@ public class SkillsGui extends GuiScreen {
 
 	public static void init() {
 		for (Skill skill : Skills.SKILLS) {
-			skillIcons.put(skill.getUName(), new ResourceLocation(WuxiaCraft.MODID,
+			skillIcons.put(skill.getUName(), new ResourceLocation(WuxiaCraft.MOD_ID,
 					"textures/skills/icons/" + skill.getUName() + ".png"));
 		}
 	}
@@ -287,7 +287,7 @@ public class SkillsGui extends GuiScreen {
 			skillCap.setActiveSkill(0);
 		}
 		skillCap.setActiveSkill(Math.max(-1, Math.min(skillCap.getSelectedSkills().size() - 1, skillCap.getActiveSkill())));
-		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap));
+		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false));
 	}
 
 	private void removeSkill(Skill skill) {
@@ -303,7 +303,7 @@ public class SkillsGui extends GuiScreen {
 			skillCap.setActiveSkill(0);
 		}
 		skillCap.setActiveSkill(Math.max(-1, Math.min(skillCap.getSelectedSkills().size() - 1, skillCap.getActiveSkill())));
-		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap));
+		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false));
 	}
 
 }

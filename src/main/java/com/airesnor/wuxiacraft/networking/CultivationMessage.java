@@ -8,12 +8,12 @@ public class CultivationMessage implements IMessage {
 
 	public CultivationLevel messageLevel;
 	public int messageSubLevel;
-	public float messageProgress;
+	public double messageProgress;
 	public float messageEnergy;
 	public int pelletCooldown;
 	public boolean suppress;
 
-	public CultivationMessage(CultivationLevel messageLevel, int messageSubLevel, float messageProgress, float messageEnergy, int pelletCooldown, boolean suppress) {
+	public CultivationMessage(CultivationLevel messageLevel, int messageSubLevel, double messageProgress, float messageEnergy, int pelletCooldown, boolean suppress) {
 		this.messageLevel = messageLevel;
 		this.messageSubLevel = messageSubLevel;
 		this.messageProgress = messageProgress;
@@ -35,7 +35,7 @@ public class CultivationMessage implements IMessage {
 	public void fromBytes(ByteBuf buf) {
 		this.suppress = buf.readBoolean();
 		this.messageSubLevel = buf.readInt();
-		this.messageProgress = buf.readFloat();
+		this.messageProgress = buf.readDouble();
 		this.messageEnergy = buf.readFloat();
 		this.pelletCooldown = buf.readInt();
 		int length = buf.readInt();
@@ -51,7 +51,7 @@ public class CultivationMessage implements IMessage {
 		byte[] bytes = messageLevel.name().getBytes();
 		buf.writeBoolean(this.suppress);
 		buf.writeInt(this.messageSubLevel);
-		buf.writeFloat(this.messageProgress);
+		buf.writeDouble(this.messageProgress);
 		buf.writeFloat(this.messageEnergy);
 		buf.writeInt(this.pelletCooldown);
 		buf.writeInt(bytes.length);

@@ -12,6 +12,7 @@ import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.handlers.GuiHandler;
 import com.airesnor.wuxiacraft.networking.*;
+import com.airesnor.wuxiacraft.utils.OreUtils;
 import com.airesnor.wuxiacraft.world.WorldGen;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
@@ -20,6 +21,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.lang.reflect.Field;
@@ -39,6 +41,8 @@ public class CommonProxy {
 
 	public void init() {
 
+		OreUtils.loadOresToFind();
+
 		CapabilityManager.INSTANCE.register(ICultivation.class, new CultivationStorage(), new CultivationFactory());
 		CapabilityManager.INSTANCE.register(ICultTech.class, new CultTechStorage(), new CultTechFactory());
 		CapabilityManager.INSTANCE.register(ISkillCap.class, new SkillsStorage(), new SkillsFactory());
@@ -55,6 +59,7 @@ public class CommonProxy {
 		NetworkWrapper.INSTANCE.registerMessage(new SuppressCultivationMessageHandler(), SuppressCultivationMessage.class, 167018, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new AddRecipeItemMessageHandler(), AddRecipeItemMessage.class, 167019, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new ShrinkEntityItemMessageHandler(), ShrinkEntityItemMessage.class, 167020, Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(new ActivateSkillMessageHandler(), ActivateSkillMessage.class, 167021, Side.SERVER);
 
 		NetworkWrapper.INSTANCE.registerMessage(new CultivationMessageHandler(), CultivationMessage.class, 167001, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new SpeedHandicapMessageHandler(), SpeedHandicapMessage.class, 167004, Side.CLIENT);
@@ -78,7 +83,7 @@ public class CommonProxy {
 			Field mf = Field.class.getDeclaredField("modifiers");
 			mf.setAccessible(true);
 
-			Field f = SharedMonsterAttributes.class.getDeclaredField("MAX_HEALTH");
+			Field f = ReflectionHelper.findField(SharedMonsterAttributes.class, "MAX_HEALTH", "field_111267_a");
 			f.setAccessible(true);
 
 			mf.set(f, f.getModifiers() & ~Modifier.FINAL);

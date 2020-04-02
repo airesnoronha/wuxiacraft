@@ -33,7 +33,7 @@ public class OBJBlockModelLoader implements ICustomModelLoader {
 
 	@Override
 	public boolean accepts(ResourceLocation modelLocation) {
-		return modelLocation.getResourceDomain().equals(WuxiaCraft.MODID)
+		return modelLocation.getResourceDomain().equals(WuxiaCraft.MOD_ID)
 				&& modelLocation.getResourcePath().startsWith(LOCATION);
 	}
 

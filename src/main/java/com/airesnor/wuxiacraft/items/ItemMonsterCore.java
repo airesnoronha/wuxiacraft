@@ -25,6 +25,16 @@ public class ItemMonsterCore extends ItemBase {
 		this.whenUsing = actor -> true;
 	}
 
+	@Override
+	public int getItemEnchantability() {
+		return super.getItemEnchantability();
+	}
+
+	@Override
+	public boolean isEnchantable(ItemStack stack) {
+		return false;
+	}
+
 	public ItemMonsterCore setUseDuration(int useDuration) {
 		this.useDuration = useDuration;
 		this.setMaxDamage(this.useDuration);

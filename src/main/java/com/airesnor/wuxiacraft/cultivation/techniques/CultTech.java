@@ -26,7 +26,7 @@ public class CultTech implements ICultTech {
 	}
 
 	@Override
-	public boolean addTechnique(Technique technique, float progress) {
+	public boolean addTechnique(Technique technique, double progress) {
 		boolean contains = false;
 		boolean elementalReverse = false;
 		for (KnownTechnique t : getKnownTechniques()) {
@@ -140,7 +140,7 @@ public class CultTech implements ICultTech {
 	}
 
 	@Override
-	public void progress(float amount) {
+	public void progress(double amount) {
 		for (KnownTechnique t : this.knownTechniques) {
 			t.progress(amount);
 		}

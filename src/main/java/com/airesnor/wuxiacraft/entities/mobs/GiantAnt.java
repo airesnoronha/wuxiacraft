@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 
 public class GiantAnt extends EntityMob {
 
-	public static final ResourceLocation DROP_LIST = new ResourceLocation(WuxiaCraft.MODID, "entities/giant_ant");
+	public static final ResourceLocation DROP_LIST = new ResourceLocation(WuxiaCraft.MOD_ID, "entities/giant_ant");
 
 	public GiantAnt(World worldIn) {
 		super(worldIn);
