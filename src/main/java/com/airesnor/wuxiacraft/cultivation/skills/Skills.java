@@ -537,7 +537,7 @@ public class Skills {
 						target.attackEntityFrom(DamageSource.causeMobDamage(actor), strength);
 						float x = +MathHelper.sin(actor.rotationYawHead * 0.017453292F);
 						float z = -MathHelper.cos(actor.rotationYawHead * 0.017453292F);
-						((EntityLivingBase) target).knockBack(actor, cultivation.getStrengthIncrease() * 0.3f, x, z);
+						((EntityLivingBase) target).knockBack(actor, strength * 0.3f, x, z);
 					}
 				}
 				return activated;

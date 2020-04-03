@@ -52,4 +52,5 @@ public class SpiritStoneStackTileEntity extends TileEntity {
 		this.readFromNBT(pkt.getNbtCompound());
 	}
 
+
 }

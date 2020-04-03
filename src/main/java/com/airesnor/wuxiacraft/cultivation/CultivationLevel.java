@@ -16,7 +16,7 @@ public enum CultivationLevel {
 	IMMORTAL_FOUNDATION("immortal_foundation", 15, 9397684.19F, 15.10F, 1254629.38F, CultivationCategory.IMMORTAL_FOUNDATION, true, true, false),
 	TRUE_IMMORTAL("true_immortal", 15, 33864906.62F, 21.75F, 6774998.68F, CultivationCategory.IMMORTAL_FOUNDATION, true, true, false),
 	MARTIAL_IMMORTAL("martial_immortal", 20, 145343801.14F, 32.62F, 40649991.78F, CultivationCategory.DIVINE_LAW, true, true, false),
-	DIVINE_LAW("divine_law", 20, 623796804.43F, 48.93F, 243899950.69F, CultivationCategory.DIVINE_LAW, true, true, false),
+	DIVINE_LAW("divine_law", 20, 623796804.43F, 48.93F, 243899950.69F, CultivationCategory.DIVINE_LAW, true, true, true),
 	DIVINE_PHENOMENON("divine_phenomenon", 20, 2837890554.39F, 74.38F, 1512179694.31F, CultivationCategory.DIVINE_LAW, true, true, true),
 	TRUE_GOD("true_god", 1000000, 13685289995.12F, 114.55F, 9677950043.55F, CultivationCategory.DIVINE_LAW, true, true, true);
 

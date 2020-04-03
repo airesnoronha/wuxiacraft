@@ -43,6 +43,7 @@ item.health_incarnate_pill.name=Health Incarnate Pill
 item.physician_miracle_pill.name=Physician Miracle Pill
 item.small_healing_pill.name=Small Healing Pill
 item.almost_resurrect_pill.name=Almost Resurrect Pill
+item.spirit_stone.name=Spirit Stone
 
 //Creative tabs
 itemGroup.wuxiacraft.scrolls=Cultivation Techniques
@@ -50,6 +51,7 @@ itemGroup.wuxiacraft.scrolls=Cultivation Techniques
 //Blocks
 tile.natural_oddity_ore.name=Natural Oddity Ore
 tile.iron_cauldron.name=Iron Cauldron
+tile.spirit_stone_stack_block.name=Spirit Stone Stack
 
 //Configuration
 gui.config.main_title=WuxiaCraft
@@ -186,7 +188,7 @@ wuxiacraft.skills.weak_sword_flight=Weak Sword Flight
 wuxiacraft.skills.light_feet_skill=Light Feet Skill
 wuxiacraft.skills.light_feet_leap=Light Feet Leap
 wuxiacraft.skills.minor_body_reinforcement=Minor Body Reinforcement
-wuxiacraft.skills.minor_power_punch=Minor Power Punch
+wuxiacraft.skills.minor_power_punch=Minor Power Crasho
 wuxiacraft.skills.adept_sword_flight=Adept Sword Flight
 
 //Recipes

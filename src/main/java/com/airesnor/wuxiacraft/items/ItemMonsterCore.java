@@ -10,6 +10,9 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 public class ItemMonsterCore extends ItemBase {
 
 	private int useDuration;
@@ -31,6 +34,7 @@ public class ItemMonsterCore extends ItemBase {
 	}
 
 	@Override
+	@ParametersAreNonnullByDefault
 	public boolean isEnchantable(ItemStack stack) {
 		return false;
 	}
@@ -52,6 +56,7 @@ public class ItemMonsterCore extends ItemBase {
 	}
 
 	@Override
+	@Nonnull
 	public EnumAction getItemUseAction(ItemStack stack) {
 		return EnumAction.NONE;
 	}
@@ -62,6 +67,7 @@ public class ItemMonsterCore extends ItemBase {
 	}
 
 	@Override
+	@Nonnull
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		if(stack.getItemDamage() < stack.getMaxDamage()) {
 			if(this.whenUsing.activate(entityLiving)) {
@@ -75,6 +81,8 @@ public class ItemMonsterCore extends ItemBase {
 	}
 
 	@Override
+	@Nonnull
+	@ParametersAreNonnullByDefault
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		playerIn.setActiveHand(handIn);
 		return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));

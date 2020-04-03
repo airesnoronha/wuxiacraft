@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.Blocks;
+import com.airesnor.wuxiacraft.blocks.SpiritStoneStackBlock;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
@@ -32,12 +33,16 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -166,29 +171,33 @@ public class EventHandler {
 			if (player.world.isRemote) {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-				if(skillCap.getActiveSkill() >= 0 && !skillCap.getSelectedSkills().isEmpty()) {
-					Skill selectedSkill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
-					if (selectedSkill != null) {
-						if (skillCap.isCasting()) {
-							if (cultivation.hasEnergy(selectedSkill.getCost())) {
-								if (skillCap.getCastProgress() < selectedSkill.getCastTime()) {
-									skillCap.stepCastProgress(cultivation.getSpeedIncrease());
-									selectedSkill.castingEffect(player);
-								}
-								if (skillCap.getCastProgress() >= selectedSkill.getCastTime()) {
-									if (selectedSkill.activate(player)) {
-										skillCap.resetCastProgress();
-										if (!player.isCreative())
-											cultivation.remEnergy(selectedSkill.getCost());
-										NetworkWrapper.INSTANCE.sendToServer(new ActivateSkillMessage());
-										cultivation.addProgress(selectedSkill.getProgress());
+				if (skillCap.getCooldown() > 0) {
+					skillCap.stepCooldown(-1 - (cultivation.getSpeedIncrease() - 1f) * 0.3f);
+				} else {
+					if (skillCap.getActiveSkill() >= 0 && !skillCap.getSelectedSkills().isEmpty()) {
+						Skill selectedSkill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
+						if (selectedSkill != null) {
+							if (skillCap.isCasting()) {
+								if (cultivation.hasEnergy(selectedSkill.getCost())) {
+									if (skillCap.getCastProgress() < selectedSkill.getCastTime()) {
+										skillCap.stepCastProgress(cultivation.getSpeedIncrease());
+										selectedSkill.castingEffect(player);
+									}
+									if (skillCap.getCastProgress() >= selectedSkill.getCastTime()) {
+										if (selectedSkill.activate(player)) {
+											skillCap.resetCastProgress();
+											if (!player.isCreative())
+												cultivation.remEnergy(selectedSkill.getCost());
+											NetworkWrapper.INSTANCE.sendToServer(new ActivateSkillMessage());
+											cultivation.addProgress(selectedSkill.getProgress());
+										}
 									}
 								}
 							}
-						}
-						if (skillCap.isDoneCasting()) {
-							skillCap.setDoneCasting(false);
-							skillCap.resetCastProgress();
+							if (skillCap.isDoneCasting()) {
+								skillCap.setDoneCasting(false);
+								skillCap.resetCastProgress();
+							}
 						}
 					}
 				}
@@ -257,41 +266,42 @@ public class EventHandler {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+		if (event.phase == TickEvent.Phase.END) {
+			EntityPlayer player = event.player;
+			if (!player.world.isRemote) return;
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 
-		EntityPlayer player = event.player;
-		if (!player.world.isRemote) return;
-		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-
-		if (!Minecraft.getMinecraft().inGameHasFocus && !toggleHasInGameFocus) {
-			toggleHasInGameFocus = true;
-			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
-			skillCap.setCasting(false);
-			skillCap.setDoneCasting(true);
-			NetworkWrapper.INSTANCE.sendToServer(new CastSkillMessage(false));
-		} else if (toggleHasInGameFocus) {
-			toggleHasInGameFocus = false;
-		}
-
-		float distance = (float) Math.sqrt(Math.pow(player.lastTickPosX - player.posX, 2) + Math.pow(player.lastTickPosY - player.posY, 2) + Math.pow(player.lastTickPosZ - player.posZ, 2));
-
-		if (player.capabilities.isFlying) {
-			float totalRem = 0f;
-			float fly_cost = 1000f;
-			float dist_cost = 660f;
-			if (!cultivation.getCurrentLevel().freeFlight) {
-				totalRem += fly_cost;
+			if (!Minecraft.getMinecraft().inGameHasFocus && !toggleHasInGameFocus) {
+				toggleHasInGameFocus = true;
+				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
+				skillCap.setCasting(false);
+				skillCap.setDoneCasting(true);
+				NetworkWrapper.INSTANCE.sendToServer(new CastSkillMessage(false));
+			} else if (toggleHasInGameFocus) {
+				toggleHasInGameFocus = false;
 			}
-			if (distance > 0) {
-				totalRem += distance * dist_cost;
-			}
-			if (!player.isCreative()) {
-				cultivation.remEnergy(totalRem);
-				NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, totalRem));
-			}
-		} /*else { //flying is not an exercise
+
+			float distance = (float) Math.sqrt(Math.pow(player.lastTickPosX - player.posX, 2) + Math.pow(player.lastTickPosY - player.posY, 2) + Math.pow(player.lastTickPosZ - player.posZ, 2));
+
+			if (player.capabilities.isFlying) {
+				float totalRem = 0f;
+				float fly_cost = 2500f;
+				float dist_cost = 1320f;
+				if (!cultivation.getCurrentLevel().freeFlight) {
+					totalRem += fly_cost;
+				}
+				if (distance > 0) {
+					totalRem += distance * dist_cost;
+				}
+				if (!player.isCreative()) {
+					cultivation.remEnergy(totalRem);
+					NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, totalRem));
+				}
+			} /*else { //flying is not an exercise
 			//CultivationUtils.cultivatorAddProgress(player, cultivation, distance * 0.1f);
 			//NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, distance * 0.1f));
 		}*/
+		}
 	}
 
 	/**
@@ -515,8 +525,8 @@ public class EventHandler {
 	 */
 	@SubscribeEvent
 	public void onSpiritStoneStackFloats(TickEvent.WorldTickEvent event) {
-		if (event.side == Side.SERVER) {
-			List<EntityItem> items = event.world.getEntities(EntityItem.class, input -> input.getItem().getItem() instanceof ItemSpiritStone && input.ticksExisted >= 40); // 2 seconds existing right
+		if (event.side == Side.SERVER && event.phase == TickEvent.Phase.END) {
+			List<EntityItem> items = event.world.getEntities(EntityItem.class, input -> input.getItem().getItem() instanceof ItemSpiritStone && input.ticksExisted >= 40 && input.getItem().getItemDamage() == 0); // 2 seconds existing right
 			for (EntityItem item : items) {
 				ItemStack stack = item.getItem();
 				BlockPos pos = item.getPosition();
@@ -528,6 +538,38 @@ public class EventHandler {
 						te.stack = stack;
 					}
 					item.setDead();
+				} else if (event.world.getBlockState(pos).getBlock() == Blocks.SPIRIT_STONE_STACK_BLOCK) {
+					SpiritStoneStackTileEntity te = (SpiritStoneStackTileEntity) event.world.getTileEntity(pos);
+					if (te != null) {
+						int remaining = te.stack.getMaxStackSize() - te.stack.getCount();
+						int having = stack.getCount();
+						int applying = Math.min(remaining, having);
+						int left = having - applying;
+						int right = te.stack.getCount() + applying;
+						te.stack.setCount(right);
+						stack.setCount(left);
+						if (stack.isEmpty()) item.setDead();
+						event.world.markAndNotifyBlock(pos, null, event.world.getBlockState(pos), event.world.getBlockState(pos), 3);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Block#onBlockActivated wouldn't be called when sneaking, so i had to hack
+	 *
+	 * @param event A description of whats happening
+	 */
+	@SubscribeEvent
+	public void onPlayerInteractSneaking(PlayerInteractEvent.RightClickBlock event) {
+		if (event.getEntityPlayer().isSneaking() && event.getHand() == EnumHand.MAIN_HAND) {
+			IBlockState blockState = event.getWorld().getBlockState(event.getPos());
+			if (blockState.getBlock() instanceof SpiritStoneStackBlock) {
+				Vec3d hit = event.getHitVec();
+				if (blockState.getBlock().onBlockActivated(event.getWorld(), event.getPos(), blockState, event.getEntityPlayer(), event.getHand(), event.getFace(), (float) hit.x, (float) hit.y, (float) hit.z)) {
+					event.setUseBlock(Event.Result.ALLOW);
+					event.setCanceled(true);
 				}
 			}
 		}
