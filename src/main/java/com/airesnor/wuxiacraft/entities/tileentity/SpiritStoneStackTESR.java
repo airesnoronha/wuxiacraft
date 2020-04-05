@@ -110,7 +110,9 @@ public class SpiritStoneStackTESR extends TileEntitySpecialRenderer<SpiritStoneS
 		int colorH = 0x10EFFF;
 		if(te.stack != null) {
 			stones = te.stack.getCount();
-			colorH = ((ItemSpiritStone)te.stack.getItem()).color;
+			if(te.stack.getItem() instanceof ItemSpiritStone) {
+				colorH = ((ItemSpiritStone) te.stack.getItem()).color;
+			}
 		}
 		Color color = new Color(colorH);
 

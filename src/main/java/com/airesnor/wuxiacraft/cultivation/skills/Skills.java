@@ -78,7 +78,7 @@ public class Skills {
 	public static final Skill CULTIVATE = new Skill("cultivate", false, 1f, 10f, 300f, 0f)
 			.setAction(actor -> {
 				if(!actor.world.isRemote) {
-					int bound = 1;
+					int bound = 100;
 					int amplifier = 0;
 					PotionEffect effect = actor.getActivePotionEffect(ENLIGHTENMENT);
 					if (effect != null) {
@@ -97,6 +97,8 @@ public class Skills {
 				return true;
 			})
 			.setWhenCasting(actor -> {
+				PotionEffect effect = new PotionEffect(MobEffects.SLOWNESS, 10, 3, false, false);
+				actor.addPotionEffect(effect);
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);

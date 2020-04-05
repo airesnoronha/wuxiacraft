@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
@@ -94,7 +95,12 @@ public class ItemSpiritStone extends ItemBase {
 		@Override
 		public boolean activate(EntityLivingBase actor) {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-			CultivationUtils.cultivatorAddProgress(actor, cultivation, this.amount);
+			if(this.amount < cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.003) {
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, this.amount);
+			} else {
+				actor.world.createExplosion(actor, actor.posX, actor.posY + 0.9, actor.posZ, 3, true);
+				actor.attackEntityFrom(DamageSource.causeExplosionDamage(actor), (float)(this.amount * 3));
+			}
 			return true;
 		}
 	}

@@ -169,28 +169,28 @@ public class Items {
 
 	public static final Item RECIPE_SCROLL = new ItemRecipe("recipe_scroll");
 
-	public static final Item SPIRIT_STONE = new ItemSpiritStone("spirit_stone", 0x10EFFF);
-	public static final Item SPIRIT_STONE1 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(3.4);
-	public static final Item SPIRIT_STONE2 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(6.84);
-	public static final Item SPIRIT_STONE15 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(8.636);
-	public static final Item SPIRIT_STONE3 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(16.393);
-	public static final Item SPIRIT_STONE4 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(39.288);
-	public static final Item SPIRIT_STONE21 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(59.075);
-	public static final Item SPIRIT_STONE5 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(99.807);
-	public static final Item SPIRIT_STONE16 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(126.004);
-	public static final Item SPIRIT_STONE6 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(268.759);
-	public static final Item SPIRIT_STONE20 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(510.184);
-	public static final Item SPIRIT_STONE7 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(861.496);
-	public static final Item SPIRIT_STONE17 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(1153.479);
-	public static final Item SPIRIT_STONE8 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(2764.379);
-	public static final Item SPIRIT_STONE9 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(9397.684);
-	public static final Item SPIRIT_STONE18 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(1577.189);
-	public static final Item SPIRIT_STONE10 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(33864.906);
-	public static final Item SPIRIT_STONE11 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(145343.801);
-	public static final Item SPIRIT_STONE19 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(260288.611);
-	public static final Item SPIRIT_STONE12 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(623796.804);
-	public static final Item SPIRIT_STONE22 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(1410344.662);
-	public static final Item SPIRIT_STONE13 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(2837890.554);
-	public static final Item SPIRIT_STONE14 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(13685289.995);
+	public static final Item WEAK_LIFE_STONE = new ItemSpiritStone("weak_life_stone", 0x10EFFF); //Body Refinement 1
+	public static final Item SOUL_STONE = new ItemSpiritStone("soul_stone", 0x10EFFF).setAmount(1.790); //Soul Refinement 1
+	public static final Item PRIMORDIAL_STONE = new ItemSpiritStone("primordial_stone", 0x10EFFF).setAmount(2.260); //Soul Refinement 5
+	public static final Item SPIRIT_STONE15 = new ItemSpiritStone("five_element_pure_crystal", 0x10EFFF).setAmount(3.399); //Qi Paths 1
+	public static final Item FIVE_ELEMENT_PURE_CRYSTAL = new ItemSpiritStone("pure_qi_crystal", 0x10EFFF).setAmount(6.84); //Dantian 1
+	public static final Item EARTH_LAW_CRYSTAL = new ItemSpiritStone("earth_law_crystal", 0x10EFFF).setAmount(16.393); //Earth Law 1
+	public static final Item SKY_LAW_CRYSTAL = new ItemSpiritStone("sky_law_crystal", 0x10EFFF).setAmount(39.288); //Sky Law 1
+	public static final Item HEAVENLY_STONE = new ItemSpiritStone("heavenly_stone", 0x10EFFF).setAmount(59.075); //Sky Law 7
+	public static final Item RAINBOW_LAW_STONE = new ItemSpiritStone("rainbow_law_stone", 0x10EFFF).setAmount(99.807); //True Law 1
+	public static final Item SKY_AND_EARTH_CRYSTAL = new ItemSpiritStone("sky_and_earth_crystal", 0x10EFFF).setAmount(126.004); // True Law 5
+	public static final Item LAW_NEXUS_STONE = new ItemSpiritStone("law_nexus_stone", 0x10EFFF).setAmount(268.759); // Martial Law 1
+	public static final Item WAR_CRYSTAL = new ItemSpiritStone("war_crystal", 0x10EFFF).setAmount(540.795); // Martial Law 12
+	public static final Item GOLD_SPIRIT_STONE = new ItemSpiritStone("gold_spirit_stone", 0x10EFFF).setAmount(861.946); //Immortality Law 1
+	public static final Item YIN_YANG_STONE = new ItemSpiritStone("yin_yang_stone", 0x10EFFF).setAmount(2764.379); // Immortality Refinement 1
+	public static final Item TRANSCENDENT_CRYSTAL = new ItemSpiritStone("transcendent_crystal", 0x10EFFF).setAmount(9397.684); // Immortal Foundation 1
+	public static final Item IMMORTALITY_STONE = new ItemSpiritStone("immortality_stone", 0x10EFFF).setAmount(33864.906); // True Immortal 1
+	public static final Item ASCENDED_IMMORTALITY_STONE = new ItemSpiritStone("ascended_immortality_stone", 0x10EFFF).setAmount(50920.298); // True Immortal 7
+	public static final Item IMMORTAL_WILL_STONE = new ItemSpiritStone("immortal_will_stone", 0x10EFFF).setAmount(145343.801); // Martial Immortal 1
+	public static final Item STELLAR_STONE = new ItemSpiritStone("stellar_stone", 0x10EFFF).setAmount(260288.611); // Martial Immortal 11
+	public static final Item DIVINE_ORIGIN_STONE = new ItemSpiritStone("divine_origin_stone", 0x10EFFF).setAmount(623796.804); // Divine Law 1
+	public static final Item BOUNDLESS_VOID_CRYSTAL = new ItemSpiritStone("boundless_void_crystal", 0x10EFFF).setAmount(1410344.662); // Divine Law 15
+	public static final Item FALLEN_STAR_CORE = new ItemSpiritStone("fallen_star_core", 0x10EFFF).setAmount(2837890.554); // Divine Phenomenon 1
+	public static final Item PRIMORDIAL_CHAOS_STONE = new ItemSpiritStone("primordial_chaos_stone", 0x10EFFF).setAmount(13685289.995); // True God 1
 
 }
