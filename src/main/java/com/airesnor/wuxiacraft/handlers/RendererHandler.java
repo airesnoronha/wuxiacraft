@@ -22,6 +22,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.SlotShulkerBox;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.client.GuiIngameForge;
@@ -120,12 +121,16 @@ public class RendererHandler {
 		if (event.isCancelable() || event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE) {
 			return;
 		}
+		GlStateManager.pushAttrib();
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		drawSkillCooldownBar(event.getResolution());
 		drawCastProgressBar(event.getResolution());
 		drawHudElements(event.getResolution());
 		drawSkillsBar(event.getResolution());
 
 		drawCauldronInfo(event.getResolution());
+		GlStateManager.popAttrib();
 	}
 
 	@SubscribeEvent

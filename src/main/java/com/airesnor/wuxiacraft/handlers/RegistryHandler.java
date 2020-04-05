@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.Blocks;
+import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.entities.mobs.GiantAnt;
 import com.airesnor.wuxiacraft.entities.mobs.GiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
@@ -13,6 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Biomes;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -129,6 +131,11 @@ public class RegistryHandler {
 		event.getRegistry().register(giantAntEntity);
 		event.getRegistry().register(giantBeeEntity);
 		event.getRegistry().register(wanderingCultivatorEntity);
+	}
+
+	@SubscribeEvent
+	public void onPotionRegister(RegistryEvent.Register<Potion> event) {
+		event.getRegistry().register(Skills.ENLIGHTENMENT);
 	}
 
 }

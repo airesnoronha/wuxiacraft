@@ -8,13 +8,17 @@ import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.pattern.BlockStateMatcher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.InvalidBlockStateException;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -152,6 +156,103 @@ public class FormationUtils {
 		return (T)(property.parseValue(args).orNull());
 	}
 
+	/**
+	 * Rotates a diagram position offset to a direction
+	 * @param pos Position offset to be rotated
+	 * @param direction Direction to which will be rotate
+	 * @return A rotated position offset
+	 */
+	public static BlockPos rotateBlockPos(BlockPos pos, EnumFacing direction) {
+		BlockPos value;
+		switch (direction) {
+			case SOUTH:
+				value = new BlockPos(-pos.getX(), pos.getY(), -pos.getZ());
+				break;
+			case EAST:
+				value = new BlockPos(pos.getZ(), pos.getY(), -pos.getX());
+				break;
+			case WEST:
+				value = new BlockPos(-pos.getZ(), pos.getY(), pos.getX());
+				break;
+			case NORTH:
+			case UP:
+			case DOWN:
+			default:
+				value = pos;
+				break;
+		}
+		return value;
+	}
+
+	/**
+	 * Rotates a formation position offset back to how it's set on diagram (north-oriented);
+	 * @param pos Position offset from formation source
+	 * @param direction Direction that formation is set
+	 * @return A north-oriented position offset
+	 */
+	public static BlockPos rotateBlockPosBack(BlockPos pos, EnumFacing direction) {
+		BlockPos value;
+		switch (direction) {
+			case SOUTH:
+				value = new BlockPos(-pos.getX(), pos.getY(), -pos.getZ());
+				break;
+			case EAST:
+				value = new BlockPos(-pos.getZ(), pos.getY(), pos.getX());
+				break;
+			case WEST:
+				value = new BlockPos(pos.getZ(), pos.getY(), -pos.getX());
+				break;
+			case NORTH:
+			case UP:
+			case DOWN:
+			default:
+				value = pos;
+				break;
+		}
+		return value;
+	}
+
+	@Nonnull
+	public static Pair<FormationDiagram, EnumFacing> searchWorldForFormations(World worldIn, BlockPos source) {
+		FormationDiagram selected = null;
+		EnumFacing direction = EnumFacing.NORTH;
+		boolean found = false;
+		for(EnumFacing facing : EnumFacing.values()) {
+			if(facing == EnumFacing.UP || facing == EnumFacing.DOWN) continue;
+			for (FormationDiagram diagram : DIAGRAMS) {
+				found = true;
+				for (Pair<BlockPos, IBlockState> pair : diagram.positions) {
+					BlockPos pos = rotateBlockPos(pair.getKey(), facing);
+					IBlockState toTest = worldIn.getBlockState(pos);
+					if (toTest.equals(pair.getValue())) {
+						found = false;
+						break;
+					}
+				}
+				if (found) {
+					selected = diagram;
+					break;
+				}
+			}
+			if(selected != null) break;
+		}
+		return Pair.of(selected, direction);
+	}
+
+	@Nullable
+	public static Formation getFormationFromResource(ResourceLocation resource) {
+		Formation result = null;
+		if(resource.getResourceDomain().equals(WuxiaCraft.MOD_ID)) {
+			for(Formation formation : Formations.FORMATIONS) {
+				if(formation.getUName().equals(resource.getResourcePath())) {
+					result = formation;
+					break;
+				}
+			}
+		}
+		return result;
+	}
+
 	public static class FormationDiagram {
 		private ResourceLocation formationName;
 		public final List<Pair<BlockPos, IBlockState>> positions = new ArrayList<>();
@@ -166,6 +267,26 @@ public class FormationUtils {
 
 		public void addPosition(BlockPos pos, IBlockState block) {
 			this.positions.add(Pair.of(pos, block));
+		}
+
+		@Nonnull
+		public List<BlockPos> getAllBlockPos() {
+			List<BlockPos> blockPosList = new ArrayList<>();
+			for(Pair<BlockPos, IBlockState> pair : this.positions) {
+				blockPosList.add(pair.getKey());
+			}
+			return blockPosList;
+		}
+
+		@Nullable
+		public IBlockState getBlockState(BlockPos pos) {
+			IBlockState state = null;
+			for(Pair<BlockPos, IBlockState> pair : this.positions) {
+				if(pos.equals(pair.getKey())) {
+					state = pair.getValue();
+				}
+			}
+			return state;
 		}
 	}
 

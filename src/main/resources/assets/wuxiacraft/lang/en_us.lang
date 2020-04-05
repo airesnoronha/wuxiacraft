@@ -223,3 +223,6 @@ wuxiacraft.temperatures.warm=Warm
 wuxiacraft.temperatures.hot=Hot
 wuxiacraft.temperatures.melting=Melting
 wuxiacraft.temperatures.super_hot=Super Hot
+
+//Potion effects
+effect.enlightenment=Enlightenment

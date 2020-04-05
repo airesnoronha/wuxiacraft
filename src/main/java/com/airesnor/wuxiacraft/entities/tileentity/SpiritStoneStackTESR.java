@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.entities.tileentity;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.items.ItemSpiritStone;
 import com.airesnor.wuxiacraft.utils.OBJModelLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -9,6 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,17 +107,22 @@ public class SpiritStoneStackTESR extends TileEntitySpecialRenderer<SpiritStoneS
 	public void render(SpiritStoneStackTileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 
 		int stones = 0;
+		int colorH = 0x10EFFF;
 		if(te.stack != null) {
 			stones = te.stack.getCount();
+			colorH = ((ItemSpiritStone)te.stack.getItem()).color;
 		}
+		Color color = new Color(colorH);
 
 		GlStateManager.pushAttrib();
 		GlStateManager.pushMatrix();
 		Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE);
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
 		GlStateManager.translate(x,y,z);
 
-		GlStateManager.color(0f,0.8f,1f,1f);
+		GlStateManager.color(color.getRed()/256f,color.getGreen()/256f,color.getBlue()/256f,0.9f);
 
 		for(int i = 0; i < stones; i++) {
 			GlStateManager.pushMatrix();
@@ -124,7 +131,7 @@ public class SpiritStoneStackTESR extends TileEntitySpecialRenderer<SpiritStoneS
 			SPIRIT_STONE_MODEL.get("SpiritStone").draw();
 			GlStateManager.popMatrix();
 		}
-
+		GlStateManager.disableBlend();
 		GlStateManager.popMatrix();
 		GlStateManager.popAttrib();
 	}

@@ -20,12 +20,14 @@ public class ItemSpiritStone extends ItemBase {
 
 	private ISkillAction action;
 	private ISkillAction whenUsing;
+	public final int color;
 
-	public ItemSpiritStone(String item_name) {
+	public ItemSpiritStone(String item_name, int color) {
 		super(item_name);
 		this.action = actor -> true;
 		this.whenUsing = new DefaultCultivationIncrease(1f);
 		this.setMaxDamage(100);
+		this.color = color;
 	}
 
 	public ItemSpiritStone setAmount(double amount) {

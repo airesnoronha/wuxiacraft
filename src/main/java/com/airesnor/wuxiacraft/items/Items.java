@@ -169,6 +169,28 @@ public class Items {
 
 	public static final Item RECIPE_SCROLL = new ItemRecipe("recipe_scroll");
 
-	public static final Item SPIRIT_STONE = new ItemSpiritStone("spirit_stone");
+	public static final Item SPIRIT_STONE = new ItemSpiritStone("spirit_stone", 0x10EFFF);
+	public static final Item SPIRIT_STONE1 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(3.4);
+	public static final Item SPIRIT_STONE2 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(6.84);
+	public static final Item SPIRIT_STONE15 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(8.636);
+	public static final Item SPIRIT_STONE3 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(16.393);
+	public static final Item SPIRIT_STONE4 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(39.288);
+	public static final Item SPIRIT_STONE21 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(59.075);
+	public static final Item SPIRIT_STONE5 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(99.807);
+	public static final Item SPIRIT_STONE16 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(126.004);
+	public static final Item SPIRIT_STONE6 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(268.759);
+	public static final Item SPIRIT_STONE20 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(510.184);
+	public static final Item SPIRIT_STONE7 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(861.496);
+	public static final Item SPIRIT_STONE17 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(1153.479);
+	public static final Item SPIRIT_STONE8 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(2764.379);
+	public static final Item SPIRIT_STONE9 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(9397.684);
+	public static final Item SPIRIT_STONE18 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(1577.189);
+	public static final Item SPIRIT_STONE10 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(33864.906);
+	public static final Item SPIRIT_STONE11 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(145343.801);
+	public static final Item SPIRIT_STONE19 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(260288.611);
+	public static final Item SPIRIT_STONE12 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(623796.804);
+	public static final Item SPIRIT_STONE22 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(1410344.662);
+	public static final Item SPIRIT_STONE13 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(2837890.554);
+	public static final Item SPIRIT_STONE14 = new ItemSpiritStone("spirit_stone", 0x10EFFF).setAmount(13685289.995);
 
 }

@@ -36,7 +36,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -334,7 +333,7 @@ public class EventHandler {
 		if (cultivation.getCurrentLevel().canFly) {
 			event.setDistance(0);
 		} else {
-			event.setDistance(event.getDistance() - 1.45f * cultivation.getStrengthIncrease());
+			event.setDistance(event.getDistance() - 1.85f * (cultivation.getStrengthIncrease()-1));
 		}
 	}
 

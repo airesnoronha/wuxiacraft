@@ -7,6 +7,7 @@ import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
+import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.cultivation.techniques.CultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.entities.mobs.EntityCultivator;
@@ -15,6 +16,7 @@ import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.text.TextComponentString;
 
 import javax.annotation.Nonnull;
@@ -64,6 +66,12 @@ public class CultivationUtils {
 	public static void cultivatorAddProgress(EntityLivingBase player, ICultivation cultivation, double amount) {
 		ICultTech cultTech = getCultTechFromEntity(player);
 		amount *= cultTech.getOverallCultivationSpeed();
+		double enlightenment = 1;
+		PotionEffect effect = player.getActivePotionEffect(Skills.ENLIGHTENMENT);
+		if(effect != null) {
+			enlightenment += 9* effect.getAmplifier();
+		}
+		amount*=enlightenment;
 		cultTech.progress(amount);
 		if (!cultivation.getSuppress()) {
 			double progressRel = cultivation.getCurrentProgress() / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
