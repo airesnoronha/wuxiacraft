@@ -17,6 +17,10 @@ public class ActivatePartialSkillMessageHandler implements IMessageHandler<Activ
 					Skills.BARRAGE_MINOR_BEAM.activate(ctx.getServerHandler().player);
 					CultivationUtils.getCultivationFromEntity(ctx.getServerHandler().player).remEnergy(message.energy);
 				}
+				if ("applySlowness".equals(message.skillName)) {
+					Skills.APPLY_SLOWNESS.activate(ctx.getServerHandler().player);
+					CultivationUtils.getCultivationFromEntity(ctx.getServerHandler().player).remEnergy(message.energy);
+				}
 			});
 		}
 		return null;

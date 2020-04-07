@@ -39,6 +39,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import sun.nio.ch.Net;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,9 +76,17 @@ public class Skills {
 
 	public static final Potion ENLIGHTENMENT = new EnlightenmentPotion("enlightenment");
 
+	public static final ISkillAction APPLY_SLOWNESS = actor -> {
+		PotionEffect effect1 = new PotionEffect(MobEffects.SLOWNESS, 10, 3, false, false);
+		PotionEffect effect2 = new PotionEffect(MobEffects.MINING_FATIGUE, 10, 2, false, false);
+		actor.addPotionEffect(effect1);
+		actor.addPotionEffect(effect2);
+		return true;
+	};
+
 	public static final Skill CULTIVATE = new Skill("cultivate", false, 1f, 10f, 300f, 0f)
 			.setAction(actor -> {
-				if(!actor.world.isRemote) {
+				if (!actor.world.isRemote) {
 					int bound = 100;
 					int amplifier = 0;
 					PotionEffect effect = actor.getActivePotionEffect(ENLIGHTENMENT);
@@ -97,40 +106,38 @@ public class Skills {
 				return true;
 			})
 			.setWhenCasting(actor -> {
-				PotionEffect effect = new PotionEffect(MobEffects.SLOWNESS, 10, 3, false, false);
-				actor.addPotionEffect(effect);
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
+				double amount = cultTech.getOverallCultivationSpeed() * 0.25 * 10;
+				float energy = cultTech.getOverallCultivationSpeed() * 1.25f * 10;
 				skillCap.stepCastProgress(-cultivation.getSpeedIncrease() + 1);
-				if ((int) skillCap.getCastProgress() % 5 == 0) {
-					for (KnownTechnique kt : cultTech.getKnownTechniques()) {
-						int particles = 6;
-						for (Element e : kt.getTechnique().getElements()) {
-							for (int i = 0; i < particles; i++) {
-								float randX = 2 * actor.world.rand.nextFloat() - 1;
-								float randY = 2 * actor.world.rand.nextFloat() - 1;
-								float randZ = 2 * actor.world.rand.nextFloat() - 1;
-								float dist = (float) Math.sqrt(randX * randX + randY * randY + randZ * randZ) * 30f;
-								SpawnParticleMessage spm = new SpawnParticleMessage(e.getParticle(), false, actor.posX + randX, actor.posY + 0.9f + randY, actor.posZ + randZ, -randX / dist, -randY / dist, -randZ / dist, 0);
-								NetworkWrapper.INSTANCE.sendToServer(spm);
+				if (cultivation.hasEnergy(energy)) {
+					if ((int) skillCap.getCastProgress() % 5 == 0) {
+						for (KnownTechnique kt : cultTech.getKnownTechniques()) {
+							int particles = 6;
+							for (Element e : kt.getTechnique().getElements()) {
+								for (int i = 0; i < particles; i++) {
+									float randX = 2 * actor.world.rand.nextFloat() - 1;
+									float randY = 2 * actor.world.rand.nextFloat() - 1;
+									float randZ = 2 * actor.world.rand.nextFloat() - 1;
+									float dist = (float) Math.sqrt(randX * randX + randY * randY + randZ * randZ) * 30f;
+									SpawnParticleMessage spm = new SpawnParticleMessage(e.getParticle(), false, actor.posX + randX, actor.posY + 0.9f + randY, actor.posZ + randZ, -randX / dist, -randY / dist, -randZ / dist, 0);
+									NetworkWrapper.INSTANCE.sendToServer(spm);
+								}
 							}
 						}
 					}
-				}
-				if (actor instanceof EntityPlayer) {
-					if ((int) skillCap.getCastProgress() % 10 == 9) {
-						double amount = cultTech.getOverallCultivationSpeed() * 0.15 * 10;
-						float energy = cultTech.getOverallCultivationSpeed() * 0.45f * 10;
-						if (cultivation.hasEnergy(energy)) {
+					if (actor instanceof EntityPlayer) {
+						if ((int) skillCap.getCastProgress() % 10 == 9) {
 							CultivationUtils.cultivatorAddProgress(actor, cultivation, amount);
 							cultivation.remEnergy(energy);
 							NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, amount));
-							NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, energy));
+							NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("applySlowness", energy));
 						}
 					}
 				}
-				return true;
+				return cultivation.hasEnergy(energy);
 			});
 
 	public static final Skill GATHER_WOOD = new Skill("gather_wood", false, 80f, 3f, 20f, 0f)

@@ -26,6 +26,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 public class CommonProxy {
@@ -83,23 +84,12 @@ public class CommonProxy {
 	}
 
 	public void preInit() {
-		try {
-			Field mf = Field.class.getDeclaredField("modifiers");
-			mf.setAccessible(true);
+		reflectOnField(SharedMonsterAttributes.class, new String[]{"MAX_HEALTH", "field_111267_a"}, (new RangedAttribute(null, "generic.maxHealth", 20.0D, Float.MIN_VALUE, 100000000000.0D)).setDescription("Max Health").setShouldWatch(true));
+		reflectOnField(SharedMonsterAttributes.class, new String[]{"ARMOR", "field_188791_g"}, (new RangedAttribute(null, "generic.armor", 0.0D, 0.0D, 1000.0D)).setShouldWatch(true));
+		reflectOnField(SharedMonsterAttributes.class, new String[]{"MOVEMENT_SPEED", "field_111263_d"}, (new RangedAttribute(null, "generic.movementSpeed", 0.699999988079071D, 0.0D, 3072.0D)).setDescription("Movement Speed").setShouldWatch(true));
+		reflectOnField(SharedMonsterAttributes.class, new String[]{"ATTACK_DAMAGE", "field_111264_e"}, new RangedAttribute(null, "generic.attackDamage", 2.0D, 0.0D, 1000000000.0D));
+		reflectOnField(SharedMonsterAttributes.class, new String[]{"ATTACK_SPEED", "field_188790_f"}, (new RangedAttribute(null, "generic.attackSpeed", 4.0D, 0.0D, 2048.0D)).setShouldWatch(true));
 
-			Field f = ReflectionHelper.findField(SharedMonsterAttributes.class, "MAX_HEALTH", "field_111267_a");
-			f.setAccessible(true);
-
-			mf.set(f, f.getModifiers() & ~Modifier.FINAL);
-			f.set(null, (new RangedAttribute(null, "generic.maxHealth", 20.0D, Float.MIN_VALUE, 10000000.0D)).setDescription("Max Health").setShouldWatch(true));
-
-			mf.set(f, f.getModifiers() & Modifier.FINAL);
-
-			WuxiaCraft.logger.info("Overriding max health succeeded.");
-		} catch (Exception e) {
-			WuxiaCraft.logger.error("Error overriding max health: " + e.getMessage());
-			e.printStackTrace();
-		}
 		WuxiaCraftConfig.preInit();
 		GameRegistry.registerWorldGenerator(new WorldGen(), 3);
 	}
@@ -108,5 +98,26 @@ public class CommonProxy {
 	}
 
 	public void registerCustomModelLocation(Item item, int meta, String id, String location) {
+	}
+
+	public void reflectOnField(Class<?> clazz, String [] names, Object newValue) {
+		try {
+			Field mf = Field.class.getDeclaredField("modifiers");
+			mf.setAccessible(true);
+
+			Field f = ReflectionHelper.findField(clazz, names);
+			f.setAccessible(true);
+
+			mf.set(f, f.getModifiers() & ~Modifier.FINAL);
+			f.set(null, newValue);
+
+
+			mf.set(f, f.getModifiers() & Modifier.FINAL);
+
+			WuxiaCraft.logger.info("Overriding field "+names[0]+" succeeded.");
+		} catch (Exception e) {
+			WuxiaCraft.logger.error("Error overriding field '"+names[0]+"': " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 }

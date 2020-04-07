@@ -147,13 +147,17 @@ public class EventHandler {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onPlayerRequestLevels(TickEvent.PlayerTickEvent event) {
-		if (event.player.isSneaking() && !toggleSneaking) {
-			toggleSneaking = true;
-			EntityPlayer player = event.player;
-			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-			NetworkWrapper.INSTANCE.sendToServer(new AskCultivationLevelMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), player.getName()));
-		} else {
-			toggleSneaking = false;
+		if (event.phase == TickEvent.Phase.END) {
+			if (event.player.isSneaking()) {
+				if (!toggleSneaking) {
+					toggleSneaking = true;
+					EntityPlayer player = event.player;
+					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+					NetworkWrapper.INSTANCE.sendToServer(new AskCultivationLevelMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), player.getName()));
+				}
+			} else {
+				toggleSneaking = false;
+			}
 		}
 	}
 
@@ -178,9 +182,8 @@ public class EventHandler {
 						if (selectedSkill != null) {
 							if (skillCap.isCasting()) {
 								if (cultivation.hasEnergy(selectedSkill.getCost())) {
-									if (skillCap.getCastProgress() < selectedSkill.getCastTime()) {
+									if (skillCap.getCastProgress() < selectedSkill.getCastTime() && selectedSkill.castingEffect(player)) {
 										skillCap.stepCastProgress(cultivation.getSpeedIncrease());
-										selectedSkill.castingEffect(player);
 									}
 									if (skillCap.getCastProgress() >= selectedSkill.getCastTime()) {
 										if (selectedSkill.activate(player)) {
@@ -270,12 +273,14 @@ public class EventHandler {
 			if (!player.world.isRemote) return;
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 
-			if (!Minecraft.getMinecraft().inGameHasFocus && !toggleHasInGameFocus) {
-				toggleHasInGameFocus = true;
-				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
-				skillCap.setCasting(false);
-				skillCap.setDoneCasting(true);
-				NetworkWrapper.INSTANCE.sendToServer(new CastSkillMessage(false));
+			if (!Minecraft.getMinecraft().inGameHasFocus) {
+				if (!toggleHasInGameFocus) {
+					toggleHasInGameFocus = true;
+					ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
+					skillCap.setCasting(false);
+					skillCap.setDoneCasting(true);
+					NetworkWrapper.INSTANCE.sendToServer(new CastSkillMessage(false));
+				}
 			} else if (toggleHasInGameFocus) {
 				toggleHasInGameFocus = false;
 			}
@@ -333,7 +338,7 @@ public class EventHandler {
 		if (cultivation.getCurrentLevel().canFly) {
 			event.setDistance(0);
 		} else {
-			event.setDistance(event.getDistance() - 1.85f * (cultivation.getStrengthIncrease()-1));
+			event.setDistance(event.getDistance() - 1.85f * (cultivation.getStrengthIncrease() - 1));
 		}
 	}
 

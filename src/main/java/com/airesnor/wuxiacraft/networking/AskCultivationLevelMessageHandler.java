@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.networking;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
@@ -18,20 +19,22 @@ public class AskCultivationLevelMessageHandler implements IMessageHandler<AskCul
 	public RespondCultivationLevelMessage onMessage(AskCultivationLevelMessage message, MessageContext ctx) {
 		if (ctx.side == Side.SERVER) {
 			EntityPlayerMP player = ctx.getServerHandler().player;
-			List<Entity> entities = player.getServerWorld().getEntitiesWithinAABB(EntityPlayer.class, player.getEntityBoundingBox().grow(64, 32, 64));
-			for (Entity entity : entities) {
-				if (entity instanceof EntityPlayer) {
-					ICultivation cultivation = CultivationUtils.getCultivationFromEntity((EntityLivingBase) entity);
-					CultivationLevel level = cultivation.getCurrentLevel();
-					int subLevel = cultivation.getCurrentSubLevel();
-					if (level.greaterThan(message.askerLevel)) {
-						level = message.askerLevel.getNextLevel();
-						subLevel = -1;
+			player.getServerWorld().addScheduledTask(() -> {
+				List<EntityPlayer> entities = player.getServerWorld().getEntitiesWithinAABB(EntityPlayer.class, player.getEntityBoundingBox().grow(64, 32, 64));
+				for (Entity entity : entities) {
+					if (entity instanceof EntityPlayer) {
+						ICultivation cultivation = CultivationUtils.getCultivationFromEntity((EntityLivingBase) entity);
+						CultivationLevel level = cultivation.getCurrentLevel();
+						int subLevel = cultivation.getCurrentSubLevel();
+						if (level.greaterThan(message.askerLevel)) {
+							level = message.askerLevel.getNextLevel();
+							subLevel = -1;
+						}
+						RespondCultivationLevelMessage respondCultivationLevelMessage = new RespondCultivationLevelMessage(level, subLevel, entity.getName());
+						NetworkWrapper.INSTANCE.sendTo(respondCultivationLevelMessage, player);
 					}
-					RespondCultivationLevelMessage respondCultivationLevelMessage = new RespondCultivationLevelMessage(level, subLevel, entity.getName());
-					NetworkWrapper.INSTANCE.sendTo(respondCultivationLevelMessage, player);
 				}
-			}
+			});
 		}
 		return null;
 	}

@@ -93,6 +93,7 @@ public class SkillCap implements ISkillCap {
 	@Override
 	public void stepCastProgress(float step) {
 		this.castProgress += step;
+		this.castProgress = Math.max(0, this.castProgress);
 	}
 
 	@Override

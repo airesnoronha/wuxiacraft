@@ -36,7 +36,7 @@ public class FormationUtils {
 	private static final Splitter NUMERAL_SPLITTER = Splitter.on("#").limit(2);
 
 	public static void init() {
-		URL assets = Minecraft.class.getClassLoader().getResource("assets/wuxiacraft/formations");
+		URL assets = FormationUtils.class.getClassLoader().getResource("assets/wuxiacraft/formations");
 		if(assets != null) {
 			File assetsDir = new File(assets.getFile());
 			getDiagramsFromDirectory(assetsDir);
@@ -46,12 +46,13 @@ public class FormationUtils {
 	}
 
 	private static void getDiagramsFromDirectory(File directory) {
-		for (File file : Objects.requireNonNull(directory.listFiles())) {
-			if(file.isDirectory()) {
-				getDiagramsFromDirectory(file);
-			}
-			else {
-				getDiagramFromFile(file);
+		if(directory.listFiles()!=null) {
+			for (File file : directory.listFiles()) {
+				if (file.isDirectory()) {
+					getDiagramsFromDirectory(file);
+				} else {
+					getDiagramFromFile(file);
+				}
 			}
 		}
 	}
