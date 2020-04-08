@@ -30,7 +30,7 @@ public class FormationUtils {
 	/**
 	 * A list containing all found diagrams in the folders
 	 */
-	public static final List<FormationDiagram> DIAGRAMS = new ArrayList<>();
+	public static final Map<ResourceLocation,FormationDiagram> DIAGRAMS = new HashMap<>();
 
 	private static final Splitter COMMA_SPLITTER = Splitter.on(",");
 	private static final Splitter EQUAL_SPLITTER = Splitter.on("=").limit(2);
@@ -81,7 +81,7 @@ public class FormationUtils {
 				BlockPos pos = new BlockPos(position.x, position.y, position.z);
 				diagram.addPosition(pos, blockState);
 			}
-			DIAGRAMS.add(diagram);
+			DIAGRAMS.put(diagram.getFormationName(),diagram);
 			WuxiaCraft.logger.info("Added diagram: " + diagram.getFormationName());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -267,7 +267,7 @@ public class FormationUtils {
 		boolean found;
 		for(EnumFacing facing : EnumFacing.values()) {
 			if(facing == EnumFacing.UP || facing == EnumFacing.DOWN) continue;
-			for (FormationDiagram diagram : DIAGRAMS) {
+			for (FormationDiagram diagram : DIAGRAMS.values()) {
 				found = true;
 				for (Pair<BlockPos, IBlockState> pair : diagram.positions) {
 					BlockPos relativePos = rotateBlockPos(pair.getKey(), facing);

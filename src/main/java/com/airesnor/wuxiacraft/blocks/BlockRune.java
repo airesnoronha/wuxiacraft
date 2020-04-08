@@ -3,11 +3,12 @@ package com.airesnor.wuxiacraft.blocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -21,13 +22,14 @@ import java.util.List;
 
 public class BlockRune extends Block {
 
+	private static final AxisAlignedBB RUNE_SIZE = new AxisAlignedBB(0,0,0,1,0.0625,1); // 1/16 height
+
 	public static final IProperty<RuneCharacter> RUNE_CHAR = PropertyEnum.create("rune", RuneCharacter.class);
 
 	public BlockRune(String name) {
 		super(Materials.RUNE);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
 		Blocks.BLOCKS.add(this);
 	}
 
@@ -84,6 +86,48 @@ public class BlockRune extends Block {
 		return BlockRenderLayer.TRANSLUCENT;
 	}
 
+	@SuppressWarnings("deprecation")
+	@Override
+	@Nonnull
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+		return RUNE_SIZE;
+	}
+
+	@SuppressWarnings("deprecation")
+	@Nonnull
+	@Override
+	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
+		return BlockFaceShape.UNDEFINED;
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+		super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+		IBlockState bottom = worldIn.getBlockState(pos.down());
+		boolean destroy = !bottom.getBlock().isSideSolid(bottom, worldIn, pos.down(), EnumFacing.UP);
+		if(destroy) {
+			if (!worldIn.isRemote)
+			{
+				worldIn.destroyBlock(pos, false);
+			}
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
+		if (pos.getY() >= worldIn.getHeight() - 1)
+		{
+			return false;
+		}
+		else
+		{
+			IBlockState state = worldIn.getBlockState(pos.down());
+			return (state.isTopSolid() || state.getBlockFaceShape(worldIn, pos.down(), EnumFacing.UP) == BlockFaceShape.SOLID) && super.canPlaceBlockAt(worldIn, pos);
+		}
+	}
+
 	@SuppressWarnings("unused")
 	public enum RuneCharacter implements IStringSerializable {
 		A(0),
@@ -119,6 +163,6 @@ public class BlockRune extends Block {
 			}
 			return A;
 		}
-	}
 
+	}
 }

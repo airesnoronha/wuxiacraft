@@ -589,6 +589,15 @@ public class EventHandler {
 	}
 
 	/**
+	 * When player has a cultivation that allows
+	 * @param event A description of whats happening
+	 */
+	@SubscribeEvent
+	public void onPlayerHunger(TickEvent.PlayerTickEvent event) {
+
+	}
+
+	/**
 	 * Applies the modifiers to the corresponding player based on its cultivation
 	 *
 	 * @param player      Player to be applied

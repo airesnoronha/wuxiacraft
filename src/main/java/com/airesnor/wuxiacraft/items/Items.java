@@ -196,6 +196,7 @@ public class Items {
 	public static final Item PAINT_BRUSH = new ItemPaintBrush("paint_brush");
 	public static final Item GOLD_DAGGER = new ItemDagger("gold_dagger");
 	public static final Item BLOOD_BOTTLE = new ItemBloodContainer("blood_bottle");
-	public static final Item EMPTY_BOTTLE = new ItemBottle("empty_bottle");
+	public static final Item EMPTY_BOTTLE = new ItemBase("empty_bottle").setMaxStackSize(16);
+	public static final Item PAINT_BOTTLE = new ItemBase("paint_bottle").setMaxStackSize(1).setMaxDamage(50);
 
 }

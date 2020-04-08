@@ -4,6 +4,8 @@ import com.airesnor.wuxiacraft.utils.TranslateUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
@@ -42,6 +44,17 @@ public abstract class Formation {
 	 * @param interrupters who might have interrupted this formation (generally anyone near the formation disturbance by 6 blocks)
 	 */
 	public void onInterrupt(World worldIn, BlockPos source, List<EntityLivingBase> interrupters) {
+
+	}
+
+	/**
+	 * If formation will render something client side
+	 * @param x core x+0.5
+	 * @param y core y+0.5
+	 * @param z core z+0.5
+	 */
+	@SideOnly(Side.CLIENT)
+	public void render(double x, double y, double z) {
 
 	}
 

@@ -8,6 +8,7 @@ import com.airesnor.wuxiacraft.entities.mobs.GiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
+import com.airesnor.wuxiacraft.formation.FormationTileEntity;
 import com.airesnor.wuxiacraft.items.IHasModel;
 import com.airesnor.wuxiacraft.items.Items;
 import net.minecraft.block.Block;
@@ -41,6 +42,7 @@ public class RegistryHandler {
 
 		GameRegistry.registerTileEntity(CauldronTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "cauldron_tile_entity"));
 		GameRegistry.registerTileEntity(SpiritStoneStackTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "spirit_stone_stack_tile_entity"));
+		GameRegistry.registerTileEntity(FormationTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "formation_tile_entity"));
 	}
 
 	@SubscribeEvent
