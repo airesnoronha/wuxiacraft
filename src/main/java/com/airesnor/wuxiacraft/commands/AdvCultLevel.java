@@ -15,7 +15,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,8 +72,10 @@ public class AdvCultLevel extends CommandBase {
 	}
 
 	@Override
+	@ParametersAreNonnullByDefault
+	@Nonnull
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
-		return null;
+		return new ArrayList<>();
 	}
 
 	@Override

@@ -47,6 +47,7 @@ public class WuxiaCraft {
 		event.registerServerCommand(new ResetCultCommand());
 		event.registerServerCommand(new SkillsCommand());
 		event.registerServerCommand(new CreateRecipeCommand());
+		event.registerServerCommand(new CultInfoCommand());
 		event.getServer().getWorld(0).getGameRules().addGameRule("doPlayerSkillSetFire", "true", GameRules.ValueType.BOOLEAN_VALUE);
 		event.getServer().getWorld(0).getGameRules().addGameRule("doMobSkillSetFire", "true", GameRules.ValueType.BOOLEAN_VALUE);
 	}
