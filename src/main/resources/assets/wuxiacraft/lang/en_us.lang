@@ -66,6 +66,9 @@ item.divine_origin_stone.name=Divine Origin Stone
 item.boundless_void_crystal.name=Boundless Void Crystal
 item.fallen_star_core.name=Fallen Star Core
 item.primordial_chaos_stone.name=Primordial Chaos Stone
+item.paint_brush.name=Paint Brush
+item.empty_bottle.name=Empty Bottle
+item.blood_bottle.name=Blood Bottle
 
 //Creative tabs
 itemGroup.wuxiacraft.scrolls=Cultivation Techniques
@@ -74,6 +77,23 @@ itemGroup.wuxiacraft.scrolls=Cultivation Techniques
 tile.natural_oddity_ore.name=Natural Oddity Ore
 tile.iron_cauldron.name=Iron Cauldron
 tile.spirit_stone_stack_block.name=Spirit Stone Stack
+tile.paint_rune.name=Painted Rune
+tile.blood_rune_body_refinement.name=Body Refinement Blood Rune
+tile.blood_rune_soul_refinement.name=Soul Refinement Blood Rune
+tile.blood_rune_qi_paths_refinement.name=Qi Paths Refinement Blood Rune
+tile.blood_rune_dantian_condensing.name=DanTian Condensing Blood Rune
+tile.blood_rune_earth_law.name=Earth Law Blood Rune
+tile.blood_rune_sky_law.name=Sky Law Blood Rune
+tile.blood_rune_true_law.name=True Law Blood Rune
+tile.blood_rune_martial_law.name=Martial Law Blood Rune
+tile.blood_rune_immortality_law.name=Immortality Law Blood Rune
+tile.blood_rune_immortality_refinement.name=Immortality Refinement Blood Rune
+tile.blood_rune_immortal_foundation.name=Immortality Foundation Blood Rune
+tile.blood_rune_true_immortal.name=True Immortal Blood Rune
+tile.blood_rune_martial_immortal.name=Martial Immortal Blood Rune
+tile.blood_rune_divine_law.name=Divine Law Blood Rune
+tile.blood_rune_divine_phenomenon.name=Divine Phenomenon Blood Rune
+tile.blood_rune_true_god.name=True God Blood Rune
 
 //Configuration
 gui.config.main_title=WuxiaCraft

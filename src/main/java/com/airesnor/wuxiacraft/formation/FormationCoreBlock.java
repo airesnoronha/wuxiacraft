@@ -1,9 +1,11 @@
 package com.airesnor.wuxiacraft.formation;
 
-import com.airesnor.wuxiacraft.blocks.BlockBase;
+import com.airesnor.wuxiacraft.blocks.Blocks;
 import com.airesnor.wuxiacraft.blocks.Materials;
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -13,10 +15,14 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class FormationCoreBlock extends BlockBase implements ITileEntityProvider {
+public class FormationCoreBlock extends Block implements ITileEntityProvider {
 
 	public FormationCoreBlock(String name) {
-		super(name, Materials.RUNE);
+		super(Materials.RUNE);
+		setRegistryName(name);
+		setUnlocalizedName(name);
+		setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
+		Blocks.BLOCKS.add(this);
 	}
 
 	@Override

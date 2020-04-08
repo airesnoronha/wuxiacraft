@@ -1,0 +1,83 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "wuxiacraft:rune",
+		"textures": {
+			"rune_top": "wuxiacraft:blocks/runes/blood_a"
+		}
+	},
+	"variants": {
+		"rune=a": {
+			"model": "wuxiacraft:rune",
+			"textures": {
+				"rune_top": "wuxiacraft:blocks/runes/blood_a"
+			}
+		},
+		"rune=b": {
+			"model": "wuxiacraft:rune",
+			"textures": {
+				"rune_top": "wuxiacraft:blocks/runes/blood_b"
+			}
+		},
+		"rune=c": {
+			"model": "wuxiacraft:rune",
+			"textures": {
+				"rune_top": "wuxiacraft:blocks/runes/blood_c"
+			}
+		},
+		"rune=d": {
+			"model": "wuxiacraft:rune",
+			"textures": {
+				"rune_top": "wuxiacraft:blocks/runes/blood_d"
+			}
+		},
+		"rune=e": {
+			"model": "wuxiacraft:rune",
+			"textures": {
+				"rune_top": "wuxiacraft:blocks/runes/blood_e"
+			}
+		},
+		"rune=f": {
+			"model": "wuxiacraft:rune",
+			"textures": {
+				"rune_top": "wuxiacraft:blocks/runes/blood_f"
+			}
+		},
+		"rune=g": {
+			"model": "wuxiacraft:rune",
+			"textures": {
+				"rune_top": "wuxiacraft:blocks/runes/blood_g"
+			}
+		},
+		"rune=h": {
+			"model": "wuxiacraft:rune",
+			"textures": {
+				"rune_top": "wuxiacraft:blocks/runes/blood_h"
+			}
+		},
+		"rune=i": {
+			"model": "wuxiacraft:rune",
+			"textures": {
+				"rune_top": "wuxiacraft:blocks/runes/blood_i"
+			}
+		},
+		"rune=j": {
+			"model": "wuxiacraft:rune",
+			"textures": {
+				"rune_top": "wuxiacraft:blocks/runes/blood_j"
+			}
+		},
+		"rune=k": {
+			"model": "wuxiacraft:rune",
+			"textures": {
+				"rune_top": "wuxiacraft:blocks/runes/blood_k"
+			}
+		},
+		"rune=l": {
+			"model": "wuxiacraft:rune",
+			"textures": {
+				"rune_top": "wuxiacraft:blocks/runes/blood_l"
+			}
+		}
+	}
+}

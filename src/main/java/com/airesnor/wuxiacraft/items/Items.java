@@ -11,13 +11,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.FoodStats;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class Items {
 
 	/**
@@ -193,6 +193,8 @@ public class Items {
 	public static final Item FALLEN_STAR_CORE = new ItemSpiritStone("fallen_star_core", 0x3e0404).setAmount(2837890.554); // Divine Phenomenon 1
 	public static final Item PRIMORDIAL_CHAOS_STONE = new ItemSpiritStone("primordial_chaos_stone", 0xe4de1c).setAmount(13685289.995); // True God 1
 
+	public static final Item PAINT_BRUSH = new ItemPaintBrush("paint_brush");
+	public static final Item GOLD_DAGGER = new ItemDagger("gold_dagger");
 	public static final Item BLOOD_BOTTLE = new ItemBloodContainer("blood_bottle");
 	public static final Item EMPTY_BOTTLE = new ItemBottle("empty_bottle");
 

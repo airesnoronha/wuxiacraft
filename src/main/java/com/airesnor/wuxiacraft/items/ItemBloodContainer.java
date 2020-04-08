@@ -41,4 +41,5 @@ public class ItemBloodContainer extends ItemBase {
 		}
 		super.addInformation(stack, worldIn, tooltip, flagIn);
 	}
+
 }

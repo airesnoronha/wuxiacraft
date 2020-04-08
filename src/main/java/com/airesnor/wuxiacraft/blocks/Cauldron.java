@@ -8,9 +8,7 @@ import com.airesnor.wuxiacraft.items.ItemFan;
 import com.airesnor.wuxiacraft.items.Items;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.ShrinkEntityItemMessage;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockHopper;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
@@ -33,7 +31,9 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Random;
 
@@ -63,38 +63,46 @@ public class Cauldron extends BlockContainer implements IHasModel {
 		ClientRegistry.bindTileEntitySpecialRenderer(CauldronTileEntity.class, new CauldronTESR());
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@ParametersAreNonnullByDefault
 	@SideOnly(Side.CLIENT)
 	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean isFullBlock(IBlockState state) {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean isBlockNormalCube(IBlockState state) {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean isOpaqueCube(IBlockState state) {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean isTranslucent(IBlockState state) {
 		return true;
 	}
 
 	@Override
+	@Nonnull
 	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
 		return ItemBlock.getItemFromBlock(this);
 	}
 
 	@Override
+	@ParametersAreNonnullByDefault
 	public boolean isToolEffective(String type, IBlockState state) {
 		if (type.equals("pickaxe")) return true;
 		else return super.isToolEffective(type, state);
@@ -102,6 +110,7 @@ public class Cauldron extends BlockContainer implements IHasModel {
 
 	@Nullable
 	@Override
+	@ParametersAreNonnullByDefault
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
 		return new CauldronTileEntity();
 	}
@@ -111,16 +120,21 @@ public class Cauldron extends BlockContainer implements IHasModel {
 	}
 
 	@Override
+	@Nonnull
 	protected BlockStateContainer createBlockState() {
 		return new BlockStateContainer(this, CAULDRON);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Nonnull
 	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
 		return state.withProperty(CAULDRON, 0);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@Nonnull
 	public IBlockState getStateFromMeta(int meta) {
 		return getDefaultState();
 	}
@@ -178,11 +192,13 @@ public class Cauldron extends BlockContainer implements IHasModel {
 	}
 
 	@Override
+	@Nonnull
 	public EnumBlockRenderType getRenderType(IBlockState state) {
 		return EnumBlockRenderType.MODEL;
 	}
 
 	@Override
+	@ParametersAreNonnullByDefault
 	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
 		getTE(world, pos).prepareToDie();
 		return super.removedByPlayer(state, world, pos, player, willHarvest);
@@ -202,7 +218,9 @@ public class Cauldron extends BlockContainer implements IHasModel {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@ParametersAreNonnullByDefault
 	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
 		addCollisionBoxToList(pos, entityBox, collidingBoxes, COLLISION_BOX);
 	}

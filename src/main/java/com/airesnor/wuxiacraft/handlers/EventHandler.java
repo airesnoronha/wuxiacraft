@@ -12,10 +12,7 @@ import com.airesnor.wuxiacraft.cultivation.techniques.CultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
-import com.airesnor.wuxiacraft.items.ItemRecipe;
-import com.airesnor.wuxiacraft.items.ItemScroll;
-import com.airesnor.wuxiacraft.items.Items;
-import com.airesnor.wuxiacraft.items.ItemSpiritStone;
+import com.airesnor.wuxiacraft.items.*;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.block.Block;
@@ -344,6 +341,7 @@ public class EventHandler {
 
 	/**
 	 * When the player hits an entity, gain a little progress, but i'm regretting
+	 * Also applies 1 damage to entity if wearing dagger
 	 *
 	 * @param event Description of whats happening
 	 */
@@ -355,6 +353,10 @@ public class EventHandler {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				CultivationUtils.cultivatorAddProgress(player, cultivation, 0.25f);
 				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
+			}
+			ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
+			if (stack.getItem() instanceof ItemDagger) {
+				event.setAmount(1);
 			}
 		}
 	}
@@ -530,7 +532,14 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onSpiritStoneStackFloats(TickEvent.WorldTickEvent event) {
 		if (event.side == Side.SERVER && event.phase == TickEvent.Phase.END) {
-			List<EntityItem> items = event.world.getEntities(EntityItem.class, input -> input.getItem().getItem() instanceof ItemSpiritStone && input.ticksExisted >= 40 && input.getItem().getItemDamage() == 0); // 2 seconds existing right
+			List<EntityItem> items = event.world.getEntities(EntityItem.class, input -> {
+				boolean isSpiritStone = false;
+				if(input != null) {
+					if(input.getItem().getItem() instanceof ItemSpiritStone)
+						isSpiritStone = true;
+				}
+				return isSpiritStone && input.ticksExisted >= 40 && input.getItem().getItemDamage() == 0;
+			}); // 2 seconds existing right
 			for (EntityItem item : items) {
 				ItemStack stack = item.getItem();
 				BlockPos pos = item.getPosition();

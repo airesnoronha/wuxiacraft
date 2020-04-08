@@ -8,8 +8,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.block.state.pattern.BlockStateMatcher;
-import net.minecraft.client.Minecraft;
 import net.minecraft.command.InvalidBlockStateException;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -29,12 +27,18 @@ import java.util.*;
 
 public class FormationUtils {
 
+	/**
+	 * A list containing all found diagrams in the folders
+	 */
 	public static final List<FormationDiagram> DIAGRAMS = new ArrayList<>();
 
 	private static final Splitter COMMA_SPLITTER = Splitter.on(",");
 	private static final Splitter EQUAL_SPLITTER = Splitter.on("=").limit(2);
 	private static final Splitter NUMERAL_SPLITTER = Splitter.on("#").limit(2);
 
+	/**
+	 * Loads all diagrams from files
+	 */
 	public static void init() {
 		URL assets = FormationUtils.class.getClassLoader().getResource("assets/wuxiacraft/formations");
 		if(assets != null) {
@@ -45,9 +49,14 @@ public class FormationUtils {
 		}
 	}
 
+	/**
+	 * Gets a {@link File} that is a directory and scans it whole for files that contains diagrams
+	 * @param directory The directory to be scanned
+	 */
 	private static void getDiagramsFromDirectory(File directory) {
-		if(directory.listFiles()!=null) {
-			for (File file : directory.listFiles()) {
+		File[] listFiles = directory.listFiles();
+		if(listFiles!=null) {
+			for (File file : listFiles) {
 				if (file.isDirectory()) {
 					getDiagramsFromDirectory(file);
 				} else {
@@ -57,6 +66,10 @@ public class FormationUtils {
 		}
 	}
 
+	/**
+	 * Gets a {@link File} that isn't a directory, then try to read it into a diagram, and automatically adds to {@link FormationUtils#DIAGRAMS}
+	 * @param file The file to be read
+	 */
 	public static void getDiagramFromFile(File file) {
 		try {
 			Reader reader = new FileReader(file);
@@ -75,6 +88,11 @@ public class FormationUtils {
 		}
 	}
 
+	/**
+	 * Transform a resource location + variations into a {@link IBlockState}
+	 * @param args string to be transformed
+	 * @return if found, a block state to be expected in the formation, else null
+	 */
 	private static IBlockState getBlockStateWithProperties(String args) {
 		IBlockState state = null;
 		Iterator<String> iterator = NUMERAL_SPLITTER.split(args).iterator();
@@ -97,11 +115,27 @@ public class FormationUtils {
 		return state;
 	}
 
+	/**
+	 * Adds properties to a base block state
+	 * @param blockState base block state
+	 * @param property property to be added
+	 * @param value value of the property
+	 * @param <T> the type of value the property stores
+	 * @return the block state added of the property
+	 */
+	@SuppressWarnings("unchecked")
 	private static <T extends Comparable<T>> IBlockState getBlockState(IBlockState blockState, IProperty<T> property, Comparable<?> value)
 	{
 		return blockState.withProperty(property, (T)value);
 	}
 
+	/**
+	 * Get block state from block with custom properties
+	 * @param block The base block for look into properties
+	 * @param args A string filled with variations and values
+	 * @return Block state if found
+	 * @throws InvalidBlockStateException Block doesn't have this properties
+	 */
 	private static Map<IProperty<?>, Comparable<? >> getBlockStatePropertyValueMap(Block block, String args) throws InvalidBlockStateException
 	{
 		Map < IProperty<?>, Comparable<? >> map = Maps.newHashMap();
@@ -151,10 +185,17 @@ public class FormationUtils {
 		}
 	}
 
+	/**
+	 * Helps with block state values
+	 * @param property target property
+	 * @param args possibly the values
+	 * @param <T> The type of property
+	 * @return return the value of the property
+	 */
 	@Nullable
 	private static <T extends Comparable<T>> T getValueHelper(IProperty<T> property, String args)
 	{
-		return (T)(property.parseValue(args).orNull());
+		return property.parseValue(args).orNull();
 	}
 
 	/**
@@ -213,22 +254,36 @@ public class FormationUtils {
 		return value;
 	}
 
+	/**
+	 * Searches the world around source for a compatible formation diagram
+	 * @param worldIn the world to be searched
+	 * @param source the formation core position
+	 * @return First diagram found, or null if none
+	 */
 	@Nonnull
 	public static Pair<FormationDiagram, EnumFacing> searchWorldForFormations(World worldIn, BlockPos source) {
 		FormationDiagram selected = null;
 		EnumFacing direction = EnumFacing.NORTH;
-		boolean found = false;
+		boolean found;
 		for(EnumFacing facing : EnumFacing.values()) {
 			if(facing == EnumFacing.UP || facing == EnumFacing.DOWN) continue;
 			for (FormationDiagram diagram : DIAGRAMS) {
 				found = true;
 				for (Pair<BlockPos, IBlockState> pair : diagram.positions) {
-					BlockPos pos = rotateBlockPos(pair.getKey(), facing);
+					BlockPos relativePos = rotateBlockPos(pair.getKey(), facing);
+					BlockPos pos = new BlockPos(source.getX() + relativePos.getX(),source.getY() + relativePos.getY(),source.getZ() + relativePos.getZ());
 					IBlockState toTest = worldIn.getBlockState(pos);
-					if (toTest.equals(pair.getValue())) {
+					if(pair.getValue().getBlock() == toTest.getBlock()) { // if are the same block, this way we could get any state case default
+						if (!(toTest.equals(pair.getValue()) // if states are equals
+							|| pair.getValue().getBlock().getDefaultState() == pair.getValue())) { // or if state in diagrams is default state, then any
+							found = false;
+							break;
+						}
+					} else {
 						found = false;
 						break;
 					}
+
 				}
 				if (found) {
 					selected = diagram;
