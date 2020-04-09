@@ -14,6 +14,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FormationQiGathering extends Formation {
 
 	private ResourceLocation displayFormation = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/formations/weak_qi_gathering_formation.png");
@@ -32,10 +35,14 @@ public class FormationQiGathering extends Formation {
 
 	@Override
 	public int doUpdate(World worldIn, BlockPos source) {
+		List<FormationTileEntity> formations = new ArrayList<>();
 		for(TileEntity te : worldIn.loadedTileEntityList) {
 			if(te instanceof FormationTileEntity && te.getPos().getDistance(source.getX(),source.getY(), source.getZ()) < this.getRange()) {
-				((FormationTileEntity) te).addEnergy(this.generation);
+				formations.add((FormationTileEntity) te);
 			}
+		}
+		for(FormationTileEntity formation : formations) {
+			formation.addEnergy(this.generation/formations.size());
 		}
 		return 0;
 	}

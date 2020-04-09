@@ -36,6 +36,18 @@ public abstract class Formation {
 	 */
 	public abstract int doUpdate(World worldIn, BlockPos source);
 
+
+	/**
+	 * The formation main function: What is it gonna do, except only client
+	 *
+	 * @param worldIn the world the formation is in
+	 * @param source  where is the formation core
+	 * @return how many times has this formation activates this tick
+	 */
+	@SideOnly(Side.CLIENT)
+	public void doClientUpdate(World worldIn, BlockPos source) {
+	}
+
 	/**
 	 * Sometimes, interrupting a formation may lead to disaster (I hope)
 	 *

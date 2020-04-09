@@ -1,8 +1,12 @@
 package com.airesnor.wuxiacraft.formation;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.blocks.SpiritStoneStackBlock;
+import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
+import com.airesnor.wuxiacraft.items.ItemSpiritStone;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -77,6 +81,7 @@ public class FormationTileEntity extends TileEntity implements ITickable {
 					this.stopFormation();
 					return;
 				}
+				searchForSpiritStones();
 				int activated = this.formation.doUpdate(this.world, this.pos);
 				if (activated >= 0) {
 					if(this.remEnergy(this.formation.getOperationCost() * activated)) {
@@ -93,11 +98,8 @@ public class FormationTileEntity extends TileEntity implements ITickable {
 			}
 		} else {
 			if(this.state == FormationState.ACTIVE) {
-				for (int i = 0; i < 3; i++) {
-					double px = this.world.rand.nextFloat();
-					double pz = this.world.rand.nextFloat();
-					double my = this.world.rand.nextFloat() * 0.2;
-					this.world.spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, false, px, 0.0625, pz, 0, my, 0, 0);
+				if(this.formation != null) {
+					this.formation.doClientUpdate(this.world, this.getPos());
 				}
 			}
 		}
@@ -124,12 +126,36 @@ public class FormationTileEntity extends TileEntity implements ITickable {
 		}
 	}
 
-	public void addEnergy(double amount) {
+	private void searchForSpiritStones() {
+		if(this.energy < this.getMaxEnergy()*0.1) {
+			List<TileEntity> tileEntities = this.world.loadedTileEntityList;
+			for(TileEntity tileEntity : tileEntities) {
+				if(tileEntity instanceof SpiritStoneStackTileEntity && tileEntity.getPos().getDistance(this.pos.getX(), this.pos.getY(), this.getPos().getZ()) < 24) {
+					ItemStack stack = ((SpiritStoneStackTileEntity) tileEntity).stack;
+					if(stack.getItem() instanceof ItemSpiritStone) {
+						double energy = ((ItemSpiritStone) stack.getItem()).getAmount()*50;
+						this.energy += energy;
+						stack.shrink(1);
+						this.updateOnClient();
+						IBlockState state = this.world.getBlockState(tileEntity.getPos());
+						this.world.notifyBlockUpdate(tileEntity.getPos(), state, state, 3);
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	public double getMaxEnergy() {
 		double limit = 50d;
 		if (this.formation != null) {
 			limit = this.formation.getOperationCost() * 100;
 		}
-		this.energy = Math.min(this.energy + amount, limit);
+		return limit;
+	}
+
+	public void addEnergy(double amount) {
+		this.energy = Math.min(this.energy + amount, this.getMaxEnergy());
 	}
 
 	public boolean remEnergy(double amount) {
