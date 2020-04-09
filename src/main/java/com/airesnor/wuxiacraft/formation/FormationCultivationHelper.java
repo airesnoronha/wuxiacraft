@@ -5,6 +5,8 @@ import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
+import com.airesnor.wuxiacraft.networking.NetworkWrapper;
+import com.airesnor.wuxiacraft.networking.ProgressMessage;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -21,6 +23,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 public class FormationCultivationHelper extends Formation {
@@ -31,10 +35,11 @@ public class FormationCultivationHelper extends Formation {
 	private ResourceLocation blood_c = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/runes/blood_c.png");
 	private ResourceLocation blood_d = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/runes/blood_d.png");
 
-	private float amount; //amount gained per tick;
+	private double amount; //amount gained per tick;
 
 	public FormationCultivationHelper(String name, double cost, double activationCost, double range, double amount) {
 		super(name, cost, activationCost, range);
+		this.amount = amount;
 	}
 
 	public FormationCultivationHelper setDisplayFormation(ResourceLocation newTexture) {
@@ -43,31 +48,55 @@ public class FormationCultivationHelper extends Formation {
 	}
 
 	@Override
-	public int doUpdate(World worldIn, BlockPos source) {
+	@ParametersAreNonnullByDefault
+	public int doUpdate(World worldIn, BlockPos source, FormationTileEntity parent) {
 		List<EntityPlayer> players = worldIn.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(source).grow(this.getRange()));
 		int activated = 0;
-		FormationTileEntity parent = (FormationTileEntity) worldIn.getTileEntity(source);
 		if (parent != null) {
 			for (EntityPlayer player : players) {
-				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-				if (skillCap.isCasting()) {
-					Skill skill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
-					if (skill == Skills.CULTIVATE) {
-						if(parent.hasEnergy(this.getOperationCost()*(activated+1))) {
-							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-							if (this.amount <= cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.06) {
-								CultivationUtils.cultivatorAddProgress(player, cultivation, this.amount);
-							} else {
-								worldIn.createExplosion(player, player.posX, player.posY + 0.9, player.posZ, 2f, true);
-								player.attackEntityFrom(DamageSource.causeExplosionDamage(player), this.amount * 2);
+				if (player.getDistance(source.getX() + 0.5, source.getY() + 0.5, source.getZ() + 0.5) < this.getRange()) {
+					ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
+					if (skillCap.isCasting()) {
+						Skill skill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
+						if (skill == Skills.CULTIVATE) {
+							if (parent.hasEnergy(this.getOperationCost() * (activated + 1))) {
+								ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+								if (!(this.amount <= cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.06)) {
+									worldIn.createExplosion(player, player.posX, player.posY + 0.9, player.posZ, 2f, true);
+									player.attackEntityFrom(DamageSource.causeExplosionDamage(player), (float) this.amount * 2);
+								}
+								activated++;
 							}
-							activated++;
 						}
 					}
 				}
 			}
 		}
 		return activated;
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	@ParametersAreNonnullByDefault
+	public void doClientUpdate(World worldIn, BlockPos source, FormationTileEntity parent) {
+		if (parent != null) {
+			EntityPlayer player = Minecraft.getMinecraft().player;
+			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
+			if (player.getDistance(source.getX() + 0.5, source.getY() + 0.5, source.getZ() + 0.5) < this.getRange()) {
+				if (skillCap.isCasting()) {
+					Skill skill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
+					if (skill == Skills.CULTIVATE) {
+						if (parent.hasEnergy(this.getOperationCost())) {
+							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+							if (this.amount <= cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.06) {
+								CultivationUtils.cultivatorAddProgress(player, cultivation, this.amount);
+								NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, this.amount));
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@SideOnly(Side.CLIENT)

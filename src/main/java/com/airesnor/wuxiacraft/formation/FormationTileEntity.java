@@ -33,7 +33,20 @@ public class FormationTileEntity extends TileEntity implements ITickable {
 
 	private FormationEventListener eventListener;
 
+	private int timeActivated;
+
+	private NBTTagCompound formationInfo;
+
 	public FormationTileEntity() {
+		formationInfo = new NBTTagCompound();
+	}
+
+	public NBTTagCompound getFormationInfo() {
+		return this.formationInfo;
+	}
+
+	public void setFormationInfo(NBTTagCompound formationInfo) {
+		this.formationInfo = formationInfo;
 	}
 
 	public void stopFormation() {
@@ -41,27 +54,30 @@ public class FormationTileEntity extends TileEntity implements ITickable {
 		this.formation = null;
 		this.world.removeEventListener(eventListener);
 		this.eventListener = null;
+		this.formationInfo = new NBTTagCompound();
+		this.timeActivated = 0;
 		updateOnClient();
 	}
 
 	public double activateFormation() {
 		double activationCost = 0;
-			if (this.state == FormationState.STOPPED || this.state == FormationState.ACTIVE) {
-				Pair<FormationUtils.FormationDiagram, EnumFacing> pair = FormationUtils.searchWorldForFormations(this.world, this.pos);
-				FormationUtils.FormationDiagram diagram = pair.getLeft();
-				if (diagram != null) {
-					Formation formation = FormationUtils.getFormationFromResource(diagram.getFormationName());
-					if (formation != null) {
-						this.eventListener = new FormationEventListener(this, diagram, pair.getRight());
-						this.world.addEventListener(this.eventListener);
-						this.formation = formation;
-						activationCost = formation.getActivationCost();
-						this.state = FormationState.ACTIVE;
-					}
-				} else {
-					this.stopFormation();
+		if (this.state == FormationState.STOPPED || this.state == FormationState.ACTIVE) {
+			Pair<FormationUtils.FormationDiagram, EnumFacing> pair = FormationUtils.searchWorldForFormations(this.world, this.pos);
+			FormationUtils.FormationDiagram diagram = pair.getLeft();
+			if (diagram != null) {
+				Formation formation = FormationUtils.getFormationFromResource(diagram.getFormationName());
+				if (formation != null) {
+					this.eventListener = new FormationEventListener(this, diagram, pair.getRight());
+					this.world.addEventListener(this.eventListener);
+					this.formation = formation;
+					activationCost = formation.getActivationCost();
+					this.state = FormationState.ACTIVE;
+					this.timeActivated = 0;
 				}
+			} else {
+				this.stopFormation();
 			}
+		}
 		return activationCost;
 	}
 
@@ -73,6 +89,10 @@ public class FormationTileEntity extends TileEntity implements ITickable {
 		return this.energy >= amount;
 	}
 
+	public int getTimeActivated() {
+		return this.timeActivated;
+	}
+
 	@Override
 	public void update() {
 		if (!this.world.isRemote) {
@@ -82,24 +102,26 @@ public class FormationTileEntity extends TileEntity implements ITickable {
 					return;
 				}
 				searchForSpiritStones();
-				int activated = this.formation.doUpdate(this.world, this.pos);
+				int activated = this.formation.doUpdate(this.world, this.pos, this);
 				if (activated >= 0) {
-					if(this.remEnergy(this.formation.getOperationCost() * activated)) {
+					if (this.remEnergy(this.formation.getOperationCost() * activated)) {
 						this.interruptFormation(this.pos, new ArrayList<>());
 					}
 				} else {
 					this.stopFormation();
 				}
-				if(this.eventListener == null) {
+				this.timeActivated++;
+				if (this.eventListener == null) {
 					this.activateFormation();
 				}
 			} else if (this.state == FormationState.INTERRUPTED) {
 				this.stopFormation();
 			}
 		} else {
-			if(this.state == FormationState.ACTIVE) {
-				if(this.formation != null) {
-					this.formation.doClientUpdate(this.world, this.getPos());
+			if (this.state == FormationState.ACTIVE) {
+				this.timeActivated++;
+				if (this.formation != null) {
+					this.formation.doClientUpdate(this.world, this.getPos(), this);
 				}
 			}
 		}
@@ -110,7 +132,7 @@ public class FormationTileEntity extends TileEntity implements ITickable {
 	}
 
 	public void interruptFormation(BlockPos interruptionSource, List<EntityLivingBase> interrupters) {
-		if(this.state == FormationState.ACTIVE) {
+		if (this.state == FormationState.ACTIVE) {
 			this.state = FormationState.INTERRUPTED;
 			if (this.formation != null) {
 				this.formation.onInterrupt(this.world, interruptionSource, interrupters);
@@ -120,25 +142,29 @@ public class FormationTileEntity extends TileEntity implements ITickable {
 	}
 
 	public void updateOnClient() {
-		if(!this.world.isRemote) {
+		if (!this.world.isRemote) {
 			IBlockState state = this.world.getBlockState(this.getPos());
 			world.notifyBlockUpdate(this.getPos(), state, state, 3);
 		}
 	}
 
 	private void searchForSpiritStones() {
-		if(this.energy < this.getMaxEnergy()*0.1) {
+		if (this.energy < this.getMaxEnergy() * 0.1) {
 			List<TileEntity> tileEntities = this.world.loadedTileEntityList;
-			for(TileEntity tileEntity : tileEntities) {
-				if(tileEntity instanceof SpiritStoneStackTileEntity && tileEntity.getPos().getDistance(this.pos.getX(), this.pos.getY(), this.getPos().getZ()) < 24) {
+			for (TileEntity tileEntity : tileEntities) {
+				if (tileEntity instanceof SpiritStoneStackTileEntity && tileEntity.getPos().getDistance(this.pos.getX(), this.pos.getY(), this.getPos().getZ()) < 24) {
 					ItemStack stack = ((SpiritStoneStackTileEntity) tileEntity).stack;
-					if(stack.getItem() instanceof ItemSpiritStone) {
-						double energy = ((ItemSpiritStone) stack.getItem()).getAmount()*50;
+					if (stack.getItem() instanceof ItemSpiritStone) {
+						double energy = ((ItemSpiritStone) stack.getItem()).getAmount() * 50;
 						this.energy += energy;
 						stack.shrink(1);
 						this.updateOnClient();
-						IBlockState state = this.world.getBlockState(tileEntity.getPos());
-						this.world.notifyBlockUpdate(tileEntity.getPos(), state, state, 3);
+						if (!stack.isEmpty()) {
+							IBlockState state = this.world.getBlockState(tileEntity.getPos());
+							this.world.notifyBlockUpdate(tileEntity.getPos(), state, state, 3);
+						} else {
+							this.world.setBlockToAir(tileEntity.getPos());
+						}
 						break;
 					}
 				}
@@ -156,31 +182,39 @@ public class FormationTileEntity extends TileEntity implements ITickable {
 
 	public void addEnergy(double amount) {
 		this.energy = Math.min(this.energy + amount, this.getMaxEnergy());
+		this.updateOnClient();
 	}
 
 	public boolean remEnergy(double amount) {
 		boolean empty = false;
 		this.energy -= amount;
-		if(this.energy < 0) {
+		if (this.energy < 0) {
 			this.energy = 0;
 			empty = true;
 		}
+		this.updateOnClient();
 		return empty;
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
 		super.readFromNBT(compound);
-		if(compound.hasKey("state")) {
+		if (compound.hasKey("state")) {
 			this.state = FormationState.valueOf(compound.getString("state"));
-			if(this.state == FormationState.ACTIVE) {
-				if(compound.hasKey("formation")) {
+			if (this.state == FormationState.ACTIVE) {
+				if (compound.hasKey("formation")) {
 					this.formation = FormationUtils.getFormationFromResource(new ResourceLocation(WuxiaCraft.MOD_ID, compound.getString("formation")));
 				}
 			}
 		}
-		if(compound.hasKey("energy")) {
+		if (compound.hasKey("energy")) {
 			this.energy = compound.getDouble("energy");
+		}
+		if (compound.hasKey("timeActivated")) {
+			this.timeActivated = compound.getInteger("timeActivated");
+		}
+		if (compound.hasKey("formationInfo")) {
+			this.formationInfo = compound.getCompoundTag("formationInfo");
 		}
 	}
 
@@ -190,9 +224,11 @@ public class FormationTileEntity extends TileEntity implements ITickable {
 		super.writeToNBT(compound);
 		compound.setString("state", this.state.toString());
 		compound.setDouble("energy", this.energy);
-		if(this.formation!=null) {
+		if (this.formation != null) {
 			compound.setString("formation", this.formation.getUName());
 		}
+		compound.setInteger("timeActivated", this.timeActivated);
+		compound.setTag("formationInfo", this.formationInfo);
 		return compound;
 	}
 

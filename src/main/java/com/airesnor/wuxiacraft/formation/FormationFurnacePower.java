@@ -17,6 +17,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,16 +36,16 @@ public class FormationFurnacePower extends Formation {
 	}
 
 	@Override
-	public int doUpdate(World worldIn, BlockPos source) {
+	@ParametersAreNonnullByDefault
+	public int doUpdate(World worldIn, BlockPos source, FormationTileEntity parent) {
 		List<TileEntity> tes = worldIn.loadedTileEntityList;
 		int activated = 0;
-		FormationTileEntity parent = (FormationTileEntity) worldIn.getTileEntity(source);
 		for (TileEntity te : tes) {
 			if (te instanceof TileEntityFurnace) {
-				if (parent != null && parent.hasEnergy(this.getOperationCost()*(activated+1))) {
+				if (parent != null && parent.hasEnergy(this.getOperationCost() * (activated + 1))) {
 					if (te.getPos().getDistance(source.getX(), source.getY(), source.getZ()) < this.getRange()) {
 						TileEntityFurnace furnace = (TileEntityFurnace) te;
-						if (!furnace.isBurning()) {
+						if (!furnace.isBurning() && !furnace.getStackInSlot(0).isEmpty()) {
 							furnace.setField(0, 201);
 							activated++;
 							BlockFurnace.setState(true, furnace.getWorld(), furnace.getPos());

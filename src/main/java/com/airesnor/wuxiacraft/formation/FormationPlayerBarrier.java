@@ -1,7 +1,6 @@
 package com.airesnor.wuxiacraft.formation;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.client.Minecraft;
@@ -10,6 +9,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.ResourceLocation;
@@ -19,6 +19,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +33,6 @@ public class FormationPlayerBarrier extends Formation {
 	private ResourceLocation blood_d = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/runes/blood_h.png");
 
 	private double strength;
-	private int timeAlive = 0;
-	private List<String> playerWhiteListNames = new ArrayList<>();
 
 	public FormationPlayerBarrier(String name, double cost, double activationCost, double range, double strength) {
 		super(name, cost, activationCost, range);
@@ -44,47 +44,88 @@ public class FormationPlayerBarrier extends Formation {
 		return this;
 	}
 
-	@Override
-	public int doUpdate(World worldIn, BlockPos source) {
-		if (timeAlive % 20 == 0) {
-			playerWhiteListNames.clear();
-			List<TileEntity> tileEntities = worldIn.loadedTileEntityList;
-			for (TileEntity te : tileEntities) {
-				if (te instanceof TileEntitySign && te.getPos().getDistance(source.getX(), source.getY(), source.getZ()) < 32) {
-					ITextComponent[] lines = ((TileEntitySign) te).signText;
-					playerWhiteListNames.add(lines[0].getFormattedText());
-				}
+	@Nonnull
+	public static List<String> getNamesFromInfo(NBTTagCompound info) {
+		List<String> names = new ArrayList<>();
+		if (info.hasKey("names-length")) {
+			int length = info.getInteger("names-length");
+			for (int i = 0; i < length; i++) {
+				String name = info.getString("names-" + i);
+				names.add(name);
 			}
 		}
+		return names;
+	}
+
+	@Override
+	@ParametersAreNonnullByDefault
+	public int doUpdate(World worldIn, BlockPos source, FormationTileEntity parent) {
+		double preferredRange = this.getRange();
+		int timeAlive = parent.getTimeActivated();
+		if (timeAlive % 20 == 0) {
+			List<String> names = new ArrayList<>();
+			List<TileEntity> tileEntities = worldIn.loadedTileEntityList;
+			for (TileEntity te : tileEntities) {
+				if (te instanceof TileEntitySign && te.getPos().getDistance(source.getX(), source.getY(), source.getZ()) < 16) {
+					ITextComponent[] lines = ((TileEntitySign) te).signText;
+					for (ITextComponent line : lines) {
+						if (!line.getUnformattedText().equals("")) {
+							names.add(line.getUnformattedText());
+						}
+					}
+				}
+			}
+			NBTTagCompound info = parent.getFormationInfo();
+			info.setInteger("names-length", names.size());
+			for (String name : names) {
+				info.setString("names-" + names.indexOf(name), name);
+			}
+			parent.setFormationInfo(info);
+		}
 		List<EntityPlayer> playersWhiteListed = new ArrayList<>();
-		for (String name : playerWhiteListNames) {
+		List<String> names = getNamesFromInfo(parent.getFormationInfo());
+		for (String name : names) {
+			if (name.startsWith("range=")) {
+				double range = Double.parseDouble(name.substring("range=".length()));
+				preferredRange = Math.min(this.getRange(), range);
+				continue;
+			}
 			EntityPlayer player = worldIn.getPlayerEntityByName(name);
 			if (player != null) {
 				playersWhiteListed.add(player);
 			}
 		}
-		List<EntityPlayer> players = worldIn.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(source).grow(this.getRange()));
+		List<EntityPlayer> players = worldIn.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(source).grow(preferredRange));
 		for (EntityPlayer player : players) {
-			if(!playersWhiteListed.contains(player)) {
-				double dx = player.posX - (source.getX()+0.5);
-				double dy = player.posY - (source.getY()+0.5);
-				double dz = player.posZ - (source.getZ()+0.5);
-				double distance = Math.sqrt(dx*dx+dy*dy+dz*dz);
-				if(distance < this.getRange()) {
+			if (!playersWhiteListed.contains(player)) {
+				double dx = player.posX - (source.getX() + 0.5);
+				double dy = player.posY - (source.getY() + 0.5);
+				double dz = player.posZ - (source.getZ() + 0.5);
+				double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+				if (distance < preferredRange) {
 					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-					if(cultivation.getStrengthIncrease() < this.strength*2) {
-						double inverseDistance = this.getRange() - distance;
-						double mx = (dx / distance) * inverseDistance * this.strength / cultivation.getStrengthIncrease();
-						double my = (dy / distance) * inverseDistance * this.strength / cultivation.getStrengthIncrease();
-						double mz = (dz / distance) * inverseDistance * this.strength / cultivation.getStrengthIncrease();
-						player.motionX += mx;
-						player.motionY += my;
-						player.motionZ += mz;
+					if (cultivation.getStrengthIncrease() < this.strength * 2) {
+						if (!player.isCreative()) {
+							double inverseDistance = preferredRange - distance;
+							double mx = (dx / distance) * inverseDistance * this.strength / cultivation.getStrengthIncrease();
+							double my = (dy / distance) * inverseDistance * this.strength / cultivation.getStrengthIncrease();
+							double mz = (dz / distance) * inverseDistance * this.strength / cultivation.getStrengthIncrease();
+							player.motionX += mx;
+							player.motionY += my;
+							player.motionZ += mz;
+							player.velocityChanged = true;
+						}
+					} else {
+						if (!player.isCreative()) {
+							player.motionX *= (cultivation.getStrengthIncrease() - this.strength) / cultivation.getStrengthIncrease();
+							player.motionY *= (cultivation.getStrengthIncrease() - this.strength) / cultivation.getStrengthIncrease();
+							player.motionZ *= (cultivation.getStrengthIncrease() - this.strength) / cultivation.getStrengthIncrease();
+							player.velocityChanged = true;
+						}
 					}
 				}
 			}
 		}
-		timeAlive++;
 		return 1;
 	}
 

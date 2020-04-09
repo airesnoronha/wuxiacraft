@@ -7,6 +7,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public abstract class Formation {
@@ -32,9 +34,10 @@ public abstract class Formation {
 	 *
 	 * @param worldIn the world the formation is in
 	 * @param source  where is the formation core
+	 * @param parent  The tile entity containing the formation
 	 * @return how many times has this formation activates this tick
 	 */
-	public abstract int doUpdate(World worldIn, BlockPos source);
+	public abstract int doUpdate(@Nonnull World worldIn,@Nonnull BlockPos source,@Nonnull FormationTileEntity parent);
 
 
 	/**
@@ -42,10 +45,10 @@ public abstract class Formation {
 	 *
 	 * @param worldIn the world the formation is in
 	 * @param source  where is the formation core
-	 * @return how many times has this formation activates this tick
+	 * @param parent  The tile entity containing the formation
 	 */
 	@SideOnly(Side.CLIENT)
-	public void doClientUpdate(World worldIn, BlockPos source) {
+	public void doClientUpdate(@Nonnull World worldIn,@Nonnull BlockPos source,@Nonnull FormationTileEntity parent) {
 	}
 
 	/**
@@ -55,7 +58,7 @@ public abstract class Formation {
 	 * @param source       where has the interruption occurred
 	 * @param interrupters who might have interrupted this formation (generally anyone near the formation disturbance by 6 blocks)
 	 */
-	public void onInterrupt(World worldIn, BlockPos source, List<EntityLivingBase> interrupters) {
+	public void onInterrupt(@Nonnull World worldIn, @Nullable BlockPos source,@Nullable List<EntityLivingBase> interrupters) {
 
 	}
 

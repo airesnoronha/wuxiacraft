@@ -14,6 +14,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,15 +36,19 @@ public class FormationQiGathering extends Formation {
 	}
 
 	@Override
-	public int doUpdate(World worldIn, BlockPos source) {
+	@ParametersAreNonnullByDefault
+	public int doUpdate(World worldIn, BlockPos source, FormationTileEntity parent) {
 		List<FormationTileEntity> formations = new ArrayList<>();
-		for(TileEntity te : worldIn.loadedTileEntityList) {
-			if(te instanceof FormationTileEntity && te.getPos().getDistance(source.getX(),source.getY(), source.getZ()) < this.getRange()) {
+		for (TileEntity te : worldIn.loadedTileEntityList) {
+			if (te instanceof FormationTileEntity && te.getPos().getDistance(source.getX(), source.getY(), source.getZ()) < this.getRange()) {
 				formations.add((FormationTileEntity) te);
 			}
 		}
-		for(FormationTileEntity formation : formations) {
-			formation.addEnergy(this.generation/formations.size());
+		for (FormationTileEntity formation : formations) {
+			if (!formation.hasEnergy(formation.getMaxEnergy())) {
+				formation.addEnergy(this.generation);
+				break;
+			}
 		}
 		return 0;
 	}
@@ -57,16 +63,16 @@ public class FormationQiGathering extends Formation {
 		GlStateManager.disableLighting();
 		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		Minecraft.getMinecraft().renderEngine.bindTexture(this.displayFormation);
-		GlStateManager.translate(x,y,z);
-		float angle = -180f + ((System.currentTimeMillis()%36000)/100f);
-		GlStateManager.rotate(angle, 0,1,0);
+		GlStateManager.translate(x, y, z);
+		float angle = -180f + ((System.currentTimeMillis() % 36000) / 100f);
+		GlStateManager.rotate(angle, 0, 1, 0);
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder builder = tessellator.getBuffer();
 		builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-		builder.pos(-2,0,-2).tex(0,0).endVertex();
-		builder.pos(2,0,-2).tex(1,0).endVertex();
-		builder.pos(2,0,2).tex(1,1).endVertex();
-		builder.pos(-2,0,2).tex(0,1).endVertex();
+		builder.pos(-2, 0, -2).tex(0, 0).endVertex();
+		builder.pos(2, 0, -2).tex(1, 0).endVertex();
+		builder.pos(2, 0, 2).tex(1, 1).endVertex();
+		builder.pos(-2, 0, 2).tex(0, 1).endVertex();
 		tessellator.draw();
 		GlStateManager.disableBlend();
 		GlStateManager.enableLighting();

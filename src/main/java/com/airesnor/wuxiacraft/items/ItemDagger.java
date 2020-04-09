@@ -7,13 +7,13 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 public class ItemDagger extends ItemBase {
 
@@ -39,10 +39,11 @@ public class ItemDagger extends ItemBase {
 			if(found && !attacker.world.isRemote) {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(target);
 				ItemStack bloodBottle = new ItemStack(Items.BLOOD_BOTTLE, 1);
-				NBTTagCompound tag;
+				NBTTagCompound tag = null;
 				if(bloodBottle.hasTagCompound()) {
 					tag = bloodBottle.getTagCompound();
-				} else {
+				}
+				if(tag == null){
 					tag = new NBTTagCompound();
 				}
 				tag.setString("bloodLevel", cultivation.getCurrentLevel().toString());
@@ -58,9 +59,11 @@ public class ItemDagger extends ItemBase {
 
 	@Override
 	@Nonnull
-	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+	@ParametersAreNonnullByDefault
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+		ItemStack dagger = playerIn.getHeldItem(handIn);
 		boolean found = false;
-		for(ItemStack stack1 :player.inventory.mainInventory) {
+		for(ItemStack stack1 :playerIn.inventory.mainInventory) {
 			if(stack1.getItem() == Items.EMPTY_BOTTLE) {
 				stack1.shrink(1);
 				found = true;
@@ -68,21 +71,23 @@ public class ItemDagger extends ItemBase {
 			}
 		}
 		if(found && !worldIn.isRemote) {
-			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(playerIn);
 			ItemStack bloodBottle = new ItemStack(Items.BLOOD_BOTTLE, 1);
-			NBTTagCompound tag;
+			NBTTagCompound tag = null;
 			if(bloodBottle.hasTagCompound()) {
 				tag = bloodBottle.getTagCompound();
-			} else {
+			}
+			if(tag == null){
 				tag = new NBTTagCompound();
 			}
 			tag.setString("bloodLevel", cultivation.getCurrentLevel().toString());
 			bloodBottle.setTagCompound(tag);
-			EntityItem item = new EntityItem(worldIn, player.posX, player.posY+0.1, player.posZ, bloodBottle);
+			EntityItem item = new EntityItem(worldIn, playerIn.posX, playerIn.posY+0.1, playerIn.posZ, bloodBottle);
 			item.setNoPickupDelay();
-			item.setOwner(player.getName());
+			item.setOwner(playerIn.getName());
 			worldIn.spawnEntity(item);
 		}
-		return found ? EnumActionResult.SUCCESS : EnumActionResult.PASS;
+		if(found) dagger.damageItem(1, playerIn);
+		return new ActionResult<>(found ? EnumActionResult.SUCCESS : EnumActionResult.PASS, dagger) ;
 	}
 }
