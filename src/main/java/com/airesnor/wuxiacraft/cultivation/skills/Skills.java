@@ -77,8 +77,8 @@ public class Skills {
 	public static final Potion ENLIGHTENMENT = new EnlightenmentPotion("enlightenment");
 
 	public static final ISkillAction APPLY_SLOWNESS = actor -> {
-		PotionEffect effect1 = new PotionEffect(MobEffects.SLOWNESS, 25, 3, false, false);
-		PotionEffect effect2 = new PotionEffect(MobEffects.MINING_FATIGUE, 25, 2, false, false);
+		PotionEffect effect1 = new PotionEffect(MobEffects.SLOWNESS, 35, 3, false, false);
+		PotionEffect effect2 = new PotionEffect(MobEffects.MINING_FATIGUE, 35, 2, false, false);
 		actor.addPotionEffect(effect1);
 		actor.addPotionEffect(effect2);
 		return true;

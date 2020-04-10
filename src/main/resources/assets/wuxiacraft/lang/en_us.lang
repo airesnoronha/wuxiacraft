@@ -49,7 +49,7 @@ item.primordial_stone.name=Primordial Stone
 item.five_element_pure_crystal.name=Five Element Pure Crystal
 item.pure_qi_crystal.name=Pure Qi Crystal
 item.earth_law_crystal.name=Earth Law Crystal
-item.sky_law_crystal.name=Sky Lw Crystal
+item.sky_law_crystal.name=Sky Law Crystal
 item.heavenly_stone.name=Heavenly Stone
 item.rainbow_law_stone.name=Rainbow Law Stone
 item.sky_and_earth_crystal.name=Sky And Earth Crystal
@@ -69,6 +69,8 @@ item.primordial_chaos_stone.name=Primordial Chaos Stone
 item.paint_brush.name=Paint Brush
 item.empty_bottle.name=Empty Bottle
 item.blood_bottle.name=Blood Bottle
+item.paint_brush.name=Paint Brush
+item.paint_bottle.name=Paint Bottle
 
 //Creative tabs
 itemGroup.wuxiacraft.scrolls=Cultivation Techniques
