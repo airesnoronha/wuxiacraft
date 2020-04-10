@@ -117,9 +117,10 @@ public class FormationPlayerBarrier extends Formation {
 						}
 					} else {
 						if (!player.isCreative()) {
-							player.motionX *= (cultivation.getStrengthIncrease() - this.strength) / cultivation.getStrengthIncrease();
-							player.motionY *= (cultivation.getStrengthIncrease() - this.strength) / cultivation.getStrengthIncrease();
-							player.motionZ *= (cultivation.getStrengthIncrease() - this.strength) / cultivation.getStrengthIncrease();
+							player.motionX *= (cultivation.getStrengthIncrease() - this.strength) / cultivation.getStrengthIncrease(); //slows players
+							player.motionY *= player.motionY > 0 ? (cultivation.getStrengthIncrease() - this.strength) / cultivation.getStrengthIncrease() //slows jumping
+									: (cultivation.getStrengthIncrease() + this.strength) / cultivation.getStrengthIncrease(); //increase fall speed
+							player.motionZ *= (cultivation.getStrengthIncrease() - this.strength) / cultivation.getStrengthIncrease(); //slows players
 							player.velocityChanged = true;
 						}
 					}

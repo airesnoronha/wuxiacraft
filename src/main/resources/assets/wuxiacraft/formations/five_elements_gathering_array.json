@@ -1,0 +1,29 @@
+{
+	"formationName": "wuxiacraft:five_elements_gathering_array",
+	"positions": [
+		{ "blockState": "minecraft:lava","x": 0, "y": -1,"z": -2 },
+		{ "blockState": "minecraft:stone","x": 2, "y": -1,"z": -1 },
+		{ "blockState": "minecraft:iron_block","x": 1, "y": -1,"z": 1 },
+		{ "blockState": "minecraft:water","x": -1, "y": -1,"z": 1 },
+		{ "blockState": "minecraft:log","x": -2, "y": -1,"z": -1 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": 0, "y": 0,"z": -3 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": -2, "y": 0,"z": -2 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": -1, "y": 0,"z": -2 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": 1, "y": 0,"z": -2 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": 2, "y": 0,"z": -2 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": -3, "y": 0,"z": -1 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": -1, "y": 0,"z": -1 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": 0, "y": 0,"z": -1 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": 1, "y": 0,"z": -1 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": 3, "y": 0,"z": -1 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": -2, "y": 0,"z": 0 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": -1, "y": 0,"z": 0 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": 1, "y": 0,"z": 0 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": 2, "y": 0,"z": 0 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": -2, "y": 0,"z": 1 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": 0, "y": 0,"z": 1 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": 2, "y": 0,"z": 1 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": -1, "y": 0,"z": 2 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": 1e, "y": 0,"z": 2 }
+	]
+}
