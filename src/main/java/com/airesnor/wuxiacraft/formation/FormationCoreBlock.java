@@ -64,7 +64,7 @@ public class FormationCoreBlock extends BlockRune implements ITileEntityProvider
 			cultivation.remEnergy((float)activationCost);
 		} else {
 			float remaining = cultivation.getEnergy() - (float)activationCost;
-			remaining /= 500f;
+			remaining /= 10f;
 			cultivation.setEnergy(0);
 			playerIn.attackEntityFrom(DamageSource.causePlayerDamage(playerIn).setDamageIsAbsolute(), remaining);
 		}

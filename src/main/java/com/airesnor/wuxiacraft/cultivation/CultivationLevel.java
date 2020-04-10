@@ -197,7 +197,7 @@ public enum CultivationLevel {
 		if (!(subLevel >= 0 && subLevel < this.subLevels)) {
 			return 0;
 		}
-		return 100F * ((this.baseStrengthModifier * (1 + 0.2F * this.subLevels)));
+		return 100F * ((this.getStrengthModifierBySubLevel(subLevel) * (1 + 0.2F * this.subLevels)));
 	}
 
 	/**

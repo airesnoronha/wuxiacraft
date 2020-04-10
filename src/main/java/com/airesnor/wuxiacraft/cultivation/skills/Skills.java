@@ -77,8 +77,8 @@ public class Skills {
 	public static final Potion ENLIGHTENMENT = new EnlightenmentPotion("enlightenment");
 
 	public static final ISkillAction APPLY_SLOWNESS = actor -> {
-		PotionEffect effect1 = new PotionEffect(MobEffects.SLOWNESS, 10, 3, false, false);
-		PotionEffect effect2 = new PotionEffect(MobEffects.MINING_FATIGUE, 10, 2, false, false);
+		PotionEffect effect1 = new PotionEffect(MobEffects.SLOWNESS, 25, 3, false, false);
+		PotionEffect effect2 = new PotionEffect(MobEffects.MINING_FATIGUE, 25, 2, false, false);
 		actor.addPotionEffect(effect1);
 		actor.addPotionEffect(effect2);
 		return true;
@@ -112,6 +112,9 @@ public class Skills {
 				double amount = cultTech.getOverallCultivationSpeed() * 0.25 * 10;
 				float energy = cultTech.getOverallCultivationSpeed() * 1.25f * 10;
 				skillCap.stepCastProgress(-cultivation.getSpeedIncrease() + 1);
+				if ((int) skillCap.getCastProgress() % 10 == 9) {
+					NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("applySlowness", cultivation.hasEnergy(energy) ? energy : 0));
+				}
 				if (cultivation.hasEnergy(energy)) {
 					if ((int) skillCap.getCastProgress() % 5 == 0) {
 						for (KnownTechnique kt : cultTech.getKnownTechniques()) {
@@ -133,7 +136,7 @@ public class Skills {
 							CultivationUtils.cultivatorAddProgress(actor, cultivation, amount);
 							cultivation.remEnergy(energy);
 							NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, amount));
-							NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("applySlowness", energy));
+							NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("applySlowness", cultivation.hasEnergy(energy) ? energy : 0));
 						}
 					}
 				}

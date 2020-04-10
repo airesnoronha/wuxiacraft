@@ -30,7 +30,7 @@ public class FormationUtils {
 	/**
 	 * A list containing all found diagrams in the folders
 	 */
-	public static final Map<ResourceLocation,FormationDiagram> DIAGRAMS = new HashMap<>();
+	public static final Map<ResourceLocation, FormationDiagram> DIAGRAMS = new HashMap<>();
 
 	private static final Splitter COMMA_SPLITTER = Splitter.on(",");
 	private static final Splitter EQUAL_SPLITTER = Splitter.on("=").limit(2);
@@ -41,7 +41,7 @@ public class FormationUtils {
 	 */
 	public static void init() {
 		URL assets = FormationUtils.class.getClassLoader().getResource("assets/wuxiacraft/formations");
-		if(assets != null) {
+		if (assets != null) {
 			File assetsDir = new File(assets.getFile());
 			getDiagramsFromDirectory(assetsDir);
 		} else {
@@ -51,11 +51,12 @@ public class FormationUtils {
 
 	/**
 	 * Gets a {@link File} that is a directory and scans it whole for files that contains diagrams
+	 *
 	 * @param directory The directory to be scanned
 	 */
 	private static void getDiagramsFromDirectory(File directory) {
 		File[] listFiles = directory.listFiles();
-		if(listFiles!=null) {
+		if (listFiles != null) {
 			for (File file : listFiles) {
 				if (file.isDirectory()) {
 					getDiagramsFromDirectory(file);
@@ -68,6 +69,7 @@ public class FormationUtils {
 
 	/**
 	 * Gets a {@link File} that isn't a directory, then try to read it into a diagram, and automatically adds to {@link FormationUtils#DIAGRAMS}
+	 *
 	 * @param file The file to be read
 	 */
 	public static void getDiagramFromFile(File file) {
@@ -76,12 +78,12 @@ public class FormationUtils {
 			Gson gson = new Gson();
 			FormationJsonFormat result = gson.fromJson(reader, FormationJsonFormat.class);
 			FormationDiagram diagram = new FormationDiagram(new ResourceLocation(result.formationName));
-			for(FormationJsonFormat.PositionPair position : result.positions) {
+			for (FormationJsonFormat.PositionPair position : result.positions) {
 				IBlockState blockState = getBlockStateWithProperties(position.blockState);
 				BlockPos pos = new BlockPos(position.x, position.y, position.z);
 				diagram.addPosition(pos, blockState);
 			}
-			DIAGRAMS.put(diagram.getFormationName(),diagram);
+			DIAGRAMS.put(diagram.getFormationName(), diagram);
 			WuxiaCraft.logger.info("Added diagram: " + diagram.getFormationName());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -90,6 +92,7 @@ public class FormationUtils {
 
 	/**
 	 * Transform a resource location + variations into a {@link IBlockState}
+	 *
 	 * @param args string to be transformed
 	 * @return if found, a block state to be expected in the formation, else null
 	 */
@@ -97,10 +100,10 @@ public class FormationUtils {
 		IBlockState state = null;
 		Iterator<String> iterator = NUMERAL_SPLITTER.split(args).iterator();
 		String blockResourceName = iterator.hasNext() ? iterator.next() : "";
-		String states =  iterator.hasNext() ? iterator.next() : "";
+		String states = iterator.hasNext() ? iterator.next() : "";
 		ResourceLocation blockLocation = new ResourceLocation(blockResourceName);
 		Block block = ForgeRegistries.BLOCKS.getValue(blockLocation);
-		Map<IProperty<?>, Comparable<? >> stateMap = null;
+		Map<IProperty<?>, Comparable<?>> stateMap = null;
 		try {
 			stateMap = getBlockStatePropertyValueMap(block, states);
 		} catch (Exception e) {
@@ -108,7 +111,7 @@ public class FormationUtils {
 		}
 		if (stateMap != null && block != null) {
 			state = block.getDefaultState();
-			for (Map.Entry< IProperty<?>, Comparable<? >> entry : stateMap.entrySet()) {
+			for (Map.Entry<IProperty<?>, Comparable<?>> entry : stateMap.entrySet()) {
 				state = getBlockState(state, entry.getKey(), entry.getValue());
 			}
 		}
@@ -117,64 +120,56 @@ public class FormationUtils {
 
 	/**
 	 * Adds properties to a base block state
+	 *
 	 * @param blockState base block state
-	 * @param property property to be added
-	 * @param value value of the property
-	 * @param <T> the type of value the property stores
+	 * @param property   property to be added
+	 * @param value      value of the property
+	 * @param <T>        the type of value the property stores
 	 * @return the block state added of the property
 	 */
 	@SuppressWarnings("unchecked")
-	private static <T extends Comparable<T>> IBlockState getBlockState(IBlockState blockState, IProperty<T> property, Comparable<?> value)
-	{
-		return blockState.withProperty(property, (T)value);
+	private static <T extends Comparable<T>> IBlockState getBlockState(IBlockState blockState, IProperty<T> property, Comparable<?> value) {
+		return blockState.withProperty(property, (T) value);
 	}
 
 	/**
 	 * Get block state from block with custom properties
+	 *
 	 * @param block The base block for look into properties
-	 * @param args A string filled with variations and values
+	 * @param args  A string filled with variations and values
 	 * @return Block state if found
 	 * @throws InvalidBlockStateException Block doesn't have this properties
 	 */
-	private static Map<IProperty<?>, Comparable<? >> getBlockStatePropertyValueMap(Block block, String args) throws InvalidBlockStateException
-	{
-		Map < IProperty<?>, Comparable<? >> map = Maps.newHashMap();
+	private static Map<IProperty<?>, Comparable<?>> getBlockStatePropertyValueMap(Block block, String args) throws InvalidBlockStateException {
+		Map<IProperty<?>, Comparable<?>> map = Maps.newHashMap();
 
-		if ("default".equals(args) || "".equals(args))
-		{
+		if ("default".equals(args) || "".equals(args)) {
 			return block.getDefaultState().getProperties();
-		}
-		else
-		{
+		} else {
 			BlockStateContainer blockstatecontainer = block.getBlockState();
 			Iterator<String> iterator = COMMA_SPLITTER.split(args).iterator();
 
-			while (true)
-			{
-				if (!iterator.hasNext())
-				{
+			while (true) {
+				if (!iterator.hasNext()) {
 					return map;
 				}
 
 				String s = iterator.next();
 				Iterator<String> iterator1 = EQUAL_SPLITTER.split(s).iterator();
 
-				if (!iterator1.hasNext())
-				{
+				if (!iterator1.hasNext()) {
 					break;
 				}
 
 				IProperty<?> property = blockstatecontainer.getProperty(iterator1.next());
 
-				if (property == null || !iterator1.hasNext())
-				{
+				if (property == null || !iterator1.hasNext()) {
 					break;
 				}
 
 				Comparable<?> comparable = getValueHelper(property, iterator1.next());
 
-				if (comparable == null)
-				{
+				if (comparable == null) {
 					break;
 				}
 
@@ -187,20 +182,21 @@ public class FormationUtils {
 
 	/**
 	 * Helps with block state values
+	 *
 	 * @param property target property
-	 * @param args possibly the values
-	 * @param <T> The type of property
+	 * @param args     possibly the values
+	 * @param <T>      The type of property
 	 * @return return the value of the property
 	 */
 	@Nullable
-	private static <T extends Comparable<T>> T getValueHelper(IProperty<T> property, String args)
-	{
+	private static <T extends Comparable<T>> T getValueHelper(IProperty<T> property, String args) {
 		return property.parseValue(args).orNull();
 	}
 
 	/**
 	 * Rotates a diagram position offset to a direction
-	 * @param pos Position offset to be rotated
+	 *
+	 * @param pos       Position offset to be rotated
 	 * @param direction Direction to which will be rotate
 	 * @return A rotated position offset
 	 */
@@ -228,7 +224,8 @@ public class FormationUtils {
 
 	/**
 	 * Rotates a formation position offset back to how it's set on diagram (north-oriented);
-	 * @param pos Position offset from formation source
+	 *
+	 * @param pos       Position offset from formation source
 	 * @param direction Direction that formation is set
 	 * @return A north-oriented position offset
 	 */
@@ -256,8 +253,9 @@ public class FormationUtils {
 
 	/**
 	 * Searches the world around source for a compatible formation diagram
+	 *
 	 * @param worldIn the world to be searched
-	 * @param source the formation core position
+	 * @param source  the formation core position
 	 * @return First diagram found, or null if none
 	 */
 	@Nonnull
@@ -265,17 +263,17 @@ public class FormationUtils {
 		FormationDiagram selected = null;
 		EnumFacing direction = EnumFacing.NORTH;
 		boolean found;
-		for(EnumFacing facing : EnumFacing.values()) {
-			if(facing == EnumFacing.UP || facing == EnumFacing.DOWN) continue;
-			for (FormationDiagram diagram : DIAGRAMS.values()) {
+		for (FormationDiagram diagram : DIAGRAMS.values()) {
+			for (EnumFacing facing : EnumFacing.values()) {
+				if (facing == EnumFacing.UP || facing == EnumFacing.DOWN) continue;
 				found = true;
 				for (Pair<BlockPos, IBlockState> pair : diagram.positions) {
 					BlockPos relativePos = rotateBlockPos(pair.getKey(), facing);
-					BlockPos pos = new BlockPos(source.getX() + relativePos.getX(),source.getY() + relativePos.getY(),source.getZ() + relativePos.getZ());
+					BlockPos pos = new BlockPos(source.getX() + relativePos.getX(), source.getY() + relativePos.getY(), source.getZ() + relativePos.getZ());
 					IBlockState toTest = worldIn.getBlockState(pos);
-					if(pair.getValue().getBlock() == toTest.getBlock()) { // if are the same block, this way we could get any state case default
+					if (pair.getValue().getBlock() == toTest.getBlock()) { // if are the same block, this way we could get any state case default
 						if (!(toTest.equals(pair.getValue()) // if states are equals
-							|| pair.getValue().getBlock().getDefaultState() == pair.getValue())) { // or if state in diagrams is default state, then any
+								|| pair.getValue().getBlock().getDefaultState() == pair.getValue())) { // or if state in diagrams is default state, then any
 							found = false;
 							break;
 						}
@@ -290,7 +288,7 @@ public class FormationUtils {
 					break;
 				}
 			}
-			if(selected != null) break;
+			if (selected != null) break;
 		}
 		return Pair.of(selected, direction);
 	}
@@ -298,9 +296,9 @@ public class FormationUtils {
 	@Nullable
 	public static Formation getFormationFromResource(ResourceLocation resource) {
 		Formation result = null;
-		if(resource.getResourceDomain().equals(WuxiaCraft.MOD_ID)) {
-			for(Formation formation : Formations.FORMATIONS) {
-				if(formation.getUName().equals(resource.getResourcePath())) {
+		if (resource.getResourceDomain().equals(WuxiaCraft.MOD_ID)) {
+			for (Formation formation : Formations.FORMATIONS) {
+				if (formation.getUName().equals(resource.getResourcePath())) {
 					result = formation;
 					break;
 				}
@@ -328,7 +326,7 @@ public class FormationUtils {
 		@Nonnull
 		public List<BlockPos> getAllBlockPos() {
 			List<BlockPos> blockPosList = new ArrayList<>();
-			for(Pair<BlockPos, IBlockState> pair : this.positions) {
+			for (Pair<BlockPos, IBlockState> pair : this.positions) {
 				blockPosList.add(pair.getKey());
 			}
 			return blockPosList;
@@ -337,8 +335,8 @@ public class FormationUtils {
 		@Nullable
 		public IBlockState getBlockState(BlockPos pos) {
 			IBlockState state = null;
-			for(Pair<BlockPos, IBlockState> pair : this.positions) {
-				if(pos.equals(pair.getKey())) {
+			for (Pair<BlockPos, IBlockState> pair : this.positions) {
+				if (pos.equals(pair.getKey())) {
 					state = pair.getValue();
 				}
 			}
