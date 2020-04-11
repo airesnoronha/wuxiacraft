@@ -23,6 +23,7 @@ public class CultInfoCommand extends CommandBase {
 
 	private static final List<String> progressFill = new ArrayList<>();
 	private static final List<String> energyFill = new ArrayList<>();
+
 	static {
 		progressFill.add("initial");
 		progressFill.add("early");
@@ -76,14 +77,24 @@ public class CultInfoCommand extends CommandBase {
 				String message = String.format("You are at %s", cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
 				TextComponentString text = new TextComponentString(message);
 				sender.sendMessage(text);
+
 				double progress = cultivation.getCurrentProgress() / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
-				int fillIndex = (int)(Math.round(progress*5));
-				message = String.format("Progress: %s (%d%%)", progressFill.get(fillIndex), (int)(progress*100f));
+				int fillIndexProgress = (int)(Math.round(progress*4));
+				if ((int)(progress*100f) == 0) {
+					message = String.format("Progress: %s (%d%%)", progressFill.get(0), (int)(progress*100f));
+				} else {
+					message = String.format("Progress: %s (%d%%)", progressFill.get(fillIndexProgress), (int)(progress*100f));
+				}
 				text = new TextComponentString(message);
 				sender.sendMessage(text);
-				double energy = cultivation.getEnergy()/ cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel());
-				fillIndex = (int)(Math.round(energy*5));
-				message = String.format("Energy: %s (%d%%)", energyFill.get(fillIndex), (int)(progress*100f));
+
+				double energy = cultivation.getEnergy() / cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel());
+				int fillIndexEnergy = (int)(Math.round(energy*4));
+				if ((int)(energy*100f) == 0) {
+					message = String.format("Energy: %s (%d%%)", energyFill.get(0), (int)(energy*100f));
+				} else {
+					message = String.format("Energy: %s (%d%%)", energyFill.get(fillIndexEnergy), (int)(energy*100f));
+				}
 				text = new TextComponentString(message);
 				sender.sendMessage(text);
 			}
