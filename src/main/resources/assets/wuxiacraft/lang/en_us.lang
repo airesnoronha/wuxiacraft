@@ -237,6 +237,7 @@ wuxiacraft.skills.adept_sword_flight=Adept Sword Flight
 
 //Recipes
 wuxiacraft.recipes.name.body_refinement_pill_recipe=Body Refinement Pill Recipe
+wuxiacraft.recipes.name.training_pill_recipe=Training Pill Recipe
 wuxiacraft.recipes.name.energy_recovery_pill_recipe=Energy Recovery Pill Recipe
 wuxiacraft.recipes.name.minor_healing_pill_recipe=Minor Healing Pill Recipe
 wuxiacraft.recipes.name.minor_recovery_pill_recipe=Minor Recovery Pill Recipe
@@ -248,6 +249,7 @@ wuxiacraft.recipes.name.jumping_rabbit_pill_recipe=Jumping Rabbit Pill Recipe
 wuxiacraft.recipes.name.runners_essence_pill_recipe=Runners Essence Pill Recipe
 wuxiacraft.recipes.name.turtle_shell_pill_recipe=Turtle Shell Pill Recipe
 wuxiacraft.recipes.name.minor_fasting_pill_recipe=Minor Fasting Pill Recipe
+
 
 //Congratulation messages
 wuxiacraft.level_message.congrats_0=Congratulations! You are now at
@@ -270,3 +272,4 @@ wuxiacraft.temperatures.super_hot=Super Hot
 
 //Potion effects
 effect.enlightenment=Enlightenment
+Not used correctly!=wrongUsage

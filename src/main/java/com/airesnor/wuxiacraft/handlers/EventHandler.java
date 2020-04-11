@@ -33,6 +33,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -76,6 +78,9 @@ public class EventHandler {
 			NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
 			NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true), (EntityPlayerMP) player);
 		}
+		TextComponentString text = new TextComponentString("For a quick tutorial on the mod. \nPlease use the /culthelp command");
+		text.getStyle().setColor(TextFormatting.GOLD);
+		player.sendMessage(text);
 	}
 
 	/**
