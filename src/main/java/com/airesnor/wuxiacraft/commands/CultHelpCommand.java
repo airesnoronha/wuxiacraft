@@ -50,6 +50,7 @@ public class CultHelpCommand extends CommandBase {
         if (args.length == 0) {
             if (sender instanceof EntityPlayerMP) {
                 EntityPlayerMP player = (EntityPlayerMP) sender;
+
                 //Creating book
                 ItemStack tutorialBook = new ItemStack(Items.WRITTEN_BOOK);
                 NBTTagCompound tagCompound = new NBTTagCompound();
@@ -61,16 +62,18 @@ public class CultHelpCommand extends CommandBase {
                         "\nYou can also make do with not gaining an element scroll and use only resources to cultivate. ";
                 String page3 = "Beware: Do not aim too high and slay cultivators much stronger than you. " +
                         "\n\nBeware: The mobs at night are lurking, please stay safe. ";
-                String page4 = "How to Alchemy:" +
+                String page4 = "\nYou can check out the Key Bindings and Controls for WuxiaCraft in the main menu " +
+                        "\n\nF - Active skills \nK - Introspection \nL - See Skills \nC - Previous Skill \nV - Next Skill";
+                String page5 = "How to Alchemy:" +
                         "\nStep 1: \nRight-click with coal in your hand to use as fuel." +
                         "\nStep 2: \nUse featherfan to control the temperature." +
                         "\nStep 3: \nPlace items in at a specific temperature and order.";
-                String page5 = "Step 4: \nOnce all the items are in let the cauldron cook at a specific temperature." +
+                String page6 = "Step 4: \nOnce all the items are in let the cauldron cook at a specific temperature." +
                         "\n\nColors: ";
 
                 //NBT data editing
                 addBookPages("Anophobia & Aires", "WuxiaCraft Tutorial Book", tutorialBook, tagCompound, tagList,
-                        page1, page2, page3, page4, page5);
+                        page1, page2, page3, page4, page5, page6);
 
                 //Giving book to player
                 player.inventory.addItemStackToInventory(tutorialBook);
@@ -78,10 +81,10 @@ public class CultHelpCommand extends CommandBase {
         } else throw new CommandException("Not used correctly!");
     }
 
-    //Method to reduce repetition
+    //Method to reduce code repetition
     public void addBookPages(String author, String title, ItemStack item, NBTTagCompound nbtTagCompound, NBTTagList tagList, Object... args) {
-        for (int i = 0; i < (args.length); i++) {
-            String page = args[i].toString();
+        for (Object arg : args) {
+            String page = arg.toString();
             tagList.appendTag(new NBTTagString(String.format("{\"text\":\"%s\"}", page)));
         }
         item.setTagInfo("pages", tagList);
