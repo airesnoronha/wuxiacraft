@@ -155,7 +155,7 @@ public class FormationTileEntity extends TileEntity implements ITickable {
 				if (tileEntity instanceof SpiritStoneStackTileEntity && tileEntity.getPos().getDistance(this.pos.getX(), this.pos.getY(), this.getPos().getZ()) < 24) {
 					ItemStack stack = ((SpiritStoneStackTileEntity) tileEntity).stack;
 					if (stack.getItem() instanceof ItemSpiritStone) {
-						double energy = ((ItemSpiritStone) stack.getItem()).getAmount() * 50;
+						double energy = ((ItemSpiritStone) stack.getItem()).getAmount() * 120;
 						this.energy += energy;
 						stack.shrink(1);
 						this.updateOnClient();

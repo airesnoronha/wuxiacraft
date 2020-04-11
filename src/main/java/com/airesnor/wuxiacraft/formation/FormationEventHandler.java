@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.formation;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -25,17 +26,19 @@ public class FormationEventHandler {
 	@SubscribeEvent
 	public void onMobSpawn(LivingSpawnEvent.CheckSpawn event) {
 		World world = event.getWorld();
-		List<TileEntity> tileEntityList = world.loadedTileEntityList;
-		for (TileEntity te : tileEntityList) {
-			if (te instanceof FormationTileEntity) {
-				if (((FormationTileEntity) te).getFormation() != null) {
-					if (((FormationTileEntity) te).getFormation() instanceof FormationMobSuppression) {
-						double range = ((FormationTileEntity) te).getFormation().getRange();
-						if (((FormationTileEntity) te).getFormationInfo().hasKey("preferredRange")) {
-							range = ((FormationTileEntity) te).getFormationInfo().getDouble("preferredRange");
-						}
-						if (te.getPos().getDistance((int) event.getX(), (int) event.getY(), (int) event.getZ()) < range) {
-							event.setResult(Event.Result.DENY);
+		if (event.getEntityLiving() instanceof IMob) {
+			List<TileEntity> tileEntityList = world.loadedTileEntityList;
+			for (TileEntity te : tileEntityList) {
+				if (te instanceof FormationTileEntity) {
+					if (((FormationTileEntity) te).getFormation() != null) {
+						if (((FormationTileEntity) te).getFormation() instanceof FormationMobSuppression) {
+							double range = ((FormationTileEntity) te).getFormation().getRange();
+							if (((FormationTileEntity) te).getFormationInfo().hasKey("preferredRange")) {
+								range = ((FormationTileEntity) te).getFormationInfo().getDouble("preferredRange");
+							}
+							if (te.getPos().getDistance((int) event.getX(), (int) event.getY(), (int) event.getZ()) < range) {
+								event.setResult(Event.Result.DENY);
+							}
 						}
 					}
 				}

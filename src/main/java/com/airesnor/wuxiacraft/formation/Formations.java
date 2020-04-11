@@ -25,6 +25,10 @@ public class Formations {
 	public static final Formation LAW_CONDENSING_BARRIER = new FormationPlayerBarrier("law_condensing_barrier", 1654.8f, 1000f, 232f, 1894.7f);
 	public static final Formation HEAVENLY_DOME_RECREATION = new FormationPlayerBarrier("heavenly_dome_recreation", 8167.53f, 1000f, 256f, 8953.17f);
 
+	//mob suppression
+	public static final Formation WEAK_MOB_SUPPRESSION_ARRAY = new FormationMobSuppression("weak_mob_suppression_array", 3f, 650f, 64, 2f);
+	public static final Formation MOB_IMMUNITY_ARRAY = new FormationMobSuppression("mob_immunity_array", 7f, 850f, 80, 5f);
+	public static final Formation EVIL_REPELLING_FORMATION = new FormationMobSuppression("evil_repelling_formation", 12f, 1250f, 128, 15f);
 
 	//Cultivation formations
 	public static final Formation SOUL_GATHERING_FORMATION = new FormationCultivationHelper("soul_gathering_formation", 3, 220f, 8f, 0.3f);
