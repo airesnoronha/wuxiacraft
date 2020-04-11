@@ -18,16 +18,16 @@ public class Formations {
 	public static final Formation FURNACE_POWERING_FORMATION = new FormationFurnacePower("furnace_powering_formation", 15f, 100f, 16f);
 
 	//barriers
-	public static final Formation SOUL_LAND_BARRIER = new FormationPlayerBarrier("soul_land_barrier", 7f, 1000f, 128f, 8.5f);
-	public static final Formation FOREIGN_QI_BARRIER = new FormationPlayerBarrier("foreign_qi_barrier", 24.2f, 1000f, 156f, 28.75f);
-	public static final Formation EARTHLY_BLOCKADE = new FormationPlayerBarrier("earthly_blockade", 103.52f, 1000f, 184f, 118.45f);
-	public static final Formation FIRMAMENT_PROTECTION = new FormationPlayerBarrier("firmament_protection", 389.25f, 1000f, 202f, 425.89f);
-	public static final Formation LAW_CONDENSING_BARRIER = new FormationPlayerBarrier("law_condensing_barrier", 1654.8f, 1000f, 232f, 1894.7f);
-	public static final Formation HEAVENLY_DOME_RECREATION = new FormationPlayerBarrier("heavenly_dome_recreation", 8167.53f, 1000f, 256f, 8953.17f);
+	public static final Formation SOUL_LAND_BARRIER = new FormationPlayerBarrier("soul_land_barrier", 7f, 1000f, 128f, 12.75f);
+	public static final Formation FOREIGN_QI_BARRIER = new FormationPlayerBarrier("foreign_qi_barrier", 24.2f, 1000f, 156f, 50.3125f);
+	public static final Formation EARTHLY_BLOCKADE = new FormationPlayerBarrier("earthly_blockade", 103.52f, 1000f, 184f, 236.9);
+	public static final Formation FIRMAMENT_PROTECTION = new FormationPlayerBarrier("firmament_protection", 389.25f, 1000f, 202f, 958.2525);
+	public static final Formation LAW_CONDENSING_BARRIER = new FormationPlayerBarrier("law_condensing_barrier", 1654.8f, 1000f, 232f, 4263.075);
+	public static final Formation HEAVENLY_DOME_RECREATION = new FormationPlayerBarrier("heavenly_dome_recreation", 8167.53f, 1000f, 256f, 22382.925);
 
 	//mob suppression
-	public static final Formation WEAK_MOB_SUPPRESSION_ARRAY = new FormationMobSuppression("weak_mob_suppression_array", 3f, 650f, 64, 2f);
-	public static final Formation MOB_IMMUNITY_ARRAY = new FormationMobSuppression("mob_immunity_array", 7f, 850f, 80, 5f);
+	public static final Formation WEAK_MOB_SUPPRESSION_ARRAY = new FormationMobSuppression("weak_mob_suppression_array", 3f, 650f, 80, 1f);
+	public static final Formation MOB_IMMUNITY_ARRAY = new FormationMobSuppression("mob_immunity_array", 7f, 850f, 96, 3f);
 	public static final Formation EVIL_REPELLING_FORMATION = new FormationMobSuppression("evil_repelling_formation", 12f, 1250f, 128, 15f);
 
 	//Cultivation formations
