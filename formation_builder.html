@@ -1,0 +1,204 @@
+<html>
+	<head>
+		<title>Formation Layout Designer</title>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			button {
+				padding: 3px 6px;
+			}
+			#everything {
+				display: flex;
+				height: 100vh;
+			}
+			input[type="number"] {
+				width: 60px;
+				font-size: 16pt;
+				text-align: center;
+			}
+			#forms {
+				padding: 10px;
+				box-sizing: border-box;
+				display: inline-block;
+				flex-grow: 3;
+				border-right: 4px groove lightgray;
+			}
+			#page {
+				display: flex;
+				vertical-align: middle;
+				text-align: center;
+				flex-grow: 7;
+				align-items: center;
+				flex-flow: column;
+				justify-content: space-evenly;
+			}
+			#board {
+				vertical-align: middle;
+				display: inline-block;
+				border-top: 1px solid black;
+				border-left: 1px solid black;
+				border-spacing: 0;
+				padding: 0;
+			}
+			#colorDemo {
+				width: 22px;
+				height: 22px;
+				display: inline-block;
+				border: 1px solid black;
+				box-sizing: border-box;
+				vertical-align: middle;
+			}
+			#blocksContainer {
+				display: flex;
+				flex-direction: column;
+			}
+			.cell {
+				border-right: 1px solid black;
+				border-bottom: 1px solid black;
+				width: 30px;
+				height: 30px;
+			}
+			p {
+				margin-block-start: 10px;
+				margin-block-end: 10px;
+			}
+			.formGroup {
+				width: 100%;
+				padding: 0px 3px;
+				box-sizing: border-box;
+			}
+			.blockElement {
+				width: 100%;
+				display: flex;
+				padding: 10px;
+				box-sizing: border-box;
+			}
+			.blockColor {
+				width: 25px;
+				height: 25px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="everything">
+			<div id="forms">
+				<p class="formGroup">
+					location:
+					<input id="location" type="text" />
+				</p>
+				<p>formation: <input id="formation" type="text" /></p>
+				<p class="formGroup">
+					<button>Load</button>
+					<button>Save</button>
+				</p>
+				<p class="formGroup">z=<input id="zIndex" type="number" value="0" /></p>
+				<hr width="100%" />
+				<p class="formGroup">block: <input type="text" id="block:id" /></p>
+				<div class="formGroup">
+					color: <input type="text" id="block:color" />
+					<div id="colorDemo"></div>
+				</div>
+				<p class="formGroup">
+					<button onclick="addBlock()">Add</button>
+					<button>Remove</button>
+					<button>Edit</button>
+				</p>
+				<hr />
+				<div id="blocksContainer"></div>
+			</div>
+			<div id="page">
+				<table id="board">
+					<script>
+						for (i = -10; i < 11; i++) {
+							document.write("<tr>");
+							for (j = -10; j < 11; j++) {
+								document.write('<td id="cell_' + i + "_" + j + '" class="cell"></td>');
+							}
+							document.write("</tr>");
+						}
+					</script>
+				</table>
+			</div>
+		</div>
+		<script>
+			document.getElementById("block:color").addEventListener("onfocusout", changeDemoColor);
+
+			function changeDemoColor() {
+				var demo = document.getElementById("colorDemo");
+				var color = document.getElementById("block:color").value;
+				demo.style["background-color"] = color;
+			}
+			var blocks = [];
+			var blockMap = [];
+			var selectedBlock = {};
+
+			function updateBlockList() {
+				var container = document.getElementById("blocksContainer");
+				container.innerHTML = "";
+				blocks.forEach(element => {
+					container.innerHTML +=
+						'<div class="blockElement" id="' +
+						element["block"] +
+						'" onlick="selectBlock(\'' +
+						element["block"] +
+						"')\">" +
+						'<div class="blockColor" style="flex-grow:0" id="color-' +
+						element["block"] +
+						'" onclick="selectBlock(\'' +
+						element["block"] +
+						'\')"></div><span id="text-'+element["block"]+'" style="flex-grow:10;padding:0px 10px;" onclick="selectBlock(\'' +
+						element["block"] +
+						"')\">" +
+						element["block"] +
+						'</span><button style="flex-grow:0" onclick="remove(\'' +
+						element["block"] +
+						'\')">Remove</button></div>';
+					document.getElementById("color-" + element["block"]).style["background-color"] = element["color"];
+					if (element == selectedBlock) {
+						document.getElementById(element["block"]).style["background-color"] = "blue";
+						document.getElementById("text-" + element["block"]).style["color"] = "white";
+					}
+				});
+			}
+
+			function getBlockById(id) {
+				var value = null;
+				blocks.forEach(element => {
+					if (id === element["block"]) {
+						value = element;
+						return;
+					}
+				});
+				return value;
+			}
+
+			function addBlock() {
+				var blockId = document.getElementById("block:id").value;
+				var blockColor = document.getElementById("block:color").value;
+				blocks.push({ block: blockId, color: blockColor });
+				updateBlockList();
+			}
+
+			function selectBlock(id) {
+				var element = getBlockById(id);
+				if (element === selectedBlock) {
+					selectedBlock = {};
+				} else {
+					selectedBlock = element;
+				}
+				updateBlockList();
+			}
+
+			function remove(id) {
+				var element = getBlockById(id);
+				if (element === selectedBlock) {
+					selectedBlock = {};
+				} 
+				blocks = blocks.filter(value => {return value !== element});
+				updateBlockList();
+			}
+		</script>
+	</body>
+</html>
