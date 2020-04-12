@@ -238,6 +238,14 @@ wuxiacraft.skills.adept_sword_flight=Adept Sword Flight
 //Recipes
 wuxiacraft.recipes.name.body_refinement_pill_recipe=Body Refinement Pill Recipe
 wuxiacraft.recipes.name.training_pill_recipe=Training Pill Recipe
+wuxiacraft.recipes.name.reinforcement_pill_recipe=Reinforcement Pill Recipe
+wuxiacraft.recipes.name.body_creation_pill_recipe=Body Creation Pill Recipe
+wuxiacraft.recipes.name.soul_refinement_pill_recipe=Soul Refinement Pill Recipe
+wuxiacraft.recipes.name.soul_aspect_pill_recipe=Soul Aspect Pill Recipe
+wuxiacraft.recipes.name.wandering_ghost_pill_recipe=Wandering Ghost Pill Recipe
+wuxiacraft.recipes.name.qi_paths_refinement_pill_recipe=Qi Paths Refinement Pill Recipe
+wuxiacraft.recipes.name.meridian_injection_pill_recipe=Meridian Injection Pill Recipe
+wuxiacraft.recipes.name.dantian_condensing_pill_recipe=Dantian Condensing Pill Recipe
 wuxiacraft.recipes.name.energy_recovery_pill_recipe=Energy Recovery Pill Recipe
 wuxiacraft.recipes.name.minor_healing_pill_recipe=Minor Healing Pill Recipe
 wuxiacraft.recipes.name.minor_recovery_pill_recipe=Minor Recovery Pill Recipe

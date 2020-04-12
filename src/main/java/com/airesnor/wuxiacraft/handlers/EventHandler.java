@@ -44,9 +44,11 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -599,6 +601,36 @@ public class EventHandler {
 	 */
 	@SubscribeEvent
 	public void onPlayerHunger(TickEvent.PlayerTickEvent event) {
+		EntityPlayer player = event.player;
+		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+		float cost = 10000f;
+
+		if(player.getFoodStats().getFoodLevel() < 19 && cultivation.getCurrentLevel().energyAsFood) {
+			if(cultivation.getCurrentLevel().needNoFood) {
+				player.getFoodStats().setFoodLevel(20);
+				try {
+					Field foodStats = ReflectionHelper.findField(player.getFoodStats().getClass(), "foodSaturationLevel", "field_75125_b");
+					foodStats.setAccessible(true);
+					foodStats.setFloat(player.getFoodStats(), 50f);
+					foodStats.setAccessible(false);
+				} catch (Exception e) {
+					WuxiaCraft.logger.error("Couldn't help with food, sorry!");
+					e.printStackTrace();
+				}
+			} else if(cultivation.hasEnergy(cost)) {
+				player.getFoodStats().setFoodLevel(20);
+				try {
+					Field foodStats = ReflectionHelper.findField(player.getFoodStats().getClass(), "foodSaturationLevel", "field_75125_b");
+					foodStats.setAccessible(true);
+					foodStats.setFloat(player.getFoodStats(), 50f);
+					foodStats.setAccessible(false);
+					cultivation.remEnergy(cost);
+				} catch (Exception e) {
+					WuxiaCraft.logger.error("Couldn't help with food, sorry!");
+					e.printStackTrace();
+				}
+			}
+		}
 
 	}
 
