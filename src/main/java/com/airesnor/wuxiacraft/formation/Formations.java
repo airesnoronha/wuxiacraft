@@ -1,5 +1,7 @@
 package com.airesnor.wuxiacraft.formation;
 
+import org.apache.logging.log4j.message.StructuredDataMessage;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +24,8 @@ public class Formations {
 	public static final Formation FOREIGN_QI_BARRIER = new FormationPlayerBarrier("foreign_qi_barrier", 24.2f, 1000f, 156f, 50.3125f);
 	public static final Formation EARTHLY_BLOCKADE = new FormationPlayerBarrier("earthly_blockade", 103.52f, 1000f, 184f, 236.9);
 	public static final Formation FIRMAMENT_PROTECTION = new FormationPlayerBarrier("firmament_protection", 389.25f, 1000f, 202f, 958.2525);
-	public static final Formation LAW_CONDENSING_BARRIER = new FormationPlayerBarrier("law_condensing_barrier", 1654.8f, 1000f, 232f, 4263.075);
-	public static final Formation HEAVENLY_DOME_RECREATION = new FormationPlayerBarrier("heavenly_dome_recreation", 8167.53f, 1000f, 256f, 22382.925);
+	public static final Formation LAW_CONDENSING_BARRIER = new FormationPlayerBarrier("law_condensing_barrier", 1654.8f, 1000f, 232f, 4263.075); //don't have diagram
+	public static final Formation HEAVENLY_DOME_RECREATION = new FormationPlayerBarrier("heavenly_dome_recreation", 8167.53f, 1000f, 256f, 22382.925); //don't have diagram
 
 	//mob suppression
 	public static final Formation WEAK_MOB_SUPPRESSION_ARRAY = new FormationMobSuppression("weak_mob_suppression_array", 3f, 650f, 80, 1f);
@@ -32,19 +34,21 @@ public class Formations {
 
 	//Cultivation formations
 	public static final Formation SOUL_GATHERING_FORMATION = new FormationCultivationHelper("soul_gathering_formation", 3, 220f, 8f, 0.3f);
-	public static final Formation QI_PATHS_OPENER_ARRAY = new FormationCultivationHelper("qi_paths_opener_array", 6f, 440f, 8f, 0.6f);
-	public static final Formation DANTIAN_FORMING_ARRAY = new FormationCultivationHelper("dantian_forming_array", 10.67, 782.22, 8f, 1.067f);
-	public static final Formation EARTH_QI_INTENSIFIER_FORMATION = new FormationCultivationHelper("earth_qi_intensifier_formation", 20, 1460.66, 8f, 2f);
-	public static final Formation SKY_QI_INTENSIFIER_FORMATION = new FormationCultivationHelper("sky_qi_intensifier_formation", 48, 3544.44, 8f, 4.8f);
-	public static final Formation LAW_PROJECTION_FORMATION = new FormationCultivationHelper("law_projection_formation", 153.3, 11244.44, 8f, 15.33f);
-	public static final Formation HEAVENLY_WAR_FORMATION = new FormationCultivationHelper("heavenly_war_formation", 383.33, 28111.11, 8f, 38.33f);
-	public static final Formation IMMORTAL_GRASP_FORMATION = new FormationCultivationHelper("immortal_grasp_formation", 1316.6, 96555.55, 8f, 131.66f);
-	public static final Formation IMMORTAL_ASCENSION_FORMATION = new FormationCultivationHelper("immortal_ascension_formation", 3500, 256666.66, 8f, 350f);
-	public static final Formation HEAVENLY_REACH_FORMATION = new FormationCultivationHelper("heavenly_reach_formation", 14833.33, 1087777.77, 8f, 1483.33);
-	public static final Formation TIME_ESSENCE_FORMATION = new FormationCultivationHelper("time_essence_formation", 50000, 333333.33, 8f, 5000);
-	public static final Formation IMMORTAL_DESTROYER_FORMATION = new FormationCultivationHelper("immortal_destroyer_formation", 200000, 14666666.66f, 8f, 20000f);
-	public static final Formation DIVINITY_GRASP_FORMATION = new FormationCultivationHelper("divinity_grasp_formation", 966666.66, 70888888.88, 8f, 96666.66);
-	public static final Formation CATACLYSM_FORMATION = new FormationCultivationHelper("cataclysm_formation", 4083333.33, 299444444.44, 8f, 408333.33);
-	public static final Formation GODHOOD_KEEPER_FORMATION = new FormationCultivationHelper("godhood_keeper_formation", 19250000, 1411666666.66, 8f, 1925000);
+	public static final Formation QI_PATHS_OPENER_ARRAY = new FormationCultivationHelper("qi_paths_opener_array", 6f, 440f, 8f, 0.6f); //don't have diagram
+	public static final Formation DANTIAN_FORMING_ARRAY = new FormationCultivationHelper("dantian_forming_array", 10.67, 782.22, 8f, 1.067f); //don't have diagram
+	public static final Formation EARTH_QI_INTENSIFIER_FORMATION = new FormationCultivationHelper("earth_qi_intensifier_formation", 20, 1460.66, 8f, 2f); //don't have diagram
+	public static final Formation SKY_QI_INTENSIFIER_FORMATION = new FormationCultivationHelper("sky_qi_intensifier_formation", 48, 3544.44, 8f, 4.8f); //don't have diagram
+	public static final Formation LAW_PROJECTION_FORMATION = new FormationCultivationHelper("law_projection_formation", 153.3, 11244.44, 8f, 15.33f); //don't have diagram
+	public static final Formation HEAVENLY_WAR_FORMATION = new FormationCultivationHelper("heavenly_war_formation", 383.33, 28111.11, 8f, 38.33f); //don't have diagram
+	public static final Formation IMMORTAL_GRASP_FORMATION = new FormationCultivationHelper("immortal_grasp_formation", 1316.6, 96555.55, 8f, 131.66f); //don't have diagram
+	public static final Formation IMMORTAL_ASCENSION_FORMATION = new FormationCultivationHelper("immortal_ascension_formation", 3500, 256666.66, 8f, 350f); //don't have diagram
+	public static final Formation HEAVENLY_REACH_FORMATION = new FormationCultivationHelper("heavenly_reach_formation", 14833.33, 1087777.77, 8f, 1483.33); //don't have diagram
+	public static final Formation TIME_ESSENCE_FORMATION = new FormationCultivationHelper("time_essence_formation", 50000, 333333.33, 8f, 5000); //don't have diagram
+	public static final Formation IMMORTAL_DESTROYER_FORMATION = new FormationCultivationHelper("immortal_destroyer_formation", 200000, 14666666.66f, 8f, 20000f); //don't have diagram
+	public static final Formation DIVINITY_GRASP_FORMATION = new FormationCultivationHelper("divinity_grasp_formation", 966666.66, 70888888.88, 8f, 96666.66); //don't have diagram
+	public static final Formation CATACLYSM_FORMATION = new FormationCultivationHelper("cataclysm_formation", 4083333.33, 299444444.44, 8f, 408333.33); //don't have diagram
+	public static final Formation GODHOOD_KEEPER_FORMATION = new FormationCultivationHelper("godhood_keeper_formation", 19250000, 1411666666.66, 8f, 1925000); //don't have diagram
 
+	//Teleportation
+	public static final Formation TELEPOSITION_ARRAY = new FormationTeleportation("teleposition_array", 750, 2500, 5000);
 }
