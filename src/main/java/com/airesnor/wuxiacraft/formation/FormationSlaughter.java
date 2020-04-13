@@ -98,10 +98,14 @@ public class FormationSlaughter extends Formation {
 				return !playersWhiteListed.contains(input);
 			else return true;
 		});
+		int activated = 0;
 		for (EntityLivingBase target : targets) {
-			target.attackEntityFrom(DamageSource.GENERIC.setDamageBypassesArmor(), this.strength);
+			if(parent.hasEnergy(this.getOperationCost() * (activated+1))) {
+				target.attackEntityFrom(DamageSource.GENERIC.setDamageBypassesArmor(), this.strength);
+				activated++;
+			}
 		}
-		return 0;
+		return activated;
 	}
 
 	@SideOnly(Side.CLIENT)
