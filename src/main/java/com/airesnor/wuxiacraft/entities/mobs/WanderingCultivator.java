@@ -96,4 +96,5 @@ public class WanderingCultivator extends EntityCultivator implements IMob {
 		}
 		return table;
 	}
+
 }

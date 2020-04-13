@@ -51,4 +51,7 @@ public class Formations {
 
 	//Teleportation
 	public static final Formation TELEPOSITION_ARRAY = new FormationTeleportation("teleposition_array", 750, 2500, 5000);
+
+	//Slaughter
+	public static final Formation WEAK_SLAUGHTER_FORMATION = new FormationSlaughter("weak_slaughter_formation", 7, 650, 24, 3f);
 }

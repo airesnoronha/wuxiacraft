@@ -66,7 +66,7 @@ public class FormationPlayerBarrier extends Formation {
 			List<String> names = new ArrayList<>();
 			List<TileEntity> tileEntities = worldIn.loadedTileEntityList;
 			for (TileEntity te : tileEntities) {
-				if (te instanceof TileEntitySign && te.getPos().getDistance(source.getX(), source.getY(), source.getZ()) < 16) {
+				if (te instanceof TileEntitySign && te.getPos().getDistance(source.getX(), source.getY(), source.getZ()) < 10) {
 					ITextComponent[] lines = ((TileEntitySign) te).signText;
 					for (ITextComponent line : lines) {
 						if (!line.getUnformattedText().equals("")) {

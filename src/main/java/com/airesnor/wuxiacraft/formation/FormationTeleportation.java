@@ -35,7 +35,7 @@ public class FormationTeleportation extends Formation {
 			List<String> names = new ArrayList<>();
 			List<TileEntity> tileEntities = worldIn.loadedTileEntityList;
 			for (TileEntity te : tileEntities) {
-				if (te instanceof TileEntitySign && te.getPos().getDistance(source.getX(), source.getY(), source.getZ()) < 16) {
+				if (te instanceof TileEntitySign && te.getPos().getDistance(source.getX(), source.getY(), source.getZ()) < 10) {
 					ITextComponent[] lines = ((TileEntitySign) te).signText;
 					for (ITextComponent line : lines) {
 						if (!line.getUnformattedText().equals("")) {
@@ -65,27 +65,29 @@ public class FormationTeleportation extends Formation {
 			double distance = new Vec3d(targetX, targetY, targetZ).distanceTo(new Vec3d(source.getX(), source.getY(), source.getZ()));
 			List<Entity> entities = worldIn.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(source).grow(2));
 			for(Entity entity : entities) {
-				if(distance < this.getRange()) { //safe landing
-					entity.setPositionAndUpdate(targetX, targetY, targetZ);
-				} else { //thrown away
-					double radius = distance/2; //a radius to make an arc that will be the y position the player will be thrown in
-					Vec3d direction = new Vec3d(targetX - source.getX(), 0, targetZ - source.getZ()).normalize(); //y not used because i just wanted in horizontal plane direction
-					double newX = source.getX() + direction.x * this.getRange();
-					double newZ = source.getZ() + direction.z * this.getRange();
-					double angle = Math.acos((this.getRange() > radius ? this.getRange()-radius : this.getRange()) / radius);
-					double newY = source.getY() + Math.sin(angle)*radius;
-					double speed = distance/this.getRange() * 10; // i guess it'll be always something around 10 to 50, not too much
-					double mx = direction.x * speed;
-					double mz = direction.z * speed;
-					double my = Math.cos(angle) * speed; //it's the differential of the position (the speed is the differential of position)
-					my *= this.getRange() > radius ? -1 : 1; //falling or rising
-					entity.motionX = mx;
-					entity.motionY = my;
-					entity.motionZ = mz;
-					entity.velocityChanged = true;
-					entity.setPositionAndUpdate(newX, newY, newZ);
+				if(parent.hasEnergy(this.getOperationCost()*(activated+1))) {
+					if (distance < this.getRange()) { //safe landing
+						entity.setPositionAndUpdate(targetX, targetY, targetZ);
+					} else { //thrown away
+						double radius = distance / 2; //a radius to make an arc that will be the y position the player will be thrown in
+						Vec3d direction = new Vec3d(targetX - source.getX(), 0, targetZ - source.getZ()).normalize(); //y not used because i just wanted in horizontal plane direction
+						double newX = source.getX() + direction.x * this.getRange();
+						double newZ = source.getZ() + direction.z * this.getRange();
+						double angle = Math.acos((this.getRange() > radius ? this.getRange() - radius : this.getRange()) / radius);
+						double newY = source.getY() + Math.sin(angle) * radius;
+						double speed = distance / this.getRange() * 10; // i guess it'll be always something around 10 to 50, not too much
+						double mx = direction.x * speed;
+						double mz = direction.z * speed;
+						double my = Math.cos(angle) * speed; //it's the differential of the position (the speed is the differential of position)
+						my *= this.getRange() > radius ? -1 : 1; //falling or rising
+						entity.motionX = mx;
+						entity.motionY = my;
+						entity.motionZ = mz;
+						entity.velocityChanged = true;
+						entity.setPositionAndUpdate(newX, newY, newZ);
+					}
+					activated++;
 				}
-				activated++;
 			}
 		}
 		return activated;
