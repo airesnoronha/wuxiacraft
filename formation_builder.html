@@ -60,6 +60,9 @@
 				width: 30px;
 				height: 30px;
 			}
+			#cell_0_0 {
+				border-color: red;
+			}
 			p {
 				margin-block-start: 10px;
 				margin-block-end: 10px;
@@ -90,10 +93,10 @@
 				</p>
 				<p>formation: <input id="formation" type="text" /></p>
 				<p class="formGroup">
-					<button>Load</button>
-					<button>Save</button>
+					<button onclick="loadFile()">Load</button>
+					<button onclick="save()">Save</button>
 				</p>
-				<p class="formGroup">z=<input id="zIndex" type="number" value="0" /></p>
+				<p class="formGroup">y=<input id="yIndex" type="number" value="0" /></p>
 				<hr width="100%" />
 				<p class="formGroup">block: <input type="text" id="block:id" /></p>
 				<div class="formGroup">
@@ -102,19 +105,30 @@
 				</div>
 				<p class="formGroup">
 					<button onclick="addBlock()">Add</button>
-					<button>Remove</button>
-					<button>Edit</button>
+					<button onclick="editBlock()">Edit</button>
 				</p>
 				<hr />
 				<div id="blocksContainer"></div>
+				<hr>
+				<textarea id="output"></textarea>
 			</div>
 			<div id="page">
 				<table id="board">
 					<script>
-						for (i = -10; i < 11; i++) {
+						for (j = -10; j < 11; j++) {
 							document.write("<tr>");
-							for (j = -10; j < 11; j++) {
-								document.write('<td id="cell_' + i + "_" + j + '" class="cell"></td>');
+							for (i = -10; i < 11; i++) {
+								document.write(
+									'<td id="cell_' +
+										i +
+										"_" +
+										j +
+										'" class="cell" onclick="toggleCell(' +
+										i +
+										"," +
+										j +
+										')"></td>'
+								);
 							}
 							document.write("</tr>");
 						}
@@ -123,7 +137,12 @@
 			</div>
 		</div>
 		<script>
-			document.getElementById("block:color").addEventListener("onfocusout", changeDemoColor);
+			document.getElementById("block:color").addEventListener("input", () => {
+				changeDemoColor();
+			});
+			document.getElementById("yIndex").addEventListener("change", () => {
+				renderBlockMap();
+			});
 
 			function changeDemoColor() {
 				var demo = document.getElementById("colorDemo");
@@ -148,13 +167,15 @@
 						element["block"] +
 						'" onclick="selectBlock(\'' +
 						element["block"] +
-						'\')"></div><span id="text-'+element["block"]+'" style="flex-grow:10;padding:0px 10px;" onclick="selectBlock(\'' +
+						'\')"></div><span id="text-' +
+						element["block"] +
+						'" style="flex-grow:10;padding:0px 10px;" onclick="selectBlock(\'' +
 						element["block"] +
 						"')\">" +
 						element["block"] +
 						'</span><button style="flex-grow:0" onclick="remove(\'' +
 						element["block"] +
-						'\')">Remove</button></div>';
+						"')\">Remove</button></div>";
 					document.getElementById("color-" + element["block"]).style["background-color"] = element["color"];
 					if (element == selectedBlock) {
 						document.getElementById(element["block"]).style["background-color"] = "blue";
@@ -181,6 +202,31 @@
 				updateBlockList();
 			}
 
+			function editBlock() {
+				var blockId = document.getElementById("block:id").value;
+				var blockColor = document.getElementById("block:color").value;
+				if(selectedBlock !== {}) {
+					var block = getBlockById(selectedBlock.block);
+					block.block = blockId;
+					block.color = blockColor;
+					var index = blocks.indexOf(selectedBlock);
+					if(~index) {
+						blocks[index] = block;
+					}
+					selectedBlock = block;
+				}
+				updateBlockList();
+				renderBlockMap();
+			}
+
+			function addCustomBlock(id, color) {
+				var blockId = id;
+				var blockColor = color;
+				var newBlock = blocks.push({ block: blockId, color: blockColor });
+				updateBlockList();
+				return blocks[newBlock];
+			}
+
 			function selectBlock(id) {
 				var element = getBlockById(id);
 				if (element === selectedBlock) {
@@ -195,9 +241,91 @@
 				var element = getBlockById(id);
 				if (element === selectedBlock) {
 					selectedBlock = {};
-				} 
-				blocks = blocks.filter(value => {return value !== element});
+				}
+				blocks = blocks.filter(value => {
+					return value !== element;
+				});
 				updateBlockList();
+			}
+
+			function renderBlockMap() {
+				var yIndex = document.getElementById("yIndex").value;
+				for (i = -10; i < 11; i++) {
+					for (j = -10; j < 11; j++) {
+						document.getElementById("cell_" + i + "_" + j).style["background-color"] = "white";
+					}
+				}
+				blockMap.forEach(element => {
+					if (element.y == yIndex) {
+						var block = getBlockById(element.block);
+						document.getElementById("cell_" + element.x + "_" + element.z).style["background-color"] =
+							block.color;
+					}
+				});
+			}
+
+			function toggleCell(i, j) {
+				var yIndex = document.getElementById("yIndex").value;
+				var found = false;
+				blockMap = blockMap.filter(element => {
+					found = element.x === i && element.y === yIndex && element.z === j;
+					return element.x !== i || element.y !== yIndex || element.z !== j;
+				});
+				if (!found) {
+					if (selectBlock !== {}) {
+						blockMap.push({ block: selectedBlock.block, x: i, y: yIndex, z: j });
+					}
+				}
+				renderBlockMap();
+			}
+
+			function loadFile() {
+				var rawFile = new XMLHttpRequest();
+				var location = document.getElementById("location").value;
+				rawFile.open("GET", "file://" + location, false);
+				rawFile.onreadystatechange = () => {
+					if (rawFile.readyState === 4) {
+						if (rawFile.status === 200 || status === 0) {
+							var allText = rawFile.responseText;
+							var parsed = JSON.parse(allText);
+							document.getElementById("formation").value = parsed.formationName;
+							parsed.positions.forEach(element => {
+								var block = getBlockById(element.blockState);
+								if (block == null) {
+									block = addCustomBlock(
+										block.id,
+										"rgb(" +
+											Math.floor(Math.random() * 256) +
+											"," +
+											Math.floor(Math.random() * 256) +
+											"," +
+											Math.floor(Math.random() * 256) +
+											")"
+									);
+								}
+								blockMap.push({ block: element.blockState, x: element.x, y: element.y, z: element.z });
+							});
+						}
+					}
+				};
+			}
+
+			function save() {
+				var formation = document.getElementById("formation").value;
+				var output = {
+					formationName: formation,
+					positions: []
+				}
+				blockMap.forEach(element=> {
+					output.positions.push({
+						blockState: element.block,
+						x: element.x,
+						y: element.y,
+						z: element.z
+					});
+				});
+				var text = JSON.stringify(output, null, "\t");
+				document.getElementById("output").value = text;
 			}
 		</script>
 	</body>
