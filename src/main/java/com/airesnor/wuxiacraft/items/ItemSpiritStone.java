@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.items;
 
-import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillAction;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
@@ -31,6 +30,7 @@ public class ItemSpiritStone extends ItemBase {
 		this.amount = 1;
 		this.setMaxDamage(100);
 		this.color = color;
+		setCreativeTab(Items.WUXIACRAFT_GENERAL);
 	}
 
 	public ItemSpiritStone setAmount(double amount) {

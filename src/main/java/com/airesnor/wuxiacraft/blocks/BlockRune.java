@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.blocks;
 
+import com.airesnor.wuxiacraft.items.Items;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
@@ -7,6 +8,8 @@ import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
@@ -126,6 +129,21 @@ public class BlockRune extends Block {
 			IBlockState state = worldIn.getBlockState(pos.down());
 			return (state.isTopSolid() || state.getBlockFaceShape(worldIn, pos.down(), EnumFacing.UP) == BlockFaceShape.SOLID) && super.canPlaceBlockAt(worldIn, pos);
 		}
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	@Nonnull
+	@ParametersAreNonnullByDefault
+	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+		return new ItemStack(this.getItem());
+	}
+
+	private Item getItem() {
+		if(Blocks.BLOOD_RUNES.containsValue(this)) {
+			return Items.BLOOD_BOTTLE;
+		}
+		return Items.PAINT_BOTTLE;
 	}
 
 	@SuppressWarnings("unused")

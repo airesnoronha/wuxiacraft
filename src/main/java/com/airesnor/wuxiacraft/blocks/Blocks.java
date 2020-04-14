@@ -3,6 +3,8 @@ package com.airesnor.wuxiacraft.blocks;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.formation.FormationCoreBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockPlanks;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
@@ -10,6 +12,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,5 +45,21 @@ public class Blocks {
 	}
 
 	public static final Block FORMATION_CORE = new FormationCoreBlock("formation_core");
+
+	//Training posts
+	public static final Map<String, Block> TRAINING_POSTS = new HashMap<>();
+	static {
+		List<Triple<String, Double, Material>> tiers =new ArrayList<>();
+		tiers.add(Triple.of("stick", 1.0, Material.WOOD));
+		tiers.add(Triple.of("stone", 2.5, Material.ROCK));
+		tiers.add(Triple.of("iron", 4.75, Material.IRON));
+		tiers.add(Triple.of("diamond", 8.0, Material.IRON));
+		for(BlockPlanks.EnumType wood: BlockPlanks.EnumType.values()) {
+			for(Triple<String, Double, Material> triple : tiers) {
+				String name = "training_post_"+wood.getName()+"_"+triple.getLeft();
+				TRAINING_POSTS.put(name, new BlockTrainingPost(name, triple.getRight(), triple.getMiddle()));
+			}
+		}
+	}
 
 }

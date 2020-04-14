@@ -71,6 +71,11 @@ item.empty_bottle.name=Empty Bottle
 item.blood_bottle.name=Blood Bottle
 item.paint_brush.name=Paint Brush
 item.paint_bottle.name=Paint Bottle
+item.gold_dagger.name=Golden Dagger
+item.training_post_diamond.name=Diamond Training Post
+item.training_post_iron.name=Iron Training Post
+item.training_post_stone.name=Stone Training Post
+item.training_post_stick.name=Training Post
 
 //Creative tabs
 itemGroup.wuxiacraft.scrolls=Cultivation Techniques

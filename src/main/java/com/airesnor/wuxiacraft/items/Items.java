@@ -4,6 +4,7 @@ import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import net.minecraft.block.BlockPlanks;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -15,7 +16,9 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public class Items {
@@ -43,6 +46,13 @@ public class Items {
 		@Override
 		public ItemStack getTabIconItem() {
 			return new ItemStack(TRAINING_PILL);
+		}
+	};
+
+	public static final CreativeTabs WUXIACRAFT_GENERAL = new CreativeTabs("wuxiacraft.general") {
+		@Override
+		public ItemStack getTabIconItem() {
+			return new ItemStack(Items.PRIMORDIAL_CHAOS_STONE);
 		}
 	};
 
@@ -198,5 +208,21 @@ public class Items {
 	public static final Item BLOOD_BOTTLE = new ItemBloodContainer("blood_bottle");
 	public static final Item EMPTY_BOTTLE = new ItemBase("empty_bottle").setMaxStackSize(16);
 	public static final Item PAINT_BOTTLE = new ItemBase("paint_bottle").setMaxStackSize(1).setMaxDamage(50);
+
+	//Training posts
+	public static final Map<String, Item> TRAINING_POSTS = new HashMap<>();
+	static {
+		List<String> tiers =new ArrayList<>();
+		tiers.add("stick");
+		tiers.add("stone");
+		tiers.add("iron");
+		tiers.add("diamond");
+		for(BlockPlanks.EnumType wood: BlockPlanks.EnumType.values()) {
+			for(String tier : tiers) {
+				String name = "training_post_"+wood.getName()+"_"+tier;
+				TRAINING_POSTS.put(name, new ItemTrainingPost(name));
+			}
+		}
+	}
 
 }

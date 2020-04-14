@@ -1,8 +1,6 @@
 package com.airesnor.wuxiacraft.utils;
 
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -11,13 +9,12 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class SkillUtils {
 
@@ -32,11 +29,7 @@ public class SkillUtils {
 		}
 	}
 
-	private static final Predicate<Entity> SKILL_TARGETS = Predicates.and(EntitySelectors.NOT_SPECTATING, EntitySelectors.IS_ALIVE, new Predicate<Entity>() {
-		public boolean apply(@Nullable Entity p_apply_1_) {
-			return p_apply_1_.canBeCollidedWith();
-		}
-	});
+	private static final Predicate<Entity> SKILL_TARGETS = input -> input != null && EntitySelectors.NOT_SPECTATING.test(input) && EntitySelectors.IS_ALIVE.test(input) && input.canBeCollidedWith();
 
 	@Nullable
 	public static Entity rayTraceEntities(EntityLivingBase player, float distance, float partialTicks) {
@@ -48,9 +41,7 @@ public class SkillUtils {
 		List<Entity> list = player.world.getEntitiesInAABBexcluding(player, new AxisAlignedBB(player.getPosition()).grow(distance + 1), SKILL_TARGETS::test);
 		double targetDistance = 0.0D;
 
-		for (int i = 0; i < list.size(); ++i) {
-			Entity entity1 = list.get(i);
-
+		for (Entity entity1 : list) {
 			if (entity1 != player) {
 				AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow(0.30000001192092896D);
 				RayTraceResult raytraceresult = axisalignedbb.calculateIntercept(start, end);
