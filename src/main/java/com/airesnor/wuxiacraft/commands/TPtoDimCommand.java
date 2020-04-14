@@ -32,7 +32,7 @@ public class TPtoDimCommand extends CommandBase {
     @ParametersAreNonnullByDefault
     @Nonnull
     public String getUsage(ICommandSender sender) {
-        return "/tptodim <dimensionID> or /tp2dim <dimensionID>";
+        return "/tptodim <dimensionID> or /tptodim <dimensionID> <x> <y> <z> or /tptodim <x> <y> <z>";
     }
 
     @Override
@@ -52,6 +52,7 @@ public class TPtoDimCommand extends CommandBase {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         String dimension = args[0];
         int dimensionID;
+        boolean wrongUsage = true;
 
         if (dimension.equalsIgnoreCase("nether")) {
             dimensionID = -1;
@@ -73,9 +74,11 @@ public class TPtoDimCommand extends CommandBase {
                             sender.getPosition().getX(),  sender.getPosition().getY() + 20, sender.getPosition().getZ(),
                             0f, 0f);
                 }
+                wrongUsage = false;
             }
-        } else {
-            TextComponentString message = new TextComponentString("Invalid Usage");
+        }
+        if(wrongUsage) {
+            TextComponentString message = new TextComponentString("Invalid Usage, /tptodim <dimensionID> or /tptodim <dimensionID> <x> <y> <z>");
             message.getStyle().setColor(TextFormatting.RED);
             sender.sendMessage(message);
         }

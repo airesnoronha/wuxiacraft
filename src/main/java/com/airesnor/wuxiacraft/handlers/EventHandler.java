@@ -31,6 +31,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.FoodStats;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
@@ -61,6 +62,12 @@ public class EventHandler {
 	private static final String armor_mod_name = "wuxiacraft.armor";
 	private static final String attack_speed_mod_name = "wuxiacraft.attack_speed";
 	private static final String health_mod_name = "wuxiacraft.health";
+
+	private static final Field foodStats = ReflectionHelper.findField(FoodStats.class, "foodSaturationLevel", "field_75125_b");
+
+	static{
+		foodStats.setAccessible(true);
+	}
 
 	/**
 	 * It gives the client side information about cultivation which i stored server side
@@ -603,35 +610,30 @@ public class EventHandler {
 	public void onPlayerHunger(TickEvent.PlayerTickEvent event) {
 		EntityPlayer player = event.player;
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-		float cost = 10000f;
+		float cost = ((1f/3f) * CultivationLevel.SKY_LAW.getMaxEnergyByLevel(1) * (5f/6f));
 
-		if(player.getFoodStats().getFoodLevel() < 19 && cultivation.getCurrentLevel().energyAsFood) {
-			if(cultivation.getCurrentLevel().needNoFood) {
-				player.getFoodStats().setFoodLevel(20);
-				try {
-					Field foodStats = ReflectionHelper.findField(player.getFoodStats().getClass(), "foodSaturationLevel", "field_75125_b");
-					foodStats.setAccessible(true);
-					foodStats.setFloat(player.getFoodStats(), 50f);
-					foodStats.setAccessible(false);
-				} catch (Exception e) {
-					WuxiaCraft.logger.error("Couldn't help with food, sorry!");
-					e.printStackTrace();
-				}
-			} else if(cultivation.hasEnergy(cost)) {
-				player.getFoodStats().setFoodLevel(20);
-				try {
-					Field foodStats = ReflectionHelper.findField(player.getFoodStats().getClass(), "foodSaturationLevel", "field_75125_b");
-					foodStats.setAccessible(true);
-					foodStats.setFloat(player.getFoodStats(), 50f);
-					foodStats.setAccessible(false);
-					cultivation.remEnergy(cost);
-				} catch (Exception e) {
-					WuxiaCraft.logger.error("Couldn't help with food, sorry!");
-					e.printStackTrace();
+		if(event.phase == TickEvent.Phase.END) {
+			if(player.getFoodStats().getFoodLevel() < 20 && cultivation.getCurrentLevel().energyAsFood) {
+				if(cultivation.getCurrentLevel().needNoFood) {
+					player.getFoodStats().setFoodLevel(20);
+					try {
+						foodStats.setFloat(player.getFoodStats(), 50f);
+					} catch (Exception e) {
+						WuxiaCraft.logger.error("Couldn't help with food, sorry!");
+						e.printStackTrace();
+					}
+				} else if(cultivation.hasEnergy(cost)) {
+					player.getFoodStats().setFoodLevel(20);
+					try {
+						foodStats.setFloat(player.getFoodStats(), 50f);
+						cultivation.remEnergy(cost);
+					} catch (Exception e) {
+						WuxiaCraft.logger.error("Couldn't help with food, sorry!");
+						e.printStackTrace();
+					}
 				}
 			}
 		}
-
 	}
 
 	/**

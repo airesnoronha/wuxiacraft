@@ -69,7 +69,11 @@ public class CultHelpCommand extends CommandBase {
                         "\nStep 2: \nUse featherfan to control the temperature." +
                         "\nStep 3: \nPlace items in at a specific temperature and order.";
                 String page6 = "Step 4: \nOnce all the items are in let the cauldron cook at a specific temperature." +
-                        "\n\nColors: ";
+                        "\n\nColors: " +
+                        "\n\nGreen - Cold" +
+                        "\nOrange - Hot" +
+                        "\nYellow - Cooking" +
+                        "\nRed - Wrong Recipe";
 
                 //NBT data editing
                 addBookPages("Anophobia & Aires", "WuxiaCraft Tutorial Book", tutorialBook, tagCompound, tagList,

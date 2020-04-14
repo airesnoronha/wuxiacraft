@@ -3,6 +3,7 @@ package com.airesnor.wuxiacraft.utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.Teleporter;
@@ -43,6 +44,19 @@ public class TeleportationUtil extends Teleporter{
             playerMP.sendMessage(message);
         }
         worldServer.getMinecraftServer().getPlayerList().transferPlayerToDimension(playerMP, dimensionID, new TeleportationUtil(worldServer, x, y, z, 0f, 0f));
+        playerMP.setPositionAndRotation(x, y, z, playerRotationYaw, playerRotationPitch);
+    }
+
+    public static void teleportPlayerToCoordinates(EntityPlayerMP playerMP, int dimensionID, double x, double y, double z, float playerRotationYaw, float playerRotationPitch) {
+        MinecraftServer minecraftServer = playerMP.getEntityWorld().getMinecraftServer();
+        WorldServer worldServer = minecraftServer.getWorld(dimensionID);
+
+        if (worldServer == null || minecraftServer == null) {
+            TextComponentString message = new TextComponentString("Invalid Location");
+            message.getStyle().setColor(TextFormatting.RED);
+            playerMP.sendMessage(message);
+        }
+        worldServer.getBlockState(new BlockPos((int)x, (int)y, (int)z));
         playerMP.setPositionAndRotation(x, y, z, playerRotationYaw, playerRotationPitch);
     }
 }
