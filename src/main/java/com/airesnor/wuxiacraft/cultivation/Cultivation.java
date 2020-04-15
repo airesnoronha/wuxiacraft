@@ -28,16 +28,18 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public boolean addProgress(double amount) {
+	public boolean addProgress(double amount, boolean allowBreakThrough) {
 		boolean leveled = false;
 		this.progress += amount;
-		while (this.progress >= this.level.getProgressBySubLevel(this.subLevel)) {
-			leveled = true;
-			this.progress -= this.level.getProgressBySubLevel(this.subLevel);
-			this.subLevel++;
-			if (this.subLevel >= this.level.subLevels) {
-				this.subLevel = 0;
-				this.level = this.level.getNextLevel();
+		if(allowBreakThrough) {
+			if (this.progress >= this.level.getProgressBySubLevel(this.subLevel)) { //no more repeated breakthrough, just one at a time
+				leveled = true;
+				this.progress -= this.level.getProgressBySubLevel(this.subLevel);
+				this.subLevel++;
+				if (this.subLevel >= this.level.subLevels) {
+					this.subLevel = 0;
+					this.level = this.level.getNextLevel();
+				}
 			}
 		}
 		return leveled;

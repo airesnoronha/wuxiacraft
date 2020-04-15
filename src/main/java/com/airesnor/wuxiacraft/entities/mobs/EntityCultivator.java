@@ -22,6 +22,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 public abstract class EntityCultivator extends EntityCreature implements IEntityAdditionalSpawnData {
@@ -71,7 +72,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 		super.readEntityFromNBT(compound);
 		cultivation.setCurrentLevel(CultivationLevel.valueOf(compound.getString("level")));
 		cultivation.setCurrentSubLevel(compound.getInteger("subLevel"));
-		cultivation.addProgress(compound.getInteger("progress"));
+		cultivation.setProgress(compound.getInteger("progress"));
 		cultivation.addEnergy(compound.getInteger("energy"));
 		cultivation.setPillCooldown(compound.getInteger("pelletCD"));
 		int length = compound.getInteger("length");
@@ -93,6 +94,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	}
 
 	@Override
+	@ParametersAreNonnullByDefault
 	public boolean attackEntityAsMob(Entity entityIn) {
 		float damageValue = (float)this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
 		int knockBack = 0;
@@ -107,9 +109,9 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 
 		if (attacked)
 		{
-			if (knockBack > 0 && entityIn instanceof EntityLivingBase)
+			if (knockBack > 0)
 			{
-				((EntityLivingBase)entityIn).knockBack(this, (float)knockBack * 0.5F, (double) MathHelper.sin(this.rotationYaw * 0.017453292F), (double)(-MathHelper.cos(this.rotationYaw * 0.017453292F)));
+				((EntityLivingBase)entityIn).knockBack(this, (float)knockBack * 0.5F, MathHelper.sin(this.rotationYaw * 0.017453292F), (-MathHelper.cos(this.rotationYaw * 0.017453292F)));
 				this.motionX *= 0.6D;
 				this.motionZ *= 0.6D;
 			}
@@ -125,15 +127,15 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 			{
 				EntityPlayer entityplayer = (EntityPlayer)entityIn;
 				ItemStack itemstack = this.getHeldItemMainhand();
-				ItemStack itemstack1 = entityplayer.isHandActive() ? entityplayer.getActiveItemStack() : ItemStack.EMPTY;
+				ItemStack itemStack1 = entityplayer.isHandActive() ? entityplayer.getActiveItemStack() : ItemStack.EMPTY;
 
-				if (!itemstack.isEmpty() && !itemstack1.isEmpty() && itemstack.getItem().canDisableShield(itemstack, itemstack1, entityplayer, this) && itemstack1.getItem().isShield(itemstack1, entityplayer))
+				if (!itemstack.isEmpty() && !itemStack1.isEmpty() && itemstack.getItem().canDisableShield(itemstack, itemStack1, entityplayer, this) && itemStack1.getItem().isShield(itemStack1, entityplayer))
 				{
 					float f1 = 0.25F + (float)EnchantmentHelper.getEfficiencyModifier(this) * 0.05F;
 
 					if (this.rand.nextFloat() < f1)
 					{
-						entityplayer.getCooldownTracker().setCooldown(itemstack1.getItem(), 100);
+						entityplayer.getCooldownTracker().setCooldown(itemStack1.getItem(), 100);
 						this.world.setEntityState(entityplayer, (byte)30);
 					}
 				}
@@ -149,6 +151,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 		return !this.skillCap.getKnownSkills().isEmpty();
 	}
 
+	@SuppressWarnings("unused")
 	public List<Skill> getSkillList() {
 		return this.skillCap.getKnownSkills();
 	}
@@ -191,8 +194,8 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 		byte[] bytes = new byte[30];
 		additionalData.readBytes(bytes, 0, length);
 		bytes[length] = '\0';
-		String cultlevelname = new String(bytes, 0, length);
-		CultivationLevel level = CultivationLevel.valueOf(cultlevelname);
+		String cultLevelName = new String(bytes, 0, length);
+		CultivationLevel level = CultivationLevel.valueOf(cultLevelName);
 		this.cultivation.setCurrentLevel(level);
 		this.cultivation.setCurrentSubLevel(subLevel);
 		this.cultivation.setProgress(progress);

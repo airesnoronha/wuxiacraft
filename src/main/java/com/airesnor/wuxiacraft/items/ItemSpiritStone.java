@@ -103,7 +103,7 @@ public class ItemSpiritStone extends ItemBase {
 		public boolean activate(EntityLivingBase actor) {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 			if(this.amount < cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.003) {
-				CultivationUtils.cultivatorAddProgress(actor, cultivation, this.amount);
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, this.amount, false, false);
 			} else {
 				actor.world.createExplosion(actor, actor.posX, actor.posY + 0.9, actor.posZ, 3, true);
 				actor.attackEntityFrom(DamageSource.causeExplosionDamage(actor), (float)(this.amount * 3));

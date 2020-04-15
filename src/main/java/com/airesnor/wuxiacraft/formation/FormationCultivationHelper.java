@@ -23,7 +23,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
@@ -42,6 +41,7 @@ public class FormationCultivationHelper extends Formation {
 		this.amount = amount;
 	}
 
+	@SuppressWarnings("unused")
 	public FormationCultivationHelper setDisplayFormation(ResourceLocation newTexture) {
 		this.displayFormation = newTexture;
 		return this;
@@ -89,8 +89,8 @@ public class FormationCultivationHelper extends Formation {
 						if (parent.hasEnergy(this.getOperationCost())) {
 							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 							if (this.amount <= cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.06) {
-								CultivationUtils.cultivatorAddProgress(player, cultivation, this.amount);
-								NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, this.amount));
+								CultivationUtils.cultivatorAddProgress(player, cultivation, this.amount, false, false);
+								NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, this.amount, false, false));
 							}
 						}
 					}

@@ -188,7 +188,7 @@ public class EventHandler {
 											if (!player.isCreative())
 												cultivation.remEnergy(selectedSkill.getCost());
 											NetworkWrapper.INSTANCE.sendToServer(new ActivateSkillMessage());
-											cultivation.addProgress(selectedSkill.getProgress());
+											CultivationUtils.cultivatorAddProgress(player, cultivation, selectedSkill.getProgress(), false, false);
 										}
 									}
 								}
@@ -351,7 +351,7 @@ public class EventHandler {
 			EntityPlayer player = (EntityPlayer) event.getSource().getTrueSource();
 			if (!player.world.isRemote) {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-				CultivationUtils.cultivatorAddProgress(player, cultivation, 0.25f);
+				CultivationUtils.cultivatorAddProgress(player, cultivation, 0.25f, false, true);
 				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
 			}
 			ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
@@ -372,7 +372,7 @@ public class EventHandler {
 		if (player != null) {
 			IBlockState block = event.getState();
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-			CultivationUtils.cultivatorAddProgress(player, cultivation, 0.1f * block.getBlockHardness(event.getWorld(), event.getPos()));
+			CultivationUtils.cultivatorAddProgress(player, cultivation, 0.1f * block.getBlockHardness(event.getWorld(), event.getPos()), false, false);
 			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
 		}
 	}

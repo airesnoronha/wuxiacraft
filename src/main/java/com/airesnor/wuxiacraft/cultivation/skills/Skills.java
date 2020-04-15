@@ -103,6 +103,8 @@ public class Skills {
 						actor.addPotionEffect(effect);
 					}
 				}
+				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.001f, true, true);
 				return true;
 			})
 			.setWhenCasting(actor -> {
@@ -133,9 +135,9 @@ public class Skills {
 					}
 					if (actor instanceof EntityPlayer) {
 						if ((int) skillCap.getCastProgress() % 10 == 9) {
-							CultivationUtils.cultivatorAddProgress(actor, cultivation, amount);
+							CultivationUtils.cultivatorAddProgress(actor, cultivation, amount, false, false);
 							cultivation.remEnergy(energy);
-							NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, amount));
+							NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, amount, false, false));
 							NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("applySlowness", cultivation.hasEnergy(energy) ? energy : 0));
 						}
 					}

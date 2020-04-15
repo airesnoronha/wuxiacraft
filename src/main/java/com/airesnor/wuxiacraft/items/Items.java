@@ -63,7 +63,7 @@ public class Items {
 	public static final Item NATURAL_ODDITY_LOW = new ItemMonsterCore("natural_oddity_low").setUseDuration(100)
 			.setWhenUsing(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.56874F);
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.56874F, false, true);
 				return true;
 			})
 			.setMaxStackSize(64);
@@ -155,7 +155,7 @@ public class Items {
 	public static final Item GIANT_ANT_CORE = new ItemMonsterCore("giant_ant_core").setUseDuration(100)
 			.setWhenUsing(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.45786f);
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.45786f, false, true);
 				return true;
 			})
 			.setUseAction(actor -> {
@@ -168,7 +168,7 @@ public class Items {
 	public static final Item GIANT_BEE_CORE = new ItemMonsterCore("giant_bee_core").setUseDuration(80)
 			.setWhenUsing(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.45786f);
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.45786f, false, true);
 				return true;
 			})
 			.setUseAction(actor -> {
