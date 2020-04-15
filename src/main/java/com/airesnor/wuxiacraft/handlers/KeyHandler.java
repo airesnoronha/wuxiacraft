@@ -19,6 +19,9 @@ import org.lwjgl.input.Keyboard;
 
 @Mod.EventBusSubscriber
 public class KeyHandler {
+
+	private static boolean isCasting = false;
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void onKeyPress(InputEvent.KeyInputEvent event) {
@@ -42,15 +45,13 @@ public class KeyHandler {
 			//NetworkWrapper.INSTANCE.sendToServer(new RequestCultGuiMessage(true));
 		}
 		if (Keyboard.getEventKey() == keyBindings[3].getKeyCode() && Keyboard.getEventKeyState()) {
-			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
-			skillCap.setCasting(true);
-			NetworkWrapper.INSTANCE.sendToServer(new CastSkillMessage(true));
+				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
+				skillCap.setCasting(true);
 		}
 		if (Keyboard.getEventKey() == keyBindings[3].getKeyCode() && !Keyboard.getEventKeyState()) {
-			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
-			skillCap.setCasting(false);
-			skillCap.setDoneCasting(true);
-			NetworkWrapper.INSTANCE.sendToServer(new CastSkillMessage(false));
+				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
+				skillCap.setCasting(false);
+				skillCap.setDoneCasting(true);
 		}
 		if (keyBindings[4].isPressed()) {
 			BlockPos pos = Minecraft.getMinecraft().player.getPosition();

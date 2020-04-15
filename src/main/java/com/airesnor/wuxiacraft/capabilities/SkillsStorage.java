@@ -24,7 +24,7 @@ public class SkillsStorage implements Capability.IStorage<ISkillCap> {
 		tag.setFloat("castProgress", instance.getCastProgress());
 		tag.setInteger("ks-length", instance.getSelectedSkills().size());
 		for (int i = 0; i < instance.getSelectedSkills().size(); i++) {
-			tag.setInteger("ks-" + i, Skills.SKILLS.indexOf(instance.getSelectedSkills().get(i)));
+			tag.setInteger("ks-" + i, instance.getSelectedSkills().get(i));
 		}
 		tag.setInteger("active", instance.getActiveSkill());
 		return tag;
@@ -45,7 +45,7 @@ public class SkillsStorage implements Capability.IStorage<ISkillCap> {
 		length = tag.getInteger("ks-length");
 		instance.getSelectedSkills().clear();
 		for (int i = 0; i < length; i++) {
-			Skill skill = Skills.SKILLS.get(tag.getInteger("ks-" + i));
+			int skill =tag.getInteger("ks-" + i);
 			instance.addSelectedSkill(skill);
 		}
 		instance.setActiveSkill(tag.getInteger("active"));

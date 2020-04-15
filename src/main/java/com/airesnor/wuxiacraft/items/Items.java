@@ -73,7 +73,7 @@ public class Items {
 				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.56874F, false, true);
 				return true;
 			})
-			.setMaxStackSize(64);
+			.setMaxStackSize(64).setCreativeTab(WUXIACRAFT_GENERAL);
 
 	//pills
 	public static final Item BODY_REFINEMENT_PILL = new ItemProgressPill("body_refinement_pill", 50f, 200);

@@ -1,5 +1,7 @@
 package com.airesnor.wuxiacraft.cultivation.skills;
 
+import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
+import com.airesnor.wuxiacraft.utils.MathUtils;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ public class SkillCap implements ISkillCap {
 	private Stack<BlockPos> toBreak;
 	private float cooldown;
 	private float castProgress;
-	private List<Skill> SelectedSkills;
+	private List<Integer> SelectedSkills;
 	private int ActiveSkillIndex;
 	private boolean casting;
 	private boolean doneCasting;
@@ -76,8 +78,8 @@ public class SkillCap implements ISkillCap {
 	@Override
 	public void stepCooldown(float step) {
 		this.cooldown += step;
-		if(this.cooldown <= 0) this.maxCooldown = 1f;
-		else if(this.cooldown > 0 && this.maxCooldown < step) this.maxCooldown = step;
+		if (this.cooldown <= 0) this.maxCooldown = 1f;
+		else if (this.cooldown > 0 && this.maxCooldown < step) this.maxCooldown = step;
 	}
 
 	@Override
@@ -107,18 +109,19 @@ public class SkillCap implements ISkillCap {
 	}
 
 	@Override
-	public List<Skill> getSelectedSkills() {
+	public List<Integer> getSelectedSkills() {
 		return this.SelectedSkills;
 	}
 
 	@Override
-	public void addSelectedSkill(Skill skill) {
-		this.SelectedSkills.add(skill);
+	public void addSelectedSkill(int skillIndex) {
+		if (skillIndex >= 0)
+			this.SelectedSkills.add(skillIndex);
 	}
 
 	@Override
-	public void remSelectedSkill(Skill skill) {
-		this.SelectedSkills.remove(skill);
+	public void remSelectedSkill(int skillIndex) {
+		this.SelectedSkills.remove(new Integer(skillIndex));
 	}
 
 	@Override
@@ -139,7 +142,7 @@ public class SkillCap implements ISkillCap {
 	@Override
 	public void setCasting(boolean casting) {
 		this.casting = casting;
-		if(casting == false) {
+		if (!casting) {
 			resetBarrageCounter();
 		}
 	}
@@ -192,6 +195,23 @@ public class SkillCap implements ISkillCap {
 
 	@Override
 	public void setCooldown(float Cooldown) {
-		this.cooldown = cooldown;
+		this.cooldown = Cooldown;
+	}
+
+	@Override
+	public Skill getSelectedSkill(ICultTech techniques) {
+		List<Skill> totalSkills = this.getTotalKnowSkill(techniques);
+		int selectedSkill = this.getActiveSkill(); //get index from selected list
+		selectedSkill = MathUtils.clamp(selectedSkill, 0, this.getSelectedSkills().size() - 1); //clamp to selected list
+		selectedSkill = MathUtils.clamp(this.getSelectedSkills().get(selectedSkill), 0, totalSkills.size() - 1); //get clamped from known skills
+		return !totalSkills.isEmpty() ? totalSkills.get(selectedSkill) : null;
+	}
+
+	@Override
+	public List<Skill> getTotalKnowSkill(ICultTech techniques) {
+		List<Skill> total = new ArrayList<>();
+		total.addAll(techniques.getTechniqueSkills());
+		total.addAll(this.getKnownSkills());
+		return total;
 	}
 }

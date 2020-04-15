@@ -4,14 +4,16 @@ import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.alchemy.Recipe;
 import com.airesnor.wuxiacraft.blocks.Cauldron;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
-import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
+import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
 import com.airesnor.wuxiacraft.gui.SkillsGui;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import com.airesnor.wuxiacraft.utils.MathUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -22,7 +24,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.SlotShulkerBox;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.client.GuiIngameForge;
@@ -44,8 +45,8 @@ import java.util.concurrent.Callable;
 @Mod.EventBusSubscriber
 public class RendererHandler {
 
-	public static final ResourceLocation bar_bg = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/bar_bg.png");
-	public static final ResourceLocation energy_bar = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/energy_bar.png");
+	//public static final ResourceLocation bar_bg = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/bar_bg.png");
+	//public static final ResourceLocation energy_bar = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/energy_bar.png");
 	public static final ResourceLocation hud_bars = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/hud_bars.png");
 	public static final ResourceLocation life_bar = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/health_bar.png");
 	public static final ResourceLocation icons = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/icons.png");
@@ -75,10 +76,6 @@ public class RendererHandler {
 				this.duration -= partialTicks - prevPartialTicks;
 				//prevPartialTicks = partialTicks;
 				return this.duration <= 0;
-			}
-
-			public float getDuration() {
-				return duration;
 			}
 		}
 
@@ -145,6 +142,7 @@ public class RendererHandler {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onDescribeCultivationLevel(RenderLivingEvent.Specials.Post e) {
@@ -183,7 +181,7 @@ public class RendererHandler {
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void onRenderWorldLast(RenderWorldLastEvent event) throws Exception {
+	public void onRenderWorldLast(RenderWorldLastEvent event) {
 		worldRenderQueue.renderQueue(event.getPartialTicks());
 	}
 
@@ -211,7 +209,7 @@ public class RendererHandler {
 
 
 		EntityPlayer player = mc.world.getPlayerEntityByUUID(mc.player.getUniqueID());
-		ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
+		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 
 		mc.renderEngine.bindTexture(hud_bars);
 
@@ -271,8 +269,8 @@ public class RendererHandler {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(res.getScaledWidth() / 2f - 94f, res.getScaledHeight() - 32, 0);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(icons);
-		ISkillCap skillCap = mc.player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
-		int coolDownBar = (int)(skillCap.getCooldown()/skillCap.getMaxCooldown() * 188);
+		ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(mc.player);
+		int coolDownBar = MathUtils.clamp((int)(skillCap.getCooldown()/skillCap.getMaxCooldown() * 188), 0, 188);
 		mc.ingameGUI.drawTexturedModalRect(0, 0, 0, 10, coolDownBar, 11);
 		GlStateManager.popMatrix();
 	}
@@ -283,12 +281,12 @@ public class RendererHandler {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(res.getScaledWidth() / 2f - 91f, res.getScaledHeight() - 29, 0);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(icons);
-		ISkillCap skillCap = mc.player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+		ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(mc.player);
 		if (skillCap.isCasting()) {
 			mc.ingameGUI.drawTexturedModalRect(0, 0, 0, 0, 182, 5);
 			if (skillCap.getActiveSkill() != -1) {
-				Skill skill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
-				int progress = (int) (skillCap.getCastProgress() / skill.getCastTime() * 182);
+				Skill skill = skillCap.getSelectedSkill(CultivationUtils.getCultTechFromEntity(mc.player));
+				int progress = MathUtils.clamp((int) (skillCap.getCastProgress() / skill.getCastTime() * 182), 0, 182);
 				mc.ingameGUI.drawTexturedModalRect(0, 0, 0, 5, progress, 5);
 			}
 		}
@@ -298,7 +296,8 @@ public class RendererHandler {
 	@SideOnly(Side.CLIENT)
 	public void drawSkillsBar(ScaledResolution res) {
 		Minecraft mc = Minecraft.getMinecraft();
-		ISkillCap skillCap = Minecraft.getMinecraft().player.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
+		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(mc.player);
+		ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(mc.player);
 		if (selectedSkill != skillCap.getActiveSkill()) {
 			selectedSkill = skillCap.getActiveSkill();
 			animationStep = 0;
@@ -309,18 +308,18 @@ public class RendererHandler {
 		int h = 0;
 		int x = res.getScaledWidth() - 20;
 		int y = res.getScaledHeight() - 40;
+		List<Skill> totalKnown = skillCap.getTotalKnowSkill(cultTech);
 		for (int i = 0; i < skillCap.getSelectedSkills().size(); i++) {
+			Skill skill = totalKnown.get(MathUtils.clamp(skillCap.getSelectedSkills().get(i), 0, totalKnown.size()-1));
 			if (i == skillCap.getActiveSkill()) {
 				mc.renderEngine.bindTexture(skills_bg);
 				drawTexturedRect(x, y - h - (20 + animationStep), 20, 20 + animationStep);
-				Skill skill = skillCap.getSelectedSkills().get(i);
 				mc.renderEngine.bindTexture(SkillsGui.skillIcons.get(skill.getUName()));
 				drawTexturedRect(x + 2 - animationStep + animationStep / 10, y - h - 18 - (animationStep) + animationStep / 10, 16 + animationStep * 4 / 5, 16 + animationStep * 4 / 5);
 				h += 20 + animationStep;
 			} else {
 				mc.renderEngine.bindTexture(skills_bg);
 				drawTexturedRect(x, y - h - 20, 20, 20);
-				Skill skill = skillCap.getSelectedSkills().get(i);
 				mc.renderEngine.bindTexture(SkillsGui.skillIcons.get(skill.getUName()));
 				drawTexturedRect(x + 2, y - h - 18, 16, 16);
 				h += 20;
@@ -358,51 +357,52 @@ public class RendererHandler {
 					GlStateManager.pushMatrix();
 					mc.getTextureManager().bindTexture(cauldron_info);
 					CauldronTileEntity te = (CauldronTileEntity) mc.player.world.getTileEntity(rtr.getBlockPos());
+					if(te!=null) {
+						float fireStrength = te.getBurnSpeed() / 25f;
+						float timeLeft = te.getTimeLit() / te.getMaxTimeLit();
+						float temperature = te.getTemperature() / te.getMaxTemperature();
 
-					float fireStrength = te.getBurnSpeed() / 25f;
-					float timeLeft = te.getTimeLit() / te.getMaxTimeLit();
-					float temperature = te.getTemperature() / te.getMaxTemperature();
+						int x = res.getScaledWidth() / 2 - (93 / 2) - 100;
+						int y = res.getScaledHeight() / 2;
 
-					int x = res.getScaledWidth() / 2 - (93 / 2) - 100;
-					int y = res.getScaledHeight() / 2;
+						int progress = (int) Math.floor(92 * fireStrength);
+						GlStateManager.pushMatrix();
+						GlStateManager.translate(x, y, 0);
+						GlStateManager.scale(0.5, 0.5, 0);
+						mc.ingameGUI.drawTexturedModalRect(0, -progress * 2, 0, (92 - progress) * 2, 92 * 2, progress * 2);
+						//drawTexturedRect(x, y-progress, 92, progress, 0, (1f-fireStrength)*92f/128f,92f/128f, 92f/128f);
+						GlStateManager.popMatrix();
 
-					int progress = (int) Math.floor(92 * fireStrength);
-					GlStateManager.pushMatrix();
-					GlStateManager.translate(x, y, 0);
-					GlStateManager.scale(0.5, 0.5, 0);
-					mc.ingameGUI.drawTexturedModalRect(0, -progress * 2, 0, (92 - progress) * 2, 92 * 2, progress * 2);
-					//drawTexturedRect(x, y-progress, 92, progress, 0, (1f-fireStrength)*92f/128f,92f/128f, 92f/128f);
-					GlStateManager.popMatrix();
+						x = res.getScaledWidth() / 2 - (93 / 2);
+						y = res.getScaledHeight() / 2 + 55;
 
-					x = res.getScaledWidth() / 2 - (93 / 2);
-					y = res.getScaledHeight() / 2 + 55;
+						progress = (int) (94 * timeLeft);
+						drawTexturedRect(x, y, 94, 17, 0, 111f / 128f, 93f / 128f, 128f / 128f);
+						drawTexturedRect(x, y, progress, 17, 0, 94f / 128f, timeLeft * 93f / 128f, 110f / 128f);
 
-					progress = (int) (94 * timeLeft);
-					drawTexturedRect(x, y, 94, 17, 0, 111f / 128f, 93f / 128f, 128f / 128f);
-					drawTexturedRect(x, y, progress, 17, 0, 94f / 128f, timeLeft * 93f / 128f, 110f / 128f);
+						x = res.getScaledWidth() / 2 + 120 - (18 / 2);
+						y = res.getScaledHeight() / 2 + 128 / 2;
 
-					x = res.getScaledWidth() / 2 + 120 - (18 / 2);
-					y = res.getScaledHeight() / 2 + 128 / 2;
+						progress = (int) (128 * temperature);
+						drawTexturedRect(x + 1, y - progress, 16, progress, 94f / 128f, 1f - temperature, 109f / 128f, 128f / 128f);
+						drawTexturedRect(x, y - 128, 18, 128, 110f / 128f, 0, 128f / 128f, 128f / 128f);
 
-					progress = (int) (128 * temperature);
-					drawTexturedRect(x + 1, y - progress, 16, progress, 94f / 128f, 1f - temperature, 109f / 128f, 128f / 128f);
-					drawTexturedRect(x, y - 128, 18, 128, 110f / 128f, 0, 128f / 128f, 128f / 128f);
-
-					String temp = String.format("%.2f -", te.getTemperature());
-					int tempWidth = mc.fontRenderer.getStringWidth(temp);
-					mc.fontRenderer.drawStringWithShadow(temp, x - tempWidth + 10, y - progress - 4, 0xCF9D15);
+						String temp = String.format("%.2f -", te.getTemperature());
+						int tempWidth = mc.fontRenderer.getStringWidth(temp);
+						mc.fontRenderer.drawStringWithShadow(temp, x - tempWidth + 10, y - progress - 4, 0xCF9D15);
 
 
-					//Only show when debugging commentary to debug
-					if (System.getProperties().contains("debug")) {
-						if (System.getProperty("debug").equals("true")) {
-							Recipe recipe = te.getActiveRecipe();
-							if (recipe != null) {
-								y = res.getScaledHeight() / 2 - 60;
-								temp = recipe.getName();
-								tempWidth = mc.fontRenderer.getStringWidth(temp);
-								x = res.getScaledWidth() / 2 - tempWidth / 2;
-								mc.fontRenderer.drawStringWithShadow(temp, x, y, 0xFFFF17);
+						//Only show when debugging commentary to debug
+						if (System.getProperties().contains("debug")) {
+							if (System.getProperty("debug").equals("true")) {
+								Recipe recipe = te.getActiveRecipe();
+								if (recipe != null) {
+									y = res.getScaledHeight() / 2 - 60;
+									temp = recipe.getName();
+									tempWidth = mc.fontRenderer.getStringWidth(temp);
+									x = res.getScaledWidth() / 2 - tempWidth / 2;
+									mc.fontRenderer.drawStringWithShadow(temp, x, y, 0xFFFF17);
+								}
 							}
 						}
 					}

@@ -19,7 +19,8 @@ public class ActivateSkillMessageHandler implements IMessageHandler<ActivateSkil
 				EntityPlayer player = ctx.getServerHandler().player;
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-				Skill selectedSkill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
+				skillCap.setActiveSkill(message.selectedSkill);
+				Skill selectedSkill = skillCap.getSelectedSkill(CultivationUtils.getCultTechFromEntity(player));
 				if (selectedSkill != null) {
 					if (selectedSkill.activate(player)) {
 						if (!player.isCreative())

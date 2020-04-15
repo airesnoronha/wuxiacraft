@@ -182,14 +182,15 @@ public class EventHandler {
 	public void onPlayerProcessSkills(LivingEvent.LivingUpdateEvent event) {
 		if (event.getEntity() instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) event.getEntity();
-			if (player.world.isRemote) {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 				if (skillCap.getCooldown() > 0) {
 					skillCap.stepCooldown(-1 - (cultivation.getSpeedIncrease() - 1f) * 0.3f);
 				} else {
+					if (player.world.isRemote) {
 					if (skillCap.getActiveSkill() >= 0 && !skillCap.getSelectedSkills().isEmpty()) {
-						Skill selectedSkill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
+						Skill selectedSkill = skillCap.getSelectedSkill(cultTech);
 						if (selectedSkill != null) {
 							if (skillCap.isCasting()) {
 								if (cultivation.hasEnergy(selectedSkill.getCost())) {
@@ -201,7 +202,7 @@ public class EventHandler {
 											skillCap.resetCastProgress();
 											if (!player.isCreative())
 												cultivation.remEnergy(selectedSkill.getCost());
-											NetworkWrapper.INSTANCE.sendToServer(new ActivateSkillMessage());
+											NetworkWrapper.INSTANCE.sendToServer(new ActivateSkillMessage(skillCap.getActiveSkill()));
 											CultivationUtils.cultivatorAddProgress(player, cultivation, selectedSkill.getProgress(), false, false);
 										}
 									}
@@ -472,7 +473,7 @@ public class EventHandler {
 		NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
 		NetworkWrapper.INSTANCE.sendTo(new EnergyMessage(), (EntityPlayerMP) player);
 		NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
-		NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false), (EntityPlayerMP) player);
+		NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true), (EntityPlayerMP) player);
 		applyModifiers(player, cultivation);
 	}
 

@@ -34,8 +34,7 @@ public class SkillCapMessage implements IMessage {
 		}
 		length = buf.readInt();
 		for (int i = 0; i < length; i++) {
-			Skill skill = Skills.SKILLS.get(buf.readInt());
-			skillCap.addSelectedSkill(skill);
+			skillCap.addSelectedSkill(buf.readInt());
 		}
 		skillCap.setActiveSkill(buf.readInt());
 	}
@@ -51,9 +50,8 @@ public class SkillCapMessage implements IMessage {
 			buf.writeInt(skillId);
 		}
 		buf.writeInt(this.skillCap.getSelectedSkills().size());
-		for (Skill skill : skillCap.getSelectedSkills()) {
-			int skillId = Skills.SKILLS.indexOf(skill);
-			buf.writeInt(skillId);
+		for (int skill : skillCap.getSelectedSkills()) {
+			buf.writeInt(skill);
 		}
 		buf.writeInt(skillCap.getActiveSkill());
 	}

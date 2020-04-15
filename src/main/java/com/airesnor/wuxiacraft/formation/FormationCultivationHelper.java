@@ -57,7 +57,7 @@ public class FormationCultivationHelper extends Formation {
 				if (player.getDistance(source.getX() + 0.5, source.getY() + 0.5, source.getZ() + 0.5) < this.getRange()) {
 					ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 					if (skillCap.isCasting()) {
-						Skill skill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
+						Skill skill = skillCap.getSelectedSkill(CultivationUtils.getCultTechFromEntity(player));
 						if (skill == Skills.CULTIVATE) {
 							if (parent.hasEnergy(this.getOperationCost() * (activated + 1))) {
 								ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
@@ -84,7 +84,7 @@ public class FormationCultivationHelper extends Formation {
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 			if (player.getDistance(source.getX() + 0.5, source.getY() + 0.5, source.getZ() + 0.5) < this.getRange()) {
 				if (skillCap.isCasting()) {
-					Skill skill = skillCap.getSelectedSkills().get(skillCap.getActiveSkill());
+					Skill skill = skillCap.getSelectedSkill(CultivationUtils.getCultTechFromEntity(player));
 					if (skill == Skills.CULTIVATE) {
 						if (parent.hasEnergy(this.getOperationCost())) {
 							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);

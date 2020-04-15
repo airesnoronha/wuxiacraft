@@ -62,7 +62,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 		compound.setFloat("castProgress", skillCap.getCastProgress());
 		compound.setInteger("ks-length", skillCap.getSelectedSkills().size());
 		for (int i = 0; i < skillCap.getSelectedSkills().size(); i++) {
-			compound.setInteger("ks-" + i, Skills.SKILLS.indexOf(skillCap.getSelectedSkills().get(i)));
+			compound.setInteger("ks-" + i, skillCap.getSelectedSkills().get(i));
 		}
 		compound.setInteger("active", skillCap.getActiveSkill());
 	}
@@ -87,8 +87,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 		length = compound.getInteger("ks-length");
 		skillCap.getSelectedSkills().clear();
 		for (int i = 0; i < length; i++) {
-			Skill skill = Skills.SKILLS.get(compound.getInteger("ks-" + i));
-			skillCap.addSelectedSkill(skill);
+			skillCap.addSelectedSkill(compound.getInteger("ks-" + i));
 		}
 		skillCap.setActiveSkill(compound.getInteger("active"));
 	}

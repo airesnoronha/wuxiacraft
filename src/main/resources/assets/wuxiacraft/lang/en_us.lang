@@ -79,6 +79,10 @@ item.training_post_stick.name=Training Post
 
 //Creative tabs
 itemGroup.wuxiacraft.scrolls=Cultivation Techniques
+itemGroup.wuxiacraft.general=Wuxiacraft
+itemGroup.wuxiacraft.blocks=Wuxiacraft Blocks
+itemGroup.wuxiacraft.cores=Monster Cores
+itemGroup.wuxiacraft.pills=Pills
 
 //Blocks
 tile.natural_oddity_ore.name=Natural Oddity Ore
@@ -223,8 +227,8 @@ wuxiacraft.techniques.botanical_growth=Botanical Growth Journal
 item.botanical_growth_scroll.name=Botanical Growth Journal
 wuxiacraft.techniques.sword_flight_journal=Sword Flight Journal
 item.sword_flight_journal_scroll.name=Sword Flight Journal
-wuxiacraft.techniques.sky_cross_technique=Sky Cross Technique
-item.sky_cross_technique_scroll.name=Sky Cross Technique Manual
+wuxiacraft.techniques.sky_crosser_sword=Sky Crosser Sword
+item.sky_crosser_sword_scroll.name=Sky Crosser Sword Manual
 
 //Elements
 wuxiacraft.elements.fire=Fire

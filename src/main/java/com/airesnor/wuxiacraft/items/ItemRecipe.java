@@ -5,6 +5,7 @@ import com.airesnor.wuxiacraft.alchemy.Recipe;
 import com.airesnor.wuxiacraft.alchemy.Recipes;
 import com.airesnor.wuxiacraft.handlers.GuiHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -14,8 +15,12 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Random;
 
@@ -88,10 +93,15 @@ public class ItemRecipe extends Item implements IHasModel {
 		stack.setTagCompound(tag);
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
+	@Nonnull
+	@ParametersAreNonnullByDefault
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		BlockPos pos = playerIn.getPosition();
-		Minecraft.getMinecraft().player.openGui(WuxiaCraft.instance, GuiHandler.RECIPE_GUI_ID, Minecraft.getMinecraft().player.world, pos.getX(), pos.getY(), pos.getZ());
+		if(worldIn.isRemote) {
+			playerIn.openGui(WuxiaCraft.instance, GuiHandler.RECIPE_GUI_ID, Minecraft.getMinecraft().player.world, pos.getX(), pos.getY(), pos.getZ());
+		}
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 

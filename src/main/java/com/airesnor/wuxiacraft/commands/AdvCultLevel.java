@@ -5,7 +5,6 @@ import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.networking.CultivationMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
-import com.sun.istack.internal.NotNull;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -30,7 +29,7 @@ public class AdvCultLevel extends CommandBase {
 	}
 
 	@Override
-	@NotNull
+	@Nonnull
 	@ParametersAreNonnullByDefault
 	public String getUsage(ICommandSender sender) {
 		return "/advcultlevel";
@@ -45,6 +44,7 @@ public class AdvCultLevel extends CommandBase {
 	}
 
 	@Override
+	@ParametersAreNonnullByDefault
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		if (sender instanceof EntityPlayerMP) {
 			EntityPlayerMP player = getCommandSenderAsPlayer(sender);

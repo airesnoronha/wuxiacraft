@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.cultivation.skills;
 
+import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
@@ -39,11 +40,11 @@ public interface ISkillCap {
 
 	void resetCastProgress();
 
-	List<Skill> getSelectedSkills();
+	List<Integer> getSelectedSkills();
 
-	void addSelectedSkill(Skill skill);
+	void addSelectedSkill(int skillIndex);
 
-	void remSelectedSkill(Skill skill);
+	void remSelectedSkill(int skillIndex);
 
 	int getActiveSkill();
 
@@ -68,5 +69,9 @@ public interface ISkillCap {
 	void increaseBarrageToRelease();
 
 	void resetBarrageToRelease();
+
+	List<Skill> getTotalKnowSkill(ICultTech techniques);
+
+	Skill getSelectedSkill(ICultTech techniques);
 
 }

@@ -111,7 +111,7 @@ public class SkillsCommand extends CommandBase {
 					}
 					if (args[0].equals("reset_cd")) {
 						skillCap.resetCooldown();
-						NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false), player);
+						NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true), player);
 					}
 				} else if (args.length == 2) {
 					if (args[0].equals("add")) {
@@ -146,6 +146,74 @@ public class SkillsCommand extends CommandBase {
 					text.getStyle().setColor(TextFormatting.RED);
 					sender.sendMessage(text);
 				}
+			}
+		}
+		else {
+			if(args.length > 1){
+				EntityPlayerMP target = server.getPlayerList().getPlayerByUsername(args[0]);
+				if (target == null) {
+					String message = String.format("Player %s not found", args[1]);
+					TextComponentString text = new TextComponentString(message);
+					sender.sendMessage(text);
+				} else {
+					ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(target);
+					if(args.length == 2 ) {
+						if(args[1].equals("reset")) {
+							skillCap.getKnownSkills().clear();
+							skillCap.getSelectedSkills().clear();
+							skillCap.setActiveSkill(-1);
+							NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false), target);
+							TextComponentString text = new TextComponentString("Reset all skills of player " + target.getDisplayNameString() );
+							sender.sendMessage(text);
+						}
+						else if(args[1].equals("reset_cd")) {
+							skillCap.resetCooldown();
+							skillCap.resetCastProgress();
+							NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true), target);
+							TextComponentString text = new TextComponentString("Reset cd and cast progress for player " + target.getDisplayNameString() );
+							sender.sendMessage(text);
+						}
+					}
+					else if(args.length == 3) {
+						if (args[1].equals("add")) {
+							for (Skill skill : Skills.SKILLS) {
+								if (args[2].equals(skill.getUName())) {
+									skillCap.addSkill(skill);
+									TextComponentString text = new TextComponentString("Added skill: " + skill.getName() + "to player " + target.getDisplayNameString());
+									sender.sendMessage(text);
+									NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false), target);
+									break;
+								}
+							}
+						}
+						if (args[1].equals("rem")) {
+							for (Skill skill : Skills.SKILLS) {
+								if (args[2].equals(skill.getUName())) {
+									if (skillCap.getKnownSkills().contains(skill)) {
+										skillCap.removeSkill(skill);
+										TextComponentString text = new TextComponentString("Removed skill: " + skill.getName() + " from " + target.getDisplayNameString());
+										sender.sendMessage(text);
+										NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false), target);
+									} else {
+										TextComponentString text = new TextComponentString(target.getDisplayName() + " don't even know such skill: " + skill.getName());
+										sender.sendMessage(text);
+									}
+									break;
+								}
+							}
+						}
+					}
+					else {
+						TextComponentString text = new TextComponentString("Invalid arguments, use /skills <player> [add:rem] skill_name");
+						text.getStyle().setColor(TextFormatting.RED);
+						sender.sendMessage(text);
+					}
+				}
+			}
+			else {
+				TextComponentString text = new TextComponentString("Invalid arguments, use /skills <player> [add:rem] skill_name");
+				text.getStyle().setColor(TextFormatting.RED);
+				sender.sendMessage(text);
 			}
 		}
 	}

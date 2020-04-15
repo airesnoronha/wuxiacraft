@@ -18,12 +18,16 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
-import java.net.URL;
+import java.io.*;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 public class FormationUtils {
 
@@ -40,12 +44,29 @@ public class FormationUtils {
 	 * Loads all diagrams from files
 	 */
 	public static void init() {
-		URL assets = FormationUtils.class.getClassLoader().getResource("assets/wuxiacraft/formations");
-		if (assets != null) {
-			File assetsDir = new File(assets.getFile());
-			getDiagramsFromDirectory(assetsDir);
-		} else {
-			WuxiaCraft.logger.error("Couldn't find assets folder. Not found but without exception");
+		try {
+			URI assets = FormationUtils.class.getClassLoader().getResource("assets/wuxiacraft/formations").toURI();
+			if (assets.getScheme().equals("jar")) {
+				//ok now i know what to do
+				String PathToZip = assets.getSchemeSpecificPart();
+				PathToZip = PathToZip.substring("file:".length());
+				PathToZip = PathToZip.substring(0, PathToZip.lastIndexOf("!"));
+				ZipFile zip = new ZipFile(PathToZip);
+				ZipEntry entry = null;
+				Enumeration<? extends ZipEntry> entries = zip.entries();
+
+				while (entries.hasMoreElements()) {
+					entry = entries.nextElement();
+					if (entry.getName().startsWith("assets/wuxiacraft/formations/") && !entry.isDirectory())
+						getDiagramFromZipEntry(zip, entry);
+				}
+			} else {
+				Path pathToAssetsDir = Paths.get(assets);
+				File assetsDir = pathToAssetsDir.toFile();
+				getDiagramsFromDirectory(assetsDir);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -64,6 +85,31 @@ public class FormationUtils {
 					getDiagramFromFile(file);
 				}
 			}
+		}
+	}
+
+	/**
+	 * Gets a {@link ZipEntry} and try to read it into a diagram
+	 *
+	 * @param entry The file to be read
+	 */
+	public static void getDiagramFromZipEntry(ZipFile file, ZipEntry entry) {
+		try {
+			InputStream is = file.getInputStream(entry);
+			Scanner s = new Scanner(is).useDelimiter("\\A");
+			String allText = s.hasNext() ? s.next() : "";
+			Gson gson = new Gson();
+			FormationJsonFormat result = gson.fromJson(allText, FormationJsonFormat.class);
+			FormationDiagram diagram = new FormationDiagram(new ResourceLocation(result.formationName));
+			for (FormationJsonFormat.PositionPair position : result.positions) {
+				IBlockState blockState = getBlockStateWithProperties(position.blockState);
+				BlockPos pos = new BlockPos(position.x, position.y, position.z);
+				diagram.addPosition(pos, blockState);
+			}
+			DIAGRAMS.put(diagram.getFormationName(), diagram);
+			WuxiaCraft.logger.info("Added diagram: " + diagram.getFormationName());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

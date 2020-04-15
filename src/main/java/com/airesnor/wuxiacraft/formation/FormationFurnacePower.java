@@ -70,6 +70,7 @@ public class FormationFurnacePower extends Formation {
 		GlStateManager.translate(x, y - 0.4, z);
 		float angle = -180f + ((System.currentTimeMillis() % 36000) / 100f);
 		GlStateManager.rotate(angle, 0, 1, 0);
+		GlStateManager.scale(1.6,1,1.6);
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder builder = tessellator.getBuffer();
 		builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
