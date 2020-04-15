@@ -50,10 +50,10 @@ public class Blocks {
 	public static final Map<String, Block> TRAINING_POSTS = new HashMap<>();
 	static {
 		List<Triple<String, Double, Material>> tiers =new ArrayList<>();
-		tiers.add(Triple.of("stick", 1.0, Material.WOOD));
-		tiers.add(Triple.of("stone", 2.5, Material.ROCK));
-		tiers.add(Triple.of("iron", 4.75, Material.IRON));
-		tiers.add(Triple.of("diamond", 8.0, Material.IRON));
+		tiers.add(Triple.of("stick", 0.5, Material.WOOD));
+		tiers.add(Triple.of("stone", 1.25, Material.ROCK));
+		tiers.add(Triple.of("iron", 2.5, Material.IRON));
+		tiers.add(Triple.of("diamond", 4.0, Material.IRON));
 		for(BlockPlanks.EnumType wood: BlockPlanks.EnumType.values()) {
 			for(Triple<String, Double, Material> triple : tiers) {
 				String name = "training_post_"+wood.getName()+"_"+triple.getLeft();

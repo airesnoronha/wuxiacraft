@@ -1,0 +1,25 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"result": {
+		"item": "wuxiacraft:training_post_oak_stone",
+		"count": 1
+	},
+	"pattern": [
+		"sws",
+		"sws",
+		"pwp"
+	],
+	"key": {
+		"w": {
+			"item": "minecraft:log",
+			"data": 0
+		},
+		"s": {
+			"item": "minecraft:stone"
+		},
+		"p": {
+			"item": "minecraft:planks",
+			"data": 0
+		}
+	}
+}
