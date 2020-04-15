@@ -31,8 +31,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.FoodStats;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -42,9 +45,11 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -57,6 +62,12 @@ public class EventHandler {
 	private static final String armor_mod_name = "wuxiacraft.armor";
 	private static final String attack_speed_mod_name = "wuxiacraft.attack_speed";
 	private static final String health_mod_name = "wuxiacraft.health";
+
+	private static final Field foodStats = ReflectionHelper.findField(FoodStats.class, "foodSaturationLevel", "field_75125_b");
+
+	static{
+		foodStats.setAccessible(true);
+	}
 
 	/**
 	 * It gives the client side information about cultivation which i stored server side
@@ -76,6 +87,9 @@ public class EventHandler {
 			NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
 			NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true), (EntityPlayerMP) player);
 		}
+		TextComponentString text = new TextComponentString("For a quick tutorial on the mod. \nPlease use the /culthelp command");
+		text.getStyle().setColor(TextFormatting.GOLD);
+		player.sendMessage(text);
 	}
 
 	/**
@@ -594,7 +608,32 @@ public class EventHandler {
 	 */
 	@SubscribeEvent
 	public void onPlayerHunger(TickEvent.PlayerTickEvent event) {
+		EntityPlayer player = event.player;
+		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+		float cost = ((1f/3f) * CultivationLevel.SKY_LAW.getMaxEnergyByLevel(1) * (5f/6f));
 
+		if(event.phase == TickEvent.Phase.END) {
+			if(player.getFoodStats().getFoodLevel() < 20 && cultivation.getCurrentLevel().energyAsFood) {
+				if(cultivation.getCurrentLevel().needNoFood) {
+					player.getFoodStats().setFoodLevel(20);
+					try {
+						foodStats.setFloat(player.getFoodStats(), 50f);
+					} catch (Exception e) {
+						WuxiaCraft.logger.error("Couldn't help with food, sorry!");
+						e.printStackTrace();
+					}
+				} else if(cultivation.hasEnergy(cost)) {
+					player.getFoodStats().setFoodLevel(20);
+					try {
+						foodStats.setFloat(player.getFoodStats(), 50f);
+						cultivation.remEnergy(cost);
+					} catch (Exception e) {
+						WuxiaCraft.logger.error("Couldn't help with food, sorry!");
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 	}
 
 	/**

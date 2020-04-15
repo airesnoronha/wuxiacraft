@@ -12,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.FoodStats;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.Field;
@@ -22,6 +23,12 @@ import java.util.Map;
 
 @SuppressWarnings("unused")
 public class Items {
+
+	private static final Field foodStats = ReflectionHelper.findField(FoodStats.class, "foodSaturationLevel", "field_75125_b");
+
+	static {
+		foodStats.setAccessible(true);
+	}
 
 	/**
 	 * Contains all the items to be registered
@@ -121,10 +128,7 @@ public class Items {
 					EntityPlayer player = (EntityPlayer)actor;
 					player.getFoodStats().setFoodLevel(20);
 					try {
-						Field foodStats = ReflectionHelper.findField(player.getFoodStats().getClass(), "foodSaturationLevel", "field_75125_b");
-						foodStats.setAccessible(true);
 						foodStats.setFloat(player.getFoodStats(), 50f);
-						foodStats.setAccessible(false);
 					} catch (Exception e) {
 						WuxiaCraft.logger.error("Couldn't help with food, sorry!");
 						e.printStackTrace();

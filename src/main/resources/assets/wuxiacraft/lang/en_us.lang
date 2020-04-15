@@ -264,8 +264,33 @@ wuxiacraft.skills.adept_sword_flight=Adept Sword Flight
 
 //Recipes
 wuxiacraft.recipes.name.body_refinement_pill_recipe=Body Refinement Pill Recipe
+wuxiacraft.recipes.name.training_pill_recipe=Training Pill Recipe
+wuxiacraft.recipes.name.reinforcement_pill_recipe=Reinforcement Pill Recipe
+wuxiacraft.recipes.name.body_creation_pill_recipe=Body Creation Pill Recipe
+wuxiacraft.recipes.name.soul_refinement_pill_recipe=Soul Refinement Pill Recipe
+wuxiacraft.recipes.name.soul_aspect_pill_recipe=Soul Aspect Pill Recipe
+wuxiacraft.recipes.name.wandering_ghost_pill_recipe=Wandering Ghost Pill Recipe
+wuxiacraft.recipes.name.qi_paths_refinement_pill_recipe=Qi Paths Refinement Pill Recipe
+wuxiacraft.recipes.name.meridian_injection_pill_recipe=Meridian Injection Pill Recipe
+wuxiacraft.recipes.name.dantian_condensing_pill_recipe=Dantian Condensing Pill Recipe
 wuxiacraft.recipes.name.energy_recovery_pill_recipe=Energy Recovery Pill Recipe
+wuxiacraft.recipes.name.minor_energy_replenishing_pill_recipe=Minor Energy Replenishing Pill Recipe
+wuxiacraft.recipes.name.energy_stream_pill_recipe=Energy Stream Pill Recipe
+wuxiacraft.recipes.name.lesser_energy_replenishing_pill_recipe=Lesser Energy Replenishing Pill Recipe
+wuxiacraft.recipes.name.earth_qi_pill_recipe=Earth Qi Pill Recipe
+wuxiacraft.recipes.name.smaller_energy_replenishing_pill_recipe=Smaller Energy Replenishing Pill Recipe
+wuxiacraft.recipes.name.heaven_qi_pill_recipe=Heaven Qi Pill Recipe
+wuxiacraft.recipes.name.small_energy_replenishing_pill_recipe=Small Energy Replenishing Pill Recipe
+wuxiacraft.recipes.name.energy_gathering_pill_recipe=Energy Gathering Pill Recipe
 wuxiacraft.recipes.name.minor_healing_pill_recipe=Minor Healing Pill Recipe
+wuxiacraft.recipes.name.invigorate_blood_pill_recipe=Invigorate Blood Pill Recipe
+wuxiacraft.recipes.name.lesser_healing_pill_recipe=Lesser Healing Pill Recipe
+wuxiacraft.recipes.name.reconstruct_body_pill_recipe=Reconstruct Body Pill Recipe
+wuxiacraft.recipes.name.smaller_healing_pill_recipe=Smaller Healing Pill Recipe
+wuxiacraft.recipes.name.health_incarnate_pill_recipe=Health Incarnate Pill Recipe
+wuxiacraft.recipes.name.physician_miracle_pill_recipe=Physician Miracle Pill Recipe
+wuxiacraft.recipes.name.small_healing_pill_recipe=Small Healing Pill Recipe
+wuxiacraft.recipes.name.almost_resurrect_pill_recipe=Almost Ressurect Pill Recipe
 wuxiacraft.recipes.name.minor_recovery_pill_recipe=Minor Recovery Pill Recipe
 wuxiacraft.recipes.name.bird_grace_pill_recipe=Bird Grace Pill Recipe
 wuxiacraft.recipes.name.bull_rage_pill_recipe=Bull Rage Pill Recipe
@@ -275,6 +300,7 @@ wuxiacraft.recipes.name.jumping_rabbit_pill_recipe=Jumping Rabbit Pill Recipe
 wuxiacraft.recipes.name.runners_essence_pill_recipe=Runners Essence Pill Recipe
 wuxiacraft.recipes.name.turtle_shell_pill_recipe=Turtle Shell Pill Recipe
 wuxiacraft.recipes.name.minor_fasting_pill_recipe=Minor Fasting Pill Recipe
+
 
 //Congratulation messages
 wuxiacraft.level_message.congrats_0=Congratulations! You are now at
@@ -297,3 +323,4 @@ wuxiacraft.temperatures.super_hot=Super Hot
 
 //Potion effects
 effect.enlightenment=Enlightenment
+Not used correctly!=wrongUsage
