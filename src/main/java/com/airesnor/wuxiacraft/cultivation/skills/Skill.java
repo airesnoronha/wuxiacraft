@@ -82,12 +82,7 @@ public class Skill {
 		this.progress = progress;
 		this.castTime = castTime;
 		this.cooldown = cooldown;
-		this.whenCasting = new ISkillAction() {
-			@Override
-			public boolean activate(EntityLivingBase actor) {
-				return false;
-			}
-		};
+		this.whenCasting = actor -> true;
 		this.authorName = author;
 	}
 

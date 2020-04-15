@@ -1,5 +1,5 @@
 {
-	"forge_maker": 1,
+	"forge_marker": 1,
 	"variants": {
 		"cauldron=0": {
 			"model": "wuxiacraft:obj/iron_cauldron"

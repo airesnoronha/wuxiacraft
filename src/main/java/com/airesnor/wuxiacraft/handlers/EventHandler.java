@@ -12,10 +12,7 @@ import com.airesnor.wuxiacraft.cultivation.techniques.CultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
-import com.airesnor.wuxiacraft.items.ItemRecipe;
-import com.airesnor.wuxiacraft.items.ItemScroll;
-import com.airesnor.wuxiacraft.items.Items;
-import com.airesnor.wuxiacraft.items.ItemSpiritStone;
+import com.airesnor.wuxiacraft.items.*;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.block.Block;
@@ -34,8 +31,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.FoodStats;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -45,9 +45,11 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -60,6 +62,12 @@ public class EventHandler {
 	private static final String armor_mod_name = "wuxiacraft.armor";
 	private static final String attack_speed_mod_name = "wuxiacraft.attack_speed";
 	private static final String health_mod_name = "wuxiacraft.health";
+
+	private static final Field foodStats = ReflectionHelper.findField(FoodStats.class, "foodSaturationLevel", "field_75125_b");
+
+	static{
+		foodStats.setAccessible(true);
+	}
 
 	/**
 	 * It gives the client side information about cultivation which i stored server side
@@ -79,6 +87,9 @@ public class EventHandler {
 			NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
 			NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true), (EntityPlayerMP) player);
 		}
+		TextComponentString text = new TextComponentString("For a quick tutorial on the mod. \nPlease use the /culthelp command");
+		text.getStyle().setColor(TextFormatting.GOLD);
+		player.sendMessage(text);
 	}
 
 	/**
@@ -191,7 +202,7 @@ public class EventHandler {
 											if (!player.isCreative())
 												cultivation.remEnergy(selectedSkill.getCost());
 											NetworkWrapper.INSTANCE.sendToServer(new ActivateSkillMessage());
-											cultivation.addProgress(selectedSkill.getProgress());
+											CultivationUtils.cultivatorAddProgress(player, cultivation, selectedSkill.getProgress(), false, false);
 										}
 									}
 								}
@@ -344,6 +355,7 @@ public class EventHandler {
 
 	/**
 	 * When the player hits an entity, gain a little progress, but i'm regretting
+	 * Also applies 1 damage to entity if wearing dagger
 	 *
 	 * @param event Description of whats happening
 	 */
@@ -353,8 +365,12 @@ public class EventHandler {
 			EntityPlayer player = (EntityPlayer) event.getSource().getTrueSource();
 			if (!player.world.isRemote) {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-				CultivationUtils.cultivatorAddProgress(player, cultivation, 0.25f);
+				CultivationUtils.cultivatorAddProgress(player, cultivation, 0.25f, false, true);
 				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
+			}
+			ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
+			if (stack.getItem() instanceof ItemDagger) {
+				event.setAmount(1);
 			}
 		}
 	}
@@ -370,7 +386,7 @@ public class EventHandler {
 		if (player != null) {
 			IBlockState block = event.getState();
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-			CultivationUtils.cultivatorAddProgress(player, cultivation, 0.1f * block.getBlockHardness(event.getWorld(), event.getPos()));
+			CultivationUtils.cultivatorAddProgress(player, cultivation, 0.1f * block.getBlockHardness(event.getWorld(), event.getPos()), false, false);
 			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
 		}
 	}
@@ -530,7 +546,14 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onSpiritStoneStackFloats(TickEvent.WorldTickEvent event) {
 		if (event.side == Side.SERVER && event.phase == TickEvent.Phase.END) {
-			List<EntityItem> items = event.world.getEntities(EntityItem.class, input -> input.getItem().getItem() instanceof ItemSpiritStone && input.ticksExisted >= 40 && input.getItem().getItemDamage() == 0); // 2 seconds existing right
+			List<EntityItem> items = event.world.getEntities(EntityItem.class, input -> {
+				boolean isSpiritStone = false;
+				if(input != null) {
+					if(input.getItem().getItem() instanceof ItemSpiritStone)
+						isSpiritStone = true;
+				}
+				return isSpiritStone && input.ticksExisted >= 40 && input.getItem().getItemDamage() == 0;
+			}); // 2 seconds existing right
 			for (EntityItem item : items) {
 				ItemStack stack = item.getItem();
 				BlockPos pos = item.getPosition();
@@ -574,6 +597,40 @@ public class EventHandler {
 				if (blockState.getBlock().onBlockActivated(event.getWorld(), event.getPos(), blockState, event.getEntityPlayer(), event.getHand(), event.getFace(), (float) hit.x, (float) hit.y, (float) hit.z)) {
 					event.setUseBlock(Event.Result.ALLOW);
 					event.setCanceled(true);
+				}
+			}
+		}
+	}
+
+	/**
+	 * When player has a cultivation that allows
+	 * @param event A description of whats happening
+	 */
+	@SubscribeEvent
+	public void onPlayerHunger(TickEvent.PlayerTickEvent event) {
+		EntityPlayer player = event.player;
+		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+		float cost = ((1f/3f) * CultivationLevel.SKY_LAW.getMaxEnergyByLevel(1) * (5f/6f));
+
+		if(event.phase == TickEvent.Phase.END) {
+			if(player.getFoodStats().getFoodLevel() < 20 && cultivation.getCurrentLevel().energyAsFood) {
+				if(cultivation.getCurrentLevel().needNoFood) {
+					player.getFoodStats().setFoodLevel(20);
+					try {
+						foodStats.setFloat(player.getFoodStats(), 50f);
+					} catch (Exception e) {
+						WuxiaCraft.logger.error("Couldn't help with food, sorry!");
+						e.printStackTrace();
+					}
+				} else if(cultivation.hasEnergy(cost)) {
+					player.getFoodStats().setFoodLevel(20);
+					try {
+						foodStats.setFloat(player.getFoodStats(), 50f);
+						cultivation.remEnergy(cost);
+					} catch (Exception e) {
+						WuxiaCraft.logger.error("Couldn't help with food, sorry!");
+						e.printStackTrace();
+					}
 				}
 			}
 		}

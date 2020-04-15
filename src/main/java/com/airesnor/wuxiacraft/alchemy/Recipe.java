@@ -1,8 +1,10 @@
 package com.airesnor.wuxiacraft.alchemy;
 
 import com.airesnor.wuxiacraft.utils.MathUtils;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -71,7 +73,9 @@ public class Recipe {
 	}
 
 	public String getName() {
-		return I18n.format("wuxiacraft.recipes.name." + this.getUnlocalizedName());
+		ITextComponent iTextComponent = new TextComponentString("");
+		iTextComponent.appendSibling(new TextComponentTranslation("wuxiacraft.recipes.name." + this.getUnlocalizedName()));
+		return iTextComponent.getFormattedText();
 	}
 
 	public String getUnlocalizedName() {

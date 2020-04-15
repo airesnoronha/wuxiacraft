@@ -1,0 +1,21 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"result": {
+		"item": "wuxiacraft:paint_bottle",
+		"count": 1
+	},
+	"pattern": [
+		"   ",
+		"sbs",
+		" s "
+	],
+	"key": {
+		"b":{
+			"item": "wuxiacraft:empty_bottle"
+		},
+		"s": {
+			"item": "minecraft:dye",
+			"data": 15
+		}
+	}
+}

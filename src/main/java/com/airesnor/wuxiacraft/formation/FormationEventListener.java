@@ -30,7 +30,9 @@ public class FormationEventListener implements IWorldEventListener {
 	@Override
 	public void notifyBlockUpdate(World worldIn, BlockPos pos, IBlockState oldState, IBlockState newState, int flags) {
 		List<BlockPos> posList = this.diagram.getAllBlockPos();
-		if(posList.contains(FormationUtils.rotateBlockPosBack(pos, this.direction))) {
+		BlockPos parentPos = this.parent.getPos();
+		BlockPos toTest = new BlockPos(pos.getX()- parentPos.getX(), pos.getY() - parentPos.getY(), pos.getZ() - parentPos.getZ());
+		if(posList.contains(FormationUtils.rotateBlockPosBack(toTest, this.direction))) {
 			if(newState != diagram.getBlockState(pos)) {
 				AxisAlignedBB aabb = new AxisAlignedBB(pos.getX(),pos.getY(),pos.getZ(),pos.getX()+1,pos.getY()+1,pos.getZ()+1).grow(6);
 				List<EntityLivingBase> interrupters = worldIn.getEntitiesWithinAABB(EntityLivingBase.class, aabb, input -> true);

@@ -18,10 +18,10 @@ public class ProgressMessageHandler implements IMessageHandler<ProgressMessage, 
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				switch (message.op) {
 					case 0:
-						CultivationUtils.cultivatorAddProgress(player, cultivation, message.amount);
+						CultivationUtils.cultivatorAddProgress(player, cultivation, message.amount, message.allowBreakTrough, message.ignoreBottleneck);
 						break;
 					case 1:
-						cultivation.addProgress(-message.amount);
+						cultivation.addProgress(-message.amount, false);
 						break;
 					case 2:
 						cultivation.setProgress(message.amount);

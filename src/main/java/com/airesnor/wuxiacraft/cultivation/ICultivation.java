@@ -5,9 +5,9 @@ public interface ICultivation {
 	/**
 	 * Adds progress and also change sub levels and levels
 	 *
-	 * @param amount
+	 * @param amount the amount of progress gained
 	 */
-	boolean addProgress(double amount);
+	boolean addProgress(double amount, boolean allowBreakThrough);
 
 	void setProgress(double amount);
 

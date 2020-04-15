@@ -27,6 +27,7 @@ public class CultivationUtils {
 	public static ICultivation getCultivationFromEntity(EntityLivingBase entityIn) {
 		ICultivation cultivation = null;
 		if (entityIn instanceof EntityPlayer) {
+			//noinspection ConstantConditions
 			cultivation = entityIn.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 		} else if (entityIn instanceof EntityCultivator) {
 			cultivation = ((EntityCultivator) entityIn).getCultivation();
@@ -41,6 +42,7 @@ public class CultivationUtils {
 	public static ICultTech getCultTechFromEntity(EntityLivingBase entityIn) {
 		ICultTech cultTech = null;
 		if (entityIn instanceof EntityPlayer) {
+			//noinspection ConstantConditions
 			cultTech = entityIn.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
 		}
 		if (cultTech == null) {
@@ -53,6 +55,7 @@ public class CultivationUtils {
 	public static ISkillCap getSkillCapFromEntity(EntityLivingBase entityIn) {
 		ISkillCap skillCap = null;
 		if (entityIn instanceof EntityPlayer) {
+			//noinspection ConstantConditions
 			skillCap = entityIn.getCapability(SkillsProvider.SKILL_CAP_CAPABILITY, null);
 		} else if (entityIn instanceof EntityCultivator) {
 			skillCap = ((EntityCultivator) entityIn).getSkillCap();
@@ -63,7 +66,7 @@ public class CultivationUtils {
 		return skillCap;
 	}
 
-	public static void cultivatorAddProgress(EntityLivingBase player, ICultivation cultivation, double amount) {
+	public static void cultivatorAddProgress(EntityLivingBase player, ICultivation cultivation, double amount, boolean allowBreakThrough, boolean ignoreBottleneck) {
 		ICultTech cultTech = getCultTechFromEntity(player);
 		amount *= cultTech.getOverallCultivationSpeed();
 		double enlightenment = 1;
@@ -75,8 +78,8 @@ public class CultivationUtils {
 		cultTech.progress(amount);
 		if (!cultivation.getSuppress()) {
 			double progressRel = cultivation.getCurrentProgress() / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
-			double bottleneckAmount = amount * Math.min(1.0f, 1.2f - progressRel);
-			if (cultivation.addProgress(bottleneckAmount)) {
+			double bottleneckAmount = ignoreBottleneck ? amount : amount * Math.min(1.0f, 1.2f - progressRel);
+			if (cultivation.addProgress(bottleneckAmount, allowBreakThrough)) {
 				if (!player.world.isRemote) {
 					if (player instanceof EntityPlayer) {
 						int msgN = player.world.rand.nextInt(CONGRATS_MESSAGE_COUNT);

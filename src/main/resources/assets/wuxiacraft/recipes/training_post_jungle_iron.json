@@ -1,0 +1,25 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"result": {
+		"item": "wuxiacraft:training_post_jungle_iron",
+		"count": 1
+	},
+	"pattern": [
+		"sws",
+		"sws",
+		"pwp"
+	],
+	"key": {
+		"w": {
+			"item": "minecraft:log",
+			"data": 3
+		},
+		"s": {
+			"item": "minecraft:iron_ingot"
+		},
+		"p": {
+			"item": "minecraft:planks",
+			"data": 3
+		}
+	}
+}

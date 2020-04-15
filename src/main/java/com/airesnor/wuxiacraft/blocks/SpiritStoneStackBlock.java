@@ -24,7 +24,9 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Random;
 
@@ -93,21 +95,25 @@ public class SpiritStoneStackBlock extends BlockContainer implements IHasModel {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean isFullBlock(IBlockState state) {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean isBlockNormalCube(IBlockState state) {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean isOpaqueCube(IBlockState state) {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean isTranslucent(IBlockState state) {
 		return true;
@@ -115,6 +121,7 @@ public class SpiritStoneStackBlock extends BlockContainer implements IHasModel {
 
 	@Nullable
 	@Override
+	@ParametersAreNonnullByDefault
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
 		return new SpiritStoneStackTileEntity();
 	}
@@ -130,11 +137,26 @@ public class SpiritStoneStackBlock extends BlockContainer implements IHasModel {
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
+	@ParametersAreNonnullByDefault
 	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
 	}
 
 	private SpiritStoneStackTileEntity getTileEntity(World world, BlockPos pos) {
 		return (SpiritStoneStackTileEntity) world.getTileEntity(pos);
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	@Nonnull
+	@ParametersAreNonnullByDefault
+	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+		SpiritStoneStackTileEntity te = getTileEntity(worldIn, pos);
+		if(te != null) {
+			if(te.stack!=null)
+				return te.stack;
+		}
+		return super.getItem(worldIn, pos, state);
 	}
 }

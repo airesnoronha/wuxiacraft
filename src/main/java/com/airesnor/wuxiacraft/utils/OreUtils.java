@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.utils;
 
+import com.airesnor.wuxiacraft.blocks.SpiritVeinOre;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -33,6 +34,28 @@ public class OreUtils {
 		oresToFind.add(Blocks.EMERALD_ORE);
 		oresToFind.add(Blocks.QUARTZ_ORE);
 		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.NATURAL_ODDITY_ORE);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.WEAK_LIFE_STONE_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.SOUL_STONE_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.PRIMORDIAL_STONE);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.FIVE_ELEMENT_PURE_CRYSTAL_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.PURE_QI_CRYSTAL_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.EARTH_LAW_CRYSTAL_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.SKY_LAW_CRYSTAL_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.HEAVENLY_STONE_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.RAINBOW_LAW_STONE_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.SKY_AND_EARTH_CRYSTAL_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.LAW_NEXUS_STONE_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.WAR_CRYSTAL_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.GOLD_SPIRIT_STONE_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.YIN_YANG_STONE_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.TRANSCENDENT_CRYSTAL_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.IMMORTALITY_STONE_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.ASCENDED_IMMORTALITY_STONE_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.IMMORTAL_WILL_STONE_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.STELLAR_STONE_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.DIVINE_ORIGIN_STONE_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.BOUNDLESS_VOID_CRYSTAL_VEIN);
+		oresToFind.add(com.airesnor.wuxiacraft.blocks.Blocks.PRIMORDIAL_CHAOS_STONE_VEIN);
 		earthTypes.add(Blocks.DIRT);
 		earthTypes.add(Blocks.SAND);
 		earthTypes.add(Blocks.STONE);
@@ -117,6 +140,11 @@ public class OreUtils {
 				red = 0.828f;
 				green = 0.044f;
 				blue = 0.044f;
+			}
+			else if(pair.getValue() instanceof SpiritVeinOre) {
+				red = 0.1f;
+				green = 0.75f;
+				blue = 0.45f;
 			}
 			//x faze z:0
 			buffer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);

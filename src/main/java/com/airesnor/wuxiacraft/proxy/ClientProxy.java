@@ -16,10 +16,11 @@ import com.airesnor.wuxiacraft.entities.skills.models.RenderSwordBeam;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterBlade;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterNeedle;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTESR;
+import com.airesnor.wuxiacraft.formation.FormationTESR;
+import com.airesnor.wuxiacraft.formation.FormationTileEntity;
 import com.airesnor.wuxiacraft.gui.SkillsGui;
 import com.airesnor.wuxiacraft.handlers.PreClientEvents;
 import com.airesnor.wuxiacraft.handlers.RendererHandler;
-import com.airesnor.wuxiacraft.utils.OreUtils;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
@@ -90,6 +91,8 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerEntityRenderingHandler(WanderingCultivator.class, RenderWanderingCultivator::new);
 
 		MinecraftForge.EVENT_BUS.register(new RendererHandler());
+
+		ClientRegistry.bindTileEntitySpecialRenderer(FormationTileEntity.class, new FormationTESR());
 	}
 
 	@Override

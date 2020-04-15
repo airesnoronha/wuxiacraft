@@ -1,6 +1,8 @@
 package com.airesnor.wuxiacraft.world;
 
 import com.airesnor.wuxiacraft.blocks.Blocks;
+import com.airesnor.wuxiacraft.blocks.SpiritVeinOre;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,6 +24,11 @@ public class WorldGen implements IWorldGenerator {
 
 	private void generateOverworld(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
 		generateOre(Blocks.NATURAL_ODDITY_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 10, 30, 4, 4);
+		generateOre(Blocks.WEAK_LIFE_STONE_VEIN.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 20, 50, 5, 7);
+		generateOre(Blocks.SOUL_STONE_VEIN.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 10, 40, 4, 6);
+		generateOre(Blocks.PRIMORDIAL_STONE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 5, 30, 4, 5);
+		generateOre(Blocks.FIVE_ELEMENT_PURE_CRYSTAL_VEIN.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 5, 20, 3, 3);
+		generateOre(Blocks.EARTH_LAW_CRYSTAL_VEIN.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 5, 15, 2, 2);
 	}
 
 	private void generateOre(IBlockState ore, World world, Random random, int x, int z, int minY, int maxY, int size, int chances) {

@@ -4,6 +4,7 @@ import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import net.minecraft.block.BlockPlanks;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -16,9 +17,18 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@SuppressWarnings("unused")
 public class Items {
+
+	private static final Field foodStats = ReflectionHelper.findField(FoodStats.class, "foodSaturationLevel", "field_75125_b");
+
+	static {
+		foodStats.setAccessible(true);
+	}
 
 	/**
 	 * Contains all the items to be registered
@@ -46,6 +56,13 @@ public class Items {
 		}
 	};
 
+	public static final CreativeTabs WUXIACRAFT_GENERAL = new CreativeTabs("wuxiacraft.general") {
+		@Override
+		public ItemStack getTabIconItem() {
+			return new ItemStack(Items.PRIMORDIAL_CHAOS_STONE);
+		}
+	};
+
 
 	/**
 	 * A test item, not in use right now
@@ -53,7 +70,7 @@ public class Items {
 	public static final Item NATURAL_ODDITY_LOW = new ItemMonsterCore("natural_oddity_low").setUseDuration(100)
 			.setWhenUsing(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.56874F);
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.56874F, false, true);
 				return true;
 			})
 			.setMaxStackSize(64);
@@ -111,10 +128,7 @@ public class Items {
 					EntityPlayer player = (EntityPlayer)actor;
 					player.getFoodStats().setFoodLevel(20);
 					try {
-						Field foodStats = ReflectionHelper.findField(player.getFoodStats().getClass(), "foodSaturationLevel", "field_75125_b");
-						foodStats.setAccessible(true);
 						foodStats.setFloat(player.getFoodStats(), 50f);
-						foodStats.setAccessible(false);
 					} catch (Exception e) {
 						WuxiaCraft.logger.error("Couldn't help with food, sorry!");
 						e.printStackTrace();
@@ -145,7 +159,7 @@ public class Items {
 	public static final Item GIANT_ANT_CORE = new ItemMonsterCore("giant_ant_core").setUseDuration(100)
 			.setWhenUsing(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.45786f);
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.45786f, false, true);
 				return true;
 			})
 			.setUseAction(actor -> {
@@ -158,7 +172,7 @@ public class Items {
 	public static final Item GIANT_BEE_CORE = new ItemMonsterCore("giant_bee_core").setUseDuration(80)
 			.setWhenUsing(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.45786f);
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.45786f, false, true);
 				return true;
 			})
 			.setUseAction(actor -> {
@@ -172,8 +186,8 @@ public class Items {
 	public static final Item WEAK_LIFE_STONE = new ItemSpiritStone("weak_life_stone", 0xC26060); //Body Refinement 1
 	public static final Item SOUL_STONE = new ItemSpiritStone("soul_stone", 0x684893).setAmount(1.790); //Soul Refinement 1
 	public static final Item PRIMORDIAL_STONE = new ItemSpiritStone("primordial_stone", 0x10EFFF).setAmount(2.260); //Soul Refinement 5
-	public static final Item SPIRIT_STONE15 = new ItemSpiritStone("five_element_pure_crystal", 0x2f5410).setAmount(3.399); //Qi Paths 1
-	public static final Item FIVE_ELEMENT_PURE_CRYSTAL = new ItemSpiritStone("pure_qi_crystal", 0xd3d3d3).setAmount(6.84); //Dantian 1
+	public static final Item FIVE_ELEMENT_PURE_CRYSTAL = new ItemSpiritStone("five_element_pure_crystal", 0x2f5410).setAmount(3.399); //Qi Paths 1
+	public static final Item PURE_QI_CRYSTAL = new ItemSpiritStone("pure_qi_crystal", 0xd3d3d3).setAmount(6.84); //Dantian 1
 	public static final Item EARTH_LAW_CRYSTAL = new ItemSpiritStone("earth_law_crystal", 0x7d511c).setAmount(16.393); //Earth Law 1
 	public static final Item SKY_LAW_CRYSTAL = new ItemSpiritStone("sky_law_crystal", 0x2a74b8).setAmount(39.288); //Sky Law 1
 	public static final Item HEAVENLY_STONE = new ItemSpiritStone("heavenly_stone", 0x004d95).setAmount(59.075); //Sky Law 7
@@ -193,7 +207,26 @@ public class Items {
 	public static final Item FALLEN_STAR_CORE = new ItemSpiritStone("fallen_star_core", 0x3e0404).setAmount(2837890.554); // Divine Phenomenon 1
 	public static final Item PRIMORDIAL_CHAOS_STONE = new ItemSpiritStone("primordial_chaos_stone", 0xe4de1c).setAmount(13685289.995); // True God 1
 
+	public static final Item PAINT_BRUSH = new ItemPaintBrush("paint_brush");
+	public static final Item GOLD_DAGGER = new ItemDagger("gold_dagger");
 	public static final Item BLOOD_BOTTLE = new ItemBloodContainer("blood_bottle");
-	public static final Item EMPTY_BOTTLE = new ItemBottle("empty_bottle");
+	public static final Item EMPTY_BOTTLE = new ItemBase("empty_bottle").setMaxStackSize(16);
+	public static final Item PAINT_BOTTLE = new ItemBase("paint_bottle").setMaxStackSize(1).setMaxDamage(50);
+
+	//Training posts
+	public static final Map<String, Item> TRAINING_POSTS = new HashMap<>();
+	static {
+		List<String> tiers =new ArrayList<>();
+		tiers.add("stick");
+		tiers.add("stone");
+		tiers.add("iron");
+		tiers.add("diamond");
+		for(BlockPlanks.EnumType wood: BlockPlanks.EnumType.values()) {
+			for(String tier : tiers) {
+				String name = "training_post_"+wood.getName()+"_"+tier;
+				TRAINING_POSTS.put(name, new ItemTrainingPost(name));
+			}
+		}
+	}
 
 }

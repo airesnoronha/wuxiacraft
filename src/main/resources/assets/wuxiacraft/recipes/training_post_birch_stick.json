@@ -1,0 +1,25 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"result": {
+		"item": "wuxiacraft:training_post_birch_stick",
+		"count": 1
+	},
+	"pattern": [
+		"sws",
+		"sws",
+		"pwp"
+	],
+	"key": {
+		"w": {
+			"item": "minecraft:log",
+			"data": 2
+		},
+		"s": {
+			"item": "minecraft:stick"
+		},
+		"p": {
+			"item": "minecraft:planks",
+			"data": 2
+		}
+	}
+}

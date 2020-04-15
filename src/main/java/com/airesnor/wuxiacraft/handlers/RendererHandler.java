@@ -54,12 +54,12 @@ public class RendererHandler {
 
 	public static class WorldRenderQueue {
 
-		public class RenderElement {
+		public static class RenderElement {
 			private float duration; //in ticks
 			private float prevPartialTicks;
-			private Callable rendering;
+			private Callable<Void> rendering;
 
-			public RenderElement(float duration, Callable rendering) {
+			public RenderElement(float duration, Callable<Void> rendering) {
 				this.duration = duration;
 				this.rendering = rendering;
 				this.prevPartialTicks = 0;
@@ -96,7 +96,7 @@ public class RendererHandler {
 			}
 		}
 
-		public void add(float duration, Callable rendering) {
+		public void add(float duration, Callable<Void> rendering) {
 			this.drawingQueue.add(new RenderElement(duration, rendering));
 		}
 

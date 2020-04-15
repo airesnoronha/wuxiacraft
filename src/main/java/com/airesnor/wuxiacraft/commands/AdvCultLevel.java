@@ -1,11 +1,11 @@
 package com.airesnor.wuxiacraft.commands;
 
-import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.networking.CultivationMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import com.sun.istack.internal.NotNull;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -15,23 +15,29 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AdvCultLevel extends CommandBase {
 
 	@Override
+	@Nonnull
 	public String getName() {
 		return "advcultlevel";
 	}
 
 	@Override
+	@NotNull
+	@ParametersAreNonnullByDefault
 	public String getUsage(ICommandSender sender) {
 		return "/advcultlevel";
 	}
 
 	@Override
+	@Nonnull
 	public List<String> getAliases() {
 		List<String> aliases = new ArrayList<>();
 		aliases.add("advcult");
@@ -45,13 +51,13 @@ public class AdvCultLevel extends CommandBase {
 			if (!player.world.isRemote) {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				if (args.length == 0) {
-					CultivationUtils.cultivatorAddProgress(player, cultivation, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
+					CultivationUtils.cultivatorAddProgress(player, cultivation, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()), true, true);
 					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), player);
 					EventHandler.applyModifiers(player, cultivation);
 				} else if (args.length == 1) {
 					int levels = Integer.parseInt(args[0], 10);
 					for (int i = 0; i < levels; i++) {
-						CultivationUtils.cultivatorAddProgress(player, cultivation, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
+						CultivationUtils.cultivatorAddProgress(player, cultivation, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()), true, true);
 					}
 					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), player);
 					EventHandler.applyModifiers(player, cultivation);
@@ -70,8 +76,10 @@ public class AdvCultLevel extends CommandBase {
 	}
 
 	@Override
+	@ParametersAreNonnullByDefault
+	@Nonnull
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
-		return null;
+		return new ArrayList<>();
 	}
 
 	@Override

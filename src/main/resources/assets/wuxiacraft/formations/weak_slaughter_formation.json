@@ -1,0 +1,269 @@
+{
+	"formationName": "wuxiacraft:weak_slaughter_formation",
+	"positions": [
+		{
+			"blockState": "minecraft:stone",
+			"x": 0,
+			"y": 0,
+			"z": -4
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": 3,
+			"y": 0,
+			"z": -3
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": 4,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": 3,
+			"y": 0,
+			"z": 3
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": 0,
+			"y": 0,
+			"z": 4
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": -3,
+			"y": 0,
+			"z": 3
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": -4,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": -3,
+			"y": 0,
+			"z": -3
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": 0,
+			"y": 1,
+			"z": -4
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": 3,
+			"y": 1,
+			"z": -3
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": 4,
+			"y": 1,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": 3,
+			"y": 1,
+			"z": 3
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": 0,
+			"y": 1,
+			"z": 4
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": -3,
+			"y": 1,
+			"z": 3
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": -4,
+			"y": 1,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": -3,
+			"y": 1,
+			"z": -3
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": 0,
+			"y": 2,
+			"z": -4
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": 4,
+			"y": 2,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": -4,
+			"y": 2,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": 0,
+			"y": 2,
+			"z": 4
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": -3,
+			"y": 2,
+			"z": 3
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": -3,
+			"y": 2,
+			"z": -3
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": 3,
+			"y": 2,
+			"z": -3
+		},
+		{
+			"blockState": "minecraft:stone",
+			"x": 3,
+			"y": 2,
+			"z": 3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": 0,
+			"y": 0,
+			"z": -3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": -1,
+			"y": 0,
+			"z": -3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": 1,
+			"y": 0,
+			"z": -3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": 2,
+			"y": 0,
+			"z": -2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": 3,
+			"y": 0,
+			"z": -1
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": 3,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": 3,
+			"y": 0,
+			"z": 1
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": 2,
+			"y": 0,
+			"z": 2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": 1,
+			"y": 0,
+			"z": 3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": 0,
+			"y": 0,
+			"z": 3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": -1,
+			"y": 0,
+			"z": 3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": -2,
+			"y": 0,
+			"z": 2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": -3,
+			"y": 0,
+			"z": 1
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": -3,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": -3,
+			"y": 0,
+			"z": -1
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": -2,
+			"y": 0,
+			"z": -2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": 0,
+			"y": 0,
+			"z": -1
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": -1,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": 0,
+			"y": 0,
+			"z": 1
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_soul_refinement",
+			"x": 1,
+			"y": 0,
+			"z": 0
+		}
+	]
+}

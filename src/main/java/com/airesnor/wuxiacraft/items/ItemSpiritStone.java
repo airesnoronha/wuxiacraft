@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.items;
 
-import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillAction;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
@@ -22,18 +21,26 @@ public class ItemSpiritStone extends ItemBase {
 	private ISkillAction action;
 	private ISkillAction whenUsing;
 	public final int color;
+	private double amount;
 
 	public ItemSpiritStone(String item_name, int color) {
 		super(item_name);
 		this.action = actor -> true;
 		this.whenUsing = new DefaultCultivationIncrease(1f);
+		this.amount = 1;
 		this.setMaxDamage(100);
 		this.color = color;
+		setCreativeTab(Items.WUXIACRAFT_GENERAL);
 	}
 
 	public ItemSpiritStone setAmount(double amount) {
 		this.whenUsing = new DefaultCultivationIncrease(amount);
+		this.amount = amount;
 		return this;
+	}
+
+	public double getAmount() {
+		return amount;
 	}
 
 	public ItemSpiritStone setUseAction(ISkillAction action) {
@@ -96,7 +103,7 @@ public class ItemSpiritStone extends ItemBase {
 		public boolean activate(EntityLivingBase actor) {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 			if(this.amount < cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.003) {
-				CultivationUtils.cultivatorAddProgress(actor, cultivation, this.amount);
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, this.amount, false, false);
 			} else {
 				actor.world.createExplosion(actor, actor.posX, actor.posY + 0.9, actor.posZ, 3, true);
 				actor.attackEntityFrom(DamageSource.causeExplosionDamage(actor), (float)(this.amount * 3));

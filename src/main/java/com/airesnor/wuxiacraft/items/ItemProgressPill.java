@@ -41,7 +41,7 @@ public class ItemProgressPill extends ItemBase {
 					stack = ItemStack.EMPTY;
 				cultivation.setPillCooldown(cooldown);
 				if(this.amount <= cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.1f) {
-					CultivationUtils.cultivatorAddProgress(player, cultivation, this.amount);
+					CultivationUtils.cultivatorAddProgress(player, cultivation, this.amount, false, true);
 				} else {
 					worldIn.createExplosion(entityLiving, entityLiving.posX, entityLiving.posY, entityLiving.posZ, 3f, true);
 					entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), this.amount*2);

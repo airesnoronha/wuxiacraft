@@ -1,0 +1,6 @@
+{
+	"parent":"item/generated",
+	"textures":{
+		"layer0":"wuxiacraft:items/training_post_dark_oak_stone"
+	}
+}

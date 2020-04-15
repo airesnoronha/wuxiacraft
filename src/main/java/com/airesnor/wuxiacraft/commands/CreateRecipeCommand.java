@@ -51,20 +51,24 @@ public class CreateRecipeCommand extends CommandBase {
 		if(!sender.getEntityWorld().isRemote) {
 			boolean wrongUsage = false;
 			if(args.length == 1) {
-				String recipe_name = args[0];
+				String recipe_name = args[0].toLowerCase();
+				String recipe_found = "";
 				for(Recipe recipe : Recipes.RECIPES) {
 					if(recipe_name.equals(recipe.getUnlocalizedName())) {
+						recipe_found = recipe.getUnlocalizedName();
 						ItemStack stack = new ItemStack(Items.RECIPE_SCROLL, 1);
 						ItemRecipe.setRecipe(stack, recipe);
 						Vec3d pos = sender.getPositionVector();
 						EntityItem item = new EntityItem(sender.getEntityWorld(), pos.x, pos.y, pos.z, stack);
 						sender.getEntityWorld().spawnEntity(item);
-					} else {
-						TextComponentString text = new TextComponentString("Couldn't find recipe");
-						text.getStyle().setColor(TextFormatting.RED);
-						sender.sendMessage(text);
 					}
 				}
+				if (!recipe_name.equals(recipe_found)){
+					TextComponentString text = new TextComponentString("Couldn't find recipe!");
+					text.getStyle().setColor(TextFormatting.RED);
+					sender.sendMessage(text);
+				}
+
 			} else {
 				wrongUsage = true;
 			}
