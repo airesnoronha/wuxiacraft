@@ -246,8 +246,8 @@ public class Skills {
 				if (actor.world.isRemote) {
 					if (actor instanceof EntityPlayer) {
 						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-						final int max_range = 128;
-						int range = Math.min(max_range, 16 + (int) (Math.floor(0.2 * (1 - cultivation.getStrengthIncrease()))));
+						final int max_range = 32;
+						int range = Math.min(max_range, 16 + (int) (Math.floor(0.2 * (cultivation.getStrengthIncrease())-1)));
 						OreUtils.findOres(actor.world, actor.getPosition(), range);
 						float duration = 10 * 20; // 10 seconds
 						RendererHandler.worldRenderQueue.add(duration, () -> {

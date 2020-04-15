@@ -182,8 +182,8 @@ public class Items {
 	public static final Item WEAK_LIFE_STONE = new ItemSpiritStone("weak_life_stone", 0xC26060); //Body Refinement 1
 	public static final Item SOUL_STONE = new ItemSpiritStone("soul_stone", 0x684893).setAmount(1.790); //Soul Refinement 1
 	public static final Item PRIMORDIAL_STONE = new ItemSpiritStone("primordial_stone", 0x10EFFF).setAmount(2.260); //Soul Refinement 5
-	public static final Item SPIRIT_STONE15 = new ItemSpiritStone("five_element_pure_crystal", 0x2f5410).setAmount(3.399); //Qi Paths 1
-	public static final Item FIVE_ELEMENT_PURE_CRYSTAL = new ItemSpiritStone("pure_qi_crystal", 0xd3d3d3).setAmount(6.84); //Dantian 1
+	public static final Item FIVE_ELEMENT_PURE_CRYSTAL = new ItemSpiritStone("five_element_pure_crystal", 0x2f5410).setAmount(3.399); //Qi Paths 1
+	public static final Item PURE_QI_CRYSTAL = new ItemSpiritStone("pure_qi_crystal", 0xd3d3d3).setAmount(6.84); //Dantian 1
 	public static final Item EARTH_LAW_CRYSTAL = new ItemSpiritStone("earth_law_crystal", 0x7d511c).setAmount(16.393); //Earth Law 1
 	public static final Item SKY_LAW_CRYSTAL = new ItemSpiritStone("sky_law_crystal", 0x2a74b8).setAmount(39.288); //Sky Law 1
 	public static final Item HEAVENLY_STONE = new ItemSpiritStone("heavenly_stone", 0x004d95).setAmount(59.075); //Sky Law 7

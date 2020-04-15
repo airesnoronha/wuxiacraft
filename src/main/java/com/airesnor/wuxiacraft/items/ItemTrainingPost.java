@@ -23,6 +23,7 @@ public class ItemTrainingPost extends ItemBase {
 
 	public ItemTrainingPost(String item_name) {
 		super(item_name);
+		setMaxStackSize(1);
 	}
 
 	@Override

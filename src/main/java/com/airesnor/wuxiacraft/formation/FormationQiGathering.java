@@ -1,13 +1,17 @@
 package com.airesnor.wuxiacraft.formation;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -50,7 +54,23 @@ public class FormationQiGathering extends Formation {
 				break;
 			}
 		}
+		List<EntityPlayer> playersNearby = worldIn.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(source).grow(this.getRange()/8));
+		for(EntityPlayer player : playersNearby) {
+			if(player.getDistanceSq(source) < (this.getRange()/8)*(this.getRange()/8)) {
+				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+				cultivation.addEnergy((float) this.generation * 2);
+			}
+		}
 		return 0;
+	}
+
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void doClientUpdate(@Nonnull World worldIn, @Nonnull BlockPos source, @Nonnull FormationTileEntity parent) {
+		if(Minecraft.getMinecraft().player.getDistanceSq(source) < (this.getRange()/8)*(this.getRange()/8)) {
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
+			cultivation.addEnergy((float) this.generation * 2);
+		}
 	}
 
 	@SideOnly(Side.CLIENT)

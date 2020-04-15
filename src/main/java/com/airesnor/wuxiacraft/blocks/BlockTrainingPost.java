@@ -19,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -81,6 +82,7 @@ public class BlockTrainingPost extends Block implements IHasModel {
 		double amount = this.amount * playerIn.getCooledAttackStrength(0.5f); //game always use 0.5 idk y
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(playerIn);
 		CultivationUtils.cultivatorAddProgress(playerIn, cultivation, amount, false, false);
+		playerIn.attackEntityFrom(DamageSource.GENERIC.setDamageBypassesArmor(), (float)amount);
 	}
 
 	@Override

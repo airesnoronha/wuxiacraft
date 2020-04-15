@@ -15,7 +15,8 @@
 			"data": 1
 		},
 		"s": {
-			"item": "minecraft:stone"
+			"item": "minecraft:stone",
+			"data": 0
 		},
 		"p": {
 			"item": "minecraft:planks",

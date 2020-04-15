@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.blocks;
 
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.formation.FormationCoreBlock;
+import com.airesnor.wuxiacraft.items.Items;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.material.Material;
@@ -61,5 +62,28 @@ public class Blocks {
 			}
 		}
 	}
+
+	public static final Block WEAK_LIFE_STONE_VEIN = new SpiritVeinOre("weak_life_stone_vein").setDroppedItem(Items.WEAK_LIFE_STONE);
+	public static final Block SOUL_STONE_VEIN = new SpiritVeinOre("soul_stone_vein").setDroppedItem(Items.SOUL_STONE);
+	public static final Block PRIMORDIAL_STONE = new SpiritVeinOre("primordial_stone_vein").setDroppedItem(Items.PRIMORDIAL_STONE);
+	public static final Block FIVE_ELEMENT_PURE_CRYSTAL_VEIN = new SpiritVeinOre("five_element_pure_crystal_vein").setDroppedItem(Items.FIVE_ELEMENT_PURE_CRYSTAL);
+	public static final Block PURE_QI_CRYSTAL_VEIN = new SpiritVeinOre("pure_qi_crystal_vein").setDroppedItem(Items.PURE_QI_CRYSTAL);
+	public static final Block EARTH_LAW_CRYSTAL_VEIN = new SpiritVeinOre("earth_law_crystal_vein").setDroppedItem(Items.EARTH_LAW_CRYSTAL);
+	public static final Block SKY_LAW_CRYSTAL_VEIN = new SpiritVeinOre("sky_law_crystal_vein").setDroppedItem(Items.SKY_LAW_CRYSTAL);
+	public static final Block HEAVENLY_STONE_VEIN = new SpiritVeinOre("heavenly_stone_vein").setDroppedItem(Items.HEAVENLY_STONE);
+	public static final Block RAINBOW_LAW_STONE_VEIN = new SpiritVeinOre("rainbow_law_stone_vein").setDroppedItem(Items.RAINBOW_LAW_STONE);
+	public static final Block SKY_AND_EARTH_CRYSTAL_VEIN = new SpiritVeinOre("sky_and_earth_crystal_vein").setDroppedItem(Items.SKY_AND_EARTH_CRYSTAL);
+	public static final Block LAW_NEXUS_STONE_VEIN = new SpiritVeinOre("law_nexus_stone_vein").setDroppedItem(Items.LAW_NEXUS_STONE);
+	public static final Block WAR_CRYSTAL_VEIN = new SpiritVeinOre("war_crystal_vein").setDroppedItem(Items.WAR_CRYSTAL);
+	public static final Block GOLD_SPIRIT_STONE_VEIN = new SpiritVeinOre("gold_spirit_stone_vein").setDroppedItem(Items.GOLD_SPIRIT_STONE);
+	public static final Block YIN_YANG_STONE_VEIN = new SpiritVeinOre("yin_yang_stone_vein").setDroppedItem(Items.YIN_YANG_STONE);
+	public static final Block TRANSCENDENT_CRYSTAL_VEIN = new SpiritVeinOre("transcendent_crystal_vein").setDroppedItem(Items.TRANSCENDENT_CRYSTAL);
+	public static final Block IMMORTALITY_STONE_VEIN = new SpiritVeinOre("immortality_stone_vein").setDroppedItem(Items.IMMORTALITY_STONE);
+	public static final Block ASCENDED_IMMORTALITY_STONE_VEIN = new SpiritVeinOre("ascended_immortality_stone_vein").setDroppedItem(Items.ASCENDED_IMMORTALITY_STONE);
+	public static final Block IMMORTAL_WILL_STONE_VEIN = new SpiritVeinOre("immortal_will_stone_vein").setDroppedItem(Items.IMMORTAL_WILL_STONE);
+	public static final Block STELLAR_STONE_VEIN = new SpiritVeinOre("stellar_stone_vein").setDroppedItem(Items.STELLAR_STONE);
+	public static final Block DIVINE_ORIGIN_STONE_VEIN = new SpiritVeinOre("divine_origin_stone_vein").setDroppedItem(Items.DIVINE_ORIGIN_STONE);
+	public static final Block BOUNDLESS_VOID_CRYSTAL_VEIN = new SpiritVeinOre("boundless_void_crystal_vein").setDroppedItem(Items.BOUNDLESS_VOID_CRYSTAL);
+	public static final Block PRIMORDIAL_CHAOS_STONE_VEIN = new SpiritVeinOre("primordial_chaos_stone_vein").setDroppedItem(Items.PRIMORDIAL_CHAOS_STONE);
 
 }
