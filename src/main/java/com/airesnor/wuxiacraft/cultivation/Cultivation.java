@@ -4,7 +4,7 @@ public class Cultivation implements ICultivation {
 	private double progress;
 	private CultivationLevel level;
 	private int subLevel;
-	private float energy;
+	private double energy;
 	public int handicap;
 	private int timer;
 	private int pillCooldown;
@@ -16,7 +16,7 @@ public class Cultivation implements ICultivation {
 	public Cultivation() {
 		this.subLevel = 0;
 		this.progress = 0;
-		this.level = CultivationLevel.BODY_REFINEMENT;
+		this.level = CultivationLevel.BASE_LEVEL;
 		this.energy = 0;
 		this.handicap = 100;
 		this.timer = 0;
@@ -71,27 +71,27 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public float getEnergy() {
+	public double getEnergy() {
 		return this.energy;
 	}
 
 	@Override
-	public void setEnergy(float amount) {
+	public void setEnergy(double amount) {
 		this.energy = Math.min(Math.max(0, amount), this.level.getMaxEnergyByLevel(this.subLevel));
 	}
 
 	@Override
-	public void addEnergy(float amount) {
+	public void addEnergy(double amount) {
 		this.energy = Math.min(this.energy + amount, this.level.getMaxEnergyByLevel(this.subLevel));
 	}
 
 	@Override
-	public void remEnergy(float amount) {
+	public void remEnergy(double amount) {
 		this.energy = Math.max(this.energy - amount, 0);
 	}
 
 	@Override
-	public boolean hasEnergy(float amount) {
+	public boolean hasEnergy(double amount) {
 		return this.energy >= amount;
 	}
 
@@ -132,7 +132,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public void lessenPillCooldown() {
-		int speed = Math.round(this.getSpeedIncrease());
+		int speed = (int)Math.round(this.getSpeedIncrease());
 		this.pillCooldown = Math.max(this.pillCooldown - speed, 0);
 	}
 
@@ -142,17 +142,17 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public float getStrengthIncrease() {
+	public double getStrengthIncrease() {
 		return this.level.getStrengthModifierBySubLevel(this.subLevel);
 	}
 
 	@Override
-	public float getSpeedIncrease() {
+	public double getSpeedIncrease() {
 		return this.level.getSpeedModifierBySubLevel(this.subLevel);
 	}
 
 	@Override
-	public float getMaxEnergy() {
+	public double getMaxEnergy() {
 		return this.level.getMaxEnergyByLevel(this.subLevel);
 	}
 
@@ -194,5 +194,15 @@ public class Cultivation implements ICultivation {
 	@Override
 	public boolean getSuppress() {
 		return this.suppress;
+	}
+
+	@Override
+	public void copyFrom(ICultivation cultivation) {
+		this.setCurrentLevel(cultivation.getCurrentLevel());
+		this.setCurrentSubLevel(cultivation.getCurrentSubLevel());
+		this.setProgress(cultivation.getCurrentProgress());
+		this.setEnergy(cultivation.getEnergy());
+		this.setPillCooldown(cultivation.getPillCooldown());
+		this.setSuppress(cultivation.getSuppress());
 	}
 }

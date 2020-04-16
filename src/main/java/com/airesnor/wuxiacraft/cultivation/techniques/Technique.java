@@ -4,7 +4,6 @@ import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.utils.TranslateUtils;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.PotionEffect;
 
@@ -127,13 +126,13 @@ public class Technique {
 	}
 
 	public TechniquesModifiers updateSmallSuccess(EntityPlayer player, ICultivation cultivation) {
-		float strength = cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel());
-		float speed = cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel());
-		float armor = this.baseModifiers.armor * strength;
-		float attackSpeed = this.baseModifiers.attackSpeed * speed;
-		float maxHealth = this.baseModifiers.maxHealth * strength;
-		float movementSpeed = this.baseModifiers.movementSpeed * speed;
-		float strengthMod = this.baseModifiers.strength * strength;
+		double strength = cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel());
+		double speed = cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel());
+		double armor = this.baseModifiers.armor * strength;
+		double attackSpeed = this.baseModifiers.attackSpeed * speed;
+		double maxHealth = this.baseModifiers.maxHealth * strength;
+		double movementSpeed = this.baseModifiers.movementSpeed * speed;
+		double strengthMod = this.baseModifiers.strength * strength;
 		for (PotionEffect p : smallCompletionEffects) {
 			if (p.getIsAmbient()) {
 				if (player.getActivePotionEffect(p.getPotion()) != null) {
@@ -146,21 +145,21 @@ public class Technique {
 	}
 
 	public TechniquesModifiers updateGreatSuccess(EntityPlayer player, ICultivation cultivation) {
-		float strength = cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel());
-		float speed = cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel());
-		float armor = this.baseModifiers.armor * strength;
+		double strength = cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel());
+		double speed = cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel());
+		double armor = this.baseModifiers.armor * strength;
 		armor = armor < 0 ? armor - (armor * 0.1f) : armor * 1.1f;
 
-		float attackSpeed = this.baseModifiers.attackSpeed * speed;
+		double attackSpeed = this.baseModifiers.attackSpeed * speed;
 		attackSpeed = attackSpeed < 0 ? attackSpeed - (attackSpeed * 0.1f) : attackSpeed * 1.1f;
 
-		float maxHealth = this.baseModifiers.maxHealth * strength;
+		double maxHealth = this.baseModifiers.maxHealth * strength;
 		maxHealth = maxHealth < 0 ? maxHealth - (maxHealth * 0.1f) : maxHealth * 1.1f;
 
-		float movementSpeed = this.baseModifiers.movementSpeed * speed;
+		double movementSpeed = this.baseModifiers.movementSpeed * speed;
 		movementSpeed = movementSpeed < 0 ? movementSpeed - (movementSpeed * 0.1f) : movementSpeed * 1.1f;
 
-		float strengthMod = this.baseModifiers.strength * strength;
+		double strengthMod = this.baseModifiers.strength * strength;
 		strengthMod = strengthMod < 0 ? strengthMod - (strengthMod * 0.1f) : strengthMod * 1.1f;
 
 		for (PotionEffect p : greatCompletionEffects) {
@@ -175,18 +174,18 @@ public class Technique {
 	}
 
 	TechniquesModifiers updatePerfection(EntityPlayer player, ICultivation cultivation) {
-		float strength = cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel());
-		float speed = cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel());
+		double strength = cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel());
+		double speed = cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel());
 
-		float armor = this.baseModifiers.armor * strength;
+		double armor = this.baseModifiers.armor * strength;
 		armor = armor < 0 ? armor - (armor * 0.25f) : armor * 1.25f;
-		float attackSpeed = this.baseModifiers.attackSpeed * speed;
+		double attackSpeed = this.baseModifiers.attackSpeed * speed;
 		attackSpeed = attackSpeed < 0 ? attackSpeed - (attackSpeed * 0.25f) : attackSpeed * 1.25f;
-		float maxHealth = this.baseModifiers.maxHealth * strength;
+		double maxHealth = this.baseModifiers.maxHealth * strength;
 		maxHealth = maxHealth < 0 ? maxHealth - (maxHealth * 0.25f) : maxHealth * 1.25f;
-		float movementSpeed = this.baseModifiers.movementSpeed * speed;
+		double movementSpeed = this.baseModifiers.movementSpeed * speed;
 		movementSpeed = movementSpeed < 0 ? movementSpeed - (movementSpeed * 0.25f) : movementSpeed * 1.25f;
-		float strengthMod = this.baseModifiers.strength * strength;
+		double strengthMod = this.baseModifiers.strength * strength;
 		strengthMod = strengthMod < 0 ? strengthMod - (strengthMod * 0.25f) : strengthMod * 1.25f;
 
 		for (PotionEffect p : perfectionCompletionEffects) {

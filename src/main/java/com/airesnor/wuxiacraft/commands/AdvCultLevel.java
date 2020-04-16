@@ -52,14 +52,14 @@ public class AdvCultLevel extends CommandBase {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				if (args.length == 0) {
 					CultivationUtils.cultivatorAddProgress(player, cultivation, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()), true, true);
-					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), player);
+					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
 					EventHandler.applyModifiers(player, cultivation);
 				} else if (args.length == 1) {
 					int levels = Integer.parseInt(args[0], 10);
 					for (int i = 0; i < levels; i++) {
 						CultivationUtils.cultivatorAddProgress(player, cultivation, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()), true, true);
 					}
-					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), player);
+					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
 					EventHandler.applyModifiers(player, cultivation);
 				} else {
 					TextComponentString text = new TextComponentString("Invalid arguments, use /advcult levels");

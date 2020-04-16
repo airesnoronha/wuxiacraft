@@ -1,7 +1,6 @@
 package com.airesnor.wuxiacraft.entities.mobs;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.entities.ai.EntityAIReleaseSkills;
@@ -43,16 +42,19 @@ public class WanderingCultivator extends EntityCultivator implements IMob {
 	protected void applyCultivation(World world) {
 		if(world.provider.getDimensionType().getId() == 0) {
 			int result = world.rand.nextInt(100);
+			CultivationLevel aux = CultivationLevel.BASE_LEVEL.getNextLevel();
 			if(MathUtils.between(result, 0, 30)) {
-				this.cultivation.setCurrentLevel(CultivationLevel.SOUL_REFINEMENT);
+				this.cultivation.setCurrentLevel(aux);
 				this.experienceValue = 7;
 			}
-			else if(MathUtils.between(result, 31, 41)) {
-				this.cultivation.setCurrentLevel(CultivationLevel.QI_PATHS_REFINEMENT);
+			aux = aux.getNextLevel();
+			if(MathUtils.between(result, 31, 41)) {
+				this.cultivation.setCurrentLevel(aux);
 				this.experienceValue = 10;
 			}
-			else if(MathUtils.between(result, 42, 47)) {
-				this.cultivation.setCurrentLevel(CultivationLevel.DANTIAN_CONDENSING);
+			aux = aux.getNextLevel();
+			if(MathUtils.between(result, 42, 47)) {
+				this.cultivation.setCurrentLevel(aux);
 				this.experienceValue = 15;
 			}
 			result = 1+world.rand.nextInt(35);
@@ -81,19 +83,17 @@ public class WanderingCultivator extends EntityCultivator implements IMob {
 	@Override
 	protected ResourceLocation getLootTable() {
 		ResourceLocation table = DROP_TABLE_1;
-		switch(this.cultivation.getCurrentLevel()) {
-			case BODY_REFINEMENT:
-				table = DROP_TABLE_1;
-				break;
-			case SOUL_REFINEMENT:
-				table = DROP_TABLE_2;
-				break;
-			case QI_PATHS_REFINEMENT:
-				table = DROP_TABLE_3;
-				break;
-			case DANTIAN_CONDENSING:
-				table = DROP_TABLE_4;
-				break;
+		CultivationLevel aux = CultivationLevel.BASE_LEVEL.getNextLevel();
+		if(this.getCultivationLevel() == aux) {
+			table = DROP_TABLE_2;
+		}
+		aux = aux.getNextLevel();
+		if(this.getCultivationLevel() == aux) {
+			table = DROP_TABLE_3;
+		}
+		aux = aux.getNextLevel();
+		if(this.getCultivationLevel() == aux) {
+			table = DROP_TABLE_4;
 		}
 		return table;
 	}

@@ -2,13 +2,13 @@ package com.airesnor.wuxiacraft.cultivation.techniques;
 
 public class TechniquesModifiers {
 
-	public float armor;
-	public float attackSpeed;
-	public float movementSpeed;
-	public float strength;
-	public float maxHealth;
+	public double armor;
+	public double attackSpeed;
+	public double movementSpeed;
+	public double strength;
+	public double maxHealth;
 
-	public TechniquesModifiers(float armor, float attackSpeed, float maxHealth, float movementSpeed, float strength) {
+	public TechniquesModifiers(double armor, double attackSpeed, double maxHealth, double movementSpeed, double strength) {
 		this.armor = armor;
 		this.attackSpeed = attackSpeed;
 		this.movementSpeed = movementSpeed;

@@ -112,7 +112,7 @@ public class Skills {
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
 				double amount = cultTech.getOverallCultivationSpeed() * 0.25 * 10;
 				float energy = cultTech.getOverallCultivationSpeed() * 1.25f * 10;
-				skillCap.stepCastProgress(-cultivation.getSpeedIncrease() + 1);
+				skillCap.stepCastProgress(-(float)cultivation.getSpeedIncrease() + 1);
 				if ((int) skillCap.getCastProgress() % 10 == 9) {
 					NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("applySlowness", cultivation.hasEnergy(energy) ? energy : 0));
 				}
@@ -222,7 +222,7 @@ public class Skills {
 				float shootYaw = actor.rotationYawHead;
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 				for (int i = 0; i < 3; i++) {
-					FireThrowable ft = new FireThrowable(actor.world, actor, Math.min(10f, cultivation.getStrengthIncrease() / 3f));
+					FireThrowable ft = new FireThrowable(actor.world, actor, Math.min(10f, (float)cultivation.getStrengthIncrease() / 3f));
 					ft.shoot(actor, shootPitch, shootYaw, 0.3f, 1.2f, 0.4f);
 					actor.world.spawnEntity(ft);
 				}
@@ -233,8 +233,8 @@ public class Skills {
 			.setAction(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 				for (int i = 0; i < 5; i++) {
-					FireThrowable ft = new FireThrowable(actor.world, actor, Math.min(4 + cultivation.getStrengthIncrease() * 1.2f, 40f), 600, 60, 1.2f);
-					ft.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, Math.min(0.8f + cultivation.getSpeedIncrease() * 0.4f, 1.8f), 0.4f);
+					FireThrowable ft = new FireThrowable(actor.world, actor, (float)Math.min(4 + cultivation.getStrengthIncrease() * 1.2f, 40f), 600, 60, 1.2f);
+					ft.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, (float)Math.min(0.8f + cultivation.getSpeedIncrease() * 0.4f, 1.8f), 0.4f);
 					actor.world.spawnEntity(ft);
 				}
 				return true;
@@ -367,8 +367,8 @@ public class Skills {
 	public static Skill WATER_NEEDLE = new Skill("water_needle", true, 100f, 1.1f, 20f, 0f, "Lysian Prieto")
 			.setAction(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				WaterNeedleThrowable needle = new WaterNeedleThrowable(actor.world, actor, Math.min(17f, 4 + cultivation.getStrengthIncrease() * 0.3f), 300);
-				needle.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, Math.min(1.8f, 0.8f + cultivation.getSpeedIncrease() * 0.12f), 0.2f);
+				WaterNeedleThrowable needle = new WaterNeedleThrowable(actor.world, actor, (float) Math.min(17f, 4 + cultivation.getStrengthIncrease() * 0.3f), 300);
+				needle.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, (float) Math.min(1.8f, 0.8f + cultivation.getSpeedIncrease() * 0.12f), 0.2f);
 				actor.world.spawnEntity(needle);
 				return true;
 			});
@@ -380,18 +380,18 @@ public class Skills {
 		if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
 			swordModifier = 1.5f;
 			actor.swingArm(EnumHand.MAIN_HAND);
-			skillCap.stepCastProgress(cultivation.getSpeedIncrease() * 0.5f);
+			skillCap.stepCastProgress((float)cultivation.getSpeedIncrease() * 0.5f);
 		}
-		float damage = Math.min(60f, 8 + cultivation.getStrengthIncrease() * 1.5f * swordModifier);
+		float damage = Math.min(60f, 8 + (float)cultivation.getStrengthIncrease() * 1.5f * swordModifier);
 		WaterBladeThrowable blade = new WaterBladeThrowable(actor.world, actor, damage, 300);
-		blade.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 0.7f + cultivation.getSpeedIncrease() * 0.5f * swordModifier, 0.2f);
+		blade.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 0.7f + (float)cultivation.getSpeedIncrease() * 0.5f * swordModifier, 0.2f);
 		actor.world.spawnEntity(blade);
 		return true;
 	});
 
 	public static Skill SELF_HEALING = new Skill("self_healing", false, 160f, 1f, 80f, 0f).setAction(actor -> {
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-		actor.heal(Math.max(15f, cultivation.getStrengthIncrease() * 0.05f));
+		actor.heal(Math.max(15f, (float)cultivation.getStrengthIncrease() * 0.05f));
 		return true;
 	});
 
@@ -401,7 +401,7 @@ public class Skills {
 		if (result instanceof EntityLiving) {
 			EntityLiving entity = (EntityLiving) result;
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-			entity.heal(Math.max(18f, cultivation.getStrengthIncrease() * 0.05f));
+			entity.heal(Math.max(18f, (float)cultivation.getStrengthIncrease() * 0.05f));
 			WuxiaCraft.logger.info("Healing a " + entity + "by " + ((int) Math.max(10f, cultivation.getStrengthIncrease() * 0.05f)));
 			activated = true;
 		}
@@ -433,7 +433,7 @@ public class Skills {
 				boolean activated = false;
 				if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
 					activated = true;
-					float strength = CultivationUtils.getCultivationFromEntity(actor).getStrengthIncrease();
+					float strength = (float)CultivationUtils.getCultivationFromEntity(actor).getStrengthIncrease();
 					float sword = ((ItemSword) actor.getHeldItem(EnumHand.MAIN_HAND).getItem()).getAttackDamage();
 					int enchantment = EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, actor.getHeldItem(EnumHand.MAIN_HAND));
 					sword += enchantment > 0 ? 0.5 * (1 + enchantment) : 0;
@@ -447,7 +447,7 @@ public class Skills {
 			});
 
 	public static final ISkillAction BARRAGE_MINOR_BEAM = actor -> {
-		float strength = CultivationUtils.getCultivationFromEntity(actor).getStrengthIncrease();
+		float strength = (float)CultivationUtils.getCultivationFromEntity(actor).getStrengthIncrease();
 		float sword = ((ItemSword) actor.getHeldItem(EnumHand.MAIN_HAND).getItem()).getAttackDamage() * 2;
 		int enchantment = EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, actor.getHeldItem(EnumHand.MAIN_HAND));
 		sword += enchantment > 0 ? 0.5 * (1 + enchantment) : 0;
@@ -465,7 +465,7 @@ public class Skills {
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
 				if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
 					activated = true;
-					float strength = CultivationUtils.getCultivationFromEntity(actor).getStrengthIncrease();
+					float strength = (float)CultivationUtils.getCultivationFromEntity(actor).getStrengthIncrease();
 					float sword = ((ItemSword) actor.getHeldItem(EnumHand.MAIN_HAND).getItem()).getAttackDamage() * 2;
 					int enchantment = EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, actor.getHeldItem(EnumHand.MAIN_HAND));
 					sword += enchantment > 0 ? 0.5 * (1 + enchantment) : 0;
@@ -504,13 +504,13 @@ public class Skills {
 			.setWhenCasting(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
-				skillCap.stepCastProgress(-cultivation.getSpeedIncrease() + 1f);
+				skillCap.stepCastProgress(-(float)cultivation.getSpeedIncrease() + 1f);
 				if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
 					if (cultivation.hasEnergy(9f)) {
 						cultivation.remEnergy(9f);
 						if ((int) skillCap.getCastProgress() % 5 == 4)
 							NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, 9 * 5));
-						float speed = cultivation.getSpeedIncrease() * 0.6f;
+						float speed = (float)cultivation.getSpeedIncrease() * 0.6f;
 						speed = Math.min(1.5f, speed);
 						float yaw = actor.rotationYawHead;
 						float pitch = actor.rotationPitch;
@@ -540,7 +540,7 @@ public class Skills {
 	public static final Skill LIGHT_FEET_LEAP = new Skill("light_feet_leap", false, 90f, 1.2f, 30f, 20f)
 			.setAction(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				float speed = Math.min(cultivation.getSpeedIncrease() * 6f, 12f);
+				float speed = Math.min((float)cultivation.getSpeedIncrease() * 6f, 12f);
 				float yaw = actor.rotationYawHead;
 				float pitch = actor.rotationPitch;
 				float x = speed * -MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
@@ -562,7 +562,7 @@ public class Skills {
 						activated = true;
 						actor.swingArm(EnumHand.MAIN_HAND);
 						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-						float strength = cultivation.getStrengthIncrease() * 1.5f;
+						float strength = (float)cultivation.getStrengthIncrease() * 1.5f;
 						for (PotionEffect effect : actor.getActivePotionEffects()) {
 							if (effect.getPotion() == MobEffects.STRENGTH) {
 								strength += (effect.getAmplifier() + 1) * 3;
@@ -590,13 +590,13 @@ public class Skills {
 			.setWhenCasting(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
-				skillCap.stepCastProgress(-cultivation.getSpeedIncrease() + 1f);
+				skillCap.stepCastProgress(-(float)cultivation.getSpeedIncrease() + 1f);
 				if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
 					if (cultivation.hasEnergy(26f)) {
 						cultivation.remEnergy(26f);
 						if ((int) skillCap.getCastProgress() % 5 == 4)
 							NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, 26 * 5));
-						float speed = cultivation.getSpeedIncrease() * 0.8f;
+						float speed = (float)cultivation.getSpeedIncrease() * 0.8f;
 						speed = Math.min(3.5f, speed);
 						float yaw = actor.rotationYawHead;
 						float pitch = actor.rotationPitch;

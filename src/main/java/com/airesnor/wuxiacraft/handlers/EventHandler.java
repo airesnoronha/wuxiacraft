@@ -82,7 +82,7 @@ public class EventHandler {
 		ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 		if (!player.world.isRemote) {
 			WuxiaCraft.logger.info("Restoring " + player.getDisplayNameString() + " cultivation.");
-			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
+			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) player);
 			NetworkWrapper.INSTANCE.sendTo(new SpeedHandicapMessage(cultivation.getSpeedHandicap(), cultivation.getMaxSpeed(), cultivation.getHasteLimit(), cultivation.getJumpLimit()), (EntityPlayerMP) player);
 			NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
 			NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true), (EntityPlayerMP) player);
@@ -111,7 +111,7 @@ public class EventHandler {
 			//each 100 ticks will sync the cultivation
 			if (cultivation.getUpdateTimer() == 100) {
 				if (!player.world.isRemote) {
-					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
+					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) player);
 					NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
 					NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false), (EntityPlayerMP) player);
 					NetworkWrapper.INSTANCE.sendTo(new SpeedHandicapMessage(cultivation.getSpeedHandicap(), cultivation.getMaxSpeed(), cultivation.getHasteLimit(), cultivation.getJumpLimit()), (EntityPlayerMP) player);
@@ -135,7 +135,7 @@ public class EventHandler {
 				player.capabilities.setFlySpeed((float) player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
 				player.stepHeight = 0.6f;
 				if (!player.isSneaking() && WuxiaCraftConfig.disableStepAssist) {
-					player.stepHeight = Math.min(3.1f, 0.6f * (1 + 0.55f * cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel())));
+					player.stepHeight = Math.min(3.1f, 0.6f * (1 + 0.55f * (float)cultivation.getSpeedIncrease()));
 				}
 				player.sendPlayerAbilities();
 			}
@@ -186,7 +186,7 @@ public class EventHandler {
 				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 				if (skillCap.getCooldown() > 0) {
-					skillCap.stepCooldown(-1 - (cultivation.getSpeedIncrease() - 1f) * 0.3f);
+					skillCap.stepCooldown(-1 - ((float)cultivation.getSpeedIncrease() - 1f) * 0.3f);
 				} else {
 					if (player.world.isRemote) {
 					if (skillCap.getActiveSkill() >= 0 && !skillCap.getSelectedSkills().isEmpty()) {
@@ -195,7 +195,7 @@ public class EventHandler {
 							if (skillCap.isCasting()) {
 								if (cultivation.hasEnergy(selectedSkill.getCost())) {
 									if (skillCap.getCastProgress() < selectedSkill.getCastTime() && selectedSkill.castingEffect(player)) {
-										skillCap.stepCastProgress(cultivation.getSpeedIncrease());
+										skillCap.stepCastProgress((float)cultivation.getSpeedIncrease());
 									}
 									if (skillCap.getCastProgress() >= selectedSkill.getCastTime()) {
 										if (selectedSkill.activate(player)) {
@@ -330,7 +330,7 @@ public class EventHandler {
 		if (event.getEntityLiving() instanceof EntityPlayer) {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.getEntityLiving());
 			float baseJumpSpeed = (float) event.getEntity().motionY;
-			float jumpSpeed = 0.88f * (cultivation.getSpeedIncrease() - 1f);
+			float jumpSpeed = 0.88f * ((float)cultivation.getSpeedIncrease() - 1f);
 			if (cultivation.getJumpLimit() >= 0) {
 				jumpSpeed = Math.min(jumpSpeed, cultivation.getJumpLimit() * baseJumpSpeed);
 			}
@@ -350,7 +350,7 @@ public class EventHandler {
 		if (cultivation.getCurrentLevel().canFly) {
 			event.setDistance(0);
 		} else {
-			event.setDistance(event.getDistance() - 1.85f * (cultivation.getStrengthIncrease() - 1));
+			event.setDistance(event.getDistance() - 1.85f * ((float)cultivation.getStrengthIncrease() - 1));
 		}
 	}
 
@@ -367,7 +367,7 @@ public class EventHandler {
 			if (!player.world.isRemote) {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				CultivationUtils.cultivatorAddProgress(player, cultivation, 0.25f, false, true);
-				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
+				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) player);
 			}
 			ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
 			if (stack.getItem() instanceof ItemDagger) {
@@ -388,7 +388,7 @@ public class EventHandler {
 			IBlockState block = event.getState();
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 			CultivationUtils.cultivatorAddProgress(player, cultivation, 0.1f * block.getBlockHardness(event.getWorld(), event.getPos()), false, false);
-			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
+			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) player);
 		}
 	}
 
@@ -400,7 +400,7 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onPlayerBreakSpeed(net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed event) {
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.getEntityPlayer());
-		float hasteModifier = 0.1f * (cultivation.getStrengthIncrease() - 1);
+		float hasteModifier = 0.1f * ((float)cultivation.getStrengthIncrease() - 1);
 		if (cultivation.getHasteLimit() >= 0) {
 			hasteModifier = Math.min(hasteModifier, cultivation.getHasteLimit() * event.getOriginalSpeed());
 		}
@@ -426,7 +426,7 @@ public class EventHandler {
 		cultivation.setCurrentLevel(old_cultivation.getCurrentLevel());
 		if (event.isWasDeath()) {
 
-			if (old_cultivation.getCurrentLevel() == CultivationLevel.TRUE_GOD) {
+			if (old_cultivation.getCurrentLevel().levelName.equals(old_cultivation.getCurrentLevel().nextLevelName)) { //if last level, i hope
 				cultivation.setCurrentSubLevel(Math.max(0, old_cultivation.getCurrentSubLevel() - 20));
 			} else {
 				cultivation.setCurrentSubLevel(0);
@@ -470,7 +470,7 @@ public class EventHandler {
 		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 		ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 		WuxiaCraft.logger.info("Applying " + player.getDisplayNameString() + " cultivation.");
-		NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), cultivation.getCurrentProgress(), cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), (EntityPlayerMP) player);
+		NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(), (EntityPlayerMP) player);
 		NetworkWrapper.INSTANCE.sendTo(new EnergyMessage(), (EntityPlayerMP) player);
 		NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
 		NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true), (EntityPlayerMP) player);
@@ -496,9 +496,12 @@ public class EventHandler {
 			Random rnd = event.getEntity().world.rand;
 			ItemStack drop = new ItemStack(scrolls.get(rnd.nextInt(scrolls.size())), 1);
 			int bound = 40;
-			if (cultivation.getCurrentLevel() == CultivationLevel.SOUL_REFINEMENT) bound = 30;
-			if (cultivation.getCurrentLevel() == CultivationLevel.QI_PATHS_REFINEMENT) bound = 15;
-			if (cultivation.getCurrentLevel() == CultivationLevel.DANTIAN_CONDENSING) bound = 5;
+			CultivationLevel aux = CultivationLevel.BASE_LEVEL.getNextLevel();
+			if (cultivation.getCurrentLevel() == aux) bound = 30;
+			aux = aux.getNextLevel();
+			if (cultivation.getCurrentLevel() == aux) bound = 15;
+			aux = aux.getNextLevel();
+			if (cultivation.getCurrentLevel() == aux) bound = 5;
 			if (rnd.nextInt(bound) == 1) {
 				event.getDrops().add(new EntityItem(event.getEntity().world, event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, drop));
 			}
@@ -611,7 +614,7 @@ public class EventHandler {
 	public void onPlayerHunger(TickEvent.PlayerTickEvent event) {
 		EntityPlayer player = event.player;
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-		float cost = ((1f/3f) * CultivationLevel.SKY_LAW.getMaxEnergyByLevel(1) * (5f/6f));
+		double cost = (CultivationLevel.DEFAULTS.get(5).getMaxEnergyByLevel(1) * (5f/18f));
 
 		if(player.ticksExisted % 100 == 0) {
 			if(player.getFoodStats().getFoodLevel() < 20 && cultivation.getCurrentLevel().energyAsFood) {
@@ -646,8 +649,8 @@ public class EventHandler {
 	public static void applyModifiers(EntityPlayer player, ICultivation cultivation) {
 
 		//as most props are additive, so i'll remove the which is the supposed base
-		float level_str_mod = cultivation.getStrengthIncrease() - 1;
-		float level_spd_mod = (cultivation.getSpeedIncrease() - 1);
+		double level_str_mod = cultivation.getStrengthIncrease() - 1;
+		double level_spd_mod = (cultivation.getSpeedIncrease() - 1);
 		if (cultivation.getMaxSpeed() >= 0) {
 			float max_speed = cultivation.getMaxSpeed() * (float) SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue();
 			level_spd_mod = Math.min(max_speed, level_spd_mod);

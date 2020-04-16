@@ -27,12 +27,7 @@ public class CultivationMessageHandler implements IMessageHandler<CultivationMes
 			EntityPlayer player = Minecraft.getMinecraft().player;
 			ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 			if (cultivation != null) {
-				cultivation.setCurrentLevel(message.messageLevel);
-				cultivation.setCurrentSubLevel(message.messageSubLevel);
-				cultivation.setProgress(message.messageProgress);
-				cultivation.setEnergy(message.messageEnergy);
-				cultivation.setPillCooldown(message.pelletCooldown);
-				cultivation.setSuppress(message.suppress);
+				cultivation.copyFrom(message.cultivation);
 			} else {
 				WuxiaCraft.logger.info("He ain't a cultivator. Weeird");
 			}
