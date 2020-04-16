@@ -60,7 +60,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 		this.temperature = 30f;
 		this.timeLit = 0;
 		this.maxTimeLit = 0;
-		this.maxTemperature = 1300f;
+		this.maxTemperature = 2000f;
 		this.recipeInputs = new ArrayList<>();
 		this.cauldronState = EnumCauldronState.EMPTY;
 		this.cookTime = 0;

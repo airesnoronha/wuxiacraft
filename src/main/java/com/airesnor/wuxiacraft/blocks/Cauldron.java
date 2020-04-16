@@ -165,6 +165,14 @@ public class Cauldron extends BlockContainer implements IHasModel {
 						itemStack.shrink(1);
 					playerIn.openContainer.detectAndSendChanges();
 				}
+
+				if (itemStack.getItem() == ItemBlock.getItemFromBlock(net.minecraft.init.Blocks.COAL_BLOCK)) {
+					used = true;
+					te.addWood(64000);
+					if (!playerIn.isCreative())
+						itemStack.shrink(1);
+					playerIn.openContainer.detectAndSendChanges();
+				}
 			}
 			if (itemStack.getItem() == net.minecraft.init.Items.FLINT_AND_STEEL) {
 				if (te.isHasFirewood() && !te.isLit()) {

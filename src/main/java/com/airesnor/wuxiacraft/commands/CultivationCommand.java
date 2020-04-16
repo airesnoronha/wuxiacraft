@@ -76,8 +76,17 @@ public class CultivationCommand extends CommandBase {
 							wrongUsage = true;
 						} else {
 							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(target);
-							String message = String.format("%s is at %s", target.getDisplayNameString(), cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
+							String message = String.format("You are at %s", cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
 							TextComponentString text = new TextComponentString(message);
+							sender.sendMessage(text);
+							message = String.format("Progress: %d/%d", (int) cultivation.getCurrentProgress(), (int) cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
+							text = new TextComponentString(message);
+							sender.sendMessage(text);
+							message = String.format("Energy: %d/%d", (int) cultivation.getEnergy(), (int) cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()));
+							text = new TextComponentString(message);
+							sender.sendMessage(text);
+							message = String.format("Speed: %d/%d%%", (int) cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()), cultivation.getSpeedHandicap());
+							text = new TextComponentString(message);
 							sender.sendMessage(text);
 							wrongUsage = false;
 						}
@@ -143,9 +152,50 @@ public class CultivationCommand extends CommandBase {
 						text.getStyle().setColor(TextFormatting.RED);
 						sender.sendMessage(text);
 					}
+				} else if (args.length == 5) {
+					EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
+					if(targetPlayer != null) {
+						if (args[0].equals("set")) {
+							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
+							CultivationLevel level = cultivation.getCurrentLevel();
+							boolean found_level = false;
+							for (CultivationLevel l : CultivationLevel.values()) {
+								if (l.getUName().equals(args[2])) {
+									level = l;
+									found_level = true;
+									break;
+								}
+							}
+							int subLevel = Integer.parseInt(args[3]) - 1;
+							if (found_level) {
+								String keepProgress = args[4];
+								if(keepProgress.equals("true")) {
+									cultivation.setCurrentLevel(level);
+									cultivation.setCurrentSubLevel(subLevel);
+								} else if (keepProgress.equalsIgnoreCase("false")) {
+									cultivation.setCurrentLevel(level);
+									cultivation.setCurrentSubLevel(subLevel);
+									cultivation.setProgress(1);
+								}
+								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), player);
+								TextComponentString text = new TextComponentString("You're now at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
+								sender.sendMessage(text);
+								wrongUsage = false;
+							} else {
+								TextComponentString text = new TextComponentString("Couldn't find level " + args[2]);
+								text.getStyle().setColor(TextFormatting.RED);
+								sender.sendMessage(text);
+								wrongUsage = true;
+							}
+						}
+					} else {
+						TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
+						text.getStyle().setColor(TextFormatting.RED);
+						sender.sendMessage(text);
+					}
 				}
 				if (wrongUsage) {
-					TextComponentString text = new TextComponentString("Invalid arguments, use /cult [get player]:[set (player) cultivation_level rank]");
+					TextComponentString text = new TextComponentString("Invalid arguments, use /cult [get player]:[set (player) cultivation_level rank]:[set (player) cultivation_level rank keep_progress]");
 					text.getStyle().setColor(TextFormatting.RED);
 					sender.sendMessage(text);
 				}

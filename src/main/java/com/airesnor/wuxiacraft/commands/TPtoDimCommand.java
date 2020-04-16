@@ -50,38 +50,42 @@ public class TPtoDimCommand extends CommandBase {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        String dimension = args[0];
-        int dimensionID;
-        boolean wrongUsage = true;
+        if(sender instanceof EntityPlayerMP) {
+            EntityPlayerMP playerMP = (EntityPlayerMP) sender;
+            if(!playerMP.world.isRemote) {
+                boolean wrongUsage = true;
+                if(args.length == 1) {
+                    String dimension = args[0];
+                    int dimensionID;
+                    if (dimension.equalsIgnoreCase("nether")) {
+                        dimensionID = -1;
+                    } else if(dimension.equalsIgnoreCase("overworld")) {
+                        dimensionID = 0;
+                    } else if(dimension.equalsIgnoreCase("end")) {
+                        dimensionID = 1;
+                    } else {
+                        dimensionID = Integer.parseInt(dimension);
+                    }
 
-        if (dimension.equalsIgnoreCase("nether")) {
-            dimensionID = -1;
-        } else if(dimension.equalsIgnoreCase("overworld")) {
-            dimensionID = 0;
-        } else if(dimension.equalsIgnoreCase("end")) {
-            dimensionID = 1;
-        } else {
-            dimensionID = Integer.parseInt(dimension);
-        }
-
-        if(args.length == 1) {
-            if(sender instanceof EntityPlayerMP) {
-                if (dimensionID == 1) {
-                    TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) sender, dimensionID,
-                            100,  60, 0, 0f, 0f);
+                    if (dimensionID == 1) {
+                        TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) sender, dimensionID,
+                                100,  60, 0, 0f, 0f);
+                    } else {
+                        TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) sender, dimensionID,
+                                sender.getPosition().getX(),  sender.getPosition().getY() + 20, sender.getPosition().getZ(),
+                                0f, 0f);
+                    }
+                    wrongUsage = false;
                 } else {
-                    TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) sender, dimensionID,
-                            sender.getPosition().getX(),  sender.getPosition().getY() + 20, sender.getPosition().getZ(),
-                            0f, 0f);
+                    wrongUsage = true;
                 }
-                wrongUsage = false;
+                if (wrongUsage) {
+                    TextComponentString text = new TextComponentString("Invalid arguments, use /tptodim <dimension>");
+                    text.getStyle().setColor(TextFormatting.RED);
+                    sender.sendMessage(text);
+                }
             }
-        }
-        if(wrongUsage) {
-            TextComponentString message = new TextComponentString("Invalid Usage, /tptodim <dimensionID> or /tptodim <dimensionID> <x> <y> <z>");
-            message.getStyle().setColor(TextFormatting.RED);
-            sender.sendMessage(message);
-        }
+        }else throw new CommandException("Not used correctly!");
     }
 
     @Override
