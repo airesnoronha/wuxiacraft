@@ -16,10 +16,12 @@ public class SpawnParticleMessageHandler implements IMessageHandler<SpawnParticl
 			return handleClientSide(message);
 		}
 		else if (ctx.side == Side.SERVER) {
-			final EntityPlayerMP player = ctx.getServerHandler().player;
-			player.getServerWorld().addScheduledTask(() -> {
-				SkillUtils.sendMessageWithinRange(player.getServerWorld(), message.getPos(), 64d, message);
-			});
+			if(ctx.getServerHandler() != null) {
+				final EntityPlayerMP player = ctx.getServerHandler().player;
+				player.getServerWorld().addScheduledTask(() -> {
+					SkillUtils.sendMessageWithinRange(player.getServerWorld(), message.getPos(), 64d, message);
+				});
+			}
 		}
 		return null;
 	}
