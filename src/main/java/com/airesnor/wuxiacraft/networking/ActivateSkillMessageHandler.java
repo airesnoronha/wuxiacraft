@@ -15,8 +15,8 @@ public class ActivateSkillMessageHandler implements IMessageHandler<ActivateSkil
 	@Override
 	public IMessage onMessage(ActivateSkillMessage message, MessageContext ctx) {
 		if (ctx.side == Side.SERVER) {
+			final EntityPlayer player = ctx.getServerHandler().player;
 			ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
-				EntityPlayer player = ctx.getServerHandler().player;
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 				skillCap.setActiveSkill(message.selectedSkill);

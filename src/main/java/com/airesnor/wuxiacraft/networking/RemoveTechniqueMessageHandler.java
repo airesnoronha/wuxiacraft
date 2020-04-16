@@ -12,8 +12,8 @@ public class RemoveTechniqueMessageHandler implements IMessageHandler<RemoveTech
 	@Override
 	public IMessage onMessage(RemoveTechniqueMessage message, MessageContext ctx) {
 		if (ctx.side == Side.SERVER) {
-			ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
-				EntityPlayerMP player = ctx.getServerHandler().player;
+			EntityPlayerMP player = ctx.getServerHandler().player;
+			player.getServerWorld().addScheduledTask(() -> {
 				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 				cultTech.remTechnique(message.toBeRemoved);
 			});

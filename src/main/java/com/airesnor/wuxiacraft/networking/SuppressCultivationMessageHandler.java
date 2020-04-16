@@ -13,8 +13,8 @@ public class SuppressCultivationMessageHandler implements IMessageHandler<Suppre
 	@Override
 	public IMessage onMessage(SuppressCultivationMessage message, MessageContext ctx) {
 		if(ctx.side == Side.SERVER) {
-			ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
-				EntityPlayerMP player = ctx.getServerHandler().player;
+			EntityPlayerMP player = ctx.getServerHandler().player;
+			player.getServerWorld().addScheduledTask(() -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				cultivation.setSuppress(message.suppress);
 			});

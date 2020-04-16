@@ -18,7 +18,7 @@ public class AskCultivationLevelMessageHandler implements IMessageHandler<AskCul
 	@Override
 	public RespondCultivationLevelMessage onMessage(AskCultivationLevelMessage message, MessageContext ctx) {
 		if (ctx.side == Side.SERVER) {
-			EntityPlayerMP player = ctx.getServerHandler().player;
+			final EntityPlayerMP player = ctx.getServerHandler().player;
 			player.getServerWorld().addScheduledTask(() -> {
 				List<EntityPlayer> entities = player.getServerWorld().getEntitiesWithinAABB(EntityPlayer.class, player.getEntityBoundingBox().grow(64, 32, 64));
 				for (Entity entity : entities) {

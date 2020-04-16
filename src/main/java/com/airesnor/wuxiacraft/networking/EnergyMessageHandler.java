@@ -12,7 +12,7 @@ public class EnergyMessageHandler implements IMessageHandler<EnergyMessage, IMes
 	@Override
 	public IMessage onMessage(EnergyMessage message, MessageContext ctx) {
 		if (ctx.side == Side.SERVER) {
-			EntityPlayerMP player = ctx.getServerHandler().player;
+			final EntityPlayerMP player = ctx.getServerHandler().player;
 			player.getServerWorld().addScheduledTask(() -> {
 				ICultivation cultivation = player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
 				switch (message.op) {
