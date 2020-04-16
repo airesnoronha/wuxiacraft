@@ -96,7 +96,7 @@ public class CultivationCommand extends CommandBase {
 						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 						CultivationLevel level = cultivation.getCurrentLevel();
 						boolean found_level = false;
-						for (CultivationLevel l : CultivationLevel.values()) {
+						for (CultivationLevel l : CultivationLevel.REGISTERED_LEVELS.values()) {
 							if (l.getUName().equals(args[1])) {
 								level = l;
 								found_level = true;
@@ -107,7 +107,7 @@ public class CultivationCommand extends CommandBase {
 						if (found_level) {
 							cultivation.setCurrentLevel(level);
 							cultivation.setCurrentSubLevel(subLevel);
-							NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), player);
+							NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
 							TextComponentString text = new TextComponentString("You're now at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
 							sender.sendMessage(text);
 							wrongUsage = false;
@@ -125,7 +125,7 @@ public class CultivationCommand extends CommandBase {
 							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
 							CultivationLevel level = cultivation.getCurrentLevel();
 							boolean found_level = false;
-							for (CultivationLevel l : CultivationLevel.values()) {
+							for (CultivationLevel l : CultivationLevel.REGISTERED_LEVELS.values()) {
 								if (l.getUName().equals(args[2])) {
 									level = l;
 									found_level = true;
@@ -136,7 +136,7 @@ public class CultivationCommand extends CommandBase {
 							if (found_level) {
 								cultivation.setCurrentLevel(level);
 								cultivation.setCurrentSubLevel(subLevel);
-								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), player);
+								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
 								TextComponentString text = new TextComponentString("You're now at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
 								sender.sendMessage(text);
 								wrongUsage = false;
@@ -159,7 +159,7 @@ public class CultivationCommand extends CommandBase {
 							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
 							CultivationLevel level = cultivation.getCurrentLevel();
 							boolean found_level = false;
-							for (CultivationLevel l : CultivationLevel.values()) {
+							for (CultivationLevel l : CultivationLevel.REGISTERED_LEVELS.values()) {
 								if (l.getUName().equals(args[2])) {
 									level = l;
 									found_level = true;
@@ -177,7 +177,7 @@ public class CultivationCommand extends CommandBase {
 									cultivation.setCurrentSubLevel(subLevel);
 									cultivation.setProgress(1);
 								}
-								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPillCooldown(), cultivation.getSuppress()), player);
+								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
 								TextComponentString text = new TextComponentString("You're now at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
 								sender.sendMessage(text);
 								wrongUsage = false;
@@ -225,7 +225,7 @@ public class CultivationCommand extends CommandBase {
 						completions.add(player.getName());
 				}
 			} else if (args[0].equals("set")) {
-				for (CultivationLevel level : CultivationLevel.values()) {
+				for (CultivationLevel level : CultivationLevel.REGISTERED_LEVELS.values()) {
 					if (level.getUName().startsWith(args[0]))
 						completions.add(level.getUName());
 				}

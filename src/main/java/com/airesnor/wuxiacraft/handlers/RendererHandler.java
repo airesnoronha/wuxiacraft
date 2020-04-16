@@ -213,7 +213,7 @@ public class RendererHandler {
 
 		mc.renderEngine.bindTexture(hud_bars);
 
-		float energy_fill = cultivation.getEnergy() / cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel());
+		double energy_fill = cultivation.getEnergy() / cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel());
 		double progress_fill = cultivation.getCurrentProgress() * 100f / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
 
 		int middleX = (width) / 2;

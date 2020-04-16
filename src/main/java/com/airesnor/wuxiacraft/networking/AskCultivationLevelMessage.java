@@ -27,7 +27,7 @@ public class AskCultivationLevelMessage implements IMessage {
 		buf.readBytes(bytes, 0, length);
 		bytes[length] = '\0';
 		String cultlevelname = new String(bytes, 0, length);
-		this.askerLevel = CultivationLevel.valueOf(cultlevelname);
+		this.askerLevel = CultivationLevel.REGISTERED_LEVELS.get(cultlevelname);
 		length = buf.readInt();
 		bytes = new byte[50];
 		buf.readBytes(bytes, 0, length);
@@ -38,7 +38,7 @@ public class AskCultivationLevelMessage implements IMessage {
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(this.askerSubLevel);
-		byte[] bytes = this.askerLevel.name().getBytes();
+		byte[] bytes = this.askerLevel.levelName.getBytes();
 		buf.writeInt(bytes.length);
 		buf.writeBytes(bytes);
 		bytes = this.askerName.getBytes();

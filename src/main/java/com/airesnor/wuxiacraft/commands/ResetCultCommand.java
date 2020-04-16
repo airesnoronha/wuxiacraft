@@ -1,6 +1,6 @@
 package com.airesnor.wuxiacraft.commands;
 
-import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.networking.CultivationMessage;
@@ -51,11 +51,8 @@ public class ResetCultCommand extends CommandBase {
 			if(sender instanceof EntityPlayerMP) {
 				EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-				cultivation.setProgress(0);
-				cultivation.setEnergy(0);
-				cultivation.setCurrentSubLevel(0);
-				cultivation.setCurrentLevel(CultivationLevel.BODY_REFINEMENT);
-				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPillCooldown(), false), player);
+				cultivation.copyFrom(new Cultivation());
+				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
 				EventHandler.applyModifiers(player, cultivation);
 			}
 			else {
@@ -68,11 +65,8 @@ public class ResetCultCommand extends CommandBase {
 			EntityPlayerMP player = server.getPlayerList().getPlayerByUsername(args[0]);
 			if(player != null) {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-				cultivation.setProgress(0);
-				cultivation.setEnergy(0);
-				cultivation.setCurrentSubLevel(0);
-				cultivation.setCurrentLevel(CultivationLevel.BODY_REFINEMENT);
-				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), (int) cultivation.getCurrentProgress(), (int) cultivation.getEnergy(), cultivation.getPillCooldown(), false), player);
+				cultivation.copyFrom(new Cultivation());
+				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
 				EventHandler.applyModifiers(player, cultivation);
 			} else {
 				TextComponentString text = new TextComponentString("Couldn't find player " + args[0]);
