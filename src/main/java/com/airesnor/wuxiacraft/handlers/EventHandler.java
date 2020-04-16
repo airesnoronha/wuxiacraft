@@ -613,7 +613,7 @@ public class EventHandler {
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 		float cost = ((1f/3f) * CultivationLevel.SKY_LAW.getMaxEnergyByLevel(1) * (5f/6f));
 
-		if(event.phase == TickEvent.Phase.END) {
+		if(player.ticksExisted % 100 == 0) {
 			if(player.getFoodStats().getFoodLevel() < 20 && cultivation.getCurrentLevel().energyAsFood) {
 				if(cultivation.getCurrentLevel().needNoFood) {
 					player.getFoodStats().setFoodLevel(20);
