@@ -136,14 +136,15 @@ public class BlockRune extends Block {
 	@Nonnull
 	@ParametersAreNonnullByDefault
 	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
-		return new ItemStack(this.getItem());
-	}
-
-	private Item getItem() {
-		if(Blocks.BLOOD_RUNES.containsValue(this)) {
-			return Items.BLOOD_BOTTLE;
+		Item item = Items.PAINT_BOTTLE;
+		if(Blocks.BLOOD_RUNES.containsValue(state.getBlock())) {
+			item = Items.BLOOD_BOTTLE;
 		}
-		return Items.PAINT_BOTTLE;
+		ItemStack stack =  new ItemStack(item);
+		if(Blocks.BLOOD_RUNES.containsValue(state.getBlock())){
+			stack.setStackDisplayName(state.getBlock().getLocalizedName());
+		}
+		return stack;
 	}
 
 	@SuppressWarnings("unused")

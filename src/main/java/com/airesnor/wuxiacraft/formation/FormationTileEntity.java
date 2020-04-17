@@ -138,7 +138,6 @@ public class FormationTileEntity extends TileEntity implements ITickable {
 				this.formation.onInterrupt(this.world, interruptionSource, interrupters);
 			}
 		}
-		updateOnClient();
 	}
 
 	public void updateOnClient() {

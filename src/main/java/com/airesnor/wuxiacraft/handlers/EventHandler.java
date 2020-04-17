@@ -202,7 +202,7 @@ public class EventHandler {
 											skillCap.resetCastProgress();
 											if (!player.isCreative())
 												cultivation.remEnergy(selectedSkill.getCost());
-											NetworkWrapper.INSTANCE.sendToServer(new ActivateSkillMessage(skillCap.getActiveSkill()));
+											NetworkWrapper.INSTANCE.sendToServer(new ActivateSkillMessage(skillCap.getActiveSkill(), player.getEntityId()));
 											CultivationUtils.cultivatorAddProgress(player, cultivation, selectedSkill.getProgress(), false, false);
 										}
 									}
