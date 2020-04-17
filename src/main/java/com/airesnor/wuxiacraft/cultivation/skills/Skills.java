@@ -136,7 +136,7 @@ public class Skills {
 						if ((int) skillCap.getCastProgress() % 10 == 9) {
 							CultivationUtils.cultivatorAddProgress(actor, cultivation, amount, false, false);
 							cultivation.remEnergy(energy);
-							NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, amount, false, false));
+							NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, amount, false, false, actor.getEntityId()));
 						}
 					}
 				}
