@@ -24,13 +24,16 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.potion.PotionType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -539,16 +542,21 @@ public class Skills {
 	public static final Skill LIGHT_FEET_LEAP = new Skill("light_feet_leap", false, 90f, 1.2f, 30f, 20f)
 			.setAction(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				float speed = Math.min((float)cultivation.getSpeedIncrease() * 6f, 12f);
-				float yaw = actor.rotationYawHead;
-				float pitch = actor.rotationPitch;
-				float x = speed * -MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
-				float y = 2f;
-				float z = speed * MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
-				actor.motionX += x;
-				actor.motionY += y;
-				actor.motionZ += z;
-				actor.fallDistance = -50;
+				int bX = MathHelper.floor(actor.posX);
+				int bY = MathHelper.floor(actor.posY - 1);
+				int bZ = MathHelper.floor(actor.posZ);
+				if(actor.getEntityWorld().getBlockState(new BlockPos(bX, bY, bZ)).getBlock() != Blocks.AIR) {
+					float speed = Math.min((float)cultivation.getSpeedIncrease() * 6f, 12f);
+					float yaw = actor.rotationYawHead;
+					float pitch = actor.rotationPitch;
+					float x = speed * -MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
+					float y = 2f;
+					float z = speed * MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
+					actor.motionX += x;
+					actor.motionY += y;
+					actor.motionZ += z;
+					actor.fallDistance = -50;
+				}
 				return true;
 			});
 

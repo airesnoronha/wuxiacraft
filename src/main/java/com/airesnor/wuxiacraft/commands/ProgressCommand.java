@@ -7,12 +7,10 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +43,7 @@ public class ProgressCommand extends CommandBase {
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (sender instanceof EntityPlayerMP) {
             EntityPlayerMP playerMP = (EntityPlayerMP) sender;
@@ -53,10 +52,13 @@ public class ProgressCommand extends CommandBase {
                 if (args.length == 3) {
                     EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
                     if(targetPlayer != null) {
+                        ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
+                        double amount = Double.parseDouble(args[2]);
                         if(args[0].equalsIgnoreCase("set")) {
-                            ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
-                            double amount = Double.parseDouble(args[2]);
                             cultivation.setProgress(amount);
+                            wrongUsage = false;
+                        } else if(args[0].equalsIgnoreCase("add")) {
+                            cultivation.addProgress(amount, true);
                             wrongUsage = false;
                         }
                     } else {

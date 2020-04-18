@@ -32,7 +32,7 @@ public class TPtoDimCommand extends CommandBase {
     @ParametersAreNonnullByDefault
     @Nonnull
     public String getUsage(ICommandSender sender) {
-        return "/tptodim <dimensionID> or /tptodim <dimensionID> <x> <y> <z> or /tptodim <x> <y> <z>";
+        return "/tptodim <dimensionID> or /tptodim <player> <player>";
     }
 
     @Override
@@ -49,11 +49,12 @@ public class TPtoDimCommand extends CommandBase {
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if(sender instanceof EntityPlayerMP) {
             EntityPlayerMP playerMP = (EntityPlayerMP) sender;
             if(!playerMP.world.isRemote) {
-                boolean wrongUsage = true;
+                boolean wrongUsage;
                 if(args.length == 1) {
                     String dimension = args[0];
                     int dimensionID;
@@ -76,11 +77,25 @@ public class TPtoDimCommand extends CommandBase {
                                 0f, 0f);
                     }
                     wrongUsage = false;
+                } else if (args.length == 3) {
+                    EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
+                    EntityPlayerMP initialPlayer = server.getPlayerList().getPlayerByUsername(args[0]);
+                    int dimensionID = 0;
+                    try{
+                        dimensionID = targetPlayer.world.provider.getDimension();
+                    }catch (NullPointerException e) {
+                        TextComponentString text = new TextComponentString("Target Player is not in a known dimension!");
+                        text.getStyle().setColor(TextFormatting.RED);
+                        sender.sendMessage(text);
+                    }
+                    TeleportationUtil.teleportPlayerToPlayer(initialPlayer, targetPlayer, dimensionID,
+                            targetPlayer.getPosition().getX(), targetPlayer.getPosition().getY(), targetPlayer.getPosition().getZ(), 0f, 0f);
+                    wrongUsage = false;
                 } else {
                     wrongUsage = true;
                 }
                 if (wrongUsage) {
-                    TextComponentString text = new TextComponentString("Invalid arguments, use /tptodim <dimension>");
+                    TextComponentString text = new TextComponentString("Invalid arguments, use /tptodim <dimension> or /tptodim <player> <player>");
                     text.getStyle().setColor(TextFormatting.RED);
                     sender.sendMessage(text);
                 }

@@ -25,7 +25,7 @@ public class ActivatePartialSkillMessageHandler implements IMessageHandler<Activ
 					CultivationUtils.getCultivationFromEntity(player).remEnergy(message.energy);
 				}
 				if ("applySlowness".equals(message.skillName)) {
-					Skills.APPLY_SLOWNESS.activate(ctx.getServerHandler().player);
+					Skills.APPLY_SLOWNESS.activate(player);
 					CultivationUtils.getCultivationFromEntity(player).remEnergy(message.energy);
 				}
 				}

@@ -59,4 +59,22 @@ public class TeleportationUtil extends Teleporter{
         worldServer.getBlockState(new BlockPos((int)x, (int)y, (int)z));
         playerMP.setPositionAndRotation(x, y, z, playerRotationYaw, playerRotationPitch);
     }
+
+    public static void teleportPlayerToPlayer(EntityPlayerMP playerMP, EntityPlayerMP targetPlayerMP, int dimensionID, double x, double y, double z, float playerRotationYaw, float playerRotationPitch) {
+        MinecraftServer minecraftServer = playerMP.getEntityWorld().getMinecraftServer();
+        WorldServer worldServer = minecraftServer.getWorld(dimensionID);
+
+        if(worldServer == null  || minecraftServer == null) {
+            TextComponentString message = new TextComponentString("Invalid Location");
+            message.getStyle().setColor(TextFormatting.RED);
+            playerMP.sendMessage(message);
+        }
+
+        if (dimensionID == targetPlayerMP.world.provider.getDimension()) {
+            worldServer.getBlockState(new BlockPos((int)x, (int)y, (int)z));
+        } else {
+            worldServer.getMinecraftServer().getPlayerList().transferPlayerToDimension(playerMP, dimensionID, new TeleportationUtil(worldServer, x, y, z, 0f, 0f));
+        }
+        playerMP.setPositionAndRotation(x, y, z, playerRotationYaw, playerRotationPitch);
+    }
 }
