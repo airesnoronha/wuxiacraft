@@ -2,7 +2,9 @@ package com.airesnor.wuxiacraft.networking;
 
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -12,9 +14,12 @@ public class ActivatePartialSkillMessageHandler implements IMessageHandler<Activ
 
 	@Override
 	public IMessage onMessage(ActivatePartialSkillMessage message, MessageContext ctx) {
-		final EntityPlayer player = ctx.getServerHandler().player;
 		if(ctx.side == Side.SERVER) {
-			ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
+			WorldServer world = ctx.getServerHandler().player.getServerWorld();
+			world.addScheduledTask(() -> {
+				Entity test = world.getEntityByID(message.senderID);
+				if(test instanceof EntityPlayer) {
+					EntityPlayer player  = (EntityPlayer) test;
 				if ("barrageMinorBeam".equals(message.skillName)) {
 					Skills.BARRAGE_MINOR_BEAM.activate(player);
 					CultivationUtils.getCultivationFromEntity(player).remEnergy(message.energy);
@@ -22,6 +27,7 @@ public class ActivatePartialSkillMessageHandler implements IMessageHandler<Activ
 				if ("applySlowness".equals(message.skillName)) {
 					Skills.APPLY_SLOWNESS.activate(ctx.getServerHandler().player);
 					CultivationUtils.getCultivationFromEntity(player).remEnergy(message.energy);
+				}
 				}
 			});
 		}

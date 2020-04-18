@@ -114,7 +114,7 @@ public class Skills {
 				float energy = cultTech.getOverallCultivationSpeed() * 1.25f * 10;
 				skillCap.stepCastProgress(-(float)cultivation.getSpeedIncrease() + 1);
 				if ((int) skillCap.getCastProgress() % 10 == 9) {
-					NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("applySlowness", cultivation.hasEnergy(energy) ? energy : 0));
+					NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("applySlowness", cultivation.hasEnergy(energy) ? energy : 0, actor.getEntityId()));
 				}
 				if (cultivation.hasEnergy(energy)) {
 					if ((int) skillCap.getCastProgress() % 5 == 0) {
@@ -136,8 +136,7 @@ public class Skills {
 						if ((int) skillCap.getCastProgress() % 10 == 9) {
 							CultivationUtils.cultivatorAddProgress(actor, cultivation, amount, false, false);
 							cultivation.remEnergy(energy);
-							NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, amount, false, false));
-							NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("applySlowness", cultivation.hasEnergy(energy) ? energy : 0));
+							NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, amount, false, false, actor.getEntityId()));
 						}
 					}
 				}
@@ -491,7 +490,7 @@ public class Skills {
 					if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
 						BARRAGE_MINOR_BEAM.activate(actor);
 						CultivationUtils.getCultivationFromEntity(actor).remEnergy(120f);
-						NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("barrageMinorBeam", 120f));
+						NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("barrageMinorBeam", 120f, actor.getEntityId()));
 					}
 					skillCap.increaseBarrageReleased();
 				}
