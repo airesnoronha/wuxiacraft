@@ -12,6 +12,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.UUID;
+
 public class ActivateSkillMessageHandler implements IMessageHandler<ActivateSkillMessage, IMessage> {
 
 	@Override
@@ -19,9 +21,8 @@ public class ActivateSkillMessageHandler implements IMessageHandler<ActivateSkil
 		if (ctx.side == Side.SERVER) {
 			WorldServer world =ctx.getServerHandler().player.getServerWorld();
 			world.addScheduledTask(() -> {
-				Entity test = world.getEntityByID(message.senderID);
-				if(test instanceof EntityPlayer) {
-					EntityPlayer player = (EntityPlayer) test;
+				EntityPlayer player = world.getPlayerEntityByName(message.sender);
+				if(player != null) {
 					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 					ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 					skillCap.setActiveSkill(message.selectedSkill);

@@ -26,16 +26,18 @@ public class CultivationGui extends GuiScreen {
 
 	private static final ResourceLocation gui_texture = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/cult_gui.png");
 
-	private int xSize = 200;
-	private int ySize = 133;
+	private final int xSize = 200;
+	private final int ySize = 133;
 	private int guiTop = 0;
 	private int guiLeft = 0;
 
-	private ICultivation cultivation;
-	private ICultTech cultTech;
+	private final ICultivation cultivation;
+	private final ICultTech cultTech;
+	private final EntityPlayer player;
 	private int offset = 0;
 
 	public CultivationGui(EntityPlayer player) {
+		this.player= player;
 		this.cultivation = CultivationUtils.getCultivationFromEntity(player);
 		this.cultTech = CultivationUtils.getCultTechFromEntity(player);
 	}
@@ -77,7 +79,7 @@ public class CultivationGui extends GuiScreen {
 		}
 		if (inBounds(mouseX, mouseY, this.guiLeft + 148, this.guiTop + 23, 9, 9)) {
 			cultivation.setSuppress(!cultivation.getSuppress());
-			NetworkWrapper.INSTANCE.sendToServer(new SuppressCultivationMessage(cultivation.getSuppress()));
+			NetworkWrapper.INSTANCE.sendToServer(new SuppressCultivationMessage(cultivation.getSuppress(), player.getName()));
 		}
 		if (inBounds(mouseX, mouseY, this.guiLeft + 156, this.guiTop + 106, 9, 9)) {
 			this.offset = Math.min(this.cultTech.getKnownTechniques().size() - 5, this.offset + 1);
@@ -85,7 +87,7 @@ public class CultivationGui extends GuiScreen {
 		for (int i = 0; i < Math.min(5, this.cultTech.getKnownTechniques().size()); i++) {
 			if (inBounds(mouseX, mouseY, this.guiLeft + 8, this.guiTop + 35 + 4 + i * 16, 9, 9)) {
 				int index = this.cultTech.getKnownTechniques().size() > 5 ? offset + i : i;
-				NetworkWrapper.INSTANCE.sendToServer(new RemoveTechniqueMessage(cultTech.getKnownTechniques().get(index).getTechnique()));
+				NetworkWrapper.INSTANCE.sendToServer(new RemoveTechniqueMessage(cultTech.getKnownTechniques().get(index).getTechnique(), player.getName()));
 				cultTech.getKnownTechniques().remove(index);
 			}
 		}
@@ -371,7 +373,7 @@ public class CultivationGui extends GuiScreen {
 		}
 		WuxiaCraftConfig.syncFromFields();
 		WuxiaCraftConfig.syncCultivationFromConfigToClient();
-		NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit));
+		NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit, player.getName()));
 	}
 
 

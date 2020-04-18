@@ -20,8 +20,6 @@ import org.lwjgl.input.Keyboard;
 @Mod.EventBusSubscriber
 public class KeyHandler {
 
-	private static boolean isCasting = false;
-
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void onKeyPress(InputEvent.KeyInputEvent event) {
@@ -31,13 +29,13 @@ public class KeyHandler {
 			WuxiaCraftConfig.speedHandicap = Math.min(100, WuxiaCraftConfig.speedHandicap + 5);
 			WuxiaCraftConfig.syncFromFields();
 			WuxiaCraftConfig.syncCultivationFromConfigToClient();
-			NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit));
+			NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit, Minecraft.getMinecraft().player.getName()));
 		}
 		if (keyBindings[1].isPressed()) {
 			WuxiaCraftConfig.speedHandicap = Math.max(0, WuxiaCraftConfig.speedHandicap - 5);
 			WuxiaCraftConfig.syncFromFields();
 			WuxiaCraftConfig.syncCultivationFromConfigToClient();
-			NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit));
+			NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit, Minecraft.getMinecraft().player.getName()));
 		}
 		if (keyBindings[2].isPressed()) {
 			BlockPos pos = Minecraft.getMinecraft().player.getPosition();
@@ -60,25 +58,25 @@ public class KeyHandler {
 		if (keyBindings[5].isPressed()) {
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
 			int next = skillCap.getActiveSkill() + 1;
-			NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next));
+			NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next, Minecraft.getMinecraft().player.getName()));
 			SelectSkillMessageHandler.selectSkill(skillCap, next);
 		}
 		if (keyBindings[6].isPressed()) {
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
 			int next = skillCap.getActiveSkill() - 1;
-			NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next));
+			NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next, Minecraft.getMinecraft().player.getName()));
 			SelectSkillMessageHandler.selectSkill(skillCap, next);
 		}
 		if(keyBindings[17].isPressed()) {
 			WuxiaCraftConfig.maxSpeed = WuxiaCraftConfig.maxSpeed * -1;
 			WuxiaCraftConfig.syncFromFields();
 			WuxiaCraftConfig.syncCultivationFromConfigToClient();
-			NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit));
+			NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit, Minecraft.getMinecraft().player.getName()));
 		}
 		for (int i = 0; i < 10; i++) {
 			if (keyBindings[7 + i].isPressed()) {
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
-				NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(i));
+				NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(i, Minecraft.getMinecraft().player.getName()));
 				SelectSkillMessageHandler.selectSkill(skillCap, i);
 			}
 		}

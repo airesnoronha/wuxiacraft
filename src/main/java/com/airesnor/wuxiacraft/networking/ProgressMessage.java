@@ -9,7 +9,7 @@ public class ProgressMessage implements IMessage {
 	public double amount;
 	public boolean allowBreakTrough;
 	public boolean ignoreBottleneck;
-	public int senderId;
+	public String sender;
 
 	@SuppressWarnings("unused")
 	public ProgressMessage() {
@@ -17,14 +17,15 @@ public class ProgressMessage implements IMessage {
 		this.amount = 0;
 		allowBreakTrough = false;
 		ignoreBottleneck = false;
+		this.sender = "";
 	}
 
-	public ProgressMessage(int op, double amount, boolean allowBreakTrough, boolean ignoreBottleneck, int senderId) {
+	public ProgressMessage(int op, double amount, boolean allowBreakTrough, boolean ignoreBottleneck, String sender) {
 		this.op = op;
 		this.amount = amount;
 		this.allowBreakTrough = allowBreakTrough;
 		this.ignoreBottleneck = ignoreBottleneck;
-		this.senderId = senderId;
+		this.sender = sender;
 	}
 
 	@Override
@@ -33,7 +34,10 @@ public class ProgressMessage implements IMessage {
 		this.amount = buf.readDouble();
 		this.allowBreakTrough = buf.readBoolean();
 		this.ignoreBottleneck = buf.readBoolean();
-		this.senderId = buf.readInt();
+		int length = buf.readInt();
+		byte [] bytes = new byte [length];
+		buf.readBytes(bytes, 0, length);
+		this.sender = new String(bytes);
 	}
 
 	@Override
@@ -42,6 +46,7 @@ public class ProgressMessage implements IMessage {
 		buf.writeDouble(this.amount);
 		buf.writeBoolean(this.allowBreakTrough);
 		buf.writeBoolean(this.ignoreBottleneck);
-		buf.writeInt(this.senderId);
+		buf.writeInt(this.sender.getBytes().length);
+		buf.writeBytes(this.sender.getBytes());
 	}
 }

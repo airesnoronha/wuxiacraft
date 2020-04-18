@@ -24,16 +24,13 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.MobEffects;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.potion.PotionType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -117,7 +114,7 @@ public class Skills {
 				float energy = cultTech.getOverallCultivationSpeed() * 1.25f * 10;
 				skillCap.stepCastProgress(-(float)cultivation.getSpeedIncrease() + 1);
 				if ((int) skillCap.getCastProgress() % 10 == 9) {
-					NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("applySlowness", cultivation.hasEnergy(energy) ? energy : 0, actor.getEntityId()));
+					NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("applySlowness", cultivation.hasEnergy(energy) ? energy : 0, actor.getName()));
 				}
 				if (cultivation.hasEnergy(energy)) {
 					if ((int) skillCap.getCastProgress() % 5 == 0) {
@@ -139,7 +136,7 @@ public class Skills {
 						if ((int) skillCap.getCastProgress() % 10 == 9) {
 							CultivationUtils.cultivatorAddProgress(actor, cultivation, amount, false, false);
 							cultivation.remEnergy(energy);
-							NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, amount, false, false, actor.getEntityId()));
+							NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, amount, false, false, actor.getName()));
 						}
 					}
 				}
@@ -493,7 +490,7 @@ public class Skills {
 					if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
 						BARRAGE_MINOR_BEAM.activate(actor);
 						CultivationUtils.getCultivationFromEntity(actor).remEnergy(120f);
-						NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("barrageMinorBeam", 120f, actor.getEntityId()));
+						NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("barrageMinorBeam", 120f, actor.getName()));
 					}
 					skillCap.increaseBarrageReleased();
 				}
@@ -511,7 +508,7 @@ public class Skills {
 					if (cultivation.hasEnergy(9f)) {
 						cultivation.remEnergy(9f);
 						if ((int) skillCap.getCastProgress() % 5 == 4)
-							NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, 9 * 5));
+							NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, 9 * 5, actor.getName()));
 						float speed = (float)cultivation.getSpeedIncrease() * 0.6f;
 						speed = Math.min(1.5f, speed);
 						float yaw = actor.rotationYawHead;
@@ -602,7 +599,7 @@ public class Skills {
 					if (cultivation.hasEnergy(26f)) {
 						cultivation.remEnergy(26f);
 						if ((int) skillCap.getCastProgress() % 5 == 4)
-							NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, 26 * 5));
+							NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, 26 * 5, actor.getName()));
 						float speed = (float)cultivation.getSpeedIncrease() * 0.8f;
 						speed = Math.min(3.5f, speed);
 						float yaw = actor.rotationYawHead;

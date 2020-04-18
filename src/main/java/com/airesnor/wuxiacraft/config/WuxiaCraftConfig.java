@@ -5,6 +5,7 @@ import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.SpeedHandicapMessage;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -100,10 +101,10 @@ public class WuxiaCraftConfig {
 
 		if (readFieldsFromConfig) {
 			speedHandicap = propHandicap.getInt();
-			maxSpeed = (float)propMaxSpeed.getDouble();
+			maxSpeed = (float) propMaxSpeed.getDouble();
 			disableStepAssist = propStepAssist.getBoolean();
-			blockBreakLimit = (float)propBreakSpeed.getDouble();
-			jumpLimit = (float)propJumpLimit.getDouble();
+			blockBreakLimit = (float) propBreakSpeed.getDouble();
+			jumpLimit = (float) propJumpLimit.getDouble();
 		}
 
 		propHandicap.set(speedHandicap);
@@ -123,22 +124,20 @@ public class WuxiaCraftConfig {
 				syncFromGui();
 				WuxiaCraft.logger.info("Sending a config update to server");
 				syncCultivationFromConfigToClient();
-				NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(speedHandicap, maxSpeed, blockBreakLimit, jumpLimit));
+				NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(speedHandicap, maxSpeed, blockBreakLimit, jumpLimit, Minecraft.getMinecraft().player.getName()));
 			}
 		}
 	}
 
-	public static void syncCultivationFromConfigToClient () {
+	public static void syncCultivationFromConfigToClient() {
 		Minecraft.getMinecraft().addScheduledTask(new Runnable() {
 			@Override
 			public void run() {
-				ICultivation cultivation = Minecraft.getMinecraft().player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-				if(cultivation != null) {
-					cultivation.setSpeedHandicap(WuxiaCraftConfig.speedHandicap);
-					cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
-					cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
-					cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);
-				}
+				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
+				cultivation.setSpeedHandicap(WuxiaCraftConfig.speedHandicap);
+				cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
+				cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
+				cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);
 			}
 		});
 	}

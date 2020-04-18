@@ -10,6 +10,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.UUID;
+
 public class ActivatePartialSkillMessageHandler implements IMessageHandler<ActivatePartialSkillMessage, IMessage> {
 
 	@Override
@@ -17,9 +19,8 @@ public class ActivatePartialSkillMessageHandler implements IMessageHandler<Activ
 		if (ctx.side == Side.SERVER) {
 			WorldServer world = ctx.getServerHandler().player.getServerWorld();
 			world.addScheduledTask(() -> {
-				Entity test = world.getEntityByID(message.senderID);
-				if (test instanceof EntityPlayer) {
-					EntityPlayer player = (EntityPlayer) test;
+				EntityPlayer player = world.getPlayerEntityByName(message.sender);
+				if(player!=null){
 					if ("barrageMinorBeam".equals(message.skillName)) {
 						Skills.BARRAGE_MINOR_BEAM.activate(player);
 						CultivationUtils.getCultivationFromEntity(player).remEnergy(message.energy);

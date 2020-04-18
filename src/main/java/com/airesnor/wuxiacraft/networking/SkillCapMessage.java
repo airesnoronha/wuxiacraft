@@ -11,15 +11,18 @@ public class SkillCapMessage implements IMessage {
 
 	public ISkillCap skillCap;
 	public boolean shouldUpdateCPaCD;
+	public String sender;
 
 	public SkillCapMessage() {
 		this.skillCap = new SkillCap();
 		this.shouldUpdateCPaCD = false;
+		this.sender = "";
 	}
 
-	public SkillCapMessage(ISkillCap skillCap, boolean shouldUpdateCPaCD) {
+	public SkillCapMessage(ISkillCap skillCap, boolean shouldUpdateCPaCD, String sender) {
 		this.skillCap = skillCap;
 		this.shouldUpdateCPaCD = shouldUpdateCPaCD;
+		this.sender = sender;
 	}
 
 	@Override
@@ -37,6 +40,10 @@ public class SkillCapMessage implements IMessage {
 			skillCap.addSelectedSkill(buf.readInt());
 		}
 		skillCap.setActiveSkill(buf.readInt());
+		length = buf.readInt();
+		byte[] bytes = new byte[length];
+		buf.readBytes(bytes, 0, length);
+		this.sender = new String(bytes);
 	}
 
 	@Override
@@ -54,5 +61,7 @@ public class SkillCapMessage implements IMessage {
 			buf.writeInt(skill);
 		}
 		buf.writeInt(skillCap.getActiveSkill());
+		buf.writeInt(this.sender.getBytes().length);
+		buf.writeBytes(this.sender.getBytes());
 	}
 }

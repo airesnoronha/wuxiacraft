@@ -9,12 +9,14 @@ public class SpeedHandicapMessage implements IMessage {
 	public float maxSpeed;
 	public float hasteLimit;
 	public float jumpLimit;
+	public String sender;
 
-	public SpeedHandicapMessage(int handicap, float maxSpeed, float hasteLimit, float jumpLimit) {
+	public SpeedHandicapMessage(int handicap, float maxSpeed, float hasteLimit, float jumpLimit, String sender) {
 		this.handicap = handicap;
 		this.maxSpeed = maxSpeed;
 		this.hasteLimit = hasteLimit;
 		this.jumpLimit = jumpLimit;
+		this.sender = sender;
 	}
 
 	public SpeedHandicapMessage() {
@@ -22,6 +24,7 @@ public class SpeedHandicapMessage implements IMessage {
 		this.maxSpeed = 0;
 		this.hasteLimit = 0;
 		this.jumpLimit = 0;
+		this.sender = "";
 	}
 
 	@Override
@@ -30,6 +33,10 @@ public class SpeedHandicapMessage implements IMessage {
 		this.maxSpeed = buf.readFloat();
 		this.hasteLimit = buf.readFloat();
 		this.jumpLimit = buf.readFloat();
+		int length = buf.readInt();
+		byte[] bytes = new byte[length];
+		buf.readBytes(bytes, 0, length);
+		this.sender = new String(bytes);
 	}
 
 	@Override
@@ -38,5 +45,7 @@ public class SpeedHandicapMessage implements IMessage {
 		buf.writeFloat(this.maxSpeed);
 		buf.writeFloat(this.hasteLimit);
 		buf.writeFloat(this.jumpLimit);
+		buf.writeInt(this.sender.getBytes().length);
+		buf.writeBytes(this.sender.getBytes());
 	}
 }

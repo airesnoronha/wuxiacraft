@@ -21,6 +21,7 @@ public class SkillCap implements ISkillCap {
 	private int barrageToRelease;
 	private int barrageReleased;
 	private float maxCooldown;
+	private boolean formationActivated;
 
 	public SkillCap() {
 		this.knownSkills = new ArrayList<>();
@@ -213,5 +214,15 @@ public class SkillCap implements ISkillCap {
 		total.addAll(techniques.getTechniqueSkills());
 		total.addAll(this.getKnownSkills());
 		return total;
+	}
+
+	@Override
+	public void setFormationActivated(boolean activated) {
+		this.formationActivated = activated;
+	}
+
+	@Override
+	public boolean hasFormationActivated() {
+		return this.formationActivated;
 	}
 }

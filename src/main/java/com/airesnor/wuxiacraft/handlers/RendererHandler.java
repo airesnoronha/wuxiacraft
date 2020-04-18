@@ -3,7 +3,6 @@ package com.airesnor.wuxiacraft.handlers;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.alchemy.Recipe;
 import com.airesnor.wuxiacraft.blocks.Cauldron;
-import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
@@ -58,7 +57,7 @@ public class RendererHandler {
 		public static class RenderElement {
 			private float duration; //in ticks
 			private float prevPartialTicks;
-			private Callable<Void> rendering;
+			private final Callable<Void> rendering;
 
 			public RenderElement(float duration, Callable<Void> rendering) {
 				this.duration = duration;
@@ -79,7 +78,7 @@ public class RendererHandler {
 			}
 		}
 
-		private List<RenderElement> drawingQueue;
+		private final List<RenderElement> drawingQueue;
 
 		public void renderQueue(float partialTicks) {
 			List<RenderElement> toRemove = new ArrayList<>();
@@ -164,9 +163,15 @@ public class RendererHandler {
 		}
 		else if (e.getEntity() instanceof WanderingCultivator) {
 			WanderingCultivator cultivator = (WanderingCultivator) e.getEntity();
+			ICultivation playerCultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
 			ICultivation cultivation = new Cultivation();
-			cultivation.setCurrentLevel(cultivator.getCultivationLevel());
-			cultivation.setCurrentSubLevel(cultivator.getCultivationSubLevel());
+			if(cultivator.getCultivationLevel().greaterThan(playerCultivation.getCurrentLevel())) {
+				cultivation.setCurrentLevel(playerCultivation.getCurrentLevel().getNextLevel());
+				cultivation.setCurrentSubLevel(-1);
+			} else {
+				cultivation.setCurrentLevel(cultivator.getCultivationLevel());
+				cultivation.setCurrentSubLevel(cultivator.getCultivationSubLevel());
+			}
 			Minecraft mc = Minecraft.getMinecraft();
 			boolean sneaking = cultivator.isSneaking();
 			boolean thirdPerson = mc.getRenderManager().options.thirdPersonView == 2;
@@ -185,6 +190,7 @@ public class RendererHandler {
 		worldRenderQueue.renderQueue(event.getPartialTicks());
 	}
 
+	@SuppressWarnings("unused")
 	public static void enableBoxRendering() {
 		GlStateManager.disableTexture2D();
 		GlStateManager.disableDepth();
@@ -194,6 +200,7 @@ public class RendererHandler {
 		GlStateManager.glLineWidth(2f);
 	}
 
+	@SuppressWarnings("unused")
 	public static void disableBoxRendering() {
 		GlStateManager.disableBlend();
 		GlStateManager.enableDepth();

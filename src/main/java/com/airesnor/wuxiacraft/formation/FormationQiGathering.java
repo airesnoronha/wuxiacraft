@@ -45,21 +45,20 @@ public class FormationQiGathering extends Formation {
 	public int doUpdate(World worldIn, BlockPos source, FormationTileEntity parent) {
 		NBTTagCompound info = parent.getFormationInfo();
 		List<FormationTileEntity> formations = new ArrayList<>();
-		if(parent.getTimeActivated() % 40 == 0) { //search for other formations
+		if (parent.getTimeActivated() % 40 == 0) { //search for other formations
 			for (TileEntity te : worldIn.loadedTileEntityList) {
 				if (te instanceof FormationTileEntity && te.getPos().getDistance(source.getX(), source.getY(), source.getZ()) < this.getRange()) {
 					formations.add((FormationTileEntity) te);
 				}
 			}
 			info.setInteger("formations-length", formations.size());
-			for(FormationTileEntity fte : formations) { //store the formations blockpos
+			for (FormationTileEntity fte : formations) { //store the formations blockpos
 				int index = formations.indexOf(fte);
-				info.setTag("f-"+index, writeBlockPosToNBT(fte.getPos()));
+				info.setTag("f-" + index, writeBlockPosToNBT(fte.getPos()));
 			}
 			parent.setFormationInfo(info);
-		}
-		else { //read from info
-			if(info.hasKey("formations-length")) {
+		} else { //read from info
+			if (info.hasKey("formations-length")) {
 				int length = info.getInteger("formations-length");
 				for (int i = 0; i < length; i++) {
 					TileEntity te = worldIn.getTileEntity(readBlockPosFromNBT((NBTTagCompound) info.getTag("f-" + i)));
@@ -75,12 +74,30 @@ public class FormationQiGathering extends Formation {
 				break;
 			}
 		}
-		List<EntityPlayer> playersNearby = worldIn.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(source).grow(this.getRange()/8));
-		for(EntityPlayer player : playersNearby) {
-			if(player.getDistanceSq(source) < (this.getRange()/8)*(this.getRange()/8)) {
-				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-				cultivation.addEnergy((float) this.generation * 2);
+		List<EntityPlayer> targets = new ArrayList<>();
+		if (parent.getTimeActivated() % 10 == 0) { //search world for players
+			List<EntityPlayer> playersNearby = worldIn.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(source).grow(this.getRange() / 8));
+			for (EntityPlayer player : playersNearby) {
+				if (player.getDistanceSq(source) < (this.getRange() / 8) * (this.getRange() / 8)) {
+					targets.add(player);
+				}
 			}
+			info.setInteger("targets", targets.size());
+			for (EntityPlayer target : targets) {
+				int index = targets.indexOf(target);
+				info.setInteger("p-" + index, target.getEntityId());
+			}
+		} else { //load from found players
+			if (info.hasKey("targets")) {
+				int length = info.getInteger("targets");
+				for (int i = 0; i < length; i++) {
+					targets.add((EntityPlayer) worldIn.getEntityByID(info.getInteger("p-" + i)));
+				}
+			}
+		}
+		for (EntityPlayer target : targets) {
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(target);
+			cultivation.addEnergy((float) this.generation * 2);
 		}
 		return 0;
 	}
@@ -89,7 +106,7 @@ public class FormationQiGathering extends Formation {
 		int x = tag.getInteger("x");
 		int y = tag.getInteger("y");
 		int z = tag.getInteger("z");
-		return new BlockPos(x,y,z);
+		return new BlockPos(x, y, z);
 	}
 
 	private static NBTTagCompound writeBlockPosToNBT(BlockPos pos) {
@@ -103,7 +120,7 @@ public class FormationQiGathering extends Formation {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void doClientUpdate(@Nonnull World worldIn, @Nonnull BlockPos source, @Nonnull FormationTileEntity parent) {
-		if(Minecraft.getMinecraft().player.getDistanceSq(source) < (this.getRange()/8)*(this.getRange()/8)) {
+		if (Minecraft.getMinecraft().player.getDistanceSq(source) < (this.getRange() / 8) * (this.getRange() / 8)) {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
 			cultivation.addEnergy((float) this.generation * 2);
 		}

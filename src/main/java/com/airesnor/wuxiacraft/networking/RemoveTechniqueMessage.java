@@ -8,33 +8,32 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 public class RemoveTechniqueMessage implements IMessage {
 
 	Technique toBeRemoved;
+	String sender;
 
-	public RemoveTechniqueMessage(Technique toBeRemoved) {
+	public RemoveTechniqueMessage(Technique toBeRemoved, String sender) {
 		this.toBeRemoved = toBeRemoved;
+		this.sender = sender;
 	}
 
 	public RemoveTechniqueMessage() {
 		this.toBeRemoved = null;
+		this.sender = "";
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
+		int techniqueId = buf.readInt();
+		this.toBeRemoved = Techniques.TECHNIQUES.get(techniqueId);
 		int length = buf.readInt();
-		if (length > 0) {
-			byte[] bytes = new byte[length];
-			buf.readBytes(bytes, 0, length);
-			String name = new String(bytes);
-			this.toBeRemoved = Techniques.getTechniqueByUName(name);
-		}
+		byte[] bytes = new byte[length];
+		buf.readBytes(bytes, 0, length);
+		this.sender = new String(bytes);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		if (this.toBeRemoved != null) {
-			buf.writeInt(this.toBeRemoved.getUName().length());
-			buf.writeBytes(this.toBeRemoved.getUName().getBytes());
-		} else {
-			buf.writeInt(0);
-		}
+		buf.writeInt(Techniques.TECHNIQUES.indexOf(this.toBeRemoved));
+		buf.writeInt(this.sender.getBytes().length);
+		buf.writeBytes(this.sender.getBytes());
 	}
 }
