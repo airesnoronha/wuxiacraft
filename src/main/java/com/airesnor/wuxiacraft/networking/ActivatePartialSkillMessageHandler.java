@@ -14,20 +14,20 @@ public class ActivatePartialSkillMessageHandler implements IMessageHandler<Activ
 
 	@Override
 	public IMessage onMessage(ActivatePartialSkillMessage message, MessageContext ctx) {
-		if(ctx.side == Side.SERVER) {
+		if (ctx.side == Side.SERVER) {
 			WorldServer world = ctx.getServerHandler().player.getServerWorld();
 			world.addScheduledTask(() -> {
 				Entity test = world.getEntityByID(message.senderID);
-				if(test instanceof EntityPlayer) {
-					EntityPlayer player  = (EntityPlayer) test;
-				if ("barrageMinorBeam".equals(message.skillName)) {
-					Skills.BARRAGE_MINOR_BEAM.activate(player);
-					CultivationUtils.getCultivationFromEntity(player).remEnergy(message.energy);
-				}
-				if ("applySlowness".equals(message.skillName)) {
-					Skills.APPLY_SLOWNESS.activate(player);
-					CultivationUtils.getCultivationFromEntity(player).remEnergy(message.energy);
-				}
+				if (test instanceof EntityPlayer) {
+					EntityPlayer player = (EntityPlayer) test;
+					if ("barrageMinorBeam".equals(message.skillName)) {
+						Skills.BARRAGE_MINOR_BEAM.activate(player);
+						CultivationUtils.getCultivationFromEntity(player).remEnergy(message.energy);
+					}
+					if ("applySlowness".equals(message.skillName)) {
+						Skills.APPLY_SLOWNESS.activate(player);
+						CultivationUtils.getCultivationFromEntity(player).remEnergy(message.energy);
+					}
 				}
 			});
 		}

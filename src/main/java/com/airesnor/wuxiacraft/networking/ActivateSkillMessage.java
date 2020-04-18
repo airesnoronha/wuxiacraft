@@ -13,14 +13,18 @@ public class ActivateSkillMessage implements IMessage {
 	}
 
 	public ActivateSkillMessage(int selectedSkill, int sender) {
-		this.selectedSkill = 0;
+		this.selectedSkill = selectedSkill;
 		this.senderID = sender;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		this.selectedSkill =  buf.readInt();
-		this.senderID = buf.readInt();
+		try {
+			this.selectedSkill = buf.readInt();
+			this.senderID = buf.readInt();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

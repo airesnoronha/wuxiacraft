@@ -105,7 +105,7 @@ public class CommonProxy {
 
 	private void registerRuneBlocks() {
 		Blocks.initBloodRunes();
-		ForgeRegistries.BLOCKS.registerAll(Blocks.BLOOD_RUNES.values().toArray(new Block[0]));
+		//ForgeRegistries.BLOCKS.registerAll(Blocks.BLOOD_RUNES.values().toArray(new Block[0]));
 	}
 
 	public void registerScrollModel(Item item, int meta, String id) {
