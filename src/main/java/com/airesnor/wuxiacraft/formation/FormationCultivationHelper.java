@@ -64,13 +64,16 @@ public class FormationCultivationHelper extends Formation {
 			info.setInteger("targets", targets.size());
 			for (EntityPlayer target : targets) {
 				int index = targets.indexOf(target);
-				info.setInteger("p-" + index, target.getEntityId());
+				info.setString("p-" + index, target.getName());
 			}
 		} else { //get loaded players
 			if (info.hasKey("targets")) {
 				int length = info.getInteger("targets");
 				for (int i = 0; i < length; i++) {
-					targets.add((EntityPlayer) worldIn.getEntityByID(info.getInteger("p-" + i)));
+					String name = info.getString("p-"+i);
+					EntityPlayer player = worldIn.getPlayerEntityByName(info.getString("p-" + i));
+					if(player != null)
+					targets.add(player);
 				}
 			}
 		}
@@ -94,7 +97,7 @@ public class FormationCultivationHelper extends Formation {
 		info.setInteger("selected", selected.size()); //so client can know who to cultivate
 		for (EntityPlayer player : selected) {
 			int index = selected.indexOf(player);
-			info.setInteger("s-" + index, player.getEntityId());
+			info.setString("s-" + index, player.getName());
 		}
 		parent.setFormationInfo(info);
 		return selected.size();
@@ -111,7 +114,7 @@ public class FormationCultivationHelper extends Formation {
 				EntityPlayer player = Minecraft.getMinecraft().player;
 				boolean selected = false;
 				for (int i = 0; i < length; i++) {
-					if (info.getInteger("s-" + i) == player.getEntityId()) {
+					if (info.getString("s-" + i).equals(player.getName())) {
 						selected = true;
 						break;
 					}
