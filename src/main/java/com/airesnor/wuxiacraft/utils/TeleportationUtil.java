@@ -12,8 +12,8 @@ import net.minecraft.world.WorldServer;
 public class TeleportationUtil extends Teleporter{
 
     private final WorldServer worldIn;
-    private double x, y, z;
-    private float playerRotationYaw, playerRotationPitch;
+    private final double x, y, z;
+    private final float playerRotationYaw, playerRotationPitch;
 
     public TeleportationUtil(WorldServer worldIn, double x, double y, double z, float playerRotationYaw, float playerRotationPitch) {
         super(worldIn);

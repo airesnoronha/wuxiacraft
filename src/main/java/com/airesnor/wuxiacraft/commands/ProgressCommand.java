@@ -33,8 +33,7 @@ public class ProgressCommand extends CommandBase {
     @Override
     @Nonnull
     public List<String> getAliases() {
-        List<String> aliases = new ArrayList<>();
-        return aliases;
+        return new ArrayList<>();
     }
 
     @Override

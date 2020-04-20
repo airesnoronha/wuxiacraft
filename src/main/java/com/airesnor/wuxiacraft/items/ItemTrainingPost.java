@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.blocks.BlockTrainingPost;
 import com.airesnor.wuxiacraft.blocks.Blocks;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.SoundType;
@@ -17,8 +18,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ItemTrainingPost extends ItemBase {
 
 	public ItemTrainingPost(String item_name) {
@@ -27,7 +30,6 @@ public class ItemTrainingPost extends ItemBase {
 	}
 
 	@Override
-	@Nonnull
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if(facing == EnumFacing.UP) {
 
@@ -66,9 +68,8 @@ public class ItemTrainingPost extends ItemBase {
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	@Nonnull
 	public String getUnlocalizedNameInefficiently(ItemStack stack) {
 		String [] parts = stack.getItem().getUnlocalizedName().split("_");
-		return parts[0]+"_"+parts[1]+"_"+(parts[3].equals("oak")?parts[4]:parts[3]);
+		return parts[0]+"_"+parts[1]+"_"+parts[parts.length-1]; //what if some new woods gets added, so this skips to the end
 	}
 }

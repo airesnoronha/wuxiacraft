@@ -2,11 +2,14 @@ package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.Blocks;
-import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.entities.mobs.GiantAnt;
 import com.airesnor.wuxiacraft.entities.mobs.GiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
+import com.airesnor.wuxiacraft.entities.skills.FireThrowable;
+import com.airesnor.wuxiacraft.entities.skills.SwordBeamThrowable;
+import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
+import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
 import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
 import com.airesnor.wuxiacraft.formation.FormationTileEntity;
@@ -25,7 +28,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.registries.RegistryBuilder;
 
 @Mod.EventBusSubscriber
 public class RegistryHandler {
@@ -132,9 +134,33 @@ public class RegistryHandler {
 						Biomes.MESA
 				)
 				.build();
+		EntityEntry fireThrowable = EntityEntryBuilder.create()
+				.entity(FireThrowable.class)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "fire_throwable"), 3)
+				.name("fire_throwable")
+				.build();
+		EntityEntry waterNeedleThrowable = EntityEntryBuilder.create()
+				.entity(WaterNeedleThrowable.class)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "water_needle_throwable"), 4)
+				.name("water_needle_throwable")
+				.build();
+		EntityEntry waterBladeThrowable = EntityEntryBuilder.create()
+				.entity(WaterBladeThrowable.class)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "water_blade_throwable"), 5)
+				.name("water_blade_throwable")
+				.build();
+		EntityEntry swordBeamThrowable = EntityEntryBuilder.create()
+				.entity(SwordBeamThrowable.class)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "sword_beam_throwable"), 6)
+				.name("sword_beam_throwable")
+				.build();
 		event.getRegistry().register(giantAntEntity);
 		event.getRegistry().register(giantBeeEntity);
 		event.getRegistry().register(wanderingCultivatorEntity);
+		event.getRegistry().register(fireThrowable);
+		event.getRegistry().register(waterNeedleThrowable);
+		event.getRegistry().register(waterBladeThrowable);
+		event.getRegistry().register(swordBeamThrowable);
 	}
 
 	@SubscribeEvent

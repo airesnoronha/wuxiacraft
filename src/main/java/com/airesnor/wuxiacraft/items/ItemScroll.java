@@ -1,11 +1,12 @@
 package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.capabilities.CultTechProvider;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.Technique;
 import com.airesnor.wuxiacraft.cultivation.techniques.TechniqueWeapon;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,11 +20,15 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ItemScroll extends Item implements IHasModel {
 
-	private Technique technique;
+	private final Technique technique;
 
 	public ItemScroll(Technique technique) {
 		setUnlocalizedName(technique.getUName() + "_scroll");
@@ -36,11 +41,8 @@ public class ItemScroll extends Item implements IHasModel {
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-		ICultTech cultTech = playerIn.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
-		boolean success = false;
-		if (cultTech != null) {
-			success = cultTech.addTechnique(this.technique, 0);
-		}
+		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(playerIn);
+		boolean success = cultTech.addTechnique(this.technique, 0);
 		return playerIn.isCreative() ? ActionResult.newResult(EnumActionResult.SUCCESS, new ItemStack(this)) : ActionResult.newResult(EnumActionResult.SUCCESS, success ? ItemStack.EMPTY : new ItemStack(this));
 	}
 

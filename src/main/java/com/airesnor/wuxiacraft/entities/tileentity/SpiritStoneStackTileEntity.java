@@ -1,19 +1,18 @@
 package com.airesnor.wuxiacraft.entities.tileentity;
 
-import com.airesnor.wuxiacraft.networking.SpawnParticleMessage;
-import com.airesnor.wuxiacraft.utils.SkillUtils;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ITickable;
-import net.minecraft.world.WorldServer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class SpiritStoneStackTileEntity extends TileEntity {
 
 	public ItemStack stack;

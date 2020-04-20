@@ -1,9 +1,8 @@
 package com.airesnor.wuxiacraft.items;
 
-import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
-import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
@@ -14,12 +13,13 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ItemEnergyPill extends ItemBase {
 
-	float amount;
+	final float amount;
 
 	public ItemEnergyPill(String item_name, float amount) {
 		super(item_name);
@@ -28,8 +28,6 @@ public class ItemEnergyPill extends ItemBase {
 	}
 
 	@Override
-	@Nonnull
-	@ParametersAreNonnullByDefault
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		if (entityLiving instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) entityLiving;
@@ -48,7 +46,6 @@ public class ItemEnergyPill extends ItemBase {
 	}
 
 	@Override
-	@Nonnull
 	public EnumAction getItemUseAction(ItemStack stack) {
 		return EnumAction.EAT;
 	}
@@ -59,8 +56,6 @@ public class ItemEnergyPill extends ItemBase {
 	}
 
 	@Override
-	@Nonnull
-	@ParametersAreNonnullByDefault
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		playerIn.setActiveHand(handIn);
 		return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));

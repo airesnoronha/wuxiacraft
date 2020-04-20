@@ -10,19 +10,20 @@ import net.minecraft.potion.PotionEffect;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings({"SameParameterValue", "unused"})
 public class Technique {
 
-	private TechniqueTier tier;
-	private String uName;
-	private TechniquesModifiers baseModifiers;
-	private List<PotionEffect> smallCompletionEffects;
-	private List<PotionEffect> greatCompletionEffects;
-	private List<PotionEffect> perfectionCompletionEffects;
-	private List<Element> elements;
+	private final TechniqueTier tier;
+	private final String uName;
+	private final TechniquesModifiers baseModifiers;
+	private final List<PotionEffect> smallCompletionEffects;
+	private final List<PotionEffect> greatCompletionEffects;
+	private final List<PotionEffect> perfectionCompletionEffects;
+	private final List<Element> elements;
 	private float cultivationSpeed;
 
-	private List<Skill> smallCompletionSkills;
-	private List<Skill> greatCompletionSkills;
+	private final List<Skill> smallCompletionSkills;
+	private final List<Skill> greatCompletionSkills;
 
 	public List<Skill> getSmallCompletionSkills() {
 		return smallCompletionSkills;
@@ -36,7 +37,7 @@ public class Technique {
 		return perfectionCompletionSkills;
 	}
 
-	private List<Skill> perfectionCompletionSkills;
+	private final List<Skill> perfectionCompletionSkills;
 
 	public TechniqueTier getTier() {
 		return this.tier;

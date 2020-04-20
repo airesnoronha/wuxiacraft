@@ -10,18 +10,17 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class SwordBeamThrowable extends EntityThrowable {
 
-	private float damage;
-	public int color;
-	private int duration;
-	public float roll;
+	private final float damage;
+	public final int color;
+	private final int duration;
+	public final float roll;
 
-	private EntityLivingBase owner;
-
-	public SwordBeamThrowable(World worldIn) {
-		super(worldIn);
-	}
+	private final EntityLivingBase owner;
 
 	public SwordBeamThrowable(World worldIn, EntityLivingBase owner, float damage, int color, int duration) {
 		super(worldIn, owner.posX, owner.posY + owner.getEyeHeight() - 0.1, owner.posZ);

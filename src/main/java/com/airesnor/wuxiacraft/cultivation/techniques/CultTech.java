@@ -19,7 +19,7 @@ public class CultTech implements ICultTech {
 	public static final String SPEED__MOD = "wuxiacraft.technique.speed";
 	public static final String STRENGTH_MOD = "wuxiacraft.technique.strength";
 
-	private List<KnownTechnique> knownTechniques;
+	private final List<KnownTechnique> knownTechniques;
 
 	public CultTech() {
 		this.knownTechniques = new ArrayList<>();

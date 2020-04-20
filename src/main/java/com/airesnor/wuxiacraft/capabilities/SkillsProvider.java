@@ -15,7 +15,7 @@ public class SkillsProvider implements ICapabilitySerializable<NBTBase> {
 	@CapabilityInject(ISkillCap.class)
 	public static final Capability<ISkillCap> SKILL_CAP_CAPABILITY = null;
 
-	private ISkillCap instance = SKILL_CAP_CAPABILITY.getDefaultInstance();
+	private final ISkillCap instance = SKILL_CAP_CAPABILITY.getDefaultInstance();
 
 	@Override
 	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {

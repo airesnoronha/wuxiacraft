@@ -27,8 +27,8 @@ import java.util.List;
 
 public class FormationSlaughter extends Formation {
 
-	private ResourceLocation displayFormation = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/formations/weak_slaughter_formation.png");
-	private ResourceLocation[] blood_runes = new ResourceLocation[]{
+	private final ResourceLocation displayFormation = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/formations/weak_slaughter_formation.png");
+	private final ResourceLocation[] blood_runes = new ResourceLocation[]{
 			new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/runes/blood_h.png"),
 			new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/runes/blood_i.png"),
 			new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/runes/blood_j.png"),
@@ -36,7 +36,7 @@ public class FormationSlaughter extends Formation {
 			new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/runes/blood_l.png")
 	};
 
-	float strength;
+	final float strength;
 
 	public FormationSlaughter(String name, double cost, double activationCost, double range, float strength) {
 		super(name, cost, activationCost, range);

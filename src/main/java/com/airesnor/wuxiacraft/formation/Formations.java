@@ -1,7 +1,5 @@
 package com.airesnor.wuxiacraft.formation;
 
-import org.apache.logging.log4j.message.StructuredDataMessage;
-
 import java.util.ArrayList;
 import java.util.List;
 

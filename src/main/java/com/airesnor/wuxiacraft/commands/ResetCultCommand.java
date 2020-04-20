@@ -6,6 +6,7 @@ import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.networking.CultivationMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -15,29 +16,26 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ResetCultCommand extends CommandBase {
 
 	@Override
-	@Nonnull
 	public String getName() {
 		return "resetcult";
 	}
 
 	@Override
-	@Nonnull
-	@ParametersAreNonnullByDefault
 	public String getUsage(ICommandSender sender) {
 		return "/resetcult";
 	}
 
 	@Override
-	@Nonnull
 	public List<String> getAliases() {
 		List<String> list = new ArrayList<>();
 		list.add("resetcult");
@@ -45,7 +43,6 @@ public class ResetCultCommand extends CommandBase {
 	}
 
 	@Override
-	@ParametersAreNonnullByDefault
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		if (args.length == 0) {
 			if(sender instanceof EntityPlayerMP) {
@@ -82,7 +79,6 @@ public class ResetCultCommand extends CommandBase {
 	}
 
 	@Override
-	@Nonnull
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
 		return new ArrayList<>();
 	}

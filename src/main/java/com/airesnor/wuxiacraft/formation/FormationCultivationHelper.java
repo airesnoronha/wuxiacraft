@@ -27,6 +27,7 @@ import org.lwjgl.opengl.GL11;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class FormationCultivationHelper extends Formation {
 
@@ -70,9 +71,12 @@ public class FormationCultivationHelper extends Formation {
 			if (info.hasKey("targets")) {
 				int length = info.getInteger("targets");
 				for (int i = 0; i < length; i++) {
-					EntityPlayer player = worldIn.getPlayerEntityByUUID(info.getUniqueId("p-" + i));
-					if(player != null)
-					targets.add(player);
+					UUID uuid = info.getUniqueId("p-" + i);
+					if(uuid != null) {
+						EntityPlayer player = worldIn.getPlayerEntityByUUID(uuid);
+						if (player != null)
+							targets.add(player);
+					}
 				}
 			}
 		}
@@ -113,9 +117,12 @@ public class FormationCultivationHelper extends Formation {
 				EntityPlayer player = Minecraft.getMinecraft().player;
 				boolean selected = false;
 				for (int i = 0; i < length; i++) {
-					if (info.getUniqueId("s-" + i).equals(player.getUniqueID())) {
-						selected = true;
-						break;
+					UUID uuid = info.getUniqueId("s-" + i);
+					if(uuid != null) {
+						if (uuid.equals(player.getUniqueID())) {
+							selected = true;
+							break;
+						}
 					}
 				}
 				if (selected) {

@@ -197,6 +197,7 @@ public class SkillsGui extends GuiScreen {
 		GlStateManager.popMatrix();
 	}
 
+	@SuppressWarnings({"EmptyMethod", "unused"})
 	private void drawTooltips(int mouseX, int mouseY) {
 
 	}
@@ -205,6 +206,7 @@ public class SkillsGui extends GuiScreen {
 		return (x >= left && x <= (left + width) && y >= top && y <= (top + height));
 	}
 
+	@SuppressWarnings("unused")
 	public void drawFramedBox(int x, int y, int width, int height, int borderSize, int textureX, int textureY) {
 		this.mc.getTextureManager().bindTexture(gui_texture);
 		drawTexturedModalRect(x, y, textureX, textureY, borderSize, borderSize);

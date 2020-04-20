@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class SkillCapMessage implements IMessage {
 
-	public ISkillCap skillCap;
+	public final ISkillCap skillCap;
 	public boolean shouldUpdateCPaCD;
 	public UUID senderUUID;
 

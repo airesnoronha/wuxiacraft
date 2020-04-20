@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CultTechMessage implements IMessage {
 
-	public ICultTech cultTech;
+	public final ICultTech cultTech;
 
 	public CultTechMessage(ICultTech cultTech) {
 		this.cultTech = cultTech;

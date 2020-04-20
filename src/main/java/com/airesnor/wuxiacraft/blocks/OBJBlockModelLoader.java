@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.blocks;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.models.BaseModel;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -11,10 +12,13 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.obj.OBJModel;
 import org.apache.commons.io.IOUtils;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class OBJBlockModelLoader implements ICustomModelLoader {
 
 	public static final OBJBlockModelLoader INSTANCE = new OBJBlockModelLoader();
@@ -38,7 +42,7 @@ public class OBJBlockModelLoader implements ICustomModelLoader {
 	}
 
 	@Override
-	public IModel loadModel(ResourceLocation modelLocation) throws Exception {
+	public IModel loadModel(ResourceLocation modelLocation) {
 		String resourcePath = modelLocation.getResourcePath();
         assert resourcePath.startsWith(LOCATION) : "loadModel expected " + LOCATION + " but found " + resourcePath;
 		String modelName = resourcePath.substring(LOCATION.length());

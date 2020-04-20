@@ -30,8 +30,8 @@ public class AskCultivationLevelMessage implements IMessage {
 		byte[] bytes = new byte[30];
 		buf.readBytes(bytes, 0, length);
 		bytes[length] = '\0';
-		String cultlevelname = new String(bytes, 0, length);
-		this.askerLevel = CultivationLevel.REGISTERED_LEVELS.get(cultlevelname);
+		String cultLevelName = new String(bytes, 0, length);
+		this.askerLevel = CultivationLevel.REGISTERED_LEVELS.get(cultLevelName);
 		this.askerUUID = packetBuffer.readUniqueId();
 	}
 

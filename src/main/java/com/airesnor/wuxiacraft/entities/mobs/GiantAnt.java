@@ -43,7 +43,7 @@ public class GiantAnt extends EntityMob {
 
 	protected static class EntityAIAttackMeleeWithRange extends EntityAIAttackMelee {
 
-		float range;
+		final float range;
 
 		public EntityAIAttackMeleeWithRange(EntityCreature creature, double speedIn, boolean useLongMemory, float range) {
 			super(creature, speedIn, useLongMemory);

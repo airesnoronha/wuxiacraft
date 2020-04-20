@@ -10,8 +10,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
@@ -86,10 +84,6 @@ public class OreUtils {
 			}
 		}
 		return found;
-	}
-
-	public static void gatherOres(EntityPlayer player, List<BlockPos> ores) {
-
 	}
 
 	public static void drawFoundOres(EntityPlayer player) {

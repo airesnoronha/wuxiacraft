@@ -4,8 +4,8 @@ import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.alchemy.Recipe;
 import com.airesnor.wuxiacraft.alchemy.Recipes;
 import com.airesnor.wuxiacraft.handlers.GuiHandler;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -19,11 +19,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Random;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ItemRecipe extends Item implements IHasModel {
 
 	public ItemRecipe(String name) {
@@ -95,8 +96,6 @@ public class ItemRecipe extends Item implements IHasModel {
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	@Nonnull
-	@ParametersAreNonnullByDefault
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		BlockPos pos = playerIn.getPosition();
 		if(worldIn.isRemote) {
@@ -107,7 +106,7 @@ public class ItemRecipe extends Item implements IHasModel {
 
 	public enum RecipeTemperature {
 		COLD("cold"), WARM("warm"), HOT("hot"), MELTING("melting"), SUPER_HOT("super_hot");
-		private String name;
+		private final String name;
 
 		RecipeTemperature(String name) {
 			this.name = name;

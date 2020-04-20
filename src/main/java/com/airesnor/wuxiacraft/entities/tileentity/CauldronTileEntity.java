@@ -22,12 +22,15 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.WorldServer;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@ParametersAreNonnullByDefault
 public class CauldronTileEntity extends TileEntity implements ITickable {
 
 	private boolean hasFirewood;
@@ -48,7 +51,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 
 	private Recipe activeRecipe;
 
-	private List<Pair<Float, Item>> recipeInputs;
+	private final List<Pair<Float, Item>> recipeInputs;
 
 	private EnumCauldronState cauldronState;
 
@@ -88,6 +91,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 		return maxTemperature;
 	}
 
+	@SuppressWarnings("unused")
 	public CauldronTileEntity setMaxTemperature(float maxTemperature) {
 		this.maxTemperature = maxTemperature;
 		return this;
@@ -143,6 +147,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 		}
 	}
 
+	@Nonnull
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
@@ -175,6 +180,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 	}
 
 	@Override
+	@Nonnull
 	public NBTTagCompound getUpdateTag() {
 		return writeToNBT(new NBTTagCompound());
 	}
@@ -344,7 +350,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 		WRONG_RECIPE(1f, 0.15f, 0.15f),
 		EMPTY(1f, 1f, 1f);
 
-		private Color color;
+		private final Color color;
 
 		EnumCauldronState(float r, float g, float b) {
 			this.color = new Color(r, g, b);

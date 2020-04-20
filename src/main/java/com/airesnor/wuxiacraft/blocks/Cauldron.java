@@ -8,6 +8,7 @@ import com.airesnor.wuxiacraft.items.ItemFan;
 import com.airesnor.wuxiacraft.items.Items;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.ShrinkEntityItemMessage;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyInteger;
@@ -37,6 +38,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Random;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class Cauldron extends BlockContainer implements IHasModel {
 
 	private static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0,0,0,1,0.81, 1);
@@ -102,7 +105,6 @@ public class Cauldron extends BlockContainer implements IHasModel {
 	}
 
 	@Override
-	@ParametersAreNonnullByDefault
 	public boolean isToolEffective(String type, IBlockState state) {
 		if (type.equals("pickaxe")) return true;
 		else return super.isToolEffective(type, state);
@@ -110,11 +112,11 @@ public class Cauldron extends BlockContainer implements IHasModel {
 
 	@Nullable
 	@Override
-	@ParametersAreNonnullByDefault
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
 		return new CauldronTileEntity();
 	}
 
+	@Nullable
 	private CauldronTileEntity getTE(World world, BlockPos pos) {
 		return (CauldronTileEntity) world.getTileEntity(pos);
 	}
@@ -148,52 +150,54 @@ public class Cauldron extends BlockContainer implements IHasModel {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		boolean used = false;
 		CauldronTileEntity te = getTE(worldIn, pos);
-		if (!playerIn.getHeldItem(hand).isEmpty()) {
-			ItemStack itemStack = playerIn.getHeldItem(hand);
-			if (!te.isHasFirewood()) {
-				if (itemStack.getItem() == net.minecraft.init.Items.STICK) {
-					used = true;
-					te.addWood(2000);
-					if (!playerIn.isCreative())
-						itemStack.shrink(1);
-					playerIn.openContainer.detectAndSendChanges();
-				}
-				if (itemStack.getItem() == net.minecraft.init.Items.COAL) {
-					used = true;
-					te.addWood(16000);
-					if (!playerIn.isCreative())
-						itemStack.shrink(1);
-					playerIn.openContainer.detectAndSendChanges();
-				}
+		if(te!=null) {
+			if (!playerIn.getHeldItem(hand).isEmpty()) {
+				ItemStack itemStack = playerIn.getHeldItem(hand);
+				if (!te.isHasFirewood()) {
+					if (itemStack.getItem() == net.minecraft.init.Items.STICK) {
+						used = true;
+						te.addWood(2000);
+						if (!playerIn.isCreative())
+							itemStack.shrink(1);
+						playerIn.openContainer.detectAndSendChanges();
+					}
+					if (itemStack.getItem() == net.minecraft.init.Items.COAL) {
+						used = true;
+						te.addWood(16000);
+						if (!playerIn.isCreative())
+							itemStack.shrink(1);
+						playerIn.openContainer.detectAndSendChanges();
+					}
 
-				if (itemStack.getItem() == ItemBlock.getItemFromBlock(net.minecraft.init.Blocks.COAL_BLOCK)) {
-					used = true;
-					te.addWood(64000);
-					if (!playerIn.isCreative())
-						itemStack.shrink(1);
-					playerIn.openContainer.detectAndSendChanges();
+					if (itemStack.getItem() == ItemBlock.getItemFromBlock(net.minecraft.init.Blocks.COAL_BLOCK)) {
+						used = true;
+						te.addWood(64000);
+						if (!playerIn.isCreative())
+							itemStack.shrink(1);
+						playerIn.openContainer.detectAndSendChanges();
+					}
+				}
+				if (itemStack.getItem() == net.minecraft.init.Items.FLINT_AND_STEEL) {
+					if (te.isHasFirewood() && !te.isLit()) {
+						used = true;
+						itemStack.damageItem(1, playerIn);
+						te.setOnFire();
+						playerIn.openContainer.detectAndSendChanges();
+					}
+				}
+				if (itemStack.getItem() instanceof ItemFan) {
+					if (te.isLit()) {
+						ItemFan item = (ItemFan) itemStack.getItem();
+						te.wiggleFan(item.getFanStrength(), item.getMaxFanStrength());
+						used = true;
+					}
 				}
 			}
-			if (itemStack.getItem() == net.minecraft.init.Items.FLINT_AND_STEEL) {
-				if (te.isHasFirewood() && !te.isLit()) {
-					used = true;
-					itemStack.damageItem(1, playerIn);
-					te.setOnFire();
-					playerIn.openContainer.detectAndSendChanges();
-				}
-			}
-			if (itemStack.getItem() instanceof ItemFan) {
-				if (te.isLit()) {
-					ItemFan item = (ItemFan) itemStack.getItem();
-					te.wiggleFan(item.getFanStrength(), item.getMaxFanStrength());
+			if (playerIn.getHeldItem(hand).isEmpty() && playerIn.isSneaking()) {
+				if (te.getCauldronState() == CauldronTileEntity.EnumCauldronState.WRONG_RECIPE && te.isHasWater()) {
+					te.emptyCauldron();
 					used = true;
 				}
-			}
-		}
-		if (playerIn.getHeldItem(hand).isEmpty() && playerIn.isSneaking()) {
-			if (te.getCauldronState() == CauldronTileEntity.EnumCauldronState.WRONG_RECIPE && te.isHasWater()) {
-				te.emptyCauldron();
-				used = true;
 			}
 		}
 		return used;
@@ -208,7 +212,10 @@ public class Cauldron extends BlockContainer implements IHasModel {
 	@Override
 	@ParametersAreNonnullByDefault
 	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
-		getTE(world, pos).prepareToDie();
+		CauldronTileEntity te = getTE(world, pos);
+		if(te!=null) {
+			te.prepareToDie();
+		}
 		return super.removedByPlayer(state, world, pos, player, willHarvest);
 	}
 
@@ -216,12 +223,14 @@ public class Cauldron extends BlockContainer implements IHasModel {
 	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
 		if(worldIn.isRemote) {
 			CauldronTileEntity te = getTE(worldIn, pos);
-			if (entityIn instanceof EntityItem && te.isAcceptingItems()) {
-				ItemStack stack = ((EntityItem) entityIn).getItem().copy();
-				te.addRecipeInput(stack.getItem());
-				NetworkWrapper.INSTANCE.sendToServer(new ShrinkEntityItemMessage(entityIn.getUniqueID().toString()));
-				stack.shrink(1);
-				if(stack.isEmpty()) entityIn.setDead();
+			if (te != null) {
+				if (entityIn instanceof EntityItem && te.isAcceptingItems()) {
+					ItemStack stack = ((EntityItem) entityIn).getItem().copy();
+					te.addRecipeInput(stack.getItem());
+					NetworkWrapper.INSTANCE.sendToServer(new ShrinkEntityItemMessage(entityIn.getUniqueID().toString()));
+					stack.shrink(1);
+					if (stack.isEmpty()) entityIn.setDead();
+				}
 			}
 		}
 	}

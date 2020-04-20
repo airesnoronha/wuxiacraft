@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class CultivationMessage implements IMessage {
 
-	public ICultivation cultivation;
+	public final ICultivation cultivation;
 
 	public CultivationMessage(ICultivation cultivation) {
 		this.cultivation = cultivation;

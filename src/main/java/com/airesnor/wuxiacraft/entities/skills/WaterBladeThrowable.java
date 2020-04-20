@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.entities.skills;
 
 import com.airesnor.wuxiacraft.utils.TreeUtils;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -8,13 +9,16 @@ import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class WaterBladeThrowable extends EntityThrowable {
 
 	private EntityLivingBase owner;
@@ -26,10 +30,12 @@ public class WaterBladeThrowable extends EntityThrowable {
 	public float prevRotationRoll;
 	public float rotationRoll;
 
+	@SuppressWarnings("unused")
 	public WaterBladeThrowable(World worldIn) {
 		super(worldIn);
 	}
 
+	@SuppressWarnings("unused")
 	public WaterBladeThrowable(World worldIn, EntityLivingBase owner, float damage) {
 		this(worldIn, owner, damage, 30);
 	}

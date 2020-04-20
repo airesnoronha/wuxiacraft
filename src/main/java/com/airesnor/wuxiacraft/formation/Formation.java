@@ -13,13 +13,13 @@ import java.util.List;
 
 public abstract class Formation {
 
-	private String name;
+	private final String name;
 
-	private double operationCost; //cost in spirit stone energy
+	private final double operationCost; //cost in spirit stone energy
 
-	private double activationCost; //cost in cultivator skill energy
+	private final double activationCost; //cost in cultivator skill energy
 
-	private double range;
+	private final double range;
 
 	public Formation(String name, double cost, double activationCost, double range) {
 		this.name = name;
@@ -58,7 +58,8 @@ public abstract class Formation {
 	 * @param source       where has the interruption occurred
 	 * @param interrupters who might have interrupted this formation (generally anyone near the formation disturbance by 6 blocks)
 	 */
-	public void onInterrupt(@Nonnull World worldIn, @Nullable BlockPos source,@Nullable List<EntityLivingBase> interrupters) {
+	@SuppressWarnings("EmptyMethod")
+	public void onInterrupt(@Nonnull World worldIn, @Nullable BlockPos source, @Nullable List<EntityLivingBase> interrupters) {
 
 	}
 

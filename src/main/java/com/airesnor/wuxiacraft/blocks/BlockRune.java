@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.blocks;
 
 import com.airesnor.wuxiacraft.items.Items;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
@@ -23,6 +24,8 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class BlockRune extends Block {
 
 	private static final AxisAlignedBB RUNE_SIZE = new AxisAlignedBB(0,0,0,1,0.0625,1); // 1/16 height

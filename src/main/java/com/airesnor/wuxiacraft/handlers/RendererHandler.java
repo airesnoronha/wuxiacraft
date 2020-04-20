@@ -100,10 +100,10 @@ public class RendererHandler {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static WorldRenderQueue worldRenderQueue = new WorldRenderQueue();
+	public static final WorldRenderQueue worldRenderQueue = new WorldRenderQueue();
 
 	@SideOnly(Side.CLIENT)
-	public static Map<UUID, ICultivation> knownCultivations = new HashMap<>();
+	public static final Map<UUID, ICultivation> knownCultivations = new HashMap<>();
 
 	@SideOnly(Side.CLIENT)
 	private static int animationStep = 0;

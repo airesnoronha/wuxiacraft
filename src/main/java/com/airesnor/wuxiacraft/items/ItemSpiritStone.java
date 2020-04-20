@@ -3,6 +3,7 @@ package com.airesnor.wuxiacraft.items;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillAction;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
@@ -16,6 +17,8 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ItemSpiritStone extends ItemBase {
 
 	private ISkillAction action;
@@ -43,11 +46,13 @@ public class ItemSpiritStone extends ItemBase {
 		return amount;
 	}
 
+	@SuppressWarnings("unused")
 	public ItemSpiritStone setUseAction(ISkillAction action) {
 		this.action = action;
 		return this;
 	}
 
+	@SuppressWarnings("unused")
 	public ItemSpiritStone setWhenUsing(ISkillAction action) {
 		this.whenUsing = action;
 		return this;
@@ -93,7 +98,7 @@ public class ItemSpiritStone extends ItemBase {
 	}
 
 	public static class DefaultCultivationIncrease implements ISkillAction {
-		public double amount;
+		public final double amount;
 
 		public DefaultCultivationIncrease(double amount) {
 			this.amount = amount;

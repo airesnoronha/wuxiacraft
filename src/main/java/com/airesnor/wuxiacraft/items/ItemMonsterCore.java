@@ -13,8 +13,10 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
 public class ItemMonsterCore extends ItemBase {
 
+	@SuppressWarnings("FieldCanBeLocal")
 	private int useDuration;
 	private ISkillAction action;
 	private ISkillAction whenUsing;
@@ -29,12 +31,6 @@ public class ItemMonsterCore extends ItemBase {
 	}
 
 	@Override
-	public int getItemEnchantability() {
-		return super.getItemEnchantability();
-	}
-
-	@Override
-	@ParametersAreNonnullByDefault
 	public boolean isEnchantable(ItemStack stack) {
 		return false;
 	}

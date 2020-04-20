@@ -15,6 +15,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
 public class ItemDagger extends ItemBase {
 
 	public ItemDagger(String item_name) {
@@ -59,7 +60,6 @@ public class ItemDagger extends ItemBase {
 
 	@Override
 	@Nonnull
-	@ParametersAreNonnullByDefault
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		ItemStack dagger = playerIn.getHeldItem(handIn);
 		boolean found = false;

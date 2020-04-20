@@ -363,7 +363,7 @@ public class Skills {
 	});
 
 	// Credits : My Girlfriend
-	public static Skill WATER_NEEDLE = new Skill("water_needle", true, 100f, 1.1f, 20f, 0f, "Lysian Prieto")
+	public static final Skill WATER_NEEDLE = new Skill("water_needle", true, 100f, 1.1f, 20f, 0f, "Lysian Prieto")
 			.setAction(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 				WaterNeedleThrowable needle = new WaterNeedleThrowable(actor.world, actor, (float) Math.min(17f, 4 + cultivation.getStrengthIncrease() * 0.3f), 300);
@@ -372,7 +372,7 @@ public class Skills {
 				return true;
 			});
 
-	public static Skill WATER_BLADE = new Skill("water_blade", true, 380f, 2.0f, 120f, 0f).setAction(actor -> {
+	public static final Skill WATER_BLADE = new Skill("water_blade", true, 380f, 2.0f, 120f, 0f).setAction(actor -> {
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 		ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
 		float swordModifier = 1f;
@@ -388,13 +388,13 @@ public class Skills {
 		return true;
 	});
 
-	public static Skill SELF_HEALING = new Skill("self_healing", false, 160f, 1f, 80f, 0f).setAction(actor -> {
+	public static final Skill SELF_HEALING = new Skill("self_healing", false, 160f, 1f, 80f, 0f).setAction(actor -> {
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 		actor.heal(Math.max(15f, (float)cultivation.getStrengthIncrease() * 0.05f));
 		return true;
 	});
 
-	public static Skill HEALING_HANDS = new Skill("healing_hands", false, 220f, 1.4f, 120f, 0f).setAction(actor -> {
+	public static final Skill HEALING_HANDS = new Skill("healing_hands", false, 220f, 1.4f, 120f, 0f).setAction(actor -> {
 		boolean activated = false;
 		Entity result = SkillUtils.rayTraceEntities(actor, 10f, 1f);
 		if (result instanceof EntityLiving) {
@@ -408,7 +408,7 @@ public class Skills {
 	});
 
 	//Credits: My Girlfriend
-	public static Skill WALL_CROSSING = new Skill("wall_crossing", false, 400f, 3.0f, 130f, 0f, "Lysian Prieto").setAction(actor -> {
+	public static final Skill WALL_CROSSING = new Skill("wall_crossing", false, 400f, 3.0f, 130f, 0f, "Lysian Prieto").setAction(actor -> {
 		boolean activated = false;
 		EnumFacing facing = EnumFacing.fromAngle(actor.rotationYaw);
 		BlockPos pos = SkillUtils.rayTraceBlock(actor, 4f, 1f);
@@ -427,7 +427,7 @@ public class Skills {
 		return activated;
 	});
 
-	public static Skill WEAK_SWORD_BEAM = new Skill("weak_sword_beam", true, 180f, 2.5f, 40f, 0f)
+	public static final Skill WEAK_SWORD_BEAM = new Skill("weak_sword_beam", true, 180f, 2.5f, 40f, 0f)
 			.setAction(actor -> {
 				boolean activated = false;
 				if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
@@ -458,7 +458,7 @@ public class Skills {
 		return true;
 	};
 
-	public static Skill SWORD_BEAM_BARRAGE = new Skill("sword_beam_barrage", true, 220f, 4f, 150f, 60f)
+	public static final Skill SWORD_BEAM_BARRAGE = new Skill("sword_beam_barrage", true, 220f, 4f, 150f, 60f)
 			.setAction(actor -> {
 				boolean activated = false;
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
@@ -498,7 +498,7 @@ public class Skills {
 				return activated;
 			});
 
-	public static Skill WEAK_SWORD_FLIGHT = new Skill("weak_sword_flight", false, 9f, 0.1f, 500f, 200f)
+	public static final Skill WEAK_SWORD_FLIGHT = new Skill("weak_sword_flight", false, 9f, 0.1f, 500f, 200f)
 			.setAction(actor -> true)
 			.setWhenCasting(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
@@ -589,7 +589,7 @@ public class Skills {
 				return true;
 			});
 
-	public static Skill ADEPT_SWORD_FLIGHT = new Skill("adept_sword_flight", false, 26f, 0.1f, 2000f, 100f)
+	public static final Skill ADEPT_SWORD_FLIGHT = new Skill("adept_sword_flight", false, 26f, 0.1f, 2000f, 100f)
 			.setAction(actor -> true)
 			.setWhenCasting(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);

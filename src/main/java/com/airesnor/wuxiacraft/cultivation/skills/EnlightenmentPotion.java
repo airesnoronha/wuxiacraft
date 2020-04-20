@@ -9,6 +9,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class EnlightenmentPotion extends Potion {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/effects/enlightenment.png");
