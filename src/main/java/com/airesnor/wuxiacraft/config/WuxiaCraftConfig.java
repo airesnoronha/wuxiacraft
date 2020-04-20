@@ -12,6 +12,8 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -117,6 +119,7 @@ public class WuxiaCraftConfig {
 	}
 
 	public static class ConfigEventHandler {
+		@SideOnly(Side.CLIENT)
 		@SubscribeEvent
 		public void onEvent(ConfigChangedEvent.OnConfigChangedEvent event) {
 			if (event.getModID().equals(WuxiaCraft.MOD_ID)) {
@@ -128,6 +131,7 @@ public class WuxiaCraftConfig {
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static void syncCultivationFromConfigToClient() {
 		Minecraft.getMinecraft().addScheduledTask(() -> {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
