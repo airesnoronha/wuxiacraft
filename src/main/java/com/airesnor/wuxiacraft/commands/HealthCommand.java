@@ -84,9 +84,13 @@ public class HealthCommand extends CommandBase {
                     if(targetPlayer != null) {
                         if(args[0].equalsIgnoreCase("set")) {
                             targetPlayer.setHealth(health);
+                            TextComponentString text = new TextComponentString(String.format("%s's health set to %.1f", targetPlayer.getName(), health));
+                            sender.sendMessage(text);
                             wrongUsage = false;
                         } else if (args[0].equalsIgnoreCase("heal")) {
                             targetPlayer.heal(health);
+                            TextComponentString text = new TextComponentString(String.format("%s's health healed by %.1f", targetPlayer.getName(), health));
+                            sender.sendMessage(text);
                             wrongUsage = false;
                         }
                     } else {
@@ -97,7 +101,7 @@ public class HealthCommand extends CommandBase {
                     }
                 }
                 if (wrongUsage) {
-                    TextComponentString text = new TextComponentString("Invalid arguments, use /progress set <player> <amount>");
+                    TextComponentString text = new TextComponentString("Invalid arguments, use /health [set:heal] <player> <amount> or /health get <player>");
                     text.getStyle().setColor(TextFormatting.RED);
                     sender.sendMessage(text);
                 }
