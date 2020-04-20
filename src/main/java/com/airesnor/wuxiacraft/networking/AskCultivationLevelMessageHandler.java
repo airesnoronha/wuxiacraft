@@ -20,7 +20,7 @@ public class AskCultivationLevelMessageHandler implements IMessageHandler<AskCul
 		if (ctx.side == Side.SERVER) {
 			final WorldServer world = ctx.getServerHandler().player.getServerWorld();
 			world.addScheduledTask(() -> {
-				EntityPlayer player = world.getPlayerEntityByName(message.askerName);
+				EntityPlayer player = world.getPlayerEntityByUUID(message.askerUUID);
 				if(player != null) {
 					List<EntityPlayer> entities = world.getEntitiesWithinAABB(EntityPlayer.class, player.getEntityBoundingBox().grow(64, 32, 64));
 					for (Entity entity : entities) {
@@ -32,7 +32,7 @@ public class AskCultivationLevelMessageHandler implements IMessageHandler<AskCul
 								level = message.askerLevel.getNextLevel();
 								subLevel = -1;
 							}
-							RespondCultivationLevelMessage respondCultivationLevelMessage = new RespondCultivationLevelMessage(level, subLevel, entity.getName());
+							RespondCultivationLevelMessage respondCultivationLevelMessage = new RespondCultivationLevelMessage(level, subLevel, entity.getUniqueID());
 							NetworkWrapper.INSTANCE.sendTo(respondCultivationLevelMessage, (EntityPlayerMP) player);
 						}
 					}

@@ -64,14 +64,13 @@ public class FormationCultivationHelper extends Formation {
 			info.setInteger("targets", targets.size());
 			for (EntityPlayer target : targets) {
 				int index = targets.indexOf(target);
-				info.setString("p-" + index, target.getName());
+				info.setUniqueId("p-" + index, target.getUniqueID());
 			}
 		} else { //get loaded players
 			if (info.hasKey("targets")) {
 				int length = info.getInteger("targets");
 				for (int i = 0; i < length; i++) {
-					String name = info.getString("p-"+i);
-					EntityPlayer player = worldIn.getPlayerEntityByName(info.getString("p-" + i));
+					EntityPlayer player = worldIn.getPlayerEntityByUUID(info.getUniqueId("p-" + i));
 					if(player != null)
 					targets.add(player);
 				}
@@ -97,7 +96,7 @@ public class FormationCultivationHelper extends Formation {
 		info.setInteger("selected", selected.size()); //so client can know who to cultivate
 		for (EntityPlayer player : selected) {
 			int index = selected.indexOf(player);
-			info.setString("s-" + index, player.getName());
+			info.setUniqueId("s-" + index, player.getUniqueID());
 		}
 		parent.setFormationInfo(info);
 		return selected.size();
@@ -114,7 +113,7 @@ public class FormationCultivationHelper extends Formation {
 				EntityPlayer player = Minecraft.getMinecraft().player;
 				boolean selected = false;
 				for (int i = 0; i < length; i++) {
-					if (info.getString("s-" + i).equals(player.getName())) {
+					if (info.getUniqueId("s-" + i).equals(player.getUniqueID())) {
 						selected = true;
 						break;
 					}
@@ -129,7 +128,7 @@ public class FormationCultivationHelper extends Formation {
 								ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 								if (this.amount <= cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.06) {
 									CultivationUtils.cultivatorAddProgress(player, cultivation, this.amount, false, false);
-									NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, this.amount, false, false, player.getName()));
+									NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, this.amount, false, false, player.getUniqueID()));
 								}
 							}
 						}

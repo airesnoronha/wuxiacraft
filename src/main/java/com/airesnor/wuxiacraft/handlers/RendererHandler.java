@@ -35,10 +35,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 @Mod.EventBusSubscriber
@@ -106,7 +103,7 @@ public class RendererHandler {
 	public static WorldRenderQueue worldRenderQueue = new WorldRenderQueue();
 
 	@SideOnly(Side.CLIENT)
-	public static Map<String, ICultivation> knownCultivations = new HashMap<>();
+	public static Map<UUID, ICultivation> knownCultivations = new HashMap<>();
 
 	@SideOnly(Side.CLIENT)
 	private static int animationStep = 0;
@@ -147,9 +144,9 @@ public class RendererHandler {
 	public void onDescribeCultivationLevel(RenderLivingEvent.Specials.Post e) {
 		if (e.getEntity() instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) e.getEntity();
-			String name = player.getName();
-			if (knownCultivations.containsKey(name)) {
-				ICultivation cultivation = knownCultivations.get(name);
+			UUID uuid = player.getUniqueID();
+			if (knownCultivations.containsKey(uuid)) {
+				ICultivation cultivation = knownCultivations.get(uuid);
 				Minecraft mc = Minecraft.getMinecraft();
 				boolean sneaking = player.isSneaking();
 				boolean thirdPerson = mc.getRenderManager().options.thirdPersonView == 2;

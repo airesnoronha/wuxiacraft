@@ -20,7 +20,7 @@ public class SkillCapMessageHandler implements IMessageHandler<SkillCapMessage, 
 		} else if (ctx.side == Side.SERVER) {
 			final WorldServer world = ctx.getServerHandler().player.getServerWorld();
 			world.addScheduledTask(() -> {
-				EntityPlayer player = world.getPlayerEntityByName(message.sender);
+				EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
 				if (player != null) {
 					ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 					skillCap.getKnownSkills().clear();
@@ -45,7 +45,7 @@ public class SkillCapMessageHandler implements IMessageHandler<SkillCapMessage, 
 	@SideOnly(Side.CLIENT)
 	private void handleClientMessage(SkillCapMessage message) {
 		Minecraft.getMinecraft().addScheduledTask(() -> {
-			if (Minecraft.getMinecraft().player.getName().equals(message.sender)) {
+			if (Minecraft.getMinecraft().player.getUniqueID().equals(message.senderUUID)) {
 				EntityPlayer player = Minecraft.getMinecraft().player;
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 				skillCap.getKnownSkills().clear();

@@ -18,7 +18,7 @@ public class EnergyMessageHandler implements IMessageHandler<EnergyMessage, IMes
 		if (ctx.side == Side.SERVER) {
 			final WorldServer world = ctx.getServerHandler().player.getServerWorld();
 			world.addScheduledTask(() -> {
-				EntityPlayer player = world.getPlayerEntityByName(message.sender);
+				EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
 				if(player != null) {
 					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 					switch (message.op) {

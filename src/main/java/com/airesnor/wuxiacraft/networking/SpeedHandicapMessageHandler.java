@@ -12,13 +12,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.UUID;
+
 public class SpeedHandicapMessageHandler implements IMessageHandler<SpeedHandicapMessage, SpeedHandicapMessage> {
 	@Override
 	public SpeedHandicapMessage onMessage(SpeedHandicapMessage message, MessageContext ctx) {
 		if (ctx.side == Side.SERVER) {
 			final WorldServer world = ctx.getServerHandler().player.getServerWorld();
 			world.addScheduledTask(() -> {
-				EntityPlayer player = world.getPlayerEntityByName(message.sender);
+				EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
 				if (player != null) {
 					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 
@@ -43,8 +45,8 @@ public class SpeedHandicapMessageHandler implements IMessageHandler<SpeedHandica
 			cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
 			cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
 			cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);
-			String name = Minecraft.getMinecraft().player.getName();
-			NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.jumpLimit, name));
+			UUID playerUUID = Minecraft.getMinecraft().player.getUniqueID();
+			NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.jumpLimit, playerUUID));
 		});
 		return null;
 	}

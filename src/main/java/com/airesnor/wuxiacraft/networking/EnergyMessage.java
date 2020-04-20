@@ -1,41 +1,42 @@
 package com.airesnor.wuxiacraft.networking;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
+import java.util.UUID;
 
 public class EnergyMessage implements IMessage {
 
 	public int op; // 0 -- add, 2 --rem, 3--set
 	public float amount;
-	public String sender;
+	public UUID senderUUID;
 
-	public EnergyMessage(int op, float amount, String sender) {
+	public EnergyMessage(int op, float amount, UUID senderUUID) {
 		this.op = op;
 		this.amount = amount;
-		this.sender = sender;
+		this.senderUUID = senderUUID;
 	}
 
 	public EnergyMessage() {
 		this.op = 0;
 		this.amount = 0;
-		this.sender = "";
+		this.senderUUID = null;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
+		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		this.op = buf.readInt();
 		this.amount = buf.readFloat();
-		int length = buf.readInt();
-		byte [] bytes = new byte[length];
-		buf.readBytes(bytes, 0, length);
-		this.sender = new String(bytes);
+		this.senderUUID = packetBuffer.readUniqueId();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
+		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		buf.writeInt(this.op);
 		buf.writeFloat(this.amount);
-		buf.writeInt(this.sender.getBytes().length);
-		buf.writeBytes(this.sender.getBytes());
+		packetBuffer.writeUniqueId(this.senderUUID);
 	}
 }

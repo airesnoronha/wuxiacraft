@@ -1,16 +1,19 @@
 package com.airesnor.wuxiacraft.networking;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
+import java.util.UUID;
 
 public class SuppressCultivationMessage implements IMessage {
 
 	public boolean suppress;
-	public String sender;
+	public UUID senderUUID;
 
-	public SuppressCultivationMessage(boolean suppress, String sender) {
+	public SuppressCultivationMessage(boolean suppress, UUID senderUUID) {
 		this.suppress = suppress;
-		this.sender = sender;
+		this.senderUUID = senderUUID;
 	}
 
 	public SuppressCultivationMessage() {
@@ -18,17 +21,15 @@ public class SuppressCultivationMessage implements IMessage {
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
+		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		this.suppress = buf.readBoolean();
-		int length = buf.readInt();
-		byte[] bytes = new byte[length];
-		buf.readBytes(bytes, 0, length);
-		this.sender = new String(bytes);
+		this.senderUUID = packetBuffer.readUniqueId();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
+		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		buf.writeBoolean(this.suppress);
-		buf.writeInt(this.sender.getBytes().length);
-		buf.writeBytes(this.sender.getBytes());
+		packetBuffer.writeUniqueId(this.senderUUID);
 	}
 }

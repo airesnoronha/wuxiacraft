@@ -108,11 +108,11 @@ public class SkillsCommand extends CommandBase {
 						skillCap.getKnownSkills().clear();
 						skillCap.getSelectedSkills().clear();
 						skillCap.setActiveSkill(-1);
-						NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false, player.getName()), player);
+						NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false, player.getUniqueID()), player);
 					}
 					if (args[0].equals("reset_cd")) {
 						skillCap.resetCooldown();
-						NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true, player.getName()), player);
+						NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true, player.getUniqueID()), player);
 					}
 				} else if (args.length == 2) {
 					if (args[0].equals("add")) {
@@ -121,7 +121,7 @@ public class SkillsCommand extends CommandBase {
 								skillCap.addSkill(skill);
 								TextComponentString text = new TextComponentString("Added skill: " + skill.getName());
 								sender.sendMessage(text);
-								NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false, player.getName()), player);
+								NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false, player.getUniqueID()), player);
 								break;
 							}
 						}
@@ -133,7 +133,7 @@ public class SkillsCommand extends CommandBase {
 									skillCap.removeSkill(skill);
 									TextComponentString text = new TextComponentString("Removed skill: " + skill.getName());
 									sender.sendMessage(text);
-									NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false, player.getName()), player);
+									NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false, player.getUniqueID()), player);
 								} else {
 									TextComponentString text = new TextComponentString("You don't even know such skill: " + skill.getName());
 									sender.sendMessage(text);
@@ -163,14 +163,14 @@ public class SkillsCommand extends CommandBase {
 							skillCap.getKnownSkills().clear();
 							skillCap.getSelectedSkills().clear();
 							skillCap.setActiveSkill(-1);
-							NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false, target.getName()), target);
+							NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false, target.getUniqueID()), target);
 							TextComponentString text = new TextComponentString("Reset all skills of player " + target.getDisplayNameString() );
 							sender.sendMessage(text);
 						}
 						else if(args[1].equals("reset_cd")) {
 							skillCap.resetCooldown();
 							skillCap.resetCastProgress();
-							NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true, target.getName()), target);
+							NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true, target.getUniqueID()), target);
 							TextComponentString text = new TextComponentString("Reset cd and cast progress for player " + target.getDisplayNameString() );
 							sender.sendMessage(text);
 						}
@@ -182,7 +182,7 @@ public class SkillsCommand extends CommandBase {
 									skillCap.addSkill(skill);
 									TextComponentString text = new TextComponentString("Added skill: " + skill.getName() + "to player " + target.getDisplayNameString());
 									sender.sendMessage(text);
-									NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false, target.getName()), target);
+									NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false, target.getUniqueID()), target);
 									break;
 								}
 							}
@@ -194,7 +194,7 @@ public class SkillsCommand extends CommandBase {
 										skillCap.removeSkill(skill);
 										TextComponentString text = new TextComponentString("Removed skill: " + skill.getName() + " from " + target.getDisplayNameString());
 										sender.sendMessage(text);
-										NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false, target.getName()), target);
+										NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false, target.getUniqueID()), target);
 									} else {
 										TextComponentString text = new TextComponentString(target.getDisplayName() + " don't even know such skill: " + skill.getName());
 										sender.sendMessage(text);

@@ -1,7 +1,10 @@
 package com.airesnor.wuxiacraft.networking;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
+import java.util.UUID;
 
 public class ProgressMessage implements IMessage {
 
@@ -9,7 +12,7 @@ public class ProgressMessage implements IMessage {
 	public double amount;
 	public boolean allowBreakTrough;
 	public boolean ignoreBottleneck;
-	public String sender;
+	public UUID senderUUID;
 
 	@SuppressWarnings("unused")
 	public ProgressMessage() {
@@ -17,36 +20,34 @@ public class ProgressMessage implements IMessage {
 		this.amount = 0;
 		allowBreakTrough = false;
 		ignoreBottleneck = false;
-		this.sender = "";
+		this.senderUUID = null;
 	}
 
-	public ProgressMessage(int op, double amount, boolean allowBreakTrough, boolean ignoreBottleneck, String sender) {
+	public ProgressMessage(int op, double amount, boolean allowBreakTrough, boolean ignoreBottleneck, UUID senderUUID) {
 		this.op = op;
 		this.amount = amount;
 		this.allowBreakTrough = allowBreakTrough;
 		this.ignoreBottleneck = ignoreBottleneck;
-		this.sender = sender;
+		this.senderUUID = senderUUID;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
+		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		this.op = buf.readInt();
 		this.amount = buf.readDouble();
 		this.allowBreakTrough = buf.readBoolean();
 		this.ignoreBottleneck = buf.readBoolean();
-		int length = buf.readInt();
-		byte [] bytes = new byte [length];
-		buf.readBytes(bytes, 0, length);
-		this.sender = new String(bytes);
+		this.senderUUID = packetBuffer.readUniqueId();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
+		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		buf.writeInt(this.op);
 		buf.writeDouble(this.amount);
 		buf.writeBoolean(this.allowBreakTrough);
 		buf.writeBoolean(this.ignoreBottleneck);
-		buf.writeInt(this.sender.getBytes().length);
-		buf.writeBytes(this.sender.getBytes());
+		packetBuffer.writeUniqueId(this.senderUUID);
 	}
 }

@@ -124,21 +124,18 @@ public class WuxiaCraftConfig {
 				syncFromGui();
 				WuxiaCraft.logger.info("Sending a config update to server");
 				syncCultivationFromConfigToClient();
-				NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(speedHandicap, maxSpeed, blockBreakLimit, jumpLimit, Minecraft.getMinecraft().player.getName()));
+				NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(speedHandicap, maxSpeed, blockBreakLimit, jumpLimit, Minecraft.getMinecraft().player.getUniqueID()));
 			}
 		}
 	}
 
 	public static void syncCultivationFromConfigToClient() {
-		Minecraft.getMinecraft().addScheduledTask(new Runnable() {
-			@Override
-			public void run() {
-				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
-				cultivation.setSpeedHandicap(WuxiaCraftConfig.speedHandicap);
-				cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
-				cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
-				cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);
-			}
+		Minecraft.getMinecraft().addScheduledTask(() -> {
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
+			cultivation.setSpeedHandicap(WuxiaCraftConfig.speedHandicap);
+			cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
+			cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
+			cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);
 		});
 	}
 }

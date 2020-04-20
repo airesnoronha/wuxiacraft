@@ -19,7 +19,7 @@ public class ActivatePartialSkillMessageHandler implements IMessageHandler<Activ
 		if (ctx.side == Side.SERVER) {
 			WorldServer world = ctx.getServerHandler().player.getServerWorld();
 			world.addScheduledTask(() -> {
-				EntityPlayer player = world.getPlayerEntityByName(message.sender);
+				EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
 				if(player!=null){
 					if ("barrageMinorBeam".equals(message.skillName)) {
 						Skills.BARRAGE_MINOR_BEAM.activate(player);

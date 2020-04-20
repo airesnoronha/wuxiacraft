@@ -263,7 +263,7 @@ public class SkillsGui extends GuiScreen {
 			skillCap.getSelectedSkills().clear();
 			skillCap.setActiveSkill(-1);
 		}
-		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false, player.getName()));
+		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false, player.getUniqueID()));
 	}
 
 	private void selectSkill(int skillIndex) {
@@ -278,7 +278,7 @@ public class SkillsGui extends GuiScreen {
 			skillCap.setActiveSkill(0);
 		}
 		skillCap.setActiveSkill(MathUtils.clamp(skillCap.getActiveSkill(), -1, skillCap.getSelectedSkills().size() - 1));
-		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false, player.getName()));
+		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false, player.getUniqueID()));
 	}
 
 	private void removeSkill(Skill skill) {
@@ -294,7 +294,7 @@ public class SkillsGui extends GuiScreen {
 			skillCap.setActiveSkill(0);
 		}
 		skillCap.setActiveSkill(Math.max(-1, Math.min(skillCap.getSelectedSkills().size() - 1, skillCap.getActiveSkill())));
-		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false, player.getName()));
+		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false, player.getUniqueID()));
 		this.offset = MathUtils.clamp(this.offset, 0, this.skillCap.getTotalKnowSkill(cultTech).size());
 	}
 

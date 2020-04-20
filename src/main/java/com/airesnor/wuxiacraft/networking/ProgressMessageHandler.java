@@ -18,7 +18,7 @@ public class ProgressMessageHandler implements IMessageHandler<ProgressMessage, 
 		if (ctx.side == Side.SERVER) {
 			final WorldServer world = ctx.getServerHandler().player.getServerWorld();
 			world.addScheduledTask(() -> {
-				EntityPlayer player = world.getPlayerEntityByName(message.sender);
+				EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
 				if(player != null) {
 					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 					switch (message.op) {

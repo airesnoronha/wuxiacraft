@@ -18,7 +18,7 @@ public class SelectSkillMessageHandler implements IMessageHandler<SelectSkillMes
 		if (ctx.side == Side.SERVER) {
 			final WorldServer world = ctx.getServerHandler().player.getServerWorld();
 			world.addScheduledTask(() -> {
-				EntityPlayer player = world.getPlayerEntityByName(message.sender);
+				EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
 				if (player != null) {
 					ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 					selectSkill(skillCap, message.selectSkill);

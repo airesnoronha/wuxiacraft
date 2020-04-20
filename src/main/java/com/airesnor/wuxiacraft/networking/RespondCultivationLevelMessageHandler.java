@@ -9,6 +9,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.UUID;
+
 public class RespondCultivationLevelMessageHandler implements IMessageHandler<RespondCultivationLevelMessage, IMessage> {
 	@Override
 	public IMessage onMessage(RespondCultivationLevelMessage message, MessageContext ctx) {
@@ -23,8 +25,8 @@ public class RespondCultivationLevelMessageHandler implements IMessageHandler<Re
 		ICultivation cultivation = new Cultivation();
 		cultivation.setCurrentLevel(message.responderLevel);
 		cultivation.setCurrentSubLevel(message.responderSubLevel);
-		String name = message.responderName;
-		RendererHandler.knownCultivations.put(name, cultivation);
+		UUID uuid = message.responderUUID;
+		RendererHandler.knownCultivations.put(uuid, cultivation);
 		return null;
 	}
 }

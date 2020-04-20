@@ -5,28 +5,32 @@ import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
+import java.util.UUID;
 
 public class SkillCapMessage implements IMessage {
 
 	public ISkillCap skillCap;
 	public boolean shouldUpdateCPaCD;
-	public String sender;
+	public UUID senderUUID;
 
 	public SkillCapMessage() {
 		this.skillCap = new SkillCap();
 		this.shouldUpdateCPaCD = false;
-		this.sender = "";
+		this.senderUUID = null;
 	}
 
-	public SkillCapMessage(ISkillCap skillCap, boolean shouldUpdateCPaCD, String sender) {
+	public SkillCapMessage(ISkillCap skillCap, boolean shouldUpdateCPaCD, UUID senderUUID) {
 		this.skillCap = skillCap;
 		this.shouldUpdateCPaCD = shouldUpdateCPaCD;
-		this.sender = sender;
+		this.senderUUID = senderUUID;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
+		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		this.shouldUpdateCPaCD = buf.readBoolean();
 		this.skillCap.stepCooldown(buf.readFloat());
 		this.skillCap.stepCastProgress(buf.readFloat());
@@ -40,14 +44,12 @@ public class SkillCapMessage implements IMessage {
 			skillCap.addSelectedSkill(buf.readInt());
 		}
 		skillCap.setActiveSkill(buf.readInt());
-		length = buf.readInt();
-		byte[] bytes = new byte[length];
-		buf.readBytes(bytes, 0, length);
-		this.sender = new String(bytes);
+		this.senderUUID = packetBuffer.readUniqueId();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
+		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		buf.writeBoolean(this.shouldUpdateCPaCD);
 		buf.writeFloat(this.skillCap.getCooldown());
 		buf.writeFloat(this.skillCap.getCastProgress());
@@ -61,7 +63,6 @@ public class SkillCapMessage implements IMessage {
 			buf.writeInt(skill);
 		}
 		buf.writeInt(skillCap.getActiveSkill());
-		buf.writeInt(this.sender.getBytes().length);
-		buf.writeBytes(this.sender.getBytes());
+		packetBuffer.writeUniqueId(this.senderUUID);
 	}
 }

@@ -84,9 +84,9 @@ public class EventHandler {
 		if (!player.world.isRemote) {
 			WuxiaCraft.logger.info("Restoring " + player.getDisplayNameString() + " cultivation.");
 			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) player);
-			NetworkWrapper.INSTANCE.sendTo(new SpeedHandicapMessage(cultivation.getSpeedHandicap(), cultivation.getMaxSpeed(), cultivation.getHasteLimit(), cultivation.getJumpLimit(), player.getName()), (EntityPlayerMP) player);
+			NetworkWrapper.INSTANCE.sendTo(new SpeedHandicapMessage(cultivation.getSpeedHandicap(), cultivation.getMaxSpeed(), cultivation.getHasteLimit(), cultivation.getJumpLimit(), player.getUniqueID()), (EntityPlayerMP) player);
 			NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
-			NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true, player.getName()), (EntityPlayerMP) player);
+			NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true, player.getUniqueID()), (EntityPlayerMP) player);
 		}
 		TextComponentString text = new TextComponentString("For a quick tutorial on the mod. \nPlease use the /culthelp command");
 		text.getStyle().setColor(TextFormatting.GOLD);
@@ -114,8 +114,8 @@ public class EventHandler {
 				if (!player.world.isRemote) {
 					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) player);
 					NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
-					NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false, player.getName()), (EntityPlayerMP) player);
-					NetworkWrapper.INSTANCE.sendTo(new SpeedHandicapMessage(cultivation.getSpeedHandicap(), cultivation.getMaxSpeed(), cultivation.getHasteLimit(), cultivation.getJumpLimit(), player.getName()), (EntityPlayerMP) player);
+					NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false, player.getUniqueID()), (EntityPlayerMP) player);
+					NetworkWrapper.INSTANCE.sendTo(new SpeedHandicapMessage(cultivation.getSpeedHandicap(), cultivation.getMaxSpeed(), cultivation.getHasteLimit(), cultivation.getJumpLimit(), player.getUniqueID()), (EntityPlayerMP) player);
 				}
 				cultivation.resetTimer();
 			}
@@ -165,7 +165,7 @@ public class EventHandler {
 					toggleSneaking = true;
 					EntityPlayer player = event.player;
 					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-					NetworkWrapper.INSTANCE.sendToServer(new AskCultivationLevelMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), player.getName()));
+					NetworkWrapper.INSTANCE.sendToServer(new AskCultivationLevelMessage(cultivation.getCurrentLevel(), cultivation.getCurrentSubLevel(), player.getUniqueID()));
 				}
 			} else {
 				toggleSneaking = false;
@@ -204,7 +204,7 @@ public class EventHandler {
 											skillCap.resetCastProgress();
 											if (!player.isCreative())
 												cultivation.remEnergy(selectedSkill.getCost());
-											NetworkWrapper.INSTANCE.sendToServer(new ActivateSkillMessage(skillCap.getActiveSkill(), player.getName()));
+											NetworkWrapper.INSTANCE.sendToServer(new ActivateSkillMessage(skillCap.getActiveSkill(), player.getUniqueID()));
 											CultivationUtils.cultivatorAddProgress(player, cultivation, selectedSkill.getProgress(), false, false);
 										}
 									}
@@ -313,7 +313,7 @@ public class EventHandler {
 				}
 				if (!player.isCreative()) {
 					cultivation.remEnergy(totalRem);
-					NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, totalRem, player.getName()));
+					NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, totalRem, player.getUniqueID()));
 				}
 			} /*else { //flying is not an exercise
 			//CultivationUtils.cultivatorAddProgress(player, cultivation, distance * 0.1f);
@@ -475,7 +475,7 @@ public class EventHandler {
 		NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(), (EntityPlayerMP) player);
 		NetworkWrapper.INSTANCE.sendTo(new EnergyMessage(), (EntityPlayerMP) player);
 		NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
-		NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true, player.getName()), (EntityPlayerMP) player);
+		NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true, player.getUniqueID()), (EntityPlayerMP) player);
 		applyModifiers(player, cultivation);
 	}
 
