@@ -80,7 +80,7 @@ public class ItemDagger extends ItemBase {
 			if(tag == null){
 				tag = new NBTTagCompound();
 			}
-			tag.setString("bloodLevel", cultivation.getCurrentLevel().toString());
+			tag.setString("bloodLevel", cultivation.getCurrentLevel().levelName);
 			bloodBottle.setTagCompound(tag);
 			EntityItem item = new EntityItem(worldIn, playerIn.posX, playerIn.posY+0.1, playerIn.posZ, bloodBottle);
 			item.setNoPickupDelay();
