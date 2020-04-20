@@ -68,6 +68,46 @@ public class AdvCultLevel extends CommandBase {
 				}
 			}
 		}
+		else {
+			if(args.length > 0) {
+				boolean wrongUsage = false;
+				EntityPlayerMP player = server.getPlayerList().getPlayerByUsername(args[0]);
+				if(player != null) {
+					int levels = 1;
+					if (args.length == 2) {
+						try {
+							levels = parseInt(args[1], 10);
+						} catch (NumberFormatException e) {
+							TextComponentString text = new TextComponentString("Couldn't recognize number " + args[1]);
+							text.getStyle().setColor(TextFormatting.RED);
+							sender.sendMessage(text);
+							wrongUsage = true;
+						}
+					}
+					if (args.length > 2) {
+						wrongUsage = true;
+					}
+					if (!wrongUsage) {
+						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+						for (int i = 0; i < levels; i++) {
+							CultivationUtils.cultivatorAddProgress(player, cultivation, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()), true, true, true);
+						}
+					} else {
+						TextComponentString text = new TextComponentString("Invalid arguments, use /advcult <player> [levels]");
+						text.getStyle().setColor(TextFormatting.RED);
+						sender.sendMessage(text);
+					}
+				} else {
+					TextComponentString text = new TextComponentString("Couldn't find player " + args[0] + "!");
+					text.getStyle().setColor(TextFormatting.RED);
+					sender.sendMessage(text);
+				}
+			} else {
+				TextComponentString text = new TextComponentString("Invalid arguments, use /advcult <player> [levels]");
+				text.getStyle().setColor(TextFormatting.RED);
+				sender.sendMessage(text);
+			}
+		}
 	}
 
 	@Override

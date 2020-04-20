@@ -72,7 +72,7 @@ public class FormationCultivationHelper extends Formation {
 				int length = info.getInteger("targets");
 				for (int i = 0; i < length; i++) {
 					UUID uuid = info.getUniqueId("p-" + i);
-					if(uuid != null) {
+					if (uuid != null) {
 						EntityPlayer player = worldIn.getPlayerEntityByUUID(uuid);
 						if (player != null)
 							targets.add(player);
@@ -83,17 +83,15 @@ public class FormationCultivationHelper extends Formation {
 		List<EntityPlayer> selected = new ArrayList<>();
 		for (EntityPlayer player : targets) {
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-			if (skillCap.isCasting()) {
-				Skill skill = skillCap.getSelectedSkill(CultivationUtils.getCultTechFromEntity(player));
-				if (skill == Skills.CULTIVATE) {
-					if (parent.hasEnergy(this.getOperationCost() * (selected.size() + 1))) {
-						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-						if (!(this.amount <= cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.06)) {
-							worldIn.createExplosion(player, player.posX, player.posY + 0.9, player.posZ, 2f, true);
-							player.attackEntityFrom(DamageSource.causeExplosionDamage(player), (float) this.amount * 2);
-						}
-						selected.add(player);
+			Skill skill = skillCap.getSelectedSkill(CultivationUtils.getCultTechFromEntity(player));
+			if (skill == Skills.CULTIVATE) {
+				if (parent.hasEnergy(this.getOperationCost() * (selected.size() + 1))) {
+					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+					if (!(this.amount <= cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.06)) {
+						worldIn.createExplosion(player, player.posX, player.posY + 0.9, player.posZ, 2f, true);
+						player.attackEntityFrom(DamageSource.causeExplosionDamage(player), (float) this.amount * 2);
 					}
+					selected.add(player);
 				}
 			}
 		}
@@ -118,7 +116,7 @@ public class FormationCultivationHelper extends Formation {
 				boolean selected = false;
 				for (int i = 0; i < length; i++) {
 					UUID uuid = info.getUniqueId("s-" + i);
-					if(uuid != null) {
+					if (uuid != null) {
 						if (uuid.equals(player.getUniqueID())) {
 							selected = true;
 							break;

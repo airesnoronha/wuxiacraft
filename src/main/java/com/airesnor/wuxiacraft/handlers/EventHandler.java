@@ -173,6 +173,10 @@ public class EventHandler {
 		}
 	}
 
+
+	//So that formations doesn't overwork too
+	private static long LastPlayerTickTime = 0;
+
 	/**
 	 * Handles the skills logic, cooldown and casting
 	 * New casting logic: client handles cooldown and cast progress, client/server activates skills
@@ -186,7 +190,15 @@ public class EventHandler {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-				skillCap.setFormationActivated(false); //always allow next tick formations to do something here
+				if(player.world.isRemote) {
+					long timeDiff = System.currentTimeMillis() - LastPlayerTickTime;
+					if (timeDiff >= 50) { //20 per seconds
+						skillCap.setFormationActivated(false); //allow next tick formations to do something here
+						LastPlayerTickTime = System.currentTimeMillis();
+					}
+				} else {
+					skillCap.setFormationActivated(false); //server won't have speed hack i hope
+				}
 				if (skillCap.getCooldown() > 0) {
 					skillCap.stepCooldown(-1 - ((float)cultivation.getSpeedIncrease() - 1f) * 0.3f);
 				} else {
