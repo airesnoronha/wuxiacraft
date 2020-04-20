@@ -33,6 +33,7 @@
 		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": 2, "y": 0,"z": -2 },
 		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": 2, "y": 0,"z": 2 },
 		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": -2, "y": 0,"z": 2 },
+		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": -2, "y": 0,"z": 0},
 		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": -1, "y": 0,"z": 0 },
 		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": 1, "y": 0,"z": 0 },
 		{ "blockState": "wuxiacraft:blood_rune_soul_refinement","x": 2, "y": 0,"z": 0 },

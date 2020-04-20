@@ -27,12 +27,12 @@ import java.util.List;
 public class FormationPlayerBarrier extends Formation {
 
 	private ResourceLocation displayFormation = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/formations/soul_land_barrier.png");
-	private ResourceLocation blood_a = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/runes/blood_e.png");
-	private ResourceLocation blood_b = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/runes/blood_f.png");
-	private ResourceLocation blood_c = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/runes/blood_g.png");
-	private ResourceLocation blood_d = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/runes/blood_h.png");
+	private final ResourceLocation blood_a = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/runes/blood_e.png");
+	private final ResourceLocation blood_b = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/runes/blood_f.png");
+	private final ResourceLocation blood_c = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/runes/blood_g.png");
+	private final ResourceLocation blood_d = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/runes/blood_h.png");
 
-	private double strength;
+	private final double strength;
 
 	public FormationPlayerBarrier(String name, double cost, double activationCost, double range, double strength) {
 		super(name, cost, activationCost, range);

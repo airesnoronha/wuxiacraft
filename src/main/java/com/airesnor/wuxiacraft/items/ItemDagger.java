@@ -15,6 +15,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
 public class ItemDagger extends ItemBase {
 
 	public ItemDagger(String item_name) {
@@ -46,7 +47,7 @@ public class ItemDagger extends ItemBase {
 				if(tag == null){
 					tag = new NBTTagCompound();
 				}
-				tag.setString("bloodLevel", cultivation.getCurrentLevel().toString());
+				tag.setString("bloodLevel", cultivation.getCurrentLevel().levelName);
 				bloodBottle.setTagCompound(tag);
 				EntityItem item = new EntityItem(attacker.world, attacker.posX, attacker.posY+0.1, attacker.posZ, bloodBottle);
 				item.setNoPickupDelay();
@@ -59,7 +60,6 @@ public class ItemDagger extends ItemBase {
 
 	@Override
 	@Nonnull
-	@ParametersAreNonnullByDefault
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		ItemStack dagger = playerIn.getHeldItem(handIn);
 		boolean found = false;
@@ -80,7 +80,7 @@ public class ItemDagger extends ItemBase {
 			if(tag == null){
 				tag = new NBTTagCompound();
 			}
-			tag.setString("bloodLevel", cultivation.getCurrentLevel().toString());
+			tag.setString("bloodLevel", cultivation.getCurrentLevel().levelName);
 			bloodBottle.setTagCompound(tag);
 			EntityItem item = new EntityItem(worldIn, playerIn.posX, playerIn.posY+0.1, playerIn.posZ, bloodBottle);
 			item.setNoPickupDelay();

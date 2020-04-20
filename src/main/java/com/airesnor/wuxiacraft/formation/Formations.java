@@ -1,7 +1,5 @@
 package com.airesnor.wuxiacraft.formation;
 
-import org.apache.logging.log4j.message.StructuredDataMessage;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +31,7 @@ public class Formations {
 	public static final Formation EVIL_REPELLING_FORMATION = new FormationMobSuppression("evil_repelling_formation", 12f, 1250f, 128, 15f);
 
 	//Cultivation formations
-	public static final Formation SOUL_GATHERING_FORMATION = new FormationCultivationHelper("soul_gathering_formation", 3, 220f, 8f, 0.3f);
+	public static final Formation SOUL_GATHERING_FORMATION = new FormationCultivationHelper("soul_gathering_formation", 6, 220f, 8f, 0.15f);
 	public static final Formation QI_PATHS_OPENER_ARRAY = new FormationCultivationHelper("qi_paths_opener_array", 6f, 440f, 8f, 0.6f); //don't have diagram
 	public static final Formation DANTIAN_FORMING_ARRAY = new FormationCultivationHelper("dantian_forming_array", 10.67, 782.22, 8f, 1.067f); //don't have diagram
 	public static final Formation EARTH_QI_INTENSIFIER_FORMATION = new FormationCultivationHelper("earth_qi_intensifier_formation", 20, 1460.66, 8f, 2f); //don't have diagram

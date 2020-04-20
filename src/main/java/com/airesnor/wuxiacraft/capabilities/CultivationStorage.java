@@ -14,10 +14,10 @@ public class CultivationStorage implements Capability.IStorage<ICultivation> {
 	@Override
 	public NBTBase writeNBT(Capability<ICultivation> capability, ICultivation instance, EnumFacing side) {
 		NBTTagCompound tag = new NBTTagCompound();
-		tag.setString("level", instance.getCurrentLevel().name());
+		tag.setString("level", instance.getCurrentLevel().levelName);
 		tag.setInteger("subLevel", instance.getCurrentSubLevel());
 		tag.setDouble("progress", instance.getCurrentProgress());
-		tag.setFloat("energy", instance.getEnergy());
+		tag.setDouble("energy", instance.getEnergy());
 		tag.setInteger("pelletCD", instance.getPillCooldown());
 		tag.setBoolean("suppress", instance.getSuppress());
 		return tag;
@@ -26,7 +26,7 @@ public class CultivationStorage implements Capability.IStorage<ICultivation> {
 	@Override
 	public void readNBT(Capability<ICultivation> capability, ICultivation instance, EnumFacing side, NBTBase nbt) {
 		NBTTagCompound tag = (NBTTagCompound) nbt;
-		instance.setCurrentLevel(CultivationLevel.valueOf(tag.getString("level")));
+		instance.setCurrentLevel(CultivationLevel.REGISTERED_LEVELS.get(tag.getString("level").toLowerCase())); //for people don't lose their previous cultivation i hope
 		instance.setCurrentSubLevel(tag.getInteger("subLevel"));
 		instance.setProgress(tag.getDouble("progress"));
 		instance.addEnergy(tag.getFloat("energy"));

@@ -12,12 +12,12 @@ import net.minecraft.world.World;
 
 public class EntityAIReleaseSkills extends EntityAIBase {
 
-	World world;
-	public EntityCultivator attacker;
-	public float maxAttackRange;
-	public float minAttackRange;
+	final World world;
+	public final EntityCultivator attacker;
+	public final float maxAttackRange;
+	public final float minAttackRange;
 	Skill selectedSkill;
-	private double optimalRange;
+	private final double optimalRange;
 
 	/**
 	 * The PathEntity of our entity.
@@ -109,7 +109,7 @@ public class EntityAIReleaseSkills extends EntityAIBase {
 			ISkillCap skillCap = this.attacker.getSkillCap();
 			if (skillCap.isCasting() && cultivation.hasEnergy(this.selectedSkill.getCost())) {
 				if (skillCap.getCastProgress() < selectedSkill.getCastTime())
-					skillCap.stepCastProgress(cultivation.getSpeedIncrease());
+					skillCap.stepCastProgress((float) cultivation.getSpeedIncrease());
 				selectedSkill.castingEffect(this.attacker);
 			} else if (skillCap.isDoneCasting()) {
 				skillCap.resetCastProgress();

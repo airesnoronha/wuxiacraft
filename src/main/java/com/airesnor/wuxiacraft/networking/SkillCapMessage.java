@@ -5,25 +5,32 @@ import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
+import java.util.UUID;
 
 public class SkillCapMessage implements IMessage {
 
-	public ISkillCap skillCap;
+	public final ISkillCap skillCap;
 	public boolean shouldUpdateCPaCD;
+	public UUID senderUUID;
 
 	public SkillCapMessage() {
 		this.skillCap = new SkillCap();
 		this.shouldUpdateCPaCD = false;
+		this.senderUUID = null;
 	}
 
-	public SkillCapMessage(ISkillCap skillCap, boolean shouldUpdateCPaCD) {
+	public SkillCapMessage(ISkillCap skillCap, boolean shouldUpdateCPaCD, UUID senderUUID) {
 		this.skillCap = skillCap;
 		this.shouldUpdateCPaCD = shouldUpdateCPaCD;
+		this.senderUUID = senderUUID;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
+		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		this.shouldUpdateCPaCD = buf.readBoolean();
 		this.skillCap.stepCooldown(buf.readFloat());
 		this.skillCap.stepCastProgress(buf.readFloat());
@@ -37,10 +44,12 @@ public class SkillCapMessage implements IMessage {
 			skillCap.addSelectedSkill(buf.readInt());
 		}
 		skillCap.setActiveSkill(buf.readInt());
+		this.senderUUID = packetBuffer.readUniqueId();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
+		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		buf.writeBoolean(this.shouldUpdateCPaCD);
 		buf.writeFloat(this.skillCap.getCooldown());
 		buf.writeFloat(this.skillCap.getCastProgress());
@@ -54,5 +63,6 @@ public class SkillCapMessage implements IMessage {
 			buf.writeInt(skill);
 		}
 		buf.writeInt(skillCap.getActiveSkill());
+		packetBuffer.writeUniqueId(this.senderUUID);
 	}
 }

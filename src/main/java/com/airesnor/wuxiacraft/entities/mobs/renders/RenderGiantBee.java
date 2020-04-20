@@ -3,6 +3,7 @@ package com.airesnor.wuxiacraft.entities.mobs.renders;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.entities.mobs.GiantBee;
 import com.airesnor.wuxiacraft.utils.OBJModelLoader;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
@@ -11,11 +12,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.vecmath.Vector3f;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class RenderGiantBee extends Render<GiantBee> {
 
 	public static final ResourceLocation BEE_TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/entities/giant_bee.png");
@@ -24,7 +28,7 @@ public class RenderGiantBee extends Render<GiantBee> {
 
 	private static Map<String, OBJModelLoader.Part>  GIANT_BEE_MODEL;
 
-	private Map<String, Vector3f> partRotations;
+	private final Map<String, Vector3f> partRotations;
 
 	@Nullable
 	@Override
@@ -145,9 +149,9 @@ public class RenderGiantBee extends Render<GiantBee> {
 	{
 		float f;
 
-		for (f = yawOffset - prevYawOffset; f < -180.0F; f += 360.0F)
-		{
-			;
+		f = yawOffset - prevYawOffset;
+		while (f < -180.0F) {
+			f += 360.0F;
 		}
 
 		while (f >= 180.0F)
@@ -162,12 +166,10 @@ public class RenderGiantBee extends Render<GiantBee> {
 		if(!part.parent.equals("")) {
 			applyLocalRotation(GIANT_BEE_MODEL.get(part.parent), this.partRotations.get(part.parent));
 		}
-		if(rotation != null) {
-			GlStateManager.translate(part.origin.x, part.origin.y, part.origin.z);
-			GlStateManager.rotate(rotation.x, 1, 0, 0);
-			GlStateManager.rotate(rotation.y, 0, 1, 0);
-			GlStateManager.rotate(rotation.z, 0, 0, 1);
-			GlStateManager.translate(-part.origin.x, -part.origin.y, -part.origin.z);
-		}
+		GlStateManager.translate(part.origin.x, part.origin.y, part.origin.z);
+		GlStateManager.rotate(rotation.x, 1, 0, 0);
+		GlStateManager.rotate(rotation.y, 0, 1, 0);
+		GlStateManager.rotate(rotation.z, 0, 0, 1);
+		GlStateManager.translate(-part.origin.x, -part.origin.y, -part.origin.z);
 	}
 }

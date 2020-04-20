@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.items;
 
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
@@ -10,8 +11,12 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ItemHealPill extends ItemBase {
-	private float amount;
+	private final float amount;
 
 	public ItemHealPill(String name, float amount) {
 		super(name);
@@ -26,7 +31,7 @@ public class ItemHealPill extends ItemBase {
 			stack.shrink(player.isCreative() ? 0 : 1);
 			if (stack.isEmpty())
 				stack = ItemStack.EMPTY;
-			if(this.amount <= player.getMaxHealth()) {
+			if (this.amount <= player.getMaxHealth()) {
 				player.heal(this.amount);
 			} else {
 				worldIn.createExplosion(player, player.posX, player.posY, player.posZ, 3f, true);

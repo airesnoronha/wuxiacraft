@@ -8,6 +8,7 @@ import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import io.netty.buffer.ByteBuf;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
@@ -25,6 +26,8 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public abstract class EntityCultivator extends EntityCreature implements IEntityAdditionalSpawnData {
 
 	private static final String MOB_ARMOR_MOD_NAME = "wuxiacraft.mob.armor";
@@ -33,8 +36,8 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	private static final String MOB_M_SPEED_MOD_NAME = "wuxiacraft.mob.movement_speed";
 	private static final String MOB_A_SPEED_MOD_NAME = "wuxiacraft.mob.attack_speed";
 
-	protected ICultivation cultivation;
-	protected ISkillCap skillCap;
+	protected final ICultivation cultivation;
+	protected final ISkillCap skillCap;
 
 	public EntityCultivator(World worldIn) {
 		super(worldIn);
@@ -48,7 +51,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	@Override
 	public void writeEntityToNBT(NBTTagCompound compound) {
 		super.writeEntityToNBT(compound);
-		compound.setString("level", cultivation.getCurrentLevel().name());
+		compound.setString("level", cultivation.getCurrentLevel().levelName);
 		compound.setInteger("subLevel", cultivation.getCurrentSubLevel());
 		compound.setInteger("progress", (int) cultivation.getCurrentProgress());
 		compound.setInteger("energy", (int) cultivation.getEnergy());
@@ -70,7 +73,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	@Override
 	public void readEntityFromNBT(NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
-		cultivation.setCurrentLevel(CultivationLevel.valueOf(compound.getString("level")));
+		cultivation.setCurrentLevel(CultivationLevel.REGISTERED_LEVELS.get(compound.getString("level")));
 		cultivation.setCurrentSubLevel(compound.getInteger("subLevel"));
 		cultivation.setProgress(compound.getInteger("progress"));
 		cultivation.addEnergy(compound.getInteger("energy"));
@@ -174,10 +177,10 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 
 	@Override
 	public void writeSpawnData(ByteBuf buffer) {
-		byte[] bytes = this.getCultivationLevel().name().getBytes();
+		byte[] bytes = this.getCultivationLevel().levelName.getBytes();
 		buffer.writeInt(this.cultivation.getCurrentSubLevel());
 		buffer.writeDouble(this.cultivation.getCurrentProgress());
-		buffer.writeFloat(this.cultivation.getEnergy());
+		buffer.writeDouble(this.cultivation.getEnergy());
 		buffer.writeInt(this.cultivation.getPillCooldown());
 		buffer.writeInt(bytes.length);
 		buffer.writeBytes(bytes);
@@ -187,14 +190,14 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	public void readSpawnData(ByteBuf additionalData) {
 		int subLevel = additionalData.readInt();
 		double progress = additionalData.readDouble();
-		float energy = additionalData.readFloat();
+		double energy = additionalData.readDouble();
 		int pelletCooldown = additionalData.readInt();
 		int length = additionalData.readInt();
 		byte[] bytes = new byte[30];
 		additionalData.readBytes(bytes, 0, length);
 		bytes[length] = '\0';
 		String cultLevelName = new String(bytes, 0, length);
-		CultivationLevel level = CultivationLevel.valueOf(cultLevelName);
+		CultivationLevel level = CultivationLevel.REGISTERED_LEVELS.get(cultLevelName);
 		this.cultivation.setCurrentLevel(level);
 		this.cultivation.setCurrentSubLevel(subLevel);
 		this.cultivation.setProgress(progress);
@@ -216,8 +219,8 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	}
 
 	protected void applyCultivationBonuses() {
-		float strengthMod = cultivation.getStrengthIncrease()-1f;
-		float speedMod = cultivation.getSpeedIncrease()-1f;
+		double strengthMod = cultivation.getStrengthIncrease()-1f;
+		double speedMod = cultivation.getSpeedIncrease()-1f;
 
 		this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MAX_HEALTH)
 				.applyModifier(new AttributeModifier(MOB_HEALTH_MOD_NAME, strengthMod*3f, 0));

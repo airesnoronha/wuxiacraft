@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public class KnownTechnique {
 
-	private Technique technique;
+	private final Technique technique;
 	private double progress;
 
 	public KnownTechnique(Technique technique, double progress) {

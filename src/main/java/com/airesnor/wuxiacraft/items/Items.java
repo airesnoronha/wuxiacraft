@@ -211,7 +211,7 @@ public class Items {
 	public static final Item GOLD_DAGGER = new ItemDagger("gold_dagger");
 	public static final Item BLOOD_BOTTLE = new ItemBloodContainer("blood_bottle");
 	public static final Item EMPTY_BOTTLE = new ItemBase("empty_bottle").setMaxStackSize(16);
-	public static final Item PAINT_BOTTLE = new ItemBase("paint_bottle").setMaxStackSize(1).setMaxDamage(50);
+	public static final Item PAINT_BOTTLE = new ItemBase("paint_bottle").setMaxStackSize(1).setMaxDamage(100);
 
 	//Training posts
 	public static final Map<String, Item> TRAINING_POSTS = new HashMap<>();

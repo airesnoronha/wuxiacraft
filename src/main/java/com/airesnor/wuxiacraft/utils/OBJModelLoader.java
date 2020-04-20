@@ -26,10 +26,17 @@ import java.util.Map;
 public class OBJModelLoader {
 
 	public static class Vertex {
-		public float x, y, z;
-		public float r, g, b;
-		public float nx, ny, nz;
-		public float u, v;
+		public final float x;
+		public final float y;
+		public final float z;
+		public final float r;
+		public final float g;
+		public final float b;
+		public final float nx;
+		public final float ny;
+		public final float nz;
+		public final float u;
+		public final float v;
 
 		public Vertex(float x, float y, float z, float r, float g, float b, float nx, float ny, float nz, float u, float v) {
 			this.x = x;
@@ -72,8 +79,8 @@ public class OBJModelLoader {
 	}
 
 	public static class Face {
-		public int drawMode;
-		public List<Vertex> vertices;
+		public final int drawMode;
+		public final List<Vertex> vertices;
 
 		public Face(int drawMode) {
 			this.drawMode = drawMode;
@@ -82,7 +89,7 @@ public class OBJModelLoader {
 	}
 
 	public static class Part {
-		public List<Face> faces;
+		public final List<Face> faces;
 		public Vector3f origin;
 		public String parent;
 		public boolean cull;
@@ -165,12 +172,10 @@ public class OBJModelLoader {
 					String[] split = line.split(" ");
 					if(split.length == 2) {
 						Triple<Float, Float, Float> or = positions.get(Integer.parseInt(split[1]));
-						Vector3f origin = new Vector3f(or.getLeft(), or.getMiddle(), or.getRight());
-						part.origin = origin;
+						part.origin = new Vector3f(or.getLeft(), or.getMiddle(), or.getRight());
 					}
 					else {
-						Vector3f origin = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
-						part.origin = origin;
+						part.origin = new Vector3f(Float.parseFloat(split[1]), Float.parseFloat(split[2]), Float.parseFloat(split[3]));
 					}
 				}
 			} else if (line.startsWith("parent ")) {

@@ -6,12 +6,15 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class ModelWanderingCultivator extends ModelBiped {
 
-	public ModelRenderer hairPin;
-	public ModelRenderer crown;
-	public ModelRenderer ponyTail;
-	public ModelRenderer ponyTailExtension;
+	public final ModelRenderer hairPin;
+	public final ModelRenderer crown;
+	public final ModelRenderer ponyTail;
+	public final ModelRenderer ponyTailExtension;
 
 	public ModelWanderingCultivator() {
 		super(0, 0, 64,64);

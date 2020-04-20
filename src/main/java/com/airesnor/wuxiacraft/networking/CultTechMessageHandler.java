@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.networking;
 
-import com.airesnor.wuxiacraft.capabilities.CultTechProvider;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
@@ -16,11 +15,12 @@ public class CultTechMessageHandler implements IMessageHandler<CultTechMessage, 
 	@Override
 	public IMessage onMessage(CultTechMessage message, MessageContext ctx) {
 		if (ctx.side == Side.CLIENT) {
-			handleMessageClient(message, ctx);
+			return handleMessageClient(message, ctx);
 		}
 		return null;
 	}
 
+	@SuppressWarnings("unused")
 	@SideOnly(Side.CLIENT)
 	private IMessage handleMessageClient(CultTechMessage message, MessageContext ctx) {
 		Minecraft.getMinecraft().addScheduledTask(() -> {

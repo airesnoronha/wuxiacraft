@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
 public class GiantBee extends EntityMob implements EntityFlying {
 
 	public GiantBee(World worldIn) {

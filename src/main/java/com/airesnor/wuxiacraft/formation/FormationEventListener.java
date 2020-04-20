@@ -13,13 +13,15 @@ import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class FormationEventListener implements IWorldEventListener {
 
-	private FormationTileEntity parent; //Reference to the formation
-	private FormationUtils.FormationDiagram diagram; // Reference to check the formation position
-	private EnumFacing direction; // Reference tho see which direction should check directly, (instead of checking every direction)
+	private final FormationTileEntity parent; //Reference to the formation
+	private final FormationUtils.FormationDiagram diagram; // Reference to check the formation position
+	private final EnumFacing direction; // Reference tho see which direction should check directly, (instead of checking every direction)
 
 	public FormationEventListener(FormationTileEntity parent, FormationUtils.FormationDiagram diagram, EnumFacing direction) {
 		this.parent = parent;

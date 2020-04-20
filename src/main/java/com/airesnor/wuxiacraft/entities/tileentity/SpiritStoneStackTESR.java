@@ -21,9 +21,9 @@ public class SpiritStoneStackTESR extends TileEntitySpecialRenderer<SpiritStoneS
 
 	private static Map<String, OBJModelLoader.Part> SPIRIT_STONE_MODEL;
 
-	private static ResourceLocation TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/spirit_stone_stack_block.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/spirit_stone_stack_block.png");
 
-	private static List<Pair<Vec3d, Vec3d>> transformations = new ArrayList<>();
+	private static final List<Pair<Vec3d, Vec3d>> transformations = new ArrayList<>();
 
 	public static void init() {
 		try {

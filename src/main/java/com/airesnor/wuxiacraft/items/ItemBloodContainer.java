@@ -11,11 +11,12 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class ItemBloodContainer extends ItemBase {
 
 	public ItemBloodContainer(String item_name) {
 		super(item_name);
-		this.setMaxDamage(20);
+		this.setMaxDamage(35);
 		this.setMaxStackSize(1);
 	}
 
@@ -35,8 +36,9 @@ public class ItemBloodContainer extends ItemBase {
 		if(stack.getTagCompound() != null) {
 			NBTTagCompound tag = stack.getTagCompound();
 			if(tag.hasKey("bloodLevel")) {
-				CultivationLevel level = CultivationLevel.valueOf(tag.getString("bloodLevel"));
-				tooltip.add(level.getLevelName(-1));
+				CultivationLevel level = CultivationLevel.REGISTERED_LEVELS.get(tag.getString("bloodLevel"));
+				if(level!=null)
+					tooltip.add(level.getLevelName(-1));
 			}
 		}
 		super.addInformation(stack, worldIn, tooltip, flagIn);

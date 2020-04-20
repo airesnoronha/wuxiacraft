@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.networking;
 
 import com.airesnor.wuxiacraft.utils.SkillUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -15,9 +16,12 @@ public class SpawnParticleMessageHandler implements IMessageHandler<SpawnParticl
 			return handleClientSide(message);
 		}
 		else if (ctx.side == Side.SERVER) {
-			ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
-				SkillUtils.sendMessageWithinRange(ctx.getServerHandler().player.getServerWorld(), message.getPos(), 64d, message);
-			});
+			if(ctx.getServerHandler() != null) {
+				final EntityPlayerMP player = ctx.getServerHandler().player;
+				player.getServerWorld().addScheduledTask(() -> {
+					SkillUtils.sendMessageWithinRange(player.getServerWorld(), message.getPos(), 64d, message);
+				});
+			}
 		}
 		return null;
 	}

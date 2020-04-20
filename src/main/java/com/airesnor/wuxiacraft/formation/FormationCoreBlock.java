@@ -18,6 +18,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
 public class FormationCoreBlock extends BlockRune implements ITileEntityProvider {
 
 	public FormationCoreBlock(String name) {
@@ -25,7 +26,7 @@ public class FormationCoreBlock extends BlockRune implements ITileEntityProvider
 	}
 
 	@Override
-	public int getMetaFromState(IBlockState state) {
+	public int getMetaFromState(@Nonnull IBlockState state) {
 		return 0;
 	}
 
@@ -63,7 +64,7 @@ public class FormationCoreBlock extends BlockRune implements ITileEntityProvider
 		if(cultivation.hasEnergy((float)activationCost)) {
 			cultivation.remEnergy((float)activationCost);
 		} else {
-			float remaining = cultivation.getEnergy() - (float)activationCost;
+			float remaining = (float)cultivation.getEnergy() - (float)activationCost;
 			remaining /= 10f;
 			cultivation.setEnergy(0);
 			playerIn.attackEntityFrom(DamageSource.causePlayerDamage(playerIn).setDamageIsAbsolute(), remaining);

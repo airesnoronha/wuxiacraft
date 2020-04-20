@@ -1,7 +1,6 @@
 package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
 public class ItemBase extends Item implements IHasModel {

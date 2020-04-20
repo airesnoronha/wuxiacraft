@@ -14,16 +14,16 @@ import java.util.Random;
 
 public class Recipe {
 
-	private List<Triple<Float, Float, Item>> recipeOrder;
-	private float cookTemperatureMin;
-	private float cookTemperatureMax;
-	private int cookTime;
+	private final List<Triple<Float, Float, Item>> recipeOrder;
+	private final float cookTemperatureMin;
+	private final float cookTemperatureMax;
+	private final int cookTime;
 
-	private String name;
+	private final String name;
 
-	private Item output;
-	private int yields;
-	private int yieldRange;
+	private final Item output;
+	private final int yields;
+	private final int yieldRange;
 
 	public Recipe(String name, float tempMin, float tempMax, int cookTime, Item output, int yields, int yieldRange) {
 		recipeOrder = new ArrayList<>();

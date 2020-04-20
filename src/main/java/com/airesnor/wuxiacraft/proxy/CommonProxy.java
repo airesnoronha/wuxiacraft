@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.proxy;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.blocks.Blocks;
 import com.airesnor.wuxiacraft.capabilities.*;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
@@ -14,6 +15,7 @@ import com.airesnor.wuxiacraft.formation.FormationUtils;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.handlers.GuiHandler;
 import com.airesnor.wuxiacraft.networking.*;
+import com.airesnor.wuxiacraft.utils.CultivationLoader;
 import com.airesnor.wuxiacraft.utils.OreUtils;
 import com.airesnor.wuxiacraft.world.WorldGen;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -85,6 +87,8 @@ public class CommonProxy {
 	}
 
 	public void preInit() {
+		CultivationLoader.loadLevelsFromConfig();
+
 		reflectOnField(SharedMonsterAttributes.class, new String[]{"MAX_HEALTH", "field_111267_a"}, (new RangedAttribute(null, "generic.maxHealth", 20.0D, Float.MIN_VALUE, 100000000000.0D)).setDescription("Max Health").setShouldWatch(true));
 		reflectOnField(SharedMonsterAttributes.class, new String[]{"ARMOR", "field_188791_g"}, (new RangedAttribute(null, "generic.armor", 0.0D, 0.0D, 1000.0D)).setShouldWatch(true));
 		reflectOnField(SharedMonsterAttributes.class, new String[]{"MOVEMENT_SPEED", "field_111263_d"}, (new RangedAttribute(null, "generic.movementSpeed", 0.699999988079071D, 0.0D, 3072.0D)).setDescription("Movement Speed").setShouldWatch(true));
@@ -93,6 +97,12 @@ public class CommonProxy {
 
 		WuxiaCraftConfig.preInit();
 		GameRegistry.registerWorldGenerator(new WorldGen(), 3);
+		registerRuneBlocks();
+	}
+
+	private void registerRuneBlocks() {
+		Blocks.initBloodRunes();
+		//ForgeRegistries.BLOCKS.registerAll(Blocks.BLOOD_RUNES.values().toArray(new Block[0]));
 	}
 
 	public void registerScrollModel(Item item, int meta, String id) {

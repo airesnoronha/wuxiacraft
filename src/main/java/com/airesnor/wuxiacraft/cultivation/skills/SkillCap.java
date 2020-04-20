@@ -10,17 +10,18 @@ import java.util.Stack;
 
 public class SkillCap implements ISkillCap {
 
-	private List<Skill> knownSkills;
-	private Stack<BlockPos> toBreak;
+	private final List<Skill> knownSkills;
+	private final Stack<BlockPos> toBreak;
 	private float cooldown;
 	private float castProgress;
-	private List<Integer> SelectedSkills;
+	private final List<Integer> SelectedSkills;
 	private int ActiveSkillIndex;
 	private boolean casting;
 	private boolean doneCasting;
 	private int barrageToRelease;
 	private int barrageReleased;
 	private float maxCooldown;
+	private boolean formationActivated;
 
 	public SkillCap() {
 		this.knownSkills = new ArrayList<>();
@@ -204,7 +205,7 @@ public class SkillCap implements ISkillCap {
 		int selectedSkill = this.getActiveSkill(); //get index from selected list
 		selectedSkill = MathUtils.clamp(selectedSkill, 0, this.getSelectedSkills().size() - 1); //clamp to selected list
 		selectedSkill = MathUtils.clamp(this.getSelectedSkills().get(selectedSkill), 0, totalSkills.size() - 1); //get clamped from known skills
-		return !totalSkills.isEmpty() ? totalSkills.get(selectedSkill) : null;
+		return !totalSkills.isEmpty() && !getSelectedSkills().isEmpty() && selectedSkill >= 0? totalSkills.get(selectedSkill) : null;
 	}
 
 	@Override
@@ -213,5 +214,15 @@ public class SkillCap implements ISkillCap {
 		total.addAll(techniques.getTechniqueSkills());
 		total.addAll(this.getKnownSkills());
 		return total;
+	}
+
+	@Override
+	public void setFormationActivated(boolean activated) {
+		this.formationActivated = activated;
+	}
+
+	@Override
+	public boolean hasFormationActivated() {
+		return this.formationActivated;
 	}
 }

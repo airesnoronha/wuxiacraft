@@ -5,6 +5,7 @@ import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.items.IHasModel;
 import com.airesnor.wuxiacraft.items.Items;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockHorizontal;
@@ -30,12 +31,14 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class BlockTrainingPost extends Block implements IHasModel {
 
 	public static final PropertyEnum<BlockDoor.EnumDoorHalf> HALF = PropertyEnum.create("half", BlockDoor.EnumDoorHalf.class);
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
-	private double amount;
+	private final double amount;
 
 	public BlockTrainingPost(String name, Material blockMaterialIn, double amount) {
 		super(blockMaterialIn);

@@ -19,7 +19,7 @@ public class CultTech implements ICultTech {
 	public static final String SPEED__MOD = "wuxiacraft.technique.speed";
 	public static final String STRENGTH_MOD = "wuxiacraft.technique.strength";
 
-	private List<KnownTechnique> knownTechniques;
+	private final List<KnownTechnique> knownTechniques;
 
 	public CultTech() {
 		this.knownTechniques = new ArrayList<>();
@@ -64,8 +64,8 @@ public class CultTech implements ICultTech {
 			mods.add(t.onUpdate(player, cultivation));
 		}
 		if (!player.world.isRemote) {
-			float armor = 0, attackSpeed = 0, maxHealth = 0, movementSpeed = 0, strength = 0;
-			float narmor = 0, nattackSpeed = 0, nmaxHealth = 0, nmovementSpeed = 0, nstrength = 0;
+			double armor = 0, attackSpeed = 0, maxHealth = 0, movementSpeed = 0, strength = 0;
+			double narmor = 0, nattackSpeed = 0, nmaxHealth = 0, nmovementSpeed = 0, nstrength = 0;
 			for (TechniquesModifiers tm : mods) {
 				//WuxiaCraft.logger.info(String.format("%.3f, %.3f, %.3f, %.3f, %.3f", tm.armor, tm.attackSpeed, tm.maxHealth, tm.movementSpeed, tm.strength));
 				if (tm.armor > 0) armor = Math.max(armor, tm.armor);
@@ -118,7 +118,7 @@ public class CultTech implements ICultTech {
 			AttributeModifier armor_mod = new AttributeModifier(ARMOR_MOD, (armor + narmor) * 2, 0);
 			AttributeModifier attack_speed_mod = new AttributeModifier(ATTACK_SPEED_MOD, attackSpeed + nattackSpeed, 0);
 			AttributeModifier max_health_mod = new AttributeModifier(MAX_HEALTH_MOD, (maxHealth + nmaxHealth) * 3, 0);
-			float speedValue = (movementSpeed + nmovementSpeed) * 0.1f * (cultivation.getSpeedHandicap() / 100f);
+			double speedValue = (movementSpeed + nmovementSpeed) * 0.1f * (cultivation.getSpeedHandicap() / 100f);
 			if(cultivation.getMaxSpeed() >= 0) {
 				if(cultivation.getSpeedIncrease()* SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue() * 0.2f < cultivation.getMaxSpeed()) {
 					speedValue = Math.min(cultivation.getMaxSpeed()*(float)SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue(), speedValue);
@@ -153,11 +153,11 @@ public class CultTech implements ICultTech {
 
 	@Override
 	public TechniquesModifiers getOverallModifiers() {
-		float armor = 0, nArmor = 0;
-		float attackSpped = 0, nAttackSpeed = 0;
-		float maxHealth = 0, nMaxHealth = 0;
-		float speed = 0, nSpeed = 0;
-		float strength = 0, nStrength = 0;
+		double armor = 0, nArmor = 0;
+		double attackSpped = 0, nAttackSpeed = 0;
+		double maxHealth = 0, nMaxHealth = 0;
+		double speed = 0, nSpeed = 0;
+		double strength = 0, nStrength = 0;
 		for (KnownTechnique t : this.getKnownTechniques()) {
 			if (t.getTechnique().getBaseModifiers().armor > 0)
 				armor = Math.max(armor, t.getTechnique().getBaseModifiers().armor);
@@ -242,7 +242,6 @@ public class CultTech implements ICultTech {
 			}
 		}
 		float divider = 1 + mortals + martials * 5 + immortals * 25 + divines * 125;
-		float cultivationSpeed = (1 + fromMortal + fromMartial * 5 + fromImmortal * 25 + fromDivine * 125) / divider;
-		return cultivationSpeed;
+		return (1 + fromMortal + fromMartial * 5 + fromImmortal * 25 + fromDivine * 125) / divider;
 	}
 }

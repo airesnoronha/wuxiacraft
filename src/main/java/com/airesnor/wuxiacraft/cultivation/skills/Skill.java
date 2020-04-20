@@ -1,25 +1,24 @@
 package com.airesnor.wuxiacraft.cultivation.skills;
 
 import com.airesnor.wuxiacraft.utils.TranslateUtils;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 
 public class Skill {
 
-	private String name;
+	private final String name;
 
-	private float cost;
-	private float progress;
+	private final float cost;
+	private final float progress;
 
-	private float castTime;
-	private float cooldown;
+	private final float castTime;
+	private final float cooldown;
 
 	private ISkillAction action;
 	private ISkillAction whenCasting;
 
-	private String authorName;
+	private final String authorName;
 
-	boolean aggressive;
+	final boolean aggressive;
 
 	public String getName() {
 		return TranslateUtils.translateKey("wuxiacraft.skills." + this.name);

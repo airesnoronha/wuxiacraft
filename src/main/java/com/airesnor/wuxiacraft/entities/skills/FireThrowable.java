@@ -21,19 +21,16 @@ import net.minecraft.world.WorldServer;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
 public class FireThrowable extends EntityThrowable {
 
-	private EntityLivingBase owner;
+	private final EntityLivingBase owner;
 
-	private float damage;
+	private final float damage;
 
-	private int duration;
+	private final int duration;
 
-	private int particles;
-
-	public FireThrowable(World worldIn) {
-		super(worldIn);
-	}
+	private final int particles;
 
 	public FireThrowable(World worldIn, EntityLivingBase owner, float damage) {
 		this(worldIn, owner, damage, 20, 6, 0.5f);

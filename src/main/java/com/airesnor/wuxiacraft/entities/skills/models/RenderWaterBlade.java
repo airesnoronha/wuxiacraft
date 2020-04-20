@@ -11,8 +11,10 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Random;
 
+@ParametersAreNonnullByDefault
 public class RenderWaterBlade<T extends WaterBladeThrowable> extends Render<T> {
 
 	public RenderWaterBlade(RenderManager renderManager) {
@@ -41,7 +43,7 @@ public class RenderWaterBlade<T extends WaterBladeThrowable> extends Render<T> {
 		BufferBuilder buf = tessellator.getBuffer();
 		buf.begin(GL11.GL_POLYGON, DefaultVertexFormats.POSITION);
 		for (int i = 0; i <= 16; i++) {
-			float angle = i * 180 / 16;
+			float angle = i * 180f / 16f;
 			buf.pos(Math.cos(angle), rand.nextFloat() * 0.05f, 0.1f * Math.sin(angle)).endVertex();
 		}
 		tessellator.draw();

@@ -11,7 +11,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.12.2-0.0.7.2"
+version = "1.12.2-0.0.7.6"
 group = "com.airesnor.wuxiacraft" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "wuxiacraft"
 
@@ -36,6 +36,7 @@ minecraft {
     replaceIn "WuxiaCraft.java"
 }
 
+//noinspection SpellCheckingInspection
 dependencies {
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
@@ -60,12 +61,14 @@ dependencies {
 
 }
 
+//noinspection SpellCheckingInspection,SpellCheckingInspection
 processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
     // replace stuff in mcmod.info, nothing else
+    //noinspection SpellCheckingInspection
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
                 

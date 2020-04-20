@@ -1,7 +1,6 @@
 package com.airesnor.wuxiacraft.networking;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

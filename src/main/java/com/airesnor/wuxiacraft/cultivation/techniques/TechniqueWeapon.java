@@ -21,7 +21,7 @@ public class TechniqueWeapon extends Technique {
 		}
 	}
 
-	private WeaponType weaponType;
+	private final WeaponType weaponType;
 
 	public TechniqueWeapon(TechniqueTier tier, String uName, TechniquesModifiers baseModifiers, WeaponType weaponType) {
 		super(tier, uName, baseModifiers);

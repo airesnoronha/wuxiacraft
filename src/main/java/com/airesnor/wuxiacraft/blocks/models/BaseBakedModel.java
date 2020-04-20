@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.blocks.models;
 
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -14,9 +15,10 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 import java.util.List;
 
+@MethodsReturnNonnullByDefault
 public class BaseBakedModel implements IBakedModel {
 
-	private IBakedModel model;
+	private final IBakedModel model;
 
 	public BaseBakedModel(IBakedModel model) {
 		this.model = model;

@@ -6,20 +6,12 @@ import com.airesnor.wuxiacraft.items.Items;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class Blocks {
@@ -39,8 +31,9 @@ public class Blocks {
 
 	public static final Block PAINT_RUNE = new BlockRune("paint_rune");
 	public static final Map<String, Block> BLOOD_RUNES = new HashMap<>();
-	static {
-		for(CultivationLevel level : CultivationLevel.values()) {
+
+	public static void initBloodRunes() {
+		for (CultivationLevel level : CultivationLevel.REGISTERED_LEVELS.values()) {
 			BLOOD_RUNES.put(level.getUName(), new BlockRune("blood_rune_" + level.getUName()));
 		}
 	}

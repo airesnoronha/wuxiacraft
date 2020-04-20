@@ -1,11 +1,12 @@
 package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.capabilities.CultTechProvider;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.Technique;
 import com.airesnor.wuxiacraft.cultivation.techniques.TechniqueWeapon;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,11 +20,15 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ItemScroll extends Item implements IHasModel {
 
-	private Technique technique;
+	private final Technique technique;
 
 	public ItemScroll(Technique technique) {
 		setUnlocalizedName(technique.getUName() + "_scroll");
@@ -36,11 +41,8 @@ public class ItemScroll extends Item implements IHasModel {
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-		ICultTech cultTech = playerIn.getCapability(CultTechProvider.CULT_TECH_CAPABILITY, null);
-		boolean success = false;
-		if (cultTech != null) {
-			success = cultTech.addTechnique(this.technique, 0);
-		}
+		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(playerIn);
+		boolean success = cultTech.addTechnique(this.technique, 0);
 		return playerIn.isCreative() ? ActionResult.newResult(EnumActionResult.SUCCESS, new ItemStack(this)) : ActionResult.newResult(EnumActionResult.SUCCESS, success ? ItemStack.EMPTY : new ItemStack(this));
 	}
 
@@ -56,7 +58,7 @@ public class ItemScroll extends Item implements IHasModel {
 			tooltip.add(line);
 		}
 		if (technique.getBaseModifiers().armor != 0) {
-			float armor = technique.getBaseModifiers().armor;
+			double armor = technique.getBaseModifiers().armor;
 			int signals = (int) Math.abs(armor / 0.1f);
 			String color = armor < 0 ? TextFormatting.RED.toString() : signals < 3 ? TextFormatting.GREEN.toString() : TextFormatting.AQUA.toString();
 			String line = color + "Armor ";
@@ -66,7 +68,7 @@ public class ItemScroll extends Item implements IHasModel {
 			tooltip.add(line);
 		}
 		if (technique.getBaseModifiers().attackSpeed != 0) {
-			float attackSpeed = technique.getBaseModifiers().attackSpeed;
+			double attackSpeed = technique.getBaseModifiers().attackSpeed;
 			int signals = (int) Math.abs(attackSpeed / 0.1f);
 			String color = attackSpeed < 0 ? TextFormatting.RED.toString() : signals < 3 ? TextFormatting.GREEN.toString() : TextFormatting.AQUA.toString();
 			String line = color + "Attack Speed ";
@@ -76,7 +78,7 @@ public class ItemScroll extends Item implements IHasModel {
 			tooltip.add(line);
 		}
 		if (technique.getBaseModifiers().maxHealth != 0) {
-			float maxHealth = technique.getBaseModifiers().maxHealth;
+			double maxHealth = technique.getBaseModifiers().maxHealth;
 			int signals = (int) Math.abs(maxHealth / 0.1f);
 			String color = maxHealth < 0 ? TextFormatting.RED.toString() : signals < 3 ? TextFormatting.GREEN.toString() : TextFormatting.AQUA.toString();
 			String line = color + "Max Health ";
@@ -86,7 +88,7 @@ public class ItemScroll extends Item implements IHasModel {
 			tooltip.add(line);
 		}
 		if (technique.getBaseModifiers().movementSpeed != 0) {
-			float movementSpeed = technique.getBaseModifiers().movementSpeed;
+			double movementSpeed = technique.getBaseModifiers().movementSpeed;
 			int signals = (int) Math.abs(movementSpeed / 0.1f);
 			String color = movementSpeed < 0 ? TextFormatting.RED.toString() : signals < 3 ? TextFormatting.GREEN.toString() : TextFormatting.AQUA.toString();
 			String line = color + "Speed ";
@@ -96,7 +98,7 @@ public class ItemScroll extends Item implements IHasModel {
 			tooltip.add(line);
 		}
 		if (technique.getBaseModifiers().strength != 0) {
-			float strength = technique.getBaseModifiers().strength;
+			double strength = technique.getBaseModifiers().strength;
 			int signals = (int) Math.abs(strength / 0.1f);
 			String color = strength < 0 ? TextFormatting.RED.toString() : signals < 3 ? TextFormatting.GREEN.toString() : TextFormatting.AQUA.toString();
 			String line = color + "Strength ";

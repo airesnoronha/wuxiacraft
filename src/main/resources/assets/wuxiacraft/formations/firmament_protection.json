@@ -250,6 +250,7 @@
 		{ "blockState": "wuxiacraft:blood_rune_sky_law","x":  3, "y": 4,"z": -1 },
 		{ "blockState": "wuxiacraft:blood_rune_sky_law","x":  3, "y": 4,"z":  0 },
 		{ "blockState": "wuxiacraft:blood_rune_sky_law","x":  3, "y": 4,"z":  1 },
+		{ "blockState": "wuxiacraft:blood_rune_sky_law","x":  3, "y": 4,"z":  2 },
 		{ "blockState": "wuxiacraft:blood_rune_sky_law","x": -2, "y":-4,"z": -3 },
 		{ "blockState": "wuxiacraft:blood_rune_sky_law","x": -1, "y":-4,"z": -3 },
 		{ "blockState": "wuxiacraft:blood_rune_sky_law","x":  0, "y":-4,"z": -3 },

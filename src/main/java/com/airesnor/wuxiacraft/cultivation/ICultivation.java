@@ -46,15 +46,15 @@ public interface ICultivation {
 	 */
 	void setCurrentSubLevel(int subLevel);
 
-	float getEnergy();
+	double getEnergy();
 
-	void setEnergy(float amount);
+	void setEnergy(double amount);
 
-	void addEnergy(float amount);
+	void addEnergy(double amount);
 
-	void remEnergy(float amount);
+	void remEnergy(double amount);
 
-	boolean hasEnergy(float amount);
+	boolean hasEnergy(double amount);
 
 	void setSpeedHandicap(int handicap);
 
@@ -72,11 +72,11 @@ public interface ICultivation {
 
 	void setPillCooldown(int cooldown);
 
-	float getStrengthIncrease();
+	double getStrengthIncrease();
 
-	float getSpeedIncrease();
+	double getSpeedIncrease();
 
-	float getMaxEnergy();
+	double getMaxEnergy();
 
 	void setMaxSpeed(float maxSpeed);
 
@@ -93,4 +93,6 @@ public interface ICultivation {
 	void setSuppress(boolean suppress);
 
 	boolean getSuppress();
+
+	void copyFrom(ICultivation cultivation);
 }

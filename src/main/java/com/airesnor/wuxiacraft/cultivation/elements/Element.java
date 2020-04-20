@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Element {
-	private String name;
-	private TextFormatting color;
-	private List<Element> counters;
-	private EnumParticleTypes particle;
+	private final String name;
+	private final TextFormatting color;
+	private final List<Element> counters;
+	private final EnumParticleTypes particle;
 
 	public static final List<Element> ELEMENTS = new ArrayList<>();
 
