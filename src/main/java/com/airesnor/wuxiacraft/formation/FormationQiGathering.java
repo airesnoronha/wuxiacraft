@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -23,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class FormationQiGathering extends Formation {
 
@@ -85,13 +87,18 @@ public class FormationQiGathering extends Formation {
 			info.setInteger("targets", targets.size());
 			for (EntityPlayer target : targets) {
 				int index = targets.indexOf(target);
-				info.setInteger("p-" + index, target.getEntityId());
+				info.setUniqueId("p-" + index, target.getPersistentID());
 			}
 		} else { //load from found players
 			if (info.hasKey("targets")) {
 				int length = info.getInteger("targets");
 				for (int i = 0; i < length; i++) {
-					targets.add((EntityPlayer) worldIn.getEntityByID(info.getInteger("p-" + i)));
+					UUID uuid = info.getUniqueId("p-" + i);
+					if(uuid != null) {
+						EntityPlayer player = worldIn.getPlayerEntityByUUID(uuid);
+						if (player != null)
+							targets.add(player);
+					}
 				}
 			}
 		}

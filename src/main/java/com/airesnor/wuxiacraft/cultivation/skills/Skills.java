@@ -76,8 +76,8 @@ public class Skills {
 	public static final Potion ENLIGHTENMENT = new EnlightenmentPotion("enlightenment");
 
 	public static final ISkillAction APPLY_SLOWNESS = actor -> {
-		PotionEffect effect1 = new PotionEffect(MobEffects.SLOWNESS, 35, 3, false, false);
-		PotionEffect effect2 = new PotionEffect(MobEffects.MINING_FATIGUE, 35, 2, false, false);
+		PotionEffect effect1 = new PotionEffect(MobEffects.SLOWNESS, 20, 3, false, false);
+		PotionEffect effect2 = new PotionEffect(MobEffects.MINING_FATIGUE, 20, 2, false, false);
 		actor.addPotionEffect(effect1);
 		actor.addPotionEffect(effect2);
 		return true;
@@ -103,7 +103,7 @@ public class Skills {
 					}
 				}
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.001f, true, true);
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.001f, true, true, true);
 				return true;
 			})
 			.setWhenCasting(actor -> {
@@ -134,9 +134,9 @@ public class Skills {
 					}
 					if (actor instanceof EntityPlayer) {
 						if ((int) skillCap.getCastProgress() % 10 == 9) {
-							CultivationUtils.cultivatorAddProgress(actor, cultivation, amount, false, false);
+							CultivationUtils.cultivatorAddProgress(actor, cultivation, amount, true, false, false);
 							cultivation.remEnergy(energy);
-							NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, amount, false, false, actor.getUniqueID()));
+							NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, amount, true, false, false, actor.getUniqueID()));
 						}
 					}
 				}

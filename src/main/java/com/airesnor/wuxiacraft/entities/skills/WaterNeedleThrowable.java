@@ -13,6 +13,9 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class WaterNeedleThrowable extends EntityThrowable {
 
 	private EntityLivingBase owner;
@@ -21,12 +24,9 @@ public class WaterNeedleThrowable extends EntityThrowable {
 
 	private int duration;
 
+	@SuppressWarnings("unused")
 	public WaterNeedleThrowable(World worldIn) {
 		super(worldIn);
-	}
-
-	public WaterNeedleThrowable(World worldIn, EntityLivingBase owner, float damage) {
-		this(worldIn, owner, damage, 30);
 	}
 
 	public WaterNeedleThrowable(World worldIn, EntityLivingBase owner, float damage, int duration) {

@@ -14,7 +14,7 @@ public class RemoveTechniqueMessageHandler implements IMessageHandler<RemoveTech
 	@Override
 	public IMessage onMessage(RemoveTechniqueMessage message, MessageContext ctx) {
 		if (ctx.side == Side.SERVER) {
-			WorldServer world = ctx.getServerHandler().player.getServerWorld();
+			final WorldServer world = ctx.getServerHandler().player.getServerWorld();
 			world.addScheduledTask(() -> {
 				EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
 				if(player != null) {

@@ -138,21 +138,25 @@ public class RegistryHandler {
 				.entity(FireThrowable.class)
 				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "fire_throwable"), 3)
 				.name("fire_throwable")
+				.tracker(200, 10, true)
 				.build();
 		EntityEntry waterNeedleThrowable = EntityEntryBuilder.create()
 				.entity(WaterNeedleThrowable.class)
 				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "water_needle_throwable"), 4)
 				.name("water_needle_throwable")
+				.tracker(200, 10, true)
 				.build();
 		EntityEntry waterBladeThrowable = EntityEntryBuilder.create()
 				.entity(WaterBladeThrowable.class)
 				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "water_blade_throwable"), 5)
 				.name("water_blade_throwable")
+				.tracker(200, 10, true)
 				.build();
 		EntityEntry swordBeamThrowable = EntityEntryBuilder.create()
 				.entity(SwordBeamThrowable.class)
 				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "sword_beam_throwable"), 6)
 				.name("sword_beam_throwable")
+				.tracker(200, 10, true)
 				.build();
 		event.getRegistry().register(giantAntEntity);
 		event.getRegistry().register(giantBeeEntity);

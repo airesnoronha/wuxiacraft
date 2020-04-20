@@ -134,8 +134,8 @@ public class FormationCultivationHelper extends Formation {
 								skillCap.setFormationActivated(true);
 								ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 								if (this.amount <= cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.06) {
-									CultivationUtils.cultivatorAddProgress(player, cultivation, this.amount, false, false);
-									NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, this.amount, false, false, player.getUniqueID()));
+									CultivationUtils.cultivatorAddProgress(player, cultivation, this.amount, true, false, false);
+									NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, this.amount, true, false, false, player.getUniqueID()));
 								}
 							}
 						}
