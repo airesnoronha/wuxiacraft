@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.networking;
 
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
@@ -16,7 +17,7 @@ public class ActivateSkillMessageHandler implements IMessageHandler<ActivateSkil
 	@Override
 	public IMessage onMessage(ActivateSkillMessage message, MessageContext ctx) {
 		if (ctx.side == Side.SERVER) {
-			WorldServer world = ctx.getServerHandler().player.getServerWorld();
+			final WorldServer world = ctx.getServerHandler().player.getServerWorld();
 			world.addScheduledTask(() -> {
 				EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
 				if(player != null) {
@@ -29,6 +30,7 @@ public class ActivateSkillMessageHandler implements IMessageHandler<ActivateSkil
 							if (!player.isCreative())
 								cultivation.remEnergy(selectedSkill.getCost());
 							skillCap.stepCooldown(selectedSkill.getCooldown());
+							CultivationUtils.cultivatorAddProgress(player, cultivation, selectedSkill.getProgress(), true, false, false);
 						}
 					}
 				}

@@ -66,7 +66,7 @@ public class CultivationUtils {
 		return skillCap;
 	}
 
-	public static void cultivatorAddProgress(EntityLivingBase player, ICultivation cultivation, double amount, boolean allowBreakThrough, boolean ignoreBottleneck) {
+	public static void cultivatorAddProgress(EntityLivingBase player, ICultivation cultivation, double amount, boolean techniques, boolean allowBreakThrough, boolean ignoreBottleneck) {
 		ICultTech cultTech = getCultTechFromEntity(player);
 		amount *= cultTech.getOverallCultivationSpeed();
 		double enlightenment = 1;
@@ -75,7 +75,9 @@ public class CultivationUtils {
 			enlightenment += 9* effect.getAmplifier();
 		}
 		amount*=enlightenment;
-		cultTech.progress(amount);
+		if(techniques) {
+			cultTech.progress(amount);
+		}
 		if (!cultivation.getSuppress()) {
 			double progressRel = cultivation.getCurrentProgress() / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
 			double bottleneckAmount = ignoreBottleneck ? amount : amount * Math.min(1.0f, 1.2f - progressRel);

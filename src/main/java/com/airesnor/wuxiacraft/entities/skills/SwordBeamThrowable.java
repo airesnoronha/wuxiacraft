@@ -15,12 +15,17 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class SwordBeamThrowable extends EntityThrowable {
 
-	private final float damage;
-	public final int color;
-	private final int duration;
-	public final float roll;
+	private float damage;
+	public int color;
+	private int duration;
+	public float roll;
 
-	private final EntityLivingBase owner;
+	private EntityLivingBase owner;
+
+	@SuppressWarnings("unused")
+	public SwordBeamThrowable(World worldIn) {
+		super(worldIn);
+	}
 
 	public SwordBeamThrowable(World worldIn, EntityLivingBase owner, float damage, int color, int duration) {
 		super(worldIn, owner.posX, owner.posY + owner.getEyeHeight() - 0.1, owner.posZ);

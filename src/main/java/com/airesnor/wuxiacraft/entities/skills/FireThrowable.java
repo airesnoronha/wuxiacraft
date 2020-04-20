@@ -24,13 +24,18 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class FireThrowable extends EntityThrowable {
 
-	private final EntityLivingBase owner;
+	private EntityLivingBase owner;
 
-	private final float damage;
+	private float damage;
 
-	private final int duration;
+	private int duration;
 
-	private final int particles;
+	private int particles;
+
+	@SuppressWarnings("unused")
+	public FireThrowable(World worldIn) {
+		super(worldIn);
+	}
 
 	public FireThrowable(World worldIn, EntityLivingBase owner, float damage) {
 		this(worldIn, owner, damage, 20, 6, 0.5f);
