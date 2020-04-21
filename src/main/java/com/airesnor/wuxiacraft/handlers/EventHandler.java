@@ -586,15 +586,17 @@ public class EventHandler {
 				} else if (event.world.getBlockState(pos).getBlock() == Blocks.SPIRIT_STONE_STACK_BLOCK) {
 					SpiritStoneStackTileEntity te = (SpiritStoneStackTileEntity) event.world.getTileEntity(pos);
 					if (te != null) {
-						int remaining = te.stack.getMaxStackSize() - te.stack.getCount();
-						int having = stack.getCount();
-						int applying = Math.min(remaining, having);
-						int left = having - applying;
-						int right = te.stack.getCount() + applying;
-						te.stack.setCount(right);
-						stack.setCount(left);
-						if (stack.isEmpty()) item.setDead();
-						event.world.markAndNotifyBlock(pos, null, event.world.getBlockState(pos), event.world.getBlockState(pos), 3);
+						if (te.stack.getItem() == stack.getItem()) { //meaning they're the same
+							int remaining = te.stack.getMaxStackSize() - te.stack.getCount();
+							int having = stack.getCount();
+							int applying = Math.min(remaining, having);
+							int left = having - applying;
+							int right = te.stack.getCount() + applying;
+							te.stack.setCount(right);
+							stack.setCount(left);
+							if (stack.isEmpty()) item.setDead();
+							event.world.markAndNotifyBlock(pos, null, event.world.getBlockState(pos), event.world.getBlockState(pos), 3);
+						}
 					}
 				}
 			}

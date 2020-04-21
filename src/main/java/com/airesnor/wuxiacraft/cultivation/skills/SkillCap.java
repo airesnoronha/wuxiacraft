@@ -204,8 +204,11 @@ public class SkillCap implements ISkillCap {
 		List<Skill> totalSkills = this.getTotalKnowSkill(techniques);
 		int selectedSkill = this.getActiveSkill(); //get index from selected list
 		selectedSkill = MathUtils.clamp(selectedSkill, 0, this.getSelectedSkills().size() - 1); //clamp to selected list
+		if(selectedSkill < 0) selectedSkill = 0;
+		if(this.getSelectedSkills().size() == 0) return null;
 		selectedSkill = MathUtils.clamp(this.getSelectedSkills().get(selectedSkill), 0, totalSkills.size() - 1); //get clamped from known skills
-		return !totalSkills.isEmpty() && !getSelectedSkills().isEmpty() && selectedSkill >= 0? totalSkills.get(selectedSkill) : null;
+		if(selectedSkill < 0) selectedSkill = 0;
+		return !totalSkills.isEmpty() && !getSelectedSkills().isEmpty()? totalSkills.get(selectedSkill) : null;
 	}
 
 	@Override

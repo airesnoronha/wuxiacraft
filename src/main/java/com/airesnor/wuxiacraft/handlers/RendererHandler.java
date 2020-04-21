@@ -314,19 +314,21 @@ public class RendererHandler {
 		int y = res.getScaledHeight() - 40;
 		List<Skill> totalKnown = skillCap.getTotalKnowSkill(cultTech);
 		for (int i = 0; i < skillCap.getSelectedSkills().size(); i++) {
-			Skill skill = totalKnown.get(MathUtils.clamp(skillCap.getSelectedSkills().get(i), 0, totalKnown.size()-1));
-			if (i == skillCap.getActiveSkill()) {
-				mc.renderEngine.bindTexture(skills_bg);
-				drawTexturedRect(x, y - h - (20 + animationStep), 20, 20 + animationStep);
-				mc.renderEngine.bindTexture(SkillsGui.skillIcons.get(skill.getUName()));
-				drawTexturedRect(x + 2 - animationStep + animationStep / 10, y - h - 18 - (animationStep) + animationStep / 10, 16 + animationStep * 4 / 5, 16 + animationStep * 4 / 5);
-				h += 20 + animationStep;
-			} else {
-				mc.renderEngine.bindTexture(skills_bg);
-				drawTexturedRect(x, y - h - 20, 20, 20);
-				mc.renderEngine.bindTexture(SkillsGui.skillIcons.get(skill.getUName()));
-				drawTexturedRect(x + 2, y - h - 18, 16, 16);
-				h += 20;
+			if(totalKnown.size() > 0 && MathUtils.between(skillCap.getSelectedSkills().get(i), 0, totalKnown.size())) { // this way won't select unwanted skills
+				Skill skill = totalKnown.get(MathUtils.clamp(skillCap.getSelectedSkills().get(i), 0, totalKnown.size() - 1));
+				if (i == skillCap.getActiveSkill()) {
+					mc.renderEngine.bindTexture(skills_bg);
+					drawTexturedRect(x, y - h - (20 + animationStep), 20, 20 + animationStep);
+					mc.renderEngine.bindTexture(SkillsGui.skillIcons.get(skill.getUName()));
+					drawTexturedRect(x + 2 - animationStep + animationStep / 10, y - h - 18 - (animationStep) + animationStep / 10, 16 + animationStep * 4 / 5, 16 + animationStep * 4 / 5);
+					h += 20 + animationStep;
+				} else {
+					mc.renderEngine.bindTexture(skills_bg);
+					drawTexturedRect(x, y - h - 20, 20, 20);
+					mc.renderEngine.bindTexture(SkillsGui.skillIcons.get(skill.getUName()));
+					drawTexturedRect(x + 2, y - h - 18, 16, 16);
+					h += 20;
+				}
 			}
 		}
 		GlStateManager.popMatrix();
