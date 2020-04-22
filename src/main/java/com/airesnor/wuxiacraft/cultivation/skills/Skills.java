@@ -86,7 +86,7 @@ public class Skills {
 	private static long LastUseCultivateMillis = 0;
 	public static boolean particleStep = false;
 
-	public static final Skill CULTIVATE = new Skill("cultivate", false, 1f, 10f, 300f, 0f)
+	public static final Skill CULTIVATE = new Skill("cultivate", false, 1f, 0, 300f, 0f)
 			.setAction(actor -> {
 				if (!actor.world.isRemote) {
 					int bound = 100;
