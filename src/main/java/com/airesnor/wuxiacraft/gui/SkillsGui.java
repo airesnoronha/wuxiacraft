@@ -27,13 +27,14 @@ public class SkillsGui extends GuiScreen {
 	public static final Map<String, ResourceLocation> skillIcons = new HashMap<>();
 
 
-	private int xSize = 200;
-	private int ySize = 133;
+	private final int xSize = 200;
+	private final int ySize = 133;
 	private int guiTop = 0;
 	private int guiLeft = 0;
 
-	private ICultTech cultTech;
-	private ISkillCap skillCap;
+	private final EntityPlayer player;
+	private final ICultTech cultTech;
+	private final ISkillCap skillCap;
 	private int offset = 0;
 
 	public static void init() {
@@ -44,6 +45,7 @@ public class SkillsGui extends GuiScreen {
 	}
 
 	public SkillsGui(EntityPlayer player) {
+		this.player = player;
 		this.cultTech = CultivationUtils.getCultTechFromEntity(player);
 		this.skillCap = CultivationUtils.getSkillCapFromEntity(player);
 	}
@@ -181,7 +183,7 @@ public class SkillsGui extends GuiScreen {
 		int width = this.fontRenderer.getStringWidth(I18n.format("wuxiacraft.label.skills_gui.title"));
 		this.fontRenderer.drawString(I18n.format("wuxiacraft.label.skills_gui.title"), (this.xSize - width) / 2, 5, 0x404040);
 		List<Skill> totalSkills = skillCap.getTotalKnowSkill(cultTech);
-		int i = 0;
+		int i ;
 		int maxi = 6;
 		int displayTS = Math.max(0, totalSkills.size() - offset);
 		for (i = 0; i < maxi && i < displayTS; i++) {
@@ -195,6 +197,7 @@ public class SkillsGui extends GuiScreen {
 		GlStateManager.popMatrix();
 	}
 
+	@SuppressWarnings({"EmptyMethod", "unused"})
 	private void drawTooltips(int mouseX, int mouseY) {
 
 	}
@@ -203,6 +206,7 @@ public class SkillsGui extends GuiScreen {
 		return (x >= left && x <= (left + width) && y >= top && y <= (top + height));
 	}
 
+	@SuppressWarnings("unused")
 	public void drawFramedBox(int x, int y, int width, int height, int borderSize, int textureX, int textureY) {
 		this.mc.getTextureManager().bindTexture(gui_texture);
 		drawTexturedModalRect(x, y, textureX, textureY, borderSize, borderSize);
@@ -210,7 +214,7 @@ public class SkillsGui extends GuiScreen {
 		drawTexturedModalRect(x + width - borderSize, y, textureX + 2 * borderSize, textureY, borderSize, borderSize);
 		drawTexturedModalRect(x + width - borderSize, y + height - borderSize, textureX + borderSize * 2, textureY + borderSize * 2, borderSize, borderSize);
 		//vertical borders
-		int i = 0;
+		int i;
 		for (i = 0; i < height - 2 * borderSize; i += borderSize) {
 			drawTexturedModalRect(x, y + borderSize + i, textureX, textureY + borderSize, borderSize, borderSize);
 			drawTexturedModalRect(x + width - borderSize, y + borderSize + i, textureX + 2 * borderSize, textureY + borderSize, borderSize, borderSize);
@@ -234,7 +238,7 @@ public class SkillsGui extends GuiScreen {
 			drawTexturedModalRect(x + borderSize + i, y + height - borderSize, textureX + borderSize, textureY + 2 * borderSize, leftOverX, borderSize);
 		}
 		//middle
-		int j = 0;
+		int j ;
 		for (j = 0; j < height - 2 * borderSize; j += borderSize) {
 			for (i = 0; i < width - 2 * borderSize; i += borderSize) {
 				drawTexturedModalRect(x + borderSize + i, y + borderSize + j, textureX + borderSize, textureY + borderSize, borderSize, borderSize);
@@ -261,7 +265,7 @@ public class SkillsGui extends GuiScreen {
 			skillCap.getSelectedSkills().clear();
 			skillCap.setActiveSkill(-1);
 		}
-		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false));
+		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false, player.getUniqueID()));
 	}
 
 	private void selectSkill(int skillIndex) {
@@ -276,7 +280,7 @@ public class SkillsGui extends GuiScreen {
 			skillCap.setActiveSkill(0);
 		}
 		skillCap.setActiveSkill(MathUtils.clamp(skillCap.getActiveSkill(), -1, skillCap.getSelectedSkills().size() - 1));
-		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false));
+		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false, player.getUniqueID()));
 	}
 
 	private void removeSkill(Skill skill) {
@@ -292,7 +296,7 @@ public class SkillsGui extends GuiScreen {
 			skillCap.setActiveSkill(0);
 		}
 		skillCap.setActiveSkill(Math.max(-1, Math.min(skillCap.getSelectedSkills().size() - 1, skillCap.getActiveSkill())));
-		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false));
+		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false, player.getUniqueID()));
 		this.offset = MathUtils.clamp(this.offset, 0, this.skillCap.getTotalKnowSkill(cultTech).size());
 	}
 

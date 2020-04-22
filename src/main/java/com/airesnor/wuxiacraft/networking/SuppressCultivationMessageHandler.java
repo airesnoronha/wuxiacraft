@@ -2,7 +2,8 @@ package com.airesnor.wuxiacraft.networking;
 
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -13,10 +14,13 @@ public class SuppressCultivationMessageHandler implements IMessageHandler<Suppre
 	@Override
 	public IMessage onMessage(SuppressCultivationMessage message, MessageContext ctx) {
 		if(ctx.side == Side.SERVER) {
-			EntityPlayerMP player = ctx.getServerHandler().player;
-			player.getServerWorld().addScheduledTask(() -> {
-				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-				cultivation.setSuppress(message.suppress);
+			final WorldServer world = ctx.getServerHandler().player.getServerWorld();
+			world.addScheduledTask(() -> {
+				EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
+				if(player != null) {
+					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+					cultivation.setSuppress(message.suppress);
+				}
 			});
 		}
 		return null;

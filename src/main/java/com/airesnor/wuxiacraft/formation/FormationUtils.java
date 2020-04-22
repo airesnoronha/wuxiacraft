@@ -20,14 +20,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.net.URI;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 public class FormationUtils {
 
@@ -45,7 +42,7 @@ public class FormationUtils {
 	 */
 	public static void init() {
 		try {
-			URI assets = FormationUtils.class.getClassLoader().getResource("assets/wuxiacraft/formations").toURI();
+			URI assets = Objects.requireNonNull(FormationUtils.class.getClassLoader().getResource("assets/wuxiacraft/formations")).toURI();
 			if (assets.getScheme().equals("jar")) {
 				//ok now i know what to do
 				String PathToZip = assets.getSchemeSpecificPart();
@@ -354,7 +351,7 @@ public class FormationUtils {
 	}
 
 	public static class FormationDiagram {
-		private ResourceLocation formationName;
+		private final ResourceLocation formationName;
 		public final List<Pair<BlockPos, IBlockState>> positions = new ArrayList<>();
 
 		public FormationDiagram(ResourceLocation formationName) {

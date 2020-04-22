@@ -15,6 +15,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class EnergyCommand extends CommandBase {
 
     @Override
@@ -33,8 +34,7 @@ public class EnergyCommand extends CommandBase {
     @Override
     @Nonnull
     public List<String> getAliases() {
-        List<String> aliases = new ArrayList<>();
-        return aliases;
+        return new ArrayList<>();
     }
 
     @Override
@@ -44,9 +44,9 @@ public class EnergyCommand extends CommandBase {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        EntityPlayerMP playerMP = (EntityPlayerMP) sender;
         if(args.length == 2) {
             if(sender instanceof EntityPlayerMP) {
+                EntityPlayerMP playerMP = (EntityPlayerMP) sender;
                 ICultivation cultivation = CultivationUtils.getCultivationFromEntity(playerMP);
                 if(args[0].equalsIgnoreCase("set")) {
                     if(args[1].equalsIgnoreCase("max")) {

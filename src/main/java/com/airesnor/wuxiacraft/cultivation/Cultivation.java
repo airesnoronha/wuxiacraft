@@ -152,8 +152,8 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public double getMaxEnergy() {
-		return this.level.getMaxEnergyByLevel(this.subLevel);
+	public double getMaxEnergy(IFoundation foundation) {
+		return 100 + 10*foundation.getSpiritModifier();
 	}
 
 	@Override

@@ -1,7 +1,5 @@
 package com.airesnor.wuxiacraft.formation;
 
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;

@@ -1,10 +1,10 @@
 package com.airesnor.wuxiacraft.config;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.SpeedHandicapMessage;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -12,6 +12,8 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -100,10 +102,10 @@ public class WuxiaCraftConfig {
 
 		if (readFieldsFromConfig) {
 			speedHandicap = propHandicap.getInt();
-			maxSpeed = (float)propMaxSpeed.getDouble();
+			maxSpeed = (float) propMaxSpeed.getDouble();
 			disableStepAssist = propStepAssist.getBoolean();
-			blockBreakLimit = (float)propBreakSpeed.getDouble();
-			jumpLimit = (float)propJumpLimit.getDouble();
+			blockBreakLimit = (float) propBreakSpeed.getDouble();
+			jumpLimit = (float) propJumpLimit.getDouble();
 		}
 
 		propHandicap.set(speedHandicap);
@@ -117,29 +119,26 @@ public class WuxiaCraftConfig {
 	}
 
 	public static class ConfigEventHandler {
+		@SideOnly(Side.CLIENT)
 		@SubscribeEvent
 		public void onEvent(ConfigChangedEvent.OnConfigChangedEvent event) {
 			if (event.getModID().equals(WuxiaCraft.MOD_ID)) {
 				syncFromGui();
 				WuxiaCraft.logger.info("Sending a config update to server");
 				syncCultivationFromConfigToClient();
-				NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(speedHandicap, maxSpeed, blockBreakLimit, jumpLimit));
+				NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(speedHandicap, maxSpeed, blockBreakLimit, jumpLimit, Minecraft.getMinecraft().player.getUniqueID()));
 			}
 		}
 	}
 
-	public static void syncCultivationFromConfigToClient () {
-		Minecraft.getMinecraft().addScheduledTask(new Runnable() {
-			@Override
-			public void run() {
-				ICultivation cultivation = Minecraft.getMinecraft().player.getCapability(CultivationProvider.CULTIVATION_CAP, null);
-				if(cultivation != null) {
-					cultivation.setSpeedHandicap(WuxiaCraftConfig.speedHandicap);
-					cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
-					cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
-					cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);
-				}
-			}
+	@SideOnly(Side.CLIENT)
+	public static void syncCultivationFromConfigToClient() {
+		Minecraft.getMinecraft().addScheduledTask(() -> {
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
+			cultivation.setSpeedHandicap(WuxiaCraftConfig.speedHandicap);
+			cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
+			cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
+			cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);
 		});
 	}
 }

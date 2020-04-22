@@ -8,6 +8,7 @@ import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import io.netty.buffer.ByteBuf;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
@@ -25,6 +26,8 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public abstract class EntityCultivator extends EntityCreature implements IEntityAdditionalSpawnData {
 
 	private static final String MOB_ARMOR_MOD_NAME = "wuxiacraft.mob.armor";
@@ -33,8 +36,8 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	private static final String MOB_M_SPEED_MOD_NAME = "wuxiacraft.mob.movement_speed";
 	private static final String MOB_A_SPEED_MOD_NAME = "wuxiacraft.mob.attack_speed";
 
-	protected ICultivation cultivation;
-	protected ISkillCap skillCap;
+	protected final ICultivation cultivation;
+	protected final ISkillCap skillCap;
 
 	public EntityCultivator(World worldIn) {
 		super(worldIn);
@@ -166,7 +169,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	@Override
 	public void onEntityUpdate() {
 		super.onEntityUpdate();
-		this.cultivation.addEnergy(cultivation.getMaxEnergy()*0.0005f);
+		this.cultivation.addEnergy(cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel())*0.0005f);
 		if (skillCap.getCooldown() >= 0) {
 			skillCap.stepCooldown(-1f);
 		}

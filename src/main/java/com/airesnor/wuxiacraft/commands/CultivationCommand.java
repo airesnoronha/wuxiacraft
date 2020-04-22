@@ -21,6 +21,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class CultivationCommand extends CommandBase {
 
 	@Override
@@ -45,7 +46,6 @@ public class CultivationCommand extends CommandBase {
 	}
 
 	@Override
-	@ParametersAreNonnullByDefault
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		if (sender instanceof EntityPlayerMP) {
 			EntityPlayerMP player = getCommandSenderAsPlayer(sender);
@@ -76,18 +76,33 @@ public class CultivationCommand extends CommandBase {
 							wrongUsage = true;
 						} else {
 							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(target);
-							String message = String.format("You are at %s", cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
-							TextComponentString text = new TextComponentString(message);
-							sender.sendMessage(text);
-							message = String.format("Progress: %d/%d", (int) cultivation.getCurrentProgress(), (int) cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
-							text = new TextComponentString(message);
-							sender.sendMessage(text);
-							message = String.format("Energy: %d/%d", (int) cultivation.getEnergy(), (int) cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()));
-							text = new TextComponentString(message);
-							sender.sendMessage(text);
-							message = String.format("Speed: %d/%d%%", (int) cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()), cultivation.getSpeedHandicap());
-							text = new TextComponentString(message);
-							sender.sendMessage(text);
+							if (target.getUniqueID().equals(player.getUniqueID())) {
+								String message = String.format("You are at %s", cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
+								TextComponentString text = new TextComponentString(message);
+								sender.sendMessage(text);
+								message = String.format("Progress: %d/%d", (int) cultivation.getCurrentProgress(), (int) cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
+								text = new TextComponentString(message);
+								sender.sendMessage(text);
+								message = String.format("Energy: %d/%d", (int) cultivation.getEnergy(), (int) cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()));
+								text = new TextComponentString(message);
+								sender.sendMessage(text);
+								message = String.format("Speed: %d/%d%%", (int) cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()), cultivation.getSpeedHandicap());
+								text = new TextComponentString(message);
+								sender.sendMessage(text);
+							} else {
+								String message = String.format("%s is at %s", target.getName(), cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
+								TextComponentString text = new TextComponentString(message);
+								sender.sendMessage(text);
+								message = String.format("Progress: %d/%d", (int) cultivation.getCurrentProgress(), (int) cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
+								text = new TextComponentString(message);
+								sender.sendMessage(text);
+								message = String.format("Energy: %d/%d", (int) cultivation.getEnergy(), (int) cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()));
+								text = new TextComponentString(message);
+								sender.sendMessage(text);
+								message = String.format("Speed: %d/%d%%", (int) cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()), cultivation.getSpeedHandicap());
+								text = new TextComponentString(message);
+								sender.sendMessage(text);
+							}
 							wrongUsage = false;
 						}
 					}
@@ -137,8 +152,13 @@ public class CultivationCommand extends CommandBase {
 								cultivation.setCurrentLevel(level);
 								cultivation.setCurrentSubLevel(subLevel);
 								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
-								TextComponentString text = new TextComponentString("You're now at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
-								sender.sendMessage(text);
+								if (targetPlayer.getUniqueID().equals(player.getUniqueID())) {
+									TextComponentString text = new TextComponentString("You're now at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
+									sender.sendMessage(text);
+								} else {
+									TextComponentString text = new TextComponentString(targetPlayer.getName() + " is now at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
+									sender.sendMessage(text);
+								}
 								wrongUsage = false;
 							} else {
 								TextComponentString text = new TextComponentString("Couldn't find level " + args[2]);
@@ -178,8 +198,13 @@ public class CultivationCommand extends CommandBase {
 									cultivation.setProgress(1);
 								}
 								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
-								TextComponentString text = new TextComponentString("You're now at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
-								sender.sendMessage(text);
+								if (targetPlayer.getUniqueID().equals(player.getUniqueID())) {
+									TextComponentString text = new TextComponentString("You're now at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
+									sender.sendMessage(text);
+								} else {
+									TextComponentString text = new TextComponentString(targetPlayer.getName() + " is now at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
+									sender.sendMessage(text);
+								}
 								wrongUsage = false;
 							} else {
 								TextComponentString text = new TextComponentString("Couldn't find level " + args[2]);

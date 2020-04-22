@@ -7,7 +7,9 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
 public class RenderWanderingCultivator<T extends WanderingCultivator> extends RenderBiped<T> {
 
 	private static final ResourceLocation WANDERING_CULTIVATOR_TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/entities/wandering_cultivator.png");

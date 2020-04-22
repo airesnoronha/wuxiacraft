@@ -26,16 +26,18 @@ public class CultivationGui extends GuiScreen {
 
 	private static final ResourceLocation gui_texture = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/cult_gui.png");
 
-	private int xSize = 200;
-	private int ySize = 133;
+	private final int xSize = 200;
+	private final int ySize = 133;
 	private int guiTop = 0;
 	private int guiLeft = 0;
 
-	private ICultivation cultivation;
-	private ICultTech cultTech;
+	private final ICultivation cultivation;
+	private final ICultTech cultTech;
+	private final EntityPlayer player;
 	private int offset = 0;
 
 	public CultivationGui(EntityPlayer player) {
+		this.player = player;
 		this.cultivation = CultivationUtils.getCultivationFromEntity(player);
 		this.cultTech = CultivationUtils.getCultTechFromEntity(player);
 	}
@@ -77,7 +79,7 @@ public class CultivationGui extends GuiScreen {
 		}
 		if (inBounds(mouseX, mouseY, this.guiLeft + 148, this.guiTop + 23, 9, 9)) {
 			cultivation.setSuppress(!cultivation.getSuppress());
-			NetworkWrapper.INSTANCE.sendToServer(new SuppressCultivationMessage(cultivation.getSuppress()));
+			NetworkWrapper.INSTANCE.sendToServer(new SuppressCultivationMessage(cultivation.getSuppress(), player.getUniqueID()));
 		}
 		if (inBounds(mouseX, mouseY, this.guiLeft + 156, this.guiTop + 106, 9, 9)) {
 			this.offset = Math.min(this.cultTech.getKnownTechniques().size() - 5, this.offset + 1);
@@ -85,7 +87,7 @@ public class CultivationGui extends GuiScreen {
 		for (int i = 0; i < Math.min(5, this.cultTech.getKnownTechniques().size()); i++) {
 			if (inBounds(mouseX, mouseY, this.guiLeft + 8, this.guiTop + 35 + 4 + i * 16, 9, 9)) {
 				int index = this.cultTech.getKnownTechniques().size() > 5 ? offset + i : i;
-				NetworkWrapper.INSTANCE.sendToServer(new RemoveTechniqueMessage(cultTech.getKnownTechniques().get(index).getTechnique()));
+				NetworkWrapper.INSTANCE.sendToServer(new RemoveTechniqueMessage(cultTech.getKnownTechniques().get(index).getTechnique(), player.getUniqueID()));
 				cultTech.getKnownTechniques().remove(index);
 			}
 		}
@@ -134,21 +136,19 @@ public class CultivationGui extends GuiScreen {
 		int pos = 0;
 		for (KnownTechnique t : drawing) {
 			int progressFill = 0;
-			if (t.getProgress() > t.getTechnique().getTier().smallProgress) {
+
+			if(t.getProgress() >= t.getTechnique().getTier().perfectionProgress + t.getTechnique().getTier().greatProgress + t.getTechnique().getTier().smallProgress) {
+				progressFill += 139;
+			} else if(t.getProgress() > t.getTechnique().getTier().greatProgress + t.getTechnique().getTier().smallProgress) {
+				progressFill += 93; // 47+46
+				progressFill += (int) ((t.getProgress() - t.getTechnique().getTier().greatProgress - t.getTechnique().getTier().smallProgress) * 45 / t.getTechnique().getTier().perfectionProgress);
+			} else if (t.getProgress() > t.getTechnique().getTier().smallProgress) {
 				progressFill += 46;
+				progressFill += (int) ((t.getProgress() - t.getTechnique().getTier().smallProgress) * 47 / t.getTechnique().getTier().greatProgress);
 			} else {
 				progressFill += (int) ((t.getProgress() * 46f) / t.getTechnique().getTier().smallProgress);
 			}
-			if (t.getProgress() > t.getTechnique().getTier().greatProgress + t.getTechnique().getTier().smallProgress) {
-				progressFill += 47;
-			} else {
-				progressFill += (int) ((t.getProgress() - t.getTechnique().getTier().smallProgress) * 47 / t.getTechnique().getTier().greatProgress);
-			}
-			if (t.getProgress() > t.getTechnique().getTier().perfectionProgress + t.getTechnique().getTier().greatProgress + t.getTechnique().getTier().smallProgress) {
-				progressFill += 46;
-			} else {
-				progressFill += (int) ((t.getProgress() - t.getTechnique().getTier().greatProgress - t.getTechnique().getTier().smallProgress) * 45 / t.getTechnique().getTier().perfectionProgress);
-			}
+
 			drawTexturedModalRect(this.guiLeft + 19, this.guiTop + 35 + pos * 16 + 11, 0, 136, 139, 3);
 			drawTexturedModalRect(this.guiLeft + 19, this.guiTop + 35 + pos * 16 + 11, 0, 139, progressFill, 3);
 			drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 35 + pos * 16 + 4, 45, 142, 9, 9);
@@ -267,7 +267,7 @@ public class CultivationGui extends GuiScreen {
 			int index = this.cultTech.getKnownTechniques().size() > 5 ? offset + i : i;
 			if (inBounds(mouseX, mouseY, this.guiLeft + 19, this.guiTop + 35 + i * 16 + 11, 139, 3)) {
 				String line = "No success";
-				if (this.cultTech.getKnownTechniques().get(index).getProgress() > this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().smallProgress +
+				if (this.cultTech.getKnownTechniques().get(index).getProgress() >= this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().smallProgress +
 						this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().greatProgress +
 						this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().perfectionProgress)
 					line = "Perfection success";
@@ -371,7 +371,7 @@ public class CultivationGui extends GuiScreen {
 		}
 		WuxiaCraftConfig.syncFromFields();
 		WuxiaCraftConfig.syncCultivationFromConfigToClient();
-		NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit));
+		NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit, player.getUniqueID()));
 	}
 
 

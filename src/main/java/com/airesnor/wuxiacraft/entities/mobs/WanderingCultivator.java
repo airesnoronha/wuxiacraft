@@ -5,6 +5,7 @@ import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.entities.ai.EntityAIReleaseSkills;
 import com.airesnor.wuxiacraft.utils.MathUtils;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.IMob;
@@ -13,7 +14,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class WanderingCultivator extends EntityCultivator implements IMob {
 
 	private static final ResourceLocation DROP_TABLE_1 = new ResourceLocation(WuxiaCraft.MOD_ID, "entities/wandering_cultivator_l1");

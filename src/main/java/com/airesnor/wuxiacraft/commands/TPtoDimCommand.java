@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.commands;
 
 import com.airesnor.wuxiacraft.utils.TeleportationUtil;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -16,6 +17,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class TPtoDimCommand extends CommandBase {
 
     public TPtoDimCommand() {
@@ -29,10 +32,8 @@ public class TPtoDimCommand extends CommandBase {
     }
 
     @Override
-    @ParametersAreNonnullByDefault
-    @Nonnull
     public String getUsage(ICommandSender sender) {
-        return "/tptodim <dimensionID> or /tptodim <dimensionID> <x> <y> <z> or /tptodim <x> <y> <z>";
+        return "/tptodim <dimensionID> or /tptodim <player> <player>";
     }
 
     @Override
@@ -52,44 +53,59 @@ public class TPtoDimCommand extends CommandBase {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if(sender instanceof EntityPlayerMP) {
             EntityPlayerMP playerMP = (EntityPlayerMP) sender;
-            if(!playerMP.world.isRemote) {
-                boolean wrongUsage = true;
-                if(args.length == 1) {
-                    String dimension = args[0];
-                    int dimensionID;
-                    if (dimension.equalsIgnoreCase("nether")) {
-                        dimensionID = -1;
-                    } else if(dimension.equalsIgnoreCase("overworld")) {
-                        dimensionID = 0;
-                    } else if(dimension.equalsIgnoreCase("end")) {
-                        dimensionID = 1;
-                    } else {
-                        dimensionID = Integer.parseInt(dimension);
-                    }
+                if (!playerMP.world.isRemote) {
+                    boolean wrongUsage = false;
+                    if (args.length == 1) {
+                        String dimension = args[0];
+                        int dimensionID;
+                        if (dimension.equalsIgnoreCase("nether")) {
+                            dimensionID = -1;
+                        } else if (dimension.equalsIgnoreCase("overworld")) {
+                            dimensionID = 0;
+                        } else if (dimension.equalsIgnoreCase("end")) {
+                            dimensionID = 1;
+                        } else {
+                            dimensionID = Integer.parseInt(dimension);
+                        }
 
-                    if (dimensionID == 1) {
-                        TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) sender, dimensionID,
-                                100,  60, 0, 0f, 0f);
+                        if (dimensionID == 1) {
+                            TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) sender, dimensionID,
+                                    100, 60, 0, 0f, 0f);
+                        } else {
+                            TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) sender, dimensionID,
+                                    sender.getPosition().getX(), sender.getPosition().getY() + 20, sender.getPosition().getZ(),
+                                    0f, 0f);
+                        }
+                        wrongUsage = false;
+                    } else if (args.length == 3) {
+                        EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
+                        EntityPlayerMP initialPlayer = server.getPlayerList().getPlayerByUsername(args[0]);
+                        if(targetPlayer != null && initialPlayer != null) {
+                            int dimensionID = 0;
+                            try {
+                                dimensionID = targetPlayer.world.provider.getDimension();
+                            } catch (NullPointerException e) {
+                                TextComponentString text = new TextComponentString("Target Player is not in a known dimension!");
+                                text.getStyle().setColor(TextFormatting.RED);
+                                sender.sendMessage(text);
+                            }
+                            TeleportationUtil.teleportPlayerToPlayer(initialPlayer, targetPlayer, dimensionID,
+                                    targetPlayer.getPosition().getX(), targetPlayer.getPosition().getY(), targetPlayer.getPosition().getZ(), 0f, 0f);
+                            wrongUsage = false;
+                        }
                     } else {
-                        TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) sender, dimensionID,
-                                sender.getPosition().getX(),  sender.getPosition().getY() + 20, sender.getPosition().getZ(),
-                                0f, 0f);
+                        wrongUsage = true;
                     }
-                    wrongUsage = false;
-                } else {
-                    wrongUsage = true;
+                    if (wrongUsage) {
+                        TextComponentString text = new TextComponentString("Invalid arguments, use /tptodim <dimension> or /tptodim <player> <player>");
+                        text.getStyle().setColor(TextFormatting.RED);
+                        sender.sendMessage(text);
+                    }
                 }
-                if (wrongUsage) {
-                    TextComponentString text = new TextComponentString("Invalid arguments, use /tptodim <dimension>");
-                    text.getStyle().setColor(TextFormatting.RED);
-                    sender.sendMessage(text);
-                }
-            }
         }else throw new CommandException("Not used correctly!");
     }
 
     @Override
-    @Nonnull
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         List<String> completions = new ArrayList<>();
         if (args.length == 1) {

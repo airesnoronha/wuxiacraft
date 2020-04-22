@@ -10,6 +10,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class SwordBeamThrowable extends EntityThrowable {
 
 	private float damage;
@@ -19,6 +22,7 @@ public class SwordBeamThrowable extends EntityThrowable {
 
 	private EntityLivingBase owner;
 
+	@SuppressWarnings("unused")
 	public SwordBeamThrowable(World worldIn) {
 		super(worldIn);
 	}

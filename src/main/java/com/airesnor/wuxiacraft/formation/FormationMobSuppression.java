@@ -21,20 +21,20 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FormationMobSuppression extends Formation {
 
 	private ResourceLocation displayFormation = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/formations/weak_mob_suppression_formation.png");
 
-	private float strength;
+	private final float strength;
 
 	public FormationMobSuppression(String name, double cost, double activationCost, double range, float strength) {
 		super(name, cost, activationCost, range);
 		this.strength = strength;
 	}
 
+	@SuppressWarnings("unused")
 	public FormationMobSuppression setDisplayFormation(ResourceLocation newTexture) {
 		this.displayFormation = newTexture;
 		return this;

@@ -3,7 +3,6 @@ package com.airesnor.wuxiacraft.handlers;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.alchemy.Recipe;
 import com.airesnor.wuxiacraft.blocks.Cauldron;
-import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
@@ -36,10 +35,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 @Mod.EventBusSubscriber
@@ -58,7 +54,7 @@ public class RendererHandler {
 		public static class RenderElement {
 			private float duration; //in ticks
 			private float prevPartialTicks;
-			private Callable<Void> rendering;
+			private final Callable<Void> rendering;
 
 			public RenderElement(float duration, Callable<Void> rendering) {
 				this.duration = duration;
@@ -79,7 +75,7 @@ public class RendererHandler {
 			}
 		}
 
-		private List<RenderElement> drawingQueue;
+		private final List<RenderElement> drawingQueue;
 
 		public void renderQueue(float partialTicks) {
 			List<RenderElement> toRemove = new ArrayList<>();
@@ -104,10 +100,10 @@ public class RendererHandler {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static WorldRenderQueue worldRenderQueue = new WorldRenderQueue();
+	public static final WorldRenderQueue worldRenderQueue = new WorldRenderQueue();
 
 	@SideOnly(Side.CLIENT)
-	public static Map<String, ICultivation> knownCultivations = new HashMap<>();
+	public static final Map<UUID, ICultivation> knownCultivations = new HashMap<>();
 
 	@SideOnly(Side.CLIENT)
 	private static int animationStep = 0;
@@ -148,9 +144,9 @@ public class RendererHandler {
 	public void onDescribeCultivationLevel(RenderLivingEvent.Specials.Post e) {
 		if (e.getEntity() instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) e.getEntity();
-			String name = player.getName();
-			if (knownCultivations.containsKey(name)) {
-				ICultivation cultivation = knownCultivations.get(name);
+			UUID uuid = player.getUniqueID();
+			if (knownCultivations.containsKey(uuid)) {
+				ICultivation cultivation = knownCultivations.get(uuid);
 				Minecraft mc = Minecraft.getMinecraft();
 				boolean sneaking = player.isSneaking();
 				boolean thirdPerson = mc.getRenderManager().options.thirdPersonView == 2;
@@ -164,9 +160,15 @@ public class RendererHandler {
 		}
 		else if (e.getEntity() instanceof WanderingCultivator) {
 			WanderingCultivator cultivator = (WanderingCultivator) e.getEntity();
+			ICultivation playerCultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
 			ICultivation cultivation = new Cultivation();
-			cultivation.setCurrentLevel(cultivator.getCultivationLevel());
-			cultivation.setCurrentSubLevel(cultivator.getCultivationSubLevel());
+			if(cultivator.getCultivationLevel().greaterThan(playerCultivation.getCurrentLevel())) {
+				cultivation.setCurrentLevel(playerCultivation.getCurrentLevel().getNextLevel());
+				cultivation.setCurrentSubLevel(-1);
+			} else {
+				cultivation.setCurrentLevel(cultivator.getCultivationLevel());
+				cultivation.setCurrentSubLevel(cultivator.getCultivationSubLevel());
+			}
 			Minecraft mc = Minecraft.getMinecraft();
 			boolean sneaking = cultivator.isSneaking();
 			boolean thirdPerson = mc.getRenderManager().options.thirdPersonView == 2;
@@ -185,6 +187,7 @@ public class RendererHandler {
 		worldRenderQueue.renderQueue(event.getPartialTicks());
 	}
 
+	@SuppressWarnings("unused")
 	public static void enableBoxRendering() {
 		GlStateManager.disableTexture2D();
 		GlStateManager.disableDepth();
@@ -194,6 +197,7 @@ public class RendererHandler {
 		GlStateManager.glLineWidth(2f);
 	}
 
+	@SuppressWarnings("unused")
 	public static void disableBoxRendering() {
 		GlStateManager.disableBlend();
 		GlStateManager.enableDepth();
@@ -310,19 +314,21 @@ public class RendererHandler {
 		int y = res.getScaledHeight() - 40;
 		List<Skill> totalKnown = skillCap.getTotalKnowSkill(cultTech);
 		for (int i = 0; i < skillCap.getSelectedSkills().size(); i++) {
-			Skill skill = totalKnown.get(MathUtils.clamp(skillCap.getSelectedSkills().get(i), 0, totalKnown.size()-1));
-			if (i == skillCap.getActiveSkill()) {
-				mc.renderEngine.bindTexture(skills_bg);
-				drawTexturedRect(x, y - h - (20 + animationStep), 20, 20 + animationStep);
-				mc.renderEngine.bindTexture(SkillsGui.skillIcons.get(skill.getUName()));
-				drawTexturedRect(x + 2 - animationStep + animationStep / 10, y - h - 18 - (animationStep) + animationStep / 10, 16 + animationStep * 4 / 5, 16 + animationStep * 4 / 5);
-				h += 20 + animationStep;
-			} else {
-				mc.renderEngine.bindTexture(skills_bg);
-				drawTexturedRect(x, y - h - 20, 20, 20);
-				mc.renderEngine.bindTexture(SkillsGui.skillIcons.get(skill.getUName()));
-				drawTexturedRect(x + 2, y - h - 18, 16, 16);
-				h += 20;
+			if(totalKnown.size() > 0 && MathUtils.between(skillCap.getSelectedSkills().get(i), 0, totalKnown.size())) { // this way won't select unwanted skills
+				Skill skill = totalKnown.get(MathUtils.clamp(skillCap.getSelectedSkills().get(i), 0, totalKnown.size() - 1));
+				if (i == skillCap.getActiveSkill()) {
+					mc.renderEngine.bindTexture(skills_bg);
+					drawTexturedRect(x, y - h - (20 + animationStep), 20, 20 + animationStep);
+					mc.renderEngine.bindTexture(SkillsGui.skillIcons.get(skill.getUName()));
+					drawTexturedRect(x + 2 - animationStep + animationStep / 10, y - h - 18 - (animationStep) + animationStep / 10, 16 + animationStep * 4 / 5, 16 + animationStep * 4 / 5);
+					h += 20 + animationStep;
+				} else {
+					mc.renderEngine.bindTexture(skills_bg);
+					drawTexturedRect(x, y - h - 20, 20, 20);
+					mc.renderEngine.bindTexture(SkillsGui.skillIcons.get(skill.getUName()));
+					drawTexturedRect(x + 2, y - h - 18, 16, 16);
+					h += 20;
+				}
 			}
 		}
 		GlStateManager.popMatrix();

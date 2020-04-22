@@ -1,9 +1,9 @@
 package com.airesnor.wuxiacraft.commands;
 
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -17,6 +17,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class CultHelpCommand extends CommandBase {
 
     public CultHelpCommand() { super(); }
@@ -45,7 +47,6 @@ public class CultHelpCommand extends CommandBase {
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) { return true; }
 
     @Override
-    @ParametersAreNonnullByDefault
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (args.length == 0) {
             if (sender instanceof EntityPlayerMP) {

@@ -6,8 +6,10 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Random;
 
+@ParametersAreNonnullByDefault
 public class NaturalOddityOre extends BlockBase {
 	public NaturalOddityOre(String name) {
 		super(name, Material.ROCK);

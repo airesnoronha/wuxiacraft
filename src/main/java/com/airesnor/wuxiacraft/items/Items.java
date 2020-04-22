@@ -24,12 +24,6 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public class Items {
 
-	private static final Field foodStats = ReflectionHelper.findField(FoodStats.class, "foodSaturationLevel", "field_75125_b");
-
-	static {
-		foodStats.setAccessible(true);
-	}
-
 	/**
 	 * Contains all the items to be registered
 	 */
@@ -70,7 +64,7 @@ public class Items {
 	public static final Item NATURAL_ODDITY_LOW = new ItemMonsterCore("natural_oddity_low").setUseDuration(100)
 			.setWhenUsing(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.56874F, false, true);
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.56874F, false, false, true);
 				return true;
 			})
 			.setMaxStackSize(64).setCreativeTab(WUXIACRAFT_GENERAL);
@@ -122,20 +116,10 @@ public class Items {
 			.addEffect(new PotionEffect(MobEffects.RESISTANCE, 20 * 60 * 2, 1, false, true));
 	public static final Item FISH_SOUL_PILL = new ItemEffectPill("fish_soul_pill", 5f)
 			.addEffect(new PotionEffect(MobEffects.WATER_BREATHING, 20 * 60 * 5, 0, true, true));
-	public static final Item MINOR_FASTING_PILL = new ItemSkillPill("minor_fasting_pill", 5f)
-			.setAction(actor -> {
-				if(actor instanceof EntityPlayer) {
-					EntityPlayer player = (EntityPlayer)actor;
-					player.getFoodStats().setFoodLevel(20);
-					try {
-						foodStats.setFloat(player.getFoodStats(), 50f);
-					} catch (Exception e) {
-						WuxiaCraft.logger.error("Couldn't help with food, sorry!");
-						e.printStackTrace();
-					}
-					return true;
-				} else return false;
-			});
+	public static final Item MINOR_FASTING_PILL = new ItemFastingPill("minor_fasting_pill", 25f);
+	public static final Item LESSER_FASTING_PILL = new ItemFastingPill("lesser_fasting_pill", 50f);
+	public static final Item SMALLER_FASTING_PILL = new ItemFastingPill("smaller_fasting_pill", 100f);
+	public static final Item SMALL_FASTING_PILL = new ItemFastingPill("small_fasting_pill", 200f);
 
 	//Scrolls
 	public static final Item BODY_STRENGTH_SCROLL = new ItemScroll(Techniques.BODY_STRENGTH);
@@ -159,7 +143,7 @@ public class Items {
 	public static final Item GIANT_ANT_CORE = new ItemMonsterCore("giant_ant_core").setUseDuration(100)
 			.setWhenUsing(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.45786f, false, true);
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.45786f, false, false, true);
 				return true;
 			})
 			.setUseAction(actor -> {
@@ -172,7 +156,7 @@ public class Items {
 	public static final Item GIANT_BEE_CORE = new ItemMonsterCore("giant_bee_core").setUseDuration(80)
 			.setWhenUsing(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.45786f, false, true);
+				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.45786f, false, false, true);
 				return true;
 			})
 			.setUseAction(actor -> {
@@ -211,7 +195,7 @@ public class Items {
 	public static final Item GOLD_DAGGER = new ItemDagger("gold_dagger");
 	public static final Item BLOOD_BOTTLE = new ItemBloodContainer("blood_bottle");
 	public static final Item EMPTY_BOTTLE = new ItemBase("empty_bottle").setMaxStackSize(16);
-	public static final Item PAINT_BOTTLE = new ItemBase("paint_bottle").setMaxStackSize(1).setMaxDamage(50);
+	public static final Item PAINT_BOTTLE = new ItemBase("paint_bottle").setMaxStackSize(1).setMaxDamage(100);
 
 	//Training posts
 	public static final Map<String, Item> TRAINING_POSTS = new HashMap<>();

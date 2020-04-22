@@ -22,12 +22,15 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.WorldServer;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+@ParametersAreNonnullByDefault
 public class CauldronTileEntity extends TileEntity implements ITickable {
 
 	private boolean hasFirewood;
@@ -48,9 +51,11 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 
 	private Recipe activeRecipe;
 
-	private List<Pair<Float, Item>> recipeInputs;
+	private final List<Pair<Float, Item>> recipeInputs;
 
 	private EnumCauldronState cauldronState;
+
+	private long ticksAlive;
 
 	public CauldronTileEntity() {
 		this.hasFirewood = false;
@@ -66,6 +71,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 		this.cookTime = 0;
 		this.burningTime = 0;
 		this.activeRecipe = null;
+		this.ticksAlive = 0;
 	}
 
 	public Recipe getActiveRecipe() {
@@ -88,6 +94,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 		return maxTemperature;
 	}
 
+	@SuppressWarnings("unused")
 	public CauldronTileEntity setMaxTemperature(float maxTemperature) {
 		this.maxTemperature = maxTemperature;
 		return this;
@@ -143,6 +150,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 		}
 	}
 
+	@Nonnull
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
@@ -175,6 +183,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 	}
 
 	@Override
+	@Nonnull
 	public NBTTagCompound getUpdateTag() {
 		return writeToNBT(new NBTTagCompound());
 	}
@@ -187,69 +196,77 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 	@Override
 	public void update() {
 		if (isLit()) {
-			int light = Math.min(15, Math.max(world.getLight(getPos()), (int) this.burnSpeed));
-			world.setLightFor(EnumSkyBlock.BLOCK, getPos(), light);
+			if(ticksAlive % 20 == 0) {
+				int light = Math.min(15, Math.max(world.getLight(getPos()), (int) this.burnSpeed));
+				world.setLightFor(EnumSkyBlock.BLOCK, getPos(), light);
+			}
 			this.timeLit -= this.burnSpeed;
 			this.temperature += this.burnSpeed;
 			this.burnSpeed = Math.max(0.4f, this.burnSpeed - 0.03f);
 			if (this.timeLit < 0) {
 				this.resetBurnSettings();
 			}
-			if (!world.isRemote) {
-				Random rand = new Random();
-				int qty = (int) (2f * this.burnSpeed);
-				for (int i = 0; i < qty; i++) {
-					float x = getPos().getX() + 0.5f + (2 * rand.nextFloat() - 1f) * 0.3f;
-					float z = getPos().getZ() + 0.5f + (2 * rand.nextFloat() - 1f) * 0.3f;
-					float y = getPos().getY();
-					SpawnParticleMessage spm = new SpawnParticleMessage(EnumParticleTypes.FLAME, false, x, y, z, 0, 0.01f, 0, 0);
-					SkillUtils.sendMessageWithinRange((WorldServer) world, getPos(), 16, spm);
+			if (world.isRemote) {
+				if(this.ticksAlive % 5 == 0) {
+					Random rand = new Random();
+					int qty = (int) (2f * this.burnSpeed);
+					for (int i = 0; i < qty; i++) {
+						float x = getPos().getX() + 0.5f + (2 * rand.nextFloat() - 1f) * 0.3f;
+						float z = getPos().getZ() + 0.5f + (2 * rand.nextFloat() - 1f) * 0.3f;
+						float y = getPos().getY();
+						this.world.spawnParticle(EnumParticleTypes.FLAME, false, x,y,z, 0,0.01f,0,0);
+					}
 				}
 			}
 		} else {
-			world.setLightFor(EnumSkyBlock.BLOCK, getPos(), 0);
+			if(this.ticksAlive % 20 == 0 ) {
+				world.setLightFor(EnumSkyBlock.BLOCK, getPos(), 0);
+			}
 		}
 		setTemperature(this.temperature * 0.995f);
-		checkLightAround();
 
 		this.activeRecipe = null;
 
-		if (!this.recipeInputs.isEmpty()) {
-			this.setHasWater(true);
-			List<Recipe> candidates = Recipes.getRecipeCandidatesByInput(recipeInputs);
-			if (!candidates.isEmpty()) {
-				Recipe definitive = Recipes.getDefinitiveRecipe(recipeInputs, candidates);
-				if (definitive != null) {
-					this.activeRecipe = definitive;
-					if (MathUtils.between(this.temperature, definitive.getCookTemperatureMin(), definitive.getCookTemperatureMax())) {
-						this.cookTime++;
-						this.cauldronState = EnumCauldronState.COOKING;
-						if (this.cookTime >= definitive.getCookTime()) {
-							emptyCauldron();
-							spawnRecipeOutput(definitive);
+		if(this.ticksAlive% 20 == 0) {
+			checkLightAround();
+			if (!this.recipeInputs.isEmpty()) {
+				this.setHasWater(true);
+				List<Recipe> candidates = Recipes.getRecipeCandidatesByInput(recipeInputs);
+				if (!candidates.isEmpty()) {
+					Recipe definitive = Recipes.getDefinitiveRecipe(recipeInputs, candidates);
+					if (definitive != null) {
+						this.activeRecipe = definitive;
+						if (MathUtils.between(this.temperature, definitive.getCookTemperatureMin(), definitive.getCookTemperatureMax())) {
+							this.cookTime++;
+							this.cauldronState = EnumCauldronState.COOKING;
+							if (this.cookTime >= definitive.getCookTime()) {
+								emptyCauldron();
+								spawnRecipeOutput(definitive);
+							}
+						} else if (this.temperature < definitive.getCookTemperatureMin()) {
+							this.cauldronState = EnumCauldronState.COOLING;
+						} else if (this.temperature > definitive.getCookTemperatureMax()) {
+							this.cauldronState = EnumCauldronState.BURNING;
+							this.burningTime++;
 						}
-					} else if (this.temperature < definitive.getCookTemperatureMin()) {
-						this.cauldronState = EnumCauldronState.COOLING;
-					} else if (this.temperature > definitive.getCookTemperatureMax()) {
-						this.cauldronState = EnumCauldronState.BURNING;
-						this.burningTime++;
+					} else {
+						this.cauldronState = EnumCauldronState.HAS_RECIPE;
 					}
 				} else {
-					this.cauldronState = EnumCauldronState.HAS_RECIPE;
+					this.cauldronState = EnumCauldronState.WRONG_RECIPE;
+					if (this.temperature > 0.4f * maxTemperature) {
+						this.burningTime++;
+					}
 				}
 			} else {
-				this.cauldronState = EnumCauldronState.WRONG_RECIPE;
-				if (this.temperature > 0.4f * maxTemperature) {
-					this.burningTime++;
-				}
+				this.setHasWater(false);
+				this.cauldronState = EnumCauldronState.EMPTY;
 			}
-		} else {
-			this.setHasWater(false);
-			this.cauldronState = EnumCauldronState.EMPTY;
 		}
-		if (this.burningTime > 20 * 15) {
+		if (this.burningTime > 15) {
 			this.explode();
 		}
+		ticksAlive++;
 	}
 
 	public void wiggleFan(float strength, float maxFanStrength) {
@@ -344,7 +361,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 		WRONG_RECIPE(1f, 0.15f, 0.15f),
 		EMPTY(1f, 1f, 1f);
 
-		private Color color;
+		private final Color color;
 
 		EnumCauldronState(float r, float g, float b) {
 			this.color = new Color(r, g, b);

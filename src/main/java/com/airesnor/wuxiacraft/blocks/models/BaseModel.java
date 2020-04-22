@@ -3,6 +3,7 @@ package com.airesnor.wuxiacraft.blocks.models;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.OBJBlockModelLoader;
 import com.google.common.collect.ImmutableMap;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -14,13 +15,16 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.common.model.IModelState;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class BaseModel implements IModel {
 
-	private ModelResourceLocation modelLocation;
+	private final ModelResourceLocation modelLocation;
 
 	public BaseModel(String ModelName) {
 		this.modelLocation = new ModelResourceLocation(WuxiaCraft.MOD_ID + ":models/block/" + ModelName + ".obj");
@@ -34,8 +38,7 @@ public class BaseModel implements IModel {
 			builder.put(ModelLoader.White.LOCATION.toString(), ModelLoader.White.INSTANCE);
 
 			IModel preModel = OBJBlockModelLoader.INSTANCE.parseOBJ(modelLocation);
-			BaseBakedModel model = new BaseBakedModel(preModel.bake(state, format, bakedTextureGetter));
-			return model;
+			return new BaseBakedModel(preModel.bake(state, format, bakedTextureGetter));
 		} catch (Exception e) {
 			System.err.println("Obj .bake() failed due to exception:" + e);
 			return ModelLoaderRegistry.getMissingModel().bake(state, format, bakedTextureGetter);

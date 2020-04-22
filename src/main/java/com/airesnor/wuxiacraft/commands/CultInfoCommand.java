@@ -15,6 +15,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class CultInfoCommand extends CommandBase {
 
 	public CultInfoCommand() {
@@ -44,7 +45,6 @@ public class CultInfoCommand extends CommandBase {
 	}
 
 	@Override
-	@ParametersAreNonnullByDefault
 	@Nonnull
 	public String getUsage(ICommandSender sender) {
 		return "/cultinfo";
@@ -69,7 +69,6 @@ public class CultInfoCommand extends CommandBase {
 	}
 
 	@Override
-	@ParametersAreNonnullByDefault
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		if (args.length == 0) {
 			if(sender instanceof EntityPlayerMP) {

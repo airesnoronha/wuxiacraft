@@ -10,17 +10,18 @@ import java.util.Stack;
 
 public class SkillCap implements ISkillCap {
 
-	private List<Skill> knownSkills;
-	private Stack<BlockPos> toBreak;
+	private final List<Skill> knownSkills;
+	private final Stack<BlockPos> toBreak;
 	private float cooldown;
 	private float castProgress;
-	private List<Integer> SelectedSkills;
-	private int ActiveSkillIndex;
+	private final List<Integer> selectedSkills;
+	private int activeSkillIndex;
 	private boolean casting;
 	private boolean doneCasting;
 	private int barrageToRelease;
 	private int barrageReleased;
 	private float maxCooldown;
+	private boolean formationActivated;
 
 	public SkillCap() {
 		this.knownSkills = new ArrayList<>();
@@ -28,8 +29,8 @@ public class SkillCap implements ISkillCap {
 		this.cooldown = 0;
 		this.maxCooldown = 0;
 		this.castProgress = 0;
-		this.SelectedSkills = new ArrayList<>();
-		this.ActiveSkillIndex = -1;
+		this.selectedSkills = new ArrayList<>();
+		this.activeSkillIndex = -1;
 		this.casting = false;
 		this.doneCasting = false;
 		this.resetBarrageCounter();
@@ -110,28 +111,28 @@ public class SkillCap implements ISkillCap {
 
 	@Override
 	public List<Integer> getSelectedSkills() {
-		return this.SelectedSkills;
+		return this.selectedSkills;
 	}
 
 	@Override
 	public void addSelectedSkill(int skillIndex) {
 		if (skillIndex >= 0)
-			this.SelectedSkills.add(skillIndex);
+			this.selectedSkills.add(skillIndex);
 	}
 
 	@Override
 	public void remSelectedSkill(int skillIndex) {
-		this.SelectedSkills.remove(new Integer(skillIndex));
+		this.selectedSkills.remove(new Integer(skillIndex));
 	}
 
 	@Override
 	public int getActiveSkill() {
-		return this.ActiveSkillIndex;
+		return this.activeSkillIndex;
 	}
 
 	@Override
 	public void setActiveSkill(int i) {
-		this.ActiveSkillIndex = i;
+		this.activeSkillIndex = i;
 	}
 
 	@Override
@@ -203,8 +204,11 @@ public class SkillCap implements ISkillCap {
 		List<Skill> totalSkills = this.getTotalKnowSkill(techniques);
 		int selectedSkill = this.getActiveSkill(); //get index from selected list
 		selectedSkill = MathUtils.clamp(selectedSkill, 0, this.getSelectedSkills().size() - 1); //clamp to selected list
+		if(selectedSkill < 0) selectedSkill = 0;
+		if(this.getSelectedSkills().size() == 0) return null;
 		selectedSkill = MathUtils.clamp(this.getSelectedSkills().get(selectedSkill), 0, totalSkills.size() - 1); //get clamped from known skills
-		return !totalSkills.isEmpty() ? totalSkills.get(selectedSkill) : null;
+		if(selectedSkill < 0) selectedSkill = 0;
+		return !totalSkills.isEmpty() && !getSelectedSkills().isEmpty()? totalSkills.get(selectedSkill) : null;
 	}
 
 	@Override
@@ -213,5 +217,29 @@ public class SkillCap implements ISkillCap {
 		total.addAll(techniques.getTechniqueSkills());
 		total.addAll(this.getKnownSkills());
 		return total;
+	}
+
+	@Override
+	public void setFormationActivated(boolean activated) {
+		this.formationActivated = activated;
+	}
+
+	@Override
+	public boolean hasFormationActivated() {
+		return this.formationActivated;
+	}
+
+	@Override
+	public void copyFrom(ISkillCap skillCap, boolean shouldUpdateCDaCP) {
+		this.knownSkills.clear();
+		this.knownSkills.addAll(skillCap.getKnownSkills());
+		this.selectedSkills.clear();
+		this.selectedSkills.addAll(skillCap.getSelectedSkills());
+		this.setActiveSkill(skillCap.getActiveSkill());
+		if(shouldUpdateCDaCP) {
+			this.maxCooldown = skillCap.getMaxCooldown();
+			this.cooldown = skillCap.getCooldown();
+			this.castProgress = skillCap.getCastProgress();
+		}
 	}
 }

@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillAction;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
@@ -11,14 +12,15 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ItemSkillPill extends ItemBase {
 
 	private ISkillAction action;
 
-	private float amount;
+	private final float amount;
 
 	public ItemSkillPill(String name, float amount) {
 		super(name);
@@ -33,13 +35,11 @@ public class ItemSkillPill extends ItemBase {
 	}
 
 	@Override
-	@Nonnull
-	@ParametersAreNonnullByDefault
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		if (entityLiving instanceof EntityPlayer) {
 			if (this.action != null) {
 				if(this.amount <= entityLiving.getMaxHealth() * 0.4F) {
-					if (this.action.activate((EntityPlayer) entityLiving))
+					if (this.action.activate(entityLiving))
 						stack.shrink(1);
 				} else {
 					stack.shrink(1);
@@ -52,7 +52,6 @@ public class ItemSkillPill extends ItemBase {
 	}
 
 	@Override
-	@Nonnull
 	public EnumAction getItemUseAction(ItemStack stack) {
 		return EnumAction.EAT;
 	}
@@ -63,8 +62,6 @@ public class ItemSkillPill extends ItemBase {
 	}
 
 	@Override
-	@Nonnull
-	@ParametersAreNonnullByDefault
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		playerIn.setActiveHand(handIn);
 		return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));

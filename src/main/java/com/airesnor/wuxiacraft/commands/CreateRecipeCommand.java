@@ -4,8 +4,8 @@ import com.airesnor.wuxiacraft.alchemy.Recipe;
 import com.airesnor.wuxiacraft.alchemy.Recipes;
 import com.airesnor.wuxiacraft.items.ItemRecipe;
 import com.airesnor.wuxiacraft.items.Items;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -14,9 +14,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class CreateRecipeCommand extends CommandBase {
 
 	@Override
@@ -47,7 +50,7 @@ public class CreateRecipeCommand extends CommandBase {
 	}
 
 	@Override
-	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+	public void execute(MinecraftServer server, ICommandSender sender, String[] args){
 		if(!sender.getEntityWorld().isRemote) {
 			boolean wrongUsage = false;
 			if(args.length == 1) {

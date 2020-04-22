@@ -21,6 +21,7 @@ import net.minecraft.world.WorldServer;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
 public class FireThrowable extends EntityThrowable {
 
 	private EntityLivingBase owner;
@@ -31,6 +32,7 @@ public class FireThrowable extends EntityThrowable {
 
 	private int particles;
 
+	@SuppressWarnings("unused")
 	public FireThrowable(World worldIn) {
 		super(worldIn);
 	}

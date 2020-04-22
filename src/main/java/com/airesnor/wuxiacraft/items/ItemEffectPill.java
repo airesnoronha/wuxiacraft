@@ -1,8 +1,5 @@
 package com.airesnor.wuxiacraft.items;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
@@ -19,11 +16,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class ItemEffectPill extends ItemBase {
 
-	private List<PotionEffect> effects;
+	private final List<PotionEffect> effects;
 
-	private float amount;
+	private final float amount;
 
 	public ItemEffectPill(String name, float amount) {
 		super(name);
@@ -39,7 +37,6 @@ public class ItemEffectPill extends ItemBase {
 
 	@Override
 	@Nonnull
-	@ParametersAreNonnullByDefault
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		if (entityLiving instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) entityLiving;
@@ -71,7 +68,6 @@ public class ItemEffectPill extends ItemBase {
 
 	@Override
 	@Nonnull
-	@ParametersAreNonnullByDefault
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		playerIn.setActiveHand(handIn);
 		return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));

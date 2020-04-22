@@ -23,7 +23,7 @@ public class RenderGiantAnt<T extends GiantAnt> extends Render<T> {
 
 	private static Map<String, OBJModelLoader.Part>  GIANT_ANT_MODEL;
 
-	private Map<String, Vector3f> partRotations;
+	private final Map<String, Vector3f> partRotations;
 
 	public static void init() {
 		try {
@@ -71,9 +71,9 @@ public class RenderGiantAnt<T extends GiantAnt> extends Render<T> {
 	{
 		float f;
 
-		for (f = yawOffset - prevYawOffset; f < -180.0F; f += 360.0F)
-		{
-			;
+		f = yawOffset - prevYawOffset;
+		while (f < -180.0F) {
+			f += 360.0F;
 		}
 
 		while (f >= 180.0F)

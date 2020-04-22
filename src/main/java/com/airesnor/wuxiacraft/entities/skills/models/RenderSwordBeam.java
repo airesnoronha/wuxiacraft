@@ -12,8 +12,10 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.awt.*;
 
+@ParametersAreNonnullByDefault
 public class RenderSwordBeam<T extends SwordBeamThrowable> extends Render<T> {
 
 	public RenderSwordBeam(RenderManager renderManager) {

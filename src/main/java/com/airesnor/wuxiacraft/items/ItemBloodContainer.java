@@ -11,11 +11,12 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class ItemBloodContainer extends ItemBase {
 
 	public ItemBloodContainer(String item_name) {
 		super(item_name);
-		this.setMaxDamage(20);
+		this.setMaxDamage(35);
 		this.setMaxStackSize(1);
 	}
 

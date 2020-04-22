@@ -74,4 +74,9 @@ public interface ISkillCap {
 
 	Skill getSelectedSkill(ICultTech techniques);
 
+	void setFormationActivated(boolean activated);
+
+	boolean hasFormationActivated();
+
+	void copyFrom(ISkillCap skillCap, boolean shouldUpdateCDaCP);
 }

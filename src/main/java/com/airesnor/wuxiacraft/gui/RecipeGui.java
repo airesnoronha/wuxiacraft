@@ -18,8 +18,8 @@ public class RecipeGui extends GuiScreen {
 
 	private ItemStack itemRecipe = null;
 
-	private int xSize = 228;
-	private int ySize = 178;
+	private final int xSize = 228;
+	private final int ySize = 178;
 	private int guiTop = 0;
 	private int guiLeft = 0;
 

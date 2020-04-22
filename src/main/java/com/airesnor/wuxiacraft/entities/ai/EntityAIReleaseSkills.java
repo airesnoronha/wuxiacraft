@@ -12,12 +12,12 @@ import net.minecraft.world.World;
 
 public class EntityAIReleaseSkills extends EntityAIBase {
 
-	World world;
-	public EntityCultivator attacker;
-	public float maxAttackRange;
-	public float minAttackRange;
+	final World world;
+	public final EntityCultivator attacker;
+	public final float maxAttackRange;
+	public final float minAttackRange;
 	Skill selectedSkill;
-	private double optimalRange;
+	private final double optimalRange;
 
 	/**
 	 * The PathEntity of our entity.
