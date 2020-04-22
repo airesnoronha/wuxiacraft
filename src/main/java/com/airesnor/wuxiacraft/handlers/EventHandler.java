@@ -6,9 +6,9 @@ import com.airesnor.wuxiacraft.blocks.SpiritStoneStackBlock;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
-import com.airesnor.wuxiacraft.cultivation.techniques.CultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
@@ -78,15 +78,13 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onPlayerLogIn(PlayerEvent.PlayerLoggedInEvent event) {
 		EntityPlayer player = event.player;
-		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
-		ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 		if (!player.world.isRemote) {
 			WuxiaCraft.logger.info("Restoring " + player.getDisplayNameString() + " cultivation.");
-			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) player);
-			NetworkWrapper.INSTANCE.sendTo(new SpeedHandicapMessage(cultivation.getSpeedHandicap(), cultivation.getMaxSpeed(), cultivation.getHasteLimit(), cultivation.getJumpLimit(), player.getUniqueID()), (EntityPlayerMP) player);
-			NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
-			NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true, player.getUniqueID()), (EntityPlayerMP) player);
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
+			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
+			IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
+			NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, foundation, true), (EntityPlayerMP) player);
 		}
 		TextComponentString text = new TextComponentString("For a quick tutorial on the mod. \nPlease use the /culthelp command");
 		text.getStyle().setColor(TextFormatting.GOLD);
@@ -106,16 +104,14 @@ public class EventHandler {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
+			IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
 
 			cultivation.advTimer();
 			cultivation.lessenPillCooldown();
 			//each 100 ticks will sync the cultivation
 			if (cultivation.getUpdateTimer() == 100) {
 				if (!player.world.isRemote) {
-					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) player);
-					NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
-					NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, false, player.getUniqueID()), (EntityPlayerMP) player);
-					NetworkWrapper.INSTANCE.sendTo(new SpeedHandicapMessage(cultivation.getSpeedHandicap(), cultivation.getMaxSpeed(), cultivation.getHasteLimit(), cultivation.getJumpLimit(), player.getUniqueID()), (EntityPlayerMP) player);
+					NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, foundation, false), (EntityPlayerMP) player);
 				}
 				cultivation.resetTimer();
 			}
@@ -123,8 +119,7 @@ public class EventHandler {
 			// let's say you have 100 players on a server
 			if (cultivation.getUpdateTimer() % 10 == 0) {
 				if (!player.world.isRemote) {
-					applyModifiers(player, cultivation);
-					cultTech.updateTechniques(player, cultivation);
+					applyModifiers(player);
 				}
 			}
 			if (player.world.isRemote) {
@@ -142,7 +137,7 @@ public class EventHandler {
 			}
 
 			//playerAddProgress(player, cultivation, 0.1f);
-			cultivation.addEnergy(cultivation.getMaxEnergy() * 0.00025F);
+			cultivation.addEnergy(cultivation.getMaxEnergy(foundation) * 0.00025F);
 		}
 	}
 
@@ -252,8 +247,6 @@ public class EventHandler {
 		for (AttributeModifier mod : iattributeinstance.getModifiers()) {
 			if (mod.getName().equals(speed_mod_name)) {
 				cultivation_speed += mod.getAmount();
-			} else if (mod.getName().equals(CultTech.SPEED__MOD)) {
-				cultivation_speed += mod.getAmount();
 			}
 		}
 
@@ -305,7 +298,6 @@ public class EventHandler {
 					ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(Minecraft.getMinecraft().player);
 					skillCap.setCasting(false);
 					skillCap.setDoneCasting(true);
-					NetworkWrapper.INSTANCE.sendToServer(new CastSkillMessage(false));
 				}
 			} else if (toggleHasInGameFocus) {
 				toggleHasInGameFocus = false;
@@ -424,6 +416,7 @@ public class EventHandler {
 	/**
 	 * When the player die, he gets punished and loses all sub levels, and energy
 	 * Except true gods that loses 20 levels
+	 * Looses on point of every foundation and their progress
 	 *
 	 * @param event Description of what happened, and what will come to be
 	 */
@@ -437,6 +430,8 @@ public class EventHandler {
 		ICultTech oldCultTech = CultivationUtils.getCultTechFromEntity(original);
 		ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 		ISkillCap oldSkillCap = CultivationUtils.getSkillCapFromEntity(original);
+		IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
+		IFoundation oldFoundation = CultivationUtils.getFoundationFromEntity(original);
 		cultivation.setCurrentLevel(old_cultivation.getCurrentLevel());
 		if (event.isWasDeath()) {
 
@@ -445,30 +440,15 @@ public class EventHandler {
 			} else {
 				cultivation.setCurrentSubLevel(0);
 			}
+			foundation.applyDeathPunishment();
 		} else {
-			cultivation.setCurrentLevel(old_cultivation.getCurrentLevel());
-			cultivation.setCurrentSubLevel(old_cultivation.getCurrentSubLevel());
-			cultivation.setProgress(old_cultivation.getCurrentProgress());
-			cultivation.setPillCooldown(old_cultivation.getPillCooldown());
-			cultivation.setEnergy(old_cultivation.getEnergy());
-			cultivation.setJumpLimit(old_cultivation.getJumpLimit());
-			cultivation.setHasteLimit(old_cultivation.getHasteLimit());
-			cultivation.setSpeedHandicap(old_cultivation.getSpeedHandicap());
-			cultivation.setMaxSpeed(old_cultivation.getMaxSpeed());
-			cultivation.setSuppress(old_cultivation.getSuppress());
+			cultivation.copyFrom(old_cultivation);
+			foundation.copyFrom(oldFoundation);
 		}
 
 		WuxiaCraft.logger.info("Restoring " + player.getDisplayNameString() + " cultivation.");
-		cultTech.getKnownTechniques().clear();
-		cultTech.getKnownTechniques().addAll(oldCultTech.getKnownTechniques());
-
-		skillCap.stepCastProgress(oldSkillCap.getCastProgress());
-		skillCap.stepCooldown(oldSkillCap.getCooldown());
-		skillCap.getKnownSkills().clear();
-		skillCap.getKnownSkills().addAll(oldSkillCap.getKnownSkills());
-		skillCap.getSelectedSkills().clear();
-		skillCap.getSelectedSkills().addAll(oldSkillCap.getSelectedSkills());
-		skillCap.setActiveSkill(oldSkillCap.getActiveSkill());
+		cultTech.copyFrom(oldCultTech);
+		skillCap.copyFrom(oldSkillCap, true);
 	}
 
 	/**
@@ -484,11 +464,10 @@ public class EventHandler {
 		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 		ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 		WuxiaCraft.logger.info("Applying " + player.getDisplayNameString() + " cultivation.");
-		NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(), (EntityPlayerMP) player);
-		NetworkWrapper.INSTANCE.sendTo(new EnergyMessage(), (EntityPlayerMP) player);
+		NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) player);
 		NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
 		NetworkWrapper.INSTANCE.sendTo(new SkillCapMessage(skillCap, true, player.getUniqueID()), (EntityPlayerMP) player);
-		applyModifiers(player, cultivation);
+		applyModifiers(player);
 	}
 
 	/**
@@ -660,26 +639,26 @@ public class EventHandler {
 	 * Applies the modifiers to the corresponding player based on its cultivation
 	 *
 	 * @param player      Player to be applied
-	 * @param cultivation Cultivation for reference
 	 */
-	public static void applyModifiers(EntityPlayer player, ICultivation cultivation) {
+	public static void applyModifiers(EntityPlayer player) {
 
-		//as most props are additive, so i'll remove the which is the supposed base
-		double level_str_mod = cultivation.getStrengthIncrease() - 1;
-		double level_spd_mod = (cultivation.getSpeedIncrease() - 1);
+		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+		IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
+
+		double level_spd_mod = foundation.getAgilityModifier();
 		if (cultivation.getMaxSpeed() >= 0) {
 			float max_speed = cultivation.getMaxSpeed() * (float) SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue();
 			level_spd_mod = Math.min(max_speed, level_spd_mod);
 		}
 		level_spd_mod *= (cultivation.getSpeedHandicap() / 100f);
 
-		AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, level_str_mod, 0);
-		AttributeModifier health_mod = new AttributeModifier(health_mod_name, 3 * level_str_mod, 0);
+		AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, foundation.getStrengthModifier(), 0);
+		AttributeModifier health_mod = new AttributeModifier(health_mod_name, foundation.getConstitutionModifier(), 0);
 		//since armor base is 0, it'll add 2*strength as armor
 		//I'll use for now strength for increase every other stat, since it's almost the same after all
-		AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, level_str_mod * 0.7f, 0);
-		AttributeModifier speed_mod = new AttributeModifier(speed_mod_name, level_spd_mod * 0.2, 0);
-		AttributeModifier attack_speed_mod = new AttributeModifier(attack_speed_mod_name, level_spd_mod, 1);
+		AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, foundation.getResistanceModifier(), 0);
+		AttributeModifier speed_mod = new AttributeModifier(speed_mod_name, level_spd_mod, 0);
+		AttributeModifier attack_speed_mod = new AttributeModifier(attack_speed_mod_name, foundation.getDexterityModifier(), 0);
 
 		//remove any previous strength modifiers
 		for (AttributeModifier mod : player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getModifiers()) {

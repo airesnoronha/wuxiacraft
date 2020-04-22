@@ -14,8 +14,8 @@ public class SkillCap implements ISkillCap {
 	private final Stack<BlockPos> toBreak;
 	private float cooldown;
 	private float castProgress;
-	private final List<Integer> SelectedSkills;
-	private int ActiveSkillIndex;
+	private final List<Integer> selectedSkills;
+	private int activeSkillIndex;
 	private boolean casting;
 	private boolean doneCasting;
 	private int barrageToRelease;
@@ -29,8 +29,8 @@ public class SkillCap implements ISkillCap {
 		this.cooldown = 0;
 		this.maxCooldown = 0;
 		this.castProgress = 0;
-		this.SelectedSkills = new ArrayList<>();
-		this.ActiveSkillIndex = -1;
+		this.selectedSkills = new ArrayList<>();
+		this.activeSkillIndex = -1;
 		this.casting = false;
 		this.doneCasting = false;
 		this.resetBarrageCounter();
@@ -111,28 +111,28 @@ public class SkillCap implements ISkillCap {
 
 	@Override
 	public List<Integer> getSelectedSkills() {
-		return this.SelectedSkills;
+		return this.selectedSkills;
 	}
 
 	@Override
 	public void addSelectedSkill(int skillIndex) {
 		if (skillIndex >= 0)
-			this.SelectedSkills.add(skillIndex);
+			this.selectedSkills.add(skillIndex);
 	}
 
 	@Override
 	public void remSelectedSkill(int skillIndex) {
-		this.SelectedSkills.remove(new Integer(skillIndex));
+		this.selectedSkills.remove(new Integer(skillIndex));
 	}
 
 	@Override
 	public int getActiveSkill() {
-		return this.ActiveSkillIndex;
+		return this.activeSkillIndex;
 	}
 
 	@Override
 	public void setActiveSkill(int i) {
-		this.ActiveSkillIndex = i;
+		this.activeSkillIndex = i;
 	}
 
 	@Override
@@ -227,5 +227,19 @@ public class SkillCap implements ISkillCap {
 	@Override
 	public boolean hasFormationActivated() {
 		return this.formationActivated;
+	}
+
+	@Override
+	public void copyFrom(ISkillCap skillCap, boolean shouldUpdateCDaCP) {
+		this.knownSkills.clear();
+		this.knownSkills.addAll(skillCap.getKnownSkills());
+		this.selectedSkills.clear();
+		this.selectedSkills.addAll(skillCap.getSelectedSkills());
+		this.setActiveSkill(skillCap.getActiveSkill());
+		if(shouldUpdateCDaCP) {
+			this.maxCooldown = skillCap.getMaxCooldown();
+			this.cooldown = skillCap.getCooldown();
+			this.castProgress = skillCap.getCastProgress();
+		}
 	}
 }

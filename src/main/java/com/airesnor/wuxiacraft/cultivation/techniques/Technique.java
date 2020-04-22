@@ -1,10 +1,8 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
-import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.utils.TranslateUtils;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.PotionEffect;
 
 import java.util.ArrayList;
@@ -118,85 +116,20 @@ public class Technique {
 		return this;
 	}
 
+	public List<PotionEffect> getSmallCompletionEffects() {
+		return this.smallCompletionEffects;
+	}
+
+	public List<PotionEffect> getGreatCompletionEffects() {
+		return this.greatCompletionEffects;
+	}
+
 	public List<PotionEffect> getPerfectionCompletionEffects() {
-		return perfectionCompletionEffects;
+		return this.perfectionCompletionEffects;
 	}
 
 	public List<Element> getElements() {
 		return this.elements;
-	}
-
-	public TechniquesModifiers updateSmallSuccess(EntityPlayer player, ICultivation cultivation) {
-		double strength = cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel());
-		double speed = cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel());
-		double armor = this.baseModifiers.armor * strength;
-		double attackSpeed = this.baseModifiers.attackSpeed * speed;
-		double maxHealth = this.baseModifiers.maxHealth * strength;
-		double movementSpeed = this.baseModifiers.movementSpeed * speed;
-		double strengthMod = this.baseModifiers.strength * strength;
-		for (PotionEffect p : smallCompletionEffects) {
-			if (p.getIsAmbient()) {
-				if (player.getActivePotionEffect(p.getPotion()) != null) {
-					continue;
-				}
-			}
-			player.addPotionEffect(new PotionEffect(p.getPotion(), p.getDuration(), p.getAmplifier(), false, p.doesShowParticles()));
-		}
-		return new TechniquesModifiers(armor, attackSpeed, maxHealth, movementSpeed, strengthMod);
-	}
-
-	public TechniquesModifiers updateGreatSuccess(EntityPlayer player, ICultivation cultivation) {
-		double strength = cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel());
-		double speed = cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel());
-		double armor = this.baseModifiers.armor * strength;
-		armor = armor < 0 ? armor - (armor * 0.1f) : armor * 1.1f;
-
-		double attackSpeed = this.baseModifiers.attackSpeed * speed;
-		attackSpeed = attackSpeed < 0 ? attackSpeed - (attackSpeed * 0.1f) : attackSpeed * 1.1f;
-
-		double maxHealth = this.baseModifiers.maxHealth * strength;
-		maxHealth = maxHealth < 0 ? maxHealth - (maxHealth * 0.1f) : maxHealth * 1.1f;
-
-		double movementSpeed = this.baseModifiers.movementSpeed * speed;
-		movementSpeed = movementSpeed < 0 ? movementSpeed - (movementSpeed * 0.1f) : movementSpeed * 1.1f;
-
-		double strengthMod = this.baseModifiers.strength * strength;
-		strengthMod = strengthMod < 0 ? strengthMod - (strengthMod * 0.1f) : strengthMod * 1.1f;
-
-		for (PotionEffect p : greatCompletionEffects) {
-			if (p.getIsAmbient()) {
-				if (player.getActivePotionEffect(p.getPotion()) != null) {
-					continue;
-				}
-			}
-			player.addPotionEffect(new PotionEffect(p.getPotion(), p.getDuration(), p.getAmplifier(), false, p.doesShowParticles()));
-		}
-		return new TechniquesModifiers(armor, attackSpeed, maxHealth, movementSpeed, strengthMod);
-	}
-
-	TechniquesModifiers updatePerfection(EntityPlayer player, ICultivation cultivation) {
-		double strength = cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel());
-		double speed = cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel());
-
-		double armor = this.baseModifiers.armor * strength;
-		armor = armor < 0 ? armor - (armor * 0.25f) : armor * 1.25f;
-		double attackSpeed = this.baseModifiers.attackSpeed * speed;
-		attackSpeed = attackSpeed < 0 ? attackSpeed - (attackSpeed * 0.25f) : attackSpeed * 1.25f;
-		double maxHealth = this.baseModifiers.maxHealth * strength;
-		maxHealth = maxHealth < 0 ? maxHealth - (maxHealth * 0.25f) : maxHealth * 1.25f;
-		double movementSpeed = this.baseModifiers.movementSpeed * speed;
-		movementSpeed = movementSpeed < 0 ? movementSpeed - (movementSpeed * 0.25f) : movementSpeed * 1.25f;
-		double strengthMod = this.baseModifiers.strength * strength;
-		strengthMod = strengthMod < 0 ? strengthMod - (strengthMod * 0.25f) : strengthMod * 1.25f;
-
-		for (PotionEffect p : perfectionCompletionEffects) {
-			if (p.getIsAmbient()) {
-				if (player.getActivePotionEffect(p.getPotion()) != null)
-					continue;
-			}
-			player.addPotionEffect(new PotionEffect(p.getPotion(), p.getDuration(), p.getAmplifier(), false, p.doesShowParticles()));
-		}
-		return new TechniquesModifiers(armor, attackSpeed, maxHealth, movementSpeed, strengthMod);
 	}
 
 	public float getCultivationSpeed() {

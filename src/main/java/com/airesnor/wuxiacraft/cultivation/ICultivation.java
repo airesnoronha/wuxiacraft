@@ -76,7 +76,7 @@ public interface ICultivation {
 
 	double getSpeedIncrease();
 
-	double getMaxEnergy();
+	double getMaxEnergy(IFoundation foundation);
 
 	void setMaxSpeed(float maxSpeed);
 

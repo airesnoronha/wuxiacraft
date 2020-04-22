@@ -78,4 +78,5 @@ public interface ISkillCap {
 
 	boolean hasFormationActivated();
 
+	void copyFrom(ISkillCap skillCap, boolean shouldUpdateCDaCP);
 }

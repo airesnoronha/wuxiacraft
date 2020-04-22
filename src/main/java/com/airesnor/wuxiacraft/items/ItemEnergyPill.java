@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.EntityLivingBase;
@@ -35,7 +36,8 @@ public class ItemEnergyPill extends ItemBase {
 			if (stack.isEmpty())
 				stack = ItemStack.EMPTY;
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-			if(this.amount < cultivation.getMaxEnergy() * 0.3F) {
+			IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
+			if(this.amount < (float)cultivation.getMaxEnergy(foundation) * 0.3F) {
 				cultivation.addEnergy(this.amount);
 			} else {
 				worldIn.createExplosion(player, player.posX, player.posY, player.posZ, 3, true);

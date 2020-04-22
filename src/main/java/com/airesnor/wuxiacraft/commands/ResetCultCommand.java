@@ -50,7 +50,7 @@ public class ResetCultCommand extends CommandBase {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				cultivation.copyFrom(new Cultivation());
 				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
-				EventHandler.applyModifiers(player, cultivation);
+				EventHandler.applyModifiers(player);
 			}
 			else {
 				TextComponentString text = new TextComponentString("You ain't a player my friend.");
@@ -64,7 +64,7 @@ public class ResetCultCommand extends CommandBase {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				cultivation.copyFrom(new Cultivation());
 				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
-				EventHandler.applyModifiers(player, cultivation);
+				EventHandler.applyModifiers(player);
 			} else {
 				TextComponentString text = new TextComponentString("Couldn't find player " + args[0]);
 				text.getStyle().setColor(TextFormatting.RED);

@@ -5,6 +5,7 @@ import com.airesnor.wuxiacraft.blocks.Blocks;
 import com.airesnor.wuxiacraft.capabilities.*;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
@@ -50,6 +51,7 @@ public class CommonProxy {
 		CapabilityManager.INSTANCE.register(ICultivation.class, new CultivationStorage(), new CultivationFactory());
 		CapabilityManager.INSTANCE.register(ICultTech.class, new CultTechStorage(), new CultTechFactory());
 		CapabilityManager.INSTANCE.register(ISkillCap.class, new SkillsStorage(), new SkillsFactory());
+		CapabilityManager.INSTANCE.register(IFoundation.class, new FoundationStorage(), new FoundationFactory());
 
 		NetworkWrapper.INSTANCE.registerMessage(new ActivatePartialSkillMessageHandler(), ActivatePartialSkillMessage.class, 167001, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new ActivateSkillMessageHandler(), ActivateSkillMessage.class, 167002, Side.SERVER);
@@ -73,6 +75,7 @@ public class CommonProxy {
 		NetworkWrapper.INSTANCE.registerMessage(new SkillCapMessageHandler(), SkillCapMessage.class, 167019, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new SpawnParticleMessageHandler(), SpawnParticleMessage.class, 167020, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new SpeedHandicapMessageHandler(), SpeedHandicapMessage.class, 167021, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(new UnifiedCapabilitySyncMessageHandler(), UnifiedCapabilitySyncMessage.class, 167022, Side.CLIENT);
 
 		MinecraftForge.EVENT_BUS.register(new CapabilitiesHandler());
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
@@ -89,11 +92,11 @@ public class CommonProxy {
 	public void preInit() {
 		CultivationLoader.loadLevelsFromConfig();
 
-		reflectOnField(SharedMonsterAttributes.class, new String[]{"MAX_HEALTH", "field_111267_a"}, (new RangedAttribute(null, "generic.maxHealth", 20.0D, Float.MIN_VALUE, 100000000000.0D)).setDescription("Max Health").setShouldWatch(true));
-		reflectOnField(SharedMonsterAttributes.class, new String[]{"ARMOR", "field_188791_g"}, (new RangedAttribute(null, "generic.armor", 0.0D, 0.0D, 1000.0D)).setShouldWatch(true));
-		reflectOnField(SharedMonsterAttributes.class, new String[]{"MOVEMENT_SPEED", "field_111263_d"}, (new RangedAttribute(null, "generic.movementSpeed", 0.699999988079071D, 0.0D, 3072.0D)).setDescription("Movement Speed").setShouldWatch(true));
-		reflectOnField(SharedMonsterAttributes.class, new String[]{"ATTACK_DAMAGE", "field_111264_e"}, new RangedAttribute(null, "generic.attackDamage", 2.0D, 0.0D, 1000000000.0D));
-		reflectOnField(SharedMonsterAttributes.class, new String[]{"ATTACK_SPEED", "field_188790_f"}, (new RangedAttribute(null, "generic.attackSpeed", 4.0D, 0.0D, 2048.0D)).setShouldWatch(true));
+		reflectOnField(SharedMonsterAttributes.class, new String[]{"MAX_HEALTH", "field_111267_a"}, (new RangedAttribute(null, "generic.maxHealth", 20.0D, Float.MIN_VALUE, 1000000000000000.0D)).setDescription("Max Health").setShouldWatch(true));
+		reflectOnField(SharedMonsterAttributes.class, new String[]{"ARMOR", "field_188791_g"}, (new RangedAttribute(null, "generic.armor", 0.0D, 0.0D, 100000000000000.0D)).setShouldWatch(true));
+		reflectOnField(SharedMonsterAttributes.class, new String[]{"MOVEMENT_SPEED", "field_111263_d"}, (new RangedAttribute(null, "generic.movementSpeed", 0.699999988079071D, 0.0D, 4096.0D)).setDescription("Movement Speed").setShouldWatch(true));
+		reflectOnField(SharedMonsterAttributes.class, new String[]{"ATTACK_DAMAGE", "field_111264_e"}, new RangedAttribute(null, "generic.attackDamage", 2.0D, 0.0D, 100000000000000.0D));
+		reflectOnField(SharedMonsterAttributes.class, new String[]{"ATTACK_SPEED", "field_188790_f"}, (new RangedAttribute(null, "generic.attackSpeed", 4.0D, 0.0D, 100000000000000.0D)).setShouldWatch(true));
 
 		WuxiaCraftConfig.preInit();
 		GameRegistry.registerWorldGenerator(new WorldGen(), 3);

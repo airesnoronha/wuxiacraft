@@ -2,9 +2,12 @@ package com.airesnor.wuxiacraft.utils;
 
 import com.airesnor.wuxiacraft.capabilities.CultTechProvider;
 import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
+import com.airesnor.wuxiacraft.capabilities.FoundationProvider;
 import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
+import com.airesnor.wuxiacraft.cultivation.Foundation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
@@ -66,16 +69,26 @@ public class CultivationUtils {
 		return skillCap;
 	}
 
+	@Nonnull
+	public static IFoundation getFoundationFromEntity(EntityLivingBase entityIn) {
+		IFoundation foundation = null;
+		if (entityIn instanceof EntityPlayer)
+			//noinspection ConstantConditions
+			foundation = entityIn.getCapability(FoundationProvider.FOUNDATION_CAPABILITY, null);
+		if (foundation == null) foundation = new Foundation();
+		return foundation;
+	}
+
 	public static void cultivatorAddProgress(EntityLivingBase player, ICultivation cultivation, double amount, boolean techniques, boolean allowBreakThrough, boolean ignoreBottleneck) {
 		ICultTech cultTech = getCultTechFromEntity(player);
 		amount *= cultTech.getOverallCultivationSpeed();
 		double enlightenment = 1;
 		PotionEffect effect = player.getActivePotionEffect(Skills.ENLIGHTENMENT);
-		if(effect != null) {
-			enlightenment += 9* effect.getAmplifier();
+		if (effect != null) {
+			enlightenment += 9 * effect.getAmplifier();
 		}
-		amount*=enlightenment;
-		if(techniques) {
+		amount *= enlightenment;
+		if (techniques) {
 			cultTech.progress(amount);
 		}
 		if (!cultivation.getSuppress()) {

@@ -12,8 +12,6 @@ public interface ICultTech {
 
 	void remTechnique(Technique technique);
 
-	void updateTechniques(EntityPlayer player, ICultivation cultivation);
-
 	void progress(double amount);
 
 	List<KnownTechnique> getKnownTechniques();
@@ -23,5 +21,7 @@ public interface ICultTech {
 	List<Skill> getTechniqueSkills();
 
 	float getOverallCultivationSpeed();
+
+	void copyFrom(ICultTech cultTech);
 
 }
