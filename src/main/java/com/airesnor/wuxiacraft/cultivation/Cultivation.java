@@ -82,7 +82,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public void addEnergy(double amount) {
-		this.energy = Math.min(this.energy + amount, this.level.getMaxEnergyByLevel(this.subLevel));
+		this.energy += amount;
 	}
 
 	@Override

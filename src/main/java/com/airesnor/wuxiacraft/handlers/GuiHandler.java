@@ -37,7 +37,7 @@ public class GuiHandler implements IGuiHandler {
 			case CULTIVATION_GUI_ID:
 				return new CultivationGui(player);
 			case SKILLS_GUI_ID:
-				return new SkillsGui(player);
+				return new CultivationGui(player).withTab(CultivationGui.Tabs.SKILLS);
 			case RECIPE_GUI_ID:
 				return new RecipeGui(player);
 		}

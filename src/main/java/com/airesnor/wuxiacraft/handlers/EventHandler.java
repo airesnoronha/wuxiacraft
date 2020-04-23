@@ -138,6 +138,9 @@ public class EventHandler {
 
 			//playerAddProgress(player, cultivation, 0.1f);
 			cultivation.addEnergy(cultivation.getMaxEnergy(foundation) * 0.00025F);
+			if(cultivation.getEnergy() > cultivation.getMaxEnergy(foundation)) {
+				cultivation.setEnergy(cultivation.getMaxEnergy(foundation));
+			}
 		}
 	}
 
