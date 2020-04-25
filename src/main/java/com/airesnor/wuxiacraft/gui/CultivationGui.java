@@ -5,18 +5,19 @@ import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
+import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
-import com.airesnor.wuxiacraft.cultivation.techniques.TechniquesModifiers;
-import com.airesnor.wuxiacraft.networking.NetworkWrapper;
-import com.airesnor.wuxiacraft.networking.RemoveTechniqueMessage;
-import com.airesnor.wuxiacraft.networking.SpeedHandicapMessage;
-import com.airesnor.wuxiacraft.networking.SuppressCultivationMessage;
+import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.proxy.ClientProxy;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import com.airesnor.wuxiacraft.utils.MathUtils;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -40,6 +41,9 @@ public class CultivationGui extends GuiScreen {
 	private final IFoundation foundation;
 	private final EntityPlayer player;
 	private int offset = 0;
+	private int displayItems = 0;
+
+	private static double amountAddedToFoundationPerClick = 1;
 
 	private Tabs tab;
 
@@ -91,13 +95,13 @@ public class CultivationGui extends GuiScreen {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 
 		//offset --
-		if (inBounds(mouseX, mouseY, this.guiLeft + 156, this.guiTop + 36, 9, 9)) {
+		if (inBounds(mouseX, mouseY, this.guiLeft + 172, this.guiTop + 36, 9, 9)) {
 			this.offset = Math.max(0, this.offset - 1);
 		}
 
 		//offset ++
-		if (inBounds(mouseX, mouseY, this.guiLeft + 156, this.guiTop + 106, 9, 9)) {
-			this.offset = Math.min(this.tab.maxOffset, this.offset + 1);
+		if (inBounds(mouseX, mouseY, this.guiLeft + 172, this.guiTop + 118, 9, 9)) {
+			this.offset = Math.min(this.displayItems - this.tab.maxDisplayItems, this.offset + 1);
 		}
 
 		//suppress
@@ -107,13 +111,13 @@ public class CultivationGui extends GuiScreen {
 		//}
 
 		//select tabs
-		if(inBounds(mouseX, mouseY, this.guiLeft+6, this.guiTop+19, 52, 15)) {
+		if (inBounds(mouseX, mouseY, this.guiLeft + 6, this.guiTop + 19, 52, 15)) {
 			this.changeToTab(Tabs.FOUNDATION);
 		}
-		if(inBounds(mouseX, mouseY, this.guiLeft+61, this.guiTop+19, 52, 15)) {
+		if (inBounds(mouseX, mouseY, this.guiLeft + 61, this.guiTop + 19, 52, 15)) {
 			this.changeToTab(Tabs.TECHNIQUES);
 		}
-		if(inBounds(mouseX, mouseY, this.guiLeft+116, this.guiTop+19, 52, 15)) {
+		if (inBounds(mouseX, mouseY, this.guiLeft + 116, this.guiTop + 19, 52, 15)) {
 			this.changeToTab(Tabs.SKILLS);
 		}
 
@@ -126,25 +130,81 @@ public class CultivationGui extends GuiScreen {
 				handleMouseTechniques(mouseX, mouseY);
 				break;
 			case SKILLS:
-				handleMouseSkills(mouseX, mouseY);
+				handleMouseSkills(mouseX, mouseY, mouseButton);
 				break;
 		}
 
 		//techniques
 
 		//regulator bars
-		for(int i = 0; i < 4; i ++) {
-			if(inBounds(mouseX, mouseY, this.guiLeft-61+13, this.guiTop+i*15+3, 9,9)) {
+		for (int i = 0; i < 4; i++) {
+			if (inBounds(mouseX, mouseY, this.guiLeft - 61 + 13, this.guiTop + i * 15 + 3, 9, 9)) {
 				handleBarButtonClick(i, 0);
-			}
-			else if(inBounds(mouseX, mouseY, this.guiLeft-61+51, this.guiTop+i*15+3, 9,9)) {
+			} else if (inBounds(mouseX, mouseY, this.guiLeft - 61 + 51, this.guiTop + i * 15 + 3, 9, 9)) {
 				handleBarButtonClick(i, 1);
 			}
 		}
 	}
 
-	private void handleMouseFoundation(int mouseX, int mouseY) {
+	private void changeToTab(Tabs tab) {
+		this.tab = tab;
+		this.offset = 0;
+		switch (tab) {
+			case FOUNDATION:
+				this.displayItems = 0;
+				break;
+			case TECHNIQUES:
+				this.displayItems = this.cultTech.getKnownTechniques().size();
+				break;
+			case SKILLS:
+				this.displayItems = this.skillCap.getTotalKnowSkill(this.cultTech).size();
+				break;
+		}
+	}
 
+	private void handleMouseFoundation(int mouseX, int mouseY) {
+		if(inBounds(mouseX, mouseY, this.guiLeft+8, this.guiTop+38, 14,14)) {
+			addProgressToFoundation(0);
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+164, this.guiTop+38, 14,14)) {
+			addProgressToFoundation(1);
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+6, this.guiTop+68, 14,14)) {
+			addProgressToFoundation(2);
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+166, this.guiTop+68, 14,14)) {
+			addProgressToFoundation(3);
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+8, this.guiTop+98, 14,14)) {
+			addProgressToFoundation(4);
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+164, this.guiTop+98, 14,14)) {
+			addProgressToFoundation(5);
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+22, this.guiTop+38, 14,14)) {
+			selectFoundationAttribute(0);
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+150, this.guiTop+38, 14,14)) {
+			selectFoundationAttribute(1);
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+20, this.guiTop+68, 14,14)) {
+			selectFoundationAttribute(2);
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+152, this.guiTop+68, 14,14)) {
+			selectFoundationAttribute(3);
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+22, this.guiTop+98, 14,14)) {
+			selectFoundationAttribute(4);
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+150, this.guiTop+98, 14,14)) {
+			selectFoundationAttribute(5);
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+64, this.guiTop+118, 14,14)) {
+			amountAddedToFoundationPerClick=MathUtils.clamp(amountAddedToFoundationPerClick-1, 0, 100);
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+113, this.guiTop+118, 14,14)) {
+			amountAddedToFoundationPerClick=MathUtils.clamp(amountAddedToFoundationPerClick+1, 0, 100);
+		}
 	}
 
 	private void handleMouseTechniques(int mouseX, int mouseY) {
@@ -157,8 +217,29 @@ public class CultivationGui extends GuiScreen {
 		}
 	}
 
-	private void handleMouseSkills(int mouseX, int mouseY) {
-
+	private void handleMouseSkills(int mouseX, int mouseY, int mouseButton) {
+		if (mouseButton == 0) {
+			List<Skill> totalSkills = skillCap.getTotalKnowSkill(cultTech);
+			for (Skill skill : totalSkills) {
+				int index = totalSkills.indexOf(skill);
+				if (index >= this.offset && index < (this.offset + Tabs.SKILLS.maxDisplayItems)) {
+					int pos = index - this.offset;
+					if (skillCap.getKnownSkills().contains(totalSkills.get(index))) {
+						if (inBounds(mouseX, mouseY, this.guiLeft + 8, this.guiTop + 37 + pos * 12, 9, 9)) {
+							removeSkill(totalSkills.get(index));
+						}
+					}
+					if (inBounds(mouseX, mouseY, this.guiLeft + 20, this.guiTop + 37 + pos * 12, 9, 9)) {
+						selectSkill(index);
+					}
+				} else if (index >= (this.offset + Tabs.SKILLS.maxDisplayItems)) {
+					break;
+				}
+			}
+			if (inBounds(mouseX, mouseY, this.guiLeft + 20, this.guiTop + 133, 9, 9)) {
+				this.toggleDeselectAllSkills();
+			}
+		}
 	}
 
 	private void drawBackgroundLayer() {
@@ -168,19 +249,27 @@ public class CultivationGui extends GuiScreen {
 		drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 
 		//cultivation dragon
-		double progress_fill = (cultivation.getCurrentProgress()/ cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
-		int progress_pix = (int) (progress_fill*124f);
-		drawTexturedModalRect(this.guiLeft + 183, this.guiTop + 5 + (124-progress_pix), 200, (124-progress_pix), 16, progress_pix );
+		double progress_fill = (cultivation.getCurrentProgress() / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
+		int progress_pix = (int) (progress_fill * 124f);
+		drawTexturedModalRect(this.guiLeft + 183, this.guiTop + 5 + (124 - progress_pix), 200, (124 - progress_pix), 16, progress_pix);
 
 		//energy bar
-		double energy_fill = (cultivation.getEnergy()/ cultivation.getMaxEnergy(this.foundation));
-		int energyPix = (int)(28f * energy_fill);
+		double energy_fill = (cultivation.getEnergy() / cultivation.getMaxEnergy(this.foundation));
+		int energyPix = (int) (28f * energy_fill);
 		drawTexturedModalRect(this.guiLeft + 172, this.guiTop + 5 + 28 - energyPix, 217, 28 - energyPix, 10, energyPix);
 
 		//tabs selectors
-		drawTexturedModalRect(this.guiLeft+6, this.guiTop+19, 0, 151, 52, 15);
-		drawTexturedModalRect(this.guiLeft+61, this.guiTop+19, 0, 151, 52, 15);
-		drawTexturedModalRect(this.guiLeft+116, this.guiTop+19, 0, 151, 52, 15);
+		drawTexturedModalRect(this.guiLeft + 6, this.guiTop + 19, 104, 151, 52, 15);
+		drawTexturedModalRect(this.guiLeft + 61, this.guiTop + 19, 104, 151, 52, 15);
+		drawTexturedModalRect(this.guiLeft + 116, this.guiTop + 19, 104, 151, 52, 15);
+
+		//scrollers
+		if (this.displayItems > this.tab.maxDisplayItems) {
+			drawTexturedModalRect(this.guiLeft + 172, this.guiTop + 36, 45, 142, 9, 9);
+			drawTexturedModalRect(this.guiLeft + 172, this.guiTop + 36, 54, 142, 9, 9);
+			drawTexturedModalRect(this.guiLeft + 172, this.guiTop + 118, 45, 142, 9, 9);
+			drawTexturedModalRect(this.guiLeft + 172, this.guiTop + 118, 63, 142, 9, 9);
+		}
 
 		//tabs
 		switch (this.tab) {
@@ -198,10 +287,10 @@ public class CultivationGui extends GuiScreen {
 		GL11.glColor4f(1f, 1f, 1f, 1f);
 		int[] iconPos = new int[]{27, 27, 99, 108};
 		int[] fills = new int[]{
-				Math.min(27,(int)((27f * cultivation.getSpeedHandicap()) / 100f)),
-				Math.min(27,(int)(27f*cultivation.getMaxSpeed()/cultivation.getSpeedIncrease())),
-				Math.min(27,(int)(27f*(cultivation.getHasteLimit()/(0.1f * (cultivation.getStrengthIncrease() - 1))))),
-				Math.min(27,(int)(27f*(cultivation.getJumpLimit()*0.42f)/(0.88f * (cultivation.getSpeedIncrease() - 1f))))
+				Math.min(27, (int) ((27f * cultivation.getSpeedHandicap()) / 100f)),
+				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / cultivation.getSpeedIncrease())),
+				Math.min(27, (int) (27f * (cultivation.getHasteLimit() / (0.1f * (cultivation.getStrengthIncrease() - 1))))),
+				Math.min(27, (int) (27f * (cultivation.getJumpLimit() * 0.42f) / (0.88f * (cultivation.getSpeedIncrease() - 1f))))
 		};
 
 		//Regulator bars
@@ -217,64 +306,128 @@ public class CultivationGui extends GuiScreen {
 		}
 	}
 
-	private void changeToTab(Tabs tab) {
-		this.tab = tab;
-		this.offset = 0;
-	}
-
 	private void drawFoundationBackground() {
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-		drawTexturedModalRect(this.guiLeft + 66, this.guiTop + 55, 0, 173, 54,52); //cultivator body
+		drawTexturedModalRect(this.guiLeft + 66, this.guiTop + 55, 0, 173, 54, 52); //cultivator body
 		GlStateManager.disableBlend();
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(this.guiLeft + 93, this.guiTop + 88, 0);
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder builder = tessellator.getBuffer();
+		GlStateManager.glLineWidth(2f);
+		GlStateManager.disableTexture2D();
+		GlStateManager.color(1f, 1f, 1f, 1f);
+		builder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
+		builder.pos(0, 0, 0).endVertex();
+		builder.pos(-20, -35, 0).endVertex();
+		builder.pos(-75, -35, 0).endVertex();
+		tessellator.draw();
+		builder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
+		builder.pos(0, 0, 0).endVertex();
+		builder.pos(20, -35, 0).endVertex();
+		builder.pos(75, -35, 0).endVertex();
+		tessellator.draw();
+		builder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
+		builder.pos(0, 0, 0).endVertex();
+		builder.pos(-27, -5, 0).endVertex();
+		builder.pos(-80, -5, 0).endVertex();
+		tessellator.draw();
+		builder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
+		builder.pos(0, 0, 0).endVertex();
+		builder.pos(27, -5, 0).endVertex();
+		builder.pos(80, -5, 0).endVertex();
+		tessellator.draw();
+		builder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
+		builder.pos(0, 0, 0).endVertex();
+		builder.pos(-20, 25, 0).endVertex();
+		builder.pos(-75, 25, 0).endVertex();
+		tessellator.draw();
+		builder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
+		builder.pos(0, 0, 0).endVertex();
+		builder.pos(20, 25, 0).endVertex();
+		builder.pos(75, 25, 0).endVertex();
+		tessellator.draw();
+		GlStateManager.enableTexture2D();
+
+		//plus buttons
+		drawTexturedModalRect(-85, -50, 90, 151, 14, 14);
+		drawTexturedModalRect(71, -50, 90, 151, 14, 14);
+		drawTexturedModalRect(-87, -20, 90, 151, 14, 14);
+		drawTexturedModalRect(73, -20, 90, 151, 14, 14);
+		drawTexturedModalRect(-85, 10, 90, 151, 14, 14);
+		drawTexturedModalRect(71, 10, 90, 151, 14, 14);
+
+		//radio buttons
+		drawTexturedModalRect(-71, -50, foundation.getSelectedAttribute() == 0 ? 76 :62, 151, 14, 14);
+		drawTexturedModalRect(57, -50, foundation.getSelectedAttribute() == 1 ? 76 : 62, 151, 14, 14);
+		drawTexturedModalRect(-73, -20, foundation.getSelectedAttribute() == 2 ? 76 : 62, 151, 14, 14);
+		drawTexturedModalRect(59, -20, foundation.getSelectedAttribute() == 3 ? 76 : 62, 151, 14, 14);
+		drawTexturedModalRect(-71, 10, foundation.getSelectedAttribute() == 4 ? 76 : 62, 151, 14, 14);
+		drawTexturedModalRect(57, 10, foundation.getSelectedAttribute() == 5 ? 76 : 62, 151, 14, 14);
+
+		GlStateManager.popMatrix();
+		//minus button
+		drawTexturedModalRect(this.guiLeft + 64, this.guiTop+118, 45, 142, 9, 9);
+		drawTexturedModalRect(this.guiLeft + 64, this.guiTop+118, 72, 142, 9, 9);
+		//plus button
+		drawTexturedModalRect(this.guiLeft + 113, this.guiTop+118, 45, 142, 9, 9);
+		drawTexturedModalRect(this.guiLeft + 113, this.guiTop+118, 90, 142, 9, 9);
+
 	}
 
 	private void drawTechniquesBackground() {
+		for (KnownTechnique t : this.cultTech.getKnownTechniques()) {
+			int index = this.cultTech.getKnownTechniques().indexOf(t);
+			if (index >= this.offset && index < (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
+				int progressFill = 0;
 
-		int knowTechniquesSize = this.cultTech.getKnownTechniques().size();
-
-		List<KnownTechnique> drawing = new ArrayList<>();
-		if (knowTechniquesSize > 5) {
-			drawTexturedModalRect(this.guiLeft + 172, this.guiTop + 36, 45, 142, 9, 9);
-			drawTexturedModalRect(this.guiLeft + 172, this.guiTop + 36, 54, 142, 9, 9);
-			drawTexturedModalRect(this.guiLeft + 172, this.guiTop + 106, 45, 142, 9, 9);
-			drawTexturedModalRect(this.guiLeft + 172, this.guiTop + 106, 63, 142, 9, 9);
-			int counter = 0;
-			for (KnownTechnique t : this.cultTech.getKnownTechniques()) {
-				if (counter >= offset && counter < offset + 5) {
-					drawing.add(t);
+				if (t.getProgress() >= t.getTechnique().getTier().perfectionProgress + t.getTechnique().getTier().greatProgress + t.getTechnique().getTier().smallProgress) {
+					progressFill += 139;
+				} else if (t.getProgress() > t.getTechnique().getTier().greatProgress + t.getTechnique().getTier().smallProgress) {
+					progressFill += 93; // 47+46
+					progressFill += (int) ((t.getProgress() - t.getTechnique().getTier().greatProgress - t.getTechnique().getTier().smallProgress) * 45 / t.getTechnique().getTier().perfectionProgress);
+				} else if (t.getProgress() > t.getTechnique().getTier().smallProgress) {
+					progressFill += 46;
+					progressFill += (int) ((t.getProgress() - t.getTechnique().getTier().smallProgress) * 47 / t.getTechnique().getTier().greatProgress);
+				} else {
+					progressFill += (int) ((t.getProgress() * 46f) / t.getTechnique().getTier().smallProgress);
 				}
-				counter++;
+				int pos = index - this.offset;
+				drawTexturedModalRect(this.guiLeft + 19, this.guiTop + 35 + pos * 16 + 11, 0, 136, 139, 3);
+				drawTexturedModalRect(this.guiLeft + 19, this.guiTop + 35 + pos * 16 + 11, 0, 139, progressFill, 3);
+				drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 35 + pos * 16 + 4, 45, 142, 9, 9);
+				drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 35 + pos * 16 + 4, 72, 142, 9, 9);
+			} else if (index >= (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
+				break;
 			}
-		} else {
-			drawing.addAll(this.cultTech.getKnownTechniques());
-		}
-		int pos = 0;
-		for (KnownTechnique t : drawing) {
-			int progressFill = 0;
-
-			if(t.getProgress() >= t.getTechnique().getTier().perfectionProgress + t.getTechnique().getTier().greatProgress + t.getTechnique().getTier().smallProgress) {
-				progressFill += 139;
-			} else if(t.getProgress() > t.getTechnique().getTier().greatProgress + t.getTechnique().getTier().smallProgress) {
-				progressFill += 93; // 47+46
-				progressFill += (int) ((t.getProgress() - t.getTechnique().getTier().greatProgress - t.getTechnique().getTier().smallProgress) * 45 / t.getTechnique().getTier().perfectionProgress);
-			} else if (t.getProgress() > t.getTechnique().getTier().smallProgress) {
-				progressFill += 46;
-				progressFill += (int) ((t.getProgress() - t.getTechnique().getTier().smallProgress) * 47 / t.getTechnique().getTier().greatProgress);
-			} else {
-				progressFill += (int) ((t.getProgress() * 46f) / t.getTechnique().getTier().smallProgress);
-			}
-
-			drawTexturedModalRect(this.guiLeft + 19, this.guiTop + 35 + pos * 16 + 11, 0, 136, 139, 3);
-			drawTexturedModalRect(this.guiLeft + 19, this.guiTop + 35 + pos * 16 + 11, 0, 139, progressFill, 3);
-			drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 35 + pos * 16 + 4, 45, 142, 9, 9);
-			drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 35 + pos * 16 + 4, 72, 142, 9, 9);
-			pos++;
 		}
 	}
 
 	private void drawSkillsBackground() {
-
+		List<Skill> totalSkills = skillCap.getTotalKnowSkill(cultTech);
+		for (Skill skill : totalSkills) {
+			int index = totalSkills.indexOf(skill);
+			if (index >= this.offset && index < (this.offset + Tabs.SKILLS.maxDisplayItems)) {
+				int pos = index - this.offset;
+				if (skillCap.getKnownSkills().contains(totalSkills.get(index))) {
+					drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 37 + pos * 12, 45, 142, 9, 9);
+					drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 37 + pos * 12, 72, 142, 9, 9);
+				}
+				if (skillCap.getSelectedSkills().contains(index)) {
+					drawTexturedModalRect(this.guiLeft + 20, this.guiTop + 37 + pos * 12, 126, 142, 9, 9);
+				} else {
+					drawTexturedModalRect(this.guiLeft + 20, this.guiTop + 37 + pos * 12, 117, 142, 9, 9);
+				}
+			} else if (index >= (this.offset + Tabs.SKILLS.maxDisplayItems)) {
+				break;
+			}
+		}
+		if (skillCap.getSelectedSkills().isEmpty()) {
+			drawTexturedModalRect(this.guiLeft + 20, this.guiTop + 133, 117, 142, 9, 9);
+		} else {
+			drawTexturedModalRect(this.guiLeft + 20, this.guiTop + 133, 126, 142, 9, 9);
+		}
 	}
 
 	private void drawForegroundLayer() {
@@ -285,21 +438,22 @@ public class CultivationGui extends GuiScreen {
 		//display = String.format("Strength: %.2f", cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()));
 		//this.fontRenderer.drawString(display, this.guiLeft + 6,this.guiTop + 45,4210752);
 
+		float fontScale = 0.75f;
 		//select tab
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(this.guiLeft+32, this.guiTop+23, 0);
-		GlStateManager.scale(0.7, 0.7, 1);
-		drawCenteredStringShadowless(this.fontRenderer, "Foundation", 0, 0, 0x404040);
+		GlStateManager.translate(this.guiLeft + 32, this.guiTop + 23, 0);
+		GlStateManager.scale(fontScale, fontScale, 1);
+		drawCenteredString(this.fontRenderer, "Foundation", 0, 0, 0xFFFFFF);
 		GlStateManager.popMatrix();
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(this.guiLeft+87, this.guiTop+23, 0);
-		GlStateManager.scale(0.7, 0.7, 1);
-		drawCenteredStringShadowless(this.fontRenderer, "Techniques", 0, 0, 0x404040);
+		GlStateManager.translate(this.guiLeft + 87, this.guiTop + 23, 0);
+		GlStateManager.scale(fontScale, fontScale, 1);
+		drawCenteredString(this.fontRenderer, "Techniques", 0, 0, 0xFFFFFF);
 		GlStateManager.popMatrix();
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(this.guiLeft+142, this.guiTop+23, 0);
-		GlStateManager.scale(0.7, 0.7, 1);
-		drawCenteredStringShadowless(this.fontRenderer, "Skills", 0, 0, 0x404040);
+		GlStateManager.translate(this.guiLeft + 142, this.guiTop + 23, 0);
+		GlStateManager.scale(fontScale, fontScale, 1);
+		drawCenteredString(this.fontRenderer, "Skills", 0, 0, 0xFFFFFF);
 		GlStateManager.popMatrix();
 
 		switch (this.tab) {
@@ -320,18 +474,68 @@ public class CultivationGui extends GuiScreen {
 		barDescriptions.add(String.format("%.1f", cultivation.getHasteLimit()));
 		barDescriptions.add(String.format("%.1f", cultivation.getJumpLimit()));
 
-		for(int i = 0; i < 4; i++) {
-			this.fontRenderer.drawString(barDescriptions.get(i), this.guiLeft-61+27, this.guiTop+4+i*15, 0xEFEF00);
+		for (int i = 0; i < 4; i++) {
+			this.fontRenderer.drawString(barDescriptions.get(i), this.guiLeft - 61 + 27, this.guiTop + 4 + i * 15, 0xEFEF00);
 		}
 	}
 
-	private void drawCenteredStringShadowless(FontRenderer fontRendererIn, String text, int x, int y, int color)
-	{
-		fontRendererIn.drawString(text, (float)(x - fontRendererIn.getStringWidth(text) / 2), (float)y, color, false);
+	public static String getShortNumberAmount(int amount) {
+		String value = "";
+		if(amount < 0) {
+			value += "-";
+		}
+		amount = Math.abs(amount);
+		if(amount < 1000) {
+			value += amount;
+		}
+		else if(amount < 10000) {
+			float mills =  amount / 1000f;
+			value += String.format("%.1fk", mills);
+		}
+		else if(amount < 100000) {
+			float mills =  amount / 1000f;
+			value += String.format("%.0fk", mills);
+		}
+		else if(amount < 1000000) {
+			float mills =  amount / 1000000f;
+			value += String.format("%.2fM", mills);
+		}
+		else if(amount < 10000000) {
+			float mills =  amount / 1000000f;
+			value += String.format("%.1fM", mills);
+		}
+		else if(amount < 100000000) {
+			float mills =  amount / 1000000f;
+			value += String.format("%.0fM", mills);
+		}
+		else if(amount < 1000000000) {
+			float mills =  amount / 1000000000f;
+			value += String.format("%.2fG", mills);
+		}
+		return value;
 	}
 
 	private void drawFoundationForeground() {
-
+		//attribute names
+		String toShow = "Agi: " + getShortNumberAmount(foundation.getAgility());
+		fontRenderer.drawString(toShow, this.guiLeft + 38, this.guiTop + 42, 0xFFFFFF);
+		toShow = "Dex: " + getShortNumberAmount(foundation.getDexterity());
+		fontRenderer.drawString(toShow, this.guiLeft + 36, this.guiTop + 72, 0xFFFFFF);
+		toShow = "Spi: " + getShortNumberAmount(foundation.getSpirit());
+		fontRenderer.drawString(toShow, this.guiLeft + 38, this.guiTop + 102, 0xFFFFFF);
+		toShow = "Con: " + getShortNumberAmount(foundation.getConstitution());
+		int length = fontRenderer.getStringWidth(toShow);
+		fontRenderer.drawString(toShow, this.guiLeft + 149 - length, this.guiTop + 42, 0xFFFFFF);
+		toShow = "Res: " + getShortNumberAmount(foundation.getResistance());
+		length = fontRenderer.getStringWidth(toShow);
+		fontRenderer.drawString(toShow, this.guiLeft + 151-length, this.guiTop + 72, 0xFFFFFF);
+		toShow = "Str: " + getShortNumberAmount(foundation.getStrength());
+		length = fontRenderer.getStringWidth(toShow);
+		fontRenderer.drawString(toShow, this.guiLeft + 149-length, this.guiTop + 102, 0xFFFFFF);
+		//per click amount
+		String perClickText = String.format("%.1f%%", amountAddedToFoundationPerClick);
+		length = this.fontRenderer.getStringWidth(perClickText);
+		fontRenderer.drawString(perClickText, this.guiLeft + 93 - length/2, this.guiTop + 118, 0xFFFFFF);
 	}
 
 	private void drawTechniquesForeground() {
@@ -356,12 +560,21 @@ public class CultivationGui extends GuiScreen {
 		}
 	}
 
-	private void drawSkillsForeground(){
-
+	private void drawSkillsForeground() {
+		List<Skill> totalSkills = skillCap.getTotalKnowSkill(cultTech);
+		for (Skill skill : totalSkills) {
+			int index = totalSkills.indexOf(skill);
+			if (index >= this.offset && index < (this.offset + Tabs.SKILLS.maxDisplayItems)) {
+				int pos = index - this.offset;
+				this.fontRenderer.drawString(skill.getName(), this.guiLeft + 31, this.guiTop + 37 + pos * 12, 0xFFFFFF);
+			} else if (index >= (this.offset + Tabs.SKILLS.maxDisplayItems)) {
+				break;
+			}
+		}
 	}
 
 	private void drawTooltips(int mouseX, int mouseY) {
-		GlStateManager.color(1f,1f,1f,1f);
+		GlStateManager.color(1f, 1f, 1f, 1f);
 		//progress %
 		if (inBounds(mouseX, mouseY, this.guiLeft + 183, this.guiTop + 5, 16, 124)) {
 			int progress_fill = (int) (cultivation.getCurrentProgress() * 100f / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
@@ -425,6 +638,88 @@ public class CultivationGui extends GuiScreen {
 
 	}
 
+	private void toggleDeselectAllSkills() {
+		if (skillCap.getSelectedSkills().isEmpty()) {
+			int size = skillCap.getTotalKnowSkill(cultTech).size();
+			for (int i = 0; i < size; i++) {
+				skillCap.getSelectedSkills().add(i);
+				skillCap.setActiveSkill(0);
+			}
+		} else {
+			skillCap.getSelectedSkills().clear();
+			skillCap.setActiveSkill(-1);
+		}
+		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false, player.getUniqueID()));
+	}
+
+	private void selectSkill(int skillIndex) {
+		if (skillCap.getSelectedSkills().contains(skillIndex)) {
+			skillCap.remSelectedSkill(skillIndex);
+		} else {
+			skillCap.addSelectedSkill(skillIndex);
+		}
+		if (skillCap.getSelectedSkills().size() == 0) {
+			skillCap.setActiveSkill(-1);
+		} else if (skillCap.getActiveSkill() == -1) {
+			skillCap.setActiveSkill(0);
+		}
+		skillCap.setActiveSkill(MathUtils.clamp(skillCap.getActiveSkill(), -1, skillCap.getSelectedSkills().size() - 1));
+		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false, player.getUniqueID()));
+	}
+
+	private void removeSkill(Skill skill) {
+		if (skillCap.getSelectedSkills().contains(skillCap.getKnownSkills().indexOf(skill))) {
+			skillCap.remSelectedSkill(skillCap.getKnownSkills().indexOf(skill));
+		}
+		if (skillCap.getKnownSkills().contains(skill)) {
+			skillCap.removeSkill(skill);
+		}
+		if (skillCap.getSelectedSkills().size() == 0) {
+			skillCap.setActiveSkill(-1);
+		} else if (skillCap.getActiveSkill() == -1) {
+			skillCap.setActiveSkill(0);
+		}
+		skillCap.setActiveSkill(Math.max(-1, Math.min(skillCap.getSelectedSkills().size() - 1, skillCap.getActiveSkill())));
+		NetworkWrapper.INSTANCE.sendToServer(new SkillCapMessage(skillCap, false, player.getUniqueID()));
+		this.offset = MathUtils.clamp(this.offset, 0, this.skillCap.getTotalKnowSkill(cultTech).size());
+	}
+
+	private void selectFoundationAttribute(int attribute) {
+		MathUtils.clamp(attribute, 0, 5);
+		if (foundation.getSelectedAttribute() == attribute) attribute = -1;
+		this.foundation.selectAttribute(attribute);
+		NetworkWrapper.INSTANCE.sendToServer(new SelectFoundationAttributeMessage(attribute, player.getUniqueID()));
+	}
+
+	private void addProgressToFoundation(int attribute) {
+		double amount = cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) *(amountAddedToFoundationPerClick/100.0);
+		if(cultivation.getCurrentProgress() < amountAddedToFoundationPerClick) {
+			amount = cultivation.getCurrentProgress();
+		}
+		cultivation.addProgress(-amount, false);
+		switch (attribute) {
+			case 0:
+				foundation.addAgilityProgress(amount);
+				break;
+			case 1:
+				foundation.addConstitutionProgress(amount);
+				break;
+			case 2:
+				foundation.addDexterityProgress(amount);
+				break;
+			case 3:
+				foundation.addResistanceProgress(amount);
+				break;
+			case 4:
+				foundation.addSpiritProgress(amount);
+				break;
+			case 5:
+				foundation.addStrengthProgress(amount);
+				break;
+		}
+		NetworkWrapper.INSTANCE.sendToServer(new AddProgressToFoundationAttributeMessage(amount, attribute, player.getUniqueID()));
+	}
+
 	public static boolean inBounds(int x, int y, int left, int top, int width, int height) {
 		return (x >= left && x <= (left + width) && y >= top && y <= (top + height));
 	}
@@ -479,20 +774,20 @@ public class CultivationGui extends GuiScreen {
 	private void handleBarButtonClick(int prop, int op) {
 		switch (prop) {
 			case 0:
-				if(op==0)WuxiaCraftConfig.speedHandicap = Math.max(0,WuxiaCraftConfig.speedHandicap - 5);
-				if(op==1)WuxiaCraftConfig.speedHandicap = Math.min(100,WuxiaCraftConfig.speedHandicap + 5);
+				if (op == 0) WuxiaCraftConfig.speedHandicap = Math.max(0, WuxiaCraftConfig.speedHandicap - 5);
+				if (op == 1) WuxiaCraftConfig.speedHandicap = Math.min(100, WuxiaCraftConfig.speedHandicap + 5);
 				break;
 			case 1:
-				if(op==0) WuxiaCraftConfig.maxSpeed -= 1f;
-				if(op==1) WuxiaCraftConfig.maxSpeed += 1f;
+				if (op == 0) WuxiaCraftConfig.maxSpeed -= 1f;
+				if (op == 1) WuxiaCraftConfig.maxSpeed += 1f;
 				break;
 			case 2:
-				if(op==0) WuxiaCraftConfig.blockBreakLimit -= 1f;
-				if(op==1) WuxiaCraftConfig.blockBreakLimit += 1f;
+				if (op == 0) WuxiaCraftConfig.blockBreakLimit -= 1f;
+				if (op == 1) WuxiaCraftConfig.blockBreakLimit += 1f;
 				break;
 			case 3:
-				if(op==0) WuxiaCraftConfig.jumpLimit -= 1f;
-				if(op==1) WuxiaCraftConfig.jumpLimit += 1f;
+				if (op == 0) WuxiaCraftConfig.jumpLimit -= 1f;
+				if (op == 1) WuxiaCraftConfig.jumpLimit += 1f;
 				break;
 		}
 		WuxiaCraftConfig.syncFromFields();
@@ -501,13 +796,15 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	public enum Tabs {
-			FOUNDATION(0),
-			TECHNIQUES(5),
-			SKILLS(5);
-			public final int maxOffset;
-			Tabs(int maxOffset) {
-				this.maxOffset = maxOffset;
-			}
+		FOUNDATION(0),
+		TECHNIQUES(5),
+		SKILLS(7);
+
+		public final int maxDisplayItems;
+
+		Tabs(int maxDisplayItems) {
+			this.maxDisplayItems = maxDisplayItems;
+		}
 	}
 
 

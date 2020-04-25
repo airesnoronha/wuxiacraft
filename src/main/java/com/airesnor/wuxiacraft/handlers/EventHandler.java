@@ -281,6 +281,12 @@ public class EventHandler {
 	private boolean toggleHasInGameFocus = false;
 
 	/**
+	 * Accumulates the fly cost to send to the server later
+	 * This is an attempt to reduce the energy messages when someone's flying
+	 */
+	private float accumulatedFlyCost = 0f;
+
+	/**
 	 * Client side logic on every tick update
 	 * It seems flight is only calculated client side
 	 * Lame
@@ -320,7 +326,11 @@ public class EventHandler {
 				}
 				if (!player.isCreative()) {
 					cultivation.remEnergy(totalRem);
-					NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, totalRem, player.getUniqueID()));
+					accumulatedFlyCost += totalRem;
+					if(cultivation.getUpdateTimer()%10==0) {
+						NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, accumulatedFlyCost, player.getUniqueID()));
+						accumulatedFlyCost = 0;
+					}
 				}
 			} /*else { //flying is not an exercise
 			//CultivationUtils.cultivatorAddProgress(player, cultivation, distance * 0.1f);
@@ -648,7 +658,7 @@ public class EventHandler {
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 		IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
 
-		double level_spd_mod = foundation.getAgilityModifier();
+		double level_spd_mod = foundation.getAgilityModifier() * (float) SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue() * 0.05f;
 		if (cultivation.getMaxSpeed() >= 0) {
 			float max_speed = cultivation.getMaxSpeed() * (float) SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue();
 			level_spd_mod = Math.min(max_speed, level_spd_mod);
