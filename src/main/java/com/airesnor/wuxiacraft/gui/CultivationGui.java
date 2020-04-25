@@ -288,14 +288,17 @@ public class CultivationGui extends GuiScreen {
 				drawSkillsBackground();
 				break;
 		}
+		double agilityModifier = (foundation.getAgilityModifier());
+		double dexterityModifier = (foundation.getDexterityModifier());
+		double strengthModifier = (foundation.getStrengthModifier());
 
 		GL11.glColor4f(1f, 1f, 1f, 1f);
 		int[] iconPos = new int[]{27, 27, 99, 108};
 		int[] fills = new int[]{
 				Math.min(27, (int) ((27f * cultivation.getSpeedHandicap()) / 100f)),
-				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / cultivation.getSpeedIncrease())),
-				Math.min(27, (int) (27f * (cultivation.getHasteLimit() / (0.1f * (cultivation.getStrengthIncrease() - 1))))),
-				Math.min(27, (int) (27f * (cultivation.getJumpLimit() * 0.42f) / (0.88f * (cultivation.getSpeedIncrease() - 1f))))
+				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / (foundation.getAgilityModifier()*0.02))),
+				Math.min(27, (int) (27f * (cultivation.getHasteLimit() / (0.1f * (dexterityModifier*0.5+strengthModifier*0.5))))),
+				Math.min(27, (int) (27f * (cultivation.getJumpLimit()) / (0.05f * (agilityModifier*0.3 + strengthModifier*0.7))))
 		};
 
 		//Regulator bars
@@ -533,7 +536,7 @@ public class CultivationGui extends GuiScreen {
 		fontRenderer.drawString(toShow, this.guiLeft + 149 - length, this.guiTop + 102, 0xFFFFFF);
 		//per click amount
 		if (this.perClickFocus) {
-			String display = String.format("%.1f", amountAddedToFoundationPerClick);
+			String display = this.perClickDisplay.replace("|", "").replace("_","");
 			display = display.substring(0, caretPosition) + (caretPosition < display.length() ? "|" + display.substring(caretPosition) : "_");
 			this.perClickDisplay = display;
 		}
@@ -806,6 +809,7 @@ public class CultivationGui extends GuiScreen {
 				MathUtils.between(keyCode, Keyboard.KEY_NUMPAD7, Keyboard.KEY_NUMPAD9) ||
 				keyCode == Keyboard.KEY_DECIMAL) {
 			this.perClickDisplay = this.perClickDisplay.substring(0, caretPosition) + typedChar + this.perClickDisplay.substring(caretPosition);
+			this.caretPosition++;
 		}
 		if (keyCode == Keyboard.KEY_LEFT) {
 			this.caretPosition = Math.max(0, this.caretPosition - 1);
@@ -815,6 +819,7 @@ public class CultivationGui extends GuiScreen {
 		}
 		if (keyCode == Keyboard.KEY_BACK) {
 			this.perClickDisplay = this.perClickDisplay.substring(0, Math.max(caretPosition - 1, 0)) + this.perClickDisplay.substring(caretPosition);
+			this.caretPosition = Math.max(0, this.caretPosition-1);
 		}
 		if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_ESCAPE) {
 			perClickLoseFocus();
@@ -831,7 +836,7 @@ public class CultivationGui extends GuiScreen {
 		this.perClickFocus = false;
 		this.caretPosition = 0;
 		try {
-			amountAddedToFoundationPerClick = Double.parseDouble(this.perClickDisplay);
+			amountAddedToFoundationPerClick = Double.parseDouble(this.perClickDisplay.replace("|","").replace("_",""));
 		} catch (NumberFormatException e) {
 			WuxiaCraft.logger.error("Couldn't convert back the number");
 		}

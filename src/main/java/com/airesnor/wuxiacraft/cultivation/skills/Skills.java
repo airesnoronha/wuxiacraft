@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.cultivation.skills;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
@@ -105,7 +106,6 @@ public class Skills {
 						actor.addPotionEffect(effect);
 					}
 				}
-				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 				CultivationUtils.cultivatorAddProgress(actor, 0.001f, true, true, true);
 				return true;
 			})
@@ -113,9 +113,13 @@ public class Skills {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
-				double amount = cultTech.getOverallCultivationSpeed() * 0.25 * 10;
+				IFoundation foundation = CultivationUtils.getFoundationFromEntity(actor);
+				double amount = cultTech.getOverallCultivationSpeed() * 0.25 * 10 * cultivation.getSpeedIncrease();
 				float energy = cultTech.getOverallCultivationSpeed() * 1.25f * 10;
-				skillCap.stepCastProgress(-(float) cultivation.getSpeedIncrease() + 1);
+				boolean hasEnergy = cultivation.hasEnergy(energy);
+				if (hasEnergy) {
+					skillCap.stepCastProgress(-(float) (foundation.getDexterityModifier() * 0.4) + 1);
+				}
 				long timeDiff = System.currentTimeMillis() - LastUseCultivateMillis;
 				if (timeDiff >= (particleStep ? 500 : 250)) { //4 per second
 					for (KnownTechnique kt : cultTech.getKnownTechniques()) {
@@ -135,7 +139,7 @@ public class Skills {
 				}
 				if (timeDiff >= 500) { //2 per second
 					NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("applySlowness", cultivation.hasEnergy(energy) ? energy : 0, actor.getUniqueID()));
-					if (cultivation.hasEnergy(energy)) {
+					if (hasEnergy) {
 						if (actor instanceof EntityPlayer) {
 							CultivationUtils.cultivatorAddProgress(actor, amount, true, false, false);
 							cultivation.remEnergy(energy);
@@ -144,7 +148,7 @@ public class Skills {
 					}
 					LastUseCultivateMillis = System.currentTimeMillis();
 				}
-				return cultivation.hasEnergy(energy);
+				return hasEnergy;
 			});
 
 	public static final Skill GATHER_WOOD = new Skill("gather_wood", false, 80f, 3f, 20f, 0f)

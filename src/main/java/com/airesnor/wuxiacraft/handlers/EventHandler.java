@@ -131,7 +131,10 @@ public class EventHandler {
 				player.capabilities.setFlySpeed((float) player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
 				player.stepHeight = 0.6f;
 				if (!player.isSneaking() && WuxiaCraftConfig.disableStepAssist) {
-					player.stepHeight = Math.min(3.1f, 0.6f * (1 + 0.55f * (float)cultivation.getSpeedIncrease()));
+					float agilityModifier = (float)foundation.getAgilityModifier()*0.4f;
+					float dexterityModifier = (float)foundation.getDexterityModifier()*0.4f;
+					float strengthModifier = (float)foundation.getStrengthModifier()*0.2f;
+					player.stepHeight = Math.min(3.1f, 0.6f * (1 + 0.15f * (agilityModifier+dexterityModifier+strengthModifier)));
 				}
 				player.sendPlayerAbilities();
 			}
@@ -188,6 +191,7 @@ public class EventHandler {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
+				IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
 				if(player.world.isRemote) {
 					long timeDiff = System.currentTimeMillis() - LastPlayerTickTime;
 					if (timeDiff >= 50) { //20 per seconds
@@ -207,7 +211,7 @@ public class EventHandler {
 							if (skillCap.isCasting()) {
 								if (cultivation.hasEnergy(selectedSkill.getCost())) {
 									if (skillCap.getCastProgress() < selectedSkill.getCastTime() && selectedSkill.castingEffect(player)) {
-										skillCap.stepCastProgress((float)cultivation.getSpeedIncrease());
+										skillCap.stepCastProgress((float)foundation.getDexterityModifier()*0.4f);
 									}
 									if (skillCap.getCastProgress() >= selectedSkill.getCastTime()) {
 										if (selectedSkill.activate(player)) {
@@ -348,8 +352,11 @@ public class EventHandler {
 	public void onPlayerJump(LivingEvent.LivingJumpEvent event) {
 		if (event.getEntityLiving() instanceof EntityPlayer) {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.getEntityLiving());
-			float baseJumpSpeed = (float) event.getEntity().motionY;
-			float jumpSpeed = 0.88f * ((float)cultivation.getSpeedIncrease() - 1f);
+			IFoundation foundation = CultivationUtils.getFoundationFromEntity(event.getEntityLiving());
+			double baseJumpSpeed = event.getEntity().motionY;
+			double agilityModifier = (foundation.getAgilityModifier()) * 0.3;
+			double strengthModifier = (foundation.getStrengthModifier()) * 0.7;
+			double jumpSpeed = 0.05f * (agilityModifier + strengthModifier) * baseJumpSpeed;
 			if (cultivation.getJumpLimit() >= 0) {
 				jumpSpeed = Math.min(jumpSpeed, cultivation.getJumpLimit() * baseJumpSpeed);
 			}
@@ -369,7 +376,15 @@ public class EventHandler {
 		if (cultivation.getCurrentLevel().canFly) {
 			event.setDistance(0);
 		} else {
-			event.setDistance(event.getDistance() - 1.85f * ((float)cultivation.getStrengthIncrease() - 1));
+			if(event.getEntityLiving() instanceof EntityPlayer) {
+				IFoundation foundation = CultivationUtils.getFoundationFromEntity(event.getEntityLiving());
+				float agilityModifier = (float) foundation.getAgilityModifier()*0.2f;
+				float strengthModifier = (float) foundation.getStrengthModifier()*0.4f;
+				float constitutionModifier = (float) foundation.getConstitution()*0.4f;
+				event.setDistance(event.getDistance() - 1.85f * (agilityModifier+strengthModifier+constitutionModifier));
+			} else {
+				event.setDistance(event.getDistance() - 1.85f * ((float) cultivation.getStrengthIncrease() - 1));
+			}
 		}
 	}
 
@@ -419,9 +434,13 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onPlayerBreakSpeed(net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed event) {
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.getEntityPlayer());
-		float hasteModifier = 0.1f * ((float)cultivation.getStrengthIncrease() - 1);
+		IFoundation foundation = CultivationUtils.getFoundationFromEntity(event.getEntityPlayer());
+		float baseSpeed = event.getOriginalSpeed();
+		float dexterityModifier = (float)foundation.getDexterityModifier()*0.5f;
+		float strengthModifier = (float)foundation.getStrengthModifier()*0.5f;
+		float hasteModifier = 0.1f * baseSpeed * (dexterityModifier+strengthModifier);
 		if (cultivation.getHasteLimit() >= 0) {
-			hasteModifier = Math.min(hasteModifier, cultivation.getHasteLimit() * event.getOriginalSpeed());
+			hasteModifier = Math.min(hasteModifier, cultivation.getHasteLimit() * baseSpeed);
 		}
 		event.setNewSpeed(event.getOriginalSpeed() + hasteModifier);
 	}
@@ -658,20 +677,20 @@ public class EventHandler {
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 		IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
 
-		double level_spd_mod = foundation.getAgilityModifier() * (float) SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue() * 0.05f;
+		double level_spd_mod = foundation.getAgilityModifier() * SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue() * 0.02f;
 		if (cultivation.getMaxSpeed() >= 0) {
-			float max_speed = cultivation.getMaxSpeed() * (float) SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue();
+			double max_speed = cultivation.getMaxSpeed() * SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue();
 			level_spd_mod = Math.min(max_speed, level_spd_mod);
 		}
 		level_spd_mod *= (cultivation.getSpeedHandicap() / 100f);
 
-		AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, foundation.getStrengthModifier(), 0);
-		AttributeModifier health_mod = new AttributeModifier(health_mod_name, foundation.getConstitutionModifier(), 0);
+		AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, foundation.getStrengthModifier()*0.25f, 0);
+		AttributeModifier health_mod = new AttributeModifier(health_mod_name, foundation.getConstitutionModifier()*0.66f, 0);
 		//since armor base is 0, it'll add 2*strength as armor
 		//I'll use for now strength for increase every other stat, since it's almost the same after all
-		AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, foundation.getResistanceModifier(), 0);
+		AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, foundation.getResistanceModifier()*0.2f, 0);
 		AttributeModifier speed_mod = new AttributeModifier(speed_mod_name, level_spd_mod, 0);
-		AttributeModifier attack_speed_mod = new AttributeModifier(attack_speed_mod_name, foundation.getDexterityModifier(), 0);
+		AttributeModifier attack_speed_mod = new AttributeModifier(attack_speed_mod_name, foundation.getDexterityModifier()/15f, 0);
 
 		//remove any previous strength modifiers
 		for (AttributeModifier mod : player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getModifiers()) {
