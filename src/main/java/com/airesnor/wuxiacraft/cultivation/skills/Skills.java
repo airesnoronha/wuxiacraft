@@ -106,7 +106,7 @@ public class Skills {
 					}
 				}
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.001f, true, true, true);
+				CultivationUtils.cultivatorAddProgress(actor, 0.001f, true, true, true);
 				return true;
 			})
 			.setWhenCasting(actor -> {
@@ -137,7 +137,7 @@ public class Skills {
 					NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("applySlowness", cultivation.hasEnergy(energy) ? energy : 0, actor.getUniqueID()));
 					if (cultivation.hasEnergy(energy)) {
 						if (actor instanceof EntityPlayer) {
-							CultivationUtils.cultivatorAddProgress(actor, cultivation, amount, true, false, false);
+							CultivationUtils.cultivatorAddProgress(actor, amount, true, false, false);
 							cultivation.remEnergy(energy);
 							NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, amount, true, false, false, actor.getUniqueID()));
 						}

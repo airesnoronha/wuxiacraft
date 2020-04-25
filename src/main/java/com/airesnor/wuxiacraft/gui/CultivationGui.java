@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
@@ -46,6 +47,10 @@ public class CultivationGui extends GuiScreen {
 	private static double amountAddedToFoundationPerClick = 1;
 
 	private Tabs tab;
+
+	private boolean perClickFocus = false;
+	private int caretPosition = 0;
+	private String perClickDisplay;
 
 	public CultivationGui(EntityPlayer player) {
 		this.player = player;
@@ -84,9 +89,13 @@ public class CultivationGui extends GuiScreen {
 
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) {
-		if (keyCode == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(keyCode)
-				|| ClientProxy.keyBindings[2].isActiveAndMatches(keyCode)) {
-			this.mc.player.closeScreen();
+		if (this.perClickFocus) {
+			handlerPerClickKey(typedChar, keyCode);
+		} else {
+			if (keyCode == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(keyCode)
+					|| ClientProxy.keyBindings[2].isActiveAndMatches(keyCode)) {
+				this.mc.player.closeScreen();
+			}
 		}
 	}
 
@@ -163,47 +172,43 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	private void handleMouseFoundation(int mouseX, int mouseY) {
-		if(inBounds(mouseX, mouseY, this.guiLeft+8, this.guiTop+38, 14,14)) {
+		if (inBounds(mouseX, mouseY, this.guiLeft + 8, this.guiTop + 38, 14, 14)) {
 			addProgressToFoundation(0);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+164, this.guiTop+38, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 164, this.guiTop + 38, 14, 14)) {
 			addProgressToFoundation(1);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+6, this.guiTop+68, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 6, this.guiTop + 68, 14, 14)) {
 			addProgressToFoundation(2);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+166, this.guiTop+68, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 166, this.guiTop + 68, 14, 14)) {
 			addProgressToFoundation(3);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+8, this.guiTop+98, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 8, this.guiTop + 98, 14, 14)) {
 			addProgressToFoundation(4);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+164, this.guiTop+98, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 164, this.guiTop + 98, 14, 14)) {
 			addProgressToFoundation(5);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+22, this.guiTop+38, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 22, this.guiTop + 38, 14, 14)) {
 			selectFoundationAttribute(0);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+150, this.guiTop+38, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 150, this.guiTop + 38, 14, 14)) {
 			selectFoundationAttribute(1);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+20, this.guiTop+68, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 20, this.guiTop + 68, 14, 14)) {
 			selectFoundationAttribute(2);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+152, this.guiTop+68, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 152, this.guiTop + 68, 14, 14)) {
 			selectFoundationAttribute(3);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+22, this.guiTop+98, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 22, this.guiTop + 98, 14, 14)) {
 			selectFoundationAttribute(4);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+150, this.guiTop+98, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 150, this.guiTop + 98, 14, 14)) {
 			selectFoundationAttribute(5);
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 64, this.guiTop + 118, 14, 14)) {
+			amountAddedToFoundationPerClick = MathUtils.clamp(amountAddedToFoundationPerClick - 1, 0, 100);
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 113, this.guiTop + 118, 14, 14)) {
+			amountAddedToFoundationPerClick = MathUtils.clamp(amountAddedToFoundationPerClick + 1, 0, 100);
 		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+64, this.guiTop+118, 14,14)) {
-			amountAddedToFoundationPerClick=MathUtils.clamp(amountAddedToFoundationPerClick-1, 0, 100);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+113, this.guiTop+118, 14,14)) {
-			amountAddedToFoundationPerClick=MathUtils.clamp(amountAddedToFoundationPerClick+1, 0, 100);
+		if(inBounds(mouseX, mouseY, this.guiLeft + 73, this.guiTop + 118, 40, 9)) {
+			if(!this.perClickFocus) {
+				perClickOnFocus();
+			}
+		} else {
+			if(this.perClickFocus) {
+				perClickLoseFocus();
+			}
 		}
 	}
 
@@ -359,7 +364,7 @@ public class CultivationGui extends GuiScreen {
 		drawTexturedModalRect(71, 10, 90, 151, 14, 14);
 
 		//radio buttons
-		drawTexturedModalRect(-71, -50, foundation.getSelectedAttribute() == 0 ? 76 :62, 151, 14, 14);
+		drawTexturedModalRect(-71, -50, foundation.getSelectedAttribute() == 0 ? 76 : 62, 151, 14, 14);
 		drawTexturedModalRect(57, -50, foundation.getSelectedAttribute() == 1 ? 76 : 62, 151, 14, 14);
 		drawTexturedModalRect(-73, -20, foundation.getSelectedAttribute() == 2 ? 76 : 62, 151, 14, 14);
 		drawTexturedModalRect(59, -20, foundation.getSelectedAttribute() == 3 ? 76 : 62, 151, 14, 14);
@@ -368,11 +373,11 @@ public class CultivationGui extends GuiScreen {
 
 		GlStateManager.popMatrix();
 		//minus button
-		drawTexturedModalRect(this.guiLeft + 64, this.guiTop+118, 45, 142, 9, 9);
-		drawTexturedModalRect(this.guiLeft + 64, this.guiTop+118, 72, 142, 9, 9);
+		drawTexturedModalRect(this.guiLeft + 64, this.guiTop + 118, 45, 142, 9, 9);
+		drawTexturedModalRect(this.guiLeft + 64, this.guiTop + 118, 72, 142, 9, 9);
 		//plus button
-		drawTexturedModalRect(this.guiLeft + 113, this.guiTop+118, 45, 142, 9, 9);
-		drawTexturedModalRect(this.guiLeft + 113, this.guiTop+118, 90, 142, 9, 9);
+		drawTexturedModalRect(this.guiLeft + 113, this.guiTop + 118, 45, 142, 9, 9);
+		drawTexturedModalRect(this.guiLeft + 113, this.guiTop + 118, 90, 142, 9, 9);
 
 	}
 
@@ -481,35 +486,29 @@ public class CultivationGui extends GuiScreen {
 
 	public static String getShortNumberAmount(int amount) {
 		String value = "";
-		if(amount < 0) {
+		if (amount < 0) {
 			value += "-";
 		}
 		amount = Math.abs(amount);
-		if(amount < 1000) {
+		if (amount < 1000) {
 			value += amount;
-		}
-		else if(amount < 10000) {
-			float mills =  amount / 1000f;
+		} else if (amount < 10000) {
+			float mills = amount / 1000f;
 			value += String.format("%.1fk", mills);
-		}
-		else if(amount < 100000) {
-			float mills =  amount / 1000f;
+		} else if (amount < 100000) {
+			float mills = amount / 1000f;
 			value += String.format("%.0fk", mills);
-		}
-		else if(amount < 1000000) {
-			float mills =  amount / 1000000f;
+		} else if (amount < 1000000) {
+			float mills = amount / 1000000f;
 			value += String.format("%.2fM", mills);
-		}
-		else if(amount < 10000000) {
-			float mills =  amount / 1000000f;
+		} else if (amount < 10000000) {
+			float mills = amount / 1000000f;
 			value += String.format("%.1fM", mills);
-		}
-		else if(amount < 100000000) {
-			float mills =  amount / 1000000f;
+		} else if (amount < 100000000) {
+			float mills = amount / 1000000f;
 			value += String.format("%.0fM", mills);
-		}
-		else if(amount < 1000000000) {
-			float mills =  amount / 1000000000f;
+		} else if (amount < 1000000000) {
+			float mills = amount / 1000000000f;
 			value += String.format("%.2fG", mills);
 		}
 		return value;
@@ -528,14 +527,19 @@ public class CultivationGui extends GuiScreen {
 		fontRenderer.drawString(toShow, this.guiLeft + 149 - length, this.guiTop + 42, 0xFFFFFF);
 		toShow = "Res: " + getShortNumberAmount(foundation.getResistance());
 		length = fontRenderer.getStringWidth(toShow);
-		fontRenderer.drawString(toShow, this.guiLeft + 151-length, this.guiTop + 72, 0xFFFFFF);
+		fontRenderer.drawString(toShow, this.guiLeft + 151 - length, this.guiTop + 72, 0xFFFFFF);
 		toShow = "Str: " + getShortNumberAmount(foundation.getStrength());
 		length = fontRenderer.getStringWidth(toShow);
-		fontRenderer.drawString(toShow, this.guiLeft + 149-length, this.guiTop + 102, 0xFFFFFF);
+		fontRenderer.drawString(toShow, this.guiLeft + 149 - length, this.guiTop + 102, 0xFFFFFF);
 		//per click amount
-		String perClickText = String.format("%.1f%%", amountAddedToFoundationPerClick);
+		if (this.perClickFocus) {
+			String display = String.format("%.1f", amountAddedToFoundationPerClick);
+			display = display.substring(0, caretPosition) + (caretPosition < display.length() ? "|" + display.substring(caretPosition) : "_");
+			this.perClickDisplay = display;
+		}
+		String perClickText = perClickFocus ? this.perClickDisplay : String.format("%.1f%%", amountAddedToFoundationPerClick);
 		length = this.fontRenderer.getStringWidth(perClickText);
-		fontRenderer.drawString(perClickText, this.guiLeft + 93 - length/2, this.guiTop + 118, 0xFFFFFF);
+		fontRenderer.drawString(perClickText, this.guiLeft + 93 - length / 2, this.guiTop + 118, this.perClickFocus ? 0xFFFF20 : 0xFFFFFF);
 	}
 
 	private void drawTechniquesForeground() {
@@ -692,8 +696,8 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	private void addProgressToFoundation(int attribute) {
-		double amount = cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) *(amountAddedToFoundationPerClick/100.0);
-		if(cultivation.getCurrentProgress() < amountAddedToFoundationPerClick) {
+		double amount = cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * (amountAddedToFoundationPerClick / 100.0);
+		if (cultivation.getCurrentProgress() < amountAddedToFoundationPerClick) {
 			amount = cultivation.getCurrentProgress();
 		}
 		cultivation.addProgress(-amount, false);
@@ -793,6 +797,44 @@ public class CultivationGui extends GuiScreen {
 		WuxiaCraftConfig.syncFromFields();
 		WuxiaCraftConfig.syncCultivationFromConfigToClient();
 		NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit, player.getUniqueID()));
+	}
+
+	private void handlerPerClickKey(char typedChar, int keyCode) {
+		if (MathUtils.between(keyCode, Keyboard.KEY_1, Keyboard.KEY_0) || keyCode == Keyboard.KEY_PERIOD ||
+				MathUtils.between(keyCode, Keyboard.KEY_NUMPAD1, Keyboard.KEY_NUMPAD0) ||
+				MathUtils.between(keyCode, Keyboard.KEY_NUMPAD4, Keyboard.KEY_NUMPAD6) ||
+				MathUtils.between(keyCode, Keyboard.KEY_NUMPAD7, Keyboard.KEY_NUMPAD9) ||
+				keyCode == Keyboard.KEY_DECIMAL) {
+			this.perClickDisplay = this.perClickDisplay.substring(0, caretPosition) + typedChar + this.perClickDisplay.substring(caretPosition);
+		}
+		if (keyCode == Keyboard.KEY_LEFT) {
+			this.caretPosition = Math.max(0, this.caretPosition - 1);
+		}
+		if (keyCode == Keyboard.KEY_RIGHT) {
+			this.caretPosition = Math.min(perClickDisplay.length() - 1, this.caretPosition + 1);
+		}
+		if (keyCode == Keyboard.KEY_BACK) {
+			this.perClickDisplay = this.perClickDisplay.substring(0, Math.max(caretPosition - 1, 0)) + this.perClickDisplay.substring(caretPosition);
+		}
+		if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_ESCAPE) {
+			perClickLoseFocus();
+		}
+	}
+
+	private void perClickOnFocus() {
+		this.perClickFocus = true;
+		this.perClickDisplay = String.format("%.1f_", amountAddedToFoundationPerClick);
+		this.caretPosition = this.perClickDisplay.length() - 1;
+	}
+
+	private void perClickLoseFocus() {
+		this.perClickFocus = false;
+		this.caretPosition = 0;
+		try {
+			amountAddedToFoundationPerClick = Double.parseDouble(this.perClickDisplay);
+		} catch (NumberFormatException e) {
+			WuxiaCraft.logger.error("Couldn't convert back the number");
+		}
 	}
 
 	public enum Tabs {

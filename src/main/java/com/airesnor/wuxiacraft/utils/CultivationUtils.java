@@ -79,8 +79,10 @@ public class CultivationUtils {
 		return foundation;
 	}
 
-	public static void cultivatorAddProgress(EntityLivingBase player, ICultivation cultivation, double amount, boolean techniques, boolean allowBreakThrough, boolean ignoreBottleneck) {
+	public static void cultivatorAddProgress(EntityLivingBase player, double amount, boolean techniques, boolean allowBreakThrough, boolean ignoreBottleneck) {
+		ICultivation cultivation = getCultivationFromEntity(player);
 		ICultTech cultTech = getCultTechFromEntity(player);
+		IFoundation foundation = getFoundationFromEntity(player);
 		amount *= cultTech.getOverallCultivationSpeed();
 		double enlightenment = 1;
 		PotionEffect effect = player.getActivePotionEffect(Skills.ENLIGHTENMENT);
@@ -94,6 +96,7 @@ public class CultivationUtils {
 		if (!cultivation.getSuppress()) {
 			double progressRel = cultivation.getCurrentProgress() / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
 			double bottleneckAmount = ignoreBottleneck ? amount : amount * MathUtils.clamp(1.2f - progressRel, 0.2f, 1f);
+			if(foundation .getSelectedAttribute() == -1) {
 			if (cultivation.addProgress(bottleneckAmount, allowBreakThrough)) {
 				if (!player.world.isRemote) {
 					if (player instanceof EntityPlayer) {
@@ -102,6 +105,26 @@ public class CultivationUtils {
 						NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) player);
 					}
 				}
+			} }
+			switch (foundation.getSelectedAttribute()) {
+				case 0:
+					foundation.addAgilityProgress(bottleneckAmount);
+					break;
+				case 1:
+					foundation.addConstitutionProgress(bottleneckAmount);
+					break;
+				case 2:
+					foundation.addDexterityProgress(bottleneckAmount);
+					break;
+				case 3:
+					foundation.addResistanceProgress(bottleneckAmount);
+					break;
+				case 4:
+					foundation.addSpiritProgress(bottleneckAmount);
+					break;
+				case 5:
+					foundation.addStrengthProgress(bottleneckAmount);
+					break;
 			}
 		}
 	}
