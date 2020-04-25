@@ -5,6 +5,7 @@ import com.airesnor.wuxiacraft.alchemy.Recipe;
 import com.airesnor.wuxiacraft.blocks.Cauldron;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
@@ -214,10 +215,11 @@ public class RendererHandler {
 
 		EntityPlayer player = mc.world.getPlayerEntityByUUID(mc.player.getUniqueID());
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+		IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
 
 		mc.renderEngine.bindTexture(hud_bars);
 
-		double energy_fill = cultivation.getEnergy() / cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel());
+		double energy_fill = cultivation.getEnergy() / cultivation.getMaxEnergy(foundation);
 		double progress_fill = cultivation.getCurrentProgress() * 100f / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
 
 		int middleX = (width) / 2;

@@ -68,6 +68,8 @@ public class CommonProxy {
 		NetworkWrapper.INSTANCE.registerMessage(new SpawnParticleMessageHandler(), SpawnParticleMessage.class, 167013, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new SpeedHandicapMessageHandler(), SpeedHandicapMessage.class, 167014, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new SuppressCultivationMessageHandler(), SuppressCultivationMessage.class, 167015, Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(new AddProgressToFoundationAttributeMessageHandler(), AddProgressToFoundationAttributeMessage.class, 167023, Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(new SelectFoundationAttributeMessageHandler(), SelectFoundationAttributeMessage.class, 167024, Side.SERVER);
 
 		NetworkWrapper.INSTANCE.registerMessage(new CultivationMessageHandler(), CultivationMessage.class, 167016, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(new CultTechMessageHandler(), CultTechMessage.class, 167017, Side.CLIENT);

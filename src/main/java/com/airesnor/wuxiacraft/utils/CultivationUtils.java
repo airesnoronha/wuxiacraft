@@ -93,7 +93,7 @@ public class CultivationUtils {
 		}
 		if (!cultivation.getSuppress()) {
 			double progressRel = cultivation.getCurrentProgress() / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
-			double bottleneckAmount = ignoreBottleneck ? amount : amount * Math.min(1.0f, 1.2f - progressRel);
+			double bottleneckAmount = ignoreBottleneck ? amount : amount * MathUtils.clamp(1.2f - progressRel, 0.2f, 1f);
 			if (cultivation.addProgress(bottleneckAmount, allowBreakThrough)) {
 				if (!player.world.isRemote) {
 					if (player instanceof EntityPlayer) {

@@ -30,7 +30,7 @@ public class ActivateSkillMessageHandler implements IMessageHandler<ActivateSkil
 							if (!player.isCreative())
 								cultivation.remEnergy(selectedSkill.getCost());
 							skillCap.stepCooldown(selectedSkill.getCooldown());
-							CultivationUtils.cultivatorAddProgress(player, cultivation, selectedSkill.getProgress(), true, false, false);
+							//CultivationUtils.cultivatorAddProgress(player, cultivation, selectedSkill.getProgress(), true, false, false);
 						}
 					}
 				}

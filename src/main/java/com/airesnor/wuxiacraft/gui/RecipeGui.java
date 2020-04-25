@@ -85,4 +85,9 @@ public class RecipeGui extends GuiScreen {
 			GlStateManager.popMatrix();
 		}
 	}
+
+	@Override
+	public boolean doesGuiPauseGame() {
+		return false;
+	}
 }

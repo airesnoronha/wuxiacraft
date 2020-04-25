@@ -38,7 +38,7 @@ public class Foundation implements IFoundation {
 
 	public static double getLevelMaxProgress(int level) {
 		if(level >= 0) {
-			return 10 * (Math.pow(1.12, Math.floor(level / 10.0) + level)); //At each 10 levels in increases another level
+			return 100 * (Math.pow(1.12, Math.floor(level / 10.0) + level)); //At each 10 levels in increases another level
 		}
 		return 0;
 	}
