@@ -2,7 +2,6 @@ package com.airesnor.wuxiacraft.cultivation.skills;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
@@ -112,7 +111,7 @@ public class Skills {
 			.setWhenCasting(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
-				double amount = cultTech.getOverallCultivationSpeed() * 10 * cultivation.getSpeedIncrease();
+				double amount = cultTech.getOverallCultivationSpeed() * cultivation.getSpeedIncrease();
 				float energy = cultTech.getOverallCultivationSpeed() * 1.25f * 10;
 				boolean hasEnergy = cultivation.hasEnergy(energy);
 				long timeDiff = System.currentTimeMillis() - LastUseCultivateMillis;

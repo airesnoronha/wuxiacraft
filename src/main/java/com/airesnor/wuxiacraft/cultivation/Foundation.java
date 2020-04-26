@@ -38,7 +38,7 @@ public class Foundation implements IFoundation {
 
 	public static double getLevelMaxProgress(long level) {
 		if(level >= 0) {
-			return 10 * (Math.pow(1.12, Math.floor(level / 10.0) + level)); //At each 10 levels in increases another level
+			return 40 * (Math.pow(1.02, Math.floor(level / 10.0) + level)); //At each 10 levels in increases another level
 		}
 		return 0;
 	}
@@ -307,7 +307,7 @@ public class Foundation implements IFoundation {
 
 	@Override
 	public void applyDeathPunishment(ICultivation cultivation) {
-		long toLose = (long) (cultivation.getStrengthIncrease()* 2 * 0.1); //lose around 10 % of what it would need to level up
+		long toLose = (long) (cultivation.getStrengthIncrease()* 0.3); //lose around 15 % of what it would need to level up
 		this.agility = Math.max(this.agility-toLose, 0);
 		this.constitution = Math.max(this.constitution-toLose, 0);
 		this.dexterity = Math.max(this.dexterity-toLose, 0);

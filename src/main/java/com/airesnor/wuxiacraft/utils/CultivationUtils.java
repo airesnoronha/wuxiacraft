@@ -173,7 +173,7 @@ public class CultivationUtils {
 						foundation.getDexterityModifier() + foundation.getResistanceModifier() +
 						foundation.getSpiritModifier() + foundation.getStrengthModifier();
 				double strength = cultivation.getStrengthIncrease() * 12;
-				final int bolts = MathUtils.clamp(1 + (int) (Math.round(resistance / cultivation.getStrengthIncrease()*6)), 1, 12);
+				final int bolts = MathUtils.clamp(1 + (int) (Math.round(resistance / (cultivation.getStrengthIncrease()*4))), 1, 12);
 				float damage = (float) Math.max(1, strength - resistance);
 				for (int i = 0; i < bolts; i++) {
 					boolean survived = player.isEntityAlive();

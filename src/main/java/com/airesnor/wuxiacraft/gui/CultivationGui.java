@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.gui;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
+import com.airesnor.wuxiacraft.cultivation.Foundation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
@@ -77,9 +78,12 @@ public class CultivationGui extends GuiScreen {
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		this.drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		this.drawBackgroundLayer();
 		this.drawForegroundLayer();
 		this.drawTooltips(mouseX, mouseY);
+		GlStateManager.disableBlend();
 	}
 
 	@Override
@@ -213,11 +217,17 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	private void handleMouseTechniques(int mouseX, int mouseY) {
-		for (int i = 0; i < Math.min(5, this.cultTech.getKnownTechniques().size()); i++) {
-			if (inBounds(mouseX, mouseY, this.guiLeft + 8, this.guiTop + 35 + 4 + i * 16, 9, 9)) {
-				int index = this.cultTech.getKnownTechniques().size() > 5 ? offset + i : i;
-				NetworkWrapper.INSTANCE.sendToServer(new RemoveTechniqueMessage(cultTech.getKnownTechniques().get(index).getTechnique(), player.getUniqueID()));
-				cultTech.getKnownTechniques().remove(index);
+		List<KnownTechnique> toDisplay = new ArrayList<>(this.cultTech.getKnownTechniques()); // this way i can remove without concurrent modification excpetion
+		for (KnownTechnique t : toDisplay) {
+			int index = this.cultTech.getKnownTechniques().indexOf(t);
+			if (index >= this.offset && index < (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
+				int pos = index - this.offset;
+				if (inBounds(mouseX, mouseY, this.guiLeft + 8, this.guiTop + 35 + 4 + pos * 19, 9, 9)) {
+					NetworkWrapper.INSTANCE.sendToServer(new RemoveTechniqueMessage(cultTech.getKnownTechniques().get(index).getTechnique(), player.getUniqueID()));
+					cultTech.getKnownTechniques().remove(index);
+				}
+			} else if (index >= (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
+				break;
 			}
 		}
 	}
@@ -315,10 +325,7 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	private void drawFoundationBackground() {
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		drawTexturedModalRect(this.guiLeft + 66, this.guiTop + 55, 0, 173, 54, 52); //cultivator body
-		GlStateManager.disableBlend();
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(this.guiLeft + 93, this.guiTop + 88, 0);
 		Tessellator tessellator = Tessellator.getInstance();
@@ -374,6 +381,32 @@ public class CultivationGui extends GuiScreen {
 		drawTexturedModalRect(-71, 10, foundation.getSelectedAttribute() == 4 ? 76 : 62, 151, 14, 14);
 		drawTexturedModalRect(57, 10, foundation.getSelectedAttribute() == 5 ? 76 : 62, 151, 14, 14);
 
+		//bars
+		float fill = (float)Math.min(1, foundation.getAgilityProgress()/ Foundation.getLevelMaxProgress(foundation.getAgility()));
+		int fill_pix = (int)(49*fill);
+		drawTexturedModalRect(-77, -34, 54, 166, 53, 3);
+		drawTexturedModalRect(-75, -34, 56, 169, fill_pix, 3);
+		fill = (float)Math.min(1, foundation.getConstitutionProgress()/ Foundation.getLevelMaxProgress(foundation.getConstitution()));
+		fill_pix = (int)(49*fill);
+		drawTexturedModalRect(21, -34, 54, 166, 53, 3);
+		drawTexturedModalRect(23, -34, 56, 169, fill_pix, 3);
+		fill = (float)Math.min(1, foundation.getDexterityProgress()/ Foundation.getLevelMaxProgress(foundation.getDexterity()));
+		fill_pix = (int)(49*fill);
+		drawTexturedModalRect(-79, -4, 54, 166, 53, 3);
+		drawTexturedModalRect(-77, -4, 56, 169, fill_pix, 3);
+		fill = (float)Math.min(1, foundation.getResistanceProgress()/ Foundation.getLevelMaxProgress(foundation.getResistance()));
+		fill_pix = (int)(49*fill);
+		drawTexturedModalRect(23, -4, 54, 166, 53, 3);
+		drawTexturedModalRect(25, -4, 56, 169, fill_pix, 3);
+		fill = (float)Math.min(1, foundation.getSpiritProgress()/ Foundation.getLevelMaxProgress(foundation.getSpirit()));
+		fill_pix = (int)(49*fill);
+		drawTexturedModalRect(-77, 26, 54, 166, 53, 3);
+		drawTexturedModalRect(-75, 26, 56, 169, fill_pix, 3);
+		fill = (float)Math.min(1, foundation.getStrengthProgress()/ Foundation.getLevelMaxProgress(foundation.getStrength()));
+		fill_pix = (int)(49*fill);
+		drawTexturedModalRect(21, 26, 54, 166, 53, 3);
+		drawTexturedModalRect(23, 26, 56, 169, fill_pix, 3);
+
 		GlStateManager.popMatrix();
 		//minus button
 		drawTexturedModalRect(this.guiLeft + 64, this.guiTop + 118, 45, 142, 9, 9);
@@ -385,7 +418,8 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	private void drawTechniquesBackground() {
-		for (KnownTechnique t : this.cultTech.getKnownTechniques()) {
+		List<KnownTechnique> toDisplay = new ArrayList<>(this.cultTech.getKnownTechniques()); // this way i can remove without concurrent modification excpetion
+		for (KnownTechnique t : toDisplay) {
 			int index = this.cultTech.getKnownTechniques().indexOf(t);
 			if (index >= this.offset && index < (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
 				int progressFill = 0;
@@ -402,10 +436,10 @@ public class CultivationGui extends GuiScreen {
 					progressFill += (int) ((t.getProgress() * 46f) / t.getTechnique().getTier().smallProgress);
 				}
 				int pos = index - this.offset;
-				drawTexturedModalRect(this.guiLeft + 19, this.guiTop + 35 + pos * 16 + 11, 0, 136, 139, 3);
-				drawTexturedModalRect(this.guiLeft + 19, this.guiTop + 35 + pos * 16 + 11, 0, 139, progressFill, 3);
-				drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 35 + pos * 16 + 4, 45, 142, 9, 9);
-				drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 35 + pos * 16 + 4, 72, 142, 9, 9);
+				drawTexturedModalRect(this.guiLeft + 19, this.guiTop + 35 + pos * 19 + 11, 0, 136, 139, 3);
+				drawTexturedModalRect(this.guiLeft + 19, this.guiTop + 35 + pos * 19 + 11, 0, 139, progressFill, 3);
+				drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 35 + pos * 19 + 4, 45, 142, 9, 9);
+				drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 35 + pos * 19 + 4, 72, 142, 9, 9);
 			} else if (index >= (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
 				break;
 			}
@@ -546,24 +580,15 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	private void drawTechniquesForeground() {
-		int knowTechniquesSize = this.cultTech.getKnownTechniques().size();
-		List<KnownTechnique> drawing = new ArrayList<>();
-		if (knowTechniquesSize > 5) {
-			int counter = 0;
-			for (KnownTechnique t : this.cultTech.getKnownTechniques()) {
-				if (counter >= offset && counter < offset + 5) {
-					drawing.add(t);
-				}
-				counter++;
+		List<KnownTechnique> toDisplay = new ArrayList<>(this.cultTech.getKnownTechniques()); // this way i can remove without concurrent modification excpetion
+		for (KnownTechnique t : toDisplay) {
+			int index = this.cultTech.getKnownTechniques().indexOf(t);
+			if (index >= this.offset && index < (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
+				int pos = index - this.offset;
+				this.fontRenderer.drawString(t.getTechnique().getName(), this.guiLeft + 19, this.guiTop + 35 + pos * 19 + 2, 0xFFFFFF);
+			} else if (index >= (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
+				break;
 			}
-		} else {
-			drawing.addAll(this.cultTech.getKnownTechniques());
-		}
-		int pos = 0;
-		for (KnownTechnique t : drawing) {
-			String display = t.getTechnique().getName();// + " " + (int)t.getProgress();
-			this.fontRenderer.drawString(display, this.guiLeft + 19, this.guiTop + 35 + pos * 16 + 2, 0xFFFFFF);
-			pos++;
 		}
 	}
 
@@ -618,25 +643,60 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	private void drawFoundationTooltips(int mouseX, int mouseY) {
-
+		boolean drawing = false;
+		String line = "";
+		if(inBounds(mouseX, mouseY, this.guiLeft+16, this.guiTop+54, 54, 3)) {
+			drawing = true;
+			line = String.format("%d%%", (int)(this.foundation.getAgilityProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getAgility())));
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+114, this.guiTop+54, 54, 3)) {
+			drawing = true;
+			line = String.format("%d%%", (int)(this.foundation.getConstitutionProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getConstitution())));
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+14, this.guiTop+84, 54, 3)) {
+			drawing = true;
+			line = String.format("%d%%", (int)(this.foundation.getDexterityProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getDexterity())));
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+116, this.guiTop+84, 54, 3)) {
+			drawing = true;
+			line = String.format("%d%%", (int)(this.foundation.getResistanceProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getResistance())));
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+16, this.guiTop+114, 54, 3)) {
+			drawing = true;
+			line = String.format("%d%%", (int)(this.foundation.getSpiritProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getSpirit())));
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+114, this.guiTop+114, 54, 3)) {
+			drawing = true;
+			line = String.format("%d%%", (int)(this.foundation.getStrengthProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getStrength())));
+		}
+		if(drawing) {
+			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
+			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
+		}
 	}
 
 	private void drawTechniquesTooltips(int mouseX, int mouseY) {
-		for (int i = 0; i < Math.min(this.cultTech.getKnownTechniques().size(), 5); i++) {
-			int index = this.cultTech.getKnownTechniques().size() > 5 ? offset + i : i;
-			if (inBounds(mouseX, mouseY, this.guiLeft + 19, this.guiTop + 35 + i * 16 + 11, 139, 3)) {
-				String line = "No success";
-				if (this.cultTech.getKnownTechniques().get(index).getProgress() >= this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().smallProgress +
-						this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().greatProgress +
-						this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().perfectionProgress)
-					line = "Perfection success";
-				else if (this.cultTech.getKnownTechniques().get(index).getProgress() > this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().smallProgress +
-						this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().greatProgress)
-					line = "Great success";
-				else if (this.cultTech.getKnownTechniques().get(index).getProgress() > this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().smallProgress)
-					line = "Small success";
-				drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
-				this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
+		List<KnownTechnique> toDisplay = new ArrayList<>(this.cultTech.getKnownTechniques()); // this way i can remove without concurrent modification excpetion
+		for (KnownTechnique t : toDisplay) {
+			int index = this.cultTech.getKnownTechniques().indexOf(t);
+			if (index >= this.offset && index < (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
+				int pos = index - this.offset;
+				if (inBounds(mouseX, mouseY, this.guiLeft + 19, this.guiTop + 35 + pos * 19 + 11, 139, 3)) {
+					String line = "No success";
+					if (t.getProgress() >= t.getTechnique().getTier().smallProgress +
+							t.getTechnique().getTier().greatProgress +
+							t.getTechnique().getTier().perfectionProgress)
+						line = "Perfection success";
+					else if (t.getProgress() > t.getTechnique().getTier().smallProgress +
+							t.getTechnique().getTier().greatProgress)
+						line = "Great success";
+					else if (t.getProgress() > t.getTechnique().getTier().smallProgress)
+						line = "Small success";
+					drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
+					this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
+				}
+			} else if (index >= (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
+				break;
 			}
 		}
 	}
