@@ -296,7 +296,7 @@ public class CultivationGui extends GuiScreen {
 		int[] iconPos = new int[]{27, 27, 99, 108};
 		int[] fills = new int[]{
 				Math.min(27, (int) ((27f * cultivation.getSpeedHandicap()) / 100f)),
-				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / (foundation.getAgilityModifier()*0.02))),
+				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / (agilityModifier*0.005))),
 				Math.min(27, (int) (27f * (cultivation.getHasteLimit() / (0.1f * (dexterityModifier*0.5+strengthModifier*0.5))))),
 				Math.min(27, (int) (27f * (cultivation.getJumpLimit()) / (0.05f * (agilityModifier*0.3 + strengthModifier*0.7))))
 		};
@@ -487,7 +487,7 @@ public class CultivationGui extends GuiScreen {
 		}
 	}
 
-	public static String getShortNumberAmount(int amount) {
+	public static String getShortNumberAmount(long amount) {
 		String value = "";
 		if (amount < 0) {
 			value += "-";

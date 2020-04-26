@@ -18,7 +18,9 @@ public class Skill {
 
 	private final String authorName;
 
-	final boolean aggressive;
+	public final boolean aggressive;
+
+	public final boolean castNotSpeedable;
 
 	public String getName() {
 		return TranslateUtils.translateKey("wuxiacraft.skills." + this.name);
@@ -67,15 +69,16 @@ public class Skill {
 	}
 
 	public Skill(String name, boolean aggressive, float cost, float progress) {
-		this(name, aggressive, cost, progress, 0, 0);
+		this(name, false, aggressive, cost, progress, 0, 0);
 	}
 
-	public Skill(String name, boolean aggressive, float cost, float progress, float castTime, float cooldown) {
-		this(name, aggressive, cost, progress, castTime, cooldown, "Aires Adures");
+	public Skill(String name, boolean castNotSpeedable, boolean aggressive, float cost, float progress, float castTime, float cooldown) {
+		this(name, castNotSpeedable, aggressive, cost, progress, castTime, cooldown, "Aires Adures");
 	}
 
-	public Skill(String name, boolean aggressive, float cost, float progress, float castTime, float cooldown, String author) {
+	public Skill(String name, boolean castNotSpeedable, boolean aggressive, float cost, float progress, float castTime, float cooldown, String author) {
 		this.name = name;
+		this.castNotSpeedable = castNotSpeedable;
 		this.aggressive = aggressive;
 		this.cost = cost;
 		this.progress = progress;

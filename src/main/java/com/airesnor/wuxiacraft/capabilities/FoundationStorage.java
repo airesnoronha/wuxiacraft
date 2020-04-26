@@ -13,12 +13,12 @@ public class FoundationStorage implements Capability.IStorage<IFoundation> {
 	@Override
 	public NBTBase writeNBT(Capability<IFoundation> capability, IFoundation instance, EnumFacing side) {
 		NBTTagCompound tag = new NBTTagCompound();
-		tag.setInteger("agility", instance.getAgility());
-		tag.setInteger("constitution", instance.getConstitution());
-		tag.setInteger("dexterity", instance.getDexterity());
-		tag.setInteger("resistance", instance.getResistance());
-		tag.setInteger("spirit", instance.getSpirit());
-		tag.setInteger("strength", instance.getStrength());
+		tag.setLong("agility", instance.getAgility());
+		tag.setLong("constitution", instance.getConstitution());
+		tag.setLong("dexterity", instance.getDexterity());
+		tag.setLong("resistance", instance.getResistance());
+		tag.setLong("spirit", instance.getSpirit());
+		tag.setLong("strength", instance.getStrength());
 		tag.setInteger("selected", instance.getSelectedAttribute());
 		tag.setDouble("agility-progress", instance.getAgilityProgress());
 		tag.setDouble("constitution-progress", instance.getConstitutionProgress());
@@ -33,17 +33,17 @@ public class FoundationStorage implements Capability.IStorage<IFoundation> {
 	public void readNBT(Capability<IFoundation> capability, IFoundation instance, EnumFacing side, NBTBase nbt) {
 		NBTTagCompound tag = (NBTTagCompound) nbt;
 		if (tag.hasKey("agility"))
-			instance.setAgility(tag.getInteger("agility"));
+			instance.setAgility(tag.getLong("agility"));
 		if (tag.hasKey("constitution"))
-			instance.setConstitution(tag.getInteger("constitution"));
+			instance.setConstitution(tag.getLong("constitution"));
 		if (tag.hasKey("dexterity"))
-			instance.setDexterity(tag.getInteger("dexterity"));
+			instance.setDexterity(tag.getLong("dexterity"));
 		if (tag.hasKey("resistance"))
-			instance.setResistance(tag.getInteger("resistance"));
+			instance.setResistance(tag.getLong("resistance"));
 		if (tag.hasKey("spirit"))
-			instance.setSpirit(tag.getInteger("spirit"));
+			instance.setSpirit(tag.getLong("spirit"));
 		if (tag.hasKey("strength"))
-			instance.setStrength(tag.getInteger("strength"));
+			instance.setStrength(tag.getLong("strength"));
 		if (tag.hasKey("selected"))
 			instance.selectAttribute(tag.getInteger("selected"));
 		if (tag.hasKey("agility-progress"))

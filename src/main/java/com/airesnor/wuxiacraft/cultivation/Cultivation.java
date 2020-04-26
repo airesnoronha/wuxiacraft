@@ -33,12 +33,16 @@ public class Cultivation implements ICultivation {
 		this.progress += amount;
 		if(allowBreakThrough) {
 			if (this.progress >= this.level.getProgressBySubLevel(this.subLevel)) { //no more repeated breakthrough, just one at a time
-				leveled = true;
 				this.progress -= this.level.getProgressBySubLevel(this.subLevel);
-				this.subLevel++;
-				if (this.subLevel >= this.level.subLevels) {
-					this.subLevel = 0;
-					this.level = this.level.getNextLevel();
+				leveled = true;
+				if(!this.level.tribulationEachSubLevel && this.subLevel+1 < this.level.subLevels) {
+					this.subLevel++;
+				}
+				else if (this.subLevel+1 >= this.level.subLevels) {
+					if(!this.level.getNextLevel().callsTribulation) {
+						this.subLevel = 0;
+						this.level = this.level.getNextLevel();
+					}
 				}
 			}
 		}
