@@ -13,29 +13,29 @@ public interface IFoundation {
 
 	double getStrengthModifier();
 
-	int getAgility();
+	long getAgility();
 
-	void setAgility(int agility);
+	void setAgility(long agility);
 
-	int getConstitution();
+	long getConstitution();
 
-	void setConstitution(int constitution);
+	void setConstitution(long constitution);
 
-	int getDexterity();
+	long getDexterity();
 
-	void setDexterity(int dexterity);
+	void setDexterity(long dexterity);
 
-	int getResistance();
+	long getResistance();
 
-	void setResistance(int resistance);
+	void setResistance(long resistance);
 
-	int getSpirit();
+	long getSpirit();
 
-	void setSpirit(int spirit);
+	void setSpirit(long spirit);
 
-	int getStrength();
+	long getStrength();
 
-	void setStrength(int strength);
+	void setStrength(long strength);
 
 	double getAgilityProgress();
 
@@ -81,5 +81,5 @@ public interface IFoundation {
 
 	void copyFrom(IFoundation foundation);
 
-	void applyDeathPunishment();
+	void applyDeathPunishment(ICultivation cultivation);
 }

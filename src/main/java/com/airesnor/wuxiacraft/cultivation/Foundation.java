@@ -4,12 +4,12 @@ import com.airesnor.wuxiacraft.utils.MathUtils;
 
 public class Foundation implements IFoundation {
 
-	private int agility; // move speed
-	private int constitution; // max health
-	private int dexterity; // attack speed
-	private int resistance; // armor
-	private int spirit; // max energy
-	private int strength; //attack damage
+	private long agility; // move speed
+	private long constitution; // max health
+	private long dexterity; // attack speed
+	private long resistance; // armor
+	private long spirit; // max energy
+	private long strength; //attack damage
 
 	private double agilityProgress;
 	private double constitutionProgress;
@@ -36,9 +36,9 @@ public class Foundation implements IFoundation {
 		this.selectedAttribute = -1;
 	}
 
-	public static double getLevelMaxProgress(int level) {
+	public static double getLevelMaxProgress(long level) {
 		if(level >= 0) {
-			return 100 * (Math.pow(1.12, Math.floor(level / 10.0) + level)); //At each 10 levels in increases another level
+			return 40 * (Math.pow(1.02, Math.floor(level / 10.0) + level)); //At each 10 levels in increases another level
 		}
 		return 0;
 	}
@@ -74,62 +74,62 @@ public class Foundation implements IFoundation {
 	}
 
 	@Override
-	public int getAgility() {
+	public long getAgility() {
 		return agility;
 	}
 
 	@Override
-	public void setAgility(int agility) {
+	public void setAgility(long agility) {
 		this.agility = agility;
 	}
 
 	@Override
-	public int getConstitution() {
+	public long getConstitution() {
 		return constitution;
 	}
 
 	@Override
-	public void setConstitution(int constitution) {
+	public void setConstitution(long constitution) {
 		this.constitution = constitution;
 	}
 
 	@Override
-	public int getDexterity() {
+	public long getDexterity() {
 		return dexterity;
 	}
 
 	@Override
-	public void setDexterity(int dexterity) {
+	public void setDexterity(long dexterity) {
 		this.dexterity = dexterity;
 	}
 
 	@Override
-	public int getResistance() {
+	public long getResistance() {
 		return resistance;
 	}
 
 	@Override
-	public void setResistance(int resistance) {
+	public void setResistance(long resistance) {
 		this.resistance = resistance;
 	}
 
 	@Override
-	public int getSpirit() {
+	public long getSpirit() {
 		return spirit;
 	}
 
 	@Override
-	public void setSpirit(int spirit) {
+	public void setSpirit(long spirit) {
 		this.spirit = spirit;
 	}
 
 	@Override
-	public int getStrength() {
+	public long getStrength() {
 		return strength;
 	}
 
 	@Override
-	public void setStrength(int strength) {
+	public void setStrength(long strength) {
 		this.strength = strength;
 	}
 
@@ -298,7 +298,7 @@ public class Foundation implements IFoundation {
 		this.dexterity = foundation.getDexterity();
 		this.dexterityProgress = foundation.getDexterityProgress();
 		this.resistance = foundation.getResistance();
-		this.resistanceProgress = foundation.getAgilityProgress();
+		this.resistanceProgress = foundation.getResistanceProgress();
 		this.spirit = foundation.getSpirit();
 		this.spiritProgress = foundation.getSpiritProgress();
 		this.strength = foundation.getStrength();
@@ -306,13 +306,14 @@ public class Foundation implements IFoundation {
 	}
 
 	@Override
-	public void applyDeathPunishment() {
-		this.agility = Math.max(this.agility-1, 0);
-		this.constitution = Math.max(this.constitution-1, 0);
-		this.dexterity = Math.max(this.dexterity-1, 0);
-		this.resistance = Math.max(this.resistance-1, 0);
-		this.spirit = Math.max(this.spirit-1, 0);
-		this.strength = Math.max(this.strength-1, 0);
+	public void applyDeathPunishment(ICultivation cultivation) {
+		long toLose = (long) (cultivation.getStrengthIncrease()* 0.3); //lose around 15 % of what it would need to level up
+		this.agility = Math.max(this.agility-toLose, 0);
+		this.constitution = Math.max(this.constitution-toLose, 0);
+		this.dexterity = Math.max(this.dexterity-toLose, 0);
+		this.resistance = Math.max(this.resistance-toLose, 0);
+		this.spirit = Math.max(this.spirit-toLose, 0);
+		this.strength = Math.max(this.strength-toLose, 0);
 		this.agilityProgress = 0;
 		this.constitutionProgress = 0;
 		this.dexterityProgress = 0;

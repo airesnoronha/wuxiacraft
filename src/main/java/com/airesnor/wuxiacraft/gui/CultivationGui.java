@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.gui;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
+import com.airesnor.wuxiacraft.cultivation.Foundation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
@@ -20,6 +21,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
@@ -47,6 +49,10 @@ public class CultivationGui extends GuiScreen {
 
 	private Tabs tab;
 
+	private boolean perClickFocus = false;
+	private int caretPosition = 0;
+	private String perClickDisplay;
+
 	public CultivationGui(EntityPlayer player) {
 		this.player = player;
 		this.cultivation = CultivationUtils.getCultivationFromEntity(player);
@@ -72,9 +78,12 @@ public class CultivationGui extends GuiScreen {
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		this.drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		this.drawBackgroundLayer();
 		this.drawForegroundLayer();
 		this.drawTooltips(mouseX, mouseY);
+		GlStateManager.disableBlend();
 	}
 
 	@Override
@@ -84,9 +93,13 @@ public class CultivationGui extends GuiScreen {
 
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) {
-		if (keyCode == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(keyCode)
-				|| ClientProxy.keyBindings[2].isActiveAndMatches(keyCode)) {
-			this.mc.player.closeScreen();
+		if (this.perClickFocus) {
+			handlerPerClickKey(typedChar, keyCode);
+		} else {
+			if (keyCode == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(keyCode)
+					|| ClientProxy.keyBindings[2].isActiveAndMatches(keyCode)) {
+				this.mc.player.closeScreen();
+			}
 		}
 	}
 
@@ -163,56 +176,58 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	private void handleMouseFoundation(int mouseX, int mouseY) {
-		if(inBounds(mouseX, mouseY, this.guiLeft+8, this.guiTop+38, 14,14)) {
+		if (inBounds(mouseX, mouseY, this.guiLeft + 8, this.guiTop + 38, 14, 14)) {
 			addProgressToFoundation(0);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+164, this.guiTop+38, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 164, this.guiTop + 38, 14, 14)) {
 			addProgressToFoundation(1);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+6, this.guiTop+68, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 6, this.guiTop + 68, 14, 14)) {
 			addProgressToFoundation(2);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+166, this.guiTop+68, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 166, this.guiTop + 68, 14, 14)) {
 			addProgressToFoundation(3);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+8, this.guiTop+98, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 8, this.guiTop + 98, 14, 14)) {
 			addProgressToFoundation(4);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+164, this.guiTop+98, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 164, this.guiTop + 98, 14, 14)) {
 			addProgressToFoundation(5);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+22, this.guiTop+38, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 22, this.guiTop + 38, 14, 14)) {
 			selectFoundationAttribute(0);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+150, this.guiTop+38, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 150, this.guiTop + 38, 14, 14)) {
 			selectFoundationAttribute(1);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+20, this.guiTop+68, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 20, this.guiTop + 68, 14, 14)) {
 			selectFoundationAttribute(2);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+152, this.guiTop+68, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 152, this.guiTop + 68, 14, 14)) {
 			selectFoundationAttribute(3);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+22, this.guiTop+98, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 22, this.guiTop + 98, 14, 14)) {
 			selectFoundationAttribute(4);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+150, this.guiTop+98, 14,14)) {
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 150, this.guiTop + 98, 14, 14)) {
 			selectFoundationAttribute(5);
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 64, this.guiTop + 118, 14, 14)) {
+			amountAddedToFoundationPerClick = MathUtils.clamp(amountAddedToFoundationPerClick - 1, 0, 100);
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 113, this.guiTop + 118, 14, 14)) {
+			amountAddedToFoundationPerClick = MathUtils.clamp(amountAddedToFoundationPerClick + 1, 0, 100);
 		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+64, this.guiTop+118, 14,14)) {
-			amountAddedToFoundationPerClick=MathUtils.clamp(amountAddedToFoundationPerClick-1, 0, 100);
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+113, this.guiTop+118, 14,14)) {
-			amountAddedToFoundationPerClick=MathUtils.clamp(amountAddedToFoundationPerClick+1, 0, 100);
+		if(inBounds(mouseX, mouseY, this.guiLeft + 73, this.guiTop + 118, 40, 9)) {
+			if(!this.perClickFocus) {
+				perClickOnFocus();
+			}
+		} else {
+			if(this.perClickFocus) {
+				perClickLoseFocus();
+			}
 		}
 	}
 
 	private void handleMouseTechniques(int mouseX, int mouseY) {
-		for (int i = 0; i < Math.min(5, this.cultTech.getKnownTechniques().size()); i++) {
-			if (inBounds(mouseX, mouseY, this.guiLeft + 8, this.guiTop + 35 + 4 + i * 16, 9, 9)) {
-				int index = this.cultTech.getKnownTechniques().size() > 5 ? offset + i : i;
-				NetworkWrapper.INSTANCE.sendToServer(new RemoveTechniqueMessage(cultTech.getKnownTechniques().get(index).getTechnique(), player.getUniqueID()));
-				cultTech.getKnownTechniques().remove(index);
+		List<KnownTechnique> toDisplay = new ArrayList<>(this.cultTech.getKnownTechniques()); // this way i can remove without concurrent modification excpetion
+		for (KnownTechnique t : toDisplay) {
+			int index = this.cultTech.getKnownTechniques().indexOf(t);
+			if (index >= this.offset && index < (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
+				int pos = index - this.offset;
+				if (inBounds(mouseX, mouseY, this.guiLeft + 8, this.guiTop + 35 + 4 + pos * 19, 9, 9)) {
+					NetworkWrapper.INSTANCE.sendToServer(new RemoveTechniqueMessage(cultTech.getKnownTechniques().get(index).getTechnique(), player.getUniqueID()));
+					cultTech.getKnownTechniques().remove(index);
+				}
+			} else if (index >= (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
+				break;
 			}
 		}
 	}
@@ -283,14 +298,17 @@ public class CultivationGui extends GuiScreen {
 				drawSkillsBackground();
 				break;
 		}
+		double agilityModifier = (foundation.getAgilityModifier());
+		double dexterityModifier = (foundation.getDexterityModifier());
+		double strengthModifier = (foundation.getStrengthModifier());
 
 		GL11.glColor4f(1f, 1f, 1f, 1f);
 		int[] iconPos = new int[]{27, 27, 99, 108};
 		int[] fills = new int[]{
 				Math.min(27, (int) ((27f * cultivation.getSpeedHandicap()) / 100f)),
-				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / cultivation.getSpeedIncrease())),
-				Math.min(27, (int) (27f * (cultivation.getHasteLimit() / (0.1f * (cultivation.getStrengthIncrease() - 1))))),
-				Math.min(27, (int) (27f * (cultivation.getJumpLimit() * 0.42f) / (0.88f * (cultivation.getSpeedIncrease() - 1f))))
+				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / (agilityModifier*0.005))),
+				Math.min(27, (int) (27f * (cultivation.getHasteLimit() / (0.1f * (dexterityModifier*0.5+strengthModifier*0.5))))),
+				Math.min(27, (int) (27f * (cultivation.getJumpLimit()) / (0.05f * (agilityModifier*0.3 + strengthModifier*0.7))))
 		};
 
 		//Regulator bars
@@ -307,10 +325,7 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	private void drawFoundationBackground() {
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		drawTexturedModalRect(this.guiLeft + 66, this.guiTop + 55, 0, 173, 54, 52); //cultivator body
-		GlStateManager.disableBlend();
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(this.guiLeft + 93, this.guiTop + 88, 0);
 		Tessellator tessellator = Tessellator.getInstance();
@@ -359,25 +374,52 @@ public class CultivationGui extends GuiScreen {
 		drawTexturedModalRect(71, 10, 90, 151, 14, 14);
 
 		//radio buttons
-		drawTexturedModalRect(-71, -50, foundation.getSelectedAttribute() == 0 ? 76 :62, 151, 14, 14);
+		drawTexturedModalRect(-71, -50, foundation.getSelectedAttribute() == 0 ? 76 : 62, 151, 14, 14);
 		drawTexturedModalRect(57, -50, foundation.getSelectedAttribute() == 1 ? 76 : 62, 151, 14, 14);
 		drawTexturedModalRect(-73, -20, foundation.getSelectedAttribute() == 2 ? 76 : 62, 151, 14, 14);
 		drawTexturedModalRect(59, -20, foundation.getSelectedAttribute() == 3 ? 76 : 62, 151, 14, 14);
 		drawTexturedModalRect(-71, 10, foundation.getSelectedAttribute() == 4 ? 76 : 62, 151, 14, 14);
 		drawTexturedModalRect(57, 10, foundation.getSelectedAttribute() == 5 ? 76 : 62, 151, 14, 14);
 
+		//bars
+		float fill = (float)Math.min(1, foundation.getAgilityProgress()/ Foundation.getLevelMaxProgress(foundation.getAgility()));
+		int fill_pix = (int)(49*fill);
+		drawTexturedModalRect(-77, -34, 54, 166, 53, 3);
+		drawTexturedModalRect(-75, -34, 56, 169, fill_pix, 3);
+		fill = (float)Math.min(1, foundation.getConstitutionProgress()/ Foundation.getLevelMaxProgress(foundation.getConstitution()));
+		fill_pix = (int)(49*fill);
+		drawTexturedModalRect(21, -34, 54, 166, 53, 3);
+		drawTexturedModalRect(23, -34, 56, 169, fill_pix, 3);
+		fill = (float)Math.min(1, foundation.getDexterityProgress()/ Foundation.getLevelMaxProgress(foundation.getDexterity()));
+		fill_pix = (int)(49*fill);
+		drawTexturedModalRect(-79, -4, 54, 166, 53, 3);
+		drawTexturedModalRect(-77, -4, 56, 169, fill_pix, 3);
+		fill = (float)Math.min(1, foundation.getResistanceProgress()/ Foundation.getLevelMaxProgress(foundation.getResistance()));
+		fill_pix = (int)(49*fill);
+		drawTexturedModalRect(23, -4, 54, 166, 53, 3);
+		drawTexturedModalRect(25, -4, 56, 169, fill_pix, 3);
+		fill = (float)Math.min(1, foundation.getSpiritProgress()/ Foundation.getLevelMaxProgress(foundation.getSpirit()));
+		fill_pix = (int)(49*fill);
+		drawTexturedModalRect(-77, 26, 54, 166, 53, 3);
+		drawTexturedModalRect(-75, 26, 56, 169, fill_pix, 3);
+		fill = (float)Math.min(1, foundation.getStrengthProgress()/ Foundation.getLevelMaxProgress(foundation.getStrength()));
+		fill_pix = (int)(49*fill);
+		drawTexturedModalRect(21, 26, 54, 166, 53, 3);
+		drawTexturedModalRect(23, 26, 56, 169, fill_pix, 3);
+
 		GlStateManager.popMatrix();
 		//minus button
-		drawTexturedModalRect(this.guiLeft + 64, this.guiTop+118, 45, 142, 9, 9);
-		drawTexturedModalRect(this.guiLeft + 64, this.guiTop+118, 72, 142, 9, 9);
+		drawTexturedModalRect(this.guiLeft + 64, this.guiTop + 118, 45, 142, 9, 9);
+		drawTexturedModalRect(this.guiLeft + 64, this.guiTop + 118, 72, 142, 9, 9);
 		//plus button
-		drawTexturedModalRect(this.guiLeft + 113, this.guiTop+118, 45, 142, 9, 9);
-		drawTexturedModalRect(this.guiLeft + 113, this.guiTop+118, 90, 142, 9, 9);
+		drawTexturedModalRect(this.guiLeft + 113, this.guiTop + 118, 45, 142, 9, 9);
+		drawTexturedModalRect(this.guiLeft + 113, this.guiTop + 118, 90, 142, 9, 9);
 
 	}
 
 	private void drawTechniquesBackground() {
-		for (KnownTechnique t : this.cultTech.getKnownTechniques()) {
+		List<KnownTechnique> toDisplay = new ArrayList<>(this.cultTech.getKnownTechniques()); // this way i can remove without concurrent modification excpetion
+		for (KnownTechnique t : toDisplay) {
 			int index = this.cultTech.getKnownTechniques().indexOf(t);
 			if (index >= this.offset && index < (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
 				int progressFill = 0;
@@ -394,10 +436,10 @@ public class CultivationGui extends GuiScreen {
 					progressFill += (int) ((t.getProgress() * 46f) / t.getTechnique().getTier().smallProgress);
 				}
 				int pos = index - this.offset;
-				drawTexturedModalRect(this.guiLeft + 19, this.guiTop + 35 + pos * 16 + 11, 0, 136, 139, 3);
-				drawTexturedModalRect(this.guiLeft + 19, this.guiTop + 35 + pos * 16 + 11, 0, 139, progressFill, 3);
-				drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 35 + pos * 16 + 4, 45, 142, 9, 9);
-				drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 35 + pos * 16 + 4, 72, 142, 9, 9);
+				drawTexturedModalRect(this.guiLeft + 19, this.guiTop + 35 + pos * 19 + 11, 0, 136, 139, 3);
+				drawTexturedModalRect(this.guiLeft + 19, this.guiTop + 35 + pos * 19 + 11, 0, 139, progressFill, 3);
+				drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 35 + pos * 19 + 4, 45, 142, 9, 9);
+				drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 35 + pos * 19 + 4, 72, 142, 9, 9);
 			} else if (index >= (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
 				break;
 			}
@@ -479,37 +521,31 @@ public class CultivationGui extends GuiScreen {
 		}
 	}
 
-	public static String getShortNumberAmount(int amount) {
+	public static String getShortNumberAmount(long amount) {
 		String value = "";
-		if(amount < 0) {
+		if (amount < 0) {
 			value += "-";
 		}
 		amount = Math.abs(amount);
-		if(amount < 1000) {
+		if (amount < 1000) {
 			value += amount;
-		}
-		else if(amount < 10000) {
-			float mills =  amount / 1000f;
+		} else if (amount < 10000) {
+			float mills = amount / 1000f;
 			value += String.format("%.1fk", mills);
-		}
-		else if(amount < 100000) {
-			float mills =  amount / 1000f;
+		} else if (amount < 100000) {
+			float mills = amount / 1000f;
 			value += String.format("%.0fk", mills);
-		}
-		else if(amount < 1000000) {
-			float mills =  amount / 1000000f;
+		} else if (amount < 1000000) {
+			float mills = amount / 1000000f;
 			value += String.format("%.2fM", mills);
-		}
-		else if(amount < 10000000) {
-			float mills =  amount / 1000000f;
+		} else if (amount < 10000000) {
+			float mills = amount / 1000000f;
 			value += String.format("%.1fM", mills);
-		}
-		else if(amount < 100000000) {
-			float mills =  amount / 1000000f;
+		} else if (amount < 100000000) {
+			float mills = amount / 1000000f;
 			value += String.format("%.0fM", mills);
-		}
-		else if(amount < 1000000000) {
-			float mills =  amount / 1000000000f;
+		} else if (amount < 1000000000) {
+			float mills = amount / 1000000000f;
 			value += String.format("%.2fG", mills);
 		}
 		return value;
@@ -528,35 +564,31 @@ public class CultivationGui extends GuiScreen {
 		fontRenderer.drawString(toShow, this.guiLeft + 149 - length, this.guiTop + 42, 0xFFFFFF);
 		toShow = "Res: " + getShortNumberAmount(foundation.getResistance());
 		length = fontRenderer.getStringWidth(toShow);
-		fontRenderer.drawString(toShow, this.guiLeft + 151-length, this.guiTop + 72, 0xFFFFFF);
+		fontRenderer.drawString(toShow, this.guiLeft + 151 - length, this.guiTop + 72, 0xFFFFFF);
 		toShow = "Str: " + getShortNumberAmount(foundation.getStrength());
 		length = fontRenderer.getStringWidth(toShow);
-		fontRenderer.drawString(toShow, this.guiLeft + 149-length, this.guiTop + 102, 0xFFFFFF);
+		fontRenderer.drawString(toShow, this.guiLeft + 149 - length, this.guiTop + 102, 0xFFFFFF);
 		//per click amount
-		String perClickText = String.format("%.1f%%", amountAddedToFoundationPerClick);
+		if (this.perClickFocus) {
+			String display = this.perClickDisplay.replace("|", "").replace("_","");
+			display = display.substring(0, caretPosition) + (caretPosition < display.length() ? "|" + display.substring(caretPosition) : "_");
+			this.perClickDisplay = display;
+		}
+		String perClickText = perClickFocus ? this.perClickDisplay : String.format("%.1f%%", amountAddedToFoundationPerClick);
 		length = this.fontRenderer.getStringWidth(perClickText);
-		fontRenderer.drawString(perClickText, this.guiLeft + 93 - length/2, this.guiTop + 118, 0xFFFFFF);
+		fontRenderer.drawString(perClickText, this.guiLeft + 93 - length / 2, this.guiTop + 118, this.perClickFocus ? 0xFFFF20 : 0xFFFFFF);
 	}
 
 	private void drawTechniquesForeground() {
-		int knowTechniquesSize = this.cultTech.getKnownTechniques().size();
-		List<KnownTechnique> drawing = new ArrayList<>();
-		if (knowTechniquesSize > 5) {
-			int counter = 0;
-			for (KnownTechnique t : this.cultTech.getKnownTechniques()) {
-				if (counter >= offset && counter < offset + 5) {
-					drawing.add(t);
-				}
-				counter++;
+		List<KnownTechnique> toDisplay = new ArrayList<>(this.cultTech.getKnownTechniques()); // this way i can remove without concurrent modification excpetion
+		for (KnownTechnique t : toDisplay) {
+			int index = this.cultTech.getKnownTechniques().indexOf(t);
+			if (index >= this.offset && index < (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
+				int pos = index - this.offset;
+				this.fontRenderer.drawString(t.getTechnique().getName(), this.guiLeft + 19, this.guiTop + 35 + pos * 19 + 2, 0xFFFFFF);
+			} else if (index >= (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
+				break;
 			}
-		} else {
-			drawing.addAll(this.cultTech.getKnownTechniques());
-		}
-		int pos = 0;
-		for (KnownTechnique t : drawing) {
-			String display = t.getTechnique().getName();// + " " + (int)t.getProgress();
-			this.fontRenderer.drawString(display, this.guiLeft + 19, this.guiTop + 35 + pos * 16 + 2, 0xFFFFFF);
-			pos++;
 		}
 	}
 
@@ -611,25 +643,60 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	private void drawFoundationTooltips(int mouseX, int mouseY) {
-
+		boolean drawing = false;
+		String line = "";
+		if(inBounds(mouseX, mouseY, this.guiLeft+16, this.guiTop+54, 54, 3)) {
+			drawing = true;
+			line = String.format("%d%%", (int)(this.foundation.getAgilityProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getAgility())));
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+114, this.guiTop+54, 54, 3)) {
+			drawing = true;
+			line = String.format("%d%%", (int)(this.foundation.getConstitutionProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getConstitution())));
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+14, this.guiTop+84, 54, 3)) {
+			drawing = true;
+			line = String.format("%d%%", (int)(this.foundation.getDexterityProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getDexterity())));
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+116, this.guiTop+84, 54, 3)) {
+			drawing = true;
+			line = String.format("%d%%", (int)(this.foundation.getResistanceProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getResistance())));
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+16, this.guiTop+114, 54, 3)) {
+			drawing = true;
+			line = String.format("%d%%", (int)(this.foundation.getSpiritProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getSpirit())));
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+114, this.guiTop+114, 54, 3)) {
+			drawing = true;
+			line = String.format("%d%%", (int)(this.foundation.getStrengthProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getStrength())));
+		}
+		if(drawing) {
+			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
+			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
+		}
 	}
 
 	private void drawTechniquesTooltips(int mouseX, int mouseY) {
-		for (int i = 0; i < Math.min(this.cultTech.getKnownTechniques().size(), 5); i++) {
-			int index = this.cultTech.getKnownTechniques().size() > 5 ? offset + i : i;
-			if (inBounds(mouseX, mouseY, this.guiLeft + 19, this.guiTop + 35 + i * 16 + 11, 139, 3)) {
-				String line = "No success";
-				if (this.cultTech.getKnownTechniques().get(index).getProgress() >= this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().smallProgress +
-						this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().greatProgress +
-						this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().perfectionProgress)
-					line = "Perfection success";
-				else if (this.cultTech.getKnownTechniques().get(index).getProgress() > this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().smallProgress +
-						this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().greatProgress)
-					line = "Great success";
-				else if (this.cultTech.getKnownTechniques().get(index).getProgress() > this.cultTech.getKnownTechniques().get(i).getTechnique().getTier().smallProgress)
-					line = "Small success";
-				drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
-				this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
+		List<KnownTechnique> toDisplay = new ArrayList<>(this.cultTech.getKnownTechniques()); // this way i can remove without concurrent modification excpetion
+		for (KnownTechnique t : toDisplay) {
+			int index = this.cultTech.getKnownTechniques().indexOf(t);
+			if (index >= this.offset && index < (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
+				int pos = index - this.offset;
+				if (inBounds(mouseX, mouseY, this.guiLeft + 19, this.guiTop + 35 + pos * 19 + 11, 139, 3)) {
+					String line = "No success";
+					if (t.getProgress() >= t.getTechnique().getTier().smallProgress +
+							t.getTechnique().getTier().greatProgress +
+							t.getTechnique().getTier().perfectionProgress)
+						line = "Perfection success";
+					else if (t.getProgress() > t.getTechnique().getTier().smallProgress +
+							t.getTechnique().getTier().greatProgress)
+						line = "Great success";
+					else if (t.getProgress() > t.getTechnique().getTier().smallProgress)
+						line = "Small success";
+					drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
+					this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
+				}
+			} else if (index >= (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
+				break;
 			}
 		}
 	}
@@ -692,8 +759,8 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	private void addProgressToFoundation(int attribute) {
-		double amount = cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) *(amountAddedToFoundationPerClick/100.0);
-		if(cultivation.getCurrentProgress() < amountAddedToFoundationPerClick) {
+		double amount = cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * (amountAddedToFoundationPerClick / 100.0);
+		if (cultivation.getCurrentProgress() < amountAddedToFoundationPerClick) {
 			amount = cultivation.getCurrentProgress();
 		}
 		cultivation.addProgress(-amount, false);
@@ -793,6 +860,46 @@ public class CultivationGui extends GuiScreen {
 		WuxiaCraftConfig.syncFromFields();
 		WuxiaCraftConfig.syncCultivationFromConfigToClient();
 		NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit, player.getUniqueID()));
+	}
+
+	private void handlerPerClickKey(char typedChar, int keyCode) {
+		if (MathUtils.between(keyCode, Keyboard.KEY_1, Keyboard.KEY_0) || keyCode == Keyboard.KEY_PERIOD ||
+				MathUtils.between(keyCode, Keyboard.KEY_NUMPAD1, Keyboard.KEY_NUMPAD0) ||
+				MathUtils.between(keyCode, Keyboard.KEY_NUMPAD4, Keyboard.KEY_NUMPAD6) ||
+				MathUtils.between(keyCode, Keyboard.KEY_NUMPAD7, Keyboard.KEY_NUMPAD9) ||
+				keyCode == Keyboard.KEY_DECIMAL) {
+			this.perClickDisplay = this.perClickDisplay.substring(0, caretPosition) + typedChar + this.perClickDisplay.substring(caretPosition);
+			this.caretPosition++;
+		}
+		if (keyCode == Keyboard.KEY_LEFT) {
+			this.caretPosition = Math.max(0, this.caretPosition - 1);
+		}
+		if (keyCode == Keyboard.KEY_RIGHT) {
+			this.caretPosition = Math.min(perClickDisplay.length() - 1, this.caretPosition + 1);
+		}
+		if (keyCode == Keyboard.KEY_BACK) {
+			this.perClickDisplay = this.perClickDisplay.substring(0, Math.max(caretPosition - 1, 0)) + this.perClickDisplay.substring(caretPosition);
+			this.caretPosition = Math.max(0, this.caretPosition-1);
+		}
+		if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_ESCAPE) {
+			perClickLoseFocus();
+		}
+	}
+
+	private void perClickOnFocus() {
+		this.perClickFocus = true;
+		this.perClickDisplay = String.format("%.1f_", amountAddedToFoundationPerClick);
+		this.caretPosition = this.perClickDisplay.length() - 1;
+	}
+
+	private void perClickLoseFocus() {
+		this.perClickFocus = false;
+		this.caretPosition = 0;
+		try {
+			amountAddedToFoundationPerClick = Double.parseDouble(this.perClickDisplay.replace("|","").replace("_",""));
+		} catch (NumberFormatException e) {
+			WuxiaCraft.logger.error("Couldn't convert back the number");
+		}
 	}
 
 	public enum Tabs {

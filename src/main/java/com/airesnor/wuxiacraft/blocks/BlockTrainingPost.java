@@ -84,7 +84,7 @@ public class BlockTrainingPost extends Block implements IHasModel {
 		super.onBlockClicked(worldIn, pos, playerIn);
 		double amount = this.amount * playerIn.getCooledAttackStrength(0.5f); //game always use 0.5 idk y
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(playerIn);
-		CultivationUtils.cultivatorAddProgress(playerIn, cultivation, amount, false, false, false);
+		CultivationUtils.cultivatorAddProgress(playerIn, amount, false, false, false);
 		playerIn.attackEntityFrom(DamageSource.GENERIC.setDamageBypassesArmor(), (float)amount);
 	}
 
