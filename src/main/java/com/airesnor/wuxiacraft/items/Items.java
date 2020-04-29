@@ -213,4 +213,11 @@ public class Items {
 		}
 	}
 
+	public static final Item TINY_DUST_IRON = new ItemBase("tiny_dust_iron");
+	public static final Item TINY_DUST_GOLD = new ItemBase("tiny_dust_gold");
+	public static final Item TINY_DUST_DIAMOND = new ItemBase("tiny_dust_diamond");
+	public static final Item DUST_IRON = new ItemBase("dust_iron");
+	public static final Item DUST_GOLD = new ItemBase("dust_gold");
+	public static final Item DUST_DIAMOND = new ItemBase("dust_diamond");
+
 }

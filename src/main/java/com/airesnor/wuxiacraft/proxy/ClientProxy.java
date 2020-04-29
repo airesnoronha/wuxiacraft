@@ -15,6 +15,7 @@ import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderSwordBeam;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterBlade;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterNeedle;
+import com.airesnor.wuxiacraft.entities.tileentity.GrinderTESR;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTESR;
 import com.airesnor.wuxiacraft.formation.FormationTESR;
 import com.airesnor.wuxiacraft.formation.FormationTileEntity;
@@ -121,5 +122,6 @@ public class ClientProxy extends CommonProxy {
 		RenderGiantAnt.init();
 		RenderGiantBee.init();
 		SpiritStoneStackTESR.init();
+		GrinderTESR.init();
 	}
 }
