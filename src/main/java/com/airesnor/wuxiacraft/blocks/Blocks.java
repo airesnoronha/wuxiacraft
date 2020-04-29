@@ -26,6 +26,11 @@ public class Blocks {
 	public static final List<Block> BLOCKS = new ArrayList<>();
 
 	public static final Block NATURAL_ODDITY_ORE = new NaturalOddityOre("natural_oddity_ore");
+
+	public static final Block FIERY_STONE = new BlockBase("fiery_stone", Material.ROCK);
+	public static final Block ICY_STONE = new BlockBase("icy_stone", Material.ROCK);
+	public static final Block METALLIC_STONE = new BlockBase("metallic_stone", Material.IRON);
+
 	public static final Block IRON_CAULDRON = new Cauldron("iron_cauldron");
 	public static final Block SPIRIT_STONE_STACK_BLOCK = new SpiritStoneStackBlock("spirit_stone_stack_block");
 
