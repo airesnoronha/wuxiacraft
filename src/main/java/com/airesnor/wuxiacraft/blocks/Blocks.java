@@ -79,4 +79,6 @@ public class Blocks {
 	public static final Block BOUNDLESS_VOID_CRYSTAL_VEIN = new SpiritVeinOre("boundless_void_crystal_vein").setDroppedItem(Items.BOUNDLESS_VOID_CRYSTAL);
 	public static final Block PRIMORDIAL_CHAOS_STONE_VEIN = new SpiritVeinOre("primordial_chaos_stone_vein").setDroppedItem(Items.PRIMORDIAL_CHAOS_STONE);
 
+	public static final Block MAGICAL_GRINDER = new MagicalGrinder("magical_grinder");
+
 }

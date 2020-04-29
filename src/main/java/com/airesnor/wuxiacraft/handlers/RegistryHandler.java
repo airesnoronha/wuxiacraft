@@ -11,6 +11,7 @@ import com.airesnor.wuxiacraft.entities.skills.SwordBeamThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
 import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
+import com.airesnor.wuxiacraft.entities.tileentity.GrinderTileEntity;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
 import com.airesnor.wuxiacraft.formation.FormationTileEntity;
 import com.airesnor.wuxiacraft.items.IHasModel;
@@ -47,6 +48,7 @@ public class RegistryHandler {
 		GameRegistry.registerTileEntity(CauldronTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "cauldron_tile_entity"));
 		GameRegistry.registerTileEntity(SpiritStoneStackTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "spirit_stone_stack_tile_entity"));
 		GameRegistry.registerTileEntity(FormationTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "formation_tile_entity"));
+		GameRegistry.registerTileEntity(GrinderTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "grinder_tile_entity"));
 	}
 
 	@SubscribeEvent
