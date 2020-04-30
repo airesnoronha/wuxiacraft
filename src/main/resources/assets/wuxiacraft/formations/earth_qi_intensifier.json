@@ -1,0 +1,875 @@
+{
+	"formationName": "wuxiacraft:earth_qi_intensifier_formation",
+	"positions": [
+		{
+			"blockState": "minecraft:dirt",
+			"x": -2,
+			"y": -1,
+			"z": -6
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -1,
+			"y": -1,
+			"z": -6
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 0,
+			"y": -1,
+			"z": -6
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 1,
+			"y": -1,
+			"z": -6
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 2,
+			"y": -1,
+			"z": -6
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -3,
+			"y": -1,
+			"z": -5
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 3,
+			"y": -1,
+			"z": -5
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -4,
+			"y": -1,
+			"z": -4
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 4,
+			"y": -1,
+			"z": -4
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -5,
+			"y": -1,
+			"z": -3
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -3,
+			"y": -1,
+			"z": -3
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -1,
+			"y": -1,
+			"z": -3
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 0,
+			"y": -1,
+			"z": -3
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 1,
+			"y": -1,
+			"z": -3
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 3,
+			"y": -1,
+			"z": -3
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 5,
+			"y": -1,
+			"z": -3
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -6,
+			"y": -1,
+			"z": -2
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -2,
+			"y": -1,
+			"z": -2
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 2,
+			"y": -1,
+			"z": -2
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 6,
+			"y": -1,
+			"z": -2
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -6,
+			"y": -1,
+			"z": -1
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -3,
+			"y": -1,
+			"z": -1
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -1,
+			"y": -1,
+			"z": -1
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 1,
+			"y": -1,
+			"z": -1
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 3,
+			"y": -1,
+			"z": -1
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 6,
+			"y": -1,
+			"z": -1
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -6,
+			"y": -1,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -3,
+			"y": -1,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 0,
+			"y": -1,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 3,
+			"y": -1,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 6,
+			"y": -1,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -6,
+			"y": -1,
+			"z": 1
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -3,
+			"y": -1,
+			"z": 1
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -1,
+			"y": -1,
+			"z": 1
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 1,
+			"y": -1,
+			"z": 1
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 3,
+			"y": -1,
+			"z": 1
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 6,
+			"y": -1,
+			"z": 1
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -6,
+			"y": -1,
+			"z": 2
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -2,
+			"y": -1,
+			"z": 2
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 2,
+			"y": -1,
+			"z": 2
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 6,
+			"y": -1,
+			"z": 2
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -5,
+			"y": -1,
+			"z": 3
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -3,
+			"y": -1,
+			"z": 3
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -1,
+			"y": -1,
+			"z": 3
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 0,
+			"y": -1,
+			"z": 3
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 1,
+			"y": -1,
+			"z": 3
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 3,
+			"y": -1,
+			"z": 3
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 5,
+			"y": -1,
+			"z": 3
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -4,
+			"y": -1,
+			"z": 4
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 4,
+			"y": -1,
+			"z": 4
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -3,
+			"y": -1,
+			"z": 5
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 3,
+			"y": -1,
+			"z": 5
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -2,
+			"y": -1,
+			"z": 6
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": -1,
+			"y": -1,
+			"z": 6
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 0,
+			"y": -1,
+			"z": 6
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 1,
+			"y": -1,
+			"z": 6
+		},
+		{
+			"blockState": "minecraft:dirt",
+			"x": 2,
+			"y": -1,
+			"z": 6
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 0,
+			"y": -1,
+			"z": -5
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 0,
+			"y": -1,
+			"z": -4
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 0,
+			"y": -1,
+			"z": -2
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 0,
+			"y": -1,
+			"z": -1
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": -5,
+			"y": -1,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": -4,
+			"y": -1,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": -2,
+			"y": -1,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": -1,
+			"y": -1,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 1,
+			"y": -1,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 2,
+			"y": -1,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 4,
+			"y": -1,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 5,
+			"y": -1,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 0,
+			"y": -1,
+			"z": 1
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 0,
+			"y": -1,
+			"z": 2
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 0,
+			"y": -1,
+			"z": 4
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 0,
+			"y": -1,
+			"z": 5
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 0,
+			"y": 0,
+			"z": -5
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 0,
+			"y": 0,
+			"z": -4
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 0,
+			"y": 0,
+			"z": -2
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 0,
+			"y": 0,
+			"z": -1
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": -5,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": -4,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": -2,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": -1,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 1,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 2,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 4,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 5,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 0,
+			"y": 0,
+			"z": 1
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 0,
+			"y": 0,
+			"z": 2
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 0,
+			"y": 0,
+			"z": 4
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 0,
+			"y": 0,
+			"z": 5
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -2,
+			"y": 0,
+			"z": -6
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -1,
+			"y": 0,
+			"z": -6
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 0,
+			"y": 0,
+			"z": -6
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 1,
+			"y": 0,
+			"z": -6
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 2,
+			"y": 0,
+			"z": -6
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -3,
+			"y": 0,
+			"z": -5
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 3,
+			"y": 0,
+			"z": -5
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -4,
+			"y": 0,
+			"z": -4
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 4,
+			"y": 0,
+			"z": -4
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -5,
+			"y": 0,
+			"z": -3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -1,
+			"y": 0,
+			"z": -3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 0,
+			"y": 0,
+			"z": -3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 1,
+			"y": 0,
+			"z": -3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 5,
+			"y": 0,
+			"z": -3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -6,
+			"y": 0,
+			"z": -2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -2,
+			"y": 0,
+			"z": -2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 2,
+			"y": 0,
+			"z": -2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 6,
+			"y": 0,
+			"z": -2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -6,
+			"y": 0,
+			"z": -1
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -3,
+			"y": 0,
+			"z": -1
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 3,
+			"y": 0,
+			"z": -1
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 6,
+			"y": 0,
+			"z": -1
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -6,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -3,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 3,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 6,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -6,
+			"y": 0,
+			"z": 1
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -3,
+			"y": 0,
+			"z": 1
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 3,
+			"y": 0,
+			"z": 1
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 6,
+			"y": 0,
+			"z": 1
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -6,
+			"y": 0,
+			"z": 2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -2,
+			"y": 0,
+			"z": 2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 2,
+			"y": 0,
+			"z": 2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 6,
+			"y": 0,
+			"z": 2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -5,
+			"y": 0,
+			"z": 3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -1,
+			"y": 0,
+			"z": 3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 0,
+			"y": 0,
+			"z": 3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 1,
+			"y": 0,
+			"z": 3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 5,
+			"y": 0,
+			"z": 3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -4,
+			"y": 0,
+			"z": 4
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 4,
+			"y": 0,
+			"z": 4
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -3,
+			"y": 0,
+			"z": 5
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 3,
+			"y": 0,
+			"z": 5
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -2,
+			"y": 0,
+			"z": 6
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": -1,
+			"y": 0,
+			"z": 6
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 0,
+			"y": 0,
+			"z": 6
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 1,
+			"y": 0,
+			"z": 6
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_earth_law",
+			"x": 2,
+			"y": 0,
+			"z": 6
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": -3,
+			"y": 0,
+			"z": -3
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": 3,
+			"y": 0,
+			"z": -3
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": -1,
+			"y": 0,
+			"z": -1
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": 1,
+			"y": 0,
+			"z": -1
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": -1,
+			"y": 0,
+			"z": 1
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": 1,
+			"y": 0,
+			"z": 1
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": -3,
+			"y": 0,
+			"z": 3
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": 3,
+			"y": 0,
+			"z": 3
+		}
+	]
+}
