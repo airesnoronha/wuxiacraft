@@ -37,6 +37,10 @@ public class GrinderTileEntity extends TileEntity implements ITickable, IInvento
 
 	private int grindingProgress = 0;
 
+	private long ticksAlive = 0;
+
+	private boolean updateEnergyToClient = false;
+
 	public GrinderTileEntity() {
 	}
 
@@ -44,6 +48,7 @@ public class GrinderTileEntity extends TileEntity implements ITickable, IInvento
 	public void update() {
 		boolean beforeGrinding = this.isGrinding();
 		boolean needUpdate = false;
+		this.ticksAlive++;
 		if(this.isGrinding()) {
 			this.grindingProgress++;
 		}
@@ -68,6 +73,7 @@ public class GrinderTileEntity extends TileEntity implements ITickable, IInvento
 			} else {
 				this.grinding = false;
 			}
+			if(this.ticksAlive%10 == 0 && this.updateEnergyToClient) needUpdate = true;
 		}
 		needUpdate = needUpdate || this.grinding != beforeGrinding;
 		if (needUpdate) {
@@ -153,7 +159,11 @@ public class GrinderTileEntity extends TileEntity implements ITickable, IInvento
 	}
 
 	public void addEnergy(double amount) {
+		int before = (int)this.energy;
 		this.energy = Math.min(this.getMaxEnergy(), this.energy+amount);
+		if(before != (int)energy) {
+			this.updateEnergyToClient = true;
+		}
 	}
 
 	//inventory stuff
