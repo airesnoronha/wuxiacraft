@@ -25,7 +25,7 @@ public class WuxiaBiomes {
 
         //This makes it so that the overworld gets the biome added then it spawns it
         if(spawnOverworld) {
-            BiomeManager.addBiome(biomeType, new BiomeManager.BiomeEntry(biome, 50));
+            BiomeManager.addBiome(biomeType, new BiomeManager.BiomeEntry(biome, 10));
         }
         BiomeManager.addSpawnBiome(biome);
         System.out.println("The biomes have been added");
