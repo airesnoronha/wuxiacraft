@@ -22,7 +22,7 @@ public class GrinderTESR extends TileEntitySpecialRenderer<GrinderTileEntity> {
 	private static Map<String, OBJModelLoader.Part> GRINDER_ROLL_MODEL;
 	private static Map<String, OBJModelLoader.Part> SPIRIT_STONE_MODEL;
 
-	private static final ResourceLocation ROLL_TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/magical_grinder_roll.png");
+	private static final ResourceLocation ROLL_TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/grinder_roll.png");
 	private static final ResourceLocation STONE_TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/blocks/spirit_stone_stack_block.png");
 
 	public static void init() {
@@ -48,11 +48,11 @@ public class GrinderTESR extends TileEntitySpecialRenderer<GrinderTileEntity> {
 				break;
 			case EAST:
 				GlStateManager.translate(0,0,1);
-				GlStateManager.rotate(-90, 0, 1,0);
+				GlStateManager.rotate(90, 0, 1,0);
 				break;
 			case WEST:
 				GlStateManager.translate(1,0,0);
-				GlStateManager.rotate(90, 0, 1,0);
+				GlStateManager.rotate(-90, 0, 1,0);
 				break;
 		}
 		Minecraft.getMinecraft().renderEngine.bindTexture(ROLL_TEXTURE);
@@ -68,7 +68,7 @@ public class GrinderTESR extends TileEntitySpecialRenderer<GrinderTileEntity> {
 		if(!te.getStones().isEmpty() ) {
 			Minecraft.getMinecraft().renderEngine.bindTexture(STONE_TEXTURE);
 			GlStateManager.pushMatrix();
-			GlStateManager.translate(0.24687, 0.88819, 0.059589);
+			GlStateManager.translate(-0.23587, 0.88819, 0.069589);
 
 			int colorH = 0x10EFFF;
 			if(te.getStones().getItem() instanceof ItemSpiritStone) {

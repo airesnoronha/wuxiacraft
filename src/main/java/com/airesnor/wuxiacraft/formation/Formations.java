@@ -32,9 +32,9 @@ public class Formations {
 
 	//Cultivation formations
 	public static final Formation SOUL_GATHERING_FORMATION = new FormationCultivationHelper("soul_gathering_formation", 6, 220f, 8f, 0.15f);
-	public static final Formation QI_PATHS_OPENER_ARRAY = new FormationCultivationHelper("qi_paths_opener_array", 6f, 440f, 8f, 0.6f); //don't have diagram
-	public static final Formation DANTIAN_FORMING_ARRAY = new FormationCultivationHelper("dantian_forming_array", 10.67, 782.22, 8f, 1.067f); //don't have diagram
-	public static final Formation EARTH_QI_INTENSIFIER_FORMATION = new FormationCultivationHelper("earth_qi_intensifier_formation", 20, 1460.66, 8f, 2f); //don't have diagram
+	public static final Formation QI_PATHS_OPENER_ARRAY = new FormationCultivationHelper("qi_paths_opener_array", 12, 440f, 8f, 0.3f);
+	public static final Formation DANTIAN_FORMING_ARRAY = new FormationCultivationHelper("dantian_forming_array", 21.2, 782.22, 8f, 0.503f);
+	public static final Formation EARTH_QI_INTENSIFIER_FORMATION = new FormationCultivationHelper("earth_qi_intensifier_formation", 40, 1460.66, 8f, 1);
 	public static final Formation SKY_QI_INTENSIFIER_FORMATION = new FormationCultivationHelper("sky_qi_intensifier_formation", 48, 3544.44, 8f, 4.8f); //don't have diagram
 	public static final Formation LAW_PROJECTION_FORMATION = new FormationCultivationHelper("law_projection_formation", 153.3, 11244.44, 8f, 15.33f); //don't have diagram
 	public static final Formation HEAVENLY_WAR_FORMATION = new FormationCultivationHelper("heavenly_war_formation", 383.33, 28111.11, 8f, 38.33f); //don't have diagram
