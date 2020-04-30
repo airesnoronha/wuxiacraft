@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class UnifiedCapabilitySyncMessageHandler implements IMessageHandler<UnifiedCapabilitySyncMessage, IMessage> {
 
@@ -23,6 +24,7 @@ public class UnifiedCapabilitySyncMessageHandler implements IMessageHandler<Unif
 		return null;
 	}
 
+	@SideOnly(Side.CLIENT)
 	private IMessage handleClientMessage(UnifiedCapabilitySyncMessage message) {
 		Minecraft.getMinecraft().addScheduledTask(()->{
 			EntityPlayer player = Minecraft.getMinecraft().player;
