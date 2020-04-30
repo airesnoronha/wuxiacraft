@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.dimensions.biomes;
 
-import com.airesnor.wuxiacraft.dimensions.worldtypes.genlayer.GenLayerFixEarth;
 import com.airesnor.wuxiacraft.dimensions.worldtypes.genlayer.GenLayerFixWater;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;

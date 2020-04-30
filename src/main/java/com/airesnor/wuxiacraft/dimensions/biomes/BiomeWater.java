@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.dimensions.biomes;
 
-import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.Biome;

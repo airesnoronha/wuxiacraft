@@ -4,10 +4,6 @@ import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.feature.WorldGenAbstractTree;
-import net.minecraft.world.gen.feature.WorldGenBigTree;
-
-import java.util.Random;
 
 public class BiomeMetal extends Biome {
 
