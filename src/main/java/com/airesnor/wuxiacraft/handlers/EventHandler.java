@@ -7,14 +7,17 @@ import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.IFoundation;
+import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
+import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
 import com.airesnor.wuxiacraft.items.*;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import com.airesnor.wuxiacraft.utils.TeleportationUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -29,6 +32,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.FoodStats;
@@ -537,6 +541,55 @@ public class EventHandler {
 					ItemRecipe.setRecipeAtRandom(stack);
 				}
 				item.setItem(stack);
+			}
+		}
+	}
+
+	public void onPlayerFlyToAnotherDimension(TickEvent.PlayerTickEvent event) {
+		if(event.side == Side.SERVER) {
+			if (event.phase == TickEvent.Phase.END) {
+				if (event.player.posY >= 2048) {
+					if (event.player.world.provider.getDimension() == 0) {
+						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.player);
+						CultivationLevel aux = CultivationLevel.BASE_LEVEL;
+						for (int i = 0; i < 3; i++)
+							aux = aux.getNextLevel(); //this way goes to dantian earth law lightning quick
+						if (cultivation.getCurrentLevel().greaterThan(aux)) { //if player cultivation is greater than dantian equivalent
+							ICultTech cultTech = CultivationUtils.getCultTechFromEntity(event.player);
+							boolean found = false;
+							int targetDimension = 4;
+							for (KnownTechnique kt : cultTech.getKnownTechniques()) {
+								for (Element element : kt.getTechnique().getElements()) {
+									if (Element.EARTH.equals(element) || Element.METAL.equals(element) || Element.FIRE.equals(element) || Element.WATER.equals(element) || Element.WOOD.equals(element)) {
+										found = true;
+										if(Element.EARTH.equals(element)){
+											targetDimension = 5;
+										}
+										if(Element.METAL.equals(element)){
+											targetDimension = 6;
+										}
+										if(Element.WATER.equals(element)){
+											targetDimension = 7;
+										}
+										if(Element.WOOD.equals(element)){
+											targetDimension = 8;
+										}
+									}
+									break;
+								}
+								if (found) break;
+							}
+							if (!found) { //couldn't find one element
+								int target = event.player.getRNG().nextInt(5); //0 to 4
+								targetDimension += target;
+							}
+							TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) event.player, targetDimension, event.player.posX, 1512, event.player.posZ, event.player.rotationYaw, event.player.rotationPitch);
+							IFoundation foundation = CultivationUtils.getFoundationFromEntity(event.player);
+							double resistance = foundation.getAgilityModifier() + foundation.getConstitutionModifier() + foundation.getStrengthModifier(); //just these three
+							event.player.attackEntityFrom(DamageSource.OUT_OF_WORLD, (float)Math.max(1, cultivation.getSpeedIncrease()*9.0 - resistance));
+						}
+					}
+				}
 			}
 		}
 	}
