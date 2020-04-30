@@ -545,6 +545,7 @@ public class EventHandler {
 		}
 	}
 
+	@SubscribeEvent
 	public void onPlayerFlyToAnotherDimension(TickEvent.PlayerTickEvent event) {
 		if(event.side == Side.SERVER) {
 			if (event.phase == TickEvent.Phase.END) {
