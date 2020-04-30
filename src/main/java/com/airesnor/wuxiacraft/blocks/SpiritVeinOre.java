@@ -2,7 +2,7 @@ package com.airesnor.wuxiacraft.blocks;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.items.ItemSpiritStone;
-import com.airesnor.wuxiacraft.items.Items;
+import com.airesnor.wuxiacraft.items.WuxiaItems;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -61,8 +61,8 @@ public class SpiritVeinOre extends BlockBase {
 									int mainDrop = worldIn.rand.nextInt(64);
 									int sideDrop = worldIn.rand.nextInt(16);
 									int evenLessDrop = worldIn.rand.nextInt(4);
-									Item prev = Items.ITEMS.get(Items.ITEMS.indexOf(this.droppedItem) - 1);
-									Item nextPrev = Items.ITEMS.get(Items.ITEMS.indexOf(prev) - 1);
+									Item prev = WuxiaItems.ITEMS.get(WuxiaItems.ITEMS.indexOf(this.droppedItem) - 1);
+									Item nextPrev = WuxiaItems.ITEMS.get(WuxiaItems.ITEMS.indexOf(prev) - 1);
 									ItemStack superDrop = new ItemStack(this.droppedItem, evenLessDrop);
 									EntityItem superDropItem = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, superDrop);
 									superDropItem.setOwner(player.getName());

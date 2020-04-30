@@ -32,8 +32,8 @@ public class ItemPaintBrush extends ItemBase {
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		EnumActionResult result = EnumActionResult.PASS;
 		List<Item> bottles = new ArrayList<>();
-		bottles.add(Items.BLOOD_BOTTLE);
-		bottles.add(Items.PAINT_BOTTLE);
+		bottles.add(WuxiaItems.BLOOD_BOTTLE);
+		bottles.add(WuxiaItems.PAINT_BOTTLE);
 		ItemStack bottle = null;
 		for (ItemStack stack : player.inventory.mainInventory) {
 			if (bottles.contains(stack.getItem())) {
@@ -42,7 +42,7 @@ public class ItemPaintBrush extends ItemBase {
 			}
 		}
 		if (bottle != null) {
-			if (worldIn.getBlockState(pos).getBlock() == WuxiaBlocks.PAINT_RUNE && bottle.getItem() == Items.PAINT_BOTTLE) {
+			if (worldIn.getBlockState(pos).getBlock() == WuxiaBlocks.PAINT_RUNE && bottle.getItem() == WuxiaItems.PAINT_BOTTLE) {
 				result = EnumActionResult.SUCCESS;
 				bottle.damageItem(1, player);
 				player.getHeldItem(hand).damageItem(1, player);
@@ -53,14 +53,14 @@ public class ItemPaintBrush extends ItemBase {
 				}
 			} else {
 				Block rune = null;
-				if (bottle.getItem() == Items.BLOOD_BOTTLE) {
+				if (bottle.getItem() == WuxiaItems.BLOOD_BOTTLE) {
 					NBTTagCompound tag = bottle.getTagCompound();
 					if (tag != null) {
 						if (tag.hasKey("bloodLevel")) {
 							rune = WuxiaBlocks.BLOOD_RUNES.get(tag.getString("bloodLevel").toLowerCase());
 						}
 					}
-				} else if (bottle.getItem() == Items.PAINT_BOTTLE) {
+				} else if (bottle.getItem() == WuxiaItems.PAINT_BOTTLE) {
 					rune = WuxiaBlocks.PAINT_RUNE;
 				}
 				if (rune == null) rune = WuxiaBlocks.BLOOD_RUNES.get("body_refinement");

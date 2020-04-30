@@ -5,7 +5,7 @@ import com.airesnor.wuxiacraft.entities.tileentity.CauldronTESR;
 import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
 import com.airesnor.wuxiacraft.items.IHasModel;
 import com.airesnor.wuxiacraft.items.ItemFan;
-import com.airesnor.wuxiacraft.items.Items;
+import com.airesnor.wuxiacraft.items.WuxiaItems;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.ShrinkEntityItemMessage;
 import mcp.MethodsReturnNonnullByDefault;
@@ -56,7 +56,7 @@ public class Cauldron extends BlockContainer implements IHasModel {
 		setResistance(25f);
 
 		WuxiaBlocks.BLOCKS.add(this);
-		Items.ITEMS.add(new ItemBlock(this).setRegistryName(name));
+		WuxiaItems.ITEMS.add(new ItemBlock(this).setRegistryName(name));
 	}
 
 	@Override

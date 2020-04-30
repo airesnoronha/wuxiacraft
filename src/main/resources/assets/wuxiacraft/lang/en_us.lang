@@ -15,6 +15,9 @@ item.minor_recovery_pill.name=Minor Recovery Pill
 item.runners_essence_pill.name=Runner's Essence Pill
 item.turtle_shell_pill.name=Turtle Shell Pill
 item.minor_fasting_pill.name=Minor Fasting Pill
+item.lesser_fasting_pill.name=Lesser Fasting Pill
+item.smaller_fasting_pill.name=Smaller Fasting Pill
+item.small_fasting_pill.name=Small Fasting Pill
 item.giant_ant_core.name=Giant Ant Core
 item.giant_bee_core.name=Giant Bee Core
 item.recipe_scroll.name=Recipe Scroll
@@ -76,6 +79,12 @@ item.training_post_diamond.name=Diamond Training Post
 item.training_post_iron.name=Iron Training Post
 item.training_post_stone.name=Stone Training Post
 item.training_post_stick.name=Training Post
+item.tiny_dust_iron.name=Tiny Iron Dust
+item.tiny_dust_gold.name=Tiny Golden Dust
+item.tiny_dust_diamond.name=Tiny Diamond Dust
+item.dust_iron.name=Iron Dust
+item.dust_gold.name=Gold Dust
+item.dust_diamond.name=Diamond Dust
 
 //Creative tabs
 itemGroup.wuxiacraft.scrolls=Cultivation Techniques
@@ -127,6 +136,10 @@ tile.stellar_stone_vein.name=Stellar Stone Vein
 tile.divine_origin_stone_vein.name=Divine Origin Stone Vein
 tile.boundless_void_crystal_vein.name=Boundless Void Crystal Vein
 tile.primordial_chaos_stone_vein.name=Primordial Chaos Stone Vein
+tile.magical_grinder.name=Magical Grinder
+tile.fiery_stone.name=Fiery Stone
+tile.icy_stone.name=Icy Stone
+tile.metallic_stone.name=Metallic Stone
 
 //Configuration
 gui.config.main_title=WuxiaCraft

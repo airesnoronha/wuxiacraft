@@ -1,6 +1,6 @@
 package com.airesnor.wuxiacraft.blocks;
 
-import com.airesnor.wuxiacraft.items.Items;
+import com.airesnor.wuxiacraft.items.WuxiaItems;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -139,9 +139,9 @@ public class BlockRune extends Block {
 	@Nonnull
 	@ParametersAreNonnullByDefault
 	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
-		Item item = Items.PAINT_BOTTLE;
+		Item item = WuxiaItems.PAINT_BOTTLE;
 		if(WuxiaBlocks.BLOOD_RUNES.containsValue(state.getBlock())) {
-			item = Items.BLOOD_BOTTLE;
+			item = WuxiaItems.BLOOD_BOTTLE;
 		}
 		ItemStack stack =  new ItemStack(item);
 		if(WuxiaBlocks.BLOOD_RUNES.containsValue(state.getBlock())){

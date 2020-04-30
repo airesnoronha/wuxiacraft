@@ -31,7 +31,7 @@ public class ItemDagger extends ItemBase {
 			EntityPlayer player = (EntityPlayer) attacker;
 			boolean found = false;
 			for(ItemStack stack1 :player.inventory.mainInventory) {
-				if(stack1.getItem() == Items.EMPTY_BOTTLE) {
+				if(stack1.getItem() == WuxiaItems.EMPTY_BOTTLE) {
 					stack1.shrink(1);
 					found = true;
 					break;
@@ -39,7 +39,7 @@ public class ItemDagger extends ItemBase {
 			}
 			if(found && !attacker.world.isRemote) {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(target);
-				ItemStack bloodBottle = new ItemStack(Items.BLOOD_BOTTLE, 1);
+				ItemStack bloodBottle = new ItemStack(WuxiaItems.BLOOD_BOTTLE, 1);
 				NBTTagCompound tag = null;
 				if(bloodBottle.hasTagCompound()) {
 					tag = bloodBottle.getTagCompound();
@@ -64,7 +64,7 @@ public class ItemDagger extends ItemBase {
 		ItemStack dagger = playerIn.getHeldItem(handIn);
 		boolean found = false;
 		for(ItemStack stack1 :playerIn.inventory.mainInventory) {
-			if(stack1.getItem() == Items.EMPTY_BOTTLE) {
+			if(stack1.getItem() == WuxiaItems.EMPTY_BOTTLE) {
 				stack1.shrink(1);
 				found = true;
 				break;
@@ -72,7 +72,7 @@ public class ItemDagger extends ItemBase {
 		}
 		if(found && !worldIn.isRemote) {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(playerIn);
-			ItemStack bloodBottle = new ItemStack(Items.BLOOD_BOTTLE, 1);
+			ItemStack bloodBottle = new ItemStack(WuxiaItems.BLOOD_BOTTLE, 1);
 			NBTTagCompound tag = null;
 			if(bloodBottle.hasTagCompound()) {
 				tag = bloodBottle.getTagCompound();

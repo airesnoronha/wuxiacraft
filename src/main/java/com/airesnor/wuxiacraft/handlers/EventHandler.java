@@ -518,7 +518,7 @@ public class EventHandler {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.getEntityLiving());
 			//scrolls
 			List<Item> scrolls = new ArrayList<>();
-			for (Item i : Items.ITEMS) {
+			for (Item i : WuxiaItems.ITEMS) {
 				if (i instanceof ItemScroll) {
 					scrolls.add(i);
 				}
@@ -537,7 +537,7 @@ public class EventHandler {
 			}
 			for (EntityItem item : event.getDrops()) {
 				ItemStack stack = item.getItem();
-				if (stack.getItem() == Items.RECIPE_SCROLL) {
+				if (stack.getItem() == WuxiaItems.RECIPE_SCROLL) {
 					ItemRecipe.setRecipeAtRandom(stack);
 				}
 				item.setItem(stack);

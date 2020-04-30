@@ -16,11 +16,14 @@ import com.airesnor.wuxiacraft.entities.tileentity.GrinderTileEntity;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
 import com.airesnor.wuxiacraft.formation.FormationTileEntity;
 import com.airesnor.wuxiacraft.items.IHasModel;
-import com.airesnor.wuxiacraft.items.Items;
+import com.airesnor.wuxiacraft.items.WuxiaItems;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Biomes;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -37,7 +40,7 @@ public class RegistryHandler {
 	@SubscribeEvent
 	public static void onItemRegister(RegistryEvent.Register<Item> event) {
 		WuxiaCraft.logger.info("Registering items.");
-		event.getRegistry().registerAll(Items.ITEMS.toArray(new Item[0]));
+		event.getRegistry().registerAll(WuxiaItems.ITEMS.toArray(new Item[0]));
 
 	}
 
@@ -54,7 +57,7 @@ public class RegistryHandler {
 
 	@SubscribeEvent
 	public static void onModelRegister(ModelRegistryEvent event) {
-		for (Item item : Items.ITEMS) {
+		for (Item item : WuxiaItems.ITEMS) {
 			if (item instanceof IHasModel) {
 				((IHasModel) item).registerModels();
 			}
@@ -186,6 +189,15 @@ public class RegistryHandler {
 		event.getRegistry().register(waterNeedleThrowable);
 		event.getRegistry().register(waterBladeThrowable);
 		event.getRegistry().register(swordBeamThrowable);
+	}
+
+	//ain't an event
+	public static void registerSmeltingRecipes() {
+		FurnaceRecipes.instance().addSmelting(WuxiaItems.DUST_IRON, new ItemStack(Items.IRON_INGOT), 2);
+		FurnaceRecipes.instance().addSmelting(WuxiaItems.TINY_DUST_IRON, new ItemStack(Items.IRON_NUGGET), 2);
+		FurnaceRecipes.instance().addSmelting(WuxiaItems.DUST_GOLD, new ItemStack(Items.GOLD_INGOT), 2);
+		FurnaceRecipes.instance().addSmelting(WuxiaItems.TINY_DUST_GOLD, new ItemStack(Items.GOLD_NUGGET), 2);
+		FurnaceRecipes.instance().addSmelting(WuxiaItems.DUST_DIAMOND, new ItemStack(Items.DIAMOND), 2);
 	}
 
 	@SubscribeEvent

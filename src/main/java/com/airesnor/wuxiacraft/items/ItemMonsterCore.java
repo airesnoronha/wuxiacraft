@@ -25,7 +25,7 @@ public class ItemMonsterCore extends ItemBase {
 		super(item_name);
 		setMaxStackSize(1);
 		setUseDuration(100);
-		setCreativeTab(Items.MONSTER_CORES);
+		setCreativeTab(WuxiaItems.MONSTER_CORES);
 		this.action = actor -> true;
 		this.whenUsing = actor -> true;
 	}

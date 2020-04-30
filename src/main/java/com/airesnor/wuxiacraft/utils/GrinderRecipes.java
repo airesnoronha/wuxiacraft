@@ -1,7 +1,8 @@
 package com.airesnor.wuxiacraft.utils;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.items.Items;
+import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
+import com.airesnor.wuxiacraft.items.WuxiaItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -25,20 +26,28 @@ public class GrinderRecipes {
 	private GrinderRecipes() {
 		this.addGrinding(new ItemStack(ItemBlock.getItemFromBlock(Blocks.IRON_ORE)),
 				new ItemStack[]{
-						new ItemStack(Items.DUST_IRON, 2),
-						new ItemStack(Items.DUST_IRON),
-						new ItemStack(Items.DUST_GOLD),
+						new ItemStack(WuxiaItems.DUST_IRON, 2),
+						new ItemStack(WuxiaItems.DUST_IRON),
+						new ItemStack(WuxiaItems.DUST_GOLD),
 						ItemStack.EMPTY},
 				new float[]{1f, 0.1f, 0.005f, 0f},
 				70.0);
 		this.addGrinding(new ItemStack(ItemBlock.getItemFromBlock(Blocks.GOLD_ORE)),
 				new ItemStack[]{
-						new ItemStack(Items.DUST_GOLD, 2),
-						new ItemStack(Items.DUST_IRON),
-						new ItemStack(Items.DUST_GOLD),
+						new ItemStack(WuxiaItems.DUST_GOLD, 2),
+						new ItemStack(WuxiaItems.DUST_IRON),
+						new ItemStack(WuxiaItems.DUST_GOLD),
 						ItemStack.EMPTY},
 				new float[]{1f, 0.1f, 0.005f, 0f},
 				80.0);
+		this.addGrinding(new ItemStack(ItemBlock.getItemFromBlock(WuxiaBlocks.METALLIC_STONE)),
+				new ItemStack[]{
+						new ItemStack(WuxiaItems.TINY_DUST_IRON),
+						new ItemStack(WuxiaItems.TINY_DUST_GOLD),
+						new ItemStack(WuxiaItems.TINY_DUST_DIAMOND),
+						ItemStack.EMPTY},
+				new float[]{0.7f, 0.3f, 0.005f, 0f},
+				70.0);
 	}
 
 	public void addGrinding(ItemStack input, ItemStack[] output, float[] chances, double energy) {

@@ -21,7 +21,7 @@ public class ItemHealPill extends ItemBase {
 	public ItemHealPill(String name, float amount) {
 		super(name);
 		this.amount = amount;
-		setCreativeTab(Items.PILLS);
+		setCreativeTab(WuxiaItems.PILLS);
 	}
 
 	@Override

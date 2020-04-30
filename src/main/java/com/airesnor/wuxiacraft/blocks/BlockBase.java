@@ -2,7 +2,7 @@ package com.airesnor.wuxiacraft.blocks;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.items.IHasModel;
-import com.airesnor.wuxiacraft.items.Items;
+import com.airesnor.wuxiacraft.items.WuxiaItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -24,7 +24,7 @@ public class BlockBase extends Block implements IHasModel {
 		this.setCreativeTab(WuxiaBlocks.BLOCKS_TAB);
 
 		WuxiaBlocks.BLOCKS.add(this);
-		Items.ITEMS.add(new ItemBlock(this).setRegistryName(name));
+		WuxiaItems.ITEMS.add(new ItemBlock(this).setRegistryName(name));
 		this.canSupportPlant = canSupportPlant;
 	}
 

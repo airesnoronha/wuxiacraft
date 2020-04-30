@@ -27,7 +27,7 @@ public class ItemEffectPill extends ItemBase {
 		super(name);
 		effects = new ArrayList<>();
 		this.amount = amount;
-		setCreativeTab(Items.PILLS);
+		setCreativeTab(WuxiaItems.PILLS);
 	}
 
 	public ItemEffectPill addEffect(PotionEffect effect) {

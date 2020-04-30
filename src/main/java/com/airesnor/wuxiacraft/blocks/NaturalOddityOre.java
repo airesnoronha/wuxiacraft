@@ -1,6 +1,6 @@
 package com.airesnor.wuxiacraft.blocks;
 
-import com.airesnor.wuxiacraft.items.Items;
+import com.airesnor.wuxiacraft.items.WuxiaItems;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
@@ -21,7 +21,7 @@ public class NaturalOddityOre extends BlockBase {
 	@Override
 	@Nonnull
 	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-		return Items.NATURAL_ODDITY_LOW;
+		return WuxiaItems.NATURAL_ODDITY_LOW;
 	}
 
 	@Override

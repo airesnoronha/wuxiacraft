@@ -1,28 +1,23 @@
 package com.airesnor.wuxiacraft.items;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.FoodStats;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class Items {
+public class WuxiaItems {
 
 	/**
 	 * Contains all the items to be registered
@@ -53,7 +48,7 @@ public class Items {
 	public static final CreativeTabs WUXIACRAFT_GENERAL = new CreativeTabs("wuxiacraft.general") {
 		@Override
 		public ItemStack getTabIconItem() {
-			return new ItemStack(Items.PRIMORDIAL_CHAOS_STONE);
+			return new ItemStack(WuxiaItems.PRIMORDIAL_CHAOS_STONE);
 		}
 	};
 

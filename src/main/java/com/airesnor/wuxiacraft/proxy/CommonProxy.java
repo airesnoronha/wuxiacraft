@@ -18,6 +18,7 @@ import com.airesnor.wuxiacraft.formation.FormationEventHandler;
 import com.airesnor.wuxiacraft.formation.FormationUtils;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.handlers.GuiHandler;
+import com.airesnor.wuxiacraft.handlers.RegistryHandler;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.CultivationLoader;
 import com.airesnor.wuxiacraft.utils.OreUtils;
@@ -92,6 +93,8 @@ public class CommonProxy {
 		Element.init();
 		Skills.init();
 		FormationUtils.init();
+
+		RegistryHandler.registerSmeltingRecipes();
 
 		//WorldType TEST = new WorldTypeTest("Test");
 		//WorldType WUXIATEST = new WorldTypeWuxiaTest("WuxiaTest");

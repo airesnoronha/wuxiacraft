@@ -33,7 +33,7 @@ public class ItemSpiritStone extends ItemBase {
 		this.amount = 1;
 		this.setMaxDamage(100);
 		this.color = color;
-		setCreativeTab(Items.WUXIACRAFT_GENERAL);
+		setCreativeTab(WuxiaItems.WUXIACRAFT_GENERAL);
 	}
 
 	public ItemSpiritStone setAmount(double amount) {
