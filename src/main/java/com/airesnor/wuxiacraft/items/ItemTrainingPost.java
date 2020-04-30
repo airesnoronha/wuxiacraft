@@ -1,7 +1,7 @@
 package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.blocks.BlockTrainingPost;
-import com.airesnor.wuxiacraft.blocks.Blocks;
+import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
@@ -33,7 +33,7 @@ public class ItemTrainingPost extends ItemBase {
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if(facing == EnumFacing.UP) {
 
-			Block targetBlock = Blocks.TRAINING_POSTS.get(this.getUnlocalizedName().substring(5)); //remove item. at the beginning
+			Block targetBlock = WuxiaBlocks.TRAINING_POSTS.get(this.getUnlocalizedName().substring(5)); //remove item. at the beginning
 			if (targetBlock != null) {
 				IBlockState iblockstate = worldIn.getBlockState(pos);
 				Block block = iblockstate.getBlock();

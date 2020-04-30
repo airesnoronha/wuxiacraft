@@ -50,12 +50,12 @@ public class Cauldron extends BlockContainer implements IHasModel {
 		super(Materials.CAULDRON);
 		setRegistryName(name);
 		setUnlocalizedName(name);
-		this.setCreativeTab(Blocks.BLOCKS_TAB);
+		this.setCreativeTab(WuxiaBlocks.BLOCKS_TAB);
 
 		setHardness(1f);
 		setResistance(25f);
 
-		Blocks.BLOCKS.add(this);
+		WuxiaBlocks.BLOCKS.add(this);
 		Items.ITEMS.add(new ItemBlock(this).setRegistryName(name));
 	}
 

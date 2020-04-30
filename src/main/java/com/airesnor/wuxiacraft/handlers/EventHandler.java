@@ -1,7 +1,7 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.blocks.Blocks;
+import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.blocks.SpiritStoneStackBlock;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
@@ -641,7 +641,7 @@ public class EventHandler {
 			for (EntityItem item : items) {
 				ItemStack stack = item.getItem();
 				BlockPos pos = item.getPosition();
-				Block spiritStones = Blocks.SPIRIT_STONE_STACK_BLOCK;
+				Block spiritStones = WuxiaBlocks.SPIRIT_STONE_STACK_BLOCK;
 				if (event.world.mayPlace(spiritStones, pos, true, EnumFacing.NORTH, item)) {
 					event.world.setBlockState(pos, spiritStones.getDefaultState());
 					SpiritStoneStackTileEntity te = (SpiritStoneStackTileEntity) event.world.getTileEntity(pos);
@@ -649,7 +649,7 @@ public class EventHandler {
 						te.stack = stack;
 					}
 					item.setDead();
-				} else if (event.world.getBlockState(pos).getBlock() == Blocks.SPIRIT_STONE_STACK_BLOCK) {
+				} else if (event.world.getBlockState(pos).getBlock() == WuxiaBlocks.SPIRIT_STONE_STACK_BLOCK) {
 					SpiritStoneStackTileEntity te = (SpiritStoneStackTileEntity) event.world.getTileEntity(pos);
 					if (te != null) {
 						if (te.stack.getItem() == stack.getItem()) { //meaning they're the same

@@ -32,7 +32,7 @@ public class MagicalGrinder extends BlockBase implements ITileEntityProvider {
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
 	public MagicalGrinder(String name) {
-		super(name, Material.IRON);
+		super(name, Material.IRON, false);
 	}
 
 	@Override

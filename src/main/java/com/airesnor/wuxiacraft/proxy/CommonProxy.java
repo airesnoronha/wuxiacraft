@@ -1,7 +1,7 @@
 package com.airesnor.wuxiacraft.proxy;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.blocks.Blocks;
+import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.capabilities.*;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
@@ -11,6 +11,9 @@ import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
+import com.airesnor.wuxiacraft.dimensions.WuxiaDimensions;
+import com.airesnor.wuxiacraft.dimensions.biomes.WuxiaBiomes;
+import com.airesnor.wuxiacraft.dimensions.worldtypes.WorldTypeRegister;
 import com.airesnor.wuxiacraft.formation.FormationEventHandler;
 import com.airesnor.wuxiacraft.formation.FormationUtils;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
@@ -89,6 +92,10 @@ public class CommonProxy {
 		Element.init();
 		Skills.init();
 		FormationUtils.init();
+
+		//WorldType TEST = new WorldTypeTest("Test");
+		//WorldType WUXIATEST = new WorldTypeWuxiaTest("WuxiaTest");
+		WorldTypeRegister.registerWorldTypes();
 	}
 
 	public void preInit() {
@@ -102,11 +109,13 @@ public class CommonProxy {
 
 		WuxiaCraftConfig.preInit();
 		GameRegistry.registerWorldGenerator(new WorldGen(), 3);
+		WuxiaBiomes.registerBiomes();
+		WuxiaDimensions.registerDimensions();
 		registerRuneBlocks();
 	}
 
 	private void registerRuneBlocks() {
-		Blocks.initBloodRunes();
+		WuxiaBlocks.initBloodRunes();
 		//ForgeRegistries.BLOCKS.registerAll(Blocks.BLOOD_RUNES.values().toArray(new Block[0]));
 	}
 

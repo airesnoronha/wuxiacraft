@@ -31,7 +31,7 @@ public class SpiritVeinOre extends BlockBase {
 	private Item droppedItem;
 
 	public SpiritVeinOre(String name) {
-		super(name, Material.ROCK);
+		super(name, Material.ROCK, false);
 		this.setResistance(25f);
 		this.setLightLevel(3f);
 		this.setHardness(40f);

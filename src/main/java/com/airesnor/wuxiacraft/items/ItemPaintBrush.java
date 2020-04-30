@@ -1,6 +1,6 @@
 package com.airesnor.wuxiacraft.items;
 
-import com.airesnor.wuxiacraft.blocks.Blocks;
+import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -42,12 +42,12 @@ public class ItemPaintBrush extends ItemBase {
 			}
 		}
 		if (bottle != null) {
-			if (worldIn.getBlockState(pos).getBlock() == Blocks.PAINT_RUNE && bottle.getItem() == Items.PAINT_BOTTLE) {
+			if (worldIn.getBlockState(pos).getBlock() == WuxiaBlocks.PAINT_RUNE && bottle.getItem() == Items.PAINT_BOTTLE) {
 				result = EnumActionResult.SUCCESS;
 				bottle.damageItem(1, player);
 				player.getHeldItem(hand).damageItem(1, player);
 				if (!worldIn.isRemote) {
-					IBlockState state = Blocks.FORMATION_CORE.getDefaultState();
+					IBlockState state = WuxiaBlocks.FORMATION_CORE.getDefaultState();
 					worldIn.setBlockState(pos, state);
 					worldIn.notifyBlockUpdate(pos, state, state, 3);
 				}
@@ -57,13 +57,13 @@ public class ItemPaintBrush extends ItemBase {
 					NBTTagCompound tag = bottle.getTagCompound();
 					if (tag != null) {
 						if (tag.hasKey("bloodLevel")) {
-							rune = Blocks.BLOOD_RUNES.get(tag.getString("bloodLevel").toLowerCase());
+							rune = WuxiaBlocks.BLOOD_RUNES.get(tag.getString("bloodLevel").toLowerCase());
 						}
 					}
 				} else if (bottle.getItem() == Items.PAINT_BOTTLE) {
-					rune = Blocks.PAINT_RUNE;
+					rune = WuxiaBlocks.PAINT_RUNE;
 				}
-				if (rune == null) rune = Blocks.BLOOD_RUNES.get("body_refinement");
+				if (rune == null) rune = WuxiaBlocks.BLOOD_RUNES.get("body_refinement");
 				BlockPos placement = pos.up();
 				if (player.canPlayerEdit(placement, facing, player.getHeldItem(hand)) && worldIn.mayPlace(rune, placement, true, EnumFacing.UP, player) && rune.canPlaceBlockAt(worldIn, placement)) {
 					if (!worldIn.isRemote) {

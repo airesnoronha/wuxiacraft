@@ -34,7 +34,7 @@ public class SpiritStoneStackBlock extends BlockContainer implements IHasModel {
 		this.setRegistryName(name);
 		this.setUnlocalizedName(name);
 		this.setLightLevel(5f);
-		Blocks.BLOCKS.add(this);
+		WuxiaBlocks.BLOCKS.add(this);
 		this.setHardness(1000f);
 	}
 

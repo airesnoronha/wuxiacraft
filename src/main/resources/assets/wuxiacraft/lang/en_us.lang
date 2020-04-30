@@ -328,3 +328,6 @@ wuxiacraft.temperatures.super_hot=Super Hot
 //Potion effects
 effect.enlightenment=Enlightenment
 Not used correctly!=wrongUsage
+
+//World Types and Biomes
+generator.Mining=Mining

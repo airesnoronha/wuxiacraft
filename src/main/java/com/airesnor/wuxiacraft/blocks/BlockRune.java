@@ -36,7 +36,7 @@ public class BlockRune extends Block {
 		super(Materials.RUNE);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		Blocks.BLOCKS.add(this);
+		WuxiaBlocks.BLOCKS.add(this);
 	}
 
 	@Override
@@ -140,11 +140,11 @@ public class BlockRune extends Block {
 	@ParametersAreNonnullByDefault
 	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
 		Item item = Items.PAINT_BOTTLE;
-		if(Blocks.BLOOD_RUNES.containsValue(state.getBlock())) {
+		if(WuxiaBlocks.BLOOD_RUNES.containsValue(state.getBlock())) {
 			item = Items.BLOOD_BOTTLE;
 		}
 		ItemStack stack =  new ItemStack(item);
-		if(Blocks.BLOOD_RUNES.containsValue(state.getBlock())){
+		if(WuxiaBlocks.BLOOD_RUNES.containsValue(state.getBlock())){
 			stack.setStackDisplayName(state.getBlock().getLocalizedName());
 		}
 		return stack;

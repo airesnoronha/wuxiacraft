@@ -49,7 +49,7 @@ public class BlockTrainingPost extends Block implements IHasModel {
 		this.amount = amount;
 		setHarvestLevel("axe", 1);
 		setCreativeTab(Items.WUXIACRAFT_GENERAL);
-		Blocks.BLOCKS.add(this);
+		WuxiaBlocks.BLOCKS.add(this);
 	}
 
 	/**
@@ -169,7 +169,7 @@ public class BlockTrainingPost extends Block implements IHasModel {
 	}
 
 	public Item getItem() {
-		if(Blocks.TRAINING_POSTS.containsValue(this)) {
+		if(WuxiaBlocks.TRAINING_POSTS.containsValue(this)) {
 			return Items.TRAINING_POSTS.get(this.getUnlocalizedName().substring(5)); //removes tile.
 		}
 		return Items.TRAINING_POSTS.get("training_post_oak_stick");

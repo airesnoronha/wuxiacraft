@@ -5,6 +5,7 @@ import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
+import com.airesnor.wuxiacraft.dimensions.biomes.WuxiaBiomes;
 import com.airesnor.wuxiacraft.entities.skills.FireThrowable;
 import com.airesnor.wuxiacraft.entities.skills.SwordBeamThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
@@ -105,7 +106,11 @@ public class Skills {
 						actor.addPotionEffect(effect);
 					}
 				}
-				CultivationUtils.cultivatorAddProgress(actor, 0.001f, true, true, true);
+				if(actor.getEntityWorld().getBiome(new BlockPos(actor.getPosition().getX(), actor.getPosition().getY(), actor.getPosition().getZ())) == WuxiaBiomes.EXTREMEQI) {
+					CultivationUtils.cultivatorAddProgress(actor, 0.002f, true, true, true);
+				}else{
+					CultivationUtils.cultivatorAddProgress(actor, 0.001f, true, true, true);
+				}
 				return true;
 			})
 			.setWhenCasting(actor -> {
@@ -135,7 +140,11 @@ public class Skills {
 					NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("applySlowness", cultivation.hasEnergy(energy) ? energy : 0, actor.getUniqueID()));
 					if (hasEnergy) {
 						if (actor instanceof EntityPlayer) {
-							CultivationUtils.cultivatorAddProgress(actor, amount, true, false, false);
+							if(actor.getEntityWorld().getBiome(new BlockPos(actor.getPosition().getX(), actor.getPosition().getY(), actor.getPosition().getZ())) == WuxiaBiomes.EXTREMEQI) {
+								CultivationUtils.cultivatorAddProgress(actor, amount *2, true, false, false);
+							}else{
+								CultivationUtils.cultivatorAddProgress(actor, amount, true, false, false);
+							}
 							cultivation.remEnergy(energy);
 							NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, amount, true, false, false, actor.getUniqueID()));
 						}

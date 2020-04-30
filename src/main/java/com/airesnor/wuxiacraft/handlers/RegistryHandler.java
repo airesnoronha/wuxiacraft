@@ -1,9 +1,9 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.blocks.Blocks;
-import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
+import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
+import com.airesnor.wuxiacraft.dimensions.biomes.WuxiaBiomes;
 import com.airesnor.wuxiacraft.entities.mobs.GiantAnt;
 import com.airesnor.wuxiacraft.entities.mobs.GiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
@@ -30,7 +30,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.registries.RegistryBuilder;
 
 @Mod.EventBusSubscriber
 public class RegistryHandler {
@@ -45,7 +44,7 @@ public class RegistryHandler {
 	@SubscribeEvent
 	public static void onBlockRegister(RegistryEvent.Register<Block> event) {
 		WuxiaCraft.logger.info("Registering blocks.");
-		event.getRegistry().registerAll(Blocks.BLOCKS.toArray(new Block[0]));
+		event.getRegistry().registerAll(WuxiaBlocks.BLOCKS.toArray(new Block[0]));
 
 		GameRegistry.registerTileEntity(CauldronTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "cauldron_tile_entity"));
 		GameRegistry.registerTileEntity(SpiritStoneStackTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "spirit_stone_stack_tile_entity"));
@@ -60,7 +59,7 @@ public class RegistryHandler {
 				((IHasModel) item).registerModels();
 			}
 		}
-		for (Block block : Blocks.BLOCKS) {
+		for (Block block : WuxiaBlocks.BLOCKS) {
 			if (block instanceof IHasModel) {
 				((IHasModel) block).registerModels();
 			}
@@ -89,7 +88,13 @@ public class RegistryHandler {
 						Biomes.TAIGA_HILLS,
 						Biomes.PLAINS,
 						Biomes.JUNGLE_EDGE,
-						Biomes.MESA
+						Biomes.MESA,
+						WuxiaBiomes.MINING,
+						WuxiaBiomes.EARTH,
+						WuxiaBiomes.FIRE,
+						WuxiaBiomes.METAL,
+						WuxiaBiomes.WATER,
+						WuxiaBiomes.WOOD
 				)
 				.build();
 		EntityEntry giantBeeEntity = EntityEntryBuilder.create()
@@ -112,7 +117,13 @@ public class RegistryHandler {
 						Biomes.TAIGA_HILLS,
 						Biomes.PLAINS,
 						Biomes.JUNGLE_EDGE,
-						Biomes.MESA
+						Biomes.MESA,
+						WuxiaBiomes.MINING,
+						WuxiaBiomes.EARTH,
+						WuxiaBiomes.FIRE,
+						WuxiaBiomes.METAL,
+						WuxiaBiomes.WATER,
+						WuxiaBiomes.WOOD
 				)
 				.build();
 		EntityEntry wanderingCultivatorEntity = EntityEntryBuilder.create()
@@ -135,7 +146,13 @@ public class RegistryHandler {
 						Biomes.TAIGA_HILLS,
 						Biomes.PLAINS,
 						Biomes.JUNGLE_EDGE,
-						Biomes.MESA
+						Biomes.MESA,
+						WuxiaBiomes.MINING,
+						WuxiaBiomes.EARTH,
+						WuxiaBiomes.FIRE,
+						WuxiaBiomes.METAL,
+						WuxiaBiomes.WATER,
+						WuxiaBiomes.WOOD
 				)
 				.build();
 		EntityEntry fireThrowable = EntityEntryBuilder.create()

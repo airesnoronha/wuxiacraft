@@ -5,22 +5,36 @@ import com.airesnor.wuxiacraft.items.IHasModel;
 import com.airesnor.wuxiacraft.items.Items;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.IPlantable;
 
 public class BlockBase extends Block implements IHasModel {
-	public BlockBase(String name, Material materialIn) {
+
+	private static boolean canSupportPlant;
+
+	public BlockBase(String name, Material materialIn, boolean canSupportPlant) {
 		super(materialIn);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(Blocks.BLOCKS_TAB);
+		this.setCreativeTab(WuxiaBlocks.BLOCKS_TAB);
 
-		Blocks.BLOCKS.add(this);
+		WuxiaBlocks.BLOCKS.add(this);
 		Items.ITEMS.add(new ItemBlock(this).setRegistryName(name));
+		this.canSupportPlant = canSupportPlant;
 	}
 
 	@Override
 	public void registerModels() {
 		WuxiaCraft.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
+	}
+
+	@Override
+	public boolean canSustainPlant(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing direction, IPlantable plantable) {
+		return canSupportPlant;
 	}
 }

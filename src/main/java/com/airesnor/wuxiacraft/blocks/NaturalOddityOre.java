@@ -12,7 +12,7 @@ import java.util.Random;
 @ParametersAreNonnullByDefault
 public class NaturalOddityOre extends BlockBase {
 	public NaturalOddityOre(String name) {
-		super(name, Material.ROCK);
+		super(name, Material.ROCK, false);
 		this.setHardness(50f);
 		this.setResistance(25f);
 		this.setHarvestLevel("pickaxe", 2);
