@@ -42,9 +42,12 @@ public class GrinderTileEntity extends TileEntity implements ITickable, IInvento
 
 	@Override
 	public void update() {
+		boolean beforeGrinding = this.isGrinding();
+		boolean needUpdate = false;
+		if(this.isGrinding()) {
+			this.grindingProgress++;
+		}
 		if (!this.world.isRemote) { //only stuff server side
-			boolean beforeGrinding = this.isGrinding();
-			boolean needUpdate = false;
 			if (!this.stones.isEmpty()) {
 				if (this.energy < this.getMaxEnergy()) {
 					if (this.stones.getItem() instanceof ItemSpiritStone) {
@@ -57,7 +60,6 @@ public class GrinderTileEntity extends TileEntity implements ITickable, IInvento
 			}
 			if (this.canGrind()) {
 				this.grinding = true;
-				this.grindingProgress++;
 				if (this.grindingProgress >= this.getMaxGrindingProcess()) {
 					this.grindItem();
 					needUpdate = true;
@@ -66,11 +68,11 @@ public class GrinderTileEntity extends TileEntity implements ITickable, IInvento
 			} else {
 				this.grinding = false;
 			}
-			needUpdate = needUpdate || this.grinding != beforeGrinding;
-			if (needUpdate) {
-				IBlockState blockState = this.world.getBlockState(getPos());
-				this.world.notifyBlockUpdate(this.getPos(), blockState, blockState, 2);
-			}
+		}
+		needUpdate = needUpdate || this.grinding != beforeGrinding;
+		if (needUpdate) {
+			IBlockState blockState = this.world.getBlockState(getPos());
+			this.world.notifyBlockUpdate(this.getPos(), blockState, blockState, 2);
 		}
 	}
 
@@ -79,24 +81,24 @@ public class GrinderTileEntity extends TileEntity implements ITickable, IInvento
 			ItemStack[] outputs = GrinderRecipes.getInstance().getOutputFromInput(this.input);
 			float[] chances = GrinderRecipes.getInstance().getChancesFromInput(this.input);
 			double cost = GrinderRecipes.getInstance().getCostFromInput(this.input);
-			this.energy = Math.max(0, this.energy - cost);
-			this.input.shrink(1);
 			for (int i = 0; i < 4; i++) {
 				float rnd = this.world.rand.nextFloat();
 				if (rnd <= chances[i]) {
 					if (this.output.get(i).isEmpty()) {
-						this.output.set(i, outputs[i]);
+						this.output.set(i, outputs[i].copy());
 					} else {
 						if (this.output.get(i).isItemEqual(outputs[i])) {
-							this.output.get(i).grow(outputs[i].getCount());
+							this.output.get(i).grow(outputs[i].copy().getCount());
 						}
 					}
 				}
 			}
+			this.energy = Math.max(0, this.energy - cost);
+			this.input.shrink(1);
 		}
 	}
 
-	protected double getMaxEnergy() {
+	public double getMaxEnergy() {
 		return 10000.0;// 10k
 	}
 
@@ -106,7 +108,10 @@ public class GrinderTileEntity extends TileEntity implements ITickable, IInvento
 
 	private NBTTagCompound prepareClientTagCompound() {
 		NBTTagCompound tag = new NBTTagCompound();
+		super.writeToNBT(tag);
 		tag.setBoolean("grinding", this.grinding);
+		tag.setInteger("grindProgress", this.grindingProgress);
+		tag.setDouble("energy", this.energy);
 		tag.setTag("stonesStack", new NBTTagCompound());
 		this.input.writeToNBT(tag.getCompoundTag("stonesStack"));
 		return tag;
@@ -123,25 +128,32 @@ public class GrinderTileEntity extends TileEntity implements ITickable, IInvento
 	public boolean canGrind() {
 		GrinderRecipes recipes = GrinderRecipes.getInstance();
 		ItemStack[] outputs = recipes.getOutputFromInput(this.input);
-		boolean canGrind = true;
-		for (int i = 0; i < 4; i++) {
-			if (!outputs[i].isItemEqual(this.output.get(i)) && !outputs[i].isEmpty() && !this.output.get(i).isEmpty()) {
-				canGrind = false;
-				break;
+		boolean canGrind = false;
+		if(!this.input.isEmpty()) {
+			canGrind = true;
+			for (int i = 0; i < 4; i++) {
+				if (!outputs[i].isItemEqual(this.output.get(i)) && !this.output.get(i).isEmpty()) {
+					canGrind = false;
+					break;
+				}
+				else if (outputs[i].getCount() + this.output.get(i).getCount() > this.output.get(i).getMaxStackSize()) {
+					canGrind = false;
+					break;
+				}
 			}
-			if (outputs[i].getCount() + this.output.get(i).getCount() > this.output.get(i).getMaxStackSize()) {
-				canGrind = false;
-				break;
+			if (canGrind) {
+				canGrind = this.hasEnergy(recipes.getCostFromInput(this.input));
 			}
-		}
-		if (canGrind) {
-			canGrind = this.hasEnergy(recipes.getCostFromInput(this.input));
 		}
 		return canGrind;
 	}
 
 	public ItemStack getStones() {
 		return this.stones.copy();
+	}
+
+	public void addEnergy(double amount) {
+		this.energy = Math.min(this.getMaxEnergy(), this.energy+amount);
 	}
 
 	//inventory stuff
@@ -222,8 +234,9 @@ public class GrinderTileEntity extends TileEntity implements ITickable, IInvento
 
 	@Override
 	public boolean isItemValidForSlot(int index, ItemStack stack) {
+		if(index == 0) return true;
 		if(index == 1) return stack.getItem() instanceof ItemSpiritStone;
-		return true;
+		return false;
 	}
 
 	@Override
@@ -271,7 +284,7 @@ public class GrinderTileEntity extends TileEntity implements ITickable, IInvento
 
 	@Override
 	public NBTTagCompound getUpdateTag() {
-		return prepareClientTagCompound();
+		return writeToNBT(new NBTTagCompound());
 	}
 
 	@Nullable
@@ -293,6 +306,8 @@ public class GrinderTileEntity extends TileEntity implements ITickable, IInvento
 			this.energy = compound.getDouble("energy");
 		if (compound.hasKey("grinding"))
 			this.grinding = compound.getBoolean("grinding");
+		if (compound.hasKey("grindProgress"))
+			this.grindingProgress = compound.getInteger("grindProgress");
 		if (compound.hasKey("stonesStack"))
 			this.stones = new ItemStack(compound.getCompoundTag("stonesStack"));
 		if (compound.hasKey("inputStack"))
@@ -307,6 +322,7 @@ public class GrinderTileEntity extends TileEntity implements ITickable, IInvento
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
 		compound.setDouble("energy", this.energy);
+		compound.setInteger("grindProgress", this.grindingProgress);
 		compound.setTag("stonesStack", new NBTTagCompound());
 		this.stones.writeToNBT(compound.getCompoundTag("stonesStack"));
 		compound.setTag("inputStack", new NBTTagCompound());

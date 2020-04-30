@@ -21,12 +21,13 @@ public class GrinderGui extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+		this.drawDefaultBackground();
 		GlStateManager.color(1f,1f,1f,1f);
 		mc.getTextureManager().bindTexture(GRINDER_GUI);
 		drawTexturedModalRect(this.guiLeft, this.guiTop, 0,0,this.xSize, this.ySize);
-		int grindProgress = (int)(21f*tileGrinder.getField(0)/150);
-		int energy = (int)(39f*tileGrinder.getField(1)/10000f);
-		drawTexturedModalRect(this.guiLeft + 16, this.guiLeft + 12 + 39-energy, 0, 166, 15, energy);
-		drawTexturedModalRect(this.guiLeft + 80, this.guiLeft + 33, 15, 166, 71, grindProgress);
+		int grindProgress = (int)(Math.min(21f,21f*tileGrinder.getField(0)/150f));
+		int energy = (int)(Math.min(39f, 39f*tileGrinder.getField(1)/10000f));
+		drawTexturedModalRect(this.guiLeft + 16, this.guiTop + 12 + 39-energy, 0, 166+39-energy, 15, energy);
+		drawTexturedModalRect(this.guiLeft + 80, this.guiTop + 33, 15, 166, 71, grindProgress);
 	}
 }

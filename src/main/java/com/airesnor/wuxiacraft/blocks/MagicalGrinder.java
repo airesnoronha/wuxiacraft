@@ -11,6 +11,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -96,7 +97,15 @@ public class MagicalGrinder extends BlockBase implements ITileEntityProvider {
 	@Override
 	public void registerModels() {
 		super.registerModels();
+
 		ClientRegistry.bindTileEntitySpecialRenderer(GrinderTileEntity.class, new GrinderTESR());
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+	{
+		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing());
 	}
 
 	@SuppressWarnings("deprecation")

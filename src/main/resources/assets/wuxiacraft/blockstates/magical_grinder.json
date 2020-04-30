@@ -14,11 +14,15 @@
 		},
 		"facing=south": {
 			"model": "wuxiacraft:magical_grinder.obj",
-			"y": 90
+			"y": 0
 		},
 		"facing=west": {
 			"model": "wuxiacraft:magical_grinder.obj",
-			"y": 0
+			"y": 90
+		},
+		"inventory": {
+			"model": "wuxiacraft:magical_grinder.obj",
+			"y": 180
 		}
 	}
 }
