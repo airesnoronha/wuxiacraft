@@ -581,7 +581,7 @@ public class EventHandler {
 								if (found) break;
 							}
 							if (!found) { //couldn't find one element
-								int target = event.player.getRNG().nextInt(5); //0 to 4
+								int target = event.player.getRNG().nextInt(5) + 2; //0 to 4
 								targetDimension += target;
 							}
 							TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) event.player, targetDimension, event.player.posX, 1512, event.player.posZ, event.player.rotationYaw, event.player.rotationPitch);
