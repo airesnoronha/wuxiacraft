@@ -119,11 +119,11 @@ public class WorldGen implements IWorldGenerator {
 	}
 
 	private void generateMetalWorld(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider, Predicate<IBlockState> replaceWithOre) {
-		generateOre(Blocks.COAL_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 0, 80, 12, 8, replaceWithOre);
-		generateOre(Blocks.IRON_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 0, 80, 4, 6, replaceWithOre);
-		generateOre(Blocks.GOLD_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 30, 50, 4, 5, replaceWithOre);
-		generateOre(Blocks.DIAMOND_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 0, 20, 3, 3, replaceWithOre);
-		generateOre(Blocks.EMERALD_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 0, 15, 3, 3, replaceWithOre);
+		generateOre(Blocks.COAL_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 0, 80, 12, 9, replaceWithOre);
+		generateOre(Blocks.IRON_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 0, 80, 4, 7, replaceWithOre);
+		generateOre(Blocks.GOLD_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 30, 50, 4, 6, replaceWithOre);
+		generateOre(Blocks.DIAMOND_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 0, 20, 3, 4, replaceWithOre);
+		generateOre(Blocks.EMERALD_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 0, 15, 3, 4, replaceWithOre);
 
 		generateOre(WuxiaBlocks.NATURAL_ODDITY_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 10, 50, 4, 4, replaceWithOre);
 		generateOre(WuxiaBlocks.PURE_QI_CRYSTAL_VEIN.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 20, 40, 5, 7, replaceWithOre);
