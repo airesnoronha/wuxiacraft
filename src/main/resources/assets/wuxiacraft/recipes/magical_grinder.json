@@ -1,0 +1,32 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"result": {
+		"item": "wuxiacraft:iron_cauldron",
+		"count": 1
+	},
+	"pattern": [
+		"ibi",
+		"lcl",
+		"rfr"
+	],
+	"key": {
+		"c": {
+			"item": "wuxiacraft:iron_cauldron"
+		},
+		"i": {
+			"item": "minecraft:iron_ingot"
+		},
+		"r": {
+			"item": "minecraft:redstone"
+		},
+		"f": {
+			"item": "minecraft:furnace"
+		},
+		"l": {
+			"item": "minecraft:flint"
+		},
+		"b": {
+			"item": "minecraft:bucket"
+		}
+	}
+}

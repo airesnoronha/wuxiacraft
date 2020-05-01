@@ -145,4 +145,8 @@ public class WanderingCultivator extends EntityCultivator implements IMob {
 		return table;
 	}
 
+	@Override
+	public int getMaxSpawnedInChunk() {
+		return 2;
+	}
 }

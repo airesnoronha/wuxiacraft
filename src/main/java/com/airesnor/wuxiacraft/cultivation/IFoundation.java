@@ -82,4 +82,6 @@ public interface IFoundation {
 	void copyFrom(IFoundation foundation);
 
 	void applyDeathPunishment(ICultivation cultivation);
+
+	void keepMaxLevel(ICultivation cultivation);
 }

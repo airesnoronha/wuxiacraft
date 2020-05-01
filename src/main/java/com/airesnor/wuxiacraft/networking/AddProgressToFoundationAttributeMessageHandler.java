@@ -48,6 +48,7 @@ public class AddProgressToFoundationAttributeMessageHandler implements IMessageH
 							foundation.addStrengthProgress(amount);
 							break;
 					}
+					foundation.keepMaxLevel(cultivation);
 				}
 			});
 		}

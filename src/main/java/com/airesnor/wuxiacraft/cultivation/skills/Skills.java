@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.cultivation.skills;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
@@ -40,6 +41,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import scala.xml.dtd.ELEMENTS;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,10 +143,9 @@ public class Skills {
 					if (hasEnergy) {
 						if (actor instanceof EntityPlayer) {
 							if(actor.getEntityWorld().getBiome(new BlockPos(actor.getPosition().getX(), actor.getPosition().getY(), actor.getPosition().getZ())) == WuxiaBiomes.EXTREMEQI) {
-								CultivationUtils.cultivatorAddProgress(actor, amount *2, true, false, false);
-							}else{
-								CultivationUtils.cultivatorAddProgress(actor, amount, true, false, false);
+								amount*=1.5;
 							}
+							CultivationUtils.cultivatorAddProgress(actor, amount, true, false, false);
 							cultivation.remEnergy(energy);
 							NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, amount, true, false, false, actor.getUniqueID()));
 						}
@@ -232,7 +233,16 @@ public class Skills {
 				float shootYaw = actor.rotationYawHead;
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 				for (int i = 0; i < 3; i++) {
-					FireThrowable ft = new FireThrowable(actor.world, actor, Math.min(10f, (float) cultivation.getStrengthIncrease() / 3f));
+					float damage = (float) cultivation.getStrengthIncrease() / 3f;
+					if(actor instanceof EntityPlayer) {
+						IFoundation foundation = CultivationUtils.getFoundationFromEntity(actor);
+						damage = (float)(foundation.getStrengthModifier()*0.3 + foundation.getSpiritModifier()*0.2);
+						ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
+						if(cultTech.hasElement(Element.FIRE)) {
+							damage*=1.3;
+						}
+					}
+					FireThrowable ft = new FireThrowable(actor.world, actor, damage);
 					ft.shoot(actor, shootPitch, shootYaw, 0.3f, 1.2f, 0.4f);
 					actor.world.spawnEntity(ft);
 				}
@@ -243,7 +253,16 @@ public class Skills {
 			.setAction(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 				for (int i = 0; i < 5; i++) {
-					FireThrowable ft = new FireThrowable(actor.world, actor, (float) Math.min(4 + cultivation.getStrengthIncrease() * 1.2f, 40f), 600, 60, 1.2f);
+					float damage = 4 + (float)cultivation.getStrengthIncrease() * 1.2f;
+					if(actor instanceof EntityPlayer) {
+						IFoundation foundation = CultivationUtils.getFoundationFromEntity(actor);
+						damage = (float)( 4 + foundation.getStrengthModifier()*0.8 + foundation.getSpiritModifier()*0.4);
+						ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
+						if(cultTech.hasElement(Element.FIRE)) {
+							damage*=1.3;
+						}
+					}
+					FireThrowable ft = new FireThrowable(actor.world, actor, damage, 600, 60, 1.2f);
 					ft.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, (float) Math.min(0.8f + cultivation.getSpeedIncrease() * 0.4f, 1.8f), 0.4f);
 					actor.world.spawnEntity(ft);
 				}
@@ -377,7 +396,16 @@ public class Skills {
 	public static final Skill WATER_NEEDLE = new Skill("water_needle", false, true, 100f, 1.1f, 20f, 0f, "Lysian Prieto")
 			.setAction(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				WaterNeedleThrowable needle = new WaterNeedleThrowable(actor.world, actor, (float) Math.min(17f, 4 + cultivation.getStrengthIncrease() * 0.3f), 300);
+				float damage = 4 + (float)cultivation.getStrengthIncrease() * 0.3f;
+				if(actor instanceof EntityPlayer) {
+					IFoundation foundation = CultivationUtils.getFoundationFromEntity(actor);
+					damage = (float)(foundation.getStrengthModifier()*0.3 + foundation.getSpiritModifier()*0.2);
+					ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
+					if(cultTech.hasElement(Element.WATER)) {
+						damage*=1.3;
+					}
+				}
+				WaterNeedleThrowable needle = new WaterNeedleThrowable(actor.world, actor, damage, 300);
 				needle.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, (float) Math.min(1.8f, 0.8f + cultivation.getSpeedIncrease() * 0.12f), 0.2f);
 				actor.world.spawnEntity(needle);
 				return true;
@@ -392,7 +420,15 @@ public class Skills {
 			actor.swingArm(EnumHand.MAIN_HAND);
 			skillCap.stepCastProgress((float) cultivation.getSpeedIncrease() * 0.5f);
 		}
-		float damage = Math.min(60f, 8 + (float) cultivation.getStrengthIncrease() * 1.5f * swordModifier);
+		float damage = 8 + (float) cultivation.getStrengthIncrease() * 1.5f * swordModifier;
+		if(actor instanceof EntityPlayer) {
+			IFoundation foundation = CultivationUtils.getFoundationFromEntity(actor);
+			damage = (float)(foundation.getStrengthModifier()*0.7+ foundation.getDexterityModifier()*0.3 + foundation.getSpiritModifier()*0.4)*swordModifier;
+			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
+			if(cultTech.hasElement(Element.FIRE)) {
+				damage*=1.3;
+			}
+		}
 		WaterBladeThrowable blade = new WaterBladeThrowable(actor.world, actor, damage, 300);
 		blade.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 0.7f + (float) cultivation.getSpeedIncrease() * 0.5f * swordModifier, 0.2f);
 		actor.world.spawnEntity(blade);
@@ -444,10 +480,14 @@ public class Skills {
 				if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
 					activated = true;
 					float strength = (float) CultivationUtils.getCultivationFromEntity(actor).getStrengthIncrease();
+					if(actor instanceof EntityPlayer) {
+						IFoundation foundation = CultivationUtils.getFoundationFromEntity(actor);
+						strength = (float)(foundation.getStrengthModifier()*1.1 + foundation.getDexterityModifier() * 0.4f  + foundation.getSpiritModifier()*0.3f);
+					}
 					float sword = ((ItemSword) actor.getHeldItem(EnumHand.MAIN_HAND).getItem()).getAttackDamage();
 					int enchantment = EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, actor.getHeldItem(EnumHand.MAIN_HAND));
 					sword += enchantment > 0 ? 0.5 * (1 + enchantment) : 0;
-					float damage = Math.min(60f, strength + sword);
+					float damage = strength + sword;
 					SwordBeamThrowable sbt = new SwordBeamThrowable(actor.world, actor, damage, 0xEF890A, 300);
 					sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.6f, 0f);
 					actor.world.spawnEntity(sbt);
@@ -458,10 +498,14 @@ public class Skills {
 
 	public static final ISkillAction BARRAGE_MINOR_BEAM = actor -> {
 		float strength = (float) CultivationUtils.getCultivationFromEntity(actor).getStrengthIncrease();
+		if(actor instanceof EntityPlayer) {
+			IFoundation foundation = CultivationUtils.getFoundationFromEntity(actor);
+			strength = (float)(foundation.getStrengthModifier()*1.1 + foundation.getDexterityModifier() * 0.4f  + foundation.getSpiritModifier()*0.3f);
+		}
 		float sword = ((ItemSword) actor.getHeldItem(EnumHand.MAIN_HAND).getItem()).getAttackDamage() * 2;
 		int enchantment = EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, actor.getHeldItem(EnumHand.MAIN_HAND));
 		sword += enchantment > 0 ? 0.5 * (1 + enchantment) : 0;
-		float damage = Math.min(20f, strength * 0.3f + sword * 0.3f);
+		float damage = strength * 0.3f + sword * 0.3f;
 		SwordBeamThrowable sbt = new SwordBeamThrowable(actor.world, actor, damage, 0x89EF0A, 300);
 		sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.2f, 0f);
 		actor.world.spawnEntity(sbt);
@@ -476,10 +520,14 @@ public class Skills {
 				if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
 					activated = true;
 					float strength = (float) CultivationUtils.getCultivationFromEntity(actor).getStrengthIncrease();
+					if(actor instanceof EntityPlayer) {
+						IFoundation foundation = CultivationUtils.getFoundationFromEntity(actor);
+						strength = (float)(foundation.getStrengthModifier()*1.2 + foundation.getDexterityModifier() * 0.4f + foundation.getSpiritModifier()*0.3f);
+					}
 					float sword = ((ItemSword) actor.getHeldItem(EnumHand.MAIN_HAND).getItem()).getAttackDamage() * 2;
 					int enchantment = EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, actor.getHeldItem(EnumHand.MAIN_HAND));
 					sword += enchantment > 0 ? 0.5 * (1 + enchantment) : 0;
-					float damage = Math.min(60f, strength + sword);
+					float damage = strength + sword;
 					SwordBeamThrowable sbt = new SwordBeamThrowable(actor.world, actor, damage, 0xEF890A, 300);
 					sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.6f, 0f);
 					actor.world.spawnEntity(sbt);
@@ -542,16 +590,19 @@ public class Skills {
 						actor.swingArm(EnumHand.MAIN_HAND);
 						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 						float strength = (float) cultivation.getStrengthIncrease() * 1.5f;
+						if(actor instanceof EntityPlayer) {
+							IFoundation foundation = CultivationUtils.getFoundationFromEntity(actor);
+							strength = (float)(foundation.getStrengthModifier()*1.1 + foundation.getSpiritModifier()*0.3 + foundation.getConstitutionModifier()*0.4);
+						}
 						for (PotionEffect effect : actor.getActivePotionEffects()) {
 							if (effect.getPotion() == MobEffects.STRENGTH) {
 								strength += (effect.getAmplifier() + 1) * 3;
 							}
 						}
-						strength = Math.min(60f, strength);
 						target.attackEntityFrom(DamageSource.causeMobDamage(actor), strength);
 						float x = +MathHelper.sin(actor.rotationYawHead * 0.017453292F);
 						float z = -MathHelper.cos(actor.rotationYawHead * 0.017453292F);
-						((EntityLivingBase) target).knockBack(actor, strength * 0.3f, x, z);
+						((EntityLivingBase) target).knockBack(actor, Math.max(30f, strength * 0.3f), x, z); //not limit the damage but the knock back
 					}
 				}
 				return activated;

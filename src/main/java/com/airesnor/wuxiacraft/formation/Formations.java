@@ -1,5 +1,7 @@
 package com.airesnor.wuxiacraft.formation;
 
+import com.airesnor.wuxiacraft.dimensions.WuxiaDimensions;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +11,12 @@ public class Formations {
 	public static final List<Formation> FORMATIONS = new ArrayList<>();
 
 	//passive generation
-	public static final Formation WEAK_QI_GATHERING_ARRAY = new FormationQiGathering("weak_qi_gathering_array", 0.03f, 32f);
-	public static final Formation FIVE_ELEMENTS_GATHERING_ARRAY = new FormationQiGathering("five_elements_gathering_array", 0.09f, 48f);
-	public static final Formation YIN_YANG_GATHERING_ARRAY = new FormationQiGathering("yin_yang_gathering_array", 0.288f, 64f);
-	public static final Formation NATURE_SPIRIT_GATHERING_ARRAY = new FormationQiGathering("nature_spirit_gathering_array", 0.9794f, 72f);
+	public static final Formation WEAK_QI_GATHERING_ARRAY = new FormationQiGathering("weak_qi_gathering_array", 0.08f, 32f);
+	public static final Formation FIVE_ELEMENTS_GATHERING_ARRAY = new FormationQiGathering("five_elements_gathering_array", 0.22f, 48f);
+	public static final Formation YIN_YANG_GATHERING_ARRAY = new FormationQiGathering("yin_yang_gathering_array", 0.5f, 64f);
+	public static final Formation NATURE_SPIRIT_GATHERING_ARRAY = new FormationQiGathering("nature_spirit_gathering_array", 2.2, 72f);
+	public static final Formation GOLDEN_YANG_QI_ARRAY = new FormationQiGathering("golden_yang_qi_array", 6.8, 72f);
+	public static final Formation HEAVENLY_QI_BORROW_ARRAY = new FormationQiGathering("heavenly_qi_borrow_array", 32.4, 72f);
 
 	//furnace powering
 	public static final Formation FURNACE_POWERING_FORMATION = new FormationFurnacePower("furnace_powering_formation", 15f, 100f, 16f);
@@ -48,7 +52,15 @@ public class Formations {
 	public static final Formation GODHOOD_KEEPER_FORMATION = new FormationCultivationHelper("godhood_keeper_formation", 19250000, 1411666666.66, 8f, 1925000); //don't have diagram
 
 	//Teleportation
-	public static final Formation TELEPOSITION_ARRAY = new FormationTeleportation("teleposition_array", 750, 2500, 5000);
+	public static final Formation TELEPOSITION_ARRAY = new FormationTeleportation("teleposition_array", 7.5, 3800, 5000);
+
+	//Dimension
+	public static final Formation MINING_DIMENSION = new FormationDimensionChanger("mining_dimension_array", 0.85, 1300, WuxiaDimensions.MINING.getId());
+	public static final Formation FIRE_DIMENSION = new FormationDimensionChanger("fire_dimension_array", 2.03, 2100,  WuxiaDimensions.FIRE.getId());
+	public static final Formation EARTH_DIMENSION = new FormationDimensionChanger(" earth_dimension_array", 2.03, 2100,  WuxiaDimensions.EARTH.getId());
+	public static final Formation METAL_DIMENSION = new FormationDimensionChanger("metal_dimension_array", 2.03, 2100,  WuxiaDimensions.METAL.getId());
+	public static final Formation WATER_DIMENSION = new FormationDimensionChanger("water_dimension_array", 2.03, 2100,  WuxiaDimensions.WATER.getId());
+	public static final Formation WOOD_DIMENSION = new FormationDimensionChanger("wood_dimension_array", 2.03, 2100,  WuxiaDimensions.WOOD.getId());
 
 	//Slaughter
 	public static final Formation WEAK_SLAUGHTER_FORMATION = new FormationSlaughter("weak_slaughter_formation", 7, 650, 24, 3f);

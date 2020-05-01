@@ -307,7 +307,7 @@ public class Foundation implements IFoundation {
 
 	@Override
 	public void applyDeathPunishment(ICultivation cultivation) {
-		long toLose = (long) (cultivation.getStrengthIncrease()* 0.3); //lose around 15 % of what it would need to level up
+		long toLose = (long) Math.max(4, (cultivation.getStrengthIncrease()* 0.3)); //lose around 15 % of what it would need to level up
 		this.agility = Math.max(this.agility-toLose, 0);
 		this.constitution = Math.max(this.constitution-toLose, 0);
 		this.dexterity = Math.max(this.dexterity-toLose, 0);
@@ -320,5 +320,40 @@ public class Foundation implements IFoundation {
 		this.resistanceProgress = 0;
 		this.spiritProgress = 0;
 		this.strengthProgress = 0;
+	}
+
+	@Override
+	public void keepMaxLevel(ICultivation cultivation) {
+		long maxStat = cultivation.getCurrentLevel().getFoundationMaxStat(cultivation.getCurrentSubLevel());
+		if(this.agility >= maxStat) {
+			this.agility = maxStat;
+			cultivation.addProgress(this.agilityProgress, false);
+			this.agilityProgress = 0;
+		}
+		if(this.constitution >= maxStat) {
+			this.constitution = maxStat;
+			cultivation.addProgress(this.constitutionProgress, false);
+			this.constitutionProgress = 0;
+		}
+		if(this.dexterity >= maxStat) {
+			this.dexterity = maxStat;
+			cultivation.addProgress(this.dexterityProgress, false);
+			this.dexterityProgress = 0;
+		}
+		if(this.resistance >= maxStat) {
+			this.resistance = maxStat;
+			cultivation.addProgress(this.resistanceProgress, false);
+			this.resistanceProgress = 0;
+		}
+		if(this.spirit >= maxStat) {
+			this.spirit = maxStat;
+			cultivation.addProgress(this.spiritProgress, false);
+			this.spiritProgress = 0;
+		}
+		if(this.strength >= maxStat) {
+			this.strength = maxStat;
+			cultivation.addProgress(this.spiritProgress, false);
+			this.strengthProgress = 0;
+		}
 	}
 }

@@ -784,6 +784,7 @@ public class CultivationGui extends GuiScreen {
 				foundation.addStrengthProgress(amount);
 				break;
 		}
+		foundation.keepMaxLevel(this.cultivation);
 		NetworkWrapper.INSTANCE.sendToServer(new AddProgressToFoundationAttributeMessage(amount, attribute, player.getUniqueID()));
 	}
 

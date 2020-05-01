@@ -2,6 +2,10 @@ package com.airesnor.wuxiacraft.cultivation.techniques;
 
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.PotionEffect;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class KnownTechnique {
 
@@ -23,5 +27,20 @@ public class KnownTechnique {
 
 	public Technique getTechnique() {
 		return technique;
+	}
+
+	public List<PotionEffect> getTechniqueEffects() {
+		List<PotionEffect> effects = new ArrayList<>();
+		TechniqueTier tier = this.getTechnique().getTier();
+		if(this.progress >= tier.smallProgress) {
+			effects.addAll(this.getTechnique().getSmallCompletionEffects());
+		}
+		if(this.progress >= tier.smallProgress + tier.greatProgress) {
+			effects.addAll(this.getTechnique().getGreatCompletionEffects());
+		}
+		if(this.progress >= tier.smallProgress + tier.greatProgress + tier.perfectionProgress) {
+			effects.addAll(this.getTechnique().getPerfectionCompletionEffects());
+		}
+		return effects;
 	}
 }

@@ -148,4 +148,12 @@ public class CultTech implements ICultTech {
 		this.knownTechniques.clear();
 		this.knownTechniques.addAll(cultTech.getKnownTechniques());
 	}
+
+	@Override
+	public boolean hasElement(Element element) {
+		for(KnownTechnique kt : this.knownTechniques) {
+			if(kt.getTechnique().getElements().contains(element)) return true;
+		}
+		return false;
+	}
 }

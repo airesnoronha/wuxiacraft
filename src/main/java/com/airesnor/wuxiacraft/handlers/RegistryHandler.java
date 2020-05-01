@@ -135,7 +135,7 @@ public class RegistryHandler {
 				.name("wandering_cultivator")
 				.tracker(150, 3, false)
 				.egg(0x202020, 0xFACB27)
-				.spawn(EnumCreatureType.MONSTER, 15, 1, 1,
+				.spawn(EnumCreatureType.MONSTER, 5, 1, 1,
 						Biomes.BEACH,
 						Biomes.BIRCH_FOREST,
 						Biomes.DESERT,
@@ -149,14 +149,16 @@ public class RegistryHandler {
 						Biomes.TAIGA_HILLS,
 						Biomes.PLAINS,
 						Biomes.JUNGLE_EDGE,
-						Biomes.MESA,
+						Biomes.MESA
+				)
+				.spawn(EnumCreatureType.MONSTER, 12, 1, 1,
+						Biomes.HELL,
 						WuxiaBiomes.MINING,
 						WuxiaBiomes.EARTH,
 						WuxiaBiomes.FIRE,
 						WuxiaBiomes.METAL,
 						WuxiaBiomes.WATER,
-						WuxiaBiomes.WOOD
-				)
+						WuxiaBiomes.WOOD)
 				.build();
 		EntityEntry fireThrowable = EntityEntryBuilder.create()
 				.entity(FireThrowable.class)

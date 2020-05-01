@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -23,5 +24,7 @@ public interface ICultTech {
 	float getOverallCultivationSpeed();
 
 	void copyFrom(ICultTech cultTech);
+
+	boolean hasElement(Element element);
 
 }

@@ -31,6 +31,10 @@ public class Element {
 		return this.counters.contains(counter);
 	}
 
+	public List<Element> getCounters() {
+		return new ArrayList<>(this.counters); //copies the list so they won't accidentally remove one
+	}
+
 	public String getName() {
 		return I18n.format("wuxiacraft.elements." + this.name);
 	}

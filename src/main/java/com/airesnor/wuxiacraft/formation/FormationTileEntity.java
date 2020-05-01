@@ -101,19 +101,21 @@ public class FormationTileEntity extends TileEntity implements ITickable {
 					this.stopFormation();
 					return;
 				}
+				if (this.eventListener == null) {
+					this.activateFormation();
+				}
 				searchForSpiritStones();
 				int activated = this.formation.doUpdate(this.world, this.pos, this);
 				if (activated >= 0) {
-					if (this.remEnergy(this.formation.getOperationCost() * activated)) {
-						this.interruptFormation(this.pos, new ArrayList<>());
+					if(activated > 0) {
+						if (this.remEnergy(this.formation.getOperationCost() * activated)) {
+							this.interruptFormation(this.pos, new ArrayList<>());
+						}
 					}
 				} else {
 					this.stopFormation();
 				}
 				this.timeActivated++;
-				if (this.eventListener == null) {
-					this.activateFormation();
-				}
 			} else if (this.state == FormationState.INTERRUPTED) {
 				this.stopFormation();
 			}

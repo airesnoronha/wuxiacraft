@@ -5,11 +5,13 @@ import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.capabilities.FoundationProvider;
 import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
 import com.airesnor.wuxiacraft.cultivation.*;
+import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.cultivation.techniques.CultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
+import com.airesnor.wuxiacraft.dimensions.WuxiaDimensions;
 import com.airesnor.wuxiacraft.entities.mobs.EntityCultivator;
 import com.airesnor.wuxiacraft.networking.CultivationMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
@@ -21,10 +23,14 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CultivationUtils {
 
@@ -98,6 +104,23 @@ public class CultivationUtils {
 		if (techniques) {
 			cultTech.progress(amount);
 		}
+		//get world extra modifier
+		List<Pair<Element, DimensionType>> elementsDim = new ArrayList<>();
+		elementsDim.add(Pair.of(Element.FIRE, WuxiaDimensions.FIRE));
+		elementsDim.add(Pair.of(Element.EARTH, WuxiaDimensions.EARTH));
+		elementsDim.add(Pair.of(Element.METAL, WuxiaDimensions.METAL));
+		elementsDim.add(Pair.of(Element.WATER, WuxiaDimensions.WATER));
+		elementsDim.add(Pair.of(Element.WOOD, WuxiaDimensions.WOOD));
+		for(Pair<Element, DimensionType> pair : elementsDim) {
+			if (player.world.provider.getDimension() == pair.getValue().getId()) {
+				if (cultTech.hasElement(pair.getKey())) {
+					amount *= 1.75;
+				}
+				for (Element element : pair.getKey().getCounters()) {
+					if (cultTech.hasElement(element)) amount *= 0.75;
+				}
+			}
+		}
 		if (!cultivation.getSuppress()) {
 			double progressRel = cultivation.getCurrentProgress() / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
 			double bottleneckAmount = ignoreBottleneck ? amount : amount * MathUtils.clamp(1.2f - progressRel, 0.2f, 1f);
@@ -131,25 +154,9 @@ public class CultivationUtils {
 					}
 				}
 			}
-			switch (foundation.getSelectedAttribute()) {
-				case 0:
-					foundation.addAgilityProgress(bottleneckAmount);
-					break;
-				case 1:
-					foundation.addConstitutionProgress(bottleneckAmount);
-					break;
-				case 2:
-					foundation.addDexterityProgress(bottleneckAmount);
-					break;
-				case 3:
-					foundation.addResistanceProgress(bottleneckAmount);
-					break;
-				case 4:
-					foundation.addSpiritProgress(bottleneckAmount);
-					break;
-				case 5:
-					foundation.addStrengthProgress(bottleneckAmount);
-					break;
+			else {
+				foundation.addSelectedProgress(amount);
+				foundation.keepMaxLevel(cultivation);
 			}
 		}
 	}

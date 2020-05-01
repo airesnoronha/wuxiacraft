@@ -1,6 +1,8 @@
 package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.cultivation.IFoundation;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,6 +20,7 @@ import java.lang.reflect.Field;
 public class ItemFastingPill extends ItemBase {
 
 	private static final Field foodStats = ReflectionHelper.findField(FoodStats.class, "foodSaturationLevel", "field_75125_b");
+
 	static {
 		foodStats.setAccessible(true);
 	}
@@ -32,21 +35,22 @@ public class ItemFastingPill extends ItemBase {
 	@Override
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		if (entityLiving instanceof EntityPlayer) {
-				if(this.amount <= entityLiving.getMaxHealth() * 3F) {
-					EntityPlayer player = (EntityPlayer)entityLiving;
-					player.getFoodStats().setFoodLevel(20);
-					try {
-						foodStats.setFloat(player.getFoodStats(), this.amount);
-					} catch (Exception e) {
-						WuxiaCraft.logger.error("Couldn't help with food, sorry!");
-						e.printStackTrace();
-					}
-					stack.shrink(1);
-				} else {
-					stack.shrink(1);
-					worldIn.createExplosion(entityLiving, entityLiving.posX, entityLiving.posY, entityLiving.posZ, 3f, true);
-					entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), this.amount*2);
+			IFoundation foundation = CultivationUtils.getFoundationFromEntity(entityLiving);
+			if (this.amount <= 25f + (foundation.getConstitutionModifier() * 0.4f) * 3F) {
+				EntityPlayer player = (EntityPlayer) entityLiving;
+				player.getFoodStats().setFoodLevel(20);
+				try {
+					foodStats.setFloat(player.getFoodStats(), this.amount);
+				} catch (Exception e) {
+					WuxiaCraft.logger.error("Couldn't help with food, sorry!");
+					e.printStackTrace();
 				}
+				stack.shrink(1);
+			} else {
+				stack.shrink(1);
+				worldIn.createExplosion(entityLiving, entityLiving.posX, entityLiving.posY, entityLiving.posZ, 3f, true);
+				entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), (float) (this.amount-foundation.getConstitutionModifier()) * 2);
+			}
 		}
 		return stack;
 	}

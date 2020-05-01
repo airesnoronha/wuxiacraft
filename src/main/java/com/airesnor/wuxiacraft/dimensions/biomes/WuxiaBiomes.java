@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.dimensions.biomes;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
@@ -20,15 +21,15 @@ public class WuxiaBiomes {
     private static Biome registerBiome(Biome biome, String biomeName, BiomeType biomeType, boolean spawnOverworld, Type... types) {
         biome.setRegistryName(biomeName);
         ForgeRegistries.BIOMES.register(biome);
-        System.out.println("The biomes have been registered");
+        WuxiaCraft.logger.info("The biomes have been registered");
         BiomeDictionary.addTypes(biome, types);
 
         //This makes it so that the overworld gets the biome added then it spawns it
         if(spawnOverworld) {
-            BiomeManager.addBiome(biomeType, new BiomeManager.BiomeEntry(biome, 10));
+            BiomeManager.addBiome(biomeType, new BiomeManager.BiomeEntry(biome, 5));
         }
         BiomeManager.addSpawnBiome(biome);
-        System.out.println("The biomes have been added");
+        WuxiaCraft.logger.info("The biomes have been added");
         return biome;
     }
 

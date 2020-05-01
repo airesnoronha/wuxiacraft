@@ -1,5 +1,7 @@
 package com.airesnor.wuxiacraft.items;
 
+import com.airesnor.wuxiacraft.cultivation.IFoundation;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
@@ -40,8 +42,9 @@ public class ItemEffectPill extends ItemBase {
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		if (entityLiving instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) entityLiving;
+			IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
 			stack.shrink(player.isCreative() ? 0 : 1);
-			if(this.amount <= player.getMaxHealth()*0.4) {
+			if(this.amount <= foundation.getConstitutionModifier()) {
 				if (stack.isEmpty())
 					stack = ItemStack.EMPTY;
 				for (PotionEffect effect : effects) {
@@ -49,7 +52,7 @@ public class ItemEffectPill extends ItemBase {
 				}
 			} else {
 				worldIn.createExplosion(entityLiving, entityLiving.posX, entityLiving.posY, entityLiving.posZ, 3f, true);
-				entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), this.amount*2);
+				entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), (this.amount-(float)foundation.getConstitutionModifier())*2);
 			}
 		}
 		return stack;

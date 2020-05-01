@@ -53,6 +53,9 @@ public class FormationQiGathering extends Formation {
 			for (TileEntity te : worldIn.loadedTileEntityList) {
 				if (te instanceof FormationTileEntity && te.getPos().getDistance(source.getX(), source.getY(), source.getZ()) < this.getRange()) {
 					formations.add((FormationTileEntity) te);
+					if(((FormationTileEntity) te).getFormation() instanceof FormationQiGathering && te!=parent) {
+						parent.stopFormation();
+					}
 				}
 				if (te instanceof GrinderTileEntity && te.getPos().getDistance(source.getX(), source.getY(), source.getZ()) < this.getRange()) {
 					grinders.add((GrinderTileEntity) te);

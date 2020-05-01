@@ -12,6 +12,7 @@ import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
+import com.airesnor.wuxiacraft.dimensions.WuxiaDimensions;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
 import com.airesnor.wuxiacraft.items.*;
@@ -32,6 +33,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -121,7 +123,7 @@ public class EventHandler {
 			}
 			//each 10 ticks to apply modifiers, i guess that every tick is too cpu consuming
 			// let's say you have 100 players on a server
-			if (cultivation.getUpdateTimer() % 10 == 0) {
+			if (cultivation.getUpdateTimer() % 20 == 0) {
 				if (!player.world.isRemote) {
 					applyModifiers(player);
 				}
@@ -545,6 +547,10 @@ public class EventHandler {
 		}
 	}
 
+	/**
+	 * Makes players that fly too high find their respective dimension, or random
+	 * @param event A description of what is happening
+	 */
 	@SubscribeEvent
 	public void onPlayerFlyToAnotherDimension(TickEvent.PlayerTickEvent event) {
 		if(event.side == Side.SERVER) {
@@ -558,22 +564,22 @@ public class EventHandler {
 						if (cultivation.getCurrentLevel().greaterThan(aux)) { //if player cultivation is greater than dantian equivalent
 							ICultTech cultTech = CultivationUtils.getCultTechFromEntity(event.player);
 							boolean found = false;
-							int targetDimension = 4;
+							int targetDimension = WuxiaDimensions.FIRE.getId();
 							for (KnownTechnique kt : cultTech.getKnownTechniques()) {
 								for (Element element : kt.getTechnique().getElements()) {
 									if (Element.EARTH.equals(element) || Element.METAL.equals(element) || Element.FIRE.equals(element) || Element.WATER.equals(element) || Element.WOOD.equals(element)) {
 										found = true;
 										if(Element.EARTH.equals(element)){
-											targetDimension = 5;
+											targetDimension = WuxiaDimensions.EARTH.getId();
 										}
 										if(Element.METAL.equals(element)){
-											targetDimension = 6;
+											targetDimension = WuxiaDimensions.METAL.getId();
 										}
 										if(Element.WATER.equals(element)){
-											targetDimension = 7;
+											targetDimension = WuxiaDimensions.WATER.getId();
 										}
 										if(Element.WOOD.equals(element)){
-											targetDimension = 8;
+											targetDimension = WuxiaDimensions.WOOD.getId();
 										}
 									}
 									break;
@@ -581,8 +587,24 @@ public class EventHandler {
 								if (found) break;
 							}
 							if (!found) { //couldn't find one element
-								int target = event.player.getRNG().nextInt(5) + 2; //0 to 4
-								targetDimension += target;
+								int target = event.player.getRNG().nextInt(5); //0 to 4
+								switch (target){
+									case 0:
+										targetDimension = WuxiaDimensions.FIRE.getId();
+										break;
+									case 1:
+										targetDimension = WuxiaDimensions.EARTH.getId();
+										break;
+									case 2:
+										targetDimension = WuxiaDimensions.METAL.getId();
+										break;
+									case 3:
+										targetDimension = WuxiaDimensions.WATER.getId();
+										break;
+									case 4:
+										targetDimension = WuxiaDimensions.WOOD.getId();
+										break;
+								}
 							}
 							TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) event.player, targetDimension, event.player.posX, 1512, event.player.posZ, event.player.rotationYaw, event.player.rotationPitch);
 							IFoundation foundation = CultivationUtils.getFoundationFromEntity(event.player);
@@ -731,6 +753,14 @@ public class EventHandler {
 
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 		IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
+		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
+
+		//Adds the potions effects from cult tech
+		for(KnownTechnique kt : cultTech.getKnownTechniques()) {
+			for(PotionEffect effect : kt.getTechniqueEffects()) {
+					player.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration()+19, effect.getAmplifier(), effect.getIsAmbient(), effect.doesShowParticles()));
+			}
+		}
 
 		double level_spd_mod = foundation.getAgilityModifier() * SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue() * 0.005;
 		if (cultivation.getMaxSpeed() >= 0) {
