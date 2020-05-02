@@ -27,7 +27,7 @@ import net.minecraft.world.gen.NoiseGeneratorPerlin;
 public class FireChunkGen implements IChunkGenerator
 {
     protected static final IBlockState STONE = WuxiaBlocks.FIERY_STONE.getDefaultState();
-    protected static final IBlockState GRAVEL = Blocks.GRAVEL.getDefaultState();
+    protected static final IBlockState GRAVEL = Blocks.LAVA.getDefaultState();
     protected static final IBlockState WATER = Blocks.LAVA.getDefaultState();
     protected static final IBlockState AIR = Blocks.AIR.getDefaultState();
     protected static final IBlockState BEDROCK = Blocks.BEDROCK.getDefaultState();

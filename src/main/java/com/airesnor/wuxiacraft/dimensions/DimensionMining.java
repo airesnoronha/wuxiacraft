@@ -2,9 +2,11 @@ package com.airesnor.wuxiacraft.dimensions;
 
 import com.airesnor.wuxiacraft.dimensions.ChunkGen.MiningChunkGen;
 import com.airesnor.wuxiacraft.dimensions.biomes.BiomeProviderWuxia;
+import com.airesnor.wuxiacraft.dimensions.biomes.WuxiaWorldBorder;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
+import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.gen.IChunkGenerator;
 
 public class DimensionMining extends WorldProvider {
@@ -52,6 +54,11 @@ public class DimensionMining extends WorldProvider {
     @Override
     public boolean shouldMapSpin(String entity, double x, double z, double rotation) {
         return true;
+    }
+
+    @Override
+    public WorldBorder createWorldBorder() {
+        return new WuxiaWorldBorder(3000000);
     }
 
     @Override

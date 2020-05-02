@@ -26,7 +26,7 @@ public class WuxiaBiomes {
 
         //This makes it so that the overworld gets the biome added then it spawns it
         if(spawnOverworld) {
-            BiomeManager.addBiome(biomeType, new BiomeManager.BiomeEntry(biome, 5));
+            BiomeManager.addBiome(biomeType, new BiomeManager.BiomeEntry(biome, 3));
         }
         BiomeManager.addSpawnBiome(biome);
         WuxiaCraft.logger.info("The biomes have been added");
@@ -40,6 +40,6 @@ public class WuxiaBiomes {
         registerBiome(WATER, "Water", BiomeType.COOL, false, Type.MAGICAL, Type.OCEAN, Type.BEACH);
         registerBiome(FIRE, "Fire", BiomeType.DESERT, false, Type.MAGICAL, Type.HOT);
         registerBiome(EARTH, "Earth", BiomeType.WARM, false, Type.MAGICAL, Type.MOUNTAIN, Type.HILLS, Type.LUSH, Type.PLAINS, Type.DENSE);
-        registerBiome(EXTREMEQI, "ExtremeQi", BiomeType.WARM, true, Type.MAGICAL, Type.MOUNTAIN, Type.LUSH, Type.DENSE);
+        registerBiome(EXTREMEQI, "ExtremeQi", BiomeType.WARM, true, Type.MAGICAL, Type.MOUNTAIN, Type.LUSH, Type.DENSE, Type.RARE);
     }
 }

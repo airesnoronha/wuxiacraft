@@ -28,6 +28,20 @@ public class BlockBase extends Block implements IHasModel {
 		this.canSupportPlant = canSupportPlant;
 	}
 
+	public BlockBase(String name, Material materialIn, boolean canSupportPlant, float hardness, float resistance, int harvestLevel) {
+		super(materialIn);
+		this.setUnlocalizedName(name);
+		this.setRegistryName(name);
+		this.setCreativeTab(WuxiaBlocks.BLOCKS_TAB);
+
+		WuxiaBlocks.BLOCKS.add(this);
+		WuxiaItems.ITEMS.add(new ItemBlock(this).setRegistryName(name));
+		this.canSupportPlant = canSupportPlant;
+		this.setHardness(hardness);
+		this.setResistance(resistance);
+		this.setHarvestLevel("pickaxe", harvestLevel);
+	}
+
 	@Override
 	public void registerModels() {
 		WuxiaCraft.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");

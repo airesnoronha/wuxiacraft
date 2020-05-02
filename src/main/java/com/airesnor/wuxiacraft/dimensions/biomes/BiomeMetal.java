@@ -9,7 +9,7 @@ public class BiomeMetal extends Biome {
 
 
     public BiomeMetal() {
-        super(new BiomeProperties("Metal").setBaseHeight(2.0f).setHeightVariation(1.0f).setTemperature(0.1f).setRainDisabled().setWaterColor(9140823));
+        super(new BiomeProperties("Metal").setBaseHeight(1.5f).setHeightVariation(2.0f).setTemperature(0.1f).setRainDisabled().setWaterColor(9140823));
 
         topBlock = Blocks.GRASS.getDefaultState();
         fillerBlock = WuxiaBlocks.METALLIC_STONE.getDefaultState();

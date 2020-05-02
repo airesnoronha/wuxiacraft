@@ -2,9 +2,11 @@ package com.airesnor.wuxiacraft.dimensions;
 
 import com.airesnor.wuxiacraft.dimensions.ChunkGen.MetalChunkGen;
 import com.airesnor.wuxiacraft.dimensions.biomes.BiomeProviderMetal;
+import com.airesnor.wuxiacraft.dimensions.biomes.WuxiaWorldBorder;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
+import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.gen.IChunkGenerator;
 
 public class DimensionMetal extends WorldProvider {
@@ -47,6 +49,11 @@ public class DimensionMetal extends WorldProvider {
     @Override
     public float getCloudHeight() {
         return 255.0f;
+    }
+
+    @Override
+    public WorldBorder createWorldBorder() {
+        return new WuxiaWorldBorder(2000000);
     }
 
     @Override
