@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft;
 
 import com.airesnor.wuxiacraft.commands.*;
+import com.airesnor.wuxiacraft.dimensions.WuxiaDimensions;
 import com.airesnor.wuxiacraft.proxy.CommonProxy;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.fml.common.Mod;
@@ -53,7 +54,14 @@ public class WuxiaCraft {
 		event.registerServerCommand(new EnergyCommand());
 		event.registerServerCommand(new ProgressCommand());
 		event.registerServerCommand(new HealthCommand());
+		event.registerServerCommand(new FoundationCommand());
 		event.getServer().getWorld(0).getGameRules().addGameRule("doPlayerSkillSetFire", "true", GameRules.ValueType.BOOLEAN_VALUE);
 		event.getServer().getWorld(0).getGameRules().addGameRule("doMobSkillSetFire", "true", GameRules.ValueType.BOOLEAN_VALUE);
+		event.getServer().getWorld(0).getGameRules().addGameRule("tribulationMultiplier", "16", GameRules.ValueType.NUMERICAL_VALUE);
+		event.getServer().getWorld(WuxiaDimensions.FIRE.getId()).getGameRules().addGameRule("tribulationMultiplier", "14", GameRules.ValueType.NUMERICAL_VALUE);
+		event.getServer().getWorld(WuxiaDimensions.EARTH.getId()).getGameRules().addGameRule("tribulationMultiplier", "14", GameRules.ValueType.NUMERICAL_VALUE);
+		event.getServer().getWorld(WuxiaDimensions.METAL.getId()).getGameRules().addGameRule("tribulationMultiplier", "14", GameRules.ValueType.NUMERICAL_VALUE);
+		event.getServer().getWorld(WuxiaDimensions.WATER.getId()).getGameRules().addGameRule("tribulationMultiplier", "14", GameRules.ValueType.NUMERICAL_VALUE);
+		event.getServer().getWorld(WuxiaDimensions.WOOD.getId()).getGameRules().addGameRule("tribulationMultiplier", "14", GameRules.ValueType.NUMERICAL_VALUE);
 	}
 }

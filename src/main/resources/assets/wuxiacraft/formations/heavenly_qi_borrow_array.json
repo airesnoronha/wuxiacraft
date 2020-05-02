@@ -146,97 +146,97 @@
 			"z": 4
 		},
 		{
-			"blockState": "wuxiacraft:gold_block",
+			"blockState": "minecraft:gold_block",
 			"x": -5,
 			"y": 1,
 			"z": -5
 		},
 		{
-			"blockState": "wuxiacraft:gold_block",
+			"blockState": "minecraft:gold_block",
 			"x": 5,
 			"y": 1,
 			"z": -5
 		},
 		{
-			"blockState": "wuxiacraft:gold_block",
+			"blockState": "minecraft:gold_block",
 			"x": -5,
 			"y": 1,
 			"z": 5
 		},
 		{
-			"blockState": "wuxiacraft:gold_block",
+			"blockState": "minecraft:gold_block",
 			"x": 5,
 			"y": 1,
 			"z": 5
 		},
 		{
-			"blockState": "wuxiacraft:gold_block",
+			"blockState": "minecraft:gold_block",
 			"x": -5,
 			"y": 2,
 			"z": -5
 		},
 		{
-			"blockState": "wuxiacraft:gold_block",
+			"blockState": "minecraft:gold_block",
 			"x": 5,
 			"y": 2,
 			"z": -5
 		},
 		{
-			"blockState": "wuxiacraft:gold_block",
+			"blockState": "minecraft:gold_block",
 			"x": -5,
 			"y": 2,
 			"z": 5
 		},
 		{
-			"blockState": "wuxiacraft:gold_block",
+			"blockState": "minecraft:gold_block",
 			"x": 5,
 			"y": 2,
 			"z": 5
 		},
 		{
-			"blockState": "wuxiacraft:gold_block",
+			"blockState": "minecraft:gold_block",
 			"x": -5,
 			"y": 3,
 			"z": -5
 		},
 		{
-			"blockState": "wuxiacraft:gold_block",
+			"blockState": "minecraft:gold_block",
 			"x": 5,
 			"y": 3,
 			"z": -5
 		},
 		{
-			"blockState": "wuxiacraft:gold_block",
+			"blockState": "minecraft:gold_block",
 			"x": -5,
 			"y": 3,
 			"z": 5
 		},
 		{
-			"blockState": "wuxiacraft:gold_block",
+			"blockState": "minecraft:gold_block",
 			"x": 5,
 			"y": 3,
 			"z": 5
 		},
 		{
-			"blockState": "wuxiacraft:iron_block",
+			"blockState": "minecraft:iron_block",
 			"x": -5,
 			"y": 0,
 			"z": -5
 		},
 		{
-			"blockState": "wuxiacraft:iron_block",
+			"blockState": "minecraft:iron_block",
 			"x": 5,
 			"y": 0,
 			"z": -5
 		},
 		{
-			"blockState": "wuxiacraft:iron_block",
+			"blockState": "minecraft:iron_block",
 			"x": -5,
 			"y": 0,
 			"z": 5
 		},
 		{
-			"blockState": "wuxiacraft:iron_block",
+			"blockState": "minecraft:iron_block",
 			"x": 5,
 			"y": 0,
 			"z": 5

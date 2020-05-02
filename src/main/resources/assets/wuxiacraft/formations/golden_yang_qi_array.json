@@ -2,313 +2,313 @@
 	"formationName": "wuxiacraft:golden_yang_qi_array",
 	"positions": [
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -4,
 			"y": 0,
 			"z": -4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 4,
 			"y": 0,
 			"z": -4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -4,
 			"y": 0,
 			"z": 4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 4,
 			"y": 0,
 			"z": 4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -4,
 			"y": 1,
 			"z": -4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -3,
 			"y": 1,
 			"z": -4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 3,
 			"y": 1,
 			"z": -4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 4,
 			"y": 1,
 			"z": -4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -4,
 			"y": 1,
 			"z": -3
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 4,
 			"y": 1,
 			"z": -3
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -4,
 			"y": 1,
 			"z": 3
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 4,
 			"y": 1,
 			"z": 3
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -4,
 			"y": 1,
 			"z": 4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -3,
 			"y": 1,
 			"z": 4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 3,
 			"y": 1,
 			"z": 4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 4,
 			"y": 1,
 			"z": 4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -3,
 			"y": 2,
 			"z": -4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -2,
 			"y": 2,
 			"z": -4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -1,
 			"y": 2,
 			"z": -4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 1,
 			"y": 2,
 			"z": -4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 2,
 			"y": 2,
 			"z": -4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 3,
 			"y": 2,
 			"z": -4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -4,
 			"y": 2,
 			"z": -3
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 4,
 			"y": 2,
 			"z": -3
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -4,
 			"y": 2,
 			"z": -2
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 4,
 			"y": 2,
 			"z": -2
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -4,
 			"y": 2,
 			"z": -1
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 4,
 			"y": 2,
 			"z": -1
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -4,
 			"y": 2,
 			"z": 1
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 4,
 			"y": 2,
 			"z": 1
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -4,
 			"y": 2,
 			"z": 2
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 4,
 			"y": 2,
 			"z": 2
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -4,
 			"y": 2,
 			"z": 3
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 4,
 			"y": 2,
 			"z": 3
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -3,
 			"y": 2,
 			"z": 4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -2,
 			"y": 2,
 			"z": 4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -1,
 			"y": 2,
 			"z": 4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 1,
 			"y": 2,
 			"z": 4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 2,
 			"y": 2,
 			"z": 4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 3,
 			"y": 2,
 			"z": 4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -1,
 			"y": 3,
 			"z": -4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 0,
 			"y": 3,
 			"z": -4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 1,
 			"y": 3,
 			"z": -4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -4,
 			"y": 3,
 			"z": -1
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 4,
 			"y": 3,
 			"z": -1
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -4,
 			"y": 3,
 			"z": 0
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 4,
 			"y": 3,
 			"z": 0
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -4,
 			"y": 3,
 			"z": 1
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 4,
 			"y": 3,
 			"z": 1
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": -1,
 			"y": 3,
 			"z": 4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 0,
 			"y": 3,
 			"z": 4
 		},
 		{
-			"blockState": "minecraft:gold",
+			"blockState": "minecraft:gold_block",
 			"x": 1,
 			"y": 3,
 			"z": 4

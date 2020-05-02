@@ -196,67 +196,73 @@ public class Foundation implements IFoundation {
 	@Override
 	public boolean addAgilityProgress(double amount) {
 		this.agilityProgress += amount;
-		if(this.agilityProgress >= getLevelMaxProgress(this.agility)) {
-			this.agilityProgress -= getLevelMaxProgress(this.dexterity);
+		boolean levelelUp = false;
+		while(this.agilityProgress >= getLevelMaxProgress(this.agility)) {
+			this.agilityProgress -= getLevelMaxProgress(this.agility);
 			this.agility++;
-			return true;
+			levelelUp = true;
 		}
-		return false;
+		return levelelUp;
 	}
 
 	@Override
 	public boolean addConstitutionProgress(double amount) {
 		this.constitutionProgress += amount;
-		if(this.constitutionProgress >= getLevelMaxProgress(this.constitution)) {
+		boolean levelelUp = false;
+		while(this.constitutionProgress >= getLevelMaxProgress(this.constitution)) {
 			this.constitutionProgress -= getLevelMaxProgress(this.constitution);
 			this.constitution++;
-			return true;
+			levelelUp = true;
 		}
-		return false;
+		return levelelUp;
 	}
 
 	@Override
 	public boolean addDexterityProgress(double amount) {
 		this.dexterityProgress += amount;
-		if(this.dexterityProgress >= getLevelMaxProgress(this.dexterity)) {
+		boolean levelelUp = false;
+		while(this.dexterityProgress >= getLevelMaxProgress(this.dexterity)) {
 			this.dexterityProgress -= getLevelMaxProgress(this.dexterity);
 			this.dexterity++;
-			return true;
+			levelelUp = true;
 		}
-		return false;
+		return levelelUp;
 	}
 
 	@Override
 	public boolean addResistanceProgress(double amount) {
 		this.resistanceProgress += amount;
-		if(this.resistanceProgress >= getLevelMaxProgress(this.resistance)) {
+		boolean levelelUp = false;
+		while(this.resistanceProgress >= getLevelMaxProgress(this.resistance)) {
 			this.resistanceProgress -= getLevelMaxProgress(this.resistance);
 			this.resistance++;
-			return true;
+			levelelUp = true;
 		}
-		return false;
+		return levelelUp;
 	}
 
 	@Override
 	public boolean addSpiritProgress(double amount) {
 		this.spiritProgress += amount;
-		if(this.spiritProgress >= getLevelMaxProgress(this.spirit)) {
+		boolean levelelUp = false;
+		while(this.spiritProgress >= getLevelMaxProgress(this.spirit)) {
 			this.spiritProgress -= getLevelMaxProgress(this.spirit);
 			this.spirit++;
-			return true;
+			levelelUp = true;
 		}
-		return false;
+		return levelelUp;
 	}
 
 	@Override
 	public boolean addStrengthProgress(double amount) {
 		this.strengthProgress += amount;
-		if(this.strengthProgress >= getLevelMaxProgress(this.strength)) {
+		boolean levelelUp = false;
+		while(this.strengthProgress >= getLevelMaxProgress(this.strength)) {
 			this.strengthProgress -= getLevelMaxProgress(this.strength);
 			this.strength++;
-			return true;
+			levelelUp = true;
 		}
-		return false;
+		return levelelUp;
 	}
 
 	@Override

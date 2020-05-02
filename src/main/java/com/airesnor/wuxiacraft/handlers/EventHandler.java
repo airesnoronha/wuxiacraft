@@ -69,6 +69,7 @@ public class EventHandler {
 	private static final String armor_mod_name = "wuxiacraft.armor";
 	private static final String attack_speed_mod_name = "wuxiacraft.attack_speed";
 	private static final String health_mod_name = "wuxiacraft.health";
+	private static final String swim_mod_name = "wuxiacraft.swim";
 
 	private static final Field foodStats = ReflectionHelper.findField(FoodStats.class, "foodSaturationLevel", "field_75125_b");
 
@@ -130,11 +131,13 @@ public class EventHandler {
 			}
 			if (player.world.isRemote) {
 
-				if (player.capabilities.isFlying && cultivation.getEnergy() <= 0 && !cultivation.getCurrentLevel().freeFlight) {
+				if (cultivation.getCurrentLevel().canFly && player.capabilities.isFlying && cultivation.getEnergy() <= 0) {
 					player.capabilities.isFlying = false;
 				}
-				player.capabilities.allowFlying = player.isCreative() || cultivation.getCurrentLevel().canFly;
-				player.capabilities.setFlySpeed((float) player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
+				if(cultivation.getCurrentLevel().canFly) {
+					player.capabilities.allowFlying = player.isCreative() || player.isSpectator() || cultivation.getCurrentLevel().canFly;
+					player.capabilities.setFlySpeed((float) player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
+				}
 				player.stepHeight = 0.6f;
 				if (!player.isSneaking() && WuxiaCraftConfig.disableStepAssist) {
 					float agilityModifier = (float)foundation.getAgilityModifier()*0.4f;
@@ -762,20 +765,22 @@ public class EventHandler {
 			}
 		}
 
-		double level_spd_mod = foundation.getAgilityModifier() * SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue() * 0.005;
+		//this last 0.05 is just so that the client won't break if we update just the server
+		//We gotta remove this later on an official release
+		double level_spd_mod = foundation.getAgilityModifier() * SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue() * 0.005 * 0.1;
 		if (cultivation.getMaxSpeed() >= 0) {
-			double max_speed = cultivation.getMaxSpeed() * SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue();
+			double max_speed = cultivation.getMaxSpeed() * SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue() * 0.1;
 			level_spd_mod = Math.min(max_speed, level_spd_mod);
 		}
 		level_spd_mod *= (cultivation.getSpeedHandicap() / 100f);
 
-		AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, foundation.getStrengthModifier()*0.25f, 0);
-		AttributeModifier health_mod = new AttributeModifier(health_mod_name, foundation.getConstitutionModifier()*0.66f, 0);
+		AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, foundation.getStrengthModifier()*0.125f, 0);
+		AttributeModifier health_mod = new AttributeModifier(health_mod_name, foundation.getConstitutionModifier()*0.33f, 0);
 		//since armor base is 0, it'll add 2*strength as armor
 		//I'll use for now strength for increase every other stat, since it's almost the same after all
-		AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, foundation.getResistanceModifier()*0.2f, 0);
+		AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, foundation.getResistanceModifier()*0.1f, 0);
 		AttributeModifier speed_mod = new AttributeModifier(speed_mod_name, level_spd_mod, 0);
-		AttributeModifier attack_speed_mod = new AttributeModifier(attack_speed_mod_name, foundation.getDexterityModifier()/15f, 0);
+		AttributeModifier attack_speed_mod = new AttributeModifier(attack_speed_mod_name, foundation.getDexterityModifier()/30f, 0);
 
 		//remove any previous strength modifiers
 		for (AttributeModifier mod : player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getModifiers()) {
@@ -810,6 +815,18 @@ public class EventHandler {
 			if (mod.getName().equals(health_mod_name)) {
 				player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(mod);
 			}
+		}
+
+		if(cultTech.hasElement(Element.WATER)) {
+			AttributeModifier swim_speed_mod = new AttributeModifier(swim_mod_name, level_spd_mod, 0);
+
+			//remove any previous swim speed modifiers
+			for (AttributeModifier mod : player.getEntityAttribute(EntityPlayer.SWIM_SPEED).getModifiers()) {
+				if (mod.getName().equals(swim_mod_name)) {
+					player.getEntityAttribute(EntityPlayer.SWIM_SPEED).removeModifier(mod);
+				}
+			}
+			player.getEntityAttribute(EntityPlayer.SWIM_SPEED).applyModifier(swim_speed_mod);
 		}
 
 		//apply current modifiers

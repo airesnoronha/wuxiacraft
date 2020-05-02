@@ -175,13 +175,21 @@ public class CultivationUtils {
 			if (player.world instanceof WorldServer) {
 				WorldServer world = (WorldServer) player.world;
 				ICultivation cultivation = getCultivationFromEntity(player);
+				ICultivation tribulation = new Cultivation(); // next level to use to get the damage
+				tribulation.copyFrom(cultivation);
+				tribulation.setCurrentSubLevel(tribulation.getCurrentSubLevel() + 1);
+				if (tribulation.getCurrentSubLevel() >= tribulation.getCurrentLevel().subLevels) {
+					tribulation.setCurrentSubLevel(0);
+					tribulation.setCurrentLevel(tribulation.getCurrentLevel().getNextLevel());
+				}
 				IFoundation foundation = getFoundationFromEntity(player);
 				double resistance = foundation.getAgilityModifier() + foundation.getConstitutionModifier() +
 						foundation.getDexterityModifier() + foundation.getResistanceModifier() +
 						foundation.getSpiritModifier() + foundation.getStrengthModifier();
-				double strength = cultivation.getStrengthIncrease() * 12;
+				int multiplier = world.getGameRules().hasRule("tribulationModifier") ? world.getGameRules().getInt("tribulationModifier") : 18; // even harder for those that weren't on the script
+				double strength = tribulation.getStrengthIncrease() * multiplier;
 				final int bolts = MathUtils.clamp(1 + (int) (Math.round(resistance / (cultivation.getStrengthIncrease()*4))), 1, 12);
-				float damage = (float) Math.max(1, strength - resistance);
+				float damage = (float) Math.max(2, strength - resistance);
 				for (int i = 0; i < bolts; i++) {
 					boolean survived = player.isEntityAlive();
 					if(!survived) return;
