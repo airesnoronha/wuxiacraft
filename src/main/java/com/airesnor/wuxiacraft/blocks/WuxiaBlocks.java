@@ -27,9 +27,9 @@ public class WuxiaBlocks {
 
 	public static final Block NATURAL_ODDITY_ORE = new NaturalOddityOre("natural_oddity_ore");
 
-	public static final Block FIERY_STONE = new BlockBase("fiery_stone", Material.ROCK, true, 5.0f, 6.0f, 3);
-	public static final Block ICY_STONE = new BlockBase("icy_stone", Material.ROCK, true, 5.0f, 6.0f, 3);
-	public static final Block METALLIC_STONE = new BlockBase("metallic_stone", Material.IRON, true, 5.0f, 6.0f, 3);
+	public static final Block FIERY_STONE = new BlockBase("fiery_stone", Material.ROCK, true, 5.0f, 6.0f, 2); // 2 is iron level
+	public static final Block ICY_STONE = new BlockBase("icy_stone", Material.ROCK, true, 5.0f, 6.0f, 2);
+	public static final Block METALLIC_STONE = new BlockBase("metallic_stone", Material.IRON, true, 5.0f, 6.0f, 2);
 
 	public static final Block IRON_CAULDRON = new Cauldron("iron_cauldron");
 	public static final Block SPIRIT_STONE_STACK_BLOCK = new SpiritStoneStackBlock("spirit_stone_stack_block");

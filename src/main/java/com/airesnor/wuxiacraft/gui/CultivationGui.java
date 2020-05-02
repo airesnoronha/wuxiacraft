@@ -669,6 +669,30 @@ public class CultivationGui extends GuiScreen {
 			drawing = true;
 			line = String.format("%d%%", (int)(this.foundation.getStrengthProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getStrength())));
 		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+36, this.guiTop+41, 44, 11)) {
+			drawing = true;
+			line = String.format("Agility: %d", this.foundation.getAgility());
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+104, this.guiTop+41, 44, 11)) {
+			drawing = true;
+			line = String.format("Constitution: %d", this.foundation.getConstitution());
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+34, this.guiTop+71, 44, 11)) {
+			drawing = true;
+			line = String.format("Dexterity: %d", this.foundation.getDexterity());
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+106, this.guiTop+71, 44, 11)) {
+			drawing = true;
+			line = String.format("Resistance: %d", this.foundation.getResistance());
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+36, this.guiTop+101, 44, 11)) {
+			drawing = true;
+			line = String.format("Spirit: %d", this.foundation.getSpirit());
+		}
+		else if(inBounds(mouseX, mouseY, this.guiLeft+104, this.guiTop+101, 44, 11)) {
+			drawing = true;
+			line = String.format("Strength: %d", this.foundation.getStrength());
+		}
 		if(drawing) {
 			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
 			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
