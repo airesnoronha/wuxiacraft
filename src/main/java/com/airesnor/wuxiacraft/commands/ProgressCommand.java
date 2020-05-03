@@ -7,10 +7,12 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,4 +78,20 @@ public class ProgressCommand extends CommandBase {
         } else throw new CommandException("Not used correctly!");
     }
 
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
+        List<String> completions = new ArrayList<>();
+        if(args.length == 1) {
+            if("set".toLowerCase().startsWith(args[0])) {
+                completions.add("set");
+            }
+        }else if(args.length == 2) {
+            for(String player : server.getPlayerList().getOnlinePlayerNames()) {
+                if(player.toLowerCase().startsWith(args[1])) {
+                    completions.add(player);
+                }
+            }
+        }
+        return completions;
+    }
 }

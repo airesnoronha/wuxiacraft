@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.commands;
 
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -73,6 +74,7 @@ public class CultInfoCommand extends CommandBase {
 		if (args.length == 0) {
 			if(sender instanceof EntityPlayerMP) {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity((EntityLivingBase) sender);
+				IFoundation foundation = CultivationUtils.getFoundationFromEntity((EntityLivingBase) sender);
 				String message = String.format("You are at %s", cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
 				TextComponentString text = new TextComponentString(message);
 				sender.sendMessage(text);
@@ -87,7 +89,7 @@ public class CultInfoCommand extends CommandBase {
 				text = new TextComponentString(message);
 				sender.sendMessage(text);
 
-				double energy = cultivation.getEnergy() / cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel());
+				double energy = cultivation.getEnergy() / cultivation.getMaxEnergy(foundation);
 				int fillIndexEnergy = (int)(Math.round(energy*4));
 				if ((int)(energy*100f) == 0) {
 					message = String.format("Energy: %s (%d%%)", energyFill.get(0), (int)(energy*100f));

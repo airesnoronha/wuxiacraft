@@ -3,6 +3,8 @@ package com.airesnor.wuxiacraft.dimensions;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 
+import java.awt.*;
+
 public class WuxiaDimensions {
 
     public static final DimensionType MINING = DimensionType.register("Mining", "_mining", 2, DimensionMining.class, false);
@@ -12,12 +14,12 @@ public class WuxiaDimensions {
     public static final DimensionType WATER = DimensionType.register("Water", "_water", 7, DimensionWater.class, false);
     public static final DimensionType WOOD = DimensionType.register("Wood", "_wood", 8, DimensionWood.class, false);
 
-    public static void registerDimensions(){
-        DimensionManager.registerDimension(2, MINING);
-        DimensionManager.registerDimension(4, FIRE);
-        DimensionManager.registerDimension(5, EARTH);
-        DimensionManager.registerDimension(6, METAL);
-        DimensionManager.registerDimension(7, WATER);
-        DimensionManager.registerDimension(8, WOOD);
+    public static void registerDimensions() {
+        DimensionManager.registerDimension(WuxiaDimensions.MINING.getId(), MINING);
+        DimensionManager.registerDimension(WuxiaDimensions.FIRE.getId(), FIRE);
+        DimensionManager.registerDimension(WuxiaDimensions.EARTH.getId(), EARTH);
+        DimensionManager.registerDimension(WuxiaDimensions.METAL.getId(), METAL);
+        DimensionManager.registerDimension(WuxiaDimensions.WATER.getId(), WATER);
+        DimensionManager.registerDimension(WuxiaDimensions.WOOD.getId(), WOOD);
     }
 }

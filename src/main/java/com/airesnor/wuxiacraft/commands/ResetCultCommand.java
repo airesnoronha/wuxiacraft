@@ -85,7 +85,15 @@ public class ResetCultCommand extends CommandBase {
 
 	@Override
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
-		return new ArrayList<>();
+		List<String> completions = new ArrayList<>();
+		if(args.length == 1) {
+			for(String player : server.getPlayerList().getOnlinePlayerNames()) {
+				if(player.toLowerCase().startsWith(args[0])) {
+					completions.add(player);
+				}
+			}
+		}
+		return completions;
 	}
 
 	@Override

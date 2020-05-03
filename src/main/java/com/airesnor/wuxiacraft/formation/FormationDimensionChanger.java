@@ -1,5 +1,7 @@
 package com.airesnor.wuxiacraft.formation;
 
+import com.airesnor.wuxiacraft.dimensions.WuxiaDimensions;
+import com.airesnor.wuxiacraft.items.WuxiaItems;
 import com.airesnor.wuxiacraft.utils.TeleportationUtil;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -46,12 +48,45 @@ public class FormationDimensionChanger extends Formation {
 			}
 		}
 		List<EntityPlayer> players = worldIn.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(source).grow(2));
+		int sourceX = source.getX();
+		int sourceY = source.getY();
+		int sourceZ = source.getZ();
 		for (EntityPlayer player : players) {
 			if (parent.hasEnergy(this.getOperationCost() * 99)) { //takes all energy with it
-				parent.remEnergy(this.getOperationCost()*99);
+				parent.remEnergy(this.getOperationCost() * 99);
 				parent.stopFormation(); //can only take one person at a time
 				int targetDimension = player.world.provider.getDimension() == this.targetDimension ? 0 : this.targetDimension; //this way they go back by the same way
-				TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) player,  targetDimension, source.getX() + 0.5, source.getY()+0.01, source.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+				if(targetDimension != -1 || targetDimension != 0 || targetDimension != 1 || targetDimension != WuxiaDimensions.MINING.getId()) {
+					if(sourceX >= 2000000) {
+						sourceX = 1999990;
+					}
+					if(sourceZ >= 2000000) {
+						sourceZ = 1999990;
+					}
+					if(sourceX <= -2000000) {
+						sourceX = -1999990;
+					}
+					if(sourceZ <= -2000000) {
+						sourceZ = -1999990;
+					}
+					TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) player,  targetDimension, sourceX + 0.5, sourceY + 0.01, sourceZ + 0.5, player.rotationYaw, player.rotationPitch);
+				} else if (targetDimension == WuxiaDimensions.MINING.getId()){
+					if(sourceX >= 3000000) {
+						sourceX = 2999990;
+					}
+					if(sourceZ >= 3000000) {
+						sourceZ = 2999990;
+					}
+					if(sourceX <= -3000000) {
+						sourceX = -2999990;
+					}
+					if(sourceZ <= -3000000) {
+						sourceZ = -2999990;
+					}
+					TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) player,  targetDimension, sourceX + 0.5, sourceY + 0.01, sourceZ + 0.5, player.rotationYaw, player.rotationPitch);
+				} else {
+					TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) player,  targetDimension, sourceX + 0.5, sourceY + 0.01, sourceZ + 0.5, player.rotationYaw, player.rotationPitch);
+				}
 				break; //only one person
 			}
 		}

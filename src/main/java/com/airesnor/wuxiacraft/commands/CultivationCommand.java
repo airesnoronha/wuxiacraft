@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.commands;
 
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.networking.CultivationMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
@@ -53,13 +54,15 @@ public class CultivationCommand extends CommandBase {
 				boolean wrongUsage = true;
 				if (args.length == 0) {
 					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+					IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
 					String message = String.format("You are at %s", cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
 					TextComponentString text = new TextComponentString(message);
 					sender.sendMessage(text);
 					message = String.format("Progress: %d/%d", (int) cultivation.getCurrentProgress(), (int) cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
 					text = new TextComponentString(message);
 					sender.sendMessage(text);
-					message = String.format("Energy: %d/%d", (int) cultivation.getEnergy(), (int) cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()));
+					//message = String.format("Energy: %d/%d", (int) cultivation.getEnergy(), (int) cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()));
+					message = String.format("Energy: %d/%d", (int) cultivation.getEnergy(), (int) cultivation.getMaxEnergy(foundation));
 					text = new TextComponentString(message);
 					sender.sendMessage(text);
 					message = String.format("Speed: %d/%d%%", (int) cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()), cultivation.getSpeedHandicap());
@@ -76,14 +79,15 @@ public class CultivationCommand extends CommandBase {
 							wrongUsage = true;
 						} else {
 							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(target);
+							IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
 							if (target.getUniqueID().equals(player.getUniqueID())) {
 								String message = String.format("You are at %s", cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
 								TextComponentString text = new TextComponentString(message);
 								sender.sendMessage(text);
-								message = String.format("Progress: %d/%d", (int) cultivation.getCurrentProgress(), (int) cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
+								message = String.format("Progress: %d/%d", (int) cultivation.getCurrentProgress(), (int) cultivation.getMaxEnergy(foundation));
 								text = new TextComponentString(message);
 								sender.sendMessage(text);
-								message = String.format("Energy: %d/%d", (int) cultivation.getEnergy(), (int) cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()));
+								message = String.format("Energy: %d/%d", (int) cultivation.getEnergy(), (int) cultivation.getMaxEnergy(foundation));
 								text = new TextComponentString(message);
 								sender.sendMessage(text);
 								message = String.format("Speed: %d/%d%%", (int) cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()), cultivation.getSpeedHandicap());
@@ -96,7 +100,7 @@ public class CultivationCommand extends CommandBase {
 								message = String.format("Progress: %d/%d", (int) cultivation.getCurrentProgress(), (int) cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
 								text = new TextComponentString(message);
 								sender.sendMessage(text);
-								message = String.format("Energy: %d/%d", (int) cultivation.getEnergy(), (int) cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()));
+								message = String.format("Energy: %d/%d", (int) cultivation.getEnergy(), (int) cultivation.getMaxEnergy(foundation));
 								text = new TextComponentString(message);
 								sender.sendMessage(text);
 								message = String.format("Speed: %d/%d%%", (int) cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()), cultivation.getSpeedHandicap());
@@ -242,18 +246,25 @@ public class CultivationCommand extends CommandBase {
 				completions.add("get");
 			if ("set".startsWith(args[0]))
 				completions.add("set");
-		}
-		if (args.length == 2) {
-			if (args[0].equals("get")) {
-				for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
-					if (player.getName().startsWith(args[0]))
-						completions.add(player.getName());
+		}else if (args.length == 2) {
+			for(String player : server.getPlayerList().getOnlinePlayerNames()) {
+				if(player.toLowerCase().startsWith(args[1])) {
+					completions.add(player);
 				}
-			} else if (args[0].equals("set")) {
+			}
+		}else if(args.length == 3) {
+			if(args[0].equalsIgnoreCase("set")) {
 				for (CultivationLevel level : CultivationLevel.REGISTERED_LEVELS.values()) {
-					if (level.getUName().startsWith(args[0]))
+					if (level.getUName().toLowerCase().startsWith(args[2]))
 						completions.add(level.getUName());
 				}
+			}
+		}else if(args.length == 5) {
+			if("true".startsWith(args[4])){
+				completions.add("true");
+			}
+			if("false".startsWith(args[4])){
+				completions.add("false");
 			}
 		}
 		return completions;

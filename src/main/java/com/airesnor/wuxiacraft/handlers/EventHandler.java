@@ -565,6 +565,8 @@ public class EventHandler {
 						for (int i = 0; i < 3; i++)
 							aux = aux.getNextLevel(); //this way goes to dantian earth law lightning quick
 						if (cultivation.getCurrentLevel().greaterThan(aux)) { //if player cultivation is greater than dantian equivalent
+							double playerPosX = event.player.posX;
+							double playerPosZ = event.player.posZ;
 							ICultTech cultTech = CultivationUtils.getCultTechFromEntity(event.player);
 							boolean found = false;
 							int targetDimension = WuxiaDimensions.FIRE.getId();
@@ -609,7 +611,37 @@ public class EventHandler {
 										break;
 								}
 							}
-							TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) event.player, targetDimension, event.player.posX, 1512, event.player.posZ, event.player.rotationYaw, event.player.rotationPitch);
+							if(targetDimension != -1 || targetDimension != 0 || targetDimension != 1 || targetDimension != WuxiaDimensions.MINING.getId()) {
+								if(playerPosX >= 2000000) {
+									playerPosX = 1999990;
+								}
+								if(playerPosZ >= 2000000) {
+									playerPosZ = 1999990;
+								}
+								if(playerPosX <= -2000000) {
+									playerPosX = -1999990;
+								}
+								if(playerPosZ <= -2000000) {
+									playerPosZ = -1999990;
+								}
+								TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) event.player,  targetDimension, playerPosX + 0.5, 1512, playerPosZ + 0.5, event.player.rotationYaw, event.player.rotationPitch);
+							} else if (targetDimension == WuxiaDimensions.MINING.getId()){
+								if(playerPosX >= 3000000) {
+									playerPosX = 2999990;
+								}
+								if(playerPosZ >= 3000000) {
+									playerPosZ = 2999990;
+								}
+								if(playerPosX <= -3000000) {
+									playerPosX = -2999990;
+								}
+								if(playerPosZ <= -3000000) {
+									playerPosZ = -2999990;
+								}
+								TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) event.player,  targetDimension, playerPosX + 0.5, 1512, playerPosZ + 0.5, event.player.rotationYaw, event.player.rotationPitch);
+							}else{
+								TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) event.player, targetDimension, playerPosX, 1512, playerPosZ, event.player.rotationYaw, event.player.rotationPitch);
+							}
 							IFoundation foundation = CultivationUtils.getFoundationFromEntity(event.player);
 							double resistance = foundation.getAgilityModifier() + foundation.getConstitutionModifier() + foundation.getStrengthModifier(); //just these three
 							event.player.attackEntityFrom(DamageSource.OUT_OF_WORLD, (float)Math.max(1, cultivation.getSpeedIncrease()*9.0 - resistance));

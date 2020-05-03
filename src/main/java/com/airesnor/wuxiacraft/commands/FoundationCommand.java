@@ -285,7 +285,55 @@ public class FoundationCommand extends CommandBase {
 	@ParametersAreNonnullByDefault
 	@Nonnull
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
-		return new ArrayList<>();
+		List<String> completions = new ArrayList<>();
+		if(args.length == 1) {
+			for (String player : server.getPlayerList().getOnlinePlayerNames()) {
+				if(player.toLowerCase().startsWith(args[0])) {
+					completions.add(player);
+				}
+			}
+		} else if(args.length == 2) {
+			if("get".toLowerCase().startsWith(args[1])) {
+				completions.add("get");
+			}
+			if("reset".toLowerCase().startsWith(args[1])) {
+				completions.add("reset");
+			}
+			if("set".toLowerCase().startsWith(args[1])) {
+				completions.add("set");
+			}
+			if("add".toLowerCase().startsWith(args[1])) {
+				completions.add("add");
+			}
+			if("rem".toLowerCase().startsWith(args[1])) {
+				completions.add("rem");
+			}
+		} else if(args.length == 3) {
+			if(args[1].equalsIgnoreCase("set") || args[1].equalsIgnoreCase("add") || args[1].equalsIgnoreCase("rem")) {
+				if("agi".toLowerCase().startsWith(args[2])) {
+					completions.add("agi");
+				}
+				if("con".toLowerCase().startsWith(args[2])) {
+					completions.add("con");
+				}
+				if("dex".toLowerCase().startsWith(args[2])) {
+					completions.add("dex");
+				}
+				if("res".toLowerCase().startsWith(args[2])) {
+					completions.add("res");
+				}
+				if("spi".toLowerCase().startsWith(args[2])) {
+					completions.add("spi");
+				}
+				if("str".toLowerCase().startsWith(args[2])) {
+					completions.add("str");
+				}
+				if("all".toLowerCase().startsWith(args[2])) {
+					completions.add("all");
+				}
+			}
+		}
+		return completions;
 	}
 
 	@Override
