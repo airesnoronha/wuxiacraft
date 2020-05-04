@@ -1,12 +1,7 @@
 package com.airesnor.wuxiacraft.commands;
 
-import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.Foundation;
-import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.IFoundation;
-import com.airesnor.wuxiacraft.handlers.EventHandler;
-import com.airesnor.wuxiacraft.networking.CultivationMessage;
-import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;

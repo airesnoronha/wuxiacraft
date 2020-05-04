@@ -13,7 +13,6 @@ import com.airesnor.wuxiacraft.cultivation.techniques.CultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.dimensions.WuxiaDimensions;
 import com.airesnor.wuxiacraft.entities.mobs.EntityCultivator;
-import com.airesnor.wuxiacraft.networking.CultivationMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.UnifiedCapabilitySyncMessage;
 import net.minecraft.entity.EntityLivingBase;
@@ -24,7 +23,6 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -165,9 +163,19 @@ public class CultivationUtils {
 	private static class BoltsScheduler extends Thread {
 
 		private final EntityLivingBase player;
+		private CultivationLevel level;
+		private int subLevel;
+		private boolean customTribulation;
 
 		public BoltsScheduler(EntityLivingBase player) {
 			this.player = player;
+		}
+
+		public BoltsScheduler(EntityLivingBase player, CultivationLevel level, int subLevel, boolean customTribulation) {
+			this.player = player;
+			this.level = level;
+			this.subLevel = subLevel;
+			this.customTribulation = customTribulation;
 		}
 
 		@Override
@@ -178,6 +186,12 @@ public class CultivationUtils {
 				ICultivation tribulation = new Cultivation(); // next level to use to get the damage
 				tribulation.copyFrom(cultivation);
 				tribulation.setCurrentSubLevel(tribulation.getCurrentSubLevel() + 1);
+
+				if(customTribulation) {
+					tribulation.setCurrentLevel(this.level);
+					tribulation.setCurrentSubLevel(this.subLevel + 1);
+				}
+
 				if (tribulation.getCurrentSubLevel() >= tribulation.getCurrentLevel().subLevels) {
 					tribulation.setCurrentSubLevel(0);
 					tribulation.setCurrentLevel(tribulation.getCurrentLevel().getNextLevel());
@@ -186,7 +200,7 @@ public class CultivationUtils {
 				double resistance = foundation.getAgilityModifier() + foundation.getConstitutionModifier() +
 						foundation.getDexterityModifier() + foundation.getResistanceModifier() +
 						foundation.getSpiritModifier() + foundation.getStrengthModifier();
-				int multiplier = world.getGameRules().hasRule("tribulationModifier") ? world.getGameRules().getInt("tribulationModifier") : 18; // even harder for those that weren't on the script
+				int multiplier = world.getGameRules().hasRule("tribulationMultiplier") ? world.getGameRules().getInt("tribulationMultiplier") : 18; // even harder for those that weren't on the script
 				double strength = tribulation.getStrengthIncrease() * multiplier;
 				final int bolts = MathUtils.clamp(1 + (int) (Math.round(resistance / (cultivation.getStrengthIncrease()*4))), 1, 12);
 				float damage = (float) Math.max(2, strength - resistance);
@@ -239,6 +253,13 @@ public class CultivationUtils {
 	public static void callTribulation(@Nonnull EntityLivingBase player) {
 		if (!player.world.isRemote) {
 			BoltsScheduler boltsScheduler = new BoltsScheduler(player);
+			boltsScheduler.start();
+		}
+	}
+
+	public static void callCustomTribulation(@Nonnull EntityLivingBase player, CultivationLevel level, int subLevel, boolean customTribulation) {
+		if(!player.world.isRemote) {
+			BoltsScheduler boltsScheduler = new BoltsScheduler(player, level, subLevel, customTribulation);
 			boltsScheduler.start();
 		}
 	}
