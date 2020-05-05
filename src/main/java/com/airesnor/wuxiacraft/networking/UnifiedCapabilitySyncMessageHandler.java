@@ -36,7 +36,11 @@ public class UnifiedCapabilitySyncMessageHandler implements IMessageHandler<Unif
 			cultTech.copyFrom(message.cultTech);
 			skillCap.copyFrom(message.skillCap, message.shouldSetCdaCP);
 			foundation.copyFrom(message.foundation);
-			NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.jumpLimit, player.getUniqueID()));
+			cultivation.setSpeedHandicap(WuxiaCraftConfig.speedHandicap);
+			cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
+			cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
+			cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);
+			NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit, player.getUniqueID()));
 		});
 		return null;
 	}

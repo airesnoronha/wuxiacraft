@@ -36,7 +36,7 @@ public class ItemBloodContainer extends ItemBase {
 		if(stack.getTagCompound() != null) {
 			NBTTagCompound tag = stack.getTagCompound();
 			if(tag.hasKey("bloodLevel")) {
-				CultivationLevel level = CultivationLevel.REGISTERED_LEVELS.get(tag.getString("bloodLevel"));
+				CultivationLevel level = CultivationLevel.LOADED_LEVELS.get(tag.getString("bloodLevel"));
 				if(level!=null)
 					tooltip.add(level.getLevelName(-1));
 			}

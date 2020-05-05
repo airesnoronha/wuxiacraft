@@ -117,7 +117,7 @@ public class TribulationCommand extends CommandBase {
                             tribulation.copyFrom(cultivation);
                             CultivationLevel level = tribulation.getCurrentLevel();
                             int subLevel = Integer.parseInt(args[3]) - 1;
-                            for (CultivationLevel l : CultivationLevel.REGISTERED_LEVELS.values()) {
+                            for (CultivationLevel l : CultivationLevel.LOADED_LEVELS.values()) {
                                 if (l.getUName().equals(args[2])) {
                                     level = l;
                                     break;
@@ -144,7 +144,7 @@ public class TribulationCommand extends CommandBase {
                     if(args[0].equalsIgnoreCase("perform")) {
                         CultivationLevel level = cultivation.getCurrentLevel();
                         int subLevel = Integer.parseInt(args[3]) - 1;
-                        for (CultivationLevel l : CultivationLevel.REGISTERED_LEVELS.values()) {
+                        for (CultivationLevel l : CultivationLevel.LOADED_LEVELS.values()) {
                             if (l.getUName().equals(args[2])) {
                                 level = l;
                                 break;

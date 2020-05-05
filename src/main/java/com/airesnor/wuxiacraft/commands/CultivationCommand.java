@@ -115,7 +115,7 @@ public class CultivationCommand extends CommandBase {
 						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 						CultivationLevel level = cultivation.getCurrentLevel();
 						boolean found_level = false;
-						for (CultivationLevel l : CultivationLevel.REGISTERED_LEVELS.values()) {
+						for (CultivationLevel l : CultivationLevel.LOADED_LEVELS.values()) {
 							if (l.getUName().equals(args[1])) {
 								level = l;
 								found_level = true;
@@ -144,7 +144,7 @@ public class CultivationCommand extends CommandBase {
 							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
 							CultivationLevel level = cultivation.getCurrentLevel();
 							boolean found_level = false;
-							for (CultivationLevel l : CultivationLevel.REGISTERED_LEVELS.values()) {
+							for (CultivationLevel l : CultivationLevel.LOADED_LEVELS.values()) {
 								if (l.getUName().equals(args[2])) {
 									level = l;
 									found_level = true;
@@ -183,7 +183,7 @@ public class CultivationCommand extends CommandBase {
 							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
 							CultivationLevel level = cultivation.getCurrentLevel();
 							boolean found_level = false;
-							for (CultivationLevel l : CultivationLevel.REGISTERED_LEVELS.values()) {
+							for (CultivationLevel l : CultivationLevel.LOADED_LEVELS.values()) {
 								if (l.getUName().equals(args[2])) {
 									level = l;
 									found_level = true;
@@ -248,14 +248,20 @@ public class CultivationCommand extends CommandBase {
 				completions.add("set");
 		}else if (args.length == 2) {
 			for(String player : server.getPlayerList().getOnlinePlayerNames()) {
-				if(player.toLowerCase().startsWith(args[1])) {
+				if(player.toLowerCase().startsWith(args[1].toLowerCase())) {
 					completions.add(player);
+				}
+			}
+			if(args[0].equalsIgnoreCase("set")) {
+				for (CultivationLevel level : CultivationLevel.LOADED_LEVELS.values()) {
+					if (level.getUName().toLowerCase().startsWith(args[1].toLowerCase()))
+						completions.add(level.getUName());
 				}
 			}
 		}else if(args.length == 3) {
 			if(args[0].equalsIgnoreCase("set")) {
-				for (CultivationLevel level : CultivationLevel.REGISTERED_LEVELS.values()) {
-					if (level.getUName().toLowerCase().startsWith(args[2]))
+				for (CultivationLevel level : CultivationLevel.LOADED_LEVELS.values()) {
+					if (level.levelName.toLowerCase().startsWith(args[2].toLowerCase()))
 						completions.add(level.getUName());
 				}
 			}

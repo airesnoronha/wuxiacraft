@@ -26,7 +26,7 @@ public class CultivationStorage implements Capability.IStorage<ICultivation> {
 	@Override
 	public void readNBT(Capability<ICultivation> capability, ICultivation instance, EnumFacing side, NBTBase nbt) {
 		NBTTagCompound tag = (NBTTagCompound) nbt;
-		instance.setCurrentLevel(CultivationLevel.REGISTERED_LEVELS.get(tag.getString("level").toLowerCase())); //for people don't lose their previous cultivation i hope
+		instance.setCurrentLevel(CultivationLevel.LOADED_LEVELS.get(tag.getString("level").toLowerCase())); //for people don't lose their previous cultivation i hope
 		instance.setCurrentSubLevel(tag.getInteger("subLevel"));
 		instance.setProgress(tag.getDouble("progress"));
 		instance.addEnergy(tag.getFloat("energy"));

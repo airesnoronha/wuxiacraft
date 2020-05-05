@@ -121,13 +121,29 @@ public class FoundationCommand extends CommandBase {
 						if(args[0].equals("add")) op = 1;
 						else if(args[0].equals("rem")) op = 2;
 						int targetAttr = -1;
-						if(args[1].equals("agi")) targetAttr = 0;
-						else if(args[1].equals("con")) targetAttr = 1;
-						else if(args[1].equals("dex")) targetAttr = 2;
-						else if(args[1].equals("res")) targetAttr = 3;
-						else if(args[1].equals("spi")) targetAttr = 4;
-						else if(args[1].equals("str")) targetAttr = 5;
-						else if(args[1].equals("all")) targetAttr = 6;
+						switch (args[1]) {
+							case "agi":
+								targetAttr = 0;
+								break;
+							case "con":
+								targetAttr = 1;
+								break;
+							case "dex":
+								targetAttr = 2;
+								break;
+							case "res":
+								targetAttr = 3;
+								break;
+							case "spi":
+								targetAttr = 4;
+								break;
+							case "str":
+								targetAttr = 5;
+								break;
+							case "all":
+								targetAttr = 6;
+								break;
+						}
 						if(targetAttr == -1) {
 							wrongUsage = true;
 						} else {
@@ -149,17 +165,34 @@ public class FoundationCommand extends CommandBase {
 					EntityPlayerMP target = server.getPlayerList().getPlayerByUsername(args[0]);
 					if (target != null) {
 						if (args[1].equals("set") || args[1].equals("add") || args[1].equals("rem")) {
+							wrongUsage = false;
 							int op = 0;
 							if (args[1].equals("add")) op = 1;
 							else if (args[1].equals("rem")) op = 2;
 							int targetAttr = -1;
-							if (args[2].equals("agi")) targetAttr = 0;
-							else if (args[2].equals("con")) targetAttr = 1;
-							else if (args[2].equals("dex")) targetAttr = 2;
-							else if (args[2].equals("res")) targetAttr = 3;
-							else if (args[2].equals("spi")) targetAttr = 4;
-							else if (args[2].equals("str")) targetAttr = 5;
-							else if (args[2].equals("all")) targetAttr = 6;
+							switch (args[2]) {
+								case "agi":
+									targetAttr = 0;
+									break;
+								case "con":
+									targetAttr = 1;
+									break;
+								case "dex":
+									targetAttr = 2;
+									break;
+								case "res":
+									targetAttr = 3;
+									break;
+								case "spi":
+									targetAttr = 4;
+									break;
+								case "str":
+									targetAttr = 5;
+									break;
+								case "all":
+									targetAttr = 6;
+									break;
+							}
 							if (targetAttr == -1) {
 								wrongUsage = true;
 							} else {
@@ -173,10 +206,9 @@ public class FoundationCommand extends CommandBase {
 									wrongUsage = true;
 								}
 								if (value >= 0) {
-									setAttrValue(op, targetAttr, value, player);
+									setAttrValue(op, targetAttr, value, target);
 								}
 							}
-							wrongUsage = false;
 						}
 					} else {
 						TextComponentString text = new TextComponentString("Couldn't find player " + args[0]);
@@ -214,7 +246,7 @@ public class FoundationCommand extends CommandBase {
 							text = new TextComponentString("  Str: " + foundation.getStrength());
 							sender.sendMessage(text);
 						}
-						if (args[1].equals("get")) {
+						else if (args[1].equals("reset")) {
 							wrongUsage = false;
 							IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
 							foundation.copyFrom(new Foundation());
@@ -240,9 +272,9 @@ public class FoundationCommand extends CommandBase {
 							} else {
 								long value =-1;
 								try {
-									value = parseLong(args[2]);
+									value = parseLong(args[3]);
 								} catch (NumberFormatException e) {
-									TextComponentString text = new TextComponentString("Couldn't recognize number " + args[2]);
+									TextComponentString text = new TextComponentString("Couldn't recognize number " + args[3]);
 									text.getStyle().setColor(TextFormatting.RED);
 									sender.sendMessage(text);
 									wrongUsage = true;
@@ -283,7 +315,7 @@ public class FoundationCommand extends CommandBase {
 		List<String> completions = new ArrayList<>();
 		if(args.length == 1) {
 			for (String player : server.getPlayerList().getOnlinePlayerNames()) {
-				if(player.toLowerCase().startsWith(args[0])) {
+				if(player.toLowerCase().startsWith(args[0].toLowerCase())) {
 					completions.add(player);
 				}
 			}

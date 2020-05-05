@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.utils;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,6 +23,7 @@ public class CultivationLoader {
 			for (CultivationLevelFileFormat.CultivationLevelFormat level : read.levels) {
 				loadedLevels.add(new CultivationLevel(level.levelName,
 						level.nextLevelName,
+						level.displayName,
 						level.subLevels,
 						level.maxFoundationStat,
 						level.baseProgress,
@@ -57,6 +59,7 @@ public class CultivationLoader {
 					CultivationLevelFileFormat.CultivationLevelFormat levelToWrite = new CultivationLevelFileFormat.CultivationLevelFormat();
 					levelToWrite.levelName = level.levelName;
 					levelToWrite.nextLevelName = level.nextLevelName;
+					levelToWrite.displayName = level.displayName;
 					levelToWrite.subLevels = level.subLevels;
 					levelToWrite.maxFoundationStat = level.foundationMaxStat;
 					levelToWrite.baseProgress = level.baseProgress;
@@ -81,14 +84,18 @@ public class CultivationLoader {
 			for (CultivationLevel loadedLevel : loadedLevels) {
 				CultivationLevel.REGISTERED_LEVELS.put(loadedLevel.levelName, loadedLevel);
 			}
-			CultivationLevel.BASE_LEVEL = loadedLevels.get(0); // gets the first registered level, i hope
+			CultivationLevel.REGISTERED_BASE_LEVEL = loadedLevels.get(0); // gets the first registered level, i hope
+			CultivationLevel.LOADED_LEVELS.clear();
+			CultivationLevel.LOADED_LEVELS.putAll(CultivationLevel.REGISTERED_LEVELS);
+			CultivationLevel.BASE_LEVEL = CultivationLevel.REGISTERED_BASE_LEVEL;
 		}
 	}
 
 	public static class CultivationLevelFileFormat {
 		public static class CultivationLevelFormat {
-			public String levelName;
-			public String nextLevelName;
+			public String levelName = "base_level";
+			public String nextLevelName = "base_level";
+			public String displayName= "Base Level";
 			public int subLevels = 5;
 			public long maxFoundationStat = 10;
 			public double baseProgress = 1000;
