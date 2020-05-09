@@ -26,7 +26,9 @@ public class AddProgressToFoundationAttributeMessageHandler implements IMessageH
 					if(cultivation.getCurrentProgress() < amount) {
 						amount = cultivation.getCurrentProgress();
 					}
+					amount = Math.max(0, amount);
 					cultivation.addProgress(-amount, false);
+					cultivation.setProgress(Math.max(0, cultivation.getCurrentProgress()));
 					int attribute = MathUtils.clamp(message.attribute, 0, 5);
 					switch (attribute) {
 						case 0:

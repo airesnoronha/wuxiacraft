@@ -15,11 +15,12 @@ public class CultivationLoader {
 
 	public static void loadLevelsFromConfig() {
 		File levelsFile = new File(Loader.instance().getConfigDir(), "wuxiacraft/cultivationLevels.json");
-		List<CultivationLevel> loadedLevels = new ArrayList<>();
+		List<CultivationLevel> loadedLevels = new ArrayList<>(CultivationLevel.DEFAULTS);
 		Gson gson = new Gson();
 		try {
 			Reader reader = new FileReader(levelsFile);
 			CultivationLevelFileFormat read = gson.fromJson(reader, CultivationLevelFileFormat.class);
+			loadedLevels.clear();
 			for (CultivationLevelFileFormat.CultivationLevelFormat level : read.levels) {
 				loadedLevels.add(new CultivationLevel(level.levelName,
 						level.nextLevelName,
@@ -39,7 +40,6 @@ public class CultivationLoader {
 			}
 		} catch (FileNotFoundException e) {
 			WuxiaCraft.logger.error("Couldn't find the cultivation levels file. creating a new one.");
-			loadedLevels = CultivationLevel.DEFAULTS;
 		} finally {
 			try {
 				if (levelsFile.getParentFile() != null) {

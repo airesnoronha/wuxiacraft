@@ -202,7 +202,7 @@ public class CultivationUtils {
 						foundation.getSpiritModifier() + foundation.getStrengthModifier();
 				int multiplier = world.getGameRules().hasRule("tribulationMultiplier") ? world.getGameRules().getInt("tribulationMultiplier") : 18; // even harder for those that weren't on the script
 				double strength = tribulation.getStrengthIncrease() * multiplier;
-				final int bolts = MathUtils.clamp(1 + (int) (Math.round(resistance / (cultivation.getStrengthIncrease()*4))), 1, 12);
+				final int bolts = MathUtils.clamp(1 + (int) (Math.round(resistance / (tribulation.getStrengthIncrease()*4))), 1, 12);
 				float damage = (float) Math.max(2, strength - resistance);
 				for (int i = 0; i < bolts; i++) {
 					boolean survived = player.isEntityAlive();

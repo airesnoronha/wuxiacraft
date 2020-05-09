@@ -13,7 +13,6 @@ import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.proxy.ClientProxy;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import com.airesnor.wuxiacraft.utils.MathUtils;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -787,6 +786,8 @@ public class CultivationGui extends GuiScreen {
 		if (cultivation.getCurrentProgress() < amountAddedToFoundationPerClick) {
 			amount = cultivation.getCurrentProgress();
 		}
+		amount = Math.max(0, amount);
+		cultivation.setProgress(Math.max(0, cultivation.getCurrentProgress()));
 		cultivation.addProgress(-amount, false);
 		switch (attribute) {
 			case 0:

@@ -23,6 +23,7 @@ import com.airesnor.wuxiacraft.utils.TeleportationUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
@@ -88,12 +89,8 @@ public class EventHandler {
 	public void onPlayerLogIn(PlayerEvent.PlayerLoggedInEvent event) {
 		EntityPlayer player = event.player;
 		if (!player.world.isRemote) {
-			WuxiaCraft.logger.info("Restoring " + player.getDisplayNameString() + " cultivation.");
-			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
-			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-			IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
-			NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, foundation, true), (EntityPlayerMP) player);
+			WuxiaCraft.logger.info("Setting player " + player.getDisplayNameString() + " cultivation levels.");
+			NetworkWrapper.INSTANCE.sendTo(new CultivationLevelsMessage(), (EntityPlayerMP) player);
 		}
 		TextComponentString text = new TextComponentString("For a quick tutorial on the mod. \nPlease use the /culthelp command");
 		text.getStyle().setColor(TextFormatting.GOLD);
