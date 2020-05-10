@@ -88,7 +88,7 @@ public class ResetCultCommand extends CommandBase {
 		List<String> completions = new ArrayList<>();
 		if(args.length == 1) {
 			for(String player : server.getPlayerList().getOnlinePlayerNames()) {
-				if(player.toLowerCase().startsWith(args[0])) {
+				if(player.toLowerCase().startsWith(args[0].toLowerCase())) {
 					completions.add(player);
 				}
 			}

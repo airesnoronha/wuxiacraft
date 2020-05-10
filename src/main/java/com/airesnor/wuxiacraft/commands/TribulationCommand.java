@@ -80,7 +80,7 @@ public class TribulationCommand extends CommandBase {
                         foundation.getSpiritModifier() + foundation.getStrengthModifier();
                 int multiplier = world.getGameRules().hasRule("tribulationMultiplier") ? world.getGameRules().getInt("tribulationMultiplier") : 18; // even harder for those that weren't on the script
                 double strength = tribulation.getStrengthIncrease() * multiplier;
-                int bolts = MathUtils.clamp(1 + (int) (Math.round(resistance / (cultivation.getStrengthIncrease()*4))), 1, 12);
+                int bolts = MathUtils.clamp(1 + (int) (Math.round(resistance / (tribulation.getStrengthIncrease()*4))), 1, 12);
                 float damage = (float) Math.max(2, strength - resistance);
 
                 if(args.length == 2) {
@@ -176,13 +176,13 @@ public class TribulationCommand extends CommandBase {
             }
         }else if(args.length == 2) {
             for(String player : server.getPlayerList().getOnlinePlayerNames()) {
-                if(player.toLowerCase().startsWith(args[1])){
+                if(player.toLowerCase().startsWith(args[1].toLowerCase())){
                     completions.add(player);
                 }
             }
         }else if(args.length == 3) {
             for (CultivationLevel level : CultivationLevel.REGISTERED_LEVELS.values()) {
-                if(level.getUName().toLowerCase().startsWith(args[2])) {
+                if(level.getUName().toLowerCase().startsWith(args[2].toLowerCase())) {
                     completions.add(level.getUName());
                 }
             }

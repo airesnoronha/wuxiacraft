@@ -2,10 +2,13 @@ package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.entities.tileentity.GrinderTileEntity;
 import com.airesnor.wuxiacraft.gui.*;
+import com.airesnor.wuxiacraft.items.ItemSpaceRing;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
 
@@ -15,6 +18,7 @@ public class GuiHandler implements IGuiHandler {
 	public static final int SKILLS_GUI_ID = 1;
 	public static final int RECIPE_GUI_ID = 2;
 	public static final int GRINDER_GUI_ID = 3;
+	public static final int SPACE_RING_GUI_ID = 4;
 
 	@Nullable
 	@Override
@@ -27,6 +31,8 @@ public class GuiHandler implements IGuiHandler {
 			case SKILLS_GUI_ID:
 			case RECIPE_GUI_ID:
 				return null;
+			case SPACE_RING_GUI_ID:
+				return new SpaceRingContainer((IInventory) player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), player);
 		}
 		return null;
 	}
@@ -44,6 +50,8 @@ public class GuiHandler implements IGuiHandler {
 				return new RecipeGui(player);
 			case GRINDER_GUI_ID:
 				return new GrinderGui(player.inventory, (GrinderTileEntity) world.getTileEntity(pos));
+			case SPACE_RING_GUI_ID:
+				return new SpaceRingGui((IInventory) player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), player);
 		}
 		return null;
 	}

@@ -16,7 +16,7 @@ import com.airesnor.wuxiacraft.dimensions.WuxiaDimensions;
 import com.airesnor.wuxiacraft.dimensions.biomes.WuxiaBiomes;
 import com.airesnor.wuxiacraft.dimensions.worldtypes.WorldTypeRegister;
 import com.airesnor.wuxiacraft.formation.FormationEventHandler;
-import com.airesnor.wuxiacraft.formation.FormationUtils;
+import com.airesnor.wuxiacraft.utils.FormationUtils;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.handlers.GuiHandler;
 import com.airesnor.wuxiacraft.handlers.RegistryHandler;

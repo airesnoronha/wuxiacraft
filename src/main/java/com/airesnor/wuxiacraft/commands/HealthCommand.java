@@ -121,7 +121,7 @@ public class HealthCommand extends CommandBase {
 				completions.add("get");
 		}else if(args.length == 2) {
 			for(String player : server.getPlayerList().getOnlinePlayerNames()) {
-				if(player.toLowerCase().startsWith(args[1])) {
+				if(player.toLowerCase().startsWith(args[1].toLowerCase())) {
 					completions.add(player);
 				}
 			}

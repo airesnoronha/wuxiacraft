@@ -3,6 +3,7 @@ package com.airesnor.wuxiacraft.formation;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
 import com.airesnor.wuxiacraft.items.ItemSpiritStone;
+import com.airesnor.wuxiacraft.utils.FormationUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;

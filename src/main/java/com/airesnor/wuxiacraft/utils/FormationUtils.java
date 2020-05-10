@@ -1,6 +1,8 @@
-package com.airesnor.wuxiacraft.formation;
+package com.airesnor.wuxiacraft.utils;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.formation.Formation;
+import com.airesnor.wuxiacraft.formation.Formations;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
