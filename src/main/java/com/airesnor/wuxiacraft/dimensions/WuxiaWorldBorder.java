@@ -1,4 +1,4 @@
-package com.airesnor.wuxiacraft.dimensions.biomes;
+package com.airesnor.wuxiacraft.dimensions;
 
 import net.minecraft.world.border.WorldBorder;
 

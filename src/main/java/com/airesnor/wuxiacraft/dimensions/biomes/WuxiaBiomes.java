@@ -21,7 +21,7 @@ public class WuxiaBiomes {
     private static Biome registerBiome(Biome biome, String biomeName, BiomeType biomeType, boolean spawnOverworld, Type... types) {
         biome.setRegistryName(biomeName);
         ForgeRegistries.BIOMES.register(biome);
-        WuxiaCraft.logger.info("The biomes have been registered");
+        WuxiaCraft.logger.info("WuxiaCraft biome " + biomeName + " has been registered!");
         BiomeDictionary.addTypes(biome, types);
 
         //This makes it so that the overworld gets the biome added then it spawns it
@@ -29,7 +29,7 @@ public class WuxiaBiomes {
             BiomeManager.addBiome(biomeType, new BiomeManager.BiomeEntry(biome, 3));
         }
         BiomeManager.addSpawnBiome(biome);
-        WuxiaCraft.logger.info("The biomes have been added");
+        WuxiaCraft.logger.info("WuxiaCraft biome " + biomeName + " has been added!");
         return biome;
     }
 

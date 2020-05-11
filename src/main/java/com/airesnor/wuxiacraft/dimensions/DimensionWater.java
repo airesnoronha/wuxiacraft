@@ -2,7 +2,6 @@ package com.airesnor.wuxiacraft.dimensions;
 
 import com.airesnor.wuxiacraft.dimensions.ChunkGen.WaterChunkGen;
 import com.airesnor.wuxiacraft.dimensions.biomes.BiomeProviderWater;
-import com.airesnor.wuxiacraft.dimensions.biomes.WuxiaWorldBorder;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;

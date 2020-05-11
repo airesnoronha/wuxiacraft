@@ -32,7 +32,7 @@ public class GuiHandler implements IGuiHandler {
 			case RECIPE_GUI_ID:
 				return null;
 			case SPACE_RING_GUI_ID:
-				return new SpaceRingContainer((IInventory) player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), player);
+				return new SpaceRingContainer(player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), player);
 		}
 		return null;
 	}
@@ -51,7 +51,7 @@ public class GuiHandler implements IGuiHandler {
 			case GRINDER_GUI_ID:
 				return new GrinderGui(player.inventory, (GrinderTileEntity) world.getTileEntity(pos));
 			case SPACE_RING_GUI_ID:
-				return new SpaceRingGui((IInventory) player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), player);
+				return new SpaceRingGui(player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), player);
 		}
 		return null;
 	}

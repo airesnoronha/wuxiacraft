@@ -1,4 +1,4 @@
-package com.airesnor.wuxiacraft.items;
+package com.airesnor.wuxiacraft.capabilities;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,25 +12,27 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class SpaceRingProvider implements ICapabilityProvider, ICapabilitySerializable {
+public class WuxiaItemInventoryProvider implements ICapabilityProvider, ICapabilitySerializable {
 
     private final ItemStackHandler inventory;
+    private int itemInventorySize;
 
-    public SpaceRingProvider() {
-        inventory = new ItemStackHandler(9);
+    public WuxiaItemInventoryProvider(int itemInventorySize) {
+        this.itemInventorySize = itemInventorySize;
+        inventory = new ItemStackHandler(this.itemInventorySize);
     }
 
     @Override
     public NBTBase serializeNBT() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setTag("SpaceItems", inventory.serializeNBT());
+        tag.setTag("ItemInventoryItems", inventory.serializeNBT());
         return tag;
     }
 
     @Override
     public void deserializeNBT(NBTBase nbt) {
         NBTTagCompound tag = (NBTTagCompound) nbt;
-        inventory.deserializeNBT(tag.getCompoundTag("SpaceItems"));
+        inventory.deserializeNBT(tag.getCompoundTag("ItemInventoryItems"));
     }
 
     @Override

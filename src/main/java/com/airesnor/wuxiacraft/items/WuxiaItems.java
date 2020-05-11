@@ -215,4 +215,6 @@ public class WuxiaItems {
 	public static final Item DUST_GOLD = new ItemBase("dust_gold");
 	public static final Item DUST_DIAMOND = new ItemBase("dust_diamond");
 
+	public static final Item SPACE_RING = new ItemSpaceRing("space_ring", 6, 9);
+
 }
