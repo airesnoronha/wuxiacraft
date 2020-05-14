@@ -56,6 +56,7 @@ public class WuxiaCraft {
 		event.registerServerCommand(new HealthCommand());
 		event.registerServerCommand(new FoundationCommand());
 		event.registerServerCommand(new TribulationCommand());
+		event.registerServerCommand(new SealCommand());
 		event.getServer().getWorld(0).getGameRules().addGameRule("doPlayerSkillSetFire", "true", GameRules.ValueType.BOOLEAN_VALUE);
 		event.getServer().getWorld(0).getGameRules().addGameRule("doMobSkillSetFire", "true", GameRules.ValueType.BOOLEAN_VALUE);
 		event.getServer().getWorld(0).getGameRules().addGameRule("tribulationMultiplier", "16", GameRules.ValueType.NUMERICAL_VALUE);

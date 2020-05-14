@@ -522,7 +522,7 @@ public class RendererHandler {
 		}
 		else if(amount < 1000000000) {
 			float mills =  amount / 1000000000f;
-			value += String.format("%.2fB", mills);
+			value += String.format("%.2fG", mills);
 		}
 		return value;
 	}

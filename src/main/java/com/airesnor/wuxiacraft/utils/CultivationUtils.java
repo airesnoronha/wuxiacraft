@@ -1,9 +1,6 @@
 package com.airesnor.wuxiacraft.utils;
 
-import com.airesnor.wuxiacraft.capabilities.CultTechProvider;
-import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
-import com.airesnor.wuxiacraft.capabilities.FoundationProvider;
-import com.airesnor.wuxiacraft.capabilities.SkillsProvider;
+import com.airesnor.wuxiacraft.capabilities.*;
 import com.airesnor.wuxiacraft.cultivation.*;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
@@ -85,6 +82,19 @@ public class CultivationUtils {
 			foundation = entityIn.getCapability(FoundationProvider.FOUNDATION_CAPABILITY, null);
 		if (foundation == null) foundation = new Foundation();
 		return foundation;
+	}
+
+	@Nonnull
+	public static ISealing getSealingFromEntity(EntityLivingBase entityIn) {
+		ISealing sealing = null;
+		if (entityIn instanceof EntityPlayer) {
+			//noinspection ConstantConditions
+			sealing = entityIn.getCapability(SealingProvider.SEALING_CAPABILITY, null);
+		}
+		if (sealing == null) {
+			sealing = new Sealing();
+		}
+		return sealing;
 	}
 
 	public static void cultivatorAddProgress(EntityLivingBase player, double amount, boolean techniques, boolean allowBreakThrough, boolean ignoreBottleneck) {

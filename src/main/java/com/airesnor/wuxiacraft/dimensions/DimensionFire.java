@@ -10,9 +10,12 @@ import net.minecraft.world.gen.IChunkGenerator;
 
 public class DimensionFire extends WorldProvider {
 
+    private static int worldBorderSize;
+
     @Override
     protected void init() {
         this.biomeProvider = new BiomeProviderFire(this.world.getSeed());
+        this.worldBorderSize = 2000000;
     }
 
     @Override
@@ -52,7 +55,7 @@ public class DimensionFire extends WorldProvider {
 
     @Override
     public WorldBorder createWorldBorder() {
-        return new WuxiaWorldBorder(2000000);
+        return new WuxiaWorldBorder(this.worldBorderSize);
     }
 
     @Override

@@ -79,12 +79,12 @@ public class CultivationCommand extends CommandBase {
 							wrongUsage = true;
 						} else {
 							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(target);
-							IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
+							IFoundation foundation = CultivationUtils.getFoundationFromEntity(target);
 							if (target.getUniqueID().equals(player.getUniqueID())) {
 								String message = String.format("You are at %s", cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
 								TextComponentString text = new TextComponentString(message);
 								sender.sendMessage(text);
-								message = String.format("Progress: %d/%d", (int) cultivation.getCurrentProgress(), (int) cultivation.getMaxEnergy(foundation));
+								message = String.format("Progress: %d/%d", (int) cultivation.getCurrentProgress(), (int) cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
 								text = new TextComponentString(message);
 								sender.sendMessage(text);
 								message = String.format("Energy: %d/%d", (int) cultivation.getEnergy(), (int) cultivation.getMaxEnergy(foundation));

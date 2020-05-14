@@ -7,11 +7,13 @@ import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.IFoundation;
+import com.airesnor.wuxiacraft.cultivation.ISealing;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
+import com.airesnor.wuxiacraft.dimensions.DimensionEarth;
 import com.airesnor.wuxiacraft.dimensions.WuxiaDimensions;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
@@ -475,6 +477,8 @@ public class EventHandler {
 		IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
 		IFoundation oldFoundation = CultivationUtils.getFoundationFromEntity(original);
 		cultivation.setCurrentLevel(oldCultivation.getCurrentLevel());
+		ISealing sealing = CultivationUtils.getSealingFromEntity(player);
+		ISealing oldSealing = CultivationUtils.getSealingFromEntity(original);
 		if (event.isWasDeath()) {
 
 			if (oldCultivation.getCurrentLevel().levelName.equals(oldCultivation.getCurrentLevel().nextLevelName)) { //if last level, i hope
@@ -484,9 +488,11 @@ public class EventHandler {
 			}
 			foundation.copyFrom(oldFoundation);
 			foundation.applyDeathPunishment(oldCultivation);
+			sealing.copyFrom(oldSealing);
 		} else {
 			cultivation.copyFrom(oldCultivation);
 			foundation.copyFrom(oldFoundation);
+			sealing.copyFrom(oldSealing);
 		}
 
 		WuxiaCraft.logger.info("Restoring " + player.getDisplayNameString() + " cultivation.");
@@ -614,31 +620,33 @@ public class EventHandler {
 								}
 							}
 							if (!MathUtils.inGroup(targetDimension, -1, 0, 1, WuxiaDimensions.MINING.getId())) {
-								if (playerPosX >= 2000000) {
-									playerPosX = 1999990;
+								final int worldBorderSize = 2000000;
+								if (playerPosX >= worldBorderSize) {
+									playerPosX = worldBorderSize - 10;
 								}
-								if (playerPosZ >= 2000000) {
-									playerPosZ = 1999990;
+								if (playerPosZ >= worldBorderSize) {
+									playerPosZ = worldBorderSize - 10;
 								}
-								if (playerPosX <= -2000000) {
-									playerPosX = -1999990;
+								if (playerPosX <= -worldBorderSize) {
+									playerPosX = -worldBorderSize + 10;
 								}
-								if (playerPosZ <= -2000000) {
-									playerPosZ = -1999990;
+								if (playerPosZ <= -worldBorderSize) {
+									playerPosZ = -worldBorderSize + 10;
 								}
 								TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) event.player, targetDimension, playerPosX + 0.5, 1512, playerPosZ + 0.5, event.player.rotationYaw, event.player.rotationPitch);
 							} else if (targetDimension == WuxiaDimensions.MINING.getId()) {
-								if (playerPosX >= 3000000) {
-									playerPosX = 2999990;
+								final int worldBorderSize = 3000000;
+								if (playerPosX >= worldBorderSize) {
+									playerPosX = worldBorderSize - 10;
 								}
-								if (playerPosZ >= 3000000) {
-									playerPosZ = 2999990;
+								if (playerPosZ >= worldBorderSize) {
+									playerPosZ = worldBorderSize - 10;
 								}
-								if (playerPosX <= -3000000) {
-									playerPosX = -2999990;
+								if (playerPosX <= -worldBorderSize) {
+									playerPosX = -worldBorderSize + 10;
 								}
-								if (playerPosZ <= -3000000) {
-									playerPosZ = -2999990;
+								if (playerPosZ <= -worldBorderSize) {
+									playerPosZ = -worldBorderSize + 10;
 								}
 								TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) event.player, targetDimension, playerPosX + 0.5, 1512, playerPosZ + 0.5, event.player.rotationYaw, event.player.rotationPitch);
 							} else {

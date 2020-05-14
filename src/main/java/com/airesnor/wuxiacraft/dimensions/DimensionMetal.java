@@ -10,9 +10,12 @@ import net.minecraft.world.gen.IChunkGenerator;
 
 public class DimensionMetal extends WorldProvider {
 
+    public static int worldBorderSize;
+
     @Override
     protected void init() {
         this.biomeProvider = new BiomeProviderMetal(this.world.getSeed());
+        this.worldBorderSize = 2000000;
     }
 
     @Override
@@ -52,7 +55,7 @@ public class DimensionMetal extends WorldProvider {
 
     @Override
     public WorldBorder createWorldBorder() {
-        return new WuxiaWorldBorder(2000000);
+        return new WuxiaWorldBorder(this.worldBorderSize);
     }
 
     @Override

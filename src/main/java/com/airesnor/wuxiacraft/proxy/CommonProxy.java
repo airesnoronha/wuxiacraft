@@ -7,6 +7,7 @@ import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.IFoundation;
+import com.airesnor.wuxiacraft.cultivation.ISealing;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
@@ -28,6 +29,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -57,6 +59,7 @@ public class CommonProxy {
 		CapabilityManager.INSTANCE.register(ICultTech.class, new CultTechStorage(), new CultTechFactory());
 		CapabilityManager.INSTANCE.register(ISkillCap.class, new SkillsStorage(), new SkillsFactory());
 		CapabilityManager.INSTANCE.register(IFoundation.class, new FoundationStorage(), new FoundationFactory());
+		CapabilityManager.INSTANCE.register(ISealing.class, new SealingStorage(), new SealingFactory());
 
 		NetworkWrapper.INSTANCE.registerMessage(new ActivatePartialSkillMessageHandler(), ActivatePartialSkillMessage.class, 167001, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new ActivateSkillMessageHandler(), ActivateSkillMessage.class, 167002, Side.SERVER);
@@ -115,9 +118,9 @@ public class CommonProxy {
 
 		WuxiaCraftConfig.preInit();
 		GameRegistry.registerWorldGenerator(new WorldGen(), 3);
+		registerRuneBlocks();
 		WuxiaBiomes.registerBiomes();
 		WuxiaDimensions.registerDimensions();
-		registerRuneBlocks();
 	}
 
 	private void registerRuneBlocks() {

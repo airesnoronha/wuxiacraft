@@ -10,9 +10,12 @@ import net.minecraft.world.gen.IChunkGenerator;
 
 public class DimensionMining extends WorldProvider {
 
+    public static int worldBorderSize;
+
     @Override
     protected void init() {
         this.biomeProvider = new BiomeProviderWuxia(this.world.getSeed());
+        this.worldBorderSize = 3000000;
     }
 
     @Override
@@ -57,7 +60,7 @@ public class DimensionMining extends WorldProvider {
 
     @Override
     public WorldBorder createWorldBorder() {
-        return new WuxiaWorldBorder(3000000);
+        return new WuxiaWorldBorder(this.worldBorderSize);
     }
 
     @Override
