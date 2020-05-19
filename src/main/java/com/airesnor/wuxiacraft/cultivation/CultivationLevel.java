@@ -5,6 +5,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class CultivationLevel extends IForgeRegistryEntry.Impl<CultivationLevel> {
@@ -31,7 +32,7 @@ public class CultivationLevel extends IForgeRegistryEntry.Impl<CultivationLevel>
 	/**
 	 * This one comes from the server, even in Single player
 	 */
-	public static final Map<String, CultivationLevel> LOADED_LEVELS = new HashMap<>();
+	public static final LinkedHashMap<String, CultivationLevel> LOADED_LEVELS = new LinkedHashMap<>();
 
 	/**
 	 * Loaded BaseLevel
@@ -41,7 +42,7 @@ public class CultivationLevel extends IForgeRegistryEntry.Impl<CultivationLevel>
 	/**
 	 * This one comes from the files
 	 */
-	public static final Map<String, CultivationLevel> REGISTERED_LEVELS = new HashMap<>();
+	public static final LinkedHashMap<String, CultivationLevel> REGISTERED_LEVELS = new LinkedHashMap<>();
 
 	/**
 	 * It is used for when a new cultivation is created, this way we can define a first level for players and stuff

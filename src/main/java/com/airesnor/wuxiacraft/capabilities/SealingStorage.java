@@ -34,6 +34,10 @@ public class SealingStorage implements Capability.IStorage<ISealing> {
         tag.setDouble("sealed-resistance-progress", instance.getResistanceProgress());
         tag.setDouble("sealed-spirit-progress", instance.getSpiritProgress());
         tag.setDouble("sealed-strength-progress", instance.getStrengthProgress());
+
+        //Sealing
+        tag.setBoolean("sealed-cultivation", instance.isCultivationSealed());
+        tag.setBoolean("sealed-foundation", instance.isFoundationSealed());
         return tag;
     }
 
@@ -70,5 +74,9 @@ public class SealingStorage implements Capability.IStorage<ISealing> {
             instance.setSpiritProgress(tag.getDouble("sealed-spirit-progress"));
         if (tag.hasKey("sealed-strength-progress"))
             instance.setStrengthProgress(tag.getDouble("sealed-strength-progress"));
+
+        //Sealing
+        instance.setSealed("cultivation", tag.getBoolean("sealed-cultivation"));
+        instance.setSealed("foundation", tag.getBoolean("sealed-foundation"));
     }
 }

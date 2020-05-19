@@ -13,6 +13,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
@@ -21,7 +22,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
-
+// TODO - clean the code up for this class
 public class SealCommand extends CommandBase {
 
     @Override
@@ -54,26 +55,27 @@ public class SealCommand extends CommandBase {
         if (sender instanceof EntityPlayerMP) {
             EntityPlayerMP playerMP = (EntityPlayerMP) sender;
             boolean wrongUsage = true;
-            if(!playerMP.world.isRemote) {
+            if (!playerMP.world.isRemote) {
                 if (args.length == 1) {
                     EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[0]);
                     ISealing sealing = CultivationUtils.getSealingFromEntity(targetPlayer);
+                    ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
+                    IFoundation foundation = CultivationUtils.getFoundationFromEntity(targetPlayer);
                     if (sealing.isCultivationSealed() && sealing.isFoundationSealed()) {
-                        ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
-                        IFoundation foundation = CultivationUtils.getFoundationFromEntity(targetPlayer);
                         setCultivationUnsealed(sealing, cultivation);
                         setFoundationUnsealed(sealing, foundation);
                         NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
                         sealing.setSealed("both", false);
+                        wrongUsage = false;
                     } else if (sealing.isCultivationSealed()) {
-                        ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
                         setCultivationUnsealed(sealing, cultivation);
                         NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
                         sealing.setSealed("cultivation", false);
+                        wrongUsage = false;
                     } else if (sealing.isFoundationSealed()) {
-                        IFoundation foundation = CultivationUtils.getFoundationFromEntity(targetPlayer);
                         setFoundationUnsealed(sealing, foundation);
                         sealing.setSealed("foundation", false);
+                        wrongUsage = false;
                     } else {
                         TextComponentString text = new TextComponentString( targetPlayer.getName() + " is not sealed!");
                         text.getStyle().setColor(TextFormatting.RED);
@@ -82,10 +84,12 @@ public class SealCommand extends CommandBase {
                 } else if (args.length == 2) {
                     EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[0]);
                     ISealing sealing = CultivationUtils.getSealingFromEntity(targetPlayer);
+                    ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
+                    IFoundation foundation = CultivationUtils.getFoundationFromEntity(targetPlayer);
                     if (args[1].equalsIgnoreCase("cultivation")) {
                         if (sealing.isCultivationSealed()) {
-                            ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
                             setCultivationUnsealed(sealing, cultivation);
+                            wrongUsage = false;
                         } else {
                             TextComponentString text = new TextComponentString( targetPlayer.getName() + "'s cultivation is not sealed!");
                             text.getStyle().setColor(TextFormatting.RED);
@@ -94,14 +98,16 @@ public class SealCommand extends CommandBase {
                         sealing.setSealed("cultivation", false);
                     } else if (args[1].equalsIgnoreCase("foundation")) {
                         if (sealing.isFoundationSealed()) {
-                            IFoundation foundation = CultivationUtils.getFoundationFromEntity(targetPlayer);
                             setFoundationUnsealed(sealing, foundation);
+                            wrongUsage = false;
                         } else {
                             TextComponentString text = new TextComponentString( targetPlayer.getName() + "'s foundation is not sealed!");
                             text.getStyle().setColor(TextFormatting.RED);
                             playerMP.sendMessage(text);
                         }
                         sealing.setSealed("foundation", false);
+                    } else if (args[1].equalsIgnoreCase("status")) {
+
                     }
                 } else if (args.length == 4) {
                     EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[0]);
@@ -121,10 +127,12 @@ public class SealCommand extends CommandBase {
                                     break;
                                 }
                             }
-                            if (found_level) {
+                            if (found_level && isSealedCultivationHigher(sealing, level, subLevel)) {
                                 cultivation.setCurrentLevel(level);
                                 cultivation.setCurrentSubLevel(subLevel);
+                                sealing.setSealed("cultivation", true);
                             }
+                            wrongUsage = false;
                         } else if (!sealing.isCultivationSealed() && sealing.isFoundationSealed()) {
                             sealing.copyFromCultivation(cultivation);
                             int subLevel = Integer.parseInt(args[3]) - 1;
@@ -137,10 +145,12 @@ public class SealCommand extends CommandBase {
                                     break;
                                 }
                             }
-                            if (found_level) {
+                            if (found_level && isSealedCultivationHigher(sealing, level, subLevel)) {
                                 cultivation.setCurrentLevel(level);
                                 cultivation.setCurrentSubLevel(subLevel);
+                                sealing.setSealed("cultivation", true);
                             }
+                            wrongUsage = false;
                         } else {
                             int subLevel = Integer.parseInt(args[3]) - 1;
                             CultivationLevel level = cultivation.getCurrentLevel();
@@ -152,27 +162,39 @@ public class SealCommand extends CommandBase {
                                     break;
                                 }
                             }
-                            if (found_level) {
+                            if (found_level && isSealedCultivationHigher(sealing, level, subLevel)) {
                                 cultivation.setCurrentLevel(level);
                                 cultivation.setCurrentSubLevel(subLevel);
+                                sealing.setSealed("cultivation", true);
                             }
+                            wrongUsage = false;
                         }
-                        sealing.setSealed("cultivation", true);
                     } else if (args[1].equalsIgnoreCase("foundation")) {
                         ISealing sealing = CultivationUtils.getSealingFromEntity(targetPlayer);
                         ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
                         IFoundation foundation = CultivationUtils.getFoundationFromEntity(targetPlayer);
-                        long value = Long.parseLong(args[3]);
+                        long value = keepSetFoundationLower(sealing, args[2], Long.parseLong(args[3]));
                         if (!sealing.isFoundationSealed() && !sealing.isCultivationSealed()) {
                             sealing.copyFromBoth(cultivation, foundation);
-                            setAttrValue(foundation, args[3], value);
+                            if (isSealedFoundationHigher(sealing, args[2], value)) {
+                                setAttrValue(foundation, args[2], value);
+                                sealing.setSealed("foundation", true);
+                            }
+                            wrongUsage = false;
                         } else if (!sealing.isFoundationSealed() && sealing.isCultivationSealed()) {
                             sealing.copyFromFoundation(foundation);
-                            setAttrValue(foundation, args[3], value);
+                            if (isSealedFoundationHigher(sealing, args[2], value)) {
+                                setAttrValue(foundation, args[2], value);
+                                sealing.setSealed("foundation", true);
+                            }
+                            wrongUsage =false;
                         } else {
-                            setAttrValue(foundation, args[3], value);
+                            if (isSealedFoundationHigher(sealing, args[2], value)) {
+                                setAttrValue(foundation, args[2], value);
+                                sealing.setSealed("foundation", true);
+                            }
+                            wrongUsage = false;
                         }
-                        sealing.setSealed("foundation", true);
                     }
                 } else if (args.length == 6) {
                     EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[0]);
@@ -222,56 +244,56 @@ public class SealCommand extends CommandBase {
                 }
             }
             if (args[1].equalsIgnoreCase("foundation")) {
-                if("agi".toLowerCase().startsWith(args[2].toLowerCase())) {
+                if ("agi".toLowerCase().startsWith(args[2].toLowerCase())) {
                     completions.add("agi");
                 }
-                if("con".toLowerCase().startsWith(args[2].toLowerCase())) {
+                if ("con".toLowerCase().startsWith(args[2].toLowerCase())) {
                     completions.add("con");
                 }
-                if("dex".toLowerCase().startsWith(args[2].toLowerCase())) {
+                if ("dex".toLowerCase().startsWith(args[2].toLowerCase())) {
                     completions.add("dex");
                 }
-                if("res".toLowerCase().startsWith(args[2].toLowerCase())) {
+                if ("res".toLowerCase().startsWith(args[2].toLowerCase())) {
                     completions.add("res");
                 }
-                if("spi".toLowerCase().startsWith(args[2].toLowerCase())) {
+                if ("spi".toLowerCase().startsWith(args[2].toLowerCase())) {
                     completions.add("spi");
                 }
-                if("str".toLowerCase().startsWith(args[2].toLowerCase())) {
+                if ("str".toLowerCase().startsWith(args[2].toLowerCase())) {
                     completions.add("str");
                 }
-                if("all".toLowerCase().startsWith(args[2].toLowerCase())) {
+                if ("all".toLowerCase().startsWith(args[2].toLowerCase())) {
                     completions.add("all");
                 }
             }
         }
         if (args.length == 5) {
-            if("agi".toLowerCase().startsWith(args[4].toLowerCase())) {
+            if ("agi".toLowerCase().startsWith(args[4].toLowerCase())) {
                 completions.add("agi");
             }
-            if("con".toLowerCase().startsWith(args[4].toLowerCase())) {
+            if ("con".toLowerCase().startsWith(args[4].toLowerCase())) {
                 completions.add("con");
             }
-            if("dex".toLowerCase().startsWith(args[4].toLowerCase())) {
+            if ("dex".toLowerCase().startsWith(args[4].toLowerCase())) {
                 completions.add("dex");
             }
-            if("res".toLowerCase().startsWith(args[4].toLowerCase())) {
+            if ("res".toLowerCase().startsWith(args[4].toLowerCase())) {
                 completions.add("res");
             }
-            if("spi".toLowerCase().startsWith(args[4].toLowerCase())) {
+            if ("spi".toLowerCase().startsWith(args[4].toLowerCase())) {
                 completions.add("spi");
             }
-            if("str".toLowerCase().startsWith(args[4].toLowerCase())) {
+            if ("str".toLowerCase().startsWith(args[4].toLowerCase())) {
                 completions.add("str");
             }
-            if("all".toLowerCase().startsWith(args[4].toLowerCase())) {
+            if ("all".toLowerCase().startsWith(args[4].toLowerCase())) {
                 completions.add("all");
             }
         }
         return completions;
     }
 
-    public void setAttrValue(IFoundation foundation, String attribute, long value) {
+    private void setAttrValue(IFoundation foundation, String attribute, long value) {
         if (attribute.equalsIgnoreCase("agi")) {
             foundation.setAgility(value);
         } else if (attribute.equalsIgnoreCase("con")) {
@@ -294,7 +316,7 @@ public class SealCommand extends CommandBase {
         }
     }
 
-    public void setCultivationUnsealed(ISealing sealing, ICultivation cultivation) {
+    private void setCultivationUnsealed(ISealing sealing, ICultivation cultivation) {
         cultivation.setCurrentLevel(sealing.getCurrentLevel());
         cultivation.setCurrentSubLevel(sealing.getCurrentSubLevel());
         cultivation.setEnergy(sealing.getEnergy());
@@ -304,7 +326,7 @@ public class SealCommand extends CommandBase {
         cultivation.setMaxSpeed(sealing.getMaxSpeed());
     }
 
-    public void setFoundationUnsealed(ISealing sealing, IFoundation foundation) {
+    private void setFoundationUnsealed(ISealing sealing, IFoundation foundation) {
         foundation.setAgility(sealing.getAgility());
         foundation.setAgilityProgress(sealing.getAgilityProgress());
         foundation.setConstitution(sealing.getConstitution());
@@ -317,5 +339,99 @@ public class SealCommand extends CommandBase {
         foundation.setSpiritProgress(sealing.getSpiritProgress());
         foundation.setStrength(sealing.getStrength());
         foundation.setStrengthProgress(sealing.getStrengthProgress());
+    }
+
+    private boolean isSealedCultivationHigher(ISealing sealing, CultivationLevel setCultivation, int setCultivationSubLevel) {
+        int indexSealedCultivation = 0;
+        int indexSetCultivation = 0;
+        int counter = 0;
+        CultivationLevel sealedCultivation = sealing.getCurrentLevel();
+        int sealedSubLevel = sealing.getCurrentSubLevel();
+        for (CultivationLevel l : CultivationLevel.LOADED_LEVELS.values()) {
+            counter++;
+            if (l.getUName().equals(sealedCultivation))
+                indexSealedCultivation = counter;
+            if (l.getUName().equals(setCultivation))
+                indexSetCultivation = counter;
+            if (indexSealedCultivation != 0 && indexSetCultivation !=0)
+                break;
+        }
+        if (indexSetCultivation < indexSealedCultivation)
+            return true;
+        if ((indexSetCultivation == indexSealedCultivation) && (setCultivationSubLevel < sealedSubLevel))
+            return true;
+        return false;
+    }
+
+    private boolean isSealedFoundationHigher(ISealing sealing, String attribute, long value) {
+        boolean isSealedAgilityHigher = false;
+        boolean isSealedConstitutionHigher = false;
+        boolean isSealedDexterityHigher = false;
+        boolean isSealedResistanceHigher = false;
+        boolean isSealedSpiritHigher = false;
+        boolean isSealedStrengthHigher = false;
+
+        if (attribute.equalsIgnoreCase("agi") && (value < sealing.getAgility())) {
+            return true;
+        } else if (attribute.equalsIgnoreCase("con") && (value < sealing.getConstitution())) {
+            return true;
+        } else if (attribute.equalsIgnoreCase("dex") && (value < sealing.getDexterity())) {
+            return true;
+        } else if (attribute.equalsIgnoreCase("res") && (value < sealing.getResistance())) {
+            return true;
+        } else if (attribute.equalsIgnoreCase("spi") && (value < sealing.getSpirit())) {
+            return true;
+        } else if (attribute.equalsIgnoreCase("str") && (value < sealing.getStrength())) {
+            return true;
+        } else if (attribute.equalsIgnoreCase("all")) {
+            if (value < sealing.getAgility()) {
+                isSealedAgilityHigher = true;
+            } else if (value < sealing.getConstitution()) {
+                isSealedConstitutionHigher = true;
+            } else if (value < sealing.getDexterity()) {
+                isSealedDexterityHigher = true;
+            } else if (value < sealing.getResistance()) {
+                isSealedResistanceHigher = true;
+            } else if (value < sealing.getSpirit()) {
+                isSealedSpiritHigher = true;
+            } else if (value < sealing.getStrength()) {
+                isSealedStrengthHigher = true;
+            }
+            if (isSealedAgilityHigher && isSealedConstitutionHigher && isSealedDexterityHigher && isSealedResistanceHigher && isSealedSpiritHigher && isSealedStrengthHigher)
+                return true;
+        }
+        return false;
+    }
+
+    private long keepSetFoundationLower(ISealing sealing, String attribute, long value) {
+        if (attribute.equalsIgnoreCase("agi") && (value > sealing.getAgility())) {
+            value = sealing.getAgility() - 1;
+        } else if (attribute.equalsIgnoreCase("con") && (value > sealing.getConstitution())) {
+            value = sealing.getConstitution() - 1;
+        } else if (attribute.equalsIgnoreCase("dex") && (value > sealing.getDexterity())) {
+            value = sealing.getDexterity() - 1;
+        } else if (attribute.equalsIgnoreCase("res") && (value > sealing.getResistance())) {
+            value = sealing.getResistance() - 1;
+        } else if (attribute.equalsIgnoreCase("spi") && (value > sealing.getSpirit())) {
+            value = sealing.getSpirit() - 1;
+        } else if (attribute.equalsIgnoreCase("str") && (value > sealing.getStrength())) {
+            value = sealing.getStrength() - 1;
+        } else if (attribute.equalsIgnoreCase("all")) {
+            //Temporary measure, will set the value to the lowest - 1
+            if (value > sealing.getAgility()) {
+                value = sealing.getAgility() - 1;
+            } else if (value > sealing.getConstitution()) {
+                value = sealing.getConstitution() - 1;
+            } else if (value > sealing.getDexterity()) {
+                value = sealing.getDexterity() - 1;
+            } else if (value > sealing.getResistance()) {
+                value = sealing.getResistance() - 1;
+            } else if (value > sealing.getSpirit()) {
+                value = sealing.getSpirit() - 1;
+            } else if (value > sealing.getStrength()) {
+                value = sealing.getStrength() - 1;
+            }
+        }
+        return value;
     }
 }
