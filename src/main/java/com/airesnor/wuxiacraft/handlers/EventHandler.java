@@ -13,7 +13,6 @@ import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
-import com.airesnor.wuxiacraft.dimensions.DimensionEarth;
 import com.airesnor.wuxiacraft.dimensions.WuxiaDimensions;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
@@ -25,7 +24,6 @@ import com.airesnor.wuxiacraft.utils.TeleportationUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
@@ -572,7 +570,7 @@ public class EventHandler {
 						CultivationLevel aux = CultivationLevel.BASE_LEVEL;
 						for (int i = 0; i < 3; i++)
 							aux = aux.getNextLevel(); //this way goes to dantian earth law lightning quick
-						if (cultivation.getCurrentLevel().greaterThan(aux)) { //if player cultivation is greater than dantian equivalent
+						if (cultivation.getCurrentLevel().isGreaterThan(aux)) { //if player cultivation is greater than dantian equivalent
 							double playerPosX = event.player.posX;
 							double playerPosZ = event.player.posZ;
 							ICultTech cultTech = CultivationUtils.getCultTechFromEntity(event.player);

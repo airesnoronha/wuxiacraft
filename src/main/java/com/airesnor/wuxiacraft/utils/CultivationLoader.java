@@ -1,7 +1,6 @@
 package com.airesnor.wuxiacraft.utils;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,13 +8,14 @@ import net.minecraftforge.fml.common.Loader;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class CultivationLoader {
 
 	public static void loadLevelsFromConfig() {
 		File levelsFile = new File(Loader.instance().getConfigDir(), "wuxiacraft/cultivationLevels.json");
-		List<CultivationLevel> loadedLevels = new ArrayList<>(CultivationLevel.DEFAULTS);
+		LinkedList<CultivationLevel> loadedLevels = new LinkedList<>(CultivationLevel.DEFAULTS);
 		Gson gson = new Gson();
 		try {
 			Reader reader = new FileReader(levelsFile);

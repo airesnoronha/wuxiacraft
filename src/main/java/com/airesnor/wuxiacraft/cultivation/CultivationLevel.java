@@ -3,13 +3,10 @@ package com.airesnor.wuxiacraft.cultivation;
 import com.airesnor.wuxiacraft.utils.TranslateUtils;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class CultivationLevel extends IForgeRegistryEntry.Impl<CultivationLevel> {
-	public static final ArrayList<CultivationLevel> DEFAULTS = new ArrayList<>();
+	public static final LinkedList<CultivationLevel> DEFAULTS = new LinkedList<>();
 	static {
 		DEFAULTS.add(new CultivationLevel("body_refinement", "soul_refinement", "Body Refinement", 5, 10, 1000F, 1.00F, 1.00F, false, false, false, false, false, false, false));
 		DEFAULTS.add(new CultivationLevel("soul_refinement","qi_paths_refinement", "Soul Refinement", 5, 80, 1790.85F, 1.20F, 3.00F, false, false, false, false, false, false, false));
@@ -230,7 +227,7 @@ public class CultivationLevel extends IForgeRegistryEntry.Impl<CultivationLevel>
 		return (long)Math.floor(this.foundationMaxStat * (1 + 0.7*subLevel));
 	}
 
-	public boolean greaterThan(CultivationLevel level) {
+	public boolean isGreaterThan(CultivationLevel level) {
 		boolean found = false; //found that level is a greater level
 		CultivationLevel aux = this;
 		while (aux != aux.getNextLevel()) { //the last level must point towards itself or game breaks

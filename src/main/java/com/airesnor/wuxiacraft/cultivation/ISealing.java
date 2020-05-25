@@ -34,9 +34,7 @@ public interface ISealing {
 
     void copyFromCultivation(ICultivation cultivation);
 
-
     //Foundation
-
 
     long getAgility();
 

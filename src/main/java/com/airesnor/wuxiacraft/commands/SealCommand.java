@@ -13,7 +13,6 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
@@ -22,7 +21,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
-// TODO - clean the code up for this class
+// TODO - clean the code up for this class, this can be heavily optimised
 public class SealCommand extends CommandBase {
 
     @Override
@@ -61,7 +60,7 @@ public class SealCommand extends CommandBase {
                     ISealing sealing = CultivationUtils.getSealingFromEntity(targetPlayer);
                     ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
                     IFoundation foundation = CultivationUtils.getFoundationFromEntity(targetPlayer);
-                    if (sealing.isCultivationSealed() && sealing.isFoundationSealed()) {
+                    if (sealing.isBothSealed()) {
                         setCultivationUnsealed(sealing, cultivation);
                         setFoundationUnsealed(sealing, foundation);
                         NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
@@ -80,6 +79,7 @@ public class SealCommand extends CommandBase {
                         TextComponentString text = new TextComponentString( targetPlayer.getName() + " is not sealed!");
                         text.getStyle().setColor(TextFormatting.RED);
                         playerMP.sendMessage(text);
+                        wrongUsage = false;
                     }
                 } else if (args.length == 2) {
                     EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[0]);
@@ -107,7 +107,23 @@ public class SealCommand extends CommandBase {
                         }
                         sealing.setSealed("foundation", false);
                     } else if (args[1].equalsIgnoreCase("status")) {
-
+                        TextComponentString message = new TextComponentString("Status:");
+                        sender.sendMessage(message);
+                        message = new TextComponentString("-Sealing-");
+                        sender.sendMessage(message);
+                        if (sealing.isCultivationSealed()) {
+                            message = new TextComponentString("Cultivation - Sealed");
+                        } else {
+                            message = new TextComponentString("Cultivation - Not Sealed");
+                        }
+                        sender.sendMessage(message);
+                        if (sealing.isFoundationSealed()) {
+                            message = new TextComponentString("Foundation - Sealed");
+                        } else {
+                            message = new TextComponentString("Foundation - Not Sealed");
+                        }
+                        sender.sendMessage(message);
+                        wrongUsage = false;
                     }
                 } else if (args.length == 4) {
                     EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[0]);
@@ -341,25 +357,14 @@ public class SealCommand extends CommandBase {
         foundation.setStrengthProgress(sealing.getStrengthProgress());
     }
 
-    private boolean isSealedCultivationHigher(ISealing sealing, CultivationLevel setCultivation, int setCultivationSubLevel) {
-        int indexSealedCultivation = 0;
-        int indexSetCultivation = 0;
-        int counter = 0;
+    public boolean isSealedCultivationHigher(ISealing sealing, CultivationLevel setCultivation, int setCultivationSubLevel) {
         CultivationLevel sealedCultivation = sealing.getCurrentLevel();
         int sealedSubLevel = sealing.getCurrentSubLevel();
-        for (CultivationLevel l : CultivationLevel.LOADED_LEVELS.values()) {
-            counter++;
-            if (l.getUName().equals(sealedCultivation))
-                indexSealedCultivation = counter;
-            if (l.getUName().equals(setCultivation))
-                indexSetCultivation = counter;
-            if (indexSealedCultivation != 0 && indexSetCultivation !=0)
-                break;
+        if ((sealedCultivation == setCultivation) && (setCultivationSubLevel < sealedSubLevel)) {
+            return true;
+        } else if (sealedCultivation.isGreaterThan(setCultivation)) {
+            return true;
         }
-        if (indexSetCultivation < indexSealedCultivation)
-            return true;
-        if ((indexSetCultivation == indexSealedCultivation) && (setCultivationSubLevel < sealedSubLevel))
-            return true;
         return false;
     }
 

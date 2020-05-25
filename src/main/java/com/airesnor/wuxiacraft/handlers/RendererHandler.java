@@ -163,7 +163,7 @@ public class RendererHandler {
 			WanderingCultivator cultivator = (WanderingCultivator) e.getEntity();
 			ICultivation playerCultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
 			ICultivation cultivation = new Cultivation();
-			if(cultivator.getCultivationLevel().greaterThan(playerCultivation.getCurrentLevel())) {
+			if(cultivator.getCultivationLevel().isGreaterThan(playerCultivation.getCurrentLevel())) {
 				cultivation.setCurrentLevel(playerCultivation.getCurrentLevel().getNextLevel());
 				cultivation.setCurrentSubLevel(-1);
 			} else {
