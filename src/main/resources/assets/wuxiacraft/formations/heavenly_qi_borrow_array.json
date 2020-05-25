@@ -1,0 +1,365 @@
+{
+	"formationName": "wuxiacraft:heavenly_qi_borrow_array",
+	"positions": [
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": -4,
+			"y": 0,
+			"z": -4
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": 0,
+			"y": 0,
+			"z": -4
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": 4,
+			"y": 0,
+			"z": -4
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": -3,
+			"y": 0,
+			"z": -3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": 0,
+			"y": 0,
+			"z": -3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": 3,
+			"y": 0,
+			"z": -3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": -2,
+			"y": 0,
+			"z": -2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": 0,
+			"y": 0,
+			"z": -2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": 2,
+			"y": 0,
+			"z": -2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": -4,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": -3,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": -2,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": 2,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": 3,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": 4,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": -2,
+			"y": 0,
+			"z": 2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": 0,
+			"y": 0,
+			"z": 2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": 2,
+			"y": 0,
+			"z": 2
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": -3,
+			"y": 0,
+			"z": 3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": 0,
+			"y": 0,
+			"z": 3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": 3,
+			"y": 0,
+			"z": 3
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": -4,
+			"y": 0,
+			"z": 4
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": 0,
+			"y": 0,
+			"z": 4
+		},
+		{
+			"blockState": "wuxiacraft:blood_rune_sky_law",
+			"x": 4,
+			"y": 0,
+			"z": 4
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": -5,
+			"y": 1,
+			"z": -5
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 5,
+			"y": 1,
+			"z": -5
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": -5,
+			"y": 1,
+			"z": 5
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 5,
+			"y": 1,
+			"z": 5
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": -5,
+			"y": 2,
+			"z": -5
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 5,
+			"y": 2,
+			"z": -5
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": -5,
+			"y": 2,
+			"z": 5
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 5,
+			"y": 2,
+			"z": 5
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": -5,
+			"y": 3,
+			"z": -5
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 5,
+			"y": 3,
+			"z": -5
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": -5,
+			"y": 3,
+			"z": 5
+		},
+		{
+			"blockState": "minecraft:gold_block",
+			"x": 5,
+			"y": 3,
+			"z": 5
+		},
+		{
+			"blockState": "minecraft:iron_block",
+			"x": -5,
+			"y": 0,
+			"z": -5
+		},
+		{
+			"blockState": "minecraft:iron_block",
+			"x": 5,
+			"y": 0,
+			"z": -5
+		},
+		{
+			"blockState": "minecraft:iron_block",
+			"x": -5,
+			"y": 0,
+			"z": 5
+		},
+		{
+			"blockState": "minecraft:iron_block",
+			"x": 5,
+			"y": 0,
+			"z": 5
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": -1,
+			"y": 0,
+			"z": -5
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": 0,
+			"y": 0,
+			"z": -5
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": 1,
+			"y": 0,
+			"z": -5
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": -2,
+			"y": 0,
+			"z": -4
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": 2,
+			"y": 0,
+			"z": -4
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": -4,
+			"y": 0,
+			"z": -2
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": 4,
+			"y": 0,
+			"z": -2
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": -5,
+			"y": 0,
+			"z": -1
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": 5,
+			"y": 0,
+			"z": -1
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": -5,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": 5,
+			"y": 0,
+			"z": 0
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": -5,
+			"y": 0,
+			"z": 1
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": 5,
+			"y": 0,
+			"z": 1
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": -4,
+			"y": 0,
+			"z": 2
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": 4,
+			"y": 0,
+			"z": 2
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": -2,
+			"y": 0,
+			"z": 4
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": 2,
+			"y": 0,
+			"z": 4
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": -1,
+			"y": 0,
+			"z": 5
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": 0,
+			"y": 0,
+			"z": 5
+		},
+		{
+			"blockState": "wuxiacraft:paint_rune",
+			"x": 1,
+			"y": 0,
+			"z": 5
+		}
+	]
+}

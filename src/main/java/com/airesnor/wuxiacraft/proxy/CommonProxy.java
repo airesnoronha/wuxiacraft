@@ -1,19 +1,26 @@
 package com.airesnor.wuxiacraft.proxy;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.blocks.Blocks;
+import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.capabilities.*;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
+import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.IFoundation;
+import com.airesnor.wuxiacraft.cultivation.ISealing;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
+import com.airesnor.wuxiacraft.dimensions.WuxiaDimensions;
+import com.airesnor.wuxiacraft.dimensions.biomes.WuxiaBiomes;
+import com.airesnor.wuxiacraft.dimensions.worldtypes.WorldTypeRegister;
 import com.airesnor.wuxiacraft.formation.FormationEventHandler;
-import com.airesnor.wuxiacraft.formation.FormationUtils;
+import com.airesnor.wuxiacraft.utils.FormationUtils;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.handlers.GuiHandler;
+import com.airesnor.wuxiacraft.handlers.RegistryHandler;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.CultivationLoader;
 import com.airesnor.wuxiacraft.utils.OreUtils;
@@ -22,6 +29,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -50,6 +58,8 @@ public class CommonProxy {
 		CapabilityManager.INSTANCE.register(ICultivation.class, new CultivationStorage(), new CultivationFactory());
 		CapabilityManager.INSTANCE.register(ICultTech.class, new CultTechStorage(), new CultTechFactory());
 		CapabilityManager.INSTANCE.register(ISkillCap.class, new SkillsStorage(), new SkillsFactory());
+		CapabilityManager.INSTANCE.register(IFoundation.class, new FoundationStorage(), new FoundationFactory());
+		CapabilityManager.INSTANCE.register(ISealing.class, new SealingStorage(), new SealingFactory());
 
 		NetworkWrapper.INSTANCE.registerMessage(new ActivatePartialSkillMessageHandler(), ActivatePartialSkillMessage.class, 167001, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new ActivateSkillMessageHandler(), ActivateSkillMessage.class, 167002, Side.SERVER);
@@ -66,13 +76,18 @@ public class CommonProxy {
 		NetworkWrapper.INSTANCE.registerMessage(new SpawnParticleMessageHandler(), SpawnParticleMessage.class, 167013, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new SpeedHandicapMessageHandler(), SpeedHandicapMessage.class, 167014, Side.SERVER);
 		NetworkWrapper.INSTANCE.registerMessage(new SuppressCultivationMessageHandler(), SuppressCultivationMessage.class, 167015, Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(new AddProgressToFoundationAttributeMessageHandler(), AddProgressToFoundationAttributeMessage.class, 167016, Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(new SelectFoundationAttributeMessageHandler(), SelectFoundationAttributeMessage.class, 167017, Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(new CapabilityRequestMessageHandler(), CapabilityRequestMessage.class, 167018, Side.SERVER);
 
-		NetworkWrapper.INSTANCE.registerMessage(new CultivationMessageHandler(), CultivationMessage.class, 167016, Side.CLIENT);
-		NetworkWrapper.INSTANCE.registerMessage(new CultTechMessageHandler(), CultTechMessage.class, 167017, Side.CLIENT);
-		NetworkWrapper.INSTANCE.registerMessage(new RespondCultivationLevelMessageHandler(), RespondCultivationLevelMessage.class, 167018, Side.CLIENT);
-		NetworkWrapper.INSTANCE.registerMessage(new SkillCapMessageHandler(), SkillCapMessage.class, 167019, Side.CLIENT);
-		NetworkWrapper.INSTANCE.registerMessage(new SpawnParticleMessageHandler(), SpawnParticleMessage.class, 167020, Side.CLIENT);
-		NetworkWrapper.INSTANCE.registerMessage(new SpeedHandicapMessageHandler(), SpeedHandicapMessage.class, 167021, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(new CultivationMessageHandler(), CultivationMessage.class, 168001, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(new CultTechMessageHandler(), CultTechMessage.class, 168002, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(new RespondCultivationLevelMessageHandler(), RespondCultivationLevelMessage.class, 168003, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(new SkillCapMessageHandler(), SkillCapMessage.class, 168004, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(new SpawnParticleMessageHandler(), SpawnParticleMessage.class, 168005, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(new SpeedHandicapMessageHandler(), SpeedHandicapMessage.class, 168006, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(new UnifiedCapabilitySyncMessageHandler(), UnifiedCapabilitySyncMessage.class, 168007, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(new CultivationLevelsMessageHandler(), CultivationLevelsMessage.class, 168008, Side.CLIENT);
 
 		MinecraftForge.EVENT_BUS.register(new CapabilitiesHandler());
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
@@ -84,24 +99,32 @@ public class CommonProxy {
 		Element.init();
 		Skills.init();
 		FormationUtils.init();
+
+		RegistryHandler.registerSmeltingRecipes();
+
+		//WorldType TEST = new WorldTypeTest("Test");
+		//WorldType WUXIATEST = new WorldTypeWuxiaTest("WuxiaTest");
+		WorldTypeRegister.registerWorldTypes();
 	}
 
 	public void preInit() {
 		CultivationLoader.loadLevelsFromConfig();
 
-		reflectOnField(SharedMonsterAttributes.class, new String[]{"MAX_HEALTH", "field_111267_a"}, (new RangedAttribute(null, "generic.maxHealth", 20.0D, Float.MIN_VALUE, 100000000000.0D)).setDescription("Max Health").setShouldWatch(true));
-		reflectOnField(SharedMonsterAttributes.class, new String[]{"ARMOR", "field_188791_g"}, (new RangedAttribute(null, "generic.armor", 0.0D, 0.0D, 1000.0D)).setShouldWatch(true));
-		reflectOnField(SharedMonsterAttributes.class, new String[]{"MOVEMENT_SPEED", "field_111263_d"}, (new RangedAttribute(null, "generic.movementSpeed", 0.699999988079071D, 0.0D, 3072.0D)).setDescription("Movement Speed").setShouldWatch(true));
-		reflectOnField(SharedMonsterAttributes.class, new String[]{"ATTACK_DAMAGE", "field_111264_e"}, new RangedAttribute(null, "generic.attackDamage", 2.0D, 0.0D, 1000000000.0D));
-		reflectOnField(SharedMonsterAttributes.class, new String[]{"ATTACK_SPEED", "field_188790_f"}, (new RangedAttribute(null, "generic.attackSpeed", 4.0D, 0.0D, 2048.0D)).setShouldWatch(true));
+		reflectOnField(SharedMonsterAttributes.class, new String[]{"MAX_HEALTH", "field_111267_a"}, (new RangedAttribute(null, "generic.maxHealth", 20.0D, Float.MIN_VALUE, 1000000000000000.0D)).setDescription("Max Health").setShouldWatch(true));
+		reflectOnField(SharedMonsterAttributes.class, new String[]{"ARMOR", "field_188791_g"}, (new RangedAttribute(null, "generic.armor", 0.0D, 0.0D, 100000000000000.0D)).setShouldWatch(true));
+		reflectOnField(SharedMonsterAttributes.class, new String[]{"MOVEMENT_SPEED", "field_111263_d"}, (new RangedAttribute(null, "generic.movementSpeed", 0.699999988079071D, 0.0D, 4096.0D)).setDescription("Movement Speed").setShouldWatch(true));
+		reflectOnField(SharedMonsterAttributes.class, new String[]{"ATTACK_DAMAGE", "field_111264_e"}, new RangedAttribute(null, "generic.attackDamage", 2.0D, 0.0D, 100000000000000.0D));
+		reflectOnField(SharedMonsterAttributes.class, new String[]{"ATTACK_SPEED", "field_188790_f"}, (new RangedAttribute(null, "generic.attackSpeed", 4.0D, 0.0D, 100000000000000.0D)).setShouldWatch(true));
 
 		WuxiaCraftConfig.preInit();
 		GameRegistry.registerWorldGenerator(new WorldGen(), 3);
 		registerRuneBlocks();
+		WuxiaBiomes.registerBiomes();
+		WuxiaDimensions.registerDimensions();
 	}
 
 	private void registerRuneBlocks() {
-		Blocks.initBloodRunes();
+		WuxiaBlocks.initBloodRunes();
 		//ForgeRegistries.BLOCKS.registerAll(Blocks.BLOOD_RUNES.values().toArray(new Block[0]));
 	}
 

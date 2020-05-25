@@ -46,4 +46,15 @@ public class MathUtils {
 		value = Math.min(value, max);
 		return value;
 	}
+
+	public static boolean inGroup(int value, int... group) {
+		boolean found = false;
+		for(int test : group) {
+			if(test == value) {
+				found = true;
+				break;
+			}
+		}
+		return found;
+	}
 }

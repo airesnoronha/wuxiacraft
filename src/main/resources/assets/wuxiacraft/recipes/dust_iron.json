@@ -1,0 +1,17 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"result": {
+		"item": "wuxiacraft:dust_iron",
+		"count": 1
+	},
+	"pattern": [
+		"ddd",
+		"ddd",
+		"ddd"
+	],
+	"key": {
+		"d": {
+			"item": "wuxiacraft:tiny_dust_iron"
+		}
+	}
+}

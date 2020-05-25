@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.commands;
 
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -8,6 +9,8 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,7 +31,7 @@ public class EnergyCommand extends CommandBase {
     @ParametersAreNonnullByDefault
     @Nonnull
     public String getUsage(ICommandSender sender) {
-        return "/energy set <amount>";
+        return "/energy set <player> <amount>";
     }
 
     @Override
@@ -44,17 +47,32 @@ public class EnergyCommand extends CommandBase {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if(args.length == 2) {
+        if(args.length == 3) {
             if(sender instanceof EntityPlayerMP) {
-                EntityPlayerMP playerMP = (EntityPlayerMP) sender;
-                ICultivation cultivation = CultivationUtils.getCultivationFromEntity(playerMP);
-                if(args[0].equalsIgnoreCase("set")) {
-                    if(args[1].equalsIgnoreCase("max")) {
-                        cultivation.setEnergy(cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()));
-                    } else {
-                        float amount = Float.parseFloat(args[1]);
-                        cultivation.setEnergy(amount);
+                boolean wrongUsage = true;
+                EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
+                if (targetPlayer != null) {
+                    EntityPlayerMP playerMP = (EntityPlayerMP) sender;
+                    ICultivation cultivation = CultivationUtils.getCultivationFromEntity(playerMP);
+                    IFoundation foundation = CultivationUtils.getFoundationFromEntity(playerMP);
+                    if(args[0].equalsIgnoreCase("set")) {
+                        if(args[2].equalsIgnoreCase("max")) {
+                            //cultivation.setEnergy(cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()));
+                            cultivation.setEnergy(cultivation.getMaxEnergy(foundation));
+                        } else {
+                            float amount = Float.parseFloat(args[2]);
+                            cultivation.setEnergy(amount);
+                        }
                     }
+                }else{
+                    TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
+                    text.getStyle().setColor(TextFormatting.RED);
+                    sender.sendMessage(text);
+                }
+                if (wrongUsage) {
+                    TextComponentString text = new TextComponentString("Invalid arguments, use /energy set <player> <amount>");
+                    text.getStyle().setColor(TextFormatting.RED);
+                    sender.sendMessage(text);
                 }
             }
         }
@@ -68,7 +86,13 @@ public class EnergyCommand extends CommandBase {
             if ("set".startsWith(args[0]))
                 completions.add("set");
         } else if(args.length == 2) {
-            if("max".startsWith(args[1]))
+            for (String player : server.getPlayerList().getOnlinePlayerNames()){
+                if (player.toLowerCase().startsWith(args[1].toLowerCase())) {
+                    completions.add(player);
+                }
+            }
+        } else if(args.length == 3) {
+            if("max".startsWith(args[2]))
                 completions.add("max");
         }
         return completions;

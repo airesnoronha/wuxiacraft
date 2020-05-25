@@ -33,10 +33,10 @@ public class ItemScroll extends Item implements IHasModel {
 	public ItemScroll(Technique technique) {
 		setUnlocalizedName(technique.getUName() + "_scroll");
 		setRegistryName(technique.getUName() + "_scroll");
-		setCreativeTab(Items.SCROLLS);
+		setCreativeTab(WuxiaItems.SCROLLS);
 		this.technique = technique;
 		this.maxStackSize = 1;
-		Items.ITEMS.add(this);
+		WuxiaItems.ITEMS.add(this);
 	}
 
 	@Override

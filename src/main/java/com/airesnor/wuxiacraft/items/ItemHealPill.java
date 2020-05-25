@@ -1,5 +1,7 @@
 package com.airesnor.wuxiacraft.items;
 
+import com.airesnor.wuxiacraft.cultivation.IFoundation;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,21 +23,22 @@ public class ItemHealPill extends ItemBase {
 	public ItemHealPill(String name, float amount) {
 		super(name);
 		this.amount = amount;
-		setCreativeTab(Items.PILLS);
+		setCreativeTab(WuxiaItems.PILLS);
 	}
 
 	@Override
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		if (entityLiving instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) entityLiving;
+			IFoundation foundation = CultivationUtils.getFoundationFromEntity(entityLiving);
 			stack.shrink(player.isCreative() ? 0 : 1);
 			if (stack.isEmpty())
 				stack = ItemStack.EMPTY;
-			if (this.amount <= player.getMaxHealth()) {
+			if (this.amount <= 10f + foundation.getConstitutionModifier()) {
 				player.heal(this.amount);
 			} else {
 				worldIn.createExplosion(player, player.posX, player.posY, player.posZ, 3f, true);
-				player.attackEntityFrom(DamageSource.causeExplosionDamage(player), this.amount);
+				player.attackEntityFrom(DamageSource.causeExplosionDamage(player), (float) (this.amount-foundation.getConstitutionModifier()));
 			}
 		}
 		return stack;

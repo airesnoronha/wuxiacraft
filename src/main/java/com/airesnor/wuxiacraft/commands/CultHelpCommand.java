@@ -30,7 +30,7 @@ public class CultHelpCommand extends CommandBase {
     @Override
     @ParametersAreNonnullByDefault
     @Nonnull
-    public String getUsage(ICommandSender sender) { return "/cultinfo"; }
+    public String getUsage(ICommandSender sender) { return "/culthelp"; }
 
     @Override
     @Nonnull
@@ -75,10 +75,17 @@ public class CultHelpCommand extends CommandBase {
                         "\nOrange - Hot" +
                         "\nYellow - Cooking" +
                         "\nRed - Wrong Recipe";
+                String page7 = "Foundation:" +
+                        "\n\nAgi - Movement Speed and Jump" +
+                        "\nDex - Attack Speed" +
+                        "\nSpi - Max Energy" +
+                        "\nCon - Max Health" +
+                        "\nRes - Armour" +
+                        "\nStr - Attack Power";
 
                 //NBT data editing
                 addBookPages("Anophobia & Aires", "WuxiaCraft Tutorial Book", tutorialBook, tagCompound, tagList,
-                        page1, page2, page3, page4, page5, page6);
+                        page1, page2, page3, page4, page5, page6, page7);
 
                 //Giving book to player
                 player.inventory.addItemStackToInventory(tutorialBook);

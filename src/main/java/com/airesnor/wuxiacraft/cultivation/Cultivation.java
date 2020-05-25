@@ -33,12 +33,16 @@ public class Cultivation implements ICultivation {
 		this.progress += amount;
 		if(allowBreakThrough) {
 			if (this.progress >= this.level.getProgressBySubLevel(this.subLevel)) { //no more repeated breakthrough, just one at a time
-				leveled = true;
 				this.progress -= this.level.getProgressBySubLevel(this.subLevel);
-				this.subLevel++;
-				if (this.subLevel >= this.level.subLevels) {
-					this.subLevel = 0;
-					this.level = this.level.getNextLevel();
+				leveled = true;
+				if(!this.level.tribulationEachSubLevel && this.subLevel+1 < this.level.subLevels) {
+					this.subLevel++;
+				}
+				else if (this.subLevel+1 >= this.level.subLevels) {
+					if(!this.level.getNextLevel().callsTribulation) {
+						this.subLevel = 0;
+						this.level = this.level.getNextLevel();
+					}
 				}
 			}
 		}
@@ -77,12 +81,12 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public void setEnergy(double amount) {
-		this.energy = Math.min(Math.max(0, amount), this.level.getMaxEnergyByLevel(this.subLevel));
+		this.energy = Math.max(0, amount);
 	}
 
 	@Override
 	public void addEnergy(double amount) {
-		this.energy = Math.min(this.energy + amount, this.level.getMaxEnergyByLevel(this.subLevel));
+		this.energy += amount;
 	}
 
 	@Override
@@ -152,8 +156,8 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public double getMaxEnergy() {
-		return this.level.getMaxEnergyByLevel(this.subLevel);
+	public double getMaxEnergy(IFoundation foundation) {
+		return 100 + 10*foundation.getSpiritModifier();
 	}
 
 	@Override

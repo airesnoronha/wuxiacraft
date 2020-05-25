@@ -1,9 +1,11 @@
 package com.airesnor.wuxiacraft.networking;
 
+import com.airesnor.wuxiacraft.capabilities.CultivationProvider;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
-import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class CultivationMessage implements IMessage {
@@ -14,39 +16,22 @@ public class CultivationMessage implements IMessage {
 		this.cultivation = cultivation;
 	}
 
+	@SuppressWarnings("unused")
 	public CultivationMessage() {
 		this.cultivation = new Cultivation();
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		boolean suppress = buf.readBoolean();
-		int messageSubLevel = buf.readInt();
-		double messageProgress = buf.readDouble();
-		double messageEnergy = buf.readDouble();
-		int pillCooldown = buf.readInt();
-		int length = buf.readInt();
-		byte[] bytes = new byte[length+1];
-		buf.readBytes(bytes, 0, length);
-		bytes[length] = '\0';
-		String cultlevelname = new String(bytes, 0, length);
-		this.cultivation.setCurrentLevel(CultivationLevel.REGISTERED_LEVELS.get(cultlevelname));
-		this.cultivation.setCurrentSubLevel(messageSubLevel);
-		this.cultivation.setProgress(messageProgress);
-		this.cultivation.setEnergy(messageEnergy);
-		this.cultivation.setSuppress(suppress);
-		cultivation.setPillCooldown(pillCooldown);
+		NBTTagCompound tag = ByteBufUtils.readTag(buf);
+		//noinspection ConstantConditions
+		CultivationProvider.CULTIVATION_CAP.getStorage().readNBT(CultivationProvider.CULTIVATION_CAP, this.cultivation, null, tag);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		byte[] bytes = this.cultivation.getCurrentLevel().levelName.getBytes();
-		buf.writeBoolean(this.cultivation.getSuppress());
-		buf.writeInt(this.cultivation.getCurrentSubLevel());
-		buf.writeDouble(this.cultivation.getCurrentProgress());
-		buf.writeDouble(this.cultivation.getEnergy());
-		buf.writeInt(this.cultivation.getPillCooldown());
-		buf.writeInt(bytes.length);
-		buf.writeBytes(bytes);
+		//noinspection ConstantConditions
+		NBTTagCompound tag = (NBTTagCompound) CultivationProvider.CULTIVATION_CAP.getStorage().writeNBT(CultivationProvider.CULTIVATION_CAP, this.cultivation, null);
+		ByteBufUtils.writeTag(buf, tag);
 	}
 }

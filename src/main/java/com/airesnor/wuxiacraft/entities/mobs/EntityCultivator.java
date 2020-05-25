@@ -169,7 +169,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	@Override
 	public void onEntityUpdate() {
 		super.onEntityUpdate();
-		this.cultivation.addEnergy(cultivation.getMaxEnergy()*0.0005f);
+		this.cultivation.addEnergy(cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel())*0.0005f);
 		if (skillCap.getCooldown() >= 0) {
 			skillCap.stepCooldown(-1f);
 		}

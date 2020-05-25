@@ -28,7 +28,7 @@ public class AskCultivationLevelMessageHandler implements IMessageHandler<AskCul
 							ICultivation cultivation = CultivationUtils.getCultivationFromEntity((EntityLivingBase) entity);
 							CultivationLevel level = cultivation.getCurrentLevel();
 							int subLevel = cultivation.getCurrentSubLevel();
-							if (level.greaterThan(message.askerLevel)) {
+							if (level.isGreaterThan(message.askerLevel)) {
 								level = message.askerLevel.getNextLevel();
 								subLevel = -1;
 							}

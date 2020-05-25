@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.formation;
 
+import com.airesnor.wuxiacraft.utils.FormationUtils;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;

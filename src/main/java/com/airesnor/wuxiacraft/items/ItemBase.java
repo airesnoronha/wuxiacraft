@@ -7,9 +7,9 @@ public class ItemBase extends Item implements IHasModel {
 	public ItemBase(String item_name) {
 		setUnlocalizedName(item_name);
 		setRegistryName(item_name);
-		setCreativeTab(Items.WUXIACRAFT_GENERAL);
+		setCreativeTab(WuxiaItems.WUXIACRAFT_GENERAL);
 
-		Items.ITEMS.add(this);
+		WuxiaItems.ITEMS.add(this);
 	}
 
 	@Override

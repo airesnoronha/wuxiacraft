@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -12,8 +13,6 @@ public interface ICultTech {
 
 	void remTechnique(Technique technique);
 
-	void updateTechniques(EntityPlayer player, ICultivation cultivation);
-
 	void progress(double amount);
 
 	List<KnownTechnique> getKnownTechniques();
@@ -23,5 +22,9 @@ public interface ICultTech {
 	List<Skill> getTechniqueSkills();
 
 	float getOverallCultivationSpeed();
+
+	void copyFrom(ICultTech cultTech);
+
+	boolean hasElement(Element element);
 
 }

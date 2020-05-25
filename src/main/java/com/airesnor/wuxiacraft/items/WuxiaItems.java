@@ -1,28 +1,23 @@
 package com.airesnor.wuxiacraft.items;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.FoodStats;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class Items {
+public class WuxiaItems {
 
 	/**
 	 * Contains all the items to be registered
@@ -53,7 +48,7 @@ public class Items {
 	public static final CreativeTabs WUXIACRAFT_GENERAL = new CreativeTabs("wuxiacraft.general") {
 		@Override
 		public ItemStack getTabIconItem() {
-			return new ItemStack(Items.PRIMORDIAL_CHAOS_STONE);
+			return new ItemStack(WuxiaItems.PRIMORDIAL_CHAOS_STONE);
 		}
 	};
 
@@ -64,7 +59,7 @@ public class Items {
 	public static final Item NATURAL_ODDITY_LOW = new ItemMonsterCore("natural_oddity_low").setUseDuration(100)
 			.setWhenUsing(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.56874F, false, false, true);
+				CultivationUtils.cultivatorAddProgress(actor, 0.56874F, false, false, true);
 				return true;
 			})
 			.setMaxStackSize(64).setCreativeTab(WUXIACRAFT_GENERAL);
@@ -143,7 +138,7 @@ public class Items {
 	public static final Item GIANT_ANT_CORE = new ItemMonsterCore("giant_ant_core").setUseDuration(100)
 			.setWhenUsing(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.45786f, false, false, true);
+				CultivationUtils.cultivatorAddProgress(actor, 0.45786f, false, false, true);
 				return true;
 			})
 			.setUseAction(actor -> {
@@ -156,7 +151,7 @@ public class Items {
 	public static final Item GIANT_BEE_CORE = new ItemMonsterCore("giant_bee_core").setUseDuration(80)
 			.setWhenUsing(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, cultivation, 0.45786f, false, false, true);
+				CultivationUtils.cultivatorAddProgress(actor, 0.45786f, false, false, true);
 				return true;
 			})
 			.setUseAction(actor -> {
@@ -212,5 +207,14 @@ public class Items {
 			}
 		}
 	}
+
+	public static final Item TINY_DUST_IRON = new ItemBase("tiny_dust_iron");
+	public static final Item TINY_DUST_GOLD = new ItemBase("tiny_dust_gold");
+	public static final Item TINY_DUST_DIAMOND = new ItemBase("tiny_dust_diamond");
+	public static final Item DUST_IRON = new ItemBase("dust_iron");
+	public static final Item DUST_GOLD = new ItemBase("dust_gold");
+	public static final Item DUST_DIAMOND = new ItemBase("dust_diamond");
+
+	public static final Item SPACE_RING = new ItemSpaceRing("space_ring", 6, 9);
 
 }

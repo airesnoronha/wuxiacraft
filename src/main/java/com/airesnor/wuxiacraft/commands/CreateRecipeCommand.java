@@ -3,7 +3,7 @@ package com.airesnor.wuxiacraft.commands;
 import com.airesnor.wuxiacraft.alchemy.Recipe;
 import com.airesnor.wuxiacraft.alchemy.Recipes;
 import com.airesnor.wuxiacraft.items.ItemRecipe;
-import com.airesnor.wuxiacraft.items.Items;
+import com.airesnor.wuxiacraft.items.WuxiaItems;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -59,7 +59,7 @@ public class CreateRecipeCommand extends CommandBase {
 				for(Recipe recipe : Recipes.RECIPES) {
 					if(recipe_name.equals(recipe.getUnlocalizedName())) {
 						recipe_found = recipe.getUnlocalizedName();
-						ItemStack stack = new ItemStack(Items.RECIPE_SCROLL, 1);
+						ItemStack stack = new ItemStack(WuxiaItems.RECIPE_SCROLL, 1);
 						ItemRecipe.setRecipe(stack, recipe);
 						Vec3d pos = sender.getPositionVector();
 						EntityItem item = new EntityItem(sender.getEntityWorld(), pos.x, pos.y, pos.z, stack);

@@ -3,7 +3,7 @@ package com.airesnor.wuxiacraft.blocks;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.items.IHasModel;
-import com.airesnor.wuxiacraft.items.Items;
+import com.airesnor.wuxiacraft.items.WuxiaItems;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.Block;
@@ -48,8 +48,8 @@ public class BlockTrainingPost extends Block implements IHasModel {
 		setRegistryName(new ResourceLocation(WuxiaCraft.MOD_ID, name));
 		this.amount = amount;
 		setHarvestLevel("axe", 1);
-		setCreativeTab(Items.WUXIACRAFT_GENERAL);
-		Blocks.BLOCKS.add(this);
+		setCreativeTab(WuxiaItems.WUXIACRAFT_GENERAL);
+		WuxiaBlocks.BLOCKS.add(this);
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class BlockTrainingPost extends Block implements IHasModel {
 		super.onBlockClicked(worldIn, pos, playerIn);
 		double amount = this.amount * playerIn.getCooledAttackStrength(0.5f); //game always use 0.5 idk y
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(playerIn);
-		CultivationUtils.cultivatorAddProgress(playerIn, cultivation, amount, false, false, false);
+		CultivationUtils.cultivatorAddProgress(playerIn, amount, false, false, false);
 		playerIn.attackEntityFrom(DamageSource.GENERIC.setDamageBypassesArmor(), (float)amount);
 	}
 
@@ -169,10 +169,10 @@ public class BlockTrainingPost extends Block implements IHasModel {
 	}
 
 	public Item getItem() {
-		if(Blocks.TRAINING_POSTS.containsValue(this)) {
-			return Items.TRAINING_POSTS.get(this.getUnlocalizedName().substring(5)); //removes tile.
+		if(WuxiaBlocks.TRAINING_POSTS.containsValue(this)) {
+			return WuxiaItems.TRAINING_POSTS.get(this.getUnlocalizedName().substring(5)); //removes tile.
 		}
-		return Items.TRAINING_POSTS.get("training_post_oak_stick");
+		return WuxiaItems.TRAINING_POSTS.get("training_post_oak_stick");
 	}
 
 	@SuppressWarnings("deprecation")

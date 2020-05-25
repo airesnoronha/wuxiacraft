@@ -1,0 +1,28 @@
+{
+	"forge-marker": 1,
+	"customs": {
+		"flip-v": true
+	},
+	"variants": {
+		"facing=north": {
+			"model": "wuxiacraft:magical_grinder.obj",
+			"y": 180
+		},
+		"facing=east": {
+			"model": "wuxiacraft:magical_grinder.obj",
+			"y": -90
+		},
+		"facing=south": {
+			"model": "wuxiacraft:magical_grinder.obj",
+			"y": 0
+		},
+		"facing=west": {
+			"model": "wuxiacraft:magical_grinder.obj",
+			"y": 90
+		},
+		"inventory": {
+			"model": "wuxiacraft:magical_grinder.obj",
+			"y": 180
+		}
+	}
+}

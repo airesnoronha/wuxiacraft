@@ -1,8 +1,9 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.blocks.Blocks;
+import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
+import com.airesnor.wuxiacraft.dimensions.biomes.WuxiaBiomes;
 import com.airesnor.wuxiacraft.entities.mobs.GiantAnt;
 import com.airesnor.wuxiacraft.entities.mobs.GiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
@@ -11,14 +12,18 @@ import com.airesnor.wuxiacraft.entities.skills.SwordBeamThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
 import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
+import com.airesnor.wuxiacraft.entities.tileentity.GrinderTileEntity;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
 import com.airesnor.wuxiacraft.formation.FormationTileEntity;
 import com.airesnor.wuxiacraft.items.IHasModel;
-import com.airesnor.wuxiacraft.items.Items;
+import com.airesnor.wuxiacraft.items.WuxiaItems;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Biomes;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -35,28 +40,29 @@ public class RegistryHandler {
 	@SubscribeEvent
 	public static void onItemRegister(RegistryEvent.Register<Item> event) {
 		WuxiaCraft.logger.info("Registering items.");
-		event.getRegistry().registerAll(Items.ITEMS.toArray(new Item[0]));
+		event.getRegistry().registerAll(WuxiaItems.ITEMS.toArray(new Item[0]));
 
 	}
 
 	@SubscribeEvent
 	public static void onBlockRegister(RegistryEvent.Register<Block> event) {
 		WuxiaCraft.logger.info("Registering blocks.");
-		event.getRegistry().registerAll(Blocks.BLOCKS.toArray(new Block[0]));
+		event.getRegistry().registerAll(WuxiaBlocks.BLOCKS.toArray(new Block[0]));
 
 		GameRegistry.registerTileEntity(CauldronTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "cauldron_tile_entity"));
 		GameRegistry.registerTileEntity(SpiritStoneStackTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "spirit_stone_stack_tile_entity"));
 		GameRegistry.registerTileEntity(FormationTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "formation_tile_entity"));
+		GameRegistry.registerTileEntity(GrinderTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "grinder_tile_entity"));
 	}
 
 	@SubscribeEvent
 	public static void onModelRegister(ModelRegistryEvent event) {
-		for (Item item : Items.ITEMS) {
+		for (Item item : WuxiaItems.ITEMS) {
 			if (item instanceof IHasModel) {
 				((IHasModel) item).registerModels();
 			}
 		}
-		for (Block block : Blocks.BLOCKS) {
+		for (Block block : WuxiaBlocks.BLOCKS) {
 			if (block instanceof IHasModel) {
 				((IHasModel) block).registerModels();
 			}
@@ -85,7 +91,13 @@ public class RegistryHandler {
 						Biomes.TAIGA_HILLS,
 						Biomes.PLAINS,
 						Biomes.JUNGLE_EDGE,
-						Biomes.MESA
+						Biomes.MESA,
+						WuxiaBiomes.MINING,
+						WuxiaBiomes.EARTH,
+						WuxiaBiomes.FIRE,
+						WuxiaBiomes.METAL,
+						WuxiaBiomes.WATER,
+						WuxiaBiomes.WOOD
 				)
 				.build();
 		EntityEntry giantBeeEntity = EntityEntryBuilder.create()
@@ -108,7 +120,13 @@ public class RegistryHandler {
 						Biomes.TAIGA_HILLS,
 						Biomes.PLAINS,
 						Biomes.JUNGLE_EDGE,
-						Biomes.MESA
+						Biomes.MESA,
+						WuxiaBiomes.MINING,
+						WuxiaBiomes.EARTH,
+						WuxiaBiomes.FIRE,
+						WuxiaBiomes.METAL,
+						WuxiaBiomes.WATER,
+						WuxiaBiomes.WOOD
 				)
 				.build();
 		EntityEntry wanderingCultivatorEntity = EntityEntryBuilder.create()
@@ -117,7 +135,7 @@ public class RegistryHandler {
 				.name("wandering_cultivator")
 				.tracker(150, 3, false)
 				.egg(0x202020, 0xFACB27)
-				.spawn(EnumCreatureType.MONSTER, 15, 1, 1,
+				.spawn(EnumCreatureType.MONSTER, 5, 1, 1,
 						Biomes.BEACH,
 						Biomes.BIRCH_FOREST,
 						Biomes.DESERT,
@@ -133,6 +151,14 @@ public class RegistryHandler {
 						Biomes.JUNGLE_EDGE,
 						Biomes.MESA
 				)
+				.spawn(EnumCreatureType.MONSTER, 12, 1, 1,
+						Biomes.HELL,
+						WuxiaBiomes.MINING,
+						WuxiaBiomes.EARTH,
+						WuxiaBiomes.FIRE,
+						WuxiaBiomes.METAL,
+						WuxiaBiomes.WATER,
+						WuxiaBiomes.WOOD)
 				.build();
 		EntityEntry fireThrowable = EntityEntryBuilder.create()
 				.entity(FireThrowable.class)
@@ -165,6 +191,15 @@ public class RegistryHandler {
 		event.getRegistry().register(waterNeedleThrowable);
 		event.getRegistry().register(waterBladeThrowable);
 		event.getRegistry().register(swordBeamThrowable);
+	}
+
+	//ain't an event
+	public static void registerSmeltingRecipes() {
+		FurnaceRecipes.instance().addSmelting(WuxiaItems.DUST_IRON, new ItemStack(Items.IRON_INGOT), 2);
+		FurnaceRecipes.instance().addSmelting(WuxiaItems.TINY_DUST_IRON, new ItemStack(Items.IRON_NUGGET), 2);
+		FurnaceRecipes.instance().addSmelting(WuxiaItems.DUST_GOLD, new ItemStack(Items.GOLD_INGOT), 2);
+		FurnaceRecipes.instance().addSmelting(WuxiaItems.TINY_DUST_GOLD, new ItemStack(Items.GOLD_NUGGET), 2);
+		FurnaceRecipes.instance().addSmelting(WuxiaItems.DUST_DIAMOND, new ItemStack(Items.DIAMOND), 2);
 	}
 
 	@SubscribeEvent

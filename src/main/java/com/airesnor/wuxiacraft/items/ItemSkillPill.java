@@ -1,6 +1,8 @@
 package com.airesnor.wuxiacraft.items;
 
+import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillAction;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,7 +28,7 @@ public class ItemSkillPill extends ItemBase {
 		super(name);
 		this.action = null;
 		this.amount = amount;
-		setCreativeTab(Items.PILLS);
+		setCreativeTab(WuxiaItems.PILLS);
 	}
 
 	public ItemSkillPill setAction(ISkillAction acton) {
@@ -38,13 +40,14 @@ public class ItemSkillPill extends ItemBase {
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		if (entityLiving instanceof EntityPlayer) {
 			if (this.action != null) {
-				if(this.amount <= entityLiving.getMaxHealth() * 0.4F) {
+				IFoundation foundation = CultivationUtils.getFoundationFromEntity(entityLiving);
+				if(this.amount <= foundation.getConstitutionModifier()) {
 					if (this.action.activate(entityLiving))
 						stack.shrink(1);
 				} else {
 					stack.shrink(1);
 					worldIn.createExplosion(entityLiving, entityLiving.posX, entityLiving.posY, entityLiving.posZ, 3f, true);
-					entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), this.amount*2);
+					entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), (this.amount-(float)foundation.getConstitutionModifier())*2);
 				}
 			}
 		}

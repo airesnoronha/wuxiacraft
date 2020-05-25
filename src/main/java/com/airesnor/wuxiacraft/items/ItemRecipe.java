@@ -30,7 +30,7 @@ public class ItemRecipe extends Item implements IHasModel {
 	public ItemRecipe(String name) {
 		setRegistryName(name);
 		setUnlocalizedName(name);
-		Items.ITEMS.add(this);
+		WuxiaItems.ITEMS.add(this);
 		setMaxStackSize(1);
 	}
 

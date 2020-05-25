@@ -1,10 +1,13 @@
 package com.airesnor.wuxiacraft.commands;
 
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
+import com.airesnor.wuxiacraft.cultivation.Foundation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.networking.CultivationMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
+import com.airesnor.wuxiacraft.networking.UnifiedCapabilitySyncMessage;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.command.CommandBase;
@@ -49,8 +52,10 @@ public class ResetCultCommand extends CommandBase {
 				EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				cultivation.copyFrom(new Cultivation());
-				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
-				EventHandler.applyModifiers(player, cultivation);
+				IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
+				foundation.copyFrom(new Foundation());
+				NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, CultivationUtils.getCultTechFromEntity(player), CultivationUtils.getSkillCapFromEntity(player), foundation, true), player);
+				EventHandler.applyModifiers(player);
 			}
 			else {
 				TextComponentString text = new TextComponentString("You ain't a player my friend.");
@@ -64,7 +69,7 @@ public class ResetCultCommand extends CommandBase {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				cultivation.copyFrom(new Cultivation());
 				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
-				EventHandler.applyModifiers(player, cultivation);
+				EventHandler.applyModifiers(player);
 			} else {
 				TextComponentString text = new TextComponentString("Couldn't find player " + args[0]);
 				text.getStyle().setColor(TextFormatting.RED);
@@ -80,7 +85,15 @@ public class ResetCultCommand extends CommandBase {
 
 	@Override
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
-		return new ArrayList<>();
+		List<String> completions = new ArrayList<>();
+		if(args.length == 1) {
+			for(String player : server.getPlayerList().getOnlinePlayerNames()) {
+				if(player.toLowerCase().startsWith(args[0].toLowerCase())) {
+					completions.add(player);
+				}
+			}
+		}
+		return completions;
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.formation;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.entities.tileentity.GrinderTileEntity;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -47,16 +48,28 @@ public class FormationQiGathering extends Formation {
 	public int doUpdate(World worldIn, BlockPos source, FormationTileEntity parent) {
 		NBTTagCompound info = parent.getFormationInfo();
 		List<FormationTileEntity> formations = new ArrayList<>();
+		List<GrinderTileEntity> grinders = new ArrayList<>();
 		if (parent.getTimeActivated() % 40 == 0) { //search for other formations
 			for (TileEntity te : worldIn.loadedTileEntityList) {
 				if (te instanceof FormationTileEntity && te.getPos().getDistance(source.getX(), source.getY(), source.getZ()) < this.getRange()) {
 					formations.add((FormationTileEntity) te);
+					if(((FormationTileEntity) te).getFormation() instanceof FormationQiGathering && te!=parent) {
+						parent.stopFormation();
+					}
+				}
+				if (te instanceof GrinderTileEntity && te.getPos().getDistance(source.getX(), source.getY(), source.getZ()) < this.getRange()) {
+					grinders.add((GrinderTileEntity) te);
 				}
 			}
 			info.setInteger("formations-length", formations.size());
 			for (FormationTileEntity fte : formations) { //store the formations blockpos
 				int index = formations.indexOf(fte);
 				info.setTag("f-" + index, writeBlockPosToNBT(fte.getPos()));
+			}
+			info.setInteger("grinders-length", grinders.size());
+			for (GrinderTileEntity grinder : grinders) { //store the formations blockpos
+				int index = grinders.indexOf(grinder);
+				info.setTag("g-" + index, writeBlockPosToNBT(grinder.getPos()));
 			}
 			parent.setFormationInfo(info);
 		} else { //read from info
@@ -69,10 +82,25 @@ public class FormationQiGathering extends Formation {
 					}
 				}
 			}
+			if (info.hasKey("grinders-length")) {
+				int length = info.getInteger("grinders-length");
+				for (int i = 0; i < length; i++) {
+					TileEntity te = worldIn.getTileEntity(readBlockPosFromNBT((NBTTagCompound) info.getTag("g-" + i)));
+					if (te instanceof GrinderTileEntity) {
+						grinders.add((GrinderTileEntity) te);
+					}
+				}
+			}
 		}//do stuff intended with those targets
 		for (FormationTileEntity formation : formations) {
 			if (!formation.hasEnergy(formation.getMaxEnergy())) {
 				formation.addEnergy(this.generation);
+				break;
+			}
+		}
+		for (GrinderTileEntity grinder : grinders) {
+			if (!grinder.hasEnergy(grinder.getMaxEnergy())) {
+				grinder.addEnergy(this.generation);
 				break;
 			}
 		}

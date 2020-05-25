@@ -8,21 +8,25 @@ import net.minecraftforge.fml.common.Loader;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class CultivationLoader {
 
 	public static void loadLevelsFromConfig() {
 		File levelsFile = new File(Loader.instance().getConfigDir(), "wuxiacraft/cultivationLevels.json");
-		List<CultivationLevel> loadedLevels = new ArrayList<>();
+		LinkedList<CultivationLevel> loadedLevels = new LinkedList<>(CultivationLevel.DEFAULTS);
 		Gson gson = new Gson();
 		try {
 			Reader reader = new FileReader(levelsFile);
 			CultivationLevelFileFormat read = gson.fromJson(reader, CultivationLevelFileFormat.class);
+			loadedLevels.clear();
 			for (CultivationLevelFileFormat.CultivationLevelFormat level : read.levels) {
 				loadedLevels.add(new CultivationLevel(level.levelName,
 						level.nextLevelName,
+						level.displayName,
 						level.subLevels,
+						level.maxFoundationStat,
 						level.baseProgress,
 						(float) level.baseSpeed,
 						(float) level.baseStrength,
@@ -30,11 +34,13 @@ public class CultivationLoader {
 						level.needNoFood,
 						level.canFly,
 						level.freeFlight,
-						level.teleportation));
+						level.teleportation,
+						level.callsTribulation,
+						level.tribulationEachSubLevel));
 			}
 		} catch (FileNotFoundException e) {
 			WuxiaCraft.logger.error("Couldn't find the cultivation levels file. creating a new one.");
-			loadedLevels = CultivationLevel.DEFAULTS;
+		} finally {
 			try {
 				if (levelsFile.getParentFile() != null) {
 					if (levelsFile.getParentFile().mkdirs()) {
@@ -53,7 +59,9 @@ public class CultivationLoader {
 					CultivationLevelFileFormat.CultivationLevelFormat levelToWrite = new CultivationLevelFileFormat.CultivationLevelFormat();
 					levelToWrite.levelName = level.levelName;
 					levelToWrite.nextLevelName = level.nextLevelName;
+					levelToWrite.displayName = level.displayName;
 					levelToWrite.subLevels = level.subLevels;
+					levelToWrite.maxFoundationStat = level.foundationMaxStat;
 					levelToWrite.baseProgress = level.baseProgress;
 					levelToWrite.baseSpeed = level.baseSpeedModifier;
 					levelToWrite.baseStrength = level.baseStrengthModifier;
@@ -62,6 +70,8 @@ public class CultivationLoader {
 					levelToWrite.canFly = level.canFly;
 					levelToWrite.freeFlight = level.freeFlight;
 					levelToWrite.teleportation = level.teleportation;
+					levelToWrite.callsTribulation = level.callsTribulation;
+					levelToWrite.tribulationEachSubLevel = level.tribulationEachSubLevel;
 					toWrite.levels.add(levelToWrite);
 				}
 				gson = new GsonBuilder().setPrettyPrinting().create();
@@ -71,27 +81,33 @@ public class CultivationLoader {
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
-		} finally {
 			for (CultivationLevel loadedLevel : loadedLevels) {
 				CultivationLevel.REGISTERED_LEVELS.put(loadedLevel.levelName, loadedLevel);
 			}
-			CultivationLevel.BASE_LEVEL = loadedLevels.get(0); // gets the first registered level, i hope
+			CultivationLevel.REGISTERED_BASE_LEVEL = loadedLevels.get(0); // gets the first registered level, i hope
+			CultivationLevel.LOADED_LEVELS.clear();
+			CultivationLevel.LOADED_LEVELS.putAll(CultivationLevel.REGISTERED_LEVELS);
+			CultivationLevel.BASE_LEVEL = CultivationLevel.REGISTERED_BASE_LEVEL;
 		}
 	}
 
 	public static class CultivationLevelFileFormat {
 		public static class CultivationLevelFormat {
-			public String levelName;
-			public String nextLevelName;
-			public int subLevels;
-			public double baseProgress;
-			public double baseStrength;
-			public double baseSpeed;
-			public boolean energyAsFood;
-			public boolean needNoFood;
-			public boolean canFly;
-			public boolean freeFlight;
-			public boolean teleportation;
+			public String levelName = "base_level";
+			public String nextLevelName = "base_level";
+			public String displayName= "Base Level";
+			public int subLevels = 5;
+			public long maxFoundationStat = 10;
+			public double baseProgress = 1000;
+			public double baseStrength = 1;
+			public double baseSpeed = 1;
+			public boolean energyAsFood = false;
+			public boolean needNoFood = false;
+			public boolean canFly = false;
+			public boolean freeFlight = false;
+			public boolean teleportation = false;
+			public boolean callsTribulation = true;
+			public boolean tribulationEachSubLevel = true;
 		}
 
 		public List<CultivationLevelFormat> levels;

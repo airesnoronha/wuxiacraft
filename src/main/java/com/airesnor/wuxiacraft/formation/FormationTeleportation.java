@@ -57,7 +57,6 @@ public class FormationTeleportation extends Formation {
 			}
 			parent.setFormationInfo(info);
 		}
-		int activated = 0;
 		if(info.hasKey("target-x")&&info.hasKey("target-y")&&info.hasKey("target-z")) {
 			double targetX = info.getInteger("target-x");
 			double targetY = info.getInteger("target-y");
@@ -65,7 +64,9 @@ public class FormationTeleportation extends Formation {
 			double distance = new Vec3d(targetX, targetY, targetZ).distanceTo(new Vec3d(source.getX(), source.getY(), source.getZ()));
 			List<Entity> entities = worldIn.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(source).grow(2));
 			for(Entity entity : entities) {
-				if(parent.hasEnergy(this.getOperationCost()*(activated+1))) {
+				if(parent.hasEnergy(this.getOperationCost()*99)) { //all energy
+					parent.remEnergy(this.getOperationCost()*99);
+					parent.stopFormation(); //only one person
 					if (distance < this.getRange()) { //safe landing
 						entity.setPositionAndUpdate(targetX, targetY, targetZ);
 					} else { //thrown away
@@ -86,11 +87,11 @@ public class FormationTeleportation extends Formation {
 						entity.velocityChanged = true;
 						entity.setPositionAndUpdate(newX, newY, newZ);
 					}
-					activated++;
+					break; //only one person
 				}
 			}
 		}
-		return activated;
+		return 0;
 	}
 
 	@SideOnly(Side.CLIENT)
