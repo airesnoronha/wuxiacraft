@@ -4,12 +4,12 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.items.IItemHandler;
 
-public class SpaceRingGui extends GuiContainer {
+public class SpatialRingGui extends GuiContainer {
 
     private final IItemHandler inv;
 
-    public SpaceRingGui(IItemHandler inv, EntityPlayer player) {
-        super(new SpaceRingContainer(inv, player));
+    public SpatialRingGui(IItemHandler inv, EntityPlayer player) {
+        super(new SpatialRingContainer(inv, player));
 
         this.xSize = 200;
         this.ySize = 250;

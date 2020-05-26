@@ -364,8 +364,9 @@ public class SealCommand extends CommandBase {
             return true;
         } else if (sealedCultivation.isGreaterThan(setCultivation)) {
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     private boolean isSealedFoundationHigher(ISealing sealing, String attribute, long value) {

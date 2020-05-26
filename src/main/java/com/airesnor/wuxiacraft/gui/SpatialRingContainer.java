@@ -1,6 +1,6 @@
 package com.airesnor.wuxiacraft.gui;
 
-import com.airesnor.wuxiacraft.items.ItemSpaceRing;
+import com.airesnor.wuxiacraft.items.ItemSpatialRing;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
@@ -8,23 +8,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class SpaceRingContainer extends Container {
+public class SpatialRingContainer extends Container {
 
     private final int inventorySize;
-    private final int spaceRingRows;
-    private final int spaceRingColumns;
+    private final int spatialRingRows;
+    private final int spatialRingColumns;
 
-    public SpaceRingContainer(IItemHandler inv, EntityPlayer player) {
+    public SpatialRingContainer(IItemHandler inv, EntityPlayer player) {
         this.inventorySize = inv.getSlots();
-        this.spaceRingRows = ItemSpaceRing.spaceRingRows;
-        this.spaceRingColumns = ItemSpaceRing.spaceRingColumns;
+        this.spatialRingRows = ItemSpatialRing.spatialRingRows;
+        this.spatialRingColumns = ItemSpatialRing.spatialRingColumns;
 
         int xPos = 8;
         int yPos = 18;
 
         //0-53 Space Ring inventory
-        for (int y = 0; y < spaceRingRows; ++y) {
-            for (int x = 0; x < spaceRingColumns; ++x) {
+        for (int y = 0; y < spatialRingRows; ++y) {
+            for (int x = 0; x < spatialRingColumns; ++x) {
                 addSlotToContainer(new SlotItemHandler(inv, x + y * 9, xPos + x * 18, yPos + y * 18));
             }
         }

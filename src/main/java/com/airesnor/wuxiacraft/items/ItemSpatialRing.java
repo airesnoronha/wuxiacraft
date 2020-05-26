@@ -16,28 +16,28 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import javax.annotation.Nullable;
 
-public class ItemSpaceRing extends Item {
+public class ItemSpatialRing extends Item {
 
-    private int spaceRingSize;
-    public static int spaceRingRows;
-    public static int spaceRingColumns;
+    private int spatialRingSize;
+    public static int spatialRingRows;
+    public static int spatialRingColumns;
 
-    public ItemSpaceRing(String name, int spaceRingRows, int spaceRingColumns) {
+    public ItemSpatialRing(String name, int spatialRingRows, int spatialRingColumns) {
         setRegistryName(name);
         setUnlocalizedName(name);
         WuxiaItems.ITEMS.add(this);
         setCreativeTab(WuxiaItems.WUXIACRAFT_GENERAL);
         setMaxStackSize(1);
 
-        this.spaceRingSize = spaceRingRows * spaceRingColumns;
-        this.spaceRingRows = spaceRingRows;
-        this.spaceRingColumns = spaceRingColumns;
+        this.spatialRingSize = spatialRingRows * spatialRingColumns;
+        this.spatialRingRows = spatialRingRows;
+        this.spatialRingColumns = spatialRingColumns;
     }
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         if (!worldIn.isRemote) {
-            playerIn.openGui(WuxiaCraft.instance, GuiHandler.SPACE_RING_GUI_ID, worldIn, playerIn.getPosition().getX(), playerIn.getPosition().getY(), playerIn.getPosition().getZ());
+            playerIn.openGui(WuxiaCraft.instance, GuiHandler.SPATIAL_RING_GUI_ID, worldIn, playerIn.getPosition().getX(), playerIn.getPosition().getY(), playerIn.getPosition().getZ());
         }
         return new ActionResult(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
     }
@@ -49,8 +49,8 @@ public class ItemSpaceRing extends Item {
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-        if(stack.getItem() instanceof ItemSpaceRing) {
-            return new WuxiaItemInventoryProvider(this.spaceRingSize);
+        if(stack.getItem() instanceof ItemSpatialRing) {
+            return new WuxiaItemInventoryProvider(this.spatialRingSize);
         }
         return null;
     }
