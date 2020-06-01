@@ -60,10 +60,9 @@ public class WuxiaBlocks {
 			}
 		}
 	}
-
 	public static final Block WEAK_LIFE_STONE_VEIN = new SpiritVeinOre("weak_life_stone_vein").setDroppedItem(WuxiaItems.WEAK_LIFE_STONE);
 	public static final Block SOUL_STONE_VEIN = new SpiritVeinOre("soul_stone_vein").setDroppedItem(WuxiaItems.SOUL_STONE);
-	public static final Block PRIMORDIAL_STONE = new SpiritVeinOre("primordial_stone_vein").setDroppedItem(WuxiaItems.PRIMORDIAL_STONE);
+	public static final Block PRIMORDIAL_STONE_VEIN = new SpiritVeinOre("primordial_stone_vein").setDroppedItem(WuxiaItems.PRIMORDIAL_STONE);
 	public static final Block FIVE_ELEMENT_PURE_CRYSTAL_VEIN = new SpiritVeinOre("five_element_pure_crystal_vein").setDroppedItem(WuxiaItems.FIVE_ELEMENT_PURE_CRYSTAL);
 	public static final Block PURE_QI_CRYSTAL_VEIN = new SpiritVeinOre("pure_qi_crystal_vein").setDroppedItem(WuxiaItems.PURE_QI_CRYSTAL);
 	public static final Block EARTH_LAW_CRYSTAL_VEIN = new SpiritVeinOre("earth_law_crystal_vein").setDroppedItem(WuxiaItems.EARTH_LAW_CRYSTAL);

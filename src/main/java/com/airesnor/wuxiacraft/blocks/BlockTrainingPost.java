@@ -2,7 +2,6 @@ package com.airesnor.wuxiacraft.blocks;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.items.IHasModel;
 import com.airesnor.wuxiacraft.items.WuxiaItems;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import mcp.MethodsReturnNonnullByDefault;
@@ -33,7 +32,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class BlockTrainingPost extends Block implements IHasModel {
+public class BlockTrainingPost extends Block {
 
 	public static final PropertyEnum<BlockDoor.EnumDoorHalf> HALF = PropertyEnum.create("half", BlockDoor.EnumDoorHalf.class);
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
@@ -135,11 +134,6 @@ public class BlockTrainingPost extends Block implements IHasModel {
 				break;
 		}
 		return value;
-	}
-
-	@Override
-	public void registerModels() {
-		WuxiaCraft.proxy.registerItemRenderer(ItemBlock.getItemFromBlock(this), 0, "inventory");
 	}
 
 	@SuppressWarnings("deprecation")

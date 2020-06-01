@@ -25,18 +25,13 @@ import java.util.Random;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class ItemRecipe extends Item implements IHasModel {
+public class ItemRecipe extends Item {
 
 	public ItemRecipe(String name) {
 		setRegistryName(name);
 		setUnlocalizedName(name);
 		WuxiaItems.ITEMS.add(this);
 		setMaxStackSize(1);
-	}
-
-	@Override
-	public void registerModels() {
-		WuxiaCraft.proxy.registerCustomModelLocation(this, 0, "inventory", "wuxiacraft:recipe_scroll");
 	}
 
 	@Override

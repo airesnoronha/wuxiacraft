@@ -90,10 +90,4 @@ public class SpiritVeinOre extends BlockBase {
 			}
 		}
 	}
-
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void registerModels() {
-		WuxiaCraft.proxy.registerCustomModelLocation(ItemBlock.getItemFromBlock(this), 0, "inventory", "wuxiacraft:spirit_vein_ore");
-	}
 }

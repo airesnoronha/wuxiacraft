@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.items;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -27,11 +26,6 @@ public class ItemBloodContainer extends ItemBase {
 	}
 
 	@Override
-	public void registerModels() {
-		WuxiaCraft.proxy.registerCustomModelLocation(this, 0, "inventory", "wuxiacraft:blood_bottle");
-	}
-
-	@Override
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		if(stack.getTagCompound() != null) {
 			NBTTagCompound tag = stack.getTagCompound();
@@ -43,5 +37,4 @@ public class ItemBloodContainer extends ItemBase {
 		}
 		super.addInformation(stack, worldIn, tooltip, flagIn);
 	}
-
 }

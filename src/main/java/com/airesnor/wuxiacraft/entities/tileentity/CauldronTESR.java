@@ -28,7 +28,7 @@ public class CauldronTESR extends TileEntitySpecialRenderer<CauldronTileEntity> 
 		GlStateManager.translate(x, y, z);
 		//GlStateManager.disableRescaleNormal();
 
-		if (te.isHasFirewood()) {
+		if (te.hasFirewood()) {
 			renderFirewood(te);
 		}
 

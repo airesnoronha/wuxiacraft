@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.blocks.SpiritVeinOre;
 import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.dimensions.biomes.WuxiaBiomes;
@@ -11,28 +12,30 @@ import com.airesnor.wuxiacraft.entities.skills.FireThrowable;
 import com.airesnor.wuxiacraft.entities.skills.SwordBeamThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
-import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
-import com.airesnor.wuxiacraft.entities.tileentity.GrinderTileEntity;
-import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
+import com.airesnor.wuxiacraft.entities.tileentity.*;
 import com.airesnor.wuxiacraft.formation.FormationTileEntity;
-import com.airesnor.wuxiacraft.items.IHasModel;
+import com.airesnor.wuxiacraft.items.ItemScroll;
 import com.airesnor.wuxiacraft.items.WuxiaItems;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import java.io.FileNotFoundException;
 
 @Mod.EventBusSubscriber
 public class RegistryHandler {
@@ -57,16 +60,27 @@ public class RegistryHandler {
 
 	@SubscribeEvent
 	public static void onModelRegister(ModelRegistryEvent event) {
+		WuxiaCraft.proxy.registerItemRenderer(Item.getItemFromBlock(WuxiaBlocks.MAGICAL_GRINDER), 0, "inventory");
+		ClientRegistry.bindTileEntitySpecialRenderer(GrinderTileEntity.class, new GrinderTESR());
+		WuxiaCraft.proxy.registerCustomModelLocation(WuxiaItems.BLOOD_BOTTLE, 0, "inventory", "wuxiacraft:blood_bottle");
+		WuxiaCraft.proxy.registerCustomModelLocation(WuxiaItems.RECIPE_SCROLL, 0, "inventory", "wuxiacraft:recipe_scroll");
+
 		for (Item item : WuxiaItems.ITEMS) {
-			if (item instanceof IHasModel) {
-				((IHasModel) item).registerModels();
+			if (item instanceof ItemScroll) {
+				WuxiaCraft.proxy.registerScrollModel(item, 0, "inventory");
+			} else {
+				WuxiaCraft.proxy.registerItemRenderer(item, 0, "inventory");
 			}
 		}
 		for (Block block : WuxiaBlocks.BLOCKS) {
-			if (block instanceof IHasModel) {
-				((IHasModel) block).registerModels();
+			if (block instanceof SpiritVeinOre) {
+				WuxiaCraft.proxy.registerCustomModelLocation(ItemBlock.getItemFromBlock(block), 0, "inventory", "wuxiacraft:spirit_vein_ore");
+			} else {
+				WuxiaCraft.proxy.registerItemRenderer(Item.getItemFromBlock(block), 0, "inventory");
 			}
 		}
+		ClientRegistry.bindTileEntitySpecialRenderer(CauldronTileEntity.class, new CauldronTESR());
+		ClientRegistry.bindTileEntitySpecialRenderer(SpiritStoneStackTileEntity.class, new SpiritStoneStackTESR());
 	}
 
 	@SubscribeEvent

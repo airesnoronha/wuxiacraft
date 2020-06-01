@@ -93,14 +93,6 @@ public class MagicalGrinder extends BlockBase implements ITileEntityProvider {
 		return true;
 	}
 
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void registerModels() {
-		super.registerModels();
-
-		ClientRegistry.bindTileEntitySpecialRenderer(GrinderTileEntity.class, new GrinderTESR());
-	}
-
 	@SuppressWarnings("deprecation")
 	@Override
 	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)

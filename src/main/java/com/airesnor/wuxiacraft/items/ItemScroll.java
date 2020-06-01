@@ -26,7 +26,7 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class ItemScroll extends Item implements IHasModel {
+public class ItemScroll extends Item {
 
 	private final Technique technique;
 
@@ -111,10 +111,5 @@ public class ItemScroll extends Item implements IHasModel {
 			String line = TextFormatting.GOLD + I18n.format(p.getEffectName());
 			tooltip.add(line);
 		}
-	}
-
-	@Override
-	public void registerModels() {
-		WuxiaCraft.proxy.registerScrollModel(this, 0, "inventory");
 	}
 }

@@ -1,9 +1,6 @@
 package com.airesnor.wuxiacraft.blocks;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.entities.tileentity.CauldronTESR;
 import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
-import com.airesnor.wuxiacraft.items.IHasModel;
 import com.airesnor.wuxiacraft.items.ItemFan;
 import com.airesnor.wuxiacraft.items.WuxiaItems;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
@@ -28,7 +25,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -40,7 +36,7 @@ import java.util.Random;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class Cauldron extends BlockContainer implements IHasModel {
+public class Cauldron extends BlockContainer {
 
 	private static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0,0,0,1,0.81, 1);
 
@@ -57,13 +53,6 @@ public class Cauldron extends BlockContainer implements IHasModel {
 
 		WuxiaBlocks.BLOCKS.add(this);
 		WuxiaItems.ITEMS.add(new ItemBlock(this).setRegistryName(name));
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerModels() {
-		WuxiaCraft.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
-		ClientRegistry.bindTileEntitySpecialRenderer(CauldronTileEntity.class, new CauldronTESR());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -153,7 +142,7 @@ public class Cauldron extends BlockContainer implements IHasModel {
 		if(te!=null) {
 			if (!playerIn.getHeldItem(hand).isEmpty()) {
 				ItemStack itemStack = playerIn.getHeldItem(hand);
-				if (!te.isHasFirewood()) {
+				if (!te.hasFirewood()) {
 					if (itemStack.getItem() == net.minecraft.init.Items.STICK) {
 						used = true;
 						te.addWood(2000);
@@ -178,7 +167,7 @@ public class Cauldron extends BlockContainer implements IHasModel {
 					}
 				}
 				if (itemStack.getItem() == net.minecraft.init.Items.FLINT_AND_STEEL) {
-					if (te.isHasFirewood() && !te.isLit()) {
+					if (te.hasFirewood() && !te.isLit()) {
 						used = true;
 						itemStack.damageItem(1, playerIn);
 						te.setOnFire();

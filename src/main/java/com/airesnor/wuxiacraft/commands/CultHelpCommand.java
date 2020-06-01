@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.TextComponentString;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -65,23 +66,24 @@ public class CultHelpCommand extends CommandBase {
                         "\n\nBeware: The mobs at night are lurking, please stay safe. ";
                 String page4 = "\nYou can check out the Key Bindings and Controls for WuxiaCraft in the main menu " +
                         "\n\nF - Active skills \nK - Introspection \nL - See Skills \nC - Previous Skill \nV - Next Skill";
-                String page5 = "How to Alchemy:" +
-                        "\nStep 1: \nRight-click with coal in your hand to use as fuel." +
-                        "\nStep 2: \nUse featherfan to control the temperature." +
-                        "\nStep 3: \nPlace items in at a specific temperature and order.";
-                String page6 = "Step 4: \nOnce all the items are in let the cauldron cook at a specific temperature." +
-                        "\n\nColors: " +
-                        "\n\nGreen - Cold" +
-                        "\nOrange - Hot" +
-                        "\nYellow - Cooking" +
-                        "\nRed - Wrong Recipe";
-                String page7 = "Foundation:" +
+                String page5 = "Foundation:" +
                         "\n\nAgi - Movement Speed and Jump" +
                         "\nDex - Attack Speed" +
                         "\nSpi - Max Energy" +
                         "\nCon - Max Health" +
                         "\nRes - Armour" +
                         "\nStr - Attack Power";
+                String page6 = "How to Alchemy:" +
+                        "\nStep 1: \nRight-click with coal in your hand to use as fuel." +
+                        "\nStep 2: \nUse featherfan to control the temperature." +
+                        "\nStep 3: \nPlace items in at a specific temperature and order.";
+                String page7 = "Step 4: \nOnce all the items are in let the cauldron cook at a specific temperature." +
+                        "\n\nColors: " +
+                        "\n\nGreen - Cold" +
+                        "\nOrange - Hot" +
+                        "\nYellow - Cooking" +
+                        "\nRed - Wrong Recipe";
+
 
                 //NBT data editing
                 addBookPages("Anophobia & Aires", "WuxiaCraft Tutorial Book", tutorialBook, tagCompound, tagList,
@@ -94,11 +96,9 @@ public class CultHelpCommand extends CommandBase {
     }
 
     //Method to reduce code repetition
-    public void addBookPages(String author, String title, ItemStack item, NBTTagCompound nbtTagCompound, NBTTagList tagList, Object... args) {
-        for (Object arg : args) {
-            String page = arg.toString();
+    public void addBookPages(String author, String title, ItemStack item, NBTTagCompound nbtTagCompound, NBTTagList tagList, String... args) {
+        for (String page : args)
             tagList.appendTag(new NBTTagString(String.format("{\"text\":\"%s\"}", page)));
-        }
         item.setTagInfo("pages", tagList);
         item.setTagInfo("author", new NBTTagString(author));
         item.setTagInfo("title", new NBTTagString(title));

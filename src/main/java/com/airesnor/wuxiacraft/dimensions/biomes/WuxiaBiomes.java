@@ -18,15 +18,15 @@ public class WuxiaBiomes {
     public static final Biome EARTH = new BiomeEarth();
     public static final Biome EXTREMEQI = new BiomeExtremeQi();
 
-    private static Biome registerBiome(Biome biome, String biomeName, BiomeType biomeType, boolean spawnOverworld, Type... types) {
+    private static Biome registerBiome(Biome biome, String biomeName, BiomeType biomeType, boolean spawnInOverworld, int weight, Type... types) {
         biome.setRegistryName(biomeName);
         ForgeRegistries.BIOMES.register(biome);
         WuxiaCraft.logger.info("WuxiaCraft biome " + biomeName + " has been registered!");
         BiomeDictionary.addTypes(biome, types);
 
         //This makes it so that the overworld gets the biome added then it spawns it
-        if(spawnOverworld) {
-            BiomeManager.addBiome(biomeType, new BiomeManager.BiomeEntry(biome, 3));
+        if(spawnInOverworld) {
+            BiomeManager.addBiome(biomeType, new BiomeManager.BiomeEntry(biome, weight));
         }
         BiomeManager.addSpawnBiome(biome);
         WuxiaCraft.logger.info("WuxiaCraft biome " + biomeName + " has been added!");
@@ -34,12 +34,12 @@ public class WuxiaBiomes {
     }
 
     public static void registerBiomes() {
-        registerBiome(MINING, "Mining", BiomeType.COOL, false, Type.MAGICAL, Type.DRY, Type.MOUNTAIN);
-        registerBiome(METAL, "Metal", BiomeType.ICY, false, Type.MAGICAL, Type.DRY, Type.MOUNTAIN, Type.COLD);
-        registerBiome(WOOD, "Wood", BiomeType.WARM, false, Type.MAGICAL, Type.DENSE, Type.FOREST, Type.PLAINS, Type.WATER);
-        registerBiome(WATER, "Water", BiomeType.COOL, false, Type.MAGICAL, Type.OCEAN, Type.BEACH);
-        registerBiome(FIRE, "Fire", BiomeType.DESERT, false, Type.MAGICAL, Type.HOT);
-        registerBiome(EARTH, "Earth", BiomeType.WARM, false, Type.MAGICAL, Type.MOUNTAIN, Type.HILLS, Type.LUSH, Type.PLAINS, Type.DENSE);
-        registerBiome(EXTREMEQI, "ExtremeQi", BiomeType.WARM, true, Type.MAGICAL, Type.MOUNTAIN, Type.LUSH, Type.DENSE, Type.RARE);
+        registerBiome(MINING, "Mining", BiomeType.COOL, false, 5, Type.MAGICAL, Type.DRY, Type.MOUNTAIN);
+        registerBiome(METAL, "Metal", BiomeType.ICY, false, 5, Type.MAGICAL, Type.DRY, Type.MOUNTAIN, Type.COLD);
+        registerBiome(WOOD, "Wood", BiomeType.WARM, false, 5, Type.MAGICAL, Type.DENSE, Type.FOREST, Type.PLAINS, Type.WATER);
+        registerBiome(WATER, "Water", BiomeType.COOL, false, 5, Type.MAGICAL, Type.OCEAN, Type.BEACH);
+        registerBiome(FIRE, "Fire", BiomeType.DESERT, false, 5, Type.MAGICAL, Type.HOT);
+        registerBiome(EARTH, "Earth", BiomeType.WARM, false, 5, Type.MAGICAL, Type.MOUNTAIN, Type.HILLS, Type.LUSH, Type.PLAINS, Type.DENSE);
+        registerBiome(EXTREMEQI, "ExtremeQi", BiomeType.WARM, true, 2, Type.MAGICAL, Type.MOUNTAIN, Type.LUSH, Type.DENSE, Type.RARE);
     }
 }

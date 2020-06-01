@@ -48,7 +48,7 @@ public class WorldGen implements IWorldGenerator {
 		generateOre(WuxiaBlocks.NATURAL_ODDITY_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 10, 30, 4, 4);
 		generateOre(WuxiaBlocks.WEAK_LIFE_STONE_VEIN.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 20, 50, 5, 7);
 		generateOre(WuxiaBlocks.SOUL_STONE_VEIN.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 10, 40, 4, 6);
-		generateOre(WuxiaBlocks.PRIMORDIAL_STONE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 5, 30, 4, 5);
+		generateOre(WuxiaBlocks.PRIMORDIAL_STONE_VEIN.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 5, 30, 4, 5);
 		generateOre(WuxiaBlocks.FIVE_ELEMENT_PURE_CRYSTAL_VEIN.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 5, 20, 3, 3);
 		generateOre(WuxiaBlocks.PURE_QI_CRYSTAL_VEIN.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 5, 20, 3, 3);
 		generateOre(WuxiaBlocks.EARTH_LAW_CRYSTAL_VEIN.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 5, 15, 2, 2);
@@ -139,7 +139,7 @@ public class WorldGen implements IWorldGenerator {
 		generateOre(WuxiaBlocks.WEAK_LIFE_STONE_VEIN.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 20, 120, 5, 7, replaceWithOre);
 		generateOre(WuxiaBlocks.SOUL_STONE_VEIN.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 10, 120, 4, 6, replaceWithOre);
 		generateOre(Blocks.IRON_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 10, 120, 4, 8, replaceWithOre);
-		generateOre(WuxiaBlocks.PRIMORDIAL_STONE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 5, 90, 4, 5, replaceWithOre);
+		generateOre(WuxiaBlocks.PRIMORDIAL_STONE_VEIN.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 5, 90, 4, 5, replaceWithOre);
 		generateOre(Blocks.GOLD_ORE.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 5, 90, 4, 7, replaceWithOre);
 		generateOre(WuxiaBlocks.FIVE_ELEMENT_PURE_CRYSTAL_VEIN.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 5, 60, 3, 3, replaceWithOre);
 		generateOre(WuxiaBlocks.PURE_QI_CRYSTAL_VEIN.getDefaultState(), world, random, chunkX * 16, chunkZ * 16, 5, 60, 3, 3, replaceWithOre);

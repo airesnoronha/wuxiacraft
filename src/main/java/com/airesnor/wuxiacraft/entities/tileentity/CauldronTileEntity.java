@@ -5,9 +5,7 @@ import com.airesnor.wuxiacraft.alchemy.Recipe;
 import com.airesnor.wuxiacraft.alchemy.Recipes;
 import com.airesnor.wuxiacraft.networking.AddRecipeItemMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
-import com.airesnor.wuxiacraft.networking.SpawnParticleMessage;
 import com.airesnor.wuxiacraft.utils.MathUtils;
-import com.airesnor.wuxiacraft.utils.SkillUtils;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -112,7 +110,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 		isLit = lit;
 	}
 
-	public boolean isHasFirewood() {
+	public boolean hasFirewood() {
 		return hasFirewood;
 	}
 
@@ -154,7 +152,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		super.writeToNBT(compound);
-		compound.setBoolean("has_firewood", isHasFirewood());
+		compound.setBoolean("has_firewood", hasFirewood());
 		compound.setBoolean("has_water", isHasWater());
 		compound.setBoolean("is_lit", isLit());
 		compound.setFloat("lit_time", timeLit);

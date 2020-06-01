@@ -227,11 +227,20 @@ public class CultivationLevel extends IForgeRegistryEntry.Impl<CultivationLevel>
 		return (long)Math.floor(this.foundationMaxStat * (1 + 0.7*subLevel));
 	}
 
+	public boolean isEqual(CultivationLevel level) {
+		boolean found = false;
+		CultivationLevel aux = this;
+			if (aux.getUName().equals(level.getUName())) {
+				found = true;
+			}
+		return found;
+	}
+
 	public boolean isGreaterThan(CultivationLevel level) {
 		boolean found = false; //found that level is a greater level
 		CultivationLevel aux = this;
 		while (aux != aux.getNextLevel()) { //the last level must point towards itself or game breaks
-			if (aux == level) {
+			if (aux.getUName().equals(level.getUName())) {
 				found = true;
 				break;
 			}
