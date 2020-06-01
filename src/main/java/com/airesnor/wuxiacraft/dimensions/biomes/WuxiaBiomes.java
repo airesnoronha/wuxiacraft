@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.dimensions.biomes;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
@@ -40,6 +41,6 @@ public class WuxiaBiomes {
         registerBiome(WATER, "Water", BiomeType.COOL, false, 5, Type.MAGICAL, Type.OCEAN, Type.BEACH);
         registerBiome(FIRE, "Fire", BiomeType.DESERT, false, 5, Type.MAGICAL, Type.HOT);
         registerBiome(EARTH, "Earth", BiomeType.WARM, false, 5, Type.MAGICAL, Type.MOUNTAIN, Type.HILLS, Type.LUSH, Type.PLAINS, Type.DENSE);
-        registerBiome(EXTREMEQI, "ExtremeQi", BiomeType.WARM, true, 2, Type.MAGICAL, Type.MOUNTAIN, Type.LUSH, Type.DENSE, Type.RARE);
+        registerBiome(EXTREMEQI, "ExtremeQi", BiomeType.WARM, WuxiaCraftConfig.EXTREME_QI_BIOME_SPAWN, 2, Type.MAGICAL, Type.MOUNTAIN, Type.LUSH, Type.DENSE, Type.RARE);
     }
 }

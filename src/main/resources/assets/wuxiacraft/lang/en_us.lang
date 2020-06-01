@@ -85,6 +85,7 @@ item.tiny_dust_diamond.name=Tiny Diamond Dust
 item.dust_iron.name=Iron Dust
 item.dust_gold.name=Gold Dust
 item.dust_diamond.name=Diamond Dust
+item.spatial_ring.name=Spatial Ring
 
 //Creative tabs
 itemGroup.wuxiacraft.scrolls=Cultivation Techniques
