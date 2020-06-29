@@ -1,13 +1,13 @@
-package com.airesnor.wuxiacraft.dimensions.worldtypes.genlayer;
+package com.airesnor.wuxiacraft.dimensions.genlayer;
 
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.GenLayerVoronoiZoom;
 import net.minecraft.world.gen.layer.GenLayerZoom;
 
-public class GenLayerFixMetal {
+public class GenLayerFixEarth {
 
     public static GenLayer[] createWorld(long seed) {
-        GenLayer biomes = new GenLayerMetal(1l);
+        GenLayer biomes = new GenLayerEarth(1l);
         biomes = new GenLayerZoom(1000l, biomes);
         biomes = new GenLayerZoom(1001l, biomes);
         biomes = new GenLayerZoom(1002l, biomes);

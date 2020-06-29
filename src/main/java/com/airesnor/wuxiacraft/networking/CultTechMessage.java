@@ -1,8 +1,15 @@
 package com.airesnor.wuxiacraft.networking;
 
 import com.airesnor.wuxiacraft.cultivation.techniques.*;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,4 +57,29 @@ public class CultTechMessage implements IMessage {
 			buf.writeDouble(t.getProgress());
 		}
 	}
+
+	public static class Handler implements IMessageHandler<CultTechMessage, IMessage> {
+		@Override
+		public IMessage onMessage(CultTechMessage message, MessageContext ctx) {
+			if (ctx.side == Side.CLIENT) {
+				return handleMessageClient(message, ctx);
+			}
+			return null;
+		}
+
+		@SuppressWarnings("unused")
+		@SideOnly(Side.CLIENT)
+		private IMessage handleMessageClient(CultTechMessage message, MessageContext ctx) {
+			Minecraft.getMinecraft().addScheduledTask(() -> {
+				EntityPlayer player = Minecraft.getMinecraft().player;
+				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
+				cultTech.getKnownTechniques().clear();
+				for (KnownTechnique t : message.cultTech.getKnownTechniques()) {
+					cultTech.addTechnique(t.getTechnique(), t.getProgress());
+				}
+			});
+			return null;
+		}
+	}
+
 }

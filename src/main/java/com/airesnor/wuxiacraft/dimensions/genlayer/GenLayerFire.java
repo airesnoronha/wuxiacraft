@@ -1,7 +1,6 @@
-package com.airesnor.wuxiacraft.dimensions.worldtypes.genlayer;
+package com.airesnor.wuxiacraft.dimensions.genlayer;
 
 import com.airesnor.wuxiacraft.dimensions.biomes.WuxiaBiomes;
-import net.minecraft.init.Biomes;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;

@@ -3,7 +3,7 @@ package com.airesnor.wuxiacraft.dimensions.biomes;
 import java.util.List;
 import java.util.Random;
 
-import com.airesnor.wuxiacraft.dimensions.worldtypes.genlayer.GenLayerFixMining;
+import com.airesnor.wuxiacraft.dimensions.genlayer.GenLayerFixMining;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.util.ReportedException;
@@ -15,24 +15,24 @@ import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
 
-public class BiomeProviderWuxia extends BiomeProvider {
+public class BiomeProviderMining extends BiomeProvider {
 
     private GenLayer genBiomes;
     private GenLayer biomeIndexLayer;
     private BiomeCache biomeCache;
 
-    public BiomeProviderWuxia() {
+    public BiomeProviderMining() {
         this.biomeCache = new BiomeCache(this);
     }
 
-    public BiomeProviderWuxia(long seed) {
+    public BiomeProviderMining(long seed) {
         this();
         GenLayer[] aGenLayer = GenLayerFixMining.createWorld(seed);
         this.genBiomes = aGenLayer[0];
         this.biomeIndexLayer = aGenLayer[1];
     }
 
-    public BiomeProviderWuxia(World world) {
+    public BiomeProviderMining(World world) {
         this(world.getSeed());
     }
 

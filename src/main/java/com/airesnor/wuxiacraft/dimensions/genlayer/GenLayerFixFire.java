@@ -1,4 +1,4 @@
-package com.airesnor.wuxiacraft.dimensions.worldtypes.genlayer;
+package com.airesnor.wuxiacraft.dimensions.genlayer;
 
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.GenLayerVoronoiZoom;

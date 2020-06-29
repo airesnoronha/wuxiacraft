@@ -6,7 +6,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import java.util.*;
 
 public class CultivationLevel extends IForgeRegistryEntry.Impl<CultivationLevel> {
-	public static final LinkedList<CultivationLevel> DEFAULTS = new LinkedList<>();
+	public static final List<CultivationLevel> DEFAULTS = new ArrayList<>();
 	static {
 		DEFAULTS.add(new CultivationLevel("body_refinement", "soul_refinement", "Body Refinement", 5, 10, 1000F, 1.00F, 1.00F, false, false, false, false, false, false, false));
 		DEFAULTS.add(new CultivationLevel("soul_refinement","qi_paths_refinement", "Soul Refinement", 5, 80, 1790.85F, 1.20F, 3.00F, false, false, false, false, false, false, false));

@@ -35,7 +35,7 @@ public class ItemProgressPill extends ItemBase {
 		if (entityLiving instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) entityLiving;
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-			if (cultivation.getPillCooldown() == 0) {
+			if (cultivation.getPillCooldown() <= 0) {
 				stack.shrink(player.isCreative() ? 0 : 1);
 				if (stack.isEmpty())
 					stack = ItemStack.EMPTY;

@@ -8,8 +8,8 @@ import net.minecraft.world.biome.BiomeProviderSingle;
 
 public class WorldTypeMining extends WorldType {
 
-    public WorldTypeMining(String name) {
-        super(name);
+    public WorldTypeMining() {
+        super("Mining");
     }
 
     @Override

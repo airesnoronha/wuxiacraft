@@ -85,7 +85,12 @@ item.tiny_dust_diamond.name=Tiny Diamond Dust
 item.dust_iron.name=Iron Dust
 item.dust_gold.name=Gold Dust
 item.dust_diamond.name=Diamond Dust
-item.spatial_ring.name=Spatial Ring
+item.low_grade_spatial_ring.name=Low Grade Spatial Ring
+item.mid_grade_spatial_ring.name=Mid Grade Spatial Ring
+item.high_grade_spatial_ring.name=High Grade Spatial Ring
+item.peak_grade_spatial_ring.name=Peak Grade Spatial Ring
+item.top_grade_spatial_ring.name=Top Grade Spatial Ring
+item.supreme_grade_spatial_ring.name=Supreme Grade Spatial Ring
 
 //Creative tabs
 itemGroup.wuxiacraft.scrolls=Cultivation Techniques
@@ -171,6 +176,7 @@ key.wuxiacraft.select_8=Select skill in 8
 key.wuxiacraft.select_9=Select skill in 9
 key.wuxiacraft.select_0=Select skill in 10
 key.wuxiacraft.unleash_speed=Toggle Speed Limit
+key.wuxiacraft.toggle_barrier=Toggle Barrier
 
 //tiers
 wuxiacraft.tier.mortal=Mortal
@@ -346,3 +352,4 @@ Not used correctly!=wrongUsage
 
 //World Types and Biomes
 generator.Mining=Mining
+generator.Wuxia=Wuxia

@@ -1,7 +1,6 @@
 package com.airesnor.wuxiacraft.dimensions.biomes;
 
-import com.airesnor.wuxiacraft.dimensions.worldtypes.genlayer.GenLayerFixEarth;
-import com.airesnor.wuxiacraft.dimensions.worldtypes.genlayer.GenLayerFixWood;
+import com.airesnor.wuxiacraft.dimensions.genlayer.GenLayerFixWood;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.util.ReportedException;

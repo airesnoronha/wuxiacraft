@@ -48,6 +48,7 @@ public class SealingStorage implements Capability.IStorage<ISealing> {
         instance.setCurrentLevel(CultivationLevel.LOADED_LEVELS.get(tag.getString("sealed-level").toLowerCase())); //for people don't lose their previous cultivation i hope
         instance.setCurrentSubLevel(tag.getInteger("sealed-subLevel"));
         instance.setProgress(tag.getDouble("sealed-progress"));
+        instance.setEnergy(tag.getDouble("sealed-energy"));
 
         //Foundation
         if (tag.hasKey("sealed-agility"))

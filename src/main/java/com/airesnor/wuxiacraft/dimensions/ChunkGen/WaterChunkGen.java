@@ -24,8 +24,7 @@ import net.minecraft.world.gen.MapGenCaves;
 import net.minecraft.world.gen.NoiseGeneratorOctaves;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
 
-public class WaterChunkGen implements IChunkGenerator
-{
+public class WaterChunkGen implements IChunkGenerator {
     protected static final IBlockState STONE = WuxiaBlocks.ICY_STONE.getDefaultState();
     protected static final IBlockState GRAVEL = Blocks.WATER.getDefaultState();
     protected static final IBlockState WATER = Blocks.WATER.getDefaultState();
@@ -56,7 +55,6 @@ public class WaterChunkGen implements IChunkGenerator
     // private MapGenBaseMeta bigCaveGenerator;
 
     public WaterChunkGen(World worldIn, long seed) {
-
         this.world = worldIn;
         this.terrainType = worldIn.getWorldInfo().getTerrainType();
         this.rand = new Random(seed);
@@ -173,8 +171,7 @@ public class WaterChunkGen implements IChunkGenerator
     }
 
     @Override
-    public void recreateStructures(Chunk chunkIn, int x, int z) {
-    }
+    public void recreateStructures(Chunk chunkIn, int x, int z) {}
 
     @Override
     public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos) {
@@ -194,61 +191,59 @@ public class WaterChunkGen implements IChunkGenerator
 
     @SuppressWarnings("unused")
     private void setBlocksInChunk(int x, int z, ChunkPrimer primer) {
-        {
-            this.biomesForGeneration = this.world.getBiomeProvider().getBiomesForGeneration(this.biomesForGeneration,
-                    x * 4 - 2, z * 4 - 2, 10, 10);
-            this.generateHeightmap(x * 4, 0, z * 4);
+        this.biomesForGeneration = this.world.getBiomeProvider().getBiomesForGeneration(this.biomesForGeneration,
+                x * 4 - 2, z * 4 - 2, 10, 10);
+        this.generateHeightmap(x * 4, 0, z * 4);
 
-            for (int i = 0; i < 4; ++i) {
-                int j = i * 5;
-                int k = (i + 1) * 5;
+        for (int i = 0; i < 4; ++i) {
+            int j = i * 5;
+            int k = (i + 1) * 5;
 
-                for (int l = 0; l < 4; ++l) {
-                    int i1 = (j + l) * 33;
-                    int j1 = (j + l + 1) * 33;
-                    int k1 = (k + l) * 33;
-                    int l1 = (k + l + 1) * 33;
+            for (int l = 0; l < 4; ++l) {
+                int i1 = (j + l) * 33;
+                int j1 = (j + l + 1) * 33;
+                int k1 = (k + l) * 33;
+                int l1 = (k + l + 1) * 33;
 
-                    for (int i2 = 0; i2 < 32; ++i2) {
-                        double d0 = 0.125D;
-                        double d1 = this.heightMap[i1 + i2];
-                        double d2 = this.heightMap[j1 + i2];
-                        double d3 = this.heightMap[k1 + i2];
-                        double d4 = this.heightMap[l1 + i2];
-                        double d5 = (this.heightMap[i1 + i2 + 1] - d1) * 0.125D;
-                        double d6 = (this.heightMap[j1 + i2 + 1] - d2) * 0.125D;
-                        double d7 = (this.heightMap[k1 + i2 + 1] - d3) * 0.125D;
-                        double d8 = (this.heightMap[l1 + i2 + 1] - d4) * 0.125D;
+                for (int i2 = 0; i2 < 32; ++i2) {
+                    double d0 = 0.125D;
+                    double d1 = this.heightMap[i1 + i2];
+                    double d2 = this.heightMap[j1 + i2];
+                    double d3 = this.heightMap[k1 + i2];
+                    double d4 = this.heightMap[l1 + i2];
+                    double d5 = (this.heightMap[i1 + i2 + 1] - d1) * 0.125D;
+                    double d6 = (this.heightMap[j1 + i2 + 1] - d2) * 0.125D;
+                    double d7 = (this.heightMap[k1 + i2 + 1] - d3) * 0.125D;
+                    double d8 = (this.heightMap[l1 + i2 + 1] - d4) * 0.125D;
 
-                        for (int j2 = 0; j2 < 8; ++j2) {
-                            double d9 = 0.25D;
-                            double d10 = d1;
-                            double d11 = d2;
-                            double d12 = (d3 - d1) * 0.25D;
-                            double d13 = (d4 - d2) * 0.25D;
+                    for (int j2 = 0; j2 < 8; ++j2) {
+                        double d9 = 0.25D;
+                        double d10 = d1;
+                        double d11 = d2;
+                        double d12 = (d3 - d1) * 0.25D;
+                        double d13 = (d4 - d2) * 0.25D;
 
-                            for (int k2 = 0; k2 < 4; ++k2) {
-                                double d14 = 0.25D;
-                                double d16 = (d11 - d10) * 0.25D;
-                                double lvt_45_1_ = d10 - d16;
+                        for (int k2 = 0; k2 < 4; ++k2) {
+                            double d14 = 0.25D;
+                            double d16 = (d11 - d10) * 0.25D;
+                            double lvt_45_1_ = d10 - d16;
 
-                                for (int l2 = 0; l2 < 4; ++l2) {
-                                    if ((lvt_45_1_ += d16) > 0.0D) {
-                                        primer.setBlockState(i * 4 + k2, i2 * 8 + j2, l * 4 + l2, STONE);
-                                    } else if (i2 * 8 + j2 < this.settings.seaLevel) {
-                                        primer.setBlockState(i * 4 + k2, i2 * 8 + j2, l * 4 + l2, WATER);
-                                    }
+                            for (int l2 = 0; l2 < 4; ++l2) {
+                                if ((lvt_45_1_ += d16) > 0.0D) {
+                                    primer.setBlockState(i * 4 + k2, i2 * 8 + j2, l * 4 + l2, STONE);
+                                } else if (i2 * 8 + j2 < this.settings.seaLevel) {
+                                    primer.setBlockState(i * 4 + k2, i2 * 8 + j2, l * 4 + l2, WATER);
                                 }
-
-                                d10 += d12;
-                                d11 += d13;
                             }
 
-                            d1 += d5;
-                            d2 += d6;
-                            d3 += d7;
-                            d4 += d8;
+                            d10 += d12;
+                            d11 += d13;
                         }
+
+                        d1 += d5;
+                        d2 += d6;
+                        d3 += d7;
+                        d4 += d8;
                     }
                 }
             }

@@ -189,12 +189,6 @@
 		},
 		{
 			"blockState": "wuxiacraft:paint_rune",
-			"x": -4,
-			"y": 0,
-			"z": -5
-		},
-		{
-			"blockState": "wuxiacraft:paint_rune",
 			"x": -2,
 			"y": 0,
 			"z": -5

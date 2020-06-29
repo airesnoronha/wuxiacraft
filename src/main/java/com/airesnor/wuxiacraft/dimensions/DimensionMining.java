@@ -1,7 +1,7 @@
 package com.airesnor.wuxiacraft.dimensions;
 
 import com.airesnor.wuxiacraft.dimensions.ChunkGen.MiningChunkGen;
-import com.airesnor.wuxiacraft.dimensions.biomes.BiomeProviderWuxia;
+import com.airesnor.wuxiacraft.dimensions.biomes.BiomeProviderMining;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
@@ -14,7 +14,7 @@ public class DimensionMining extends WorldProvider {
 
     @Override
     protected void init() {
-        this.biomeProvider = new BiomeProviderWuxia(this.world.getSeed());
+        this.biomeProvider = new BiomeProviderMining(this.world.getSeed());
         this.worldBorderSize = 3000000;
     }
 

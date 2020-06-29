@@ -1,13 +1,10 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.blocks.SpiritStoneStackBlock;
+import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
-import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
-import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.cultivation.IFoundation;
-import com.airesnor.wuxiacraft.cultivation.ISealing;
+import com.airesnor.wuxiacraft.cultivation.*;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
@@ -51,6 +48,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -91,6 +89,9 @@ public class EventHandler {
 		if (!player.world.isRemote) {
 			WuxiaCraft.logger.info("Setting player " + player.getDisplayNameString() + " cultivation levels.");
 			NetworkWrapper.INSTANCE.sendTo(new CultivationLevelsMessage(), (EntityPlayerMP) player);
+
+			IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
+			NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
 		}
 		TextComponentString text = new TextComponentString("For a quick tutorial on the mod. \nPlease use the /culthelp command");
 		text.getStyle().setColor(TextFormatting.GOLD);
@@ -121,7 +122,7 @@ public class EventHandler {
 				}
 				cultivation.resetTimer();
 			}
-			//each 10 ticks to apply modifiers, i guess that every tick is too cpu consuming
+			//each 20 ticks to apply modifiers, i guess that every tick is too cpu consuming
 			// let's say you have 100 players on a server
 			if (cultivation.getUpdateTimer() % 20 == 0) {
 				if (!player.world.isRemote) {
@@ -166,7 +167,7 @@ public class EventHandler {
 	 * @param event Description of whats happening
 	 */
 	@SideOnly(Side.CLIENT)
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onPlayerRequestLevels(TickEvent.PlayerTickEvent event) {
 		if (event.phase == TickEvent.Phase.END) {
 			if (event.player.isSneaking()) {
@@ -250,7 +251,7 @@ public class EventHandler {
 	 *
 	 * @param e Description of whats happening
 	 */
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOW)
 	public void fovChange(FOVUpdateEvent e) {
 		float f = 1.0F;
 		EntityPlayer entity = e.getEntity();
@@ -477,6 +478,8 @@ public class EventHandler {
 		cultivation.setCurrentLevel(oldCultivation.getCurrentLevel());
 		ISealing sealing = CultivationUtils.getSealingFromEntity(player);
 		ISealing oldSealing = CultivationUtils.getSealingFromEntity(original);
+		IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
+		IBarrier oldBarrier = CultivationUtils.getBarrierFromEntity(original);
 		if (event.isWasDeath()) {
 
 			if (oldCultivation.getCurrentLevel().levelName.equals(oldCultivation.getCurrentLevel().nextLevelName)) { //if last level, i hope
@@ -487,10 +490,12 @@ public class EventHandler {
 			foundation.copyFrom(oldFoundation);
 			foundation.applyDeathPunishment(oldCultivation);
 			sealing.copyFrom(oldSealing);
+			barrier.copyFrom(oldBarrier);
 		} else {
 			cultivation.copyFrom(oldCultivation);
 			foundation.copyFrom(oldFoundation);
 			sealing.copyFrom(oldSealing);
+			barrier.copyFrom(oldBarrier);
 		}
 
 		WuxiaCraft.logger.info("Restoring " + player.getDisplayNameString() + " cultivation.");
@@ -560,7 +565,7 @@ public class EventHandler {
 	 *
 	 * @param event A description of what is happening
 	 */
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onPlayerFlyToAnotherDimension(TickEvent.PlayerTickEvent event) {
 		if (event.side == Side.SERVER) {
 			if (event.phase == TickEvent.Phase.END) {
@@ -617,7 +622,7 @@ public class EventHandler {
 										break;
 								}
 							}
-							if (!MathUtils.inGroup(targetDimension, -1, 0, 1, WuxiaDimensions.MINING.getId())) {
+							if (MathUtils.inGroup(targetDimension, WuxiaDimensions.WATER.getId(), WuxiaDimensions.WOOD.getId(), WuxiaDimensions.FIRE.getId(), WuxiaDimensions.EARTH.getId(), WuxiaDimensions.METAL.getId())) {
 								final int worldBorderSize = 2000000;
 								if (playerPosX >= worldBorderSize) {
 									playerPosX = worldBorderSize - 10;
@@ -703,7 +708,7 @@ public class EventHandler {
 	 *
 	 * @param event Description of what is happening
 	 */
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onSpiritStoneStackFloats(TickEvent.WorldTickEvent event) {
 		if (event.side == Side.SERVER && event.phase == TickEvent.Phase.END) {
 			List<EntityItem> items = event.world.getEntities(EntityItem.class, input -> {
@@ -769,7 +774,7 @@ public class EventHandler {
 	 *
 	 * @param event A description of whats happening
 	 */
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onPlayerHunger(TickEvent.PlayerTickEvent event) {
 		EntityPlayer player = event.player;
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
@@ -887,6 +892,89 @@ public class EventHandler {
 		player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(health_mod);
 
 		//WuxiaCraft.logger.info(String.format("Applying %s modifiers from %s.", player.getDisplayNameString(), cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel())));
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOW)
+	public void onPlayerDefense(LivingAttackEvent event) {
+		if (!(event.getEntityLiving() instanceof EntityPlayer)) return;
+		if (event.getAmount() <= 0.0f) return;
+
+		EntityPlayer player = (EntityPlayer) event.getEntityLiving();
+		if (!player.world.isRemote) {
+			IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
+			if (barrier.isBarrierActive() && !barrier.isBarrierBroken()) {
+				handleBarrier(event, barrier, player);
+			} else {
+				event.setCanceled(false);
+			}
+			TextComponentString message = new TextComponentString("Barrier Amount: " + barrier.getBarrierAmount());
+			message.getStyle().setColor(TextFormatting.AQUA);
+			player.sendMessage(message);
+		}
+	}
+
+	// TODO - Handle the damage cancelling selectively
+	/**
+	 * Handles the barrier, cancels all damage at the moment
+	 *
+	 * @param event LivingAttackEvent
+	 * @param barrier Barrier instance of the player
+	 * @param player EntityPlayer instance of player
+	 */
+	public void handleBarrier(LivingAttackEvent event, IBarrier barrier, EntityPlayer player) {
+		if (barrier.getBarrierAmount() > 0.0f && event.getAmount() < barrier.getBarrierAmount()) {
+			event.setCanceled(true);
+			barrier.removeBarrierAmount(event.getAmount());
+			NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
+		} else if (barrier.getBarrierAmount() > 0.0f && event.getAmount() > barrier.getBarrierAmount()) {
+			event.setCanceled(true);
+			float remainingDamage = event.getAmount() - barrier.getBarrierAmount();
+			barrier.removeBarrierAmount(barrier.getBarrierAmount());
+			player.setHealth(player.getHealth() - remainingDamage);
+			barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
+			barrier.setBarrierBroken(true);
+			barrier.setBarrierActive(false);
+			NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
+		} else if (barrier.getBarrierAmount() <= 0.0f) {
+			event.setCanceled(false);
+			barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
+			barrier.setBarrierBroken(true);
+			barrier.setBarrierActive(false);
+			NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
+		}
+	}
+
+	// TODO - make it so that the barrier does not infinitely regen and only regen up to the maximum the current cultivation level would allow
+	/**
+	 * Handles the player barrier update every 20 ticks / 1 second
+	 *
+	 * @param event Player Update Event
+	 */
+	@SubscribeEvent
+	public void onPlayerBarrierUpdate(LivingEvent.LivingUpdateEvent event) {
+        if (event.getEntity() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) event.getEntity();
+            if (!player.world.isRemote && player.ticksExisted % 20 == 0) {
+            	IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
+            	ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+            	IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
+				//Energy Drain while the barrier is active
+				if (barrier.isBarrierActive() && !barrier.isBarrierBroken()) {
+					cultivation.remEnergy(cultivation.getMaxEnergy(foundation) * 0.0005F);
+				}
+				//Barrier regen when the barrier is not broken
+				if (!barrier.isBarrierBroken() && barrier.isBarrierRegenActive()) {
+					barrier.addBarrierAmount(barrier.getBarrierRegenRate());
+				}
+				//Cooldown
+            	if (barrier.getBarrierCooldown() <= 0) {
+            		barrier.setBarrierBroken(false);
+            	} else {
+					barrier.removeBarrierCooldown(20);
+            	}
+				NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
+            }
+        }
 	}
 
 }

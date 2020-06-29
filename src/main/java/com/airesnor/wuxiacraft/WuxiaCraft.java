@@ -42,6 +42,11 @@ public class WuxiaCraft {
 
 	@EventHandler
 	public void onServerStart(FMLServerStartingEvent event) {
+		registerCommands(event);
+		registerGameRules(event);
+	}
+
+	public void registerCommands(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CultivationCommand());
 		event.registerServerCommand(new CultTechsCommand());
 		event.registerServerCommand(new AdvCultLevel());
@@ -57,6 +62,10 @@ public class WuxiaCraft {
 		event.registerServerCommand(new FoundationCommand());
 		event.registerServerCommand(new TribulationCommand());
 		event.registerServerCommand(new SealCommand());
+		event.registerServerCommand(new BarrierCommand());
+	}
+
+	public void registerGameRules(FMLServerStartingEvent event) {
 		event.getServer().getWorld(0).getGameRules().addGameRule("doPlayerSkillSetFire", "true", GameRules.ValueType.BOOLEAN_VALUE);
 		event.getServer().getWorld(0).getGameRules().addGameRule("doMobSkillSetFire", "true", GameRules.ValueType.BOOLEAN_VALUE);
 		event.getServer().getWorld(0).getGameRules().addGameRule("tribulationMultiplier", "16", GameRules.ValueType.NUMERICAL_VALUE);

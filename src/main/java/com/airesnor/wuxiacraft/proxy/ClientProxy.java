@@ -48,6 +48,7 @@ public class ClientProxy extends CommonProxy {
 	public static final int KEY_SELECT_DOWN = 6;
 	public static final int KEY_SELECT_1 = 7;
 	public static final int KEY_UNLEASH_SPEED = 17;
+	public static final int KEY_TOGGLE_BARRIER = 18;
 
 	public static KeyBinding[] keyBindings;
 
@@ -102,7 +103,7 @@ public class ClientProxy extends CommonProxy {
 
 		SkillsGui.init();
 
-		keyBindings = new KeyBinding[18];
+		keyBindings = new KeyBinding[19];
 		keyBindings[KEY_SPEED_UP] = new KeyBinding("key.wuxiacraft.speed_up", Keyboard.KEY_EQUALS, "key.wuxiacraft.category");
 		keyBindings[KEY_SPEED_DOWN] = new KeyBinding("key.wuxiacraft.speed_down", Keyboard.KEY_MINUS, "key.wuxiacraft.category");
 		keyBindings[KEY_CULT_GUI] = new KeyBinding("key.wuxiacraft.cult_gui", Keyboard.KEY_K, "key.wuxiacraft.category");
@@ -115,6 +116,7 @@ public class ClientProxy extends CommonProxy {
 			keyBindings[KEY_SELECT_1 + i] = new KeyBinding("key.wuxiacraft.select_" + j, KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Keyboard.KEY_1 + i, "key.wuxiacraft.category");
 		}
 		keyBindings[KEY_UNLEASH_SPEED] = new KeyBinding("key.wuxiacraft.unleash_speed", Keyboard.KEY_U, "key.wuxiacraft.category");
+		keyBindings[KEY_TOGGLE_BARRIER] = new KeyBinding("key.wuxiacraft.toggle_barrier", Keyboard.KEY_SEMICOLON, "key.wuxiacraft.category");
 		for (KeyBinding keyBinding : keyBindings) {
 			ClientRegistry.registerKeyBinding(keyBinding);
 		}

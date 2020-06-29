@@ -215,6 +215,10 @@ public class WuxiaItems {
 	public static final Item DUST_GOLD = new ItemBase("dust_gold");
 	public static final Item DUST_DIAMOND = new ItemBase("dust_diamond");
 
-	public static final Item SPATIAL_RING = new ItemSpatialRing("spatial_ring", 6, 9);
-
+	public static final Item LOW_GRADE_SPATIAL_RING = new ItemSpatialRing("low_grade_spatial_ring", 3, 9);
+	public static final Item MID_GRADE_SPATIAL_RING = new ItemSpatialRing("mid_grade_spatial_ring", 4, 10);
+	public static final Item HIGH_GRADE_SPATIAL_RING = new ItemSpatialRing("high_grade_spatial_ring", 5, 11);
+	public static final Item PEAK_GRADE_SPATIAL_RING = new ItemSpatialRing("peak_grade_spatial_ring", 6, 12);
+	public static final Item TOP_GRADE_SPATIAL_RING = new ItemSpatialRing("top_grade_spatial_ring", 7, 13);
+	public static final Item SUPREME_GRADE_SPATIAL_RING = new ItemSpatialRing("supreme_grade_spatial_ring", 8, 14);
 }

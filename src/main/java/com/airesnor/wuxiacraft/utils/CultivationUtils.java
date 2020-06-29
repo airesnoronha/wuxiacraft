@@ -97,6 +97,18 @@ public class CultivationUtils {
 		return sealing;
 	}
 
+	@Nonnull
+	public static IBarrier getBarrierFromEntity(EntityLivingBase entityIn) {
+		IBarrier barrier = null;
+		if (entityIn instanceof EntityPlayer) {
+			barrier = entityIn.getCapability(BarrierProvider.BARRIER_CAPABILITY, null);
+		}
+		if (barrier == null) {
+			barrier = new Barrier();
+		}
+		return barrier;
+	}
+
 	public static void cultivatorAddProgress(EntityLivingBase player, double amount, boolean techniques, boolean allowBreakThrough, boolean ignoreBottleneck) {
 		ICultivation cultivation = getCultivationFromEntity(player);
 		ICultTech cultTech = getCultTechFromEntity(player);

@@ -13,7 +13,7 @@ public class BiomeExtremeQi extends Biome {
     protected static final WorldGenAbstractTree TREE = new WorldGenBigTree(true);
 
     public BiomeExtremeQi() {
-        super(new BiomeProperties("ExtremeQi").setBaseHeight(2.0f).setHeightVariation(1.0f).setTemperature(1.0f).setRainfall(0.5f).setWaterColor(16777215));
+        super(new BiomeProperties("ExtremeQi").setBaseHeight(2.5f).setHeightVariation(2.0f).setTemperature(1.0f).setRainfall(0.5f).setWaterColor(12188907));
 
         topBlock = Blocks.GRASS.getDefaultState();
         fillerBlock = Blocks.DIRT.getDefaultState();

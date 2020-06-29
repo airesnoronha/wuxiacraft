@@ -13,7 +13,7 @@ public class BiomeEarth extends Biome {
     protected static final WorldGenAbstractTree TREE = new WorldGenBigTree(true);
 
     public BiomeEarth() {
-        super(new BiomeProperties("Earth").setBaseHeight(1.5f).setHeightVariation(0.8f).setTemperature(1.0f).setRainfall(0.1f).setWaterColor(9140823));
+        super(new BiomeProperties("Earth").setBaseHeight(2.0f).setHeightVariation(2.0f).setTemperature(1.0f).setRainfall(0.1f).setWaterColor(9140823));
 
         topBlock = Blocks.GRASS.getDefaultState();
         fillerBlock = Blocks.DIRT.getDefaultState();

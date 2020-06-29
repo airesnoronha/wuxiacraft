@@ -9,7 +9,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
 
-public class TeleportationUtil extends Teleporter{
+public class TeleportationUtil extends Teleporter {
 
     private final WorldServer worldIn;
     private final double x, y, z;
@@ -43,7 +43,7 @@ public class TeleportationUtil extends Teleporter{
             message.getStyle().setColor(TextFormatting.RED);
             playerMP.sendMessage(message);
         }
-        worldServer.getMinecraftServer().getPlayerList().transferPlayerToDimension(playerMP, dimensionID, new TeleportationUtil(worldServer, x, y, z, 0f, 0f));
+        worldServer.getMinecraftServer().getPlayerList().transferPlayerToDimension(playerMP, dimensionID, new TeleportationUtil(worldServer, x, y, z, playerMP.rotationYaw, playerMP.rotationPitch));
         playerMP.setPositionAndRotation(x, y, z, playerRotationYaw, playerRotationPitch);
     }
 
@@ -73,7 +73,7 @@ public class TeleportationUtil extends Teleporter{
         if (dimensionID == targetPlayerMP.world.provider.getDimension()) {
             worldServer.getBlockState(new BlockPos((int)x, (int)y, (int)z));
         } else {
-            worldServer.getMinecraftServer().getPlayerList().transferPlayerToDimension(playerMP, dimensionID, new TeleportationUtil(worldServer, x, y, z, 0f, 0f));
+            worldServer.getMinecraftServer().getPlayerList().transferPlayerToDimension(playerMP, dimensionID, new TeleportationUtil(worldServer, x, y, z, playerMP.rotationYaw, playerMP.rotationPitch));
         }
         playerMP.setPositionAndRotation(x, y, z, playerRotationYaw, playerRotationPitch);
     }
