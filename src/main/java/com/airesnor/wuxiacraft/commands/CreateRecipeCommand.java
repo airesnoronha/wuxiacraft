@@ -1,7 +1,7 @@
 package com.airesnor.wuxiacraft.commands;
 
-import com.airesnor.wuxiacraft.alchemy.Recipe;
-import com.airesnor.wuxiacraft.alchemy.Recipes;
+import com.airesnor.wuxiacraft.profession.alchemy.Recipe;
+import com.airesnor.wuxiacraft.profession.alchemy.RecipesOld;
 import com.airesnor.wuxiacraft.items.ItemRecipe;
 import com.airesnor.wuxiacraft.items.WuxiaItems;
 import mcp.MethodsReturnNonnullByDefault;
@@ -56,7 +56,7 @@ public class CreateRecipeCommand extends CommandBase {
 			if(args.length == 1) {
 				String recipe_name = args[0].toLowerCase();
 				String recipe_found = "";
-				for(Recipe recipe : Recipes.RECIPES) {
+				for(Recipe recipe : RecipesOld.RECIPES) {
 					if(recipe_name.equals(recipe.getUnlocalizedName())) {
 						recipe_found = recipe.getUnlocalizedName();
 						ItemStack stack = new ItemStack(WuxiaItems.RECIPE_SCROLL, 1);

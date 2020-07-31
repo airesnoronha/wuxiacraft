@@ -27,8 +27,8 @@ public class ProgressMessage implements IMessage {
 		this.op = 0;
 		this.amount = 0;
 		this.techniques = false;
-		allowBreakTrough = false;
-		ignoreBottleneck = false;
+		this.allowBreakTrough = false;
+		this.ignoreBottleneck = false;
 		this.senderUUID = null;
 	}
 

@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -37,11 +38,7 @@ public class AskCultivationLevelMessage implements IMessage {
 	public void fromBytes(ByteBuf buf) {
 		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		this.askerSubLevel = buf.readInt();
-		int length = buf.readInt();
-		byte[] bytes = new byte[30];
-		buf.readBytes(bytes, 0, length);
-		bytes[length] = '\0';
-		String cultLevelName = new String(bytes, 0, length);
+		String cultLevelName = ByteBufUtils.readUTF8String(buf);
 		this.askerLevel = CultivationLevel.REGISTERED_LEVELS.get(cultLevelName);
 		this.askerUUID = packetBuffer.readUniqueId();
 	}
@@ -50,9 +47,7 @@ public class AskCultivationLevelMessage implements IMessage {
 	public void toBytes(ByteBuf buf) {
 		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		buf.writeInt(this.askerSubLevel);
-		byte[] bytes = this.askerLevel.levelName.getBytes();
-		buf.writeInt(bytes.length);
-		buf.writeBytes(bytes);
+		ByteBufUtils.writeUTF8String(buf, this.askerLevel.levelName);
 		packetBuffer.writeUniqueId(this.askerUUID);
 	}
 

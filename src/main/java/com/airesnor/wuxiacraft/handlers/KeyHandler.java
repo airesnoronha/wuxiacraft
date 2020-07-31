@@ -4,6 +4,7 @@ import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.IBarrier;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
+import com.airesnor.wuxiacraft.items.ItemHerb;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.proxy.ClientProxy;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;

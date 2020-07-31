@@ -4,7 +4,9 @@ import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.SpiritVeinOre;
 import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
-import com.airesnor.wuxiacraft.dimensions.biomes.WuxiaBiomes;
+import com.airesnor.wuxiacraft.items.ItemHerb;
+import com.airesnor.wuxiacraft.items.WuxiaHerbs;
+import com.airesnor.wuxiacraft.world.dimensions.biomes.WuxiaBiomes;
 import com.airesnor.wuxiacraft.entities.mobs.GiantAnt;
 import com.airesnor.wuxiacraft.entities.mobs.GiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
@@ -35,8 +37,6 @@ import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import java.io.FileNotFoundException;
-
 @Mod.EventBusSubscriber
 public class RegistryHandler {
 
@@ -44,6 +44,7 @@ public class RegistryHandler {
 	public static void onItemRegister(RegistryEvent.Register<Item> event) {
 		WuxiaCraft.logger.info("Registering items.");
 		event.getRegistry().registerAll(WuxiaItems.ITEMS.toArray(new Item[0]));
+		event.getRegistry().registerAll(WuxiaHerbs.HERBS.toArray(new Item[0]));
 
 	}
 
@@ -71,6 +72,9 @@ public class RegistryHandler {
 			} else {
 				WuxiaCraft.proxy.registerItemRenderer(item, 0, "inventory");
 			}
+		}
+		for (Item item : WuxiaHerbs.HERBS) {
+			WuxiaCraft.proxy.registerItemRenderer(item, 0, "inventory");
 		}
 		for (Block block : WuxiaBlocks.BLOCKS) {
 			if (block instanceof SpiritVeinOre) {
@@ -172,7 +176,8 @@ public class RegistryHandler {
 						WuxiaBiomes.FIRE,
 						WuxiaBiomes.METAL,
 						WuxiaBiomes.WATER,
-						WuxiaBiomes.WOOD)
+						WuxiaBiomes.WOOD,
+						WuxiaBiomes.EXTREMEQI)
 				.build();
 		EntityEntry fireThrowable = EntityEntryBuilder.create()
 				.entity(FireThrowable.class)

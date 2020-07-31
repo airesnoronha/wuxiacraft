@@ -6,14 +6,11 @@ import net.minecraftforge.items.IItemHandler;
 
 public class SpatialRingGui extends GuiContainer {
 
-    private final IItemHandler inv;
-
-    public SpatialRingGui(IItemHandler inv, EntityPlayer player) {
-        super(new SpatialRingContainer(inv, player));
+    public SpatialRingGui(EntityPlayer player) {
+        super(new SpatialRingContainer(player));
 
         this.xSize = 200;
         this.ySize = 250;
-        this.inv = inv;
     }
 
     @Override

@@ -6,7 +6,7 @@ import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
-import com.airesnor.wuxiacraft.dimensions.biomes.WuxiaBiomes;
+import com.airesnor.wuxiacraft.world.dimensions.biomes.WuxiaBiomes;
 import com.airesnor.wuxiacraft.entities.skills.FireThrowable;
 import com.airesnor.wuxiacraft.entities.skills.SwordBeamThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
@@ -41,7 +41,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import scala.xml.dtd.ELEMENTS;
 
 import java.util.ArrayList;
 import java.util.List;
