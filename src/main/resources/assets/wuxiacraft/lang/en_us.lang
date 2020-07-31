@@ -1,4 +1,4 @@
-//Items
+#Items
 item.crunchy_bar.name=Crunchy Bar
 item.natural_oddity_low.name=Low Tier Natural Oddity
 item.feather_fan.name=Feather Fan
@@ -69,7 +69,6 @@ item.divine_origin_stone.name=Divine Origin Stone
 item.boundless_void_crystal.name=Boundless Void Crystal
 item.fallen_star_core.name=Fallen Star Core
 item.primordial_chaos_stone.name=Primordial Chaos Stone
-item.paint_brush.name=Paint Brush
 item.empty_bottle.name=Empty Bottle
 item.blood_bottle.name=Blood Bottle
 item.paint_brush.name=Paint Brush
@@ -92,14 +91,14 @@ item.peak_grade_spatial_ring.name=Peak Grade Spatial Ring
 item.top_grade_spatial_ring.name=Top Grade Spatial Ring
 item.supreme_grade_spatial_ring.name=Supreme Grade Spatial Ring
 
-//Creative tabs
+#Creative tabs
 itemGroup.wuxiacraft.scrolls=Cultivation Techniques
 itemGroup.wuxiacraft.general=Wuxiacraft
 itemGroup.wuxiacraft.blocks=Wuxiacraft Blocks
 itemGroup.wuxiacraft.cores=Monster Cores
 itemGroup.wuxiacraft.pills=Pills
 
-//Blocks
+#Blocks
 tile.natural_oddity_ore.name=Natural Oddity Ore
 tile.iron_cauldron.name=Iron Cauldron
 tile.spirit_stone_stack_block.name=Spirit Stone Stack
@@ -147,7 +146,7 @@ tile.fiery_stone.name=Fiery Stone
 tile.icy_stone.name=Icy Stone
 tile.metallic_stone.name=Metallic Stone
 
-//Configuration
+#Configuration
 gui.config.main_title=WuxiaCraft
 gui.config.category.gameplay=Gameplay
 gui.config.gameplay.speed_handicap.name=Speed handicap
@@ -156,7 +155,7 @@ gui.config.gameplay.max_speed.name=Max Speed
 gui.config.gameplay.haste_limit.name=Break Block Limit
 gui.config.gameplay.jump_limit.name=Jump Limit
 
-//Key bindings
+#Key bindings
 key.wuxiacraft.category=WuxiaCraft
 key.wuxiacraft.speed_up=Increase speed handicap
 key.wuxiacraft.speed_down=Decrease speed handicap
@@ -178,13 +177,13 @@ key.wuxiacraft.select_0=Select skill in 10
 key.wuxiacraft.unleash_speed=Toggle Speed Limit
 key.wuxiacraft.toggle_barrier=Toggle Barrier
 
-//tiers
+#tiers
 wuxiacraft.tier.mortal=Mortal
 wuxiacraft.tier.martial=Martial
 wuxiacraft.tier.Immortal=Immortal
 wuxiacraft.tier.Divine=Divine
 
-//cultivation levels
+#cultivation levels
 wuxiacraft.cultivation.body_refinement=Body Refinement
 wuxiacraft.cultivation.soul_refinement=Soul Refinement
 wuxiacraft.cultivation.qi_paths_refinement=Qi Paths Refinement
@@ -202,13 +201,13 @@ wuxiacraft.cultivation.divine_law=Divine Law
 wuxiacraft.cultivation.divine_phenomenon=Divine Phenomenon
 wuxiacraft.cultivation.true_god=True God
 
-//cultivation category
-wuxiacraft.category.energy_perception
-wuxiacraft.category.martial_law
-wuxiacraft.category.immortal_foundation
-wuxiacraft.category.divine_law
+#cultivation category
+wuxiacraft.category.energy_perception=Energy Perception
+wuxiacraft.category.martial_law=Martial Law
+wuxiacraft.category.immortal_foundation=Immortal Foundation
+wuxiacraft.category.divine_law=Divine Law
 
-//Labels
+#Labels
 wuxiacraft.label.cultivation=Cultivation
 wuxiacraft.label.rank=Rank
 wuxiacraft.label.tier=Tier
@@ -222,7 +221,7 @@ wuxiacraft.label.pickaxe=Pickaxe
 wuxiacraft.label.shovel=Shovel
 wuxiacraft.label.skills_gui.title=Skills List
 
-//Techniques
+#Techniques
 wuxiacraft.techniques.body_strength=Body Strength Manual
 item.body_strength_scroll.name=Body Strength Manual
 wuxiacraft.techniques.light_feet=Light Feet Scroll
@@ -250,7 +249,7 @@ item.sword_flight_journal_scroll.name=Sword Flight Journal
 wuxiacraft.techniques.sky_crosser_sword=Sky Crosser Sword
 item.sky_crosser_sword_scroll.name=Sky Crosser Sword Manual
 
-//Elements
+#Elements
 wuxiacraft.elements.fire=Fire
 wuxiacraft.elements.earth=Earth
 wuxiacraft.elements.metal=Metal
@@ -262,7 +261,7 @@ wuxiacraft.elements.wind=Wind
 wuxiacraft.elements.lightning=Lightning
 wuxiacraft.elements.ice=Ice
 
-//Skills
+#Skills
 wuxiacraft.skills.cultivate=Cultivate
 wuxiacraft.skills.gather_wood=Gather Wood
 wuxiacraft.skills.accelerate_growth=Accelerate Growth
@@ -286,7 +285,7 @@ wuxiacraft.skills.minor_body_reinforcement=Minor Body Reinforcement
 wuxiacraft.skills.minor_power_punch=Minor Power Crasho
 wuxiacraft.skills.adept_sword_flight=Adept Sword Flight
 
-//Recipes
+#Recipes
 wuxiacraft.recipes.name.body_refinement_pill_recipe=Body Refinement Pill Recipe
 wuxiacraft.recipes.name.training_pill_recipe=Training Pill Recipe
 wuxiacraft.recipes.name.reinforcement_pill_recipe=Reinforcement Pill Recipe
@@ -327,29 +326,29 @@ wuxiacraft.recipes.name.turtle_shell_pill_recipe=Turtle Shell Pill Recipe
 wuxiacraft.recipes.name.minor_fasting_pill_recipe=Minor Fasting Pill Recipe
 
 
-//Congratulation messages
+#Congratulation messages
 wuxiacraft.level_message.congrats_0=Congratulations! You are now at
 wuxiacraft.level_message.congrats_1=Woooow! You broken through to
 wuxiacraft.level_message.congrats_2=Beware! There is a new cultivator at
 wuxiacraft.level_message.congrats_3=You just reached
 wuxiacraft.level_message.congrats_4=A big cultivator has always passed by
 
-//entities
+#entities
 entity.giant_ant.name=Giant Ant
 entity.giant_bee.name=Giant Bee
 entity.wandering_cultivator.name=Wandering Cultivator
 
-//Temperatures
+#Temperatures
 wuxiacraft.temperatures.cold=Cold
 wuxiacraft.temperatures.warm=Warm
 wuxiacraft.temperatures.hot=Hot
 wuxiacraft.temperatures.melting=Melting
 wuxiacraft.temperatures.super_hot=Super Hot
 
-//Potion effects
+#Potion effects
 effect.enlightenment=Enlightenment
 Not used correctly!=wrongUsage
 
-//World Types and Biomes
+#World Types and Biomes
 generator.Mining=Mining
 generator.Wuxia=Wuxia
