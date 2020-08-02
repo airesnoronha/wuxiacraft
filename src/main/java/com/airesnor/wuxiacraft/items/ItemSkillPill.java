@@ -5,6 +5,7 @@ import com.airesnor.wuxiacraft.cultivation.skills.ISkillAction;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
@@ -40,14 +41,14 @@ public class ItemSkillPill extends ItemBase {
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		if (entityLiving instanceof EntityPlayer) {
 			if (this.action != null) {
-				IFoundation foundation = CultivationUtils.getFoundationFromEntity(entityLiving);
-				if(this.amount <= foundation.getConstitutionModifier()) {
+				float constitution = (float) entityLiving.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue()*0.6f;
+				if(this.amount <= constitution) {
 					if (this.action.activate(entityLiving))
 						stack.shrink(1);
 				} else {
 					stack.shrink(1);
 					worldIn.createExplosion(entityLiving, entityLiving.posX, entityLiving.posY, entityLiving.posZ, 3f, true);
-					entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), (this.amount-(float)foundation.getConstitutionModifier())*2);
+					entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), (this.amount-constitution)*2);
 				}
 			}
 		}

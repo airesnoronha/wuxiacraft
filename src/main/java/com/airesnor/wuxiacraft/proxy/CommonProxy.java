@@ -1,13 +1,9 @@
 package com.airesnor.wuxiacraft.proxy;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.capabilities.*;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
-import com.airesnor.wuxiacraft.cultivation.IBarrier;
-import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.cultivation.IFoundation;
-import com.airesnor.wuxiacraft.cultivation.ISealing;
+import com.airesnor.wuxiacraft.cultivation.*;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
@@ -21,7 +17,6 @@ import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.handlers.GuiHandler;
 import com.airesnor.wuxiacraft.handlers.RegistryHandler;
 import com.airesnor.wuxiacraft.networking.*;
-import com.airesnor.wuxiacraft.utils.CultivationLoader;
 import com.airesnor.wuxiacraft.utils.FormationUtils;
 import com.airesnor.wuxiacraft.utils.OreUtils;
 import com.airesnor.wuxiacraft.world.WorldGen;
@@ -107,7 +102,8 @@ public class CommonProxy {
 	}
 
 	public void preInit() {
-		CultivationLoader.loadLevelsFromConfig();
+
+		BaseSystemLevel.initializeLevels();
 
 		reflectOnField(SharedMonsterAttributes.class, new String[]{"MAX_HEALTH", "field_111267_a"}, (new RangedAttribute(null, "generic.maxHealth", 20.0D, Float.MIN_VALUE, 1000000000000000.0D)).setDescription("Max Health").setShouldWatch(true));
 		reflectOnField(SharedMonsterAttributes.class, new String[]{"ARMOR", "field_188791_g"}, (new RangedAttribute(null, "generic.armor", 0.0D, 0.0D, 100000000000000.0D)).setShouldWatch(true));
@@ -123,8 +119,8 @@ public class CommonProxy {
 	}
 
 	private void registerRuneBlocks() {
-		WuxiaBlocks.initBloodRunes();
-		//ForgeRegistries.BLOCKS.registerAll(Blocks.BLOOD_RUNES.values().toArray(new Block[0]));
+		//No more blood runes
+		//WuxiaBlocks.initBloodRunes();
 	}
 
 	public void registerScrollModel(Item item, int meta, String id) {

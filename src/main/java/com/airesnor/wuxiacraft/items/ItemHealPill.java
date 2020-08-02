@@ -4,6 +4,7 @@ import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
@@ -30,15 +31,15 @@ public class ItemHealPill extends ItemBase {
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		if (entityLiving instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) entityLiving;
-			IFoundation foundation = CultivationUtils.getFoundationFromEntity(entityLiving);
+			float constitution = (float) entityLiving.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue()*0.6f;
 			stack.shrink(player.isCreative() ? 0 : 1);
 			if (stack.isEmpty())
 				stack = ItemStack.EMPTY;
-			if (this.amount <= 10f + foundation.getConstitutionModifier()) {
+			if (this.amount <= 10f + constitution) {
 				player.heal(this.amount);
 			} else {
 				worldIn.createExplosion(player, player.posX, player.posY, player.posZ, 3f, true);
-				player.attackEntityFrom(DamageSource.causeExplosionDamage(player), (float) (this.amount-foundation.getConstitutionModifier()));
+				player.attackEntityFrom(DamageSource.causeExplosionDamage(player), (float) (this.amount-constitution));
 			}
 		}
 		return stack;

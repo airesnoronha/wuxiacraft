@@ -1,12 +1,10 @@
 package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -51,7 +49,7 @@ public class ItemPaintBrush extends ItemBase {
 					worldIn.setBlockState(pos, state);
 					worldIn.notifyBlockUpdate(pos, state, state, 3);
 				}
-			} else {
+			} /*else {
 				Block rune = null;
 				if (bottle.getItem() == WuxiaItems.BLOOD_BOTTLE) {
 					NBTTagCompound tag = bottle.getTagCompound();
@@ -77,7 +75,7 @@ public class ItemPaintBrush extends ItemBase {
 					player.getHeldItem(hand).damageItem(1, player);
 					result = EnumActionResult.SUCCESS;
 				}
-			}
+			}*/
 		}
 		return result;
 	}

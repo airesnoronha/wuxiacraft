@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.networking;
 
+import com.airesnor.wuxiacraft.cultivation.BaseSystemLevel;
 import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
@@ -20,11 +21,11 @@ import java.util.UUID;
 
 public class AskCultivationLevelMessage implements IMessage {
 
-	public CultivationLevel askerLevel;
+	public BaseSystemLevel askerLevel;
 	public int askerSubLevel;
 	public UUID askerUUID;
 
-	public AskCultivationLevelMessage(CultivationLevel askerLevel, int askerSubLevel, UUID askerUUID) {
+	public AskCultivationLevelMessage(BaseSystemLevel askerLevel, int askerSubLevel, UUID askerUUID) {
 		this.askerLevel = askerLevel;
 		this.askerSubLevel = askerSubLevel;
 		this.askerUUID = askerUUID;
@@ -42,7 +43,7 @@ public class AskCultivationLevelMessage implements IMessage {
 		buf.readBytes(bytes, 0, length);
 		bytes[length] = '\0';
 		String cultLevelName = new String(bytes, 0, length);
-		this.askerLevel = CultivationLevel.REGISTERED_LEVELS.get(cultLevelName);
+		this.askerLevel = BaseSystemLevel.getLevelInListByName(BaseSystemLevel.ESSENCE_LEVELS, cultLevelName);
 		this.askerUUID = packetBuffer.readUniqueId();
 	}
 
@@ -69,10 +70,10 @@ public class AskCultivationLevelMessage implements IMessage {
 						for (Entity entity : entities) {
 							if (entity instanceof EntityPlayer) {
 								ICultivation cultivation = CultivationUtils.getCultivationFromEntity((EntityLivingBase) entity);
-								CultivationLevel level = cultivation.getCurrentLevel();
-								int subLevel = cultivation.getCurrentSubLevel();
-								if (level.isGreaterThan(message.askerLevel)) {
-									level = message.askerLevel.getNextLevel();
+								BaseSystemLevel level = cultivation.getEssenceLevel();
+								int subLevel = cultivation.getEssenceSubLevel();
+								if (level.greaterThan(message.askerLevel, BaseSystemLevel.ESSENCE_LEVELS)) {
+									level = message.askerLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
 									subLevel = -1;
 								}
 								RespondCultivationLevelMessage respondCultivationLevelMessage = new RespondCultivationLevelMessage(level, subLevel, entity.getUniqueID());

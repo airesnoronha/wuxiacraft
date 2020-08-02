@@ -1,7 +1,7 @@
 package com.airesnor.wuxiacraft.entities.mobs;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
+import com.airesnor.wuxiacraft.cultivation.BaseSystemLevel;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.entities.ai.EntityAIReleaseSkills;
 import com.airesnor.wuxiacraft.utils.MathUtils;
@@ -64,23 +64,23 @@ public class WanderingCultivator extends EntityCultivator implements IMob {
 	protected void applyCultivation(World world) {
 		if(world.provider.getDimensionType().getId() == 0) {
 			int result = world.rand.nextInt(100);
-			CultivationLevel aux = CultivationLevel.BASE_LEVEL.getNextLevel();
+			BaseSystemLevel aux = BaseSystemLevel.DEFAULT_ESSENCE_LEVEL.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
 			if(MathUtils.between(result, 0, 30)) {
-				this.cultivation.setCurrentLevel(aux);
+				this.cultivation.setEssenceLevel(aux);
 				this.experienceValue = 7;
 			}
-			aux = aux.getNextLevel();
+			aux = aux.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
 			if(MathUtils.between(result, 31, 41)) {
-				this.cultivation.setCurrentLevel(aux);
+				this.cultivation.setEssenceLevel(aux);
 				this.experienceValue = 10;
 			}
-			aux = aux.getNextLevel();
+			aux = aux.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
 			if(MathUtils.between(result, 42, 47)) {
-				this.cultivation.setCurrentLevel(aux);
+				this.cultivation.setEssenceLevel(aux);
 				this.experienceValue = 15;
 			}
 			result = 1+world.rand.nextInt(35);
-			this.cultivation.setCurrentSubLevel(5-(int)Math.floor(Math.sqrt(result)));
+			this.cultivation.setEssenceSubLevel(5-(int)Math.floor(Math.sqrt(result)));
 			result = world.rand.nextInt(100);
 			if(result < 50) {
 				skillCap.addSkill(Skills.FLAMES);
@@ -96,28 +96,29 @@ public class WanderingCultivator extends EntityCultivator implements IMob {
 		}
 		if(world.provider.getDimensionType().getId() != 0) {
 			int result = world.rand.nextInt(100);
-			CultivationLevel aux = CultivationLevel.BASE_LEVEL.getNextLevel().getNextLevel(); //qi paths equivalent
+			BaseSystemLevel aux = BaseSystemLevel.DEFAULT_ESSENCE_LEVEL.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
+			aux = aux.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);//third level minimum
 			if(MathUtils.between(result, 48, 100)) { // base level for other worlds
-				this.cultivation.setCurrentLevel(aux);
+				this.cultivation.setEssenceLevel(aux);
 				this.experienceValue = 10;
 			}
-			aux = aux.getNextLevel();
+			aux = aux.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
 			if(MathUtils.between(result, 0, 30)) {
-				this.cultivation.setCurrentLevel(aux);
+				this.cultivation.setEssenceLevel(aux);
 				this.experienceValue = 15;
 			}
-			aux = aux.getNextLevel();
+			aux = aux.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
 			if(MathUtils.between(result, 31, 41)) {
-				this.cultivation.setCurrentLevel(aux);
+				this.cultivation.setEssenceLevel(aux);
 				this.experienceValue = 25;
 			}
-			aux = aux.getNextLevel(); //sky law tops
+			aux = aux.nextLevel(BaseSystemLevel.ESSENCE_LEVELS); // guess this should be immortal 3
 			if(MathUtils.between(result, 42, 47)) {
-				this.cultivation.setCurrentLevel(aux);
+				this.cultivation.setEssenceLevel(aux);
 				this.experienceValue = 40;
 			}
 			result = 1+world.rand.nextInt(35);
-			this.cultivation.setCurrentSubLevel(5-(int)Math.floor(Math.sqrt(result)));
+			this.cultivation.setEssenceSubLevel(5-(int)Math.floor(Math.sqrt(result)));
 			result = world.rand.nextInt(100);
 			if(result < 50) {
 				skillCap.addSkill(Skills.FLAMES);
@@ -138,23 +139,23 @@ public class WanderingCultivator extends EntityCultivator implements IMob {
 	@Override
 	protected ResourceLocation getLootTable() {
 		ResourceLocation table = DROP_TABLE_1;
-		CultivationLevel aux = CultivationLevel.BASE_LEVEL.getNextLevel();
+		BaseSystemLevel aux = BaseSystemLevel.DEFAULT_ESSENCE_LEVEL.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
 		if(this.getCultivationLevel() == aux) {
 			table = DROP_TABLE_2;
 		}
-		aux = aux.getNextLevel();
+		aux = aux.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
 		if(this.getCultivationLevel() == aux) {
 			table = DROP_TABLE_3;
 		}
-		aux = aux.getNextLevel();
+		aux = aux.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
 		if(this.getCultivationLevel() == aux) {
 			table = DROP_TABLE_4;
 		}
-		aux = aux.getNextLevel();
+		aux = aux.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
 		if(this.getCultivationLevel() == aux) {
 			table = DROP_TABLE_5;
 		}
-		aux = aux.getNextLevel();
+		aux = aux.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
 		if(this.getCultivationLevel() == aux) {
 			table = DROP_TABLE_6;
 		}

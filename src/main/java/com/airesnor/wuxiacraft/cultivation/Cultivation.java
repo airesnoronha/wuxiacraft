@@ -1,9 +1,17 @@
 package com.airesnor.wuxiacraft.cultivation;
 
+import com.airesnor.wuxiacraft.utils.MathUtils;
+
 public class Cultivation implements ICultivation {
-	private double progress;
-	private CultivationLevel level;
-	private int subLevel;
+	private double bodyProgress;
+	private BaseSystemLevel bodyLevel;
+	private int bodySubLevel;
+	private double divineProgress;
+	private BaseSystemLevel divineLevel;
+	private int divineSubLevel;
+	private double essenceProgress;
+	private BaseSystemLevel essenceLevel;
+	private int essenceSubLevel;
 	private double energy;
 	public int handicap;
 	private int timer;
@@ -13,10 +21,23 @@ public class Cultivation implements ICultivation {
 	private float jumpLimit;
 	private boolean suppress;
 
+	public enum System {
+		BODY, ESSENCE, DIVINE
+	}
+
+	private System selectedSystem;
+
+
 	public Cultivation() {
-		this.subLevel = 0;
-		this.progress = 0;
-		this.level = CultivationLevel.BASE_LEVEL;
+		this.bodyProgress = 0;
+		this.divineProgress = 0;
+		this.essenceProgress = 0;
+		this.bodyLevel = BaseSystemLevel.DEFAULT_BODY_LEVEL;
+		this.divineLevel = BaseSystemLevel.DEFAULT_DIVINE_LEVEL;
+		this.essenceLevel = BaseSystemLevel.DEFAULT_ESSENCE_LEVEL;
+		this.bodySubLevel = 0;
+		this.divineSubLevel = 0;
+		this.divineSubLevel = 0;
 		this.energy = 0;
 		this.handicap = 100;
 		this.timer = 0;
@@ -25,24 +46,21 @@ public class Cultivation implements ICultivation {
 		this.hasteLimit = 10.0f;
 		this.jumpLimit = 10.0f;
 		this.suppress = false;
+		this.selectedSystem = System.ESSENCE;
 	}
 
 	@Override
-	public boolean addProgress(double amount, boolean allowBreakThrough) {
+	public boolean addBodyProgress(double amount, boolean allowBreakthrough) {
 		boolean leveled = false;
-		this.progress += amount;
-		if(allowBreakThrough) {
-			if (this.progress >= this.level.getProgressBySubLevel(this.subLevel)) { //no more repeated breakthrough, just one at a time
-				this.progress -= this.level.getProgressBySubLevel(this.subLevel);
+		this.bodyProgress += amount;
+		if(allowBreakthrough) {
+			if(this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel)) {
+				this.bodyProgress -= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel);
 				leveled = true;
-				if(!this.level.tribulationEachSubLevel && this.subLevel+1 < this.level.subLevels) {
-					this.subLevel++;
-				}
-				else if (this.subLevel+1 >= this.level.subLevels) {
-					if(!this.level.getNextLevel().callsTribulation) {
-						this.subLevel = 0;
-						this.level = this.level.getNextLevel();
-					}
+				this.bodySubLevel ++;
+				if(this.bodySubLevel == this.bodyLevel.subLevels) {
+					this.bodySubLevel = 0;
+					this.bodyLevel = this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS);
 				}
 			}
 		}
@@ -50,28 +68,114 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public CultivationLevel getCurrentLevel() {
-		return this.level;
+	public boolean addDivineProgress(double amount, boolean allowBreakthrough) {
+		boolean leveled = false;
+		this.divineProgress += amount;
+		if(allowBreakthrough) {
+			if(this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) {
+				this.divineProgress -= this.divineLevel.getProgressBySubLevel(this.divineSubLevel);
+				leveled = true;
+				this.divineSubLevel ++;
+				if(this.divineSubLevel == this.divineLevel.subLevels) {
+					this.divineSubLevel = 0;
+					this.divineLevel = this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS);
+				}
+			}
+		}
+		return leveled;
 	}
 
 	@Override
-	public int getCurrentSubLevel() {
-		return this.subLevel;
+	public boolean addEssenceProgress(double amount, boolean allowBreakthrough) {
+		boolean leveled = false;
+		this.essenceProgress += amount;
+		if(allowBreakthrough) {
+			if(this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)) {
+				this.essenceProgress -= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel);
+				leveled = true;
+				this.essenceSubLevel ++;
+				if(this.essenceSubLevel == this.essenceLevel.subLevels) {
+					this.essenceSubLevel = 0;
+					this.essenceLevel = this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
+				}
+			}
+		}
+		return leveled;
 	}
 
 	@Override
-	public double getCurrentProgress() {
-		return this.progress;
+	public BaseSystemLevel getBodyLevel() {
+		return this.bodyLevel;
 	}
 
 	@Override
-	public void setCurrentLevel(CultivationLevel level) {
-		this.level = level;
+	public BaseSystemLevel getDivineLevel() {
+		return this.divineLevel;
 	}
 
 	@Override
-	public void setCurrentSubLevel(int subLevel) {
-		this.subLevel = subLevel;
+	public BaseSystemLevel getEssenceLevel() {
+		return this.essenceLevel;
+	}
+
+	@Override
+	public int getBodySubLevel() {
+		return this.bodySubLevel;
+	}
+
+	@Override
+	public int getDivineSubLevel() {
+		return this.divineSubLevel;
+	}
+
+	@Override
+	public int getEssenceSubLevel() {
+		return this.essenceSubLevel;
+	}
+
+	@Override
+	public double getBodyProgress() {
+		return this.bodyProgress;
+	}
+
+	@Override
+	public double getDivineProgress() {
+		return this.divineProgress;
+	}
+
+	@Override
+	public double getEssenceProgress() {
+		return this.essenceProgress;
+	}
+
+	@Override
+	public void setBodyLevel(BaseSystemLevel level) {
+		this.bodyLevel = level;
+	}
+
+	@Override
+	public void setDivineLevel(BaseSystemLevel level) {
+		this.divineLevel = level;
+	}
+
+	@Override
+	public void setEssenceLevel(BaseSystemLevel level) {
+		this.essenceLevel = level;
+	}
+
+	@Override
+	public void setBodySubLevel(int subLevel) {
+		this.bodySubLevel = subLevel;
+	}
+
+	@Override
+	public void setDivineSubLevel(int subLevel) {
+		this.divineSubLevel = subLevel;
+	}
+
+	@Override
+	public void setEssenceSubLevel(int subLevel) {
+		this.essenceSubLevel = subLevel;
 	}
 
 	@Override
@@ -100,8 +204,18 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public void setProgress(double amount) {
-		this.progress = Math.min(Math.max(0, amount), this.level.getProgressBySubLevel(this.subLevel));
+	public void setBodyProgress(double amount) {
+		this.bodyProgress = MathUtils.clamp(amount, 0, this.bodyLevel.getProgressBySubLevel(this.bodySubLevel));
+	}
+
+	@Override
+	public void setDivineProgress(double amount) {
+		this.divineProgress = MathUtils.clamp(amount, 0, this.divineLevel.getProgressBySubLevel(this.divineSubLevel));
+	}
+
+	@Override
+	public void setEssenceProgress(double amount) {
+		this.essenceProgress = MathUtils.clamp(amount, 0, this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel));
 	}
 
 	@Override
@@ -136,8 +250,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public void lessenPillCooldown() {
-		int speed = (int)Math.round(this.getSpeedIncrease());
-		this.pillCooldown = Math.max(this.pillCooldown - speed, 0);
+		this.pillCooldown = Math.max(this.pillCooldown - 1, 0);
 	}
 
 	@Override
@@ -146,18 +259,8 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public double getStrengthIncrease() {
-		return this.level.getStrengthModifierBySubLevel(this.subLevel);
-	}
-
-	@Override
-	public double getSpeedIncrease() {
-		return this.level.getSpeedModifierBySubLevel(this.subLevel);
-	}
-
-	@Override
-	public double getMaxEnergy(IFoundation foundation) {
-		return 100 + 10*foundation.getSpiritModifier();
+	public double getMaxEnergy() {
+		return 18*this.getEssenceModifier() + 8*this.getBodyModifier() + 12*this.getDivineModifier();
 	}
 
 	@Override
@@ -201,10 +304,41 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
+	public double getBodyModifier() {
+		return this.bodyLevel.getModifierBySubLevel(this.bodySubLevel);
+	}
+
+	@Override
+	public double getDivineModifier() {
+		return this.divineLevel.getModifierBySubLevel(this.divineSubLevel);
+	}
+
+	@Override
+	public double getEssenceModifier() {
+		return this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel);
+	}
+
+	@Override
+	public System getSelectedSystem() {
+		return this.selectedSystem;
+	}
+
+	@Override
+	public void setSelectedSystem(System selectedSystem) {
+		this.selectedSystem = selectedSystem;
+	}
+
+	@Override
 	public void copyFrom(ICultivation cultivation) {
-		this.setCurrentLevel(cultivation.getCurrentLevel());
-		this.setCurrentSubLevel(cultivation.getCurrentSubLevel());
-		this.setProgress(cultivation.getCurrentProgress());
+		this.bodyLevel = cultivation.getBodyLevel();
+		this.divineLevel = cultivation.getDivineLevel();
+		this.essenceLevel = cultivation.getEssenceLevel();
+		this.bodySubLevel = cultivation.getBodySubLevel();
+		this.divineSubLevel = cultivation.getDivineSubLevel();
+		this.essenceSubLevel = cultivation.getEssenceSubLevel();
+		this.bodyProgress = cultivation.getBodyProgress();
+		this.divineProgress = cultivation.getDivineProgress();
+		this.essenceProgress = cultivation.getEssenceProgress();
 		this.setEnergy(cultivation.getEnergy());
 		this.setPillCooldown(cultivation.getPillCooldown());
 		this.setSuppress(cultivation.getSuppress());

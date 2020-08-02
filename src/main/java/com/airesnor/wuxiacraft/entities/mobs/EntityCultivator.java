@@ -1,7 +1,7 @@
 package com.airesnor.wuxiacraft.entities.mobs;
 
+import com.airesnor.wuxiacraft.cultivation.BaseSystemLevel;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
-import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
@@ -51,9 +51,9 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	@Override
 	public void writeEntityToNBT(NBTTagCompound compound) {
 		super.writeEntityToNBT(compound);
-		compound.setString("level", cultivation.getCurrentLevel().levelName);
-		compound.setInteger("subLevel", cultivation.getCurrentSubLevel());
-		compound.setInteger("progress", (int) cultivation.getCurrentProgress());
+		compound.setString("level", cultivation.getEssenceLevel().levelName);
+		compound.setInteger("subLevel", cultivation.getEssenceSubLevel());
+		compound.setInteger("progress", (int) cultivation.getEssenceProgress());
 		compound.setInteger("energy", (int) cultivation.getEnergy());
 		compound.setInteger("pelletCD", cultivation.getPillCooldown());
 		compound.setInteger("length", skillCap.getKnownSkills().size());
@@ -73,9 +73,9 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	@Override
 	public void readEntityFromNBT(NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
-		cultivation.setCurrentLevel(CultivationLevel.REGISTERED_LEVELS.get(compound.getString("level")));
-		cultivation.setCurrentSubLevel(compound.getInteger("subLevel"));
-		cultivation.setProgress(compound.getInteger("progress"));
+		cultivation.setEssenceLevel(BaseSystemLevel.getLevelInListByName(BaseSystemLevel.ESSENCE_LEVELS, compound.getString("level")));
+		cultivation.setEssenceSubLevel(compound.getInteger("subLevel"));
+		cultivation.setEssenceProgress(compound.getInteger("progress"));
 		cultivation.addEnergy(compound.getInteger("energy"));
 		cultivation.setPillCooldown(compound.getInteger("pelletCD"));
 		int length = compound.getInteger("length");
@@ -169,7 +169,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	@Override
 	public void onEntityUpdate() {
 		super.onEntityUpdate();
-		this.cultivation.addEnergy(cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel())*0.0005f);
+		this.cultivation.addEnergy(cultivation.getMaxEnergy()*0.0005f);
 		if (skillCap.getCooldown() >= 0) {
 			skillCap.stepCooldown(-1f);
 		}
@@ -178,8 +178,8 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	@Override
 	public void writeSpawnData(ByteBuf buffer) {
 		byte[] bytes = this.getCultivationLevel().levelName.getBytes();
-		buffer.writeInt(this.cultivation.getCurrentSubLevel());
-		buffer.writeDouble(this.cultivation.getCurrentProgress());
+		buffer.writeInt(this.cultivation.getEssenceSubLevel());
+		buffer.writeDouble(this.cultivation.getEssenceProgress());
 		buffer.writeDouble(this.cultivation.getEnergy());
 		buffer.writeInt(this.cultivation.getPillCooldown());
 		buffer.writeInt(bytes.length);
@@ -197,10 +197,10 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 		additionalData.readBytes(bytes, 0, length);
 		bytes[length] = '\0';
 		String cultLevelName = new String(bytes, 0, length);
-		CultivationLevel level = CultivationLevel.REGISTERED_LEVELS.get(cultLevelName);
-		this.cultivation.setCurrentLevel(level);
-		this.cultivation.setCurrentSubLevel(subLevel);
-		this.cultivation.setProgress(progress);
+		BaseSystemLevel level = BaseSystemLevel.getLevelInListByName(BaseSystemLevel.ESSENCE_LEVELS,cultLevelName);
+		this.cultivation.setEssenceLevel(level);
+		this.cultivation.setEssenceSubLevel(subLevel);
+		this.cultivation.setEssenceProgress(progress);
 		this.cultivation.setEnergy(energy);
 		this.cultivation.setPillCooldown(pelletCooldown);
 	}
@@ -219,8 +219,8 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	}
 
 	protected void applyCultivationBonuses() {
-		double strengthMod = cultivation.getStrengthIncrease()-1f;
-		double speedMod = cultivation.getSpeedIncrease()-1f;
+		double strengthMod = cultivation.getEssenceModifier()-1f;
+		double speedMod = cultivation.getEssenceModifier()*0.4-1f;
 
 		this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MAX_HEALTH)
 				.applyModifier(new AttributeModifier(MOB_HEALTH_MOD_NAME, strengthMod*3f, 0));
@@ -235,12 +235,12 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 		this.heal(100000f);
 	}
 
-	public CultivationLevel getCultivationLevel() {
-		return this.cultivation.getCurrentLevel();
+	public BaseSystemLevel getCultivationLevel() {
+		return this.cultivation.getEssenceLevel();
 	}
 
 	public int getCultivationSubLevel() {
-		return this.cultivation.getCurrentSubLevel();
+		return this.cultivation.getEssenceSubLevel();
 	}
 
 	protected abstract void applyCultivation(World worldIn);

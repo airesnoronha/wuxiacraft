@@ -1,7 +1,7 @@
 package com.airesnor.wuxiacraft.blocks;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.items.WuxiaItems;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import mcp.MethodsReturnNonnullByDefault;
@@ -17,7 +17,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
@@ -82,8 +81,7 @@ public class BlockTrainingPost extends Block {
 	public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn) {
 		super.onBlockClicked(worldIn, pos, playerIn);
 		double amount = this.amount * playerIn.getCooledAttackStrength(0.5f); //game always use 0.5 idk y
-		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(playerIn);
-		CultivationUtils.cultivatorAddProgress(playerIn, amount, false, false, false);
+		CultivationUtils.cultivatorAddProgress(playerIn, Cultivation.System.BODY, amount, false, false);
 		playerIn.attackEntityFrom(DamageSource.GENERIC.setDamageBypassesArmor(), (float)amount);
 	}
 

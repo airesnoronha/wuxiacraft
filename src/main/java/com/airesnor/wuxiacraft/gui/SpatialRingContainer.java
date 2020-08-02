@@ -14,10 +14,10 @@ public class SpatialRingContainer extends Container {
     private final int spatialRingRows;
     private final int spatialRingColumns;
 
-    public SpatialRingContainer(IItemHandler inv, EntityPlayer player) {
+    public SpatialRingContainer(IItemHandler inv, EntityPlayer player, ItemSpatialRing spatialRing) {
         this.inventorySize = inv.getSlots();
-        this.spatialRingRows = ItemSpatialRing.spatialRingRows;
-        this.spatialRingColumns = ItemSpatialRing.spatialRingColumns;
+        this.spatialRingRows = spatialRing.spatialRingRows;
+        this.spatialRingColumns = spatialRing.spatialRingColumns;
 
         int xPos = 8;
         int yPos = 18;

@@ -377,7 +377,7 @@ public class MiningChunkGen implements IChunkGenerator {
 
         biome.decorate(this.world, this.rand, new BlockPos(i, 0, j));
 
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.terraingen.DecorateBiomeEvent.Post(this.world, this.rand, blockpos));
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.terraingen.DecorateBiomeEvent.Post(this.world, this.rand, new ChunkPos(blockpos)));
 
         BlockFalling.fallInstantly = false;
     }

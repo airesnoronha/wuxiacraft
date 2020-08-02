@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.items;
 
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import mcp.MethodsReturnNonnullByDefault;
@@ -40,8 +41,8 @@ public class ItemProgressPill extends ItemBase {
 				if (stack.isEmpty())
 					stack = ItemStack.EMPTY;
 				cultivation.setPillCooldown(cooldown);
-				if(this.amount <= cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.1f) {
-					CultivationUtils.cultivatorAddProgress(player, this.amount, false, false, true);
+				if(this.amount <= cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) * 0.1f) {
+					CultivationUtils.cultivatorAddProgress(player, Cultivation.System.ESSENCE, this.amount, false, true);
 				} else {
 					worldIn.createExplosion(entityLiving, entityLiving.posX, entityLiving.posY, entityLiving.posZ, 3f, true);
 					entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), this.amount*2);

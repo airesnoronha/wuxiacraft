@@ -38,13 +38,14 @@ public class FoundationCommand extends CommandBase {
 	@Nonnull
 	public List<String> getAliases() {
 		List<String> aliases = new ArrayList<>();
+		//noinspection SpellCheckingInspection
 		aliases.add("foundt");
 		return aliases;
 	}
-
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		if (sender instanceof EntityPlayerMP) {
+
+	/*if (sender instanceof EntityPlayerMP) {
 			EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 			boolean wrongUsage = true;
 			if (!player.world.isRemote) {
@@ -422,6 +423,6 @@ public class FoundationCommand extends CommandBase {
 				setAttrValue(op, 4, value, target);
 				setAttrValue(op, 5, value, target);
 				break;
-		}
+		}*/
 	}
 }

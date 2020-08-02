@@ -6,8 +6,8 @@ import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.entities.mobs.EntityCultivator;
 import com.airesnor.wuxiacraft.utils.MathUtils;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.pathfinding.Path;
 import net.minecraft.world.World;
 
 public class EntityAIReleaseSkills extends EntityAIBase {
@@ -18,11 +18,6 @@ public class EntityAIReleaseSkills extends EntityAIBase {
 	public final float minAttackRange;
 	Skill selectedSkill;
 	private final double optimalRange;
-
-	/**
-	 * The PathEntity of our entity.
-	 */
-	Path path;
 
 	public EntityAIReleaseSkills(EntityCultivator cultivator) {
 		this.attacker = cultivator;
@@ -109,7 +104,7 @@ public class EntityAIReleaseSkills extends EntityAIBase {
 			ISkillCap skillCap = this.attacker.getSkillCap();
 			if (skillCap.isCasting() && cultivation.hasEnergy(this.selectedSkill.getCost())) {
 				if (skillCap.getCastProgress() < selectedSkill.getCastTime())
-					skillCap.stepCastProgress((float) cultivation.getSpeedIncrease());
+					skillCap.stepCastProgress((float) this.attacker.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue());
 				selectedSkill.castingEffect(this.attacker);
 			} else if (skillCap.isDoneCasting()) {
 				skillCap.resetCastProgress();

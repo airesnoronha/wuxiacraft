@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.entities.tileentity.GrinderTileEntity;
 import com.airesnor.wuxiacraft.gui.*;
+import com.airesnor.wuxiacraft.items.ItemSpatialRing;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -24,13 +25,15 @@ public class GuiHandler implements IGuiHandler {
 		BlockPos pos = new BlockPos(x, y, z);
 		switch (ID) {
 			case GRINDER_GUI_ID:
+				//noinspection ConstantConditions
 				return new GrinderContainer(player.inventory, (GrinderTileEntity) world.getTileEntity(pos));
 			case CULTIVATION_GUI_ID:
 			case SKILLS_GUI_ID:
 			case RECIPE_GUI_ID:
 				return null;
 			case SPATIAL_RING_GUI_ID:
-				return new SpatialRingContainer(player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), player);
+				//noinspection ConstantConditions
+				return new SpatialRingContainer(player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), player, (ItemSpatialRing) player.getHeldItemMainhand().getItem());
 		}
 		return null;
 	}
@@ -49,7 +52,7 @@ public class GuiHandler implements IGuiHandler {
 			case GRINDER_GUI_ID:
 				return new GrinderGui(player.inventory, (GrinderTileEntity) world.getTileEntity(pos));
 			case SPATIAL_RING_GUI_ID:
-				return new SpatialRingGui(player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), player);
+				return new SpatialRingGui(player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), player, (ItemSpatialRing) player.getHeldItemMainhand().getItem());
 		}
 		return null;
 	}

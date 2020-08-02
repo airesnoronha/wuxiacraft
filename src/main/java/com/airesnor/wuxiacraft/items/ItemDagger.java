@@ -36,7 +36,7 @@ public class ItemDagger extends ItemBase {
 					found = true;
 					break;
 				}
-			}
+			}/*
 			if(found && !attacker.world.isRemote) {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(target);
 				ItemStack bloodBottle = new ItemStack(WuxiaItems.BLOOD_BOTTLE, 1);
@@ -53,7 +53,7 @@ public class ItemDagger extends ItemBase {
 				item.setNoPickupDelay();
 				item.setOwner(attacker.getName());
 				attacker.world.spawnEntity(item);
-			}
+			}*/
 		}
 		return true;
 	}
@@ -69,7 +69,7 @@ public class ItemDagger extends ItemBase {
 				found = true;
 				break;
 			}
-		}
+		}/*
 		if(found && !worldIn.isRemote) {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(playerIn);
 			ItemStack bloodBottle = new ItemStack(WuxiaItems.BLOOD_BOTTLE, 1);
@@ -86,7 +86,7 @@ public class ItemDagger extends ItemBase {
 			item.setNoPickupDelay();
 			item.setOwner(playerIn.getName());
 			worldIn.spawnEntity(item);
-		}
+		}*/
 		if(found) dagger.damageItem(1, playerIn);
 		return new ActionResult<>(found ? EnumActionResult.SUCCESS : EnumActionResult.PASS, dagger) ;
 	}

@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ProgressCommand extends CommandBase {
@@ -29,7 +30,7 @@ public class ProgressCommand extends CommandBase {
     @ParametersAreNonnullByDefault
     @Nonnull
     public String getUsage(ICommandSender sender) {
-        return "/progress set <player> <amount>";
+        return "/progress [set:add] <player> <system> <amount>";
     }
 
     @Override
@@ -48,19 +49,47 @@ public class ProgressCommand extends CommandBase {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (sender instanceof EntityPlayerMP) {
             EntityPlayerMP playerMP = (EntityPlayerMP) sender;
-            if(!playerMP.world.isRemote) {
+            if (!playerMP.world.isRemote) {
                 boolean wrongUsage = true;
-                if (args.length == 3) {
+                if (args.length == 4) {
                     EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
-                    if(targetPlayer != null) {
+                    if (targetPlayer != null) {
                         ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
-                        double amount = Double.parseDouble(args[2]);
-                        if(args[0].equalsIgnoreCase("set")) {
-                            cultivation.setProgress(amount);
-                            wrongUsage = false;
-                        } else if(args[0].equalsIgnoreCase("add")) {
-                            cultivation.addProgress(amount, true);
-                            wrongUsage = false;
+                        try {
+                            double amount = Double.parseDouble(args[3]);
+                            switch(args[2]) {
+                                case "body":
+                                    if (args[0].equalsIgnoreCase("set")) {
+                                        cultivation.setBodyProgress(amount);
+                                        wrongUsage = false;
+                                    } else if (args[0].equalsIgnoreCase("add")) {
+                                        cultivation.addBodyProgress(amount, true);
+                                        wrongUsage = false;
+                                    }
+                                    break;
+                                case "divine":
+                                    if (args[0].equalsIgnoreCase("set")) {
+                                        cultivation.setDivineProgress(amount);
+                                        wrongUsage = false;
+                                    } else if (args[0].equalsIgnoreCase("add")) {
+                                        cultivation.addDivineProgress(amount, true);
+                                        wrongUsage = false;
+                                    }
+                                    break;
+                                case "essence":
+                                    if (args[0].equalsIgnoreCase("set")) {
+                                        cultivation.setEssenceProgress(amount);
+                                        wrongUsage = false;
+                                    } else if (args[0].equalsIgnoreCase("add")) {
+                                        cultivation.addEssenceProgress(amount, true);
+                                        wrongUsage = false;
+                                    }
+                                    break;
+                            }
+                        } catch (NumberFormatException e) {
+                            TextComponentString text = new TextComponentString("Couldn't read number: " + args[3]);
+                            text.getStyle().setColor(TextFormatting.RED);
+                            sender.sendMessage(text);
                         }
                     } else {
                         TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
@@ -70,7 +99,7 @@ public class ProgressCommand extends CommandBase {
                     }
                 }
                 if (wrongUsage) {
-                    TextComponentString text = new TextComponentString("Invalid arguments, use /progress set <player> <amount>");
+                    TextComponentString text = new TextComponentString("Invalid arguments, use " + this.getUsage(sender));
                     text.getStyle().setColor(TextFormatting.RED);
                     sender.sendMessage(text);
                 }
@@ -79,18 +108,19 @@ public class ProgressCommand extends CommandBase {
     }
 
     @Override
+    @Nonnull
+    @ParametersAreNonnullByDefault
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         List<String> completions = new ArrayList<>();
-        if(args.length == 1) {
-            if("set".toLowerCase().startsWith(args[0])) {
-                completions.add("set");
-            }
-        }else if(args.length == 2) {
-            for(String player : server.getPlayerList().getOnlinePlayerNames()) {
-                if(player.toLowerCase().startsWith(args[1].toLowerCase())) {
-                    completions.add(player);
-                }
-            }
+        if (args.length == 1) {
+            completions.add("add");
+            completions.add("set");
+        } else if (args.length == 2) {
+            completions.addAll(Arrays.asList(server.getOnlinePlayerNames()));
+        } else if(args.length == 3) {
+            completions.add("body");
+            completions.add("divine");
+            completions.add("essence");
         }
         return completions;
     }

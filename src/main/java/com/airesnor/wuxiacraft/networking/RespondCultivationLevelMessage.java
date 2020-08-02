@@ -1,7 +1,7 @@
 package com.airesnor.wuxiacraft.networking;
 
+import com.airesnor.wuxiacraft.cultivation.BaseSystemLevel;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
-import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.handlers.RendererHandler;
 import io.netty.buffer.ByteBuf;
@@ -17,17 +17,17 @@ import java.util.UUID;
 
 public class RespondCultivationLevelMessage implements IMessage {
 
-	public CultivationLevel responderLevel;
+	public BaseSystemLevel responderLevel;
 	public int responderSubLevel;
-	public String responderName;
 	public UUID responderUUID;
 
-	public RespondCultivationLevelMessage(CultivationLevel responderLevel, int responderSubLevel, UUID responderUUID) {
+	public RespondCultivationLevelMessage(BaseSystemLevel responderLevel, int responderSubLevel, UUID responderUUID) {
 		this.responderLevel = responderLevel;
 		this.responderSubLevel = responderSubLevel;
 		this.responderUUID = responderUUID;
 	}
 
+	@SuppressWarnings("unused")
 	public RespondCultivationLevelMessage() {
 	}
 
@@ -35,8 +35,8 @@ public class RespondCultivationLevelMessage implements IMessage {
 	public void fromBytes(ByteBuf buf) {
 		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		this.responderSubLevel = buf.readInt();
-		String cultlevelname = ByteBufUtils.readUTF8String(buf);
-		this.responderLevel = CultivationLevel.REGISTERED_LEVELS.get(cultlevelname);
+		String cultLevelName = ByteBufUtils.readUTF8String(buf);
+		this.responderLevel = BaseSystemLevel.getLevelInListByName(BaseSystemLevel.ESSENCE_LEVELS, cultLevelName);
 		this.responderUUID = packetBuffer.readUniqueId();
 	}
 
@@ -52,16 +52,16 @@ public class RespondCultivationLevelMessage implements IMessage {
 		@Override
 		public IMessage onMessage(RespondCultivationLevelMessage message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
-				return handleMessageClient(message, ctx);
+				return handleMessageClient(message);
 			}
 			return null;
 		}
 
 		@SideOnly(Side.CLIENT)
-		private IMessage handleMessageClient(RespondCultivationLevelMessage message, MessageContext ctx) {
+		private IMessage handleMessageClient(RespondCultivationLevelMessage message) {
 			ICultivation cultivation = new Cultivation();
-			cultivation.setCurrentLevel(message.responderLevel);
-			cultivation.setCurrentSubLevel(message.responderSubLevel);
+			cultivation.setEssenceLevel(message.responderLevel);
+			cultivation.setEssenceSubLevel(message.responderSubLevel);
 			UUID uuid = message.responderUUID;
 			RendererHandler.knownCultivations.put(uuid, cultivation);
 			return null;

@@ -50,8 +50,7 @@ public class CapabilityRequestMessage implements IMessage {
 					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 					ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 					ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-					IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
-					return new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, foundation, true);
+					return new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, true);
 				}
 			}
 			return null;

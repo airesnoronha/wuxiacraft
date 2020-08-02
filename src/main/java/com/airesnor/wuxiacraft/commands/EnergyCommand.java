@@ -54,11 +54,10 @@ public class EnergyCommand extends CommandBase {
                 if (targetPlayer != null) {
                     EntityPlayerMP playerMP = (EntityPlayerMP) sender;
                     ICultivation cultivation = CultivationUtils.getCultivationFromEntity(playerMP);
-                    IFoundation foundation = CultivationUtils.getFoundationFromEntity(playerMP);
                     if(args[0].equalsIgnoreCase("set")) {
                         if(args[2].equalsIgnoreCase("max")) {
                             //cultivation.setEnergy(cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()));
-                            cultivation.setEnergy(cultivation.getMaxEnergy(foundation));
+                            cultivation.setEnergy(cultivation.getMaxEnergy());
                         } else {
                             float amount = Float.parseFloat(args[2]);
                             cultivation.setEnergy(amount);

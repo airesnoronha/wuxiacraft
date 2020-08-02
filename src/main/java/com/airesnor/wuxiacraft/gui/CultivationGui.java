@@ -2,9 +2,7 @@ package com.airesnor.wuxiacraft.gui;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
-import com.airesnor.wuxiacraft.cultivation.Foundation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
@@ -14,13 +12,10 @@ import com.airesnor.wuxiacraft.proxy.ClientProxy;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import com.airesnor.wuxiacraft.utils.MathUtils;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
@@ -39,25 +34,25 @@ public class CultivationGui extends GuiScreen {
 	private final ICultivation cultivation;
 	private final ICultTech cultTech;
 	private final ISkillCap skillCap;
-	private final IFoundation foundation;
+	//private final IFoundation foundation;
 	private final EntityPlayer player;
 	private int offset = 0;
 	private int displayItems = 0;
 
-	private static double amountAddedToFoundationPerClick = 1;
+	//private static double amountAddedToFoundationPerClick = 1;
 
 	private Tabs tab;
 
-	private boolean perClickFocus = false;
-	private int caretPosition = 0;
-	private String perClickDisplay;
+	//private boolean perClickFocus = false;
+	//private int caretPosition = 0;
+	//private String perClickDisplay;
 
 	public CultivationGui(EntityPlayer player) {
 		this.player = player;
 		this.cultivation = CultivationUtils.getCultivationFromEntity(player);
 		this.cultTech = CultivationUtils.getCultTechFromEntity(player);
 		this.skillCap = CultivationUtils.getSkillCapFromEntity(player);
-		this.foundation = CultivationUtils.getFoundationFromEntity(player);
+		//this.foundation = CultivationUtils.getFoundationFromEntity(player);
 		this.tab = Tabs.FOUNDATION;
 	}
 
@@ -92,14 +87,14 @@ public class CultivationGui extends GuiScreen {
 
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) {
-		if (this.perClickFocus) {
-			handlerPerClickKey(typedChar, keyCode);
-		} else {
-			if (keyCode == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(keyCode)
-					|| ClientProxy.keyBindings[2].isActiveAndMatches(keyCode)) {
-				this.mc.player.closeScreen();
-			}
+		/*if (this.perClickFocus) {
+			//handlerPerClickKey(typedChar, keyCode);
+		} else {*/
+		if (keyCode == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(keyCode)
+				|| ClientProxy.keyBindings[2].isActiveAndMatches(keyCode)) {
+			this.mc.player.closeScreen();
 		}
+		//}
 	}
 
 	@Override
@@ -136,7 +131,7 @@ public class CultivationGui extends GuiScreen {
 		//tabs
 		switch (this.tab) {
 			case FOUNDATION:
-				handleMouseFoundation(mouseX, mouseY);
+				//handleMouseFoundation(mouseX, mouseY);
 				break;
 			case TECHNIQUES:
 				handleMouseTechniques(mouseX, mouseY);
@@ -174,6 +169,7 @@ public class CultivationGui extends GuiScreen {
 		}
 	}
 
+	/*
 	private void handleMouseFoundation(int mouseX, int mouseY) {
 		if (inBounds(mouseX, mouseY, this.guiLeft + 8, this.guiTop + 38, 14, 14)) {
 			addProgressToFoundation(0);
@@ -213,10 +209,10 @@ public class CultivationGui extends GuiScreen {
 				perClickLoseFocus();
 			}
 		}
-	}
+	}*/
 
 	private void handleMouseTechniques(int mouseX, int mouseY) {
-		List<KnownTechnique> toDisplay = new ArrayList<>(this.cultTech.getKnownTechniques()); // this way i can remove without concurrent modification excpetion
+		List<KnownTechnique> toDisplay = new ArrayList<>(this.cultTech.getKnownTechniques()); // this way i can remove without concurrent modification exception
 		for (KnownTechnique t : toDisplay) {
 			int index = this.cultTech.getKnownTechniques().indexOf(t);
 			if (index >= this.offset && index < (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
@@ -263,12 +259,12 @@ public class CultivationGui extends GuiScreen {
 		drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 
 		//cultivation dragon
-		double progress_fill = (cultivation.getCurrentProgress() / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
+		double progress_fill = (cultivation.getEssenceProgress() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()));
 		int progress_pix = (int) (progress_fill * 124f);
 		drawTexturedModalRect(this.guiLeft + 183, this.guiTop + 5 + (124 - progress_pix), 200, (124 - progress_pix), 16, progress_pix);
 
 		//energy bar
-		double energy_fill = (cultivation.getEnergy() / cultivation.getMaxEnergy(this.foundation));
+		double energy_fill = (cultivation.getEnergy() / cultivation.getMaxEnergy());
 		int energyPix = (int) (28f * energy_fill);
 		drawTexturedModalRect(this.guiLeft + 172, this.guiTop + 5 + 28 - energyPix, 217, 28 - energyPix, 10, energyPix);
 
@@ -288,7 +284,7 @@ public class CultivationGui extends GuiScreen {
 		//tabs
 		switch (this.tab) {
 			case FOUNDATION:
-				drawFoundationBackground();
+				//drawFoundationBackground();
 				break;
 			case TECHNIQUES:
 				drawTechniquesBackground();
@@ -297,17 +293,17 @@ public class CultivationGui extends GuiScreen {
 				drawSkillsBackground();
 				break;
 		}
-		double agilityModifier = (foundation.getAgilityModifier());
-		double dexterityModifier = (foundation.getDexterityModifier());
-		double strengthModifier = (foundation.getStrengthModifier());
+		double agilityModifier = player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue();
+		double dexterityModifier = player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue();
+		double strengthModifier = player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
 
 		GL11.glColor4f(1f, 1f, 1f, 1f);
 		int[] iconPos = new int[]{27, 27, 99, 108};
 		int[] fills = new int[]{
 				Math.min(27, (int) ((27f * cultivation.getSpeedHandicap()) / 100f)),
-				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / (agilityModifier*0.005))),
-				Math.min(27, (int) (27f * (cultivation.getHasteLimit() / (0.1f * (dexterityModifier*0.5+strengthModifier*0.5))))),
-				Math.min(27, (int) (27f * (cultivation.getJumpLimit()) / (0.05f * (agilityModifier*0.3 + strengthModifier*0.7))))
+				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / (agilityModifier * 0.005))),
+				Math.min(27, (int) (27f * (cultivation.getHasteLimit() / (0.1f * (dexterityModifier * 0.5 + strengthModifier * 0.5))))),
+				Math.min(27, (int) (27f * (cultivation.getJumpLimit()) / (0.05f * (agilityModifier * 0.3 + strengthModifier * 0.7))))
 		};
 
 		//Regulator bars
@@ -323,7 +319,7 @@ public class CultivationGui extends GuiScreen {
 		}
 	}
 
-	private void drawFoundationBackground() {
+	/*private void drawFoundationBackground() {
 		drawTexturedModalRect(this.guiLeft + 66, this.guiTop + 55, 0, 173, 54, 52); //cultivator body
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(this.guiLeft + 93, this.guiTop + 88, 0);
@@ -414,10 +410,10 @@ public class CultivationGui extends GuiScreen {
 		drawTexturedModalRect(this.guiLeft + 113, this.guiTop + 118, 45, 142, 9, 9);
 		drawTexturedModalRect(this.guiLeft + 113, this.guiTop + 118, 90, 142, 9, 9);
 
-	}
+	}*/
 
 	private void drawTechniquesBackground() {
-		List<KnownTechnique> toDisplay = new ArrayList<>(this.cultTech.getKnownTechniques()); // this way i can remove without concurrent modification excpetion
+		List<KnownTechnique> toDisplay = new ArrayList<>(this.cultTech.getKnownTechniques()); // this way i can remove without concurrent modification exception
 		for (KnownTechnique t : toDisplay) {
 			int index = this.cultTech.getKnownTechniques().indexOf(t);
 			if (index >= this.offset && index < (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
@@ -472,7 +468,7 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	private void drawForegroundLayer() {
-		this.fontRenderer.drawString(cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()), this.guiLeft + 6, this.guiTop + 7, 0xFFFFFF);
+		//this.fontRenderer.drawString(cultivation.getEssenceLevel().getLevelName(cultivation.getEssenceSubLevel()), this.guiLeft + 6, this.guiTop + 7, 0xFFFFFF);
 
 		//String display = String.format("Speed: %.3f (%d%%)", cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()), WuxiaCraftConfig.speedHandicap);
 		//this.fontRenderer.drawString(display, this.guiLeft + 6,this.guiTop + 35,4210752);
@@ -484,7 +480,7 @@ public class CultivationGui extends GuiScreen {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(this.guiLeft + 32, this.guiTop + 23, 0);
 		GlStateManager.scale(fontScale, fontScale, 1);
-		drawCenteredString(this.fontRenderer, "Foundation", 0, 0, 0xFFFFFF);
+		drawCenteredString(this.fontRenderer, "Cultivation", 0, 0, 0xFFFFFF);
 		GlStateManager.popMatrix();
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(this.guiLeft + 87, this.guiTop + 23, 0);
@@ -499,7 +495,7 @@ public class CultivationGui extends GuiScreen {
 
 		switch (this.tab) {
 			case FOUNDATION:
-				drawFoundationForeground();
+				drawCultivationForeground();
 				break;
 			case TECHNIQUES:
 				drawTechniquesForeground();
@@ -550,36 +546,24 @@ public class CultivationGui extends GuiScreen {
 		return value;
 	}
 
-	private void drawFoundationForeground() {
-		//attribute names
-		String toShow = "Agi: " + getShortNumberAmount(foundation.getAgility());
-		fontRenderer.drawString(toShow, this.guiLeft + 38, this.guiTop + 42, 0xFFFFFF);
-		toShow = "Dex: " + getShortNumberAmount(foundation.getDexterity());
-		fontRenderer.drawString(toShow, this.guiLeft + 36, this.guiTop + 72, 0xFFFFFF);
-		toShow = "Spi: " + getShortNumberAmount(foundation.getSpirit());
-		fontRenderer.drawString(toShow, this.guiLeft + 38, this.guiTop + 102, 0xFFFFFF);
-		toShow = "Con: " + getShortNumberAmount(foundation.getConstitution());
-		int length = fontRenderer.getStringWidth(toShow);
-		fontRenderer.drawString(toShow, this.guiLeft + 149 - length, this.guiTop + 42, 0xFFFFFF);
-		toShow = "Res: " + getShortNumberAmount(foundation.getResistance());
-		length = fontRenderer.getStringWidth(toShow);
-		fontRenderer.drawString(toShow, this.guiLeft + 151 - length, this.guiTop + 72, 0xFFFFFF);
-		toShow = "Str: " + getShortNumberAmount(foundation.getStrength());
-		length = fontRenderer.getStringWidth(toShow);
-		fontRenderer.drawString(toShow, this.guiLeft + 149 - length, this.guiTop + 102, 0xFFFFFF);
-		//per click amount
-		if (this.perClickFocus) {
-			String display = this.perClickDisplay.replace("|", "").replace("_","");
-			display = display.substring(0, caretPosition) + (caretPosition < display.length() ? "|" + display.substring(caretPosition) : "_");
-			this.perClickDisplay = display;
-		}
-		String perClickText = perClickFocus ? this.perClickDisplay : String.format("%.1f%%", amountAddedToFoundationPerClick);
-		length = this.fontRenderer.getStringWidth(perClickText);
-		fontRenderer.drawString(perClickText, this.guiLeft + 93 - length / 2, this.guiTop + 118, this.perClickFocus ? 0xFFFF20 : 0xFFFFFF);
+
+	private void drawCultivationForeground() {
+		this.fontRenderer.drawString(cultivation.getBodyLevel().getLevelName(cultivation.getBodySubLevel()), this.guiLeft + 13, this.guiTop + 38, 0xFFFFFF);
+		this.fontRenderer.drawString(String.format("P: %d%% M:%.1f", (int)(100*cultivation.getBodyProgress()/
+				cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel())),
+				cultivation.getBodyModifier()), this.guiLeft + 13, this.guiTop + 50, 0xFFFFFF);
+		this.fontRenderer.drawString(cultivation.getDivineLevel().getLevelName(cultivation.getDivineSubLevel()), this.guiLeft + 13, this.guiTop + 62, 0xFFFFFF);
+		this.fontRenderer.drawString(String.format("P: %d%% M:%.1f", (int)(100*cultivation.getDivineProgress()/
+				cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel())),
+				cultivation.getDivineModifier()), this.guiLeft + 13, this.guiTop + 74, 0xFFFFFF);
+		this.fontRenderer.drawString(cultivation.getEssenceLevel().getLevelName(cultivation.getEssenceSubLevel()), this.guiLeft + 13, this.guiTop + 86, 0xFFFFFF);
+		this.fontRenderer.drawString(String.format("P: %d%% M:%.1f", (int)(100*cultivation.getEssenceProgress()/
+				cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel())),
+				cultivation.getEssenceModifier()), this.guiLeft + 13, this.guiTop + 98, 0xFFFFFF);
 	}
 
 	private void drawTechniquesForeground() {
-		List<KnownTechnique> toDisplay = new ArrayList<>(this.cultTech.getKnownTechniques()); // this way i can remove without concurrent modification excpetion
+		List<KnownTechnique> toDisplay = new ArrayList<>(this.cultTech.getKnownTechniques()); // this way i can remove without concurrent modification exception
 		for (KnownTechnique t : toDisplay) {
 			int index = this.cultTech.getKnownTechniques().indexOf(t);
 			if (index >= this.offset && index < (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
@@ -608,14 +592,14 @@ public class CultivationGui extends GuiScreen {
 		GlStateManager.color(1f, 1f, 1f, 1f);
 		//progress %
 		if (inBounds(mouseX, mouseY, this.guiLeft + 183, this.guiTop + 5, 16, 124)) {
-			int progress_fill = (int) (cultivation.getCurrentProgress() * 100f / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
+			int progress_fill = (int) (cultivation.getEssenceProgress() * 100f / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()));
 			String line = String.format("%d%%", progress_fill);
 			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
 			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
 		}
 		//energy %
 		if (inBounds(mouseX, mouseY, this.guiLeft + 172, this.guiTop + 5, 10, 28)) {
-			int energy_fill = (int) (cultivation.getEnergy() * 100f / cultivation.getMaxEnergy(this.foundation));
+			int energy_fill = (int) (cultivation.getEnergy() * 100f / cultivation.getMaxEnergy());
 			String line = String.format("%d%%", energy_fill);
 			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
 			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
@@ -623,7 +607,7 @@ public class CultivationGui extends GuiScreen {
 		//tabs
 		switch (this.tab) {
 			case FOUNDATION:
-				drawFoundationTooltips(mouseX, mouseY);
+				//drawFoundationTooltips(mouseX, mouseY);
 				break;
 			case TECHNIQUES:
 				drawTechniquesTooltips(mouseX, mouseY);
@@ -641,7 +625,7 @@ public class CultivationGui extends GuiScreen {
 		//}
 	}
 
-	private void drawFoundationTooltips(int mouseX, int mouseY) {
+	/*private void drawFoundationTooltips(int mouseX, int mouseY) {
 		boolean drawing = false;
 		String line = "";
 		if(inBounds(mouseX, mouseY, this.guiLeft+16, this.guiTop+54, 54, 3)) {
@@ -696,10 +680,10 @@ public class CultivationGui extends GuiScreen {
 			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
 			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
 		}
-	}
+	}*/
 
 	private void drawTechniquesTooltips(int mouseX, int mouseY) {
-		List<KnownTechnique> toDisplay = new ArrayList<>(this.cultTech.getKnownTechniques()); // this way i can remove without concurrent modification excpetion
+		List<KnownTechnique> toDisplay = new ArrayList<>(this.cultTech.getKnownTechniques()); // this way i can remove without concurrent modification exception
 		for (KnownTechnique t : toDisplay) {
 			int index = this.cultTech.getKnownTechniques().indexOf(t);
 			if (index >= this.offset && index < (this.offset + Tabs.TECHNIQUES.maxDisplayItems)) {
@@ -724,6 +708,7 @@ public class CultivationGui extends GuiScreen {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void drawSkillsTooltips(int mouseX, int mouseY) {
 
 	}
@@ -774,14 +759,15 @@ public class CultivationGui extends GuiScreen {
 		this.offset = MathUtils.clamp(this.offset, 0, this.skillCap.getTotalKnowSkill(cultTech).size());
 	}
 
+	/*
 	private void selectFoundationAttribute(int attribute) {
 		MathUtils.clamp(attribute, 0, 5);
 		if (foundation.getSelectedAttribute() == attribute) attribute = -1;
 		this.foundation.selectAttribute(attribute);
 		NetworkWrapper.INSTANCE.sendToServer(new SelectFoundationAttributeMessage(attribute, player.getUniqueID()));
-	}
+	}*/
 
-	private void addProgressToFoundation(int attribute) {
+	/*private void addProgressToFoundation(int attribute) {
 		double amount = cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * (amountAddedToFoundationPerClick / 100.0);
 		if (cultivation.getCurrentProgress() < amountAddedToFoundationPerClick) {
 			amount = cultivation.getCurrentProgress();
@@ -811,7 +797,7 @@ public class CultivationGui extends GuiScreen {
 		}
 		foundation.keepMaxLevel(this.cultivation);
 		NetworkWrapper.INSTANCE.sendToServer(new AddProgressToFoundationAttributeMessage(amount, attribute, player.getUniqueID()));
-	}
+	}*/
 
 	public static boolean inBounds(int x, int y, int left, int top, int width, int height) {
 		return (x >= left && x <= (left + width) && y >= top && y <= (top + height));
@@ -888,7 +874,7 @@ public class CultivationGui extends GuiScreen {
 		NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit, player.getUniqueID()));
 	}
 
-	private void handlerPerClickKey(char typedChar, int keyCode) {
+	/*private void handlerPerClickKey(char typedChar, int keyCode) {
 		if (MathUtils.between(keyCode, Keyboard.KEY_1, Keyboard.KEY_0) || keyCode == Keyboard.KEY_PERIOD ||
 				MathUtils.between(keyCode, Keyboard.KEY_NUMPAD1, Keyboard.KEY_NUMPAD0) ||
 				MathUtils.between(keyCode, Keyboard.KEY_NUMPAD4, Keyboard.KEY_NUMPAD6) ||
@@ -910,15 +896,15 @@ public class CultivationGui extends GuiScreen {
 		if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_ESCAPE) {
 			perClickLoseFocus();
 		}
-	}
+	}*/
 
-	private void perClickOnFocus() {
+	/*private void perClickOnFocus() {
 		this.perClickFocus = true;
 		this.perClickDisplay = String.format("%.1f_", amountAddedToFoundationPerClick);
 		this.caretPosition = this.perClickDisplay.length() - 1;
-	}
+	}*/
 
-	private void perClickLoseFocus() {
+	/*private void perClickLoseFocus() {
 		this.perClickFocus = false;
 		this.caretPosition = 0;
 		try {
@@ -926,7 +912,7 @@ public class CultivationGui extends GuiScreen {
 		} catch (NumberFormatException e) {
 			WuxiaCraft.logger.error("Couldn't convert back the number");
 		}
-	}
+	}*/
 
 	public enum Tabs {
 		FOUNDATION(0),

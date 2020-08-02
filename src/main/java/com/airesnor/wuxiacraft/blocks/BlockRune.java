@@ -140,14 +140,14 @@ public class BlockRune extends Block {
 	@ParametersAreNonnullByDefault
 	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
 		Item item = WuxiaItems.PAINT_BOTTLE;
-		if(WuxiaBlocks.BLOOD_RUNES.containsValue(state.getBlock())) {
+		//ItemStack stack =  new ItemStack(item);
+		/*if(WuxiaBlocks.BLOOD_RUNES.containsValue(state.getBlock())) {
 			item = WuxiaItems.BLOOD_BOTTLE;
 		}
-		ItemStack stack =  new ItemStack(item);
 		if(WuxiaBlocks.BLOOD_RUNES.containsValue(state.getBlock())){
 			stack.setStackDisplayName(state.getBlock().getLocalizedName());
-		}
-		return stack;
+		}*/
+		return new ItemStack(item);
 	}
 
 	@SuppressWarnings("unused")

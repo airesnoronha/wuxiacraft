@@ -3,9 +3,9 @@ package com.airesnor.wuxiacraft.handlers;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.alchemy.Recipe;
 import com.airesnor.wuxiacraft.blocks.Cauldron;
+import com.airesnor.wuxiacraft.cultivation.BaseSystemLevel;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
@@ -163,12 +163,12 @@ public class RendererHandler {
 			WanderingCultivator cultivator = (WanderingCultivator) e.getEntity();
 			ICultivation playerCultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
 			ICultivation cultivation = new Cultivation();
-			if(cultivator.getCultivationLevel().isGreaterThan(playerCultivation.getCurrentLevel())) {
-				cultivation.setCurrentLevel(playerCultivation.getCurrentLevel().getNextLevel());
-				cultivation.setCurrentSubLevel(-1);
+			if(cultivator.getCultivation().getEssenceLevel().greaterThan(playerCultivation.getEssenceLevel(), BaseSystemLevel.ESSENCE_LEVELS)) {
+				cultivation.setEssenceLevel(playerCultivation.getEssenceLevel().nextLevel(BaseSystemLevel.ESSENCE_LEVELS));
+				cultivation.setEssenceSubLevel(-1);
 			} else {
-				cultivation.setCurrentLevel(cultivator.getCultivationLevel());
-				cultivation.setCurrentSubLevel(cultivator.getCultivationSubLevel());
+				cultivation.setEssenceLevel(cultivator.getCultivation().getEssenceLevel());
+				cultivation.setEssenceSubLevel(cultivator.getCultivation().getEssenceSubLevel());
 			}
 			Minecraft mc = Minecraft.getMinecraft();
 			boolean sneaking = cultivator.isSneaking();
@@ -206,6 +206,7 @@ public class RendererHandler {
 		GlStateManager.enableTexture2D();
 	}
 
+	@SuppressWarnings("SpellCheckingInspection")
 	@SideOnly(Side.CLIENT)
 	public void drawHudElements(ScaledResolution res) {
 		Minecraft mc = Minecraft.getMinecraft();
@@ -215,12 +216,11 @@ public class RendererHandler {
 
 		EntityPlayer player = mc.world.getPlayerEntityByUUID(mc.player.getUniqueID());
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-		IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
 
 		mc.renderEngine.bindTexture(hud_bars);
 
-		double energy_fill = cultivation.getEnergy() / cultivation.getMaxEnergy(foundation);
-		double progress_fill = cultivation.getCurrentProgress() * 100f / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
+		double energy_fill = cultivation.getEnergy() / cultivation.getMaxEnergy();
+		double progress_fill = cultivation.getEssenceProgress() * 100f / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
 
 		int middleX = (width) / 2;
 
@@ -449,7 +449,7 @@ public class RendererHandler {
 
 	public static void drawCultivationPlate(ICultivation cultivation, float x, float y, float z, float viewYaw, float viewPitch, boolean thirdPerson, boolean sneaking) {
 		Minecraft mc = Minecraft.getMinecraft();
-		String str = cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel());
+		String str = cultivation.getEssenceLevel().getLevelName(cultivation.getEssenceSubLevel());
 		FontRenderer fr = mc.getRenderManager().getFontRenderer();
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x, y, z);

@@ -35,13 +35,15 @@ public class WuxiaBlocks {
 	public static final Block SPIRIT_STONE_STACK_BLOCK = new SpiritStoneStackBlock("spirit_stone_stack_block");
 
 	public static final Block PAINT_RUNE = new BlockRune("paint_rune");
-	public static final Map<String, Block> BLOOD_RUNES = new HashMap<>();
+
+	//No more blood runes for a while because levels got too complex
+	/*public static final Map<String, Block> BLOOD_RUNES = new HashMap<>();
 
 	public static void initBloodRunes() {
 		for (CultivationLevel level : CultivationLevel.REGISTERED_LEVELS.values()) {
 			BLOOD_RUNES.put(level.getUName(), new BlockRune("blood_rune_" + level.getUName()));
 		}
-	}
+	}*/
 
 	public static final Block FORMATION_CORE = new FormationCoreBlock("formation_core");
 

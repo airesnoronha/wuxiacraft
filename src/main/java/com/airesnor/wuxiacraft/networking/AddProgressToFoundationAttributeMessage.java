@@ -53,7 +53,7 @@ public class AddProgressToFoundationAttributeMessage implements IMessage {
 
 		@Override
 		public IMessage onMessage(AddProgressToFoundationAttributeMessage message, MessageContext ctx) {
-			if(ctx.side == Side.SERVER) {
+			if(ctx.side == Side.SERVER) { /*
 				final WorldServer world = ctx.getServerHandler().player.getServerWorld();
 				world.addScheduledTask(() -> {
 					double amount = message.amount;
@@ -90,7 +90,7 @@ public class AddProgressToFoundationAttributeMessage implements IMessage {
 						}
 						foundation.keepMaxLevel(cultivation);
 					}
-				});
+				});*/
 			}
 			return null;
 		}

@@ -1,10 +1,10 @@
 package com.airesnor.wuxiacraft.cultivation.skills;
 
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.networking.EnergyMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.item.ItemSword;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
@@ -17,15 +17,14 @@ public class SkillSwordFlight extends Skill {
 		setWhenCasting(actor -> {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
-			IFoundation foundation = CultivationUtils.getFoundationFromEntity(actor);
-			skillCap.stepCastProgress(-(float) cultivation.getSpeedIncrease() + 1f);
+			skillCap.stepCastProgress(-(float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() + 1f);
 			if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
 				if (cultivation.hasEnergy(cost)) {
 					cultivation.remEnergy(cost);
 					if ((int) skillCap.getCastProgress() % 5 == 4)
 						NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, 9 * 5, actor.getUniqueID()));
-					float agility = (float)foundation.getAgilityModifier()* 0.3f;
-					float dexterity = (float)foundation.getAgilityModifier() * 0.7f;
+					float agility = (float)actor.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() * 0.7f;
+					float dexterity = (float)actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() * 0.3f;
 					float speed = (agility + dexterity) * speedMultiplier;
 					speed = Math.min(maxSpeed, speed);
 					float yaw = actor.rotationYawHead;

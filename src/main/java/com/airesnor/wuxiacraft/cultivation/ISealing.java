@@ -2,103 +2,39 @@ package com.airesnor.wuxiacraft.cultivation;
 
 public interface ISealing {
 
-    //Cultivation
+    boolean isBodySealed();
 
-    double getCurrentProgress();
+    boolean isDivineSealed();
 
-    void setProgress(double amount);
+    boolean isEssenceSealed();
 
-    CultivationLevel getCurrentLevel();
+    void sealBody(ICultivation cultivation, BaseSystemLevel toLevel, int toRank);
 
-    void setCurrentLevel(CultivationLevel level);
+    void sealDivine(ICultivation cultivation, BaseSystemLevel toLevel, int toRank);
 
-    int getCurrentSubLevel();
+    void sealEssence(ICultivation cultivation, BaseSystemLevel toLevel, int toRank);
 
-    void setCurrentSubLevel(int subLevel);
+    void releaseBody(ICultivation cultivation);
 
-    double getEnergy();
+    void releaseDivine(ICultivation cultivation);
 
-    void setEnergy(double amount);
+    void releaseEssence(ICultivation cultivation);
 
-    float getMaxSpeed();
+    void changeBodySeal(ICultivation cultivation, BaseSystemLevel toLevel, int toRank);
 
-    void setMaxSpeed(float maxSpeed);
+    void changeDivineSeal(ICultivation cultivation, BaseSystemLevel toLevel, int toRank);
 
-    float getHasteLimit();
+    void changeEssenceSeal(ICultivation cultivation, BaseSystemLevel toLevel, int toRank);
 
-    void setHasteLimit(float hasteLimit);
+    void setBodySealed(boolean sealed);
 
-    float getJumpLimit();
+    void setDivineSealed(boolean sealed);
 
-    void setJumpLimit(float jumpLimit);
+    void setEssenceSealed(boolean sealed);
 
-    void copyFromCultivation(ICultivation cultivation);
+    void setSealedCultivation(ICultivation cultivation);
 
-    //Foundation
-
-    long getAgility();
-
-    void setAgility(long agility);
-
-    long getConstitution();
-
-    void setConstitution(long constitution);
-
-    long getDexterity();
-
-    void setDexterity(long dexterity);
-
-    long getResistance();
-
-    void setResistance(long resistance);
-
-    long getSpirit();
-
-    void setSpirit(long spirit);
-
-    long getStrength();
-
-    void setStrength(long strength);
-
-    double getAgilityProgress();
-
-    void setAgilityProgress(double agilityProgress);
-
-    double getConstitutionProgress();
-
-    void setConstitutionProgress(double constitutionProgress);
-
-    double getDexterityProgress();
-
-    void setDexterityProgress(double dexterityProgress);
-
-    double getResistanceProgress();
-
-    void setResistanceProgress(double resistanceProgress);
-
-    double getSpiritProgress();
-
-    void setSpiritProgress(double spiritProgress);
-
-    double getStrengthProgress();
-
-    void setStrengthProgress(double strengthProgress);
-
-    void copyFromFoundation(IFoundation foundation);
-
-    //Both
-
-    void copyFromBoth(ICultivation cultivation, IFoundation foundation);
+    ICultivation getSealedCultivation();
 
     void copyFrom(ISealing sealing);
-
-    //Sealing
-
-    void setSealed(String type, boolean sealed);
-
-    boolean isBothSealed();
-
-    boolean isCultivationSealed();
-
-    boolean isFoundationSealed();
 }

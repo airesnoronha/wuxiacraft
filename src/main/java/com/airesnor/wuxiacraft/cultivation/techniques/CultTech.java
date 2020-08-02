@@ -80,7 +80,7 @@ public class CultTech implements ICultTech {
 	public List<Skill> getTechniqueSkills() {
 		List<Skill> knownSkills = new ArrayList<>();
 		if (this.knownTechniques.size() > 0) {
-			knownSkills.add(Skills.CULTIVATE);
+			knownSkills.add(Skills.CULTIVATE_ESSENCE);
 		}
 		for (KnownTechnique kt : getKnownTechniques()) {
 			Technique t = kt.getTechnique();

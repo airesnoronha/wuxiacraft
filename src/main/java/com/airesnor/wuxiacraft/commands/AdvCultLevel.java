@@ -1,13 +1,11 @@
 package com.airesnor.wuxiacraft.commands;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.networking.CultivationMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.*;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -18,6 +16,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
@@ -33,7 +32,7 @@ public class AdvCultLevel extends CommandBase {
 	@Nonnull
 	@ParametersAreNonnullByDefault
 	public String getUsage(ICommandSender sender) {
-		return "/advcultlevel";
+		return "/advcultlevel [<player>] [<system>] [<count>]";
 	}
 
 	@Override
@@ -45,81 +44,220 @@ public class AdvCultLevel extends CommandBase {
 	}
 
 	@Override
-	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		if (sender instanceof EntityPlayerMP) {
-			EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-			if (!player.world.isRemote) {
-				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-				if (args.length == 0) {
-					CultivationUtils.cultivatorAddProgress(player, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()), true, true, true);
-					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
-					EventHandler.applyModifiers(player);
-				} else if (args.length == 1) {
-					int levels = Integer.parseInt(args[0], 10);
-					for (int i = 0; i < levels; i++) {
-						CultivationUtils.cultivatorAddProgress(player, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()), true, true, true);
+	@ParametersAreNonnullByDefault
+	@Nonnull
+	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
+		List<String> completions = new ArrayList<>();
+		switch (args.length) {
+			case 1:
+				for (String name : server.getOnlinePlayerNames()) {
+					if(name.startsWith(args[0])) {
+						completions.add(name);
 					}
-					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
-					EventHandler.applyModifiers(player);
-				} else {
-					TextComponentString text = new TextComponentString("Invalid arguments, use /advcult levels");
-					text.getStyle().setColor(TextFormatting.RED);
-					sender.sendMessage(text);
 				}
-			}
+			case 2:
+				String [] systems = new String [] { "body", "divine", "essence", "three"};
+				for(String system : systems) {
+					if(system.startsWith(args[0])) {
+						completions.add(system);
+					}
+				}
+				break;
 		}
-		else {
-			if(args.length > 0) {
-				boolean wrongUsage = false;
-				EntityPlayerMP player = server.getPlayerList().getPlayerByUsername(args[0]);
-				if(player != null) {
-					int levels = 1;
-					if (args.length == 2) {
-						try {
-							levels = parseInt(args[1], 10);
-						} catch (NumberFormatException e) {
-							TextComponentString text = new TextComponentString("Couldn't recognize number " + args[1]);
-							text.getStyle().setColor(TextFormatting.RED);
-							sender.sendMessage(text);
-							wrongUsage = true;
-						}
-					}
-					if (args.length > 2) {
-						wrongUsage = true;
-					}
-					if (!wrongUsage) {
-						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-						for (int i = 0; i < levels; i++) {
-							CultivationUtils.cultivatorAddProgress(player, cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()), true, true, true);
-						}
-					} else {
-						TextComponentString text = new TextComponentString("Invalid arguments, use /advcult <player> [levels]");
-						text.getStyle().setColor(TextFormatting.RED);
-						sender.sendMessage(text);
-					}
-				} else {
-					TextComponentString text = new TextComponentString("Couldn't find player " + args[0] + "!");
+		return completions;
+	}
+
+	@Override
+	public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
+		boolean wrongUsage = false;
+		boolean execute = true;
+		boolean consoleError = false;
+		EntityPlayerMP target = null;
+		int levelCount = 1;
+		String system = "";
+		if(args.length == 0) {
+			system = "three";
+			if (sender instanceof EntityPlayerMP) {
+				try {
+					target = getCommandSenderAsPlayer(sender);
+				} catch (PlayerNotFoundException e) {
+					TextComponentString text = new TextComponentString("You ain't a player, what are you?");
 					text.getStyle().setColor(TextFormatting.RED);
 					sender.sendMessage(text);
+					execute = false;
 				}
 			} else {
-				TextComponentString text = new TextComponentString("Invalid arguments, use /advcult <player> [levels]");
+				consoleError = true;
+				execute = false;
+			}
+		}
+		else if (args.length == 1) {
+			if (sender instanceof EntityPlayerMP) {
+				if ("body".equalsIgnoreCase(args[0])
+						|| "divine".equalsIgnoreCase(args[0]) ||
+						"essence".equalsIgnoreCase(args[0]) ||
+						"three".equalsIgnoreCase(args[0])) {
+					system = args[0].toLowerCase();
+					try {
+						target = getCommandSenderAsPlayer(sender);
+					} catch (PlayerNotFoundException e) {
+						TextComponentString text = new TextComponentString("You ain't a player, what are you?");
+						text.getStyle().setColor(TextFormatting.RED);
+						sender.sendMessage(text);
+						execute = false;
+					}
+				} else {
+					system = "three".toLowerCase();
+					try {
+						levelCount = parseInt(args[0], 0);
+					} catch (NumberInvalidException e) {
+						WuxiaCraft.logger.error("Couldn't parse number, assuming 1 for execution sake");
+					}
+				}
+			} else {
+				consoleError = true;
+				execute = false;
+			}
+		} else if (args.length == 2) {
+			if (args[0].equalsIgnoreCase("body") ||
+					args[0].equalsIgnoreCase("divine") ||
+					args[0].equalsIgnoreCase("essence") ||
+					args[0].equalsIgnoreCase("three")) {
+				system = args[0].toLowerCase();
+				if (sender instanceof EntityPlayerMP) {
+					try {
+						target = getCommandSenderAsPlayer(sender);
+					} catch (PlayerNotFoundException e) {
+						TextComponentString text = new TextComponentString("You ain't a player, what are you?");
+						text.getStyle().setColor(TextFormatting.RED);
+						sender.sendMessage(text);
+						execute = false;
+					}
+					try {
+						levelCount = parseInt(args[1], 0);
+					} catch (NumberInvalidException e) {
+						WuxiaCraft.logger.error("Couldn't parse number, assuming 1 for execution sake");
+					}
+				} else {
+					execute = false;
+					consoleError = true;
+				}
+			} else {
+				for (String name : server.getOnlinePlayerNames()) {
+					if (args[0].equalsIgnoreCase(name)) {
+						target = server.getPlayerList().getPlayerByUsername(name);
+						break;
+					}
+				}
+				if (target == null) {
+					TextComponentString text = new TextComponentString("Couldn't find target player");
+					text.getStyle().setColor(TextFormatting.RED);
+					sender.sendMessage(text);
+					execute = false;
+				} else {
+					if (args[1].equalsIgnoreCase("body") ||
+							args[1].equalsIgnoreCase("divine") ||
+							args[1].equalsIgnoreCase("essence") ||
+							args[1].equalsIgnoreCase("three")) {
+						system = args[1].toLowerCase();
+
+					} else {
+						system = "three".toLowerCase();
+						try {
+							levelCount = parseInt(args[1], 0);
+						} catch (NumberInvalidException e) {
+							WuxiaCraft.logger.error("Couldn't parse number, assuming 1 for execution sake");
+						}
+					}
+				}
+			}
+
+		} else if (args.length == 3) {
+			target = server.getPlayerList().getPlayerByUsername(args[0]);
+			if(target != null) {
+				if (args[1].equalsIgnoreCase("body") ||
+						args[1].equalsIgnoreCase("divine") ||
+						args[1].equalsIgnoreCase("essence") ||
+						args[1].equalsIgnoreCase("three")) {
+					system = args[1].toLowerCase();
+					try {
+						levelCount = parseInt(args[2], 0);
+					} catch (NumberInvalidException e) {
+						WuxiaCraft.logger.error("Couldn't parse number, assuming 1 for execution sake");
+					}
+				} else {
+					execute = false;
+					wrongUsage = true;
+				}
+			} else {
+				TextComponentString text = new TextComponentString("Couldn't find target player");
+				text.getStyle().setColor(TextFormatting.RED);
+				sender.sendMessage(text);
+				execute = false;
+			}
+		}
+		if (execute) {
+			if (target != null) {
+				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(target);
+				switch (system) {
+					case "body":
+						for (int i = 0; i < levelCount; i++) {
+							double amount = cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel());
+							cultivation.addBodyProgress(amount, true);
+						}
+						break;
+					case "divine":
+						for (int i = 0; i < levelCount; i++) {
+							double amount = cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel());
+							cultivation.addDivineProgress(amount, true);
+						}
+						break;
+					case "essence":
+						for (int i = 0; i < levelCount; i++) {
+							double amount = cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
+							cultivation.addEssenceProgress(amount, true);
+						}
+						break;
+					case "three":
+						for (int i = 0; i < levelCount; i++) {
+							double amount = cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel());
+							cultivation.addBodyProgress(amount, true);
+						}
+						for (int i = 0; i < levelCount; i++) {
+							double amount = cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel());
+							cultivation.addDivineProgress(amount, true);
+						}
+						for (int i = 0; i < levelCount; i++) {
+							double amount = cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
+							cultivation.addEssenceProgress(amount, true);
+						}
+						break;
+				}
+				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), target);
+				TextComponentString text = new TextComponentString("You gained some levels, cherish!");
+				text.getStyle().setColor(TextFormatting.GRAY);
+				target.sendMessage(text);
+				text = new TextComponentString("Levels added successfully!");
+				sender.sendMessage(text);
+			} else {
+				TextComponentString text = new TextComponentString("There is no target player!");
 				text.getStyle().setColor(TextFormatting.RED);
 				sender.sendMessage(text);
 			}
+		} else if (consoleError) {
+			TextComponentString text = new TextComponentString("Consoles can't cultivate (yet) ...");
+			text.getStyle().setColor(TextFormatting.RED);
+			sender.sendMessage(text);
+		} else if (wrongUsage) {
+			TextComponentString text = new TextComponentString("Wrong usage, use " + getUsage(sender));
+			text.getStyle().setColor(TextFormatting.RED);
+			sender.sendMessage(text);
 		}
 	}
 
 	@Override
 	public int getRequiredPermissionLevel() {
 		return 2;
-	}
-
-	@Override
-	@ParametersAreNonnullByDefault
-	@Nonnull
-	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
-		return new ArrayList<>();
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.networking;
 
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import io.netty.buffer.ByteBuf;
@@ -19,7 +20,7 @@ public class ProgressMessage implements IMessage {
 	public double amount;
 	public boolean techniques;
 	public boolean allowBreakTrough;
-	public boolean ignoreBottleneck;
+	public Cultivation.System system;
 	public UUID senderUUID;
 
 	@SuppressWarnings("unused")
@@ -27,17 +28,17 @@ public class ProgressMessage implements IMessage {
 		this.op = 0;
 		this.amount = 0;
 		this.techniques = false;
-		allowBreakTrough = false;
-		ignoreBottleneck = false;
+		this.allowBreakTrough = false;
+		this.system = Cultivation.System.ESSENCE;
 		this.senderUUID = null;
 	}
 
-	public ProgressMessage(int op, double amount, boolean techniques, boolean allowBreakTrough, boolean ignoreBottleneck, UUID senderUUID) {
+	public ProgressMessage(int op, Cultivation.System system, double amount, boolean techniques, boolean allowBreakTrough, UUID senderUUID) {
 		this.op = op;
 		this.amount = amount;
 		this.techniques = techniques;
 		this.allowBreakTrough = allowBreakTrough;
-		this.ignoreBottleneck = ignoreBottleneck;
+		this.system = system;
 		this.senderUUID = senderUUID;
 	}
 
@@ -45,10 +46,10 @@ public class ProgressMessage implements IMessage {
 	public void fromBytes(ByteBuf buf) {
 		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		this.op = buf.readInt();
+		this.system = Cultivation.System.valueOf(packetBuffer.readString(10));
 		this.amount = buf.readDouble();
 		this.techniques = buf.readBoolean();
 		this.allowBreakTrough = buf.readBoolean();
-		this.ignoreBottleneck = buf.readBoolean();
 		this.senderUUID = packetBuffer.readUniqueId();
 	}
 
@@ -56,10 +57,10 @@ public class ProgressMessage implements IMessage {
 	public void toBytes(ByteBuf buf) {
 		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		buf.writeInt(this.op);
+		packetBuffer.writeString(this.system.toString());
 		buf.writeDouble(this.amount);
 		buf.writeBoolean(this.techniques);
 		buf.writeBoolean(this.allowBreakTrough);
-		buf.writeBoolean(this.ignoreBottleneck);
 		packetBuffer.writeUniqueId(this.senderUUID);
 	}
 
@@ -75,13 +76,13 @@ public class ProgressMessage implements IMessage {
 						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 						switch (message.op) {
 							case 0:
-								CultivationUtils.cultivatorAddProgress(player, message.amount, message.techniques, message.allowBreakTrough, message.ignoreBottleneck);
+								CultivationUtils.cultivatorAddProgress(player, message.system, message.amount, message.techniques, message.allowBreakTrough);
 								break;
 							case 1:
-								cultivation.addProgress(-message.amount, false);
+								cultivation.addEssenceProgress(-message.amount, false);
 								break;
 							case 2:
-								cultivation.setProgress(message.amount);
+								cultivation.setEssenceProgress(message.amount);
 						}
 					}
 				});

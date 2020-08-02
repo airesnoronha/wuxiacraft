@@ -14,13 +14,15 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 public class ItemSpatialRing extends Item {
 
-    private int spatialRingSize;
-    public static int spatialRingRows;
-    public static int spatialRingColumns;
+    private final int spatialRingSize;
+    public final int spatialRingRows;
+    public final int spatialRingColumns;
 
     public ItemSpatialRing(String name, int spatialRingRows, int spatialRingColumns) {
         setRegistryName(name);
@@ -35,14 +37,17 @@ public class ItemSpatialRing extends Item {
     }
 
     @Override
+    @Nonnull
+    @ParametersAreNonnullByDefault
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         if (!worldIn.isRemote) {
             playerIn.openGui(WuxiaCraft.instance, GuiHandler.SPATIAL_RING_GUI_ID, worldIn, playerIn.getPosition().getX(), playerIn.getPosition().getY(), playerIn.getPosition().getZ());
         }
-        return new ActionResult(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
+        return new ActionResult<>(EnumActionResult.PASS, playerIn.getHeldItem(handIn));
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft) {
     }
 

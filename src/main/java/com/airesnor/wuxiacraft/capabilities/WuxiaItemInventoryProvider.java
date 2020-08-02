@@ -12,14 +12,12 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class WuxiaItemInventoryProvider implements ICapabilityProvider, ICapabilitySerializable {
+public class WuxiaItemInventoryProvider implements ICapabilityProvider, ICapabilitySerializable<NBTBase> {
 
     private final ItemStackHandler inventory;
-    private int itemInventorySize;
 
     public WuxiaItemInventoryProvider(int itemInventorySize) {
-        this.itemInventorySize = itemInventorySize;
-        inventory = new ItemStackHandler(this.itemInventorySize);
+        inventory = new ItemStackHandler(itemInventorySize);
     }
 
     @Override

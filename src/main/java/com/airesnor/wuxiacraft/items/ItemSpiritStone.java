@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.items;
 
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillAction;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
@@ -107,8 +108,8 @@ public class ItemSpiritStone extends ItemBase {
 		@Override
 		public boolean activate(EntityLivingBase actor) {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-			if(this.amount < cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.003) {
-				CultivationUtils.cultivatorAddProgress(actor, this.amount, false, false, false);
+			if(this.amount < cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) * 0.003) {
+				CultivationUtils.cultivatorAddProgress(actor, Cultivation.System.ESSENCE, this.amount, false, false);
 			} else {
 				actor.world.createExplosion(actor, actor.posX, actor.posY + 0.9, actor.posZ, 3, true);
 				actor.attackEntityFrom(DamageSource.causeExplosionDamage(actor), (float)(this.amount * 3));

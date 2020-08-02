@@ -47,7 +47,7 @@ public class SelectFoundationAttributeMessage implements IMessage {
 
 		@Override
 		public IMessage onMessage(SelectFoundationAttributeMessage message, MessageContext ctx) {
-			if(ctx.side == Side.SERVER) {
+			if(ctx.side == Side.SERVER) {/*
 				final WorldServer world = ctx.getServerHandler().player.getServerWorld();
 				world.addScheduledTask(() -> {
 					EntityPlayer player = world.getPlayerEntityByUUID(message.sender);
@@ -57,7 +57,7 @@ public class SelectFoundationAttributeMessage implements IMessage {
 						foundation.selectAttribute(attribute);
 					}
 				});
-			}
+			*/}
 			return null;
 		}
 	}

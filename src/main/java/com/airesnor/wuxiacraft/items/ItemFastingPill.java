@@ -1,10 +1,9 @@
 package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.cultivation.IFoundation;
-import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
@@ -35,8 +34,8 @@ public class ItemFastingPill extends ItemBase {
 	@Override
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		if (entityLiving instanceof EntityPlayer) {
-			IFoundation foundation = CultivationUtils.getFoundationFromEntity(entityLiving);
-			if (this.amount <= 25f + (foundation.getConstitutionModifier() * 0.4f) * 3F) {
+			double constitution = entityLiving.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue() * 0.6;
+			if (this.amount <= 25f + (constitution * 0.4f) * 3F) {
 				EntityPlayer player = (EntityPlayer) entityLiving;
 				player.getFoodStats().setFoodLevel(20);
 				try {
@@ -49,7 +48,7 @@ public class ItemFastingPill extends ItemBase {
 			} else {
 				stack.shrink(1);
 				worldIn.createExplosion(entityLiving, entityLiving.posX, entityLiving.posY, entityLiving.posZ, 3f, true);
-				entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), (float) (this.amount-foundation.getConstitutionModifier()) * 2);
+				entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), (float) (constitution) * 2);
 			}
 		}
 		return stack;
