@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.utils.TranslateUtils;
@@ -11,7 +12,7 @@ import java.util.List;
 @SuppressWarnings({"SameParameterValue", "unused"})
 public class Technique {
 
-	private final TechniqueTier tier;
+	private final Cultivation.System system;
 	private final String uName;
 	private final TechniquesModifiers baseModifiers;
 	private final List<PotionEffect> smallCompletionEffects;
@@ -22,6 +23,10 @@ public class Technique {
 
 	private final List<Skill> smallCompletionSkills;
 	private final List<Skill> greatCompletionSkills;
+
+	public Cultivation.System getSystem() {
+		return system;
+	}
 
 	public List<Skill> getSmallCompletionSkills() {
 		return smallCompletionSkills;
@@ -37,10 +42,6 @@ public class Technique {
 
 	private final List<Skill> perfectionCompletionSkills;
 
-	public TechniqueTier getTier() {
-		return this.tier;
-	}
-
 	public String getName() {
 		return TranslateUtils.translateKey("wuxiacraft.techniques." + this.uName);
 	}
@@ -53,8 +54,8 @@ public class Technique {
 		return baseModifiers;
 	}
 
-	public Technique(TechniqueTier tier, String uName, TechniquesModifiers baseModifiers) {
-		this.tier = tier;
+	public Technique(Cultivation.System system, String uName, TechniquesModifiers baseModifiers) {
+		this.system = system;
 		this.uName = uName;
 		this.baseModifiers = baseModifiers;
 		this.smallCompletionEffects = new ArrayList<>();
@@ -67,8 +68,8 @@ public class Technique {
 		this.cultivationSpeed = 1;
 	}
 
-	public Technique(TechniqueTier tier, String uName, TechniquesModifiers baseModifiers, float cultSpeed) {
-		this.tier = tier;
+	public Technique(Cultivation.System system, String uName, TechniquesModifiers baseModifiers, float cultSpeed) {
+		this.system = system;
 		this.uName = uName;
 		this.baseModifiers = baseModifiers;
 		this.smallCompletionEffects = new ArrayList<>();

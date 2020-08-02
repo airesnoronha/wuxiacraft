@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,8 +24,8 @@ public class TechniqueWeapon extends Technique {
 
 	private final WeaponType weaponType;
 
-	public TechniqueWeapon(TechniqueTier tier, String uName, TechniquesModifiers baseModifiers, WeaponType weaponType) {
-		super(tier, uName, baseModifiers);
+	public TechniqueWeapon(Cultivation.System system, String uName, TechniquesModifiers baseModifiers, WeaponType weaponType) {
+		super(system, uName, baseModifiers);
 		this.weaponType = weaponType;
 	}
 
