@@ -5,26 +5,29 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class SpatialRingContainer extends Container {
 
+    private final IItemHandler inv;
     private final int inventorySize;
     private final int spatialRingRows;
     private final int spatialRingColumns;
 
-    public SpatialRingContainer(IItemHandler inv, EntityPlayer player, ItemSpatialRing spatialRing) {
+    public SpatialRingContainer(EntityPlayer player) {
+        this.inv = player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         this.inventorySize = inv.getSlots();
-        this.spatialRingRows = spatialRing.spatialRingRows;
-        this.spatialRingColumns = spatialRing.spatialRingColumns;
+        this.spatialRingRows = ((ItemSpatialRing) player.getHeldItemMainhand().getItem()).getSpatialRingRows();
+        this.spatialRingColumns = ((ItemSpatialRing) player.getHeldItemMainhand().getItem()).getSpatialRingColumns();;
 
         int xPos = 8;
         int yPos = 18;
 
         //0-53 Space Ring inventory
-        for (int y = 0; y < spatialRingRows; ++y) {
-            for (int x = 0; x < spatialRingColumns; ++x) {
+        for (int y = 0; y < this.spatialRingRows; ++y) {
+            for (int x = 0; x < this.spatialRingColumns; ++x) {
                 addSlotToContainer(new SlotItemHandler(inv, x + y * 9, xPos + x * 18, yPos + y * 18));
             }
         }
@@ -61,11 +64,9 @@ public class SpatialRingContainer extends Container {
                 if (!this.mergeItemStack(stack1, inventorySize, this.inventorySlots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else {
+            } else if (!this.mergeItemStack(stack1, 0, inventorySize, false)){
                 //from player to space ring
-                if (!this.mergeItemStack(stack1, 0, inventorySize, false)) {
-                    return ItemStack.EMPTY;
-                }
+                return ItemStack.EMPTY;
             }
 
             if (stack1.getCount() == 0) {
@@ -74,10 +75,10 @@ public class SpatialRingContainer extends Container {
                 slot.onSlotChanged();
             }
 
-            if (stack1.getCount() == stack0.getCount()) {
-                return ItemStack.EMPTY;
-            }
-            slot.onTake(playerIn, stack1);
+//            if (stack1.getCount() == stack0.getCount()) {
+//                return ItemStack.EMPTY;
+//            }
+//            slot.onTake(playerIn, stack1);
         }
         return stack0;
     }

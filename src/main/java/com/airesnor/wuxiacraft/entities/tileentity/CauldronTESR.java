@@ -32,7 +32,7 @@ public class CauldronTESR extends TileEntitySpecialRenderer<CauldronTileEntity> 
 			renderFirewood(te);
 		}
 
-		if (te.isHasWater()) {
+		if (te.hasWater()) {
 			renderWater(te);
 		}
 

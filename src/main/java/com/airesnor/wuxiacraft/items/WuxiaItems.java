@@ -216,6 +216,7 @@ public class WuxiaItems {
 	public static final Item DUST_GOLD = new ItemBase("dust_gold");
 	public static final Item DUST_DIAMOND = new ItemBase("dust_diamond");
 
+	// Spatial Rings
 	public static final Item LOW_GRADE_SPATIAL_RING = new ItemSpatialRing("low_grade_spatial_ring", 3, 9);
 	public static final Item MID_GRADE_SPATIAL_RING = new ItemSpatialRing("mid_grade_spatial_ring", 4, 10);
 	public static final Item HIGH_GRADE_SPATIAL_RING = new ItemSpatialRing("high_grade_spatial_ring", 5, 11);

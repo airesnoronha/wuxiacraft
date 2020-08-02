@@ -10,7 +10,7 @@ import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
-import com.airesnor.wuxiacraft.dimensions.WuxiaDimensions;
+import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
 import com.airesnor.wuxiacraft.items.*;
@@ -435,7 +435,7 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onPlayerDigBlock(BlockEvent.HarvestDropsEvent event) {
 		EntityPlayer player = event.getHarvester();
-		if (player != null) {
+		if (player != null && !player.world.isRemote) {
 			IBlockState block = event.getState();
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 			CultivationUtils.cultivatorAddProgress(player, Cultivation.System.BODY, 0.1f * block.getBlockHardness(event.getWorld(), event.getPos()), false, false);

@@ -1,6 +1,6 @@
 package com.airesnor.wuxiacraft.formation;
 
-import com.airesnor.wuxiacraft.dimensions.WuxiaDimensions;
+import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
 
 import java.util.ArrayList;
 import java.util.List;

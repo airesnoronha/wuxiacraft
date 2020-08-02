@@ -28,12 +28,17 @@ public class GuiHandler implements IGuiHandler {
 				//noinspection ConstantConditions
 				return new GrinderContainer(player.inventory, (GrinderTileEntity) world.getTileEntity(pos));
 			case CULTIVATION_GUI_ID:
+				break;
 			case SKILLS_GUI_ID:
+				break;
 			case RECIPE_GUI_ID:
 				return null;
 			case SPATIAL_RING_GUI_ID:
-				//noinspection ConstantConditions
-				return new SpatialRingContainer(player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), player, (ItemSpatialRing) player.getHeldItemMainhand().getItem());
+				if (player.getHeldItemMainhand().getItem() instanceof ItemSpatialRing) {
+					return new SpatialRingContainer(player);
+				} else {
+					return null;
+				}
 		}
 		return null;
 	}
@@ -52,7 +57,11 @@ public class GuiHandler implements IGuiHandler {
 			case GRINDER_GUI_ID:
 				return new GrinderGui(player.inventory, (GrinderTileEntity) world.getTileEntity(pos));
 			case SPATIAL_RING_GUI_ID:
-				return new SpatialRingGui(player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), player, (ItemSpatialRing) player.getHeldItemMainhand().getItem());
+				if (player.getHeldItemMainhand().getItem() instanceof ItemSpatialRing) {
+					return new SpatialRingGui(player);
+				} else {
+					return null;
+				}
 		}
 		return null;
 	}

@@ -23,6 +23,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -39,6 +41,7 @@ import java.util.Random;
 public class Cauldron extends BlockContainer {
 
 	private static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0,0,0,1,0.81, 1);
+	private int rightClickCounter;
 
 	public static final IProperty<Integer> CAULDRON = PropertyInteger.create("cauldron", 0, 2);
 
@@ -50,6 +53,7 @@ public class Cauldron extends BlockContainer {
 
 		setHardness(1f);
 		setResistance(25f);
+		rightClickCounter = 0;
 
 		WuxiaBlocks.BLOCKS.add(this);
 		WuxiaItems.ITEMS.add(new ItemBlock(this).setRegistryName(name));
@@ -182,10 +186,30 @@ public class Cauldron extends BlockContainer {
 					}
 				}
 			}
+			if (playerIn.getHeldItem(hand).isEmpty() && !playerIn.isSneaking() && !playerIn.world.isRemote) {
+				TextComponentString text = new TextComponentString("Burning Time: " + te.getBurningTime());
+				playerIn.sendMessage(text);
+			}
 			if (playerIn.getHeldItem(hand).isEmpty() && playerIn.isSneaking()) {
-				if (te.getCauldronState() == CauldronTileEntity.EnumCauldronState.WRONG_RECIPE && te.isHasWater()) {
-					te.emptyCauldron();
-					used = true;
+				TextComponentString text = new TextComponentString("The Cauldron has been emptied.");
+				text.getStyle().setColor(TextFormatting.GREEN);
+				if (te.hasWater()) {
+					if (te.getCauldronState() == CauldronTileEntity.EnumCauldronState.WRONG_RECIPE) {
+						te.emptyCauldron();
+						if (!playerIn.world.isRemote) {
+							playerIn.sendMessage(text);
+						}
+						used = true;
+					} else if (te.getCauldronState() != CauldronTileEntity.EnumCauldronState.WRONG_RECIPE && rightClickCounter >= 2) {
+						te.emptyCauldron();
+						if (!playerIn.world.isRemote) {
+							playerIn.sendMessage(text);
+						}
+						used = true;
+						rightClickCounter = 0;
+					} else if (te.getCauldronState() != CauldronTileEntity.EnumCauldronState.WRONG_RECIPE) {
+						rightClickCounter++;
+					}
 				}
 			}
 		}
@@ -213,7 +237,7 @@ public class Cauldron extends BlockContainer {
 		if(worldIn.isRemote) {
 			CauldronTileEntity te = getTE(worldIn, pos);
 			if (te != null) {
-				if (entityIn instanceof EntityItem && te.isAcceptingItems()) {
+				if (entityIn instanceof EntityItem) {
 					ItemStack stack = ((EntityItem) entityIn).getItem().copy();
 					te.addRecipeInput(stack.getItem());
 					NetworkWrapper.INSTANCE.sendToServer(new ShrinkEntityItemMessage(entityIn.getUniqueID().toString()));

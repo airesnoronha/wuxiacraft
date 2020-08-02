@@ -57,24 +57,28 @@ public class BarrierMessage implements IMessage {
             if (ctx.side == Side.CLIENT) {
                 handleClientMessage(message);
             } else if (ctx.side == Side.SERVER) {
-                final WorldServer world = ctx.getServerHandler().player.getServerWorld();
-                world.addScheduledTask(() -> {
-                    EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
-                    if (player != null) {
-                        IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
-                        barrier.copyFrom(message.barrier);
-                    }
-                });
+                handleServerMessage(message, ctx);
             }
             return null;
         }
 
-        @SideOnly(Side.CLIENT)
         private void handleClientMessage(BarrierMessage message) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 EntityPlayer player = Minecraft.getMinecraft().player;
                 IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
                 barrier.copyFrom(message.barrier);
+            });
+        }
+
+        public void handleServerMessage(BarrierMessage message, MessageContext ctx) {
+            final WorldServer world = ctx.getServerHandler().player.getServerWorld();
+            world.addScheduledTask(() -> {
+                EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
+                if (player != null) {
+                    IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
+                    barrier.setBarrierActive(message.barrier.isBarrierActive());
+                    barrier.setBarrierRegenActive(message.barrier.isBarrierRegenActive());
+                }
             });
         }
     }

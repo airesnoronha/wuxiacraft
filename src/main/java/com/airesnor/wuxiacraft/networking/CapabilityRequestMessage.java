@@ -18,10 +18,10 @@ import java.util.UUID;
 
 public class CapabilityRequestMessage implements IMessage {
 
-	public UUID sender;
+	public UUID senderUUID;
 
-	public CapabilityRequestMessage(UUID sender) {
-		this.sender = sender;
+	public CapabilityRequestMessage(UUID senderUUID) {
+		this.senderUUID = senderUUID;
 	}
 
 	public CapabilityRequestMessage() {
@@ -30,13 +30,13 @@ public class CapabilityRequestMessage implements IMessage {
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		PacketBuffer packetBuffer = new PacketBuffer(buf);
-		this.sender = packetBuffer.readUniqueId();
+		this.senderUUID = packetBuffer.readUniqueId();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		PacketBuffer packetBuffer = new PacketBuffer(buf);
-		packetBuffer.writeUniqueId(this.sender);
+		packetBuffer.writeUniqueId(this.senderUUID);
 	}
 
 	public static class Handler implements IMessageHandler<CapabilityRequestMessage, UnifiedCapabilitySyncMessage> {
@@ -45,7 +45,7 @@ public class CapabilityRequestMessage implements IMessage {
 		public UnifiedCapabilitySyncMessage onMessage(CapabilityRequestMessage message, MessageContext ctx) {
 			if(ctx.side == Side.SERVER) {
 				WorldServer world = ctx.getServerHandler().player.getServerWorld();
-				EntityPlayer player = world.getPlayerEntityByUUID(message.sender);
+				EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
 				if(player != null) {
 					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 					ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);

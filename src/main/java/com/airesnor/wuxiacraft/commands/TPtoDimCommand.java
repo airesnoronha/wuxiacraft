@@ -1,6 +1,6 @@
 package com.airesnor.wuxiacraft.commands;
 
-import com.airesnor.wuxiacraft.dimensions.WuxiaDimensions;
+import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
 import com.airesnor.wuxiacraft.utils.TeleportationUtil;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.command.CommandBase;
@@ -11,12 +11,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.common.DimensionManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.xml.soap.Text;
 import java.util.ArrayList;
 import java.util.List;
 
