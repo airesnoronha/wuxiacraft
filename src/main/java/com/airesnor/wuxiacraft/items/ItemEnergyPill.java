@@ -35,7 +35,7 @@ public class ItemEnergyPill extends ItemBase {
 			if (stack.isEmpty())
 				stack = ItemStack.EMPTY;
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-			if(this.amount < (float)cultivation.getMaxEnergy() * 0.3F) {
+			if(this.amount < (float)CultivationUtils.getMaxEnergy(player) * 0.3F) {
 				cultivation.addEnergy(this.amount);
 			} else {
 				worldIn.createExplosion(player, player.posX, player.posY, player.posZ, 3, true);

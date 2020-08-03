@@ -179,6 +179,58 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
+	public BaseSystemLevel getSystemLevel(System system) {
+		switch(system) {
+			case BODY:
+				return this.getBodyLevel();
+			case DIVINE:
+				return this.getDivineLevel();
+			case ESSENCE:
+				return this.getEssenceLevel();
+		}
+		return null;
+	}
+
+	@Override
+	public int getSystemSubLevel(System system) {
+		switch(system) {
+			case BODY:
+				return this.getBodySubLevel();
+			case DIVINE:
+				return this.getDivineSubLevel();
+			case ESSENCE:
+				return this.getEssenceSubLevel();
+		}
+		return 0;
+	}
+
+	@Override
+	public double getSystemProgress(System system) {
+		switch(system) {
+			case BODY:
+				return this.getBodyProgress();
+			case DIVINE:
+				return this.getDivineProgress();
+			case ESSENCE:
+				return this.getEssenceProgress();
+		}
+		return 0;
+	}
+
+	@Override
+	public double getSystemModifier(System system) {
+		switch(system) {
+			case BODY:
+				return this.getBodyModifier();
+			case DIVINE:
+				return this.getDivineModifier();
+			case ESSENCE:
+				return this.getEssenceModifier();
+		}
+		return 0;
+	}
+
+	@Override
 	public double getEnergy() {
 		return this.energy;
 	}

@@ -52,9 +52,15 @@ public class RemoveTechniqueMessage implements IMessage {
 				final WorldServer world = ctx.getServerHandler().player.getServerWorld();
 				world.addScheduledTask(() -> {
 					EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
-					if(player != null) {
+					if (player != null) {
 						ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
-						cultTech.remTechnique(message.toBeRemoved);
+						if (cultTech.getBodyTechnique().getTechnique().equals(message.toBeRemoved)) {
+							cultTech.setBodyTechnique(null);
+						} else if (cultTech.getDivineTechnique().getTechnique().equals(message.toBeRemoved)) {
+							cultTech.setDivineTechnique(null);
+						} else if (cultTech.getEssenceTechnique().getTechnique().equals(message.toBeRemoved)) {
+							cultTech.setEssenceTechnique(null);
+						}
 					}
 				});
 			}

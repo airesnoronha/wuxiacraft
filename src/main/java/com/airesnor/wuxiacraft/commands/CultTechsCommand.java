@@ -1,7 +1,9 @@
 package com.airesnor.wuxiacraft.commands;
 
+import com.airesnor.wuxiacraft.cultivation.techniques.CultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
-import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
+import com.airesnor.wuxiacraft.networking.CultTechMessage;
+import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.command.CommandBase;
@@ -18,6 +20,8 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class CultTechsCommand extends CommandBase {
+	
+	@SuppressWarnings("SpellCheckingInspection")
 	@Override
 	public List<String> getAliases() {
 		List<String> aliases = new ArrayList<>();
@@ -30,11 +34,13 @@ public class CultTechsCommand extends CommandBase {
 		return 2;
 	}
 
+	@SuppressWarnings("SpellCheckingInspection")
 	@Override
 	public String getName() {
 		return "cultivationtechniques";
 	}
 
+	@SuppressWarnings("SpellCheckingInspection")
 	@Override
 	public String getUsage(ICommandSender sender) {
 		return "/culttech";
@@ -46,22 +52,36 @@ public class CultTechsCommand extends CommandBase {
 			if (!((EntityPlayerMP) sender).world.isRemote) {
 				ICultTech cultTech = CultivationUtils.getCultTechFromEntity((EntityLivingBase) sender);
 				if (args.length == 0) {
-					if (cultTech.getKnownTechniques().size() > 0) {
-						String message = "You know " + cultTech.getKnownTechniques().size() + " techniques.";
+					if (cultTech.getBodyTechnique() != null) {
+						String message = String.format("%s %.2f", cultTech.getBodyTechnique().getTechnique().getName(),
+								cultTech.getBodyTechnique().getProficiency());
 						sender.sendMessage(new TextComponentString(message));
-						for (KnownTechnique t : cultTech.getKnownTechniques()) {
-							message = String.format("%s %.0f", t.getTechnique().getName(), t.getProgress());
-							sender.sendMessage(new TextComponentString(message));
-						}
+					} else {
+						String message = "You don't know any techniques yet";
+						sender.sendMessage(new TextComponentString(message));
+					}
+					if (cultTech.getEssenceTechnique() != null) {
+						String message = String.format("%s %.2f", cultTech.getEssenceTechnique().getTechnique().getName(),
+								cultTech.getEssenceTechnique().getProficiency());
+						sender.sendMessage(new TextComponentString(message));
+					} else {
+						String message = "You don't know any techniques yet";
+						sender.sendMessage(new TextComponentString(message));
+					}
+					if (cultTech.getDivineTechnique() != null) {
+						String message = String.format("%s %.2f", cultTech.getDivineTechnique().getTechnique().getName(),
+								cultTech.getDivineTechnique().getProficiency());
+						sender.sendMessage(new TextComponentString(message));
 					} else {
 						String message = "You don't know any techniques yet";
 						sender.sendMessage(new TextComponentString(message));
 					}
 				} else if (args.length == 1) {
 					if (args[0].equals("reset")) {
-						cultTech.getKnownTechniques().clear();
+						cultTech.copyFrom(new CultTech());
 						String message = "You forgot all techniques.";
 						sender.sendMessage(new TextComponentString(message));
+						NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) sender);
 					}
 				}
 			}

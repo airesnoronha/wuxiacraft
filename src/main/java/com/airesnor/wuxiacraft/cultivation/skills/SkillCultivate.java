@@ -4,8 +4,7 @@ import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
-import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
-import com.airesnor.wuxiacraft.dimensions.biomes.WuxiaBiomes;
+import com.airesnor.wuxiacraft.world.dimensions.biomes.WuxiaBiomes;
 import com.airesnor.wuxiacraft.networking.ActivatePartialSkillMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.ProgressMessage;
@@ -52,20 +51,21 @@ public class SkillCultivate extends Skill {
 		setWhenCasting(actor -> {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
-			double amount = cultTech.getOverallCultivationSpeed();
-			float energy = cultTech.getOverallCultivationSpeed() * 1.25f * 10;
+			double amount = cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system)) * 0.03; //trust me this is necessary
+			double energy =  cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system)) * 1.25 * 10;
 			boolean hasEnergy = cultivation.hasEnergy(energy);
 			long timeDiff = System.currentTimeMillis() - LastUseCultivateMillis;
+			//TODO make server calculate the particles everytime it receives a progress message
 			if (timeDiff >= (particleStep ? 500 : 250)) { //4 per second
-				for (KnownTechnique kt : cultTech.getKnownTechniques()) {
+				for (Element element : Element.ELEMENTS) {
 					int particles = 12;
-					for (Element e : kt.getTechnique().getElements()) {
+					if(cultTech.hasElement(element)) {
 						for (int i = 0; i < particles; i++) {
 							float randX = 2 * actor.world.rand.nextFloat() - 1;
 							float randY = 2 * actor.world.rand.nextFloat() - 1;
 							float randZ = 2 * actor.world.rand.nextFloat() - 1;
 							float dist = (float) Math.sqrt(randX * randX + randY * randY + randZ * randZ) * 30f;
-							SpawnParticleMessage spm = new SpawnParticleMessage(e.getParticle(), false, actor.posX + randX, actor.posY + 0.9f + randY, actor.posZ + randZ, -randX / dist, -randY / dist, -randZ / dist, 0);
+							SpawnParticleMessage spm = new SpawnParticleMessage(element.getParticle(), false, actor.posX + randX, actor.posY + 0.9f + randY, actor.posZ + randZ, -randX / dist, -randY / dist, -randZ / dist, 0);
 							NetworkWrapper.INSTANCE.sendToServer(spm);
 						}
 					}

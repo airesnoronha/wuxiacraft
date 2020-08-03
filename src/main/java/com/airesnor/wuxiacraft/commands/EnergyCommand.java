@@ -1,11 +1,11 @@
 package com.airesnor.wuxiacraft.commands;
 
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -46,10 +46,10 @@ public class EnergyCommand extends CommandBase {
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         if(args.length == 3) {
             if(sender instanceof EntityPlayerMP) {
-                boolean wrongUsage = true;
+                boolean wrongUsage = false;
                 EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
                 if (targetPlayer != null) {
                     EntityPlayerMP playerMP = (EntityPlayerMP) sender;
@@ -57,11 +57,13 @@ public class EnergyCommand extends CommandBase {
                     if(args[0].equalsIgnoreCase("set")) {
                         if(args[2].equalsIgnoreCase("max")) {
                             //cultivation.setEnergy(cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()));
-                            cultivation.setEnergy(cultivation.getMaxEnergy());
+                            cultivation.setEnergy(CultivationUtils.getMaxEnergy((EntityLivingBase) sender));
                         } else {
                             float amount = Float.parseFloat(args[2]);
                             cultivation.setEnergy(amount);
                         }
+                    } else {
+                        wrongUsage = true;
                     }
                 }else{
                     TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);

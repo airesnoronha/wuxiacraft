@@ -16,12 +16,17 @@ public class CultTechStorage implements Capability.IStorage<ICultTech> {
 	@Override
 	public NBTBase writeNBT(Capability<ICultTech> capability, ICultTech instance, EnumFacing side) {
 		NBTTagCompound tag = new NBTTagCompound();
-		tag.setInteger("length", instance.getKnownTechniques().size());
-		int i = 0;
-		for (KnownTechnique t : instance.getKnownTechniques()) {
-			tag.setString("tech-" + i, t.getTechnique().getUName());
-			tag.setDouble("prog-" + i, t.getProgress());
-			i++;
+		if(instance.getBodyTechnique() != null) {
+			tag.setString("tech-body", instance.getBodyTechnique().getTechnique().getUName());
+			tag.setDouble("prof-body", instance.getBodyTechnique().getProficiency());
+		}
+		if(instance.getDivineTechnique() != null) {
+			tag.setString("tech-divine", instance.getDivineTechnique().getTechnique().getUName());
+			tag.setDouble("prof-divine", instance.getDivineTechnique().getProficiency());
+		}
+		if(instance.getEssenceTechnique() != null) {
+			tag.setString("tech-essence", instance.getEssenceTechnique().getTechnique().getUName());
+			tag.setDouble("prof-essence", instance.getEssenceTechnique().getProficiency());
 		}
 		return tag;
 	}
@@ -29,13 +34,20 @@ public class CultTechStorage implements Capability.IStorage<ICultTech> {
 	@Override
 	public void readNBT(Capability<ICultTech> capability, ICultTech instance, EnumFacing side, NBTBase nbt) {
 		NBTTagCompound tag = (NBTTagCompound) nbt;
-		int i = tag.getInteger("length");
-		for (int j = 0; j < i; j++) {
-			Technique t = Techniques.getTechniqueByUName(tag.getString("tech-" + j));
-			if (t != null) {
-				float progress = tag.getFloat("prog-" + j);
-				instance.addTechnique(t, progress);
-			}
+		if(tag.hasKey("tech-body")) {
+			Technique t = Techniques.getTechniqueByUName(tag.getString("tech-body"));
+			double p = tag.getDouble("prof-body");
+			instance.setBodyTechnique(new KnownTechnique(t, p));
+		}
+		if(tag.hasKey("tech-divine")) {
+			Technique t = Techniques.getTechniqueByUName(tag.getString("tech-divine"));
+			double p = tag.getDouble("prof-divine");
+			instance.setDivineTechnique(new KnownTechnique(t, p));
+		}
+		if(tag.hasKey("tech-essence")) {
+			Technique t = Techniques.getTechniqueByUName(tag.getString("tech-essence"));
+			double p = tag.getDouble("prof-essence");
+			instance.setEssenceTechnique(new KnownTechnique(t, p));
 		}
 	}
 }

@@ -164,6 +164,33 @@ public interface ICultivation {
 	 */
 	double getEssenceModifier();
 
+
+	/**
+	 * @param system the system in question
+	 * @return specified system level
+	 */
+	BaseSystemLevel getSystemLevel(Cultivation.System system);
+
+	/**
+	 * @param system the system in question
+	 * @return specified system sub level
+	 */
+	int getSystemSubLevel(Cultivation.System system);
+
+
+	/**
+	 * @param system the system in question
+	 * @return specified system progress
+	 */
+	double  getSystemProgress(Cultivation.System system);
+
+
+	/**
+	 * @param system the system in question
+	 * @return specified system modifier
+	 */
+	double getSystemModifier(Cultivation.System system);
+
 	/**
 	 * @return The amount of energy available to cast spells
 	 */

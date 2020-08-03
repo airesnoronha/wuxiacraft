@@ -1,27 +1,39 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.PotionEffect;
 
 import java.util.List;
 
 public interface ICultTech {
 
-	boolean addTechnique(Technique technique, double progress);
+	void progress(double amount, Cultivation.System system);
 
-	void remTechnique(Technique technique);
+	boolean addTechnique(Technique technique);
 
-	void progress(double amount);
+	KnownTechnique getBodyTechnique();
 
-	List<KnownTechnique> getKnownTechniques();
+	KnownTechnique getDivineTechnique();
 
-	TechniquesModifiers getOverallModifiers();
+	KnownTechnique getEssenceTechnique();
+
+	void setBodyTechnique(KnownTechnique knownTechnique);
+
+	void setDivineTechnique(KnownTechnique knownTechnique);
+
+	void setEssenceTechnique(KnownTechnique knownTechnique);
+
+	KnownTechnique getTechniqueBySystem(Cultivation.System system);
 
 	List<Skill> getTechniqueSkills();
 
-	float getOverallCultivationSpeed();
+	List<PotionEffect> getTechniquesEffects();
+
+	TechniquesModifiers getOverallModifiers();
 
 	void copyFrom(ICultTech cultTech);
 

@@ -1,10 +1,14 @@
 package com.airesnor.wuxiacraft.networking;
 
+import com.airesnor.wuxiacraft.capabilities.CultTechProvider;
 import com.airesnor.wuxiacraft.cultivation.techniques.*;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -28,34 +32,18 @@ public class CultTechMessage implements IMessage {
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		int size = buf.readInt();
-		List<String> names = new ArrayList<>();
-		double[] progresses = new double[size];
-		for (int i = 0; i < size; i++) {
-			int length = buf.readInt();
-			byte[] bytes = new byte[length];
-			buf.readBytes(bytes, 0, length);
-			names.add(new String(bytes));
-			progresses[i] = buf.readDouble();
-		}
-		int i = 0;
-		for (String name : names) {
-			Technique t = Techniques.getTechniqueByUName(name);
-			if (t != null) {
-				cultTech.addTechnique(t, progresses[i]);
-				i++;
-			}
-		}
+		NBTTagCompound tag = ByteBufUtils.readTag(buf);
+		//noinspection ConstantConditions
+		CultTechProvider.CULT_TECH_CAPABILITY.getStorage()
+				.readNBT(CultTechProvider.CULT_TECH_CAPABILITY, this.cultTech, null, tag);
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
-		buf.writeInt(this.cultTech.getKnownTechniques().size());
-		for (KnownTechnique t : this.cultTech.getKnownTechniques()) {
-			buf.writeInt(t.getTechnique().getUName().length());
-			buf.writeBytes(t.getTechnique().getUName().getBytes());
-			buf.writeDouble(t.getProgress());
-		}
+		//noinspection ConstantConditions
+		NBTTagCompound tag = (NBTTagCompound) CultTechProvider.CULT_TECH_CAPABILITY.getStorage()
+				.writeNBT(CultTechProvider.CULT_TECH_CAPABILITY, this.cultTech, null);
+		ByteBufUtils.writeTag(buf, tag);
 	}
 
 	public static class Handler implements IMessageHandler<CultTechMessage, IMessage> {
@@ -73,10 +61,7 @@ public class CultTechMessage implements IMessage {
 			Minecraft.getMinecraft().addScheduledTask(() -> {
 				EntityPlayer player = Minecraft.getMinecraft().player;
 				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
-				cultTech.getKnownTechniques().clear();
-				for (KnownTechnique t : message.cultTech.getKnownTechniques()) {
-					cultTech.addTechnique(t.getTechnique(), t.getProgress());
-				}
+				cultTech.copyFrom(message.cultTech);
 			});
 			return null;
 		}

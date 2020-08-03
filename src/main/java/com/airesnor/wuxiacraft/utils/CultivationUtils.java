@@ -110,10 +110,16 @@ public class CultivationUtils {
 		return barrier;
 	}
 
+	public static double getMaxEnergy(EntityLivingBase entityIn) {
+		double energy = getCultivationFromEntity(entityIn).getMaxEnergy();
+		energy *= getCultTechFromEntity(entityIn).getOverallModifiers().maxEnergy;
+		return energy;
+	}
+
 	public static void cultivatorAddProgress(EntityLivingBase player, Cultivation.System system, double amount, boolean techniques, boolean allowBreakThrough) {
 		ICultivation cultivation = getCultivationFromEntity(player);
 		ICultTech cultTech = getCultTechFromEntity(player);
-		amount *= cultTech.getOverallCultivationSpeed();
+		amount *= cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system));
 		double enlightenment = 1;
 		PotionEffect effect = player.getActivePotionEffect(Skills.ENLIGHTENMENT);
 		if (effect != null) {
@@ -121,7 +127,7 @@ public class CultivationUtils {
 		}
 		amount *= enlightenment;
 		if (techniques) {
-			cultTech.progress(amount);
+			cultTech.progress(amount, system);
 		}
 		//get world extra modifier
 		List<Pair<Element, DimensionType>> elementsDim = new ArrayList<>();

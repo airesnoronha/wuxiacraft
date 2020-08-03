@@ -9,7 +9,6 @@ import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
-import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
 import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
@@ -32,7 +31,6 @@ import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
@@ -58,7 +56,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -131,7 +128,7 @@ public class EventHandler {
 				}
 			}
 			if (player.world.isRemote) {
-                boolean canFly = cultivation.getMaxEnergy() > 100000;
+                boolean canFly = CultivationUtils.getMaxEnergy(player) > 100000;
 				if (canFly && player.capabilities.isFlying && cultivation.getEnergy() <= 0) {
 					player.capabilities.isFlying = false;
 				}
@@ -153,9 +150,9 @@ public class EventHandler {
 			}
 
 			//playerAddProgress(player, cultivation, 0.1f);
-			cultivation.addEnergy(cultivation.getMaxEnergy() * 0.00025F);
-			if (cultivation.getEnergy() > cultivation.getMaxEnergy()) {
-				cultivation.setEnergy(cultivation.getMaxEnergy());
+			cultivation.addEnergy(CultivationUtils.getMaxEnergy(player) * 0.00025F);
+			if (cultivation.getEnergy() > CultivationUtils.getMaxEnergy(player)) {
+				cultivation.setEnergy(CultivationUtils.getMaxEnergy(player));
 			}
 		}
 	}
@@ -338,7 +335,7 @@ public class EventHandler {
 				float totalRem = 0f;
 				float fly_cost = 2500f;
 				float dist_cost = 1320f;
-				if (cultivation.getMaxEnergy() < 10000000) { // cannot fly freely
+				if (CultivationUtils.getMaxEnergy(player) < 10000000) { // cannot fly freely
 					totalRem += fly_cost;
 				}
 				if (distance > 0) {
@@ -389,10 +386,9 @@ public class EventHandler {
 	 */
 	@SubscribeEvent
 	public void onCultivatorFall(LivingFallEvent event) {
-		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.getEntityLiving());
         EntityLivingBase player = event.getEntityLiving();
 		if (event.getEntityLiving().world.isRemote || event.getDistance() < 3) return;
-		if (cultivation.getMaxEnergy() > 100000) {
+		if (CultivationUtils.getMaxEnergy(player)> 100000) {
 			event.setDistance(0);
 		} else {
 				float agilityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() - // difference between whats -->
@@ -524,14 +520,8 @@ public class EventHandler {
 	public void onMobDrop(LivingDropsEvent event) {
 		if (event.getEntity() instanceof WanderingCultivator) {
 			//scrolls
-			List<Item> scrolls = new ArrayList<>();
-			for (Item i : WuxiaItems.ITEMS) {
-				if (i instanceof ItemScroll) {
-					scrolls.add(i);
-				}
-			}
 			Random rnd = event.getEntity().world.rand;
-			ItemStack drop = new ItemStack(scrolls.get(rnd.nextInt(scrolls.size())), 1);
+			ItemStack drop = new ItemStack(WuxiaItems.TECHNIQUES_SCROLL.get(rnd.nextInt(WuxiaItems.TECHNIQUES_SCROLL.size())), 1);
 			if (rnd.nextInt(50) == 1) {
 				event.getDrops().add(new EntityItem(event.getEntity().world, event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, drop));
 			}
@@ -558,32 +548,26 @@ public class EventHandler {
 				if (event.player.posY >= 2048) {
 					if (event.player.world.provider.getDimension() == 0) {
 						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.player);
-						if (cultivation.getMaxEnergy() > 100000) { //if energy may work as a parameter for levels
+						if (CultivationUtils.getMaxEnergy(event.player) > 100000) { //if energy may work as a parameter for levels
 							double playerPosX = event.player.posX;
 							double playerPosZ = event.player.posZ;
 							ICultTech cultTech = CultivationUtils.getCultTechFromEntity(event.player);
 							boolean found = false;
 							int targetDimension = WuxiaDimensions.FIRE.getId();
-							for (KnownTechnique kt : cultTech.getKnownTechniques()) {
-								for (Element element : kt.getTechnique().getElements()) {
-									if (Element.EARTH.equals(element) || Element.METAL.equals(element) || Element.FIRE.equals(element) || Element.WATER.equals(element) || Element.WOOD.equals(element)) {
-										found = true;
-										if (Element.EARTH.equals(element)) {
-											targetDimension = WuxiaDimensions.EARTH.getId();
-										}
-										if (Element.METAL.equals(element)) {
-											targetDimension = WuxiaDimensions.METAL.getId();
-										}
-										if (Element.WATER.equals(element)) {
-											targetDimension = WuxiaDimensions.WATER.getId();
-										}
-										if (Element.WOOD.equals(element)) {
-											targetDimension = WuxiaDimensions.WOOD.getId();
-										}
-									}
-									break;
+							if (cultTech.hasElement(Element.FIRE)|| cultTech.hasElement(Element.EARTH) || cultTech.hasElement(Element.METAL) || cultTech.hasElement(Element.WATER) || cultTech.hasElement(Element.WOOD)) {
+								found = true;
+								if (cultTech.hasElement(Element.EARTH)) {
+									targetDimension = WuxiaDimensions.EARTH.getId();
 								}
-								if (found) break;
+								else if (cultTech.hasElement(Element.METAL)) {
+									targetDimension = WuxiaDimensions.METAL.getId();
+								}
+								else if (cultTech.hasElement(Element.WATER)) {
+									targetDimension = WuxiaDimensions.WATER.getId();
+								}
+								else if (cultTech.hasElement(Element.WOOD)) {
+									targetDimension = WuxiaDimensions.WOOD.getId();
+								}
 							}
 							if (!found) { //couldn't find one element
 								int target = event.player.getRNG().nextInt(5); //0 to 4
@@ -763,8 +747,8 @@ public class EventHandler {
 		double cost = 500000;
 
 		if (player.ticksExisted % 100 == 0) {
-			if (player.getFoodStats().getFoodLevel() < 20 && cultivation.getMaxEnergy() > 100000) {
-				if (cultivation.getMaxEnergy() > 10000000) {
+			if (player.getFoodStats().getFoodLevel() < 20 && CultivationUtils.getMaxEnergy(player) > 100000) {
+				if (CultivationUtils.getMaxEnergy(player) > 10000000) {
 					player.getFoodStats().setFoodLevel(20);
 					try {
 						foodStats.setFloat(player.getFoodStats(), 50f);
@@ -797,10 +781,8 @@ public class EventHandler {
 		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 
 		//Adds the potions effects from cult tech
-		for (KnownTechnique kt : cultTech.getKnownTechniques()) {
-			for (PotionEffect effect : kt.getTechniqueEffects()) {
-				player.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration() + 19, effect.getAmplifier(), effect.getIsAmbient(), effect.doesShowParticles()));
-			}
+		for (PotionEffect effect : cultTech.getTechniquesEffects()) {
+			player.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration() + 19, effect.getAmplifier(), effect.getIsAmbient(), effect.doesShowParticles()));
 		}
 
 		double str = (cultivation.getBodyModifier()-1)*0.8 + (cultivation.getEssenceModifier()-1)*0.6 + (cultivation.getDivineModifier()-1)*0.2;
@@ -946,7 +928,7 @@ public class EventHandler {
             	ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				//Energy Drain while the barrier is active
 				if (barrier.isBarrierActive() && !barrier.isBarrierBroken()) {
-					cultivation.remEnergy(cultivation.getMaxEnergy() * 0.00005F);
+					cultivation.remEnergy(CultivationUtils.getMaxEnergy(player) * 0.00005F);
 				}
 				//Barrier regen when the barrier is not broken
 				if (!barrier.isBarrierBroken() && barrier.isBarrierRegenActive()) {
