@@ -24,6 +24,16 @@ public interface ICultivation {
 	boolean addEssenceProgress(double amount, boolean allowBreakThrough);
 
 	/**
+	 * Adds progress to specified system
+	 *
+	 * @param amount the progress to be added
+	 * @param system the system to be added progress to
+	 * @param allowBreakThrough if the progress source allows a breakthrough
+	 */
+	boolean addSystemProgress(double amount, Cultivation.System system, boolean allowBreakThrough);
+
+
+	/**
 	 * Sets the amount of progress of the body cultivation
 	 *
 	 * @param amount the progress to be set

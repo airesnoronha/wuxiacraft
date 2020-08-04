@@ -112,7 +112,7 @@ public class CultivationUtils {
 
 	public static double getMaxEnergy(EntityLivingBase entityIn) {
 		double energy = getCultivationFromEntity(entityIn).getMaxEnergy();
-		energy *= getCultTechFromEntity(entityIn).getOverallModifiers().maxEnergy;
+		energy *= (1+getCultTechFromEntity(entityIn).getOverallModifiers().maxEnergy);
 		return energy;
 	}
 
@@ -147,17 +147,15 @@ public class CultivationUtils {
 			}
 		}
 		if (!cultivation.getSuppress()) {
-			switch(system) {
-				case BODY:
-					cultivation.addBodyProgress(amount, allowBreakThrough);
-					break;
-				case DIVINE:
-					cultivation.addDivineProgress(amount, allowBreakThrough);
-					break;
-				case ESSENCE:
-					cultivation.addEssenceProgress(amount, allowBreakThrough);
-					break;
-
+			cultivation.addSystemProgress(amount, system, allowBreakThrough);
+			if(cultivation.getBodyLevel() == BaseSystemLevel.DEFAULT_BODY_LEVEL) {
+				cultivation.addBodyProgress(amount*0.3, allowBreakThrough);
+			}
+			if(cultivation.getDivineLevel() == BaseSystemLevel.DEFAULT_DIVINE_LEVEL) {
+				cultivation.addDivineProgress(amount*0.3, allowBreakThrough);
+			}
+			if(cultivation.getEssenceLevel() == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
+				cultivation.addEssenceProgress(amount*0.3, allowBreakThrough);
 			}
 		}
 	}

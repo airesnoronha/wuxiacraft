@@ -149,8 +149,11 @@ public class EventHandler {
 				player.sendPlayerAbilities();
 			}
 
-			//playerAddProgress(player, cultivation, 0.1f);
-			cultivation.addEnergy(CultivationUtils.getMaxEnergy(player) * 0.00025F);
+
+			double energy = CultivationUtils.getMaxEnergy(player) * 0.00025;
+			//add a little of soul modifier to help out since soul affects perception
+			energy *= (1+cultivation.getDivineModifier()*0.003);
+			cultivation.addEnergy(energy);
 			if (cultivation.getEnergy() > CultivationUtils.getMaxEnergy(player)) {
 				cultivation.setEnergy(CultivationUtils.getMaxEnergy(player));
 			}

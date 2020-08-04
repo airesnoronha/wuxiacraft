@@ -52,7 +52,7 @@ public class SkillCultivate extends Skill {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
 			double amount = cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system)) * 0.03; //trust me this is necessary
-			double energy =  cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system)) * 1.25 * 10;
+			double energy =  cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system)) * 1.45;
 			boolean hasEnergy = cultivation.hasEnergy(energy);
 			long timeDiff = System.currentTimeMillis() - LastUseCultivateMillis;
 			//TODO make server calculate the particles everytime it receives a progress message

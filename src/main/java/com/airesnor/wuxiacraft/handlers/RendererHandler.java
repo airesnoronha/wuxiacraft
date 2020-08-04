@@ -248,21 +248,25 @@ public class RendererHandler {
 
 		GlStateManager.popMatrix();
 
+		String message = String.format("Energy: %.4f (%d%%)",
+				cultivation.getEnergy(), (int)(cultivation.getEnergy()*100.0/CultivationUtils.getMaxEnergy(player)));
+		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 90, Integer.parseInt("FFAA00", 16));
+
 		if (cultTech.getBodyTechnique() != null) {
-			String message = String.format("Body Technique: %s %.4f", cultTech.getBodyTechnique().getTechnique().getName(),
+			message = String.format("Body Technique: %s %.4f", cultTech.getBodyTechnique().getTechnique().getName(),
 					cultTech.getBodyTechnique().getProficiency());
-			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 20, Integer.parseInt("FFAA00", 16));
+			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 100, Integer.parseInt("FFAA00", 16));
 		}
 
 		if (cultTech.getEssenceTechnique() != null) {
-			String message = String.format("Essence Technique: %s %.4f", cultTech.getEssenceTechnique().getTechnique().getName(),
+			message = String.format("Essence Technique: %s %.4f", cultTech.getEssenceTechnique().getTechnique().getName(),
 					cultTech.getEssenceTechnique().getProficiency());
-			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 30, Integer.parseInt("FFAA00", 16));
+			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 120, Integer.parseInt("FFAA00", 16));
 		}
 		if (cultTech.getDivineTechnique() != null) {
-			String message  = String.format("Divine Technique: %s %.4f", cultTech.getDivineTechnique().getTechnique().getName(),
+			message  = String.format("Divine Technique: %s %.4f", cultTech.getDivineTechnique().getTechnique().getName(),
 					cultTech.getDivineTechnique().getProficiency());
-			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 10, Integer.parseInt("FFAA00", 16));
+			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 130, Integer.parseInt("FFAA00", 16));
 		}
 		/*
 		message = String.format("Speed: %.3f(%.3f->%d%%)",player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue(),cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()), WuxiaCraftConfig.speedHandicap);

@@ -53,14 +53,28 @@ public class Cultivation implements ICultivation {
 	public boolean addBodyProgress(double amount, boolean allowBreakthrough) {
 		boolean leveled = false;
 		this.bodyProgress += amount;
-		if(allowBreakthrough) {
-			if(this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel)) {
-				this.bodyProgress -= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel);
-				leveled = true;
-				this.bodySubLevel ++;
-				if(this.bodySubLevel == this.bodyLevel.subLevels) {
-					this.bodySubLevel = 0;
-					this.bodyLevel = this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS);
+		if (allowBreakthrough) {
+			if (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) {
+				boolean canDoIt = false; // the only way is to have both last sub level in default system level and max progress
+				if (this.bodyLevel == BaseSystemLevel.DEFAULT_BODY_LEVEL || this.essenceLevel == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
+					if (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineLevel.subLevels - 1)
+							&& this.divineSubLevel >= this.divineLevel.subLevels - 1 &&
+							this.essenceSubLevel >= this.essenceLevel.getProgressBySubLevel(this.essenceLevel.subLevels - 1)
+							&& this.essenceSubLevel >= this.essenceLevel.subLevels - 1
+					) {
+						canDoIt = true;
+					}
+				} else {
+					canDoIt = true;
+				}
+				if (canDoIt) {
+					this.bodyProgress -= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel);
+					leveled = true;
+					this.bodySubLevel++;
+					if (this.bodySubLevel == this.bodyLevel.subLevels) {
+						this.bodySubLevel = 0;
+						this.bodyLevel = this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS);
+					}
 				}
 			}
 		}
@@ -71,14 +85,28 @@ public class Cultivation implements ICultivation {
 	public boolean addDivineProgress(double amount, boolean allowBreakthrough) {
 		boolean leveled = false;
 		this.divineProgress += amount;
-		if(allowBreakthrough) {
-			if(this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) {
-				this.divineProgress -= this.divineLevel.getProgressBySubLevel(this.divineSubLevel);
-				leveled = true;
-				this.divineSubLevel ++;
-				if(this.divineSubLevel == this.divineLevel.subLevels) {
-					this.divineSubLevel = 0;
-					this.divineLevel = this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS);
+		if (allowBreakthrough) {
+			if (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) {
+				boolean canDoIt = false; // the only way is to have both last sub level in default system level and max progress
+				if (this.bodyLevel == BaseSystemLevel.DEFAULT_BODY_LEVEL || this.essenceLevel == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
+					if (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodyLevel.subLevels - 1)
+							&& this.bodySubLevel >= this.bodyLevel.subLevels - 1 &&
+							this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceLevel.subLevels - 1)
+							&& this.essenceSubLevel >= this.essenceLevel.subLevels - 1
+					) {
+						canDoIt = true;
+					}
+				} else {
+					canDoIt = true;
+				}
+				if (canDoIt) {
+					this.divineProgress -= this.divineLevel.getProgressBySubLevel(this.divineSubLevel);
+					leveled = true;
+					this.divineSubLevel++;
+					if (this.divineSubLevel == this.divineLevel.subLevels) {
+						this.divineSubLevel = 0;
+						this.divineLevel = this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS);
+					}
 				}
 			}
 		}
@@ -89,18 +117,48 @@ public class Cultivation implements ICultivation {
 	public boolean addEssenceProgress(double amount, boolean allowBreakthrough) {
 		boolean leveled = false;
 		this.essenceProgress += amount;
-		if(allowBreakthrough) {
-			if(this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)) {
-				this.essenceProgress -= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel);
-				leveled = true;
-				this.essenceSubLevel ++;
-				if(this.essenceSubLevel == this.essenceLevel.subLevels) {
-					this.essenceSubLevel = 0;
-					this.essenceLevel = this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
+		if (allowBreakthrough) {
+			if (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) {
+				boolean canDoIt = false; // the only way is to have both last sub level in default system level and max progress
+				if (this.bodyLevel == BaseSystemLevel.DEFAULT_BODY_LEVEL || this.essenceLevel == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
+					if (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodyLevel.subLevels - 1)
+							&& this.bodySubLevel >= this.bodyLevel.subLevels - 1 &&
+							this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineLevel.subLevels - 1)
+							&& this.divineSubLevel >= this.divineLevel.subLevels - 1
+					) {
+						canDoIt = true;
+					}
+				} else {
+					canDoIt = true;
+				}
+				if (canDoIt) {
+					this.essenceProgress -= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel);
+					leveled = true;
+					this.essenceSubLevel++;
+					if (this.essenceSubLevel == this.essenceLevel.subLevels) {
+						this.essenceSubLevel = 0;
+						this.essenceLevel = this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
+					}
 				}
 			}
 		}
 		return leveled;
+	}
+
+	@Override
+	public boolean addSystemProgress(double amount, System system, boolean allowBreakThrough) {
+		switch (system) {
+			case BODY:
+				addBodyProgress(amount, allowBreakThrough);
+				break;
+			case DIVINE:
+				addDivineProgress(amount, allowBreakThrough);
+				break;
+			case ESSENCE:
+				addEssenceProgress(amount, allowBreakThrough);
+				break;
+		}
+		return false;
 	}
 
 	@Override
@@ -180,7 +238,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public BaseSystemLevel getSystemLevel(System system) {
-		switch(system) {
+		switch (system) {
 			case BODY:
 				return this.getBodyLevel();
 			case DIVINE:
@@ -193,7 +251,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public int getSystemSubLevel(System system) {
-		switch(system) {
+		switch (system) {
 			case BODY:
 				return this.getBodySubLevel();
 			case DIVINE:
@@ -206,7 +264,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public double getSystemProgress(System system) {
-		switch(system) {
+		switch (system) {
 			case BODY:
 				return this.getBodyProgress();
 			case DIVINE:
@@ -219,7 +277,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public double getSystemModifier(System system) {
-		switch(system) {
+		switch (system) {
 			case BODY:
 				return this.getBodyModifier();
 			case DIVINE:
@@ -312,7 +370,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public double getMaxEnergy() {
-		return 18*this.getEssenceModifier() + 8*this.getBodyModifier() + 12*this.getDivineModifier();
+		return 18 * this.getEssenceModifier() + 8 * this.getBodyModifier() + 12 * this.getDivineModifier();
 	}
 
 	@Override

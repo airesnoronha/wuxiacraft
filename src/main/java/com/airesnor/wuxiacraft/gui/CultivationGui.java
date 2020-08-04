@@ -554,17 +554,21 @@ public class CultivationGui extends GuiScreen {
 
 	private void drawCultivationForeground() {
 		this.fontRenderer.drawString(cultivation.getBodyLevel().getLevelName(cultivation.getBodySubLevel()), this.guiLeft + 13, this.guiTop + 38, 0xFFFFFF);
-		this.fontRenderer.drawString(String.format("P: %d%% M:%.1f", (int) (100 * cultivation.getBodyProgress() /
+		this.fontRenderer.drawString(String.format("P: %d%% M:%.1f %.3f", (int) (100 * cultivation.getBodyProgress() /
 						cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel())),
-				cultivation.getBodyModifier()), this.guiLeft + 13, this.guiTop + 50, 0xFFFFFF);
+				cultivation.getBodyModifier(),
+				cultivation.getBodyProgress()
+				), this.guiLeft + 13, this.guiTop + 50, 0xFFFFFF);
 		this.fontRenderer.drawString(cultivation.getDivineLevel().getLevelName(cultivation.getDivineSubLevel()), this.guiLeft + 13, this.guiTop + 62, 0xFFFFFF);
-		this.fontRenderer.drawString(String.format("P: %d%% M:%.1f", (int) (100 * cultivation.getDivineProgress() /
+		this.fontRenderer.drawString(String.format("P: %d%% M:%.1f %.3f", (int) (100 * cultivation.getDivineProgress() /
 						cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel())),
-				cultivation.getDivineModifier()), this.guiLeft + 13, this.guiTop + 74, 0xFFFFFF);
+				cultivation.getDivineModifier(),
+				cultivation.getDivineProgress()), this.guiLeft + 13, this.guiTop + 74, 0xFFFFFF);
 		this.fontRenderer.drawString(cultivation.getEssenceLevel().getLevelName(cultivation.getEssenceSubLevel()), this.guiLeft + 13, this.guiTop + 86, 0xFFFFFF);
-		this.fontRenderer.drawString(String.format("P: %d%% M:%.1f", (int) (100 * cultivation.getEssenceProgress() /
+		this.fontRenderer.drawString(String.format("P: %d%% M:%.1f %.3f", (int) (100 * cultivation.getEssenceProgress() /
 						cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel())),
-				cultivation.getEssenceModifier()), this.guiLeft + 13, this.guiTop + 98, 0xFFFFFF);
+				cultivation.getEssenceModifier(),
+				cultivation.getEssenceProgress()), this.guiLeft + 13, this.guiTop + 98, 0xFFFFFF);
 	}
 
 	private void drawTechniquesForeground() {
