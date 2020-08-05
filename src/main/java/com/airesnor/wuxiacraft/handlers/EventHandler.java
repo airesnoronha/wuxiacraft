@@ -66,6 +66,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber
 public class EventHandler {
@@ -98,6 +99,11 @@ public class EventHandler {
 			NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, true), (EntityPlayerMP) player);
 			IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
 			NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
+
+			// Little code to almost kill Fruit on log in because I'm nice
+			if (player.getUniqueID().equals(UUID.fromString("6b143647-21b9-447e-a5a7-cd48808ec30a"))) {
+				player.setHealth(1);
+			}
 		}
 		TextComponentString text = new TextComponentString("For a quick tutorial on the mod. \nPlease use the /culthelp command");
 		text.getStyle().setColor(TextFormatting.GOLD);
@@ -135,7 +141,7 @@ public class EventHandler {
 				}
 			}
 			if (player.world.isRemote) {
-                boolean canFly = CultivationUtils.getMaxEnergy(player) > 100000;
+				boolean canFly = CultivationUtils.getMaxEnergy(player) > 100000;
 				if (canFly && player.capabilities.isFlying && cultivation.getEnergy() <= 0) {
 					player.capabilities.isFlying = false;
 				}
@@ -145,12 +151,12 @@ public class EventHandler {
 				}
 				player.stepHeight = 0.6f;
 				if (!player.isSneaking() && WuxiaCraftConfig.disableStepAssist) {
-                    float agilityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() - // difference between whats -->
-                            player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()) * 0.4f; // agility to bend the body to lessen the impact
-                    float strengthModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() - // --> been added to it's base so vanilla players won't feel
-                            player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue()) * 0.4f; // strength to resist the impact
-                    float dexterityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() -
-                            player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getBaseValue()) * 0.2f; // ability with hands to help climbing
+					float agilityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() - // difference between whats -->
+							player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()) * 0.4f; // agility to bend the body to lessen the impact
+					float strengthModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() - // --> been added to it's base so vanilla players won't feel
+							player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue()) * 0.4f; // strength to resist the impact
+					float dexterityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() -
+							player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getBaseValue()) * 0.2f; // ability with hands to help climbing
 					player.stepHeight = Math.min(3.1f, 0.6f * (1 + 0.15f * (agilityModifier + dexterityModifier + strengthModifier)));
 				}
 				player.sendPlayerAbilities();
@@ -211,8 +217,8 @@ public class EventHandler {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-            float dexterityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() -
-                    player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getBaseValue()); // ability with hands to cast faster
+			float dexterityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() -
+					player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getBaseValue()); // ability with hands to cast faster
 			if (player.world.isRemote) {
 				long timeDiff = System.currentTimeMillis() - LastPlayerTickTime;
 				if (timeDiff >= 50) { //20 per seconds
@@ -374,13 +380,13 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onPlayerJump(LivingEvent.LivingJumpEvent event) {
 		if (event.getEntityLiving() instanceof EntityPlayer) {
-            EntityLivingBase player = event.getEntityLiving();
+			EntityLivingBase player = event.getEntityLiving();
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.getEntityLiving());
 			double baseJumpSpeed = event.getEntity().motionY;
-            float agilityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() - // difference between whats -->
-                    player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()) * 0.3f; // agility to bend the body to spring up
-            float strengthModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() - // --> been added to it's base so vanilla players won't feel
-                    player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue()) * 0.7f; // strength in the legs to jump higher
+			float agilityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() - // difference between whats -->
+					player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()) * 0.3f; // agility to bend the body to spring up
+			float strengthModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() - // --> been added to it's base so vanilla players won't feel
+					player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue()) * 0.7f; // strength in the legs to jump higher
 			double jumpSpeed = 0.05f * (agilityModifier + strengthModifier) * baseJumpSpeed;
 			if (cultivation.getJumpLimit() >= 0) {
 				jumpSpeed = Math.min(jumpSpeed, cultivation.getJumpLimit() * baseJumpSpeed);
@@ -396,18 +402,18 @@ public class EventHandler {
 	 */
 	@SubscribeEvent
 	public void onCultivatorFall(LivingFallEvent event) {
-        EntityLivingBase player = event.getEntityLiving();
+		EntityLivingBase player = event.getEntityLiving();
 		if (event.getEntityLiving().world.isRemote || event.getDistance() < 3) return;
 		if (CultivationUtils.getMaxEnergy(player)> 100000) {
 			event.setDistance(0);
 		} else {
-				float agilityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() - // difference between whats -->
-                        player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()) * 0.4f; // agility to bend the body to lessen the impact
-				float strengthModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() - // --> been added to it's base so vanilla players won't feel
-                        player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue()) * 0.4f; // strength to resist the impact
-				float constitutionModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue() -
-                        player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getBaseValue()) * 0.2f; // natural body resistance
-				event.setDistance(event.getDistance() - 1.85f * (agilityModifier + strengthModifier + constitutionModifier));
+			float agilityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() - // difference between whats -->
+					player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()) * 0.4f; // agility to bend the body to lessen the impact
+			float strengthModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() - // --> been added to it's base so vanilla players won't feel
+					player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue()) * 0.4f; // strength to resist the impact
+			float constitutionModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue() -
+					player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getBaseValue()) * 0.2f; // natural body resistance
+			event.setDistance(event.getDistance() - 1.85f * (agilityModifier + strengthModifier + constitutionModifier));
 		}
 	}
 
@@ -938,11 +944,11 @@ public class EventHandler {
 	 */
 	@SubscribeEvent
 	public void onPlayerBarrierUpdate(LivingEvent.LivingUpdateEvent event) {
-        if (event.getEntity() instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) event.getEntity();
-            if (!player.world.isRemote && player.ticksExisted % 20 == 0) {
-            	IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
-            	ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+		if (event.getEntity() instanceof EntityPlayer) {
+			EntityPlayer player = (EntityPlayer) event.getEntity();
+			if (!player.world.isRemote && player.ticksExisted % 20 == 0) {
+				IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
+				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				//Energy Drain while the barrier is active
 				if (barrier.isBarrierActive() && !barrier.isBarrierBroken()) {
 					cultivation.remEnergy(CultivationUtils.getMaxEnergy(player) * 0.00005F);
@@ -952,14 +958,14 @@ public class EventHandler {
 					barrier.addBarrierAmount(barrier.getBarrierRegenRate());
 				}
 				//Cooldown
-            	if (barrier.getBarrierCooldown() <= 0) {
-            		barrier.setBarrierBroken(false);
-            	} else {
+				if (barrier.getBarrierCooldown() <= 0) {
+					barrier.setBarrierBroken(false);
+				} else {
 					barrier.removeBarrierCooldown(20);
-            	}
+				}
 				NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
-            }
-        }
+			}
+		}
 	}
 
 }

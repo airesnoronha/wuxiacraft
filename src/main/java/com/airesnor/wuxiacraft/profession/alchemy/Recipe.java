@@ -29,7 +29,7 @@ public class Recipe {
 
 	public Recipe(String name, float tempMin, float tempMax, int cookTime, Item output, int yields, int yieldRange) {
 		this.recipeOrder = new ArrayList<>();
-		this.elements = new int[5];
+		this.elements = new int[] { 0, 0, 0, 0, 0 };
 		this.name = name;
 		this.cookTemperatureMin = tempMin;
 		this.cookTemperatureMax = tempMax;

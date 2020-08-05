@@ -22,4 +22,4 @@ eclipse
 run
 
 #Secret
-src/main/java/com/airesnor/wuxiacraft/profession/alchemy/Recipes.java
+/src/main/java/com/airesnor/wuxiacraft/profession/alchemy/Recipes.java
