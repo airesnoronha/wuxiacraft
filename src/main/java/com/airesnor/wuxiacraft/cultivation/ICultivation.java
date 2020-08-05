@@ -26,12 +26,19 @@ public interface ICultivation {
 	/**
 	 * Adds progress to specified system
 	 *
-	 * @param amount the progress to be added
-	 * @param system the system to be added progress to
+	 * @param amount            the progress to be added
+	 * @param system            the system to be added progress to
 	 * @param allowBreakThrough if the progress source allows a breakthrough
 	 */
 	boolean addSystemProgress(double amount, Cultivation.System system, boolean allowBreakThrough);
 
+	void addBodyFoundation(double amount);
+
+	void addDivineFoundation(double amount);
+
+	void addEssenceFoundation(double amount);
+
+	void addSystemFoundation(double amount, Cultivation.System system);
 
 	/**
 	 * Sets the amount of progress of the body cultivation
@@ -160,6 +167,21 @@ public interface ICultivation {
 	void setEssenceSubLevel(int subLevel);
 
 	/**
+	 * @param bodyFoundation
+	 */
+	void setBodyFoundation(double bodyFoundation);
+
+	/**
+	 * @param divineFoundation
+	 */
+	void setDivineFoundation(double divineFoundation);
+
+	/**
+	 * @param essenceFoundation
+	 */
+	void setEssenceFoundation(double essenceFoundation);
+
+	/**
 	 * @return the modifier for the body cultivation
 	 */
 	double getBodyModifier();
@@ -174,6 +196,20 @@ public interface ICultivation {
 	 */
 	double getEssenceModifier();
 
+	/**
+	 * @return body system accumulated foundation
+	 */
+	double getBodyFoundation();
+
+	/**
+	 * @return divine system accumulated foundation
+	 */
+	double getDivineFoundation();
+
+	/**
+	 * @return essence system accumulated foundation
+	 */
+	double getEssenceFoundation();
 
 	/**
 	 * @param system the system in question
@@ -192,7 +228,7 @@ public interface ICultivation {
 	 * @param system the system in question
 	 * @return specified system progress
 	 */
-	double  getSystemProgress(Cultivation.System system);
+	double getSystemProgress(Cultivation.System system);
 
 
 	/**
@@ -200,6 +236,12 @@ public interface ICultivation {
 	 * @return specified system modifier
 	 */
 	double getSystemModifier(Cultivation.System system);
+
+	/**
+	 * @param system
+	 * @return specified system accumulated foundation
+	 */
+	double getSystemFoundation(Cultivation.System system);
 
 	/**
 	 * @return The amount of energy available to cast spells

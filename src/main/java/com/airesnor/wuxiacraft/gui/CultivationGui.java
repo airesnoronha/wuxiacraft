@@ -7,7 +7,10 @@ import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
-import com.airesnor.wuxiacraft.networking.*;
+import com.airesnor.wuxiacraft.networking.NetworkWrapper;
+import com.airesnor.wuxiacraft.networking.RemoveTechniqueMessage;
+import com.airesnor.wuxiacraft.networking.SkillCapMessage;
+import com.airesnor.wuxiacraft.networking.SpeedHandicapMessage;
 import com.airesnor.wuxiacraft.proxy.ClientProxy;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import com.airesnor.wuxiacraft.utils.MathUtils;
@@ -554,11 +557,11 @@ public class CultivationGui extends GuiScreen {
 
 	private void drawCultivationForeground() {
 		this.fontRenderer.drawString(cultivation.getBodyLevel().getLevelName(cultivation.getBodySubLevel()), this.guiLeft + 13, this.guiTop + 38, 0xFFFFFF);
-		this.fontRenderer.drawString(String.format("P: %d%% M:%.1f %.3f", (int) (100 * cultivation.getBodyProgress() /
+		this.fontRenderer.drawString(String.format("P: %.2f%% M:%.1f %.3f", (100 * cultivation.getBodyProgress() /
 						cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel())),
 				cultivation.getBodyModifier(),
 				cultivation.getBodyProgress()
-				), this.guiLeft + 13, this.guiTop + 50, 0xFFFFFF);
+		), this.guiLeft + 13, this.guiTop + 50, 0xFFFFFF);
 		this.fontRenderer.drawString(cultivation.getDivineLevel().getLevelName(cultivation.getDivineSubLevel()), this.guiLeft + 13, this.guiTop + 62, 0xFFFFFF);
 		this.fontRenderer.drawString(String.format("P: %d%% M:%.1f %.3f", (int) (100 * cultivation.getDivineProgress() /
 						cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel())),

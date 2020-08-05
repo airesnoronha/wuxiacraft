@@ -4,19 +4,26 @@ import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.SpiritStoneStackBlock;
 import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
-import com.airesnor.wuxiacraft.cultivation.*;
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
+import com.airesnor.wuxiacraft.cultivation.IBarrier;
+import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.ISealing;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
-import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
+import com.airesnor.wuxiacraft.cultivation.techniques.TechniquesModifiers;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
-import com.airesnor.wuxiacraft.items.*;
+import com.airesnor.wuxiacraft.items.ItemDagger;
+import com.airesnor.wuxiacraft.items.ItemRecipe;
+import com.airesnor.wuxiacraft.items.ItemSpiritStone;
+import com.airesnor.wuxiacraft.items.WuxiaItems;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import com.airesnor.wuxiacraft.utils.MathUtils;
 import com.airesnor.wuxiacraft.utils.TeleportationUtil;
+import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -788,11 +795,18 @@ public class EventHandler {
 			player.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration() + 19, effect.getAmplifier(), effect.getIsAmbient(), effect.doesShowParticles()));
 		}
 
-		double str = (cultivation.getBodyModifier()-1)*0.8 + (cultivation.getEssenceModifier()-1)*0.6 + (cultivation.getDivineModifier()-1)*0.2;
-		double spd = (cultivation.getBodyModifier()-1)*0.6 + (cultivation.getEssenceModifier()-1)*0.5 + (cultivation.getDivineModifier()-1)*0.5;
-		double hp = (cultivation.getBodyModifier()-1) + (cultivation.getEssenceModifier()-1)*0.4 + (cultivation.getDivineModifier()-1)*0.2;
-		double armor = (cultivation.getBodyModifier()-1)*0.7 + (cultivation.getEssenceModifier()-1)*0.7 + (cultivation.getDivineModifier()-1)*0.3;
-		double atk_sp = (cultivation.getBodyModifier()-1)*0.4 + (cultivation.getEssenceModifier()-1)*0.8 + (cultivation.getDivineModifier()-1)+0.6;
+		TechniquesModifiers tm = cultTech.getOverallModifiers();
+
+		double str = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.2;
+		str *= (1 + tm.strength);
+		double spd = (cultivation.getBodyModifier() - 1) * 0.6 + (cultivation.getEssenceModifier() - 1) * 0.5 + (cultivation.getDivineModifier() - 1) * 0.5;
+		spd *= (1 + tm.movementSpeed);
+		double hp = (cultivation.getBodyModifier() - 1) + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.2;
+		hp *= (1 + tm.maxHealth);
+		double armor = (cultivation.getBodyModifier() - 1) * 0.7 + (cultivation.getEssenceModifier() - 1) * 0.7 + (cultivation.getDivineModifier() - 1) * 0.3;
+		armor *= (1 + tm.armor);
+		double atk_sp = (cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) + 0.6;
+		atk_sp *= (1 + tm.attackSpeed);
 
 		double level_spd_mod = spd * SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue() * 0.3;
 		if (cultivation.getMaxSpeed() >= 0) {
@@ -801,8 +815,8 @@ public class EventHandler {
 		}
 		level_spd_mod *= (cultivation.getSpeedHandicap() / 100f);
 
-		AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, str*0.7, 0);
-		AttributeModifier health_mod = new AttributeModifier(health_mod_name, hp*0.8, 0);
+		AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, str * 0.7, 0);
+		AttributeModifier health_mod = new AttributeModifier(health_mod_name, hp * 0.8, 0);
 		//since armor base is 0, it'll add 2*strength as armor
 		//I'll use for now strength for increase every other stat, since it's almost the same after all
 		AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, armor*0.4, 0);

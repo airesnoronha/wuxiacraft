@@ -8,10 +8,10 @@ import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.cultivation.techniques.CultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
-import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
 import com.airesnor.wuxiacraft.entities.mobs.EntityCultivator;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.UnifiedCapabilitySyncMessage;
+import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
@@ -112,7 +112,7 @@ public class CultivationUtils {
 
 	public static double getMaxEnergy(EntityLivingBase entityIn) {
 		double energy = getCultivationFromEntity(entityIn).getMaxEnergy();
-		energy *= (1+getCultTechFromEntity(entityIn).getOverallModifiers().maxEnergy);
+		energy *= (1 + getCultTechFromEntity(entityIn).getOverallModifiers().maxEnergy);
 		return energy;
 	}
 
@@ -136,7 +136,7 @@ public class CultivationUtils {
 		elementsDim.add(Pair.of(Element.METAL, WuxiaDimensions.METAL));
 		elementsDim.add(Pair.of(Element.WATER, WuxiaDimensions.WATER));
 		elementsDim.add(Pair.of(Element.WOOD, WuxiaDimensions.WOOD));
-		for(Pair<Element, DimensionType> pair : elementsDim) {
+		for (Pair<Element, DimensionType> pair : elementsDim) {
 			if (player.world.provider.getDimension() == pair.getValue().getId()) {
 				if (cultTech.hasElement(pair.getKey())) {
 					amount *= 1.75;
@@ -148,15 +148,18 @@ public class CultivationUtils {
 		}
 		if (!cultivation.getSuppress()) {
 			cultivation.addSystemProgress(amount, system, allowBreakThrough);
-			if(cultivation.getBodyLevel() == BaseSystemLevel.DEFAULT_BODY_LEVEL) {
-				cultivation.addBodyProgress(amount*0.3, allowBreakThrough);
+			cultivation.addSystemFoundation(amount * 0.05, system); //5% extra to foundations
+			if (cultivation.getBodyLevel() == BaseSystemLevel.DEFAULT_BODY_LEVEL) {
+				cultivation.addBodyProgress(amount * 0.3, allowBreakThrough);
 			}
-			if(cultivation.getDivineLevel() == BaseSystemLevel.DEFAULT_DIVINE_LEVEL) {
-				cultivation.addDivineProgress(amount*0.3, allowBreakThrough);
+			if (cultivation.getDivineLevel() == BaseSystemLevel.DEFAULT_DIVINE_LEVEL) {
+				cultivation.addDivineProgress(amount * 0.3, allowBreakThrough);
 			}
-			if(cultivation.getEssenceLevel() == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
-				cultivation.addEssenceProgress(amount*0.3, allowBreakThrough);
+			if (cultivation.getEssenceLevel() == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
+				cultivation.addEssenceProgress(amount * 0.3, allowBreakThrough);
 			}
+		} else {
+			cultivation.addSystemFoundation(amount, system);
 		}
 	}
 
@@ -184,14 +187,14 @@ public class CultivationUtils {
 				WorldServer world = (WorldServer) player.world;
 				ICultivation cultivation = getCultivationFromEntity(player);
 
-				double resistance = cultivation.getBodyModifier() * 0.6 + cultivation.getEssenceModifier() * 0.8 + cultivation.getDivineModifier() * 0.4;
+				double resistance = cultivation.getBodyModifier() * 0.6 + cultivation.getEssenceModifier() * 0.8 + cultivation.getDivineModifier() * 0.4; //new foundation system is already a way to resist tribulation
 				int multiplier = world.getGameRules().hasRule("tribulationMultiplier") ? world.getGameRules().getInt("tribulationMultiplier") : 18; // even harder for those that weren't on the script
 				double strength = this.tribulationStrength * multiplier;
 				final int bolts = MathUtils.clamp(1 + (int) (Math.round(resistance / strength)), 1, 12);
 				float damage = (float) Math.max(2, strength - resistance);
 				for (int i = 0; i < bolts; i++) {
 					boolean survived = player.isEntityAlive();
-					if(!survived) return;
+					if (!survived) return;
 					world.addScheduledTask(() -> {
 						EntityLightningBolt lightningBolt = new EntityLightningBolt(world, player.posX, player.posY + 1.0, player.posZ, true); // effect only won't cause damage
 						world.addWeatherEffect(lightningBolt);
@@ -207,26 +210,26 @@ public class CultivationUtils {
 				world.addScheduledTask(() -> {
 					boolean survived = player.isEntityAlive();
 					if (survived && !this.customTribulation) {
-						switch(cultivation.getSelectedSystem()) {
+						switch (cultivation.getSelectedSystem()) {
 							case BODY:
-								cultivation.setBodySubLevel(cultivation.getBodySubLevel()+1);
-								if(cultivation.getBodySubLevel() >= cultivation.getBodyLevel().subLevels) {
+								cultivation.setBodySubLevel(cultivation.getBodySubLevel() + 1);
+								if (cultivation.getBodySubLevel() >= cultivation.getBodyLevel().subLevels) {
 									cultivation.setBodySubLevel(0);
 									cultivation.setBodyLevel(cultivation.getBodyLevel().nextLevel(BaseSystemLevel.BODY_LEVELS));
 								}
 								((EntityPlayer) player).sendStatusMessage(new TextComponentString(TranslateUtils.translateKey("wuxiacraft.level_message.congrats_" + msgN) + " " + cultivation.getBodyLevel().getLevelName(cultivation.getBodySubLevel())), false);
 								break;
 							case DIVINE:
-								cultivation.setDivineSubLevel(cultivation.getBodySubLevel()+1);
-								if(cultivation.getDivineSubLevel() >= cultivation.getDivineLevel().subLevels) {
+								cultivation.setDivineSubLevel(cultivation.getBodySubLevel() + 1);
+								if (cultivation.getDivineSubLevel() >= cultivation.getDivineLevel().subLevels) {
 									cultivation.setDivineSubLevel(0);
 									cultivation.setDivineLevel(cultivation.getDivineLevel().nextLevel(BaseSystemLevel.DIVINE_LEVELS));
 								}
 								((EntityPlayer) player).sendStatusMessage(new TextComponentString(TranslateUtils.translateKey("wuxiacraft.level_message.congrats_" + msgN) + " " + cultivation.getDivineLevel().getLevelName(cultivation.getDivineSubLevel())), false);
 								break;
 							case ESSENCE:
-								cultivation.setEssenceSubLevel(cultivation.getEssenceSubLevel()+1);
-								if(cultivation.getEssenceSubLevel() >= cultivation.getEssenceLevel().subLevels) {
+								cultivation.setEssenceSubLevel(cultivation.getEssenceSubLevel() + 1);
+								if (cultivation.getEssenceSubLevel() >= cultivation.getEssenceLevel().subLevels) {
 									cultivation.setEssenceSubLevel(0);
 									cultivation.setEssenceLevel(cultivation.getEssenceLevel().nextLevel(BaseSystemLevel.ESSENCE_LEVELS));
 								}
@@ -248,7 +251,7 @@ public class CultivationUtils {
 	}
 
 	public static void callCustomTribulation(@Nonnull EntityLivingBase player, double tribulationStrength, boolean customTribulation) {
-		if(!player.world.isRemote) {
+		if (!player.world.isRemote) {
 			BoltsScheduler boltsScheduler = new BoltsScheduler(player, tribulationStrength, customTribulation);
 			boltsScheduler.start();
 		}

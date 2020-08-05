@@ -4,12 +4,12 @@ import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
-import com.airesnor.wuxiacraft.world.dimensions.biomes.WuxiaBiomes;
 import com.airesnor.wuxiacraft.networking.ActivatePartialSkillMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.ProgressMessage;
 import com.airesnor.wuxiacraft.networking.SpawnParticleMessage;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import com.airesnor.wuxiacraft.world.dimensions.biomes.WuxiaBiomes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
@@ -79,9 +79,9 @@ public class SkillCultivate extends Skill {
 						if (actor.getEntityWorld().getBiome(new BlockPos(actor.getPosition().getX(), actor.getPosition().getY(), actor.getPosition().getZ())) == WuxiaBiomes.EXTREMEQI) {
 							amount *= 1.5;
 						}
-						CultivationUtils.cultivatorAddProgress(actor, system, amount, true, false);
+						CultivationUtils.cultivatorAddProgress(actor, system, amount, true, true);
 						cultivation.remEnergy(energy);
-						NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, system, amount, true, false, actor.getUniqueID()));
+						NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, system, amount, true, true, actor.getUniqueID()));
 					}
 				}
 				LastUseCultivateMillis = System.currentTimeMillis();
