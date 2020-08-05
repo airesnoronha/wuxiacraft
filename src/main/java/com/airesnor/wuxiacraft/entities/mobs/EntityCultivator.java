@@ -7,6 +7,7 @@ import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import io.netty.buffer.ByteBuf;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -169,7 +170,7 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	@Override
 	public void onEntityUpdate() {
 		super.onEntityUpdate();
-		this.cultivation.addEnergy(cultivation.getMaxEnergy()*0.0005f);
+		this.cultivation.addEnergy(CultivationUtils.getMaxEnergy(this) *0.0005f);
 		if (skillCap.getCooldown() >= 0) {
 			skillCap.stepCooldown(-1f);
 		}

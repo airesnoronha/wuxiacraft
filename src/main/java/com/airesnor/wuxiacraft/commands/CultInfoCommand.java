@@ -87,7 +87,7 @@ public class CultInfoCommand extends CommandBase {
 				text = new TextComponentString(message);
 				sender.sendMessage(text);
 
-				double energy = cultivation.getEnergy() / cultivation.getMaxEnergy();
+				double energy = cultivation.getEnergy() / CultivationUtils.getMaxEnergy((EntityLivingBase) sender);
 				int fillIndexEnergy = (int)(Math.round(energy*4));
 				if ((int)(energy*100f) == 0) {
 					message = String.format("Energy: %s (%d%%)", energyFill.get(0), (int)(energy*100f));

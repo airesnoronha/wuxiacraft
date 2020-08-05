@@ -1,159 +1,175 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
+import net.minecraft.potion.PotionEffect;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CultTech implements ICultTech {
 
-	private final List<KnownTechnique> knownTechniques;
+	public KnownTechnique bodyTechnique, divineTechnique, essenceTechnique;
 
 	public CultTech() {
-		this.knownTechniques = new ArrayList<>();
+		bodyTechnique = null;
+		divineTechnique = null;
+		essenceTechnique = null;
 	}
 
 	@Override
-	public boolean addTechnique(Technique technique, double progress) {
-		boolean contains = false;
-		boolean elementalReverse = false;
-		for (KnownTechnique t : getKnownTechniques()) {
-			if (t.getTechnique() == technique) {
-				contains = true;
-			}
-			for (Element e : t.getTechnique().getElements()) {
-				for (Element n : technique.getElements()) {
-					if (e.isCounter(n) || n.isCounter(e))
-						elementalReverse = true;
-				}
-			}
-		}
-		if (!contains && !elementalReverse) {
-			this.knownTechniques.add(new KnownTechnique(technique, progress));
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public void remTechnique(Technique technique) {
-		for (KnownTechnique t : this.knownTechniques) {
-			if (t.getTechnique().equals(technique)) {
-				this.knownTechniques.remove(t);
+	public void progress(double amount, Cultivation.System system) {
+		switch (system) {
+			case BODY:
+				if (this.bodyTechnique != null)
+					this.bodyTechnique.progress(amount);
+			case DIVINE:
+				if (this.divineTechnique != null)
+					this.divineTechnique.progress(amount);
 				break;
-			}
+			case ESSENCE:
+				if (this.essenceTechnique != null)
+					this.essenceTechnique.progress(amount);
+				break;
 		}
 	}
 
 	@Override
-	public void progress(double amount) {
-		for (KnownTechnique t : this.knownTechniques) {
-			t.progress(amount);
+	public boolean addTechnique(Technique technique) {
+		boolean added = false;
+		switch(technique.getSystem()) {
+			case BODY:
+				if(this.bodyTechnique == null) {
+					this.bodyTechnique = new KnownTechnique(technique, 0);
+					added = true;
+				}
+				break;
+			case DIVINE:
+				if(this.divineTechnique == null) {
+					this.divineTechnique = new KnownTechnique(technique, 0);
+					added = true;
+				}
+				break;
+			case ESSENCE:
+				if(this.essenceTechnique == null) {
+					this.essenceTechnique = new KnownTechnique(technique, 0);
+					added = true;
+				}
+				break;
 		}
+		return added;
 	}
 
 	@Override
-	public List<KnownTechnique> getKnownTechniques() {
-		return this.knownTechniques;
+	public KnownTechnique getBodyTechnique() {
+		return bodyTechnique;
+	}
+
+	@Override
+	public KnownTechnique getDivineTechnique() {
+		return divineTechnique;
+	}
+
+	@Override
+	public KnownTechnique getEssenceTechnique() {
+		return essenceTechnique;
+	}
+
+	@Override
+	public void setBodyTechnique(KnownTechnique knownTechnique) {
+		if(knownTechnique == null || knownTechnique.getTechnique().getSystem() == Cultivation.System.BODY)
+		this.bodyTechnique = knownTechnique;
+	}
+
+	@Override
+	public void setDivineTechnique(KnownTechnique knownTechnique) {
+		if(knownTechnique == null || knownTechnique.getTechnique().getSystem() == Cultivation.System.DIVINE)
+		this.divineTechnique = knownTechnique;
+	}
+
+	@Override
+	public void setEssenceTechnique(KnownTechnique knownTechnique) {
+		if(knownTechnique == null || knownTechnique.getTechnique().getSystem() == Cultivation.System.ESSENCE)
+		this.essenceTechnique = knownTechnique;
+	}
+
+	@Override
+	public KnownTechnique getTechniqueBySystem(Cultivation.System system) {
+		switch (system) {
+			case BODY:
+				return this.bodyTechnique;
+			case DIVINE:
+				return this.divineTechnique;
+			case ESSENCE:
+				return this.essenceTechnique;
+		}
+		return null;
 	}
 
 	@Override
 	public TechniquesModifiers getOverallModifiers() {
-		double armor = 0;
-		double attackSpeed = 0;
-		double maxHealth = 0;
-		double speed = 0;
-		double strength = 0;
-		for (KnownTechnique t : this.getKnownTechniques()) {
-			armor+= t.getTechnique().getBaseModifiers().armor;
-			attackSpeed+=t.getTechnique().getBaseModifiers().attackSpeed;
-			maxHealth+=t.getTechnique().getBaseModifiers().maxHealth;
-			speed+=t.getTechnique().getBaseModifiers().movementSpeed;
-			strength+=t.getTechnique().getBaseModifiers().strength;
-		}
-		return new TechniquesModifiers(armor, attackSpeed, maxHealth, speed, strength);
+		TechniquesModifiers tm = new TechniquesModifiers(0, 0, 0, 0, 0, 0);
+		if (this.bodyTechnique != null)
+			tm = tm.add(bodyTechnique.getModifiers());
+		if (this.essenceTechnique != null)
+			tm = tm.add(essenceTechnique.getModifiers());
+		if (this.divineTechnique != null)
+			tm = tm.add(divineTechnique.getModifiers());
+		return tm;
 	}
 
 	@Override
 	public List<Skill> getTechniqueSkills() {
 		List<Skill> knownSkills = new ArrayList<>();
-		if (this.knownTechniques.size() > 0) {
-			knownSkills.add(Skills.CULTIVATE_ESSENCE);
+		if (this.bodyTechnique != null) {
+			knownSkills.add(Skills.CULTIVATE_BODY);
+			knownSkills.addAll(bodyTechnique.getKnownSkills());
 		}
-		for (KnownTechnique kt : getKnownTechniques()) {
-			Technique t = kt.getTechnique();
-			if (kt.getProgress() >= t.getTier().smallProgress) {
-				for (Skill skill : t.getSmallCompletionSkills()) {
-					if (!knownSkills.contains(skill)) {
-						knownSkills.add(skill);
-					}
-				}
-			}
-			if (kt.getProgress() >= t.getTier().smallProgress + t.getTier().greatProgress) {
-				for (Skill skill : t.getGreatCompletionSkills()) {
-					if (!knownSkills.contains(skill)) {
-						knownSkills.add(skill);
-					}
-				}
-			}
-			if (kt.getProgress() >= t.getTier().smallProgress + t.getTier().greatProgress + t.getTier().perfectionProgress) {
-				for (Skill skill : t.getPerfectionCompletionSkills()) {
-					if (!knownSkills.contains(skill)) {
-						knownSkills.add(skill);
-					}
-				}
-			}
+		if (this.essenceTechnique != null) {
+			knownSkills.add(Skills.CULTIVATE_ESSENCE);
+			knownSkills.addAll(essenceTechnique.getKnownSkills());
+		}
+		if (this.divineTechnique != null) {
+			knownSkills.add(Skills.CULTIVATE_DIVINE);
+			knownSkills.addAll(divineTechnique.getKnownSkills());
 		}
 		return knownSkills;
 	}
 
 	@Override
-	public float getOverallCultivationSpeed() {
-		int mortals = 0;
-		float fromMortal = 0;
-		int martials = 0;
-		float fromMartial = 0;
-		int immortals = 0;
-		float fromImmortal = 0;
-		int divines = 0;
-		float fromDivine = 0;
-		for (KnownTechnique kt : getKnownTechniques()) {
-			switch (kt.getTechnique().getTier()) {
-				case MORTAL:
-					mortals++;
-					fromMortal += kt.getTechnique().getCultivationSpeed();
-					break;
-				case MARTIAL:
-					martials++;
-					fromMartial += kt.getTechnique().getCultivationSpeed();
-					break;
-				case IMMORTAL:
-					immortals++;
-					fromImmortal += kt.getTechnique().getCultivationSpeed();
-					break;
-				case DIVINE:
-					divines++;
-					fromDivine += kt.getTechnique().getCultivationSpeed();
-					break;
-			}
+	public List<PotionEffect> getTechniquesEffects() {
+		List<PotionEffect> effects = new ArrayList<>();
+		if(this.getBodyTechnique() != null) {
+			effects.addAll(this.getBodyTechnique().getTechniqueEffects());
 		}
-		float divider = 1 + mortals + martials * 5 + immortals * 25 + divines * 125;
-		return (1 + fromMortal + fromMartial * 5 + fromImmortal * 25 + fromDivine * 125) / divider;
+		if(this.getDivineTechnique() != null) {
+			effects.addAll(this.getDivineTechnique().getTechniqueEffects());
+		}
+		if(this.getEssenceTechnique() != null) {
+			effects.addAll(this.getEssenceTechnique().getTechniqueEffects());
+		}
+		return effects;
 	}
 
 	@Override
 	public void copyFrom(ICultTech cultTech) {
-		this.knownTechniques.clear();
-		this.knownTechniques.addAll(cultTech.getKnownTechniques());
+		this.bodyTechnique = cultTech.getBodyTechnique();
+		this.divineTechnique = cultTech.getDivineTechnique();
+		this.essenceTechnique = cultTech.getEssenceTechnique();
 	}
 
 	@Override
 	public boolean hasElement(Element element) {
-		for(KnownTechnique kt : this.knownTechniques) {
-			if(kt.getTechnique().getElements().contains(element)) return true;
+		boolean contains = false;
+		if (this.bodyTechnique != null) {
+			if (this.bodyTechnique.getTechnique().getElements().contains(element)) contains = true;
+		} else if (this.divineTechnique != null) {
+			if (this.divineTechnique.getTechnique().getElements().contains(element)) contains = true;
+		} else if (this.essenceTechnique != null) {
+			if (this.essenceTechnique.getTechnique().getElements().contains(element)) contains = true;
 		}
-		return false;
+		return contains;
 	}
 }

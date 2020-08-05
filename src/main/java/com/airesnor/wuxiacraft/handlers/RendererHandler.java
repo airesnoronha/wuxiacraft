@@ -158,12 +158,11 @@ public class RendererHandler {
 				float f1 = mc.getRenderManager().playerViewX;
 				drawCultivationPlate(cultivation, x, y, z, f, f1, thirdPerson, sneaking);
 			}
-		}
-		else if (e.getEntity() instanceof WanderingCultivator) {
+		} else if (e.getEntity() instanceof WanderingCultivator) {
 			WanderingCultivator cultivator = (WanderingCultivator) e.getEntity();
 			ICultivation playerCultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
 			ICultivation cultivation = new Cultivation();
-			if(cultivator.getCultivation().getEssenceLevel().greaterThan(playerCultivation.getEssenceLevel(), BaseSystemLevel.ESSENCE_LEVELS)) {
+			if (cultivator.getCultivation().getEssenceLevel().greaterThan(playerCultivation.getEssenceLevel(), BaseSystemLevel.ESSENCE_LEVELS)) {
 				cultivation.setEssenceLevel(playerCultivation.getEssenceLevel().nextLevel(BaseSystemLevel.ESSENCE_LEVELS));
 				cultivation.setEssenceSubLevel(-1);
 			} else {
@@ -216,6 +215,7 @@ public class RendererHandler {
 
 		EntityPlayer player = mc.world.getPlayerEntityByUUID(mc.player.getUniqueID());
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 
 		mc.renderEngine.bindTexture(hud_bars);
 
@@ -248,16 +248,27 @@ public class RendererHandler {
 
 		GlStateManager.popMatrix();
 
+		String message = String.format("Energy: %.4f (%d%%)",
+				cultivation.getEnergy(), (int)(cultivation.getEnergy()*100.0/CultivationUtils.getMaxEnergy(player)));
+		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 90, Integer.parseInt("FFAA00", 16));
+
+		if (cultTech.getBodyTechnique() != null) {
+			message = String.format("Body Technique: %s %.4f", cultTech.getBodyTechnique().getTechnique().getName(),
+					cultTech.getBodyTechnique().getProficiency());
+			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 100, Integer.parseInt("FFAA00", 16));
+		}
+
+		if (cultTech.getEssenceTechnique() != null) {
+			message = String.format("Essence Technique: %s %.4f", cultTech.getEssenceTechnique().getTechnique().getName(),
+					cultTech.getEssenceTechnique().getProficiency());
+			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 120, Integer.parseInt("FFAA00", 16));
+		}
+		if (cultTech.getDivineTechnique() != null) {
+			message  = String.format("Divine Technique: %s %.4f", cultTech.getDivineTechnique().getTechnique().getName(),
+					cultTech.getDivineTechnique().getProficiency());
+			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 130, Integer.parseInt("FFAA00", 16));
+		}
 		/*
-		String message = String.format("Energy: %.0f (%.2f%%)",cultivation.getEnergy(), energy_fill);
-		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 20, Integer.parseInt("FFAA00",16));
-
-		message = String.format("Progress: %.2f (%.2f%%)",cultivation.getCurrentProgress(), progress_fill);
-		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 30, Integer.parseInt("FFAA00",16));
-
-		message = String.format("Player: %s, %s",player.getDisplayNameString(), cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
-		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 10, Integer.parseInt("FFAA00",16));
-
 		message = String.format("Speed: %.3f(%.3f->%d%%)",player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue(),cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()), WuxiaCraftConfig.speedHandicap);
 		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 40, Integer.parseInt("FFAA00",16));
 
@@ -276,7 +287,7 @@ public class RendererHandler {
 		GlStateManager.translate(res.getScaledWidth() / 2f - 94f, res.getScaledHeight() - 32, 0);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(icons);
 		ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(mc.player);
-		int coolDownBar = MathUtils.clamp((int)(skillCap.getCooldown()/skillCap.getMaxCooldown() * 188), 0, 188);
+		int coolDownBar = MathUtils.clamp((int) (skillCap.getCooldown() / skillCap.getMaxCooldown() * 188), 0, 188);
 		mc.ingameGUI.drawTexturedModalRect(0, 0, 0, 10, coolDownBar, 11);
 		GlStateManager.popMatrix();
 	}
@@ -316,7 +327,7 @@ public class RendererHandler {
 		int y = res.getScaledHeight() - 40;
 		List<Skill> totalKnown = skillCap.getTotalKnowSkill(cultTech);
 		for (int i = 0; i < skillCap.getSelectedSkills().size(); i++) {
-			if(totalKnown.size() > 0 && MathUtils.between(skillCap.getSelectedSkills().get(i), 0, totalKnown.size())) { // this way won't select unwanted skills
+			if (totalKnown.size() > 0 && MathUtils.between(skillCap.getSelectedSkills().get(i), 0, totalKnown.size())) { // this way won't select unwanted skills
 				Skill skill = totalKnown.get(MathUtils.clamp(skillCap.getSelectedSkills().get(i), 0, totalKnown.size() - 1));
 				if (i == skillCap.getActiveSkill()) {
 					mc.renderEngine.bindTexture(skills_bg);
@@ -365,7 +376,7 @@ public class RendererHandler {
 					GlStateManager.pushMatrix();
 					mc.getTextureManager().bindTexture(cauldron_info);
 					CauldronTileEntity te = (CauldronTileEntity) mc.player.world.getTileEntity(rtr.getBlockPos());
-					if(te!=null) {
+					if (te != null) {
 						float fireStrength = te.getBurnSpeed() / 25f;
 						float timeLeft = te.getTimeLit() / te.getMaxTimeLit();
 						float temperature = te.getTemperature() / te.getMaxTemperature();
@@ -493,35 +504,29 @@ public class RendererHandler {
 
 	public static String getShortHealthAmount(int amount) {
 		String value = "";
-		if(amount < 0) {
+		if (amount < 0) {
 			value += "-";
 		}
 		amount = Math.abs(amount);
-		if(amount < 1000) {
+		if (amount < 1000) {
 			value += amount;
-		}
-		else if(amount < 10000) {
-			float mills =  amount / 1000f;
+		} else if (amount < 10000) {
+			float mills = amount / 1000f;
 			value += String.format("%.1fk", mills);
-		}
-		else if(amount < 100000) {
-			float mills =  amount / 1000f;
+		} else if (amount < 100000) {
+			float mills = amount / 1000f;
 			value += String.format("%.0fk", mills);
-		}
-		else if(amount < 1000000) {
-			float mills =  amount / 1000000f;
+		} else if (amount < 1000000) {
+			float mills = amount / 1000000f;
 			value += String.format("%.2fM", mills);
-		}
-		else if(amount < 10000000) {
-			float mills =  amount / 1000000f;
+		} else if (amount < 10000000) {
+			float mills = amount / 1000000f;
 			value += String.format("%.1fM", mills);
-		}
-		else if(amount < 100000000) {
-			float mills =  amount / 1000000f;
+		} else if (amount < 100000000) {
+			float mills = amount / 1000000f;
 			value += String.format("%.0fM", mills);
-		}
-		else if(amount < 1000000000) {
-			float mills =  amount / 1000000000f;
+		} else if (amount < 1000000000) {
+			float mills = amount / 1000000000f;
 			value += String.format("%.2fG", mills);
 		}
 		return value;

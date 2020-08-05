@@ -1,17 +1,23 @@
 package com.airesnor.wuxiacraft.cultivation;
 
-import com.airesnor.wuxiacraft.utils.MathUtils;
-
 public class Cultivation implements ICultivation {
+
+	//body
 	private double bodyProgress;
 	private BaseSystemLevel bodyLevel;
 	private int bodySubLevel;
+	private double bodyFoundation;
+
 	private double divineProgress;
 	private BaseSystemLevel divineLevel;
 	private int divineSubLevel;
+	private double divineFoundation;
+
 	private double essenceProgress;
 	private BaseSystemLevel essenceLevel;
 	private int essenceSubLevel;
+	private double essenceFoundation;
+
 	private double energy;
 	public int handicap;
 	private int timer;
@@ -38,6 +44,9 @@ public class Cultivation implements ICultivation {
 		this.bodySubLevel = 0;
 		this.divineSubLevel = 0;
 		this.divineSubLevel = 0;
+		this.bodyFoundation = 0;
+		this.divineFoundation = 0;
+		this.essenceFoundation = 0;
 		this.energy = 0;
 		this.handicap = 100;
 		this.timer = 0;
@@ -53,14 +62,24 @@ public class Cultivation implements ICultivation {
 	public boolean addBodyProgress(double amount, boolean allowBreakthrough) {
 		boolean leveled = false;
 		this.bodyProgress += amount;
-		if(allowBreakthrough) {
-			if(this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel)) {
-				this.bodyProgress -= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel);
-				leveled = true;
-				this.bodySubLevel ++;
-				if(this.bodySubLevel == this.bodyLevel.subLevels) {
-					this.bodySubLevel = 0;
-					this.bodyLevel = this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS);
+		if (allowBreakthrough) {
+			if (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel)) {
+				boolean divineCondition = (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineLevel.subLevels - 1)
+						&& this.divineSubLevel >= this.divineLevel.subLevels - 1
+						&& this.divineLevel == BaseSystemLevel.DEFAULT_DIVINE_LEVEL)
+						|| this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL;
+				boolean essenceCondition = (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceLevel.subLevels - 1)
+						&& this.essenceSubLevel >= this.essenceLevel.subLevels - 1
+						&& this.essenceLevel == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) // if this tehn all above
+						|| this.bodyLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL; // or not in this level
+				if (essenceCondition && divineCondition) { // can breaktrough
+					this.bodyProgress -= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel);
+					leveled = true;
+					this.bodySubLevel++;
+					if (this.bodySubLevel == this.bodyLevel.subLevels) {
+						this.bodySubLevel = 0;
+						this.bodyLevel = this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS);
+					}
 				}
 			}
 		}
@@ -71,14 +90,24 @@ public class Cultivation implements ICultivation {
 	public boolean addDivineProgress(double amount, boolean allowBreakthrough) {
 		boolean leveled = false;
 		this.divineProgress += amount;
-		if(allowBreakthrough) {
-			if(this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) {
-				this.divineProgress -= this.divineLevel.getProgressBySubLevel(this.divineSubLevel);
-				leveled = true;
-				this.divineSubLevel ++;
-				if(this.divineSubLevel == this.divineLevel.subLevels) {
-					this.divineSubLevel = 0;
-					this.divineLevel = this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS);
+		if (allowBreakthrough) {
+			if (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) {
+				boolean bodyCondition = (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodyLevel.subLevels - 1)
+						&& this.bodySubLevel >= this.bodyLevel.subLevels - 1
+						&& this.bodyLevel == BaseSystemLevel.DEFAULT_BODY_LEVEL) // if this tehn all above
+						|| this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL; // or not in this level
+				boolean essenceCondition = (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceLevel.subLevels - 1)
+						&& this.essenceSubLevel >= this.essenceLevel.subLevels - 1
+						&& this.essenceLevel == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) // if this tehn all above
+						|| this.bodyLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL; // or not in this level
+				if (bodyCondition && essenceCondition) { // can breaktrough
+					this.divineProgress -= this.divineLevel.getProgressBySubLevel(this.divineSubLevel);
+					leveled = true;
+					this.divineSubLevel++;
+					if (this.divineSubLevel == this.divineLevel.subLevels) {
+						this.divineSubLevel = 0;
+						this.divineLevel = this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS);
+					}
 				}
 			}
 		}
@@ -89,18 +118,74 @@ public class Cultivation implements ICultivation {
 	public boolean addEssenceProgress(double amount, boolean allowBreakthrough) {
 		boolean leveled = false;
 		this.essenceProgress += amount;
-		if(allowBreakthrough) {
-			if(this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)) {
-				this.essenceProgress -= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel);
-				leveled = true;
-				this.essenceSubLevel ++;
-				if(this.essenceSubLevel == this.essenceLevel.subLevels) {
-					this.essenceSubLevel = 0;
-					this.essenceLevel = this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
+		if (allowBreakthrough) {
+			if (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)) {
+				boolean bodyCondition = (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodyLevel.subLevels - 1)
+						&& this.bodySubLevel >= this.bodyLevel.subLevels - 1
+						&& this.bodyLevel == BaseSystemLevel.DEFAULT_BODY_LEVEL) // if this tehn all above
+						|| this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL; // or not in this level
+				boolean divineCondition = (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineLevel.subLevels - 1)
+						&& this.divineSubLevel >= this.divineLevel.subLevels - 1
+						&& this.divineLevel == BaseSystemLevel.DEFAULT_DIVINE_LEVEL)
+						|| this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL;
+				if (bodyCondition && divineCondition) { // can breaktrough
+					this.essenceProgress -= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel);
+					leveled = true;
+					this.essenceSubLevel++;
+					if (this.essenceSubLevel == this.essenceLevel.subLevels) {
+						this.essenceSubLevel = 0;
+						this.essenceLevel = this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
+					}
 				}
 			}
 		}
 		return leveled;
+	}
+
+	@Override
+	public boolean addSystemProgress(double amount, System system, boolean allowBreakThrough) {
+		switch (system) {
+			case BODY:
+				addBodyProgress(amount, allowBreakThrough);
+				break;
+			case DIVINE:
+				addDivineProgress(amount, allowBreakThrough);
+				break;
+			case ESSENCE:
+				addEssenceProgress(amount, allowBreakThrough);
+				break;
+		}
+		return false;
+	}
+
+	@Override
+	public void addBodyFoundation(double amount) {
+		this.bodyFoundation = Math.max(this.bodyFoundation + amount, 0);
+	}
+
+	@Override
+	public void addDivineFoundation(double amount) {
+		this.divineFoundation = Math.max(this.divineFoundation + amount, 0);
+	}
+
+	@Override
+	public void addEssenceFoundation(double amount) {
+		this.essenceFoundation = Math.max(this.essenceFoundation + amount, 0);
+	}
+
+	@Override
+	public void addSystemFoundation(double amount, System system) {
+		switch (system) {
+			case BODY:
+				addBodyFoundation(amount);
+				break;
+			case DIVINE:
+				addDivineFoundation(amount);
+				break;
+			case ESSENCE:
+				addEssenceFoundation(amount);
+				break;
+		}
 	}
 
 	@Override
@@ -179,6 +264,101 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
+	public void setBodyFoundation(double bodyFoundation) {
+		this.bodyFoundation = bodyFoundation;
+	}
+
+	@Override
+	public void setDivineFoundation(double divineFoundation) {
+		this.divineFoundation = divineFoundation;
+	}
+
+	@Override
+	public void setEssenceFoundation(double essenceFoundation) {
+		this.essenceFoundation = essenceFoundation;
+	}
+
+	@Override
+	public double getBodyFoundation() {
+		return bodyFoundation;
+	}
+
+	@Override
+	public double getDivineFoundation() {
+		return divineFoundation;
+	}
+
+	@Override
+	public double getEssenceFoundation() {
+		return essenceFoundation;
+	}
+
+	@Override
+	public BaseSystemLevel getSystemLevel(System system) {
+		switch (system) {
+			case BODY:
+				return this.getBodyLevel();
+			case DIVINE:
+				return this.getDivineLevel();
+			case ESSENCE:
+				return this.getEssenceLevel();
+		}
+		return null;
+	}
+
+	@Override
+	public int getSystemSubLevel(System system) {
+		switch (system) {
+			case BODY:
+				return this.getBodySubLevel();
+			case DIVINE:
+				return this.getDivineSubLevel();
+			case ESSENCE:
+				return this.getEssenceSubLevel();
+		}
+		return 0;
+	}
+
+	@Override
+	public double getSystemProgress(System system) {
+		switch (system) {
+			case BODY:
+				return this.getBodyProgress();
+			case DIVINE:
+				return this.getDivineProgress();
+			case ESSENCE:
+				return this.getEssenceProgress();
+		}
+		return 0;
+	}
+
+	@Override
+	public double getSystemModifier(System system) {
+		switch (system) {
+			case BODY:
+				return this.getBodyModifier();
+			case DIVINE:
+				return this.getDivineModifier();
+			case ESSENCE:
+				return this.getEssenceModifier();
+		}
+		return 0;
+	}
+
+	@Override
+	public double getSystemFoundation(System system) {
+		switch (system) {
+			case BODY:
+				return this.getBodyFoundation();
+			case DIVINE:
+				return this.getDivineFoundation();
+			case ESSENCE:
+				return this.getEssenceFoundation();
+		}
+		return 0;
+	}
+
+	@Override
 	public double getEnergy() {
 		return this.energy;
 	}
@@ -205,17 +385,17 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public void setBodyProgress(double amount) {
-		this.bodyProgress = MathUtils.clamp(amount, 0, this.bodyLevel.getProgressBySubLevel(this.bodySubLevel));
+		this.bodyProgress = Math.max(amount, 0);
 	}
 
 	@Override
 	public void setDivineProgress(double amount) {
-		this.divineProgress = MathUtils.clamp(amount, 0, this.divineLevel.getProgressBySubLevel(this.divineSubLevel));
+		this.divineProgress = Math.max(amount, 0);
 	}
 
 	@Override
 	public void setEssenceProgress(double amount) {
-		this.essenceProgress = MathUtils.clamp(amount, 0, this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel));
+		this.essenceProgress = Math.max(amount, 0);
 	}
 
 	@Override
@@ -260,7 +440,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public double getMaxEnergy() {
-		return 18*this.getEssenceModifier() + 8*this.getBodyModifier() + 12*this.getDivineModifier();
+		return 18 * this.getEssenceModifier() + 8 * this.getBodyModifier() + 12 * this.getDivineModifier();
 	}
 
 	@Override
@@ -305,17 +485,20 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public double getBodyModifier() {
-		return this.bodyLevel.getModifierBySubLevel(this.bodySubLevel);
+		return this.bodyLevel.getModifierBySubLevel(this.bodySubLevel) *
+				(0.6 + ((this.bodyProgress + this.bodyFoundation) / this.bodyLevel.getProgressBySubLevel(this.bodySubLevel)) * 0.4);
 	}
 
 	@Override
 	public double getDivineModifier() {
-		return this.divineLevel.getModifierBySubLevel(this.divineSubLevel);
+		return this.divineLevel.getModifierBySubLevel(this.divineSubLevel) *
+				(0.6 + ((this.divineProgress + this.divineFoundation) / this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) * 0.4);
 	}
 
 	@Override
 	public double getEssenceModifier() {
-		return this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel);
+		return this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel) *
+				(0.6 + ((this.essenceProgress + this.essenceFoundation) / this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)) * 0.4);
 	}
 
 	@Override

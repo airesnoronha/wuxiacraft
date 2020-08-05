@@ -1,8 +1,8 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
-import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import net.minecraft.entity.player.EntityPlayer;
+import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import net.minecraft.potion.PotionEffect;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,19 +10,19 @@ import java.util.List;
 public class KnownTechnique {
 
 	private final Technique technique;
-	private double progress;
+	private double proficiency;
 
-	public KnownTechnique(Technique technique, double progress) {
+	public KnownTechnique(Technique technique, double proficiency) {
 		this.technique = technique;
-		this.progress = progress;
+		this.proficiency = proficiency;
 	}
 
 	public void progress(double amount) {
-		this.progress = Math.min(Math.max(0, this.progress + amount), this.technique.getTier().smallProgress + this.technique.getTier().greatProgress + this.technique.getTier().perfectionProgress + 10f);
+		this.proficiency = Math.max(this.proficiency + amount, 0);
 	}
 
-	public double getProgress() {
-		return this.progress;
+	public double getProficiency() {
+		return this.proficiency;
 	}
 
 	public Technique getTechnique() {
@@ -31,16 +31,42 @@ public class KnownTechnique {
 
 	public List<PotionEffect> getTechniqueEffects() {
 		List<PotionEffect> effects = new ArrayList<>();
-		TechniqueTier tier = this.getTechnique().getTier();
-		if(this.progress >= tier.smallProgress) {
-			effects.addAll(this.getTechnique().getSmallCompletionEffects());
-		}
-		if(this.progress >= tier.smallProgress + tier.greatProgress) {
-			effects.addAll(this.getTechnique().getGreatCompletionEffects());
-		}
-		if(this.progress >= tier.smallProgress + tier.greatProgress + tier.perfectionProgress) {
-			effects.addAll(this.getTechnique().getPerfectionCompletionEffects());
+		for(Pair<Double, PotionEffect> effect : this.getTechnique().getEffects()) {
+			if(this.proficiency >= effect.getKey()) {
+				effects.add(effect.getValue());
+			}
 		}
 		return effects;
+	}
+
+	public TechniquesModifiers getModifiers() {
+		double unlocked = 0; //from 0 to 1
+		double highestComparedCheckpointProficiency = 0; //in case checkpoints aren't in order
+		for(Pair<Double, String> checkpoint : technique.getCheckpoints()) {
+			if(checkpoint.getKey() > highestComparedCheckpointProficiency) {
+				if(this.proficiency > checkpoint.getKey()) {
+					highestComparedCheckpointProficiency = checkpoint.getKey();
+					unlocked = this.proficiency / this.getTechnique().getMaxProficiency();
+				}
+			}
+		}
+		return this.getTechnique().getBaseModifiers().multiply(unlocked);
+	}
+
+	public List<Skill> getKnownSkills() {
+		List<Skill> skills = new ArrayList<>();
+		for(Pair<Double, Skill> skill : this.getTechnique().getSkills()) {
+			if(this.proficiency >= skill.getKey()) {
+				skills.add(skill.getValue());
+			}
+		}
+		return skills;
+	}
+
+	public double getCultivationSpeed(double modifier) {
+		if(modifier > technique.getEfficientTillModifier()) {
+			return technique.getCultivationSpeed() * (technique.getEfficientTillModifier() / (modifier*2)); //Eventually will amount to almost nothing
+		}
+		return technique.getCultivationSpeed();
 	}
 }

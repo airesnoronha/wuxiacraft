@@ -2,7 +2,6 @@ package com.airesnor.wuxiacraft.cultivation.skills;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
-import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.entities.skills.FireThrowable;
@@ -46,6 +45,19 @@ import java.util.List;
 import java.util.Stack;
 
 public class Skills {
+
+    // TODO Asura's despair (slows and blindness) from fruit
+    // TODO Red Lotus Purgatory (Sets someone on fire) from fruit
+    // TODO Elder Dragons Roar (paralyze someone and knock back) from fruit
+    // TODO Buddha's palm (snare and dot) from fruit
+    // TODO Hell's Pond (healing for undead) from fruit
+    // TODO Thunder God's Punishment (strikes lightning at target while casting) from fruit
+    // TODO Demon God's flash (tp at looking) from fruit
+    // TODO Sword God's Mercy (Exxxxxtra big sword beam) from fruit
+    // TODO Green Lotus (A wood life steal skill) from Asura
+    // TODO Overlay Swing (Sword marking skill that makes target vulnerable) from HuoYuhao
+    // TODO Natural embodiment (mimicry) from HuoYuhao
+    // TODO Eye of terror (gaze and slows target and fear) from HuoYuhao
 
     public static final List<Skill> SKILLS = new ArrayList<>();
 
@@ -184,11 +196,10 @@ public class Skills {
 
     public static final Skill FIRE_BAll = new Skill("fire_ball", false, true, 480f, 3f, 120f, 0f)
             .setAction(actor -> {
-                ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
                 ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
                 float strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
                 float speed = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue();
-                float damage = (float) (4 + strength * 0.8 + cultivation.getMaxEnergy() * 0.04);
+                float damage = (float) (4 + strength * 0.8 + CultivationUtils.getMaxEnergy(actor) * 0.04);
                 if (cultTech.hasElement(Element.FIRE)) {
                     damage *= 1.3f;
                 }
@@ -326,11 +337,10 @@ public class Skills {
     // Credits : My Girlfriend
     public static final Skill WATER_NEEDLE = new Skill("water_needle", false, true, 100f, 1.1f, 20f, 0f, "Lysian Prieto")
             .setAction(actor -> {
-                ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
                 ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
                 float strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
                 float speed = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue();
-                float damage = 4 + (float) (strength * 0.3 + cultivation.getMaxEnergy() * 0.02);
+                float damage = 4 + (float) (strength * 0.3 + CultivationUtils.getMaxEnergy(actor) * 0.02);
                 if (cultTech.hasElement(Element.WATER)) {
                     damage *= 1.3;
                 }
@@ -341,7 +351,6 @@ public class Skills {
             });
 
     public static final Skill WATER_BLADE = new Skill("water_blade", false, true, 380f, 2.0f, 120f, 0f).setAction(actor -> {
-        ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
         ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
         ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
         float strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
@@ -352,7 +361,7 @@ public class Skills {
             actor.swingArm(EnumHand.MAIN_HAND);
             skillCap.stepCastProgress(speed * 0.5f);
         }
-        float damage = 8 + (strength * 0.7f + speed * 0.3f + (float) cultivation.getMaxEnergy() * 0.04f) * swordModifier;
+        float damage = 8 + (strength * 0.7f + speed * 0.3f + (float) CultivationUtils.getMaxEnergy(actor) * 0.04f) * swordModifier;
         if (cultTech.hasElement(Element.WATER)) {
             damage *= 1.3;
         }

@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.techniques.Technique;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.block.BlockPlanks;
@@ -12,10 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class WuxiaItems {
@@ -28,7 +26,9 @@ public class WuxiaItems {
 	public static final CreativeTabs SCROLLS = new CreativeTabs("wuxiacraft.scrolls") {
 		@Override
 		public ItemStack getTabIconItem() {
-			return new ItemStack(BODY_STRENGTH_SCROLL);
+			if(TECHNIQUES_SCROLL.size() > 0)
+			return new ItemStack(TECHNIQUES_SCROLL.get(0));
+			return new ItemStack(RECIPE_SCROLL);
 		}
 	};
 
@@ -117,20 +117,12 @@ public class WuxiaItems {
 	public static final Item SMALLER_FASTING_PILL = new ItemFastingPill("smaller_fasting_pill", 100f);
 	public static final Item SMALL_FASTING_PILL = new ItemFastingPill("small_fasting_pill", 200f);
 
-	//Scrolls
-	public static final Item BODY_STRENGTH_SCROLL = new ItemScroll(Techniques.BODY_STRENGTH);
-	public static final Item LIGHT_FEET_SCROLL = new ItemScroll(Techniques.LIGHT_FEET);
-	public static final Item ASSASSIN_MANUAL_SCROLL = new ItemScroll(Techniques.ASSASSIN_MANUAL);
-	public static final Item BASIC_MEDICINE_SCROLL = new ItemScroll(Techniques.BASIC_MEDICINE);
-	public static final Item SWORD_HEART_SCROLL = new ItemScroll(Techniques.SWORD_HEART);
-	public static final Item AXE_RAGE_SCROLL = new ItemScroll(Techniques.AXE_RAGE);
-	public static final Item FIRE_BENDING_SCROLL = new ItemScroll(Techniques.FIRE_BENDING);
-	public static final Item MOUNTAIN_RAISER_SCROLL = new ItemScroll(Techniques.MOUNTAIN_RAISER);
-	public static final Item METAL_MANIPULATION_SCROLL = new ItemScroll(Techniques.METAL_MANIPULATION);
-	public static final Item SURGING_WAVES_SCROLL = new ItemScroll(Techniques.SURGING_WAVES);
-	public static final Item BOTANICAL_GROWTH_SCROLL = new ItemScroll(Techniques.BOTANICAL_GROWTH);
-	public static final Item SWORD_FLIGHT_JOURNAL_SCROLL = new ItemScroll(Techniques.SWORD_FLIGHT_JOURNAL);
-	public static final Item SKY_CROSSER_SWORD_SCROLL = new ItemScroll(Techniques.SKY_CROSSER_SWORD);
+	//Scrolls -- hopes this works
+	public static final LinkedList<Item> TECHNIQUES_SCROLL = new LinkedList<>();
+	static {
+		for(Technique t : Techniques.TECHNIQUES)
+		TECHNIQUES_SCROLL.add(new ItemScroll(t));
+	}
 
 	//FANS
 	public static final Item FEATHER_FAN = new ItemFan("feather_fan").setMaxStrength(10f).setStrength(1f);

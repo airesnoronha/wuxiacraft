@@ -74,7 +74,7 @@ public class CultivationCommand extends CommandBase {
 					text.appendText(String.format("Progress: %.0f/%.0f\n", cultivation.getEssenceProgress(),
 							cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel())));
 					text.appendText(String.format("Energy: %.0f/%.0f (%d%%)\n", cultivation.getEnergy(),
-							cultivation.getMaxEnergy(), (int) (cultivation.getEnergy() * 100 / cultivation.getMaxEnergy())));
+							cultivation.getMaxEnergy(), (int) (cultivation.getEnergy() * 100 / CultivationUtils.getMaxEnergy(target))));
 					sender.sendMessage(text);
 				}
 			} else {

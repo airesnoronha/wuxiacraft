@@ -17,14 +17,14 @@ import java.util.UUID;
 public class ActivatePartialSkillMessage implements IMessage {
 
 	public String skillName;
-	public float energy;
+	public double energy;
 	public UUID senderUUID;
 
 	@SuppressWarnings("unused")
 	public ActivatePartialSkillMessage() {
 	}
 
-	public ActivatePartialSkillMessage(String skillName, float energy, UUID senderUUID) {
+	public ActivatePartialSkillMessage(String skillName, double energy, UUID senderUUID) {
 		this.skillName = skillName;
 		this.energy = energy;
 		this.senderUUID = senderUUID;
@@ -33,7 +33,7 @@ public class ActivatePartialSkillMessage implements IMessage {
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		PacketBuffer packetBuffer = new PacketBuffer(buf);
-		this.energy = buf.readFloat();
+		this.energy = buf.readDouble();
 		this.skillName = ByteBufUtils.readUTF8String(buf);
 		this.senderUUID = packetBuffer.readUniqueId();
 	}
@@ -41,7 +41,7 @@ public class ActivatePartialSkillMessage implements IMessage {
 	@Override
 	public void toBytes(ByteBuf buf) {
 		PacketBuffer packetBuffer = new PacketBuffer(buf);
-		buf.writeFloat(energy);
+		buf.writeDouble(energy);
 		ByteBufUtils.writeUTF8String(buf, skillName);
 		packetBuffer.writeUniqueId(senderUUID);
 	}

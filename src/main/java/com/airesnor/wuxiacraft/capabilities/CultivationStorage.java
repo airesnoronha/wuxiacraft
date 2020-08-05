@@ -23,6 +23,9 @@ public class CultivationStorage implements Capability.IStorage<ICultivation> {
 		tag.setDouble("progressBody", instance.getBodyProgress());
 		tag.setDouble("progressDivine", instance.getDivineProgress());
 		tag.setDouble("progressEssence", instance.getEssenceProgress());
+		tag.setDouble("foundationBody", instance.getBodyFoundation());
+		tag.setDouble("foundationDivine", instance.getDivineFoundation());
+		tag.setDouble("foundationEssence", instance.getEssenceFoundation());
 		tag.setDouble("energy", instance.getEnergy());
 		tag.setInteger("pelletCD", instance.getPillCooldown());
 		tag.setBoolean("suppress", instance.getSuppress());
@@ -41,6 +44,9 @@ public class CultivationStorage implements Capability.IStorage<ICultivation> {
 		instance.setBodyProgress(tag.getDouble("progressBody"));
 		instance.setDivineProgress(tag.getDouble("progressDivine"));
 		instance.setEssenceProgress(tag.getDouble("progressEssence"));
+		instance.setBodyFoundation(tag.getDouble("foundationBody"));
+		instance.setDivineFoundation(tag.getDouble("foundationDivine"));
+		instance.setEssenceFoundation(tag.getDouble("foundationEssence"));
 		instance.addEnergy(tag.getFloat("energy"));
 		instance.setPillCooldown(tag.getInteger("pelletCD"));
 		instance.setSuppress(tag.getBoolean("suppress"));
