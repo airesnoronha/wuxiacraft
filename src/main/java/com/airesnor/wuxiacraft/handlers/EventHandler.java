@@ -23,6 +23,8 @@ import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import com.airesnor.wuxiacraft.utils.MathUtils;
 import com.airesnor.wuxiacraft.utils.TeleportationUtil;
+import com.airesnor.wuxiacraft.world.Sect;
+import com.airesnor.wuxiacraft.world.data.WorldSectData;
 import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -46,6 +48,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.FOVUpdateEvent;
@@ -63,10 +66,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Mod.EventBusSubscriber
 public class EventHandler {
@@ -169,6 +169,20 @@ public class EventHandler {
 			cultivation.addEnergy(energy);
 			if (cultivation.getEnergy() > CultivationUtils.getMaxEnergy(player)) {
 				cultivation.setEnergy(CultivationUtils.getMaxEnergy(player));
+			}
+
+		}
+		if (event.getEntity() instanceof EntityPlayerMP) {
+			EntityPlayerMP player = (EntityPlayerMP) event.getEntity();
+			if (player.ticksExisted % 200 == 0) {
+				WorldSectData sectData = WorldSectData.get(player.world);
+				Sect sect = Sect.getSectByPlayer(player, sectData);
+				if (sect != null) {
+					LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) player.getPrefixes();
+					TextComponentString prefix = new TextComponentString("[" + sect.getSectName() + "]");
+					prefix.getStyle().setColor(TextFormatting.AQUA);
+					prefixes.add(0, prefix);
+				}
 			}
 		}
 	}

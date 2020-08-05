@@ -14,14 +14,16 @@ import java.util.List;
 public class WorldSectData extends WorldSavedData {
 
     private static final String DATA_NAME = WuxiaCraft.MOD_ID + "_SectData";
-    public static List<Sect> SECTS = new ArrayList<>();
+    public static List<Sect> SECTS;
 
     public WorldSectData() {
         super(DATA_NAME);
+        SECTS = new ArrayList<>();
     }
 
     public WorldSectData(String name) {
         super(name);
+        SECTS = new ArrayList<>();
     }
 
     public static WorldSectData get(World world) {
@@ -35,7 +37,7 @@ public class WorldSectData extends WorldSavedData {
     }
 
     public void saveChanges() {
-        markDirty();
+        this.markDirty();
     }
 
     @Override
@@ -45,8 +47,7 @@ public class WorldSectData extends WorldSavedData {
         for (int i = 0; i < tagList.tagCount(); i++) {
             NBTTagCompound tagCompound = tagList.getCompoundTagAt(i);
             Sect sect = new Sect();
-            sect.readFromNBT(tagCompound);
-            SECTS.add(sect);
+            SECTS.add(sect.readFromNBT(tagCompound));
         }
     }
 
@@ -57,7 +58,6 @@ public class WorldSectData extends WorldSavedData {
             tagList.appendTag(sect.writeToNBT());
         }
         compound.setTag("sects", tagList);
-        SECTS.clear();
         return compound;
     }
 }

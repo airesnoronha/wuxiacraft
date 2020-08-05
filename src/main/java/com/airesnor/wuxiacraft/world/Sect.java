@@ -283,7 +283,10 @@ public class Sect {
         return changeLeaderTime;
     }
 
-    public void readFromNBT(NBTTagCompound nbt) {
+    public Sect readFromNBT(NBTTagCompound nbt) {
+        if (nbt == null) {
+            nbt = new NBTTagCompound();
+        }
         this.setSectName(nbt.getString("sectName"));
         this.setSectLeader(nbt.getUniqueId("sectLeader"));
         NBTTagList rankList = (NBTTagList) nbt.getTag("rankList");
@@ -315,6 +318,7 @@ public class Sect {
         this.setDisbandTime(nbt.getLong("disbandTime"));
         this.setChangeLeader(nbt.getBoolean("changeLeader"));
         this.setChangeLeaderTime(nbt.getLong("changeLeaderTime"));
+        return this;
     }
 
     public NBTTagCompound writeToNBT() {
@@ -334,13 +338,13 @@ public class Sect {
         }
         for (Pair<UUID, String> member : members) {
             NBTTagCompound memberCompound = new NBTTagCompound();
-            tag.setUniqueId("memberUUID", member.getLeft());
-            tag.setString("memberRank", member.getRight());
+            memberCompound.setUniqueId("memberUUID", member.getLeft());
+            memberCompound.setString("memberRank", member.getRight());
             memberList.appendTag(memberCompound);
         }
         for (UUID invitation : invitations) {
             NBTTagCompound invitationCompund = new NBTTagCompound();
-            tag.setUniqueId("playerInvitationUUID", invitation);
+            invitationCompund.setUniqueId("playerInvitationUUID", invitation);
             invitationList.appendTag(invitationCompund);
         }
         for (String ally : allies) {
@@ -369,10 +373,10 @@ public class Sect {
         return ranks.get(0).getLeft();
     }
 
-    public static Sect getSectByPlayer(EntityPlayerMP playerMP) {
+    public static Sect getSectByPlayer(EntityPlayerMP playerMP, WorldSectData sectData) {
         boolean isThis = false;
         Sect chosenSect = null;
-        for (Sect sect : WorldSectData.SECTS) {
+        for (Sect sect : sectData.SECTS) {
             List<Pair<UUID, String>> members = sect.getMembers();
             UUID sectLeader = sect.getSectLeader();
             for (Pair<UUID, String> member : members) {
@@ -394,9 +398,9 @@ public class Sect {
         return chosenSect;
     }
 
-    public static Sect getSectByName(String sectName) {
+    public static Sect getSectByName(String sectName, WorldSectData sectData) {
         Sect chosenSect = null;
-        for (Sect sect : WorldSectData.SECTS) {
+        for (Sect sect : sectData.SECTS) {
             if (sect.sectName.equalsIgnoreCase(sectName)) {
                 chosenSect = sect;
                 break;
