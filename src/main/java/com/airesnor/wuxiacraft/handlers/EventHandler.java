@@ -181,6 +181,7 @@ public class EventHandler {
 					LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) player.getPrefixes();
 					TextComponentString prefix = new TextComponentString("[" + sect.getSectName() + "]");
 					prefix.getStyle().setColor(TextFormatting.AQUA);
+					prefixes.remove(0);
 					prefixes.add(0, prefix);
 				}
 			}

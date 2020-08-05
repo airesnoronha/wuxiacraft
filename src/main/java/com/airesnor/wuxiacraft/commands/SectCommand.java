@@ -12,6 +12,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.tuple.Pair;
+import scala.Int;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -720,14 +721,14 @@ public class SectCommand extends CommandBase {
                             text.getStyle().setColor(TextFormatting.RED);
                             playerMP.sendMessage(text);
                         }
-                    } else if (args[0].equalsIgnoreCase("setrankpermission")) { // <rankname> <permission>
+                    } else if (args[0].equalsIgnoreCase("setrankpermission")) {
                         Sect sect = Sect.getSectByPlayer(playerMP, sectData);
                         if (sect != null) {
                             if (sect.getSectLeader().equals(playerMP.getUniqueID())) {
                                 Pair<String, Integer> sectRank = sect.getRank(args[1]);
                                 if (sectRank != null) {
-                                    sectRank.setValue(Integer.parseInt(args[2]));
-                                    TextComponentString text = new TextComponentString("[" + args[1] + "] permission level has been set to " + args[1] + ".");
+                                    sect.setRankPermissionLevel(sectRank.getLeft(), Integer.parseInt(args[2]));
+                                    TextComponentString text = new TextComponentString("[" + args[1] + "] permission level has been set to " + args[2] + ".");
                                     text.getStyle().setColor(TextFormatting.GREEN);
                                     playerMP.sendMessage(text);
                                 } else {
