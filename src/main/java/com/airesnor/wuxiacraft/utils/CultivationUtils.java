@@ -147,16 +147,20 @@ public class CultivationUtils {
 			}
 		}
 		if (!cultivation.getSuppress()) {
-			cultivation.addSystemProgress(amount, system, allowBreakThrough);
-			cultivation.addSystemFoundation(amount * 0.05, system); //5% extra to foundations
-			if (cultivation.getBodyLevel() == BaseSystemLevel.DEFAULT_BODY_LEVEL) {
-				cultivation.addBodyProgress(amount * 0.3, allowBreakThrough);
-			}
-			if (cultivation.getDivineLevel() == BaseSystemLevel.DEFAULT_DIVINE_LEVEL) {
-				cultivation.addDivineProgress(amount * 0.3, allowBreakThrough);
-			}
-			if (cultivation.getEssenceLevel() == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
-				cultivation.addEssenceProgress(amount * 0.3, allowBreakThrough);
+			try {
+				cultivation.addSystemProgress(amount, system, allowBreakThrough);
+				cultivation.addSystemFoundation(amount * 0.05, system); //5% extra to foundations
+				if (cultivation.getBodyLevel() == BaseSystemLevel.DEFAULT_BODY_LEVEL) {
+					cultivation.addBodyProgress(amount * 0.3, allowBreakThrough);
+				}
+				if (cultivation.getDivineLevel() == BaseSystemLevel.DEFAULT_DIVINE_LEVEL) {
+					cultivation.addDivineProgress(amount * 0.3, allowBreakThrough);
+				}
+				if (cultivation.getEssenceLevel() == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
+					cultivation.addEssenceProgress(amount * 0.3, allowBreakThrough);
+				}
+			} catch (Cultivation.RequiresTribulation trib) {
+				callTribulation(player, trib.tribulationStrength, trib.system, trib.level, trib.sublevel);
 			}
 		} else {
 			cultivation.addSystemFoundation(amount, system);
@@ -168,11 +172,17 @@ public class CultivationUtils {
 
 		private final EntityLivingBase player;
 		private final double tribulationStrength;
+		private BaseSystemLevel targetLevel;
+		private int targetSublevel;
+		private Cultivation.System system;
 		private boolean customTribulation;
 
-		public BoltsScheduler(EntityLivingBase player, double tribulationStrength) {
+		public BoltsScheduler(EntityLivingBase player, double tribulationStrength, Cultivation.System system, BaseSystemLevel targetLevel, int targetSublevel) {
 			this.player = player;
 			this.tribulationStrength = tribulationStrength;
+			this.system = system;
+			this.targetLevel = targetLevel;
+			this.targetSublevel = targetSublevel;
 		}
 
 		public BoltsScheduler(EntityLivingBase player, double tribulationStrength, boolean customTribulation) {
@@ -210,32 +220,33 @@ public class CultivationUtils {
 				world.addScheduledTask(() -> {
 					boolean survived = player.isEntityAlive();
 					if (survived && !this.customTribulation) {
-						switch (cultivation.getSelectedSystem()) {
+						switch (this.system) {
 							case BODY:
-								cultivation.setBodySubLevel(cultivation.getBodySubLevel() + 1);
-								if (cultivation.getBodySubLevel() >= cultivation.getBodyLevel().subLevels) {
-									cultivation.setBodySubLevel(0);
-									cultivation.setBodyLevel(cultivation.getBodyLevel().nextLevel(BaseSystemLevel.BODY_LEVELS));
-								}
-								((EntityPlayer) player).sendStatusMessage(new TextComponentString(TranslateUtils.translateKey("wuxiacraft.level_message.congrats_" + msgN) + " " + cultivation.getBodyLevel().getLevelName(cultivation.getBodySubLevel())), false);
+								cultivation.setBodyProgress(cultivation.getBodyProgress() -
+										cultivation.getBodyLevel().getProgressBySubLevel(cultivation
+												.getBodySubLevel()));
+								cultivation.setBodyLevel(this.targetLevel);
+								cultivation.setBodySubLevel(this.targetSublevel);
+								cultivation.addBodyFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
 								break;
 							case DIVINE:
-								cultivation.setDivineSubLevel(cultivation.getBodySubLevel() + 1);
-								if (cultivation.getDivineSubLevel() >= cultivation.getDivineLevel().subLevels) {
-									cultivation.setDivineSubLevel(0);
-									cultivation.setDivineLevel(cultivation.getDivineLevel().nextLevel(BaseSystemLevel.DIVINE_LEVELS));
-								}
-								((EntityPlayer) player).sendStatusMessage(new TextComponentString(TranslateUtils.translateKey("wuxiacraft.level_message.congrats_" + msgN) + " " + cultivation.getDivineLevel().getLevelName(cultivation.getDivineSubLevel())), false);
+								cultivation.setDivineProgress(cultivation.getDivineProgress() -
+										cultivation.getDivineLevel().getProgressBySubLevel(cultivation
+												.getDivineSubLevel()));
+								cultivation.setDivineLevel(this.targetLevel);
+								cultivation.setDivineSubLevel(this.targetSublevel);
+								cultivation.addDivineFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
 								break;
 							case ESSENCE:
-								cultivation.setEssenceSubLevel(cultivation.getEssenceSubLevel() + 1);
-								if (cultivation.getEssenceSubLevel() >= cultivation.getEssenceLevel().subLevels) {
-									cultivation.setEssenceSubLevel(0);
-									cultivation.setEssenceLevel(cultivation.getEssenceLevel().nextLevel(BaseSystemLevel.ESSENCE_LEVELS));
-								}
-								((EntityPlayer) player).sendStatusMessage(new TextComponentString(TranslateUtils.translateKey("wuxiacraft.level_message.congrats_" + msgN) + " " + cultivation.getEssenceLevel().getLevelName(cultivation.getEssenceSubLevel())), false);
+								cultivation.setEssenceFoundation(cultivation.getEssenceProgress() -
+										cultivation.getEssenceLevel().getProgressBySubLevel(cultivation
+												.getEssenceSubLevel()));
+								cultivation.setEssenceLevel(this.targetLevel);
+								cultivation.setEssenceSubLevel(this.targetSublevel);
+								cultivation.addEssenceFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
 								break;
 						}
+						((EntityPlayer) player).sendStatusMessage(new TextComponentString(TranslateUtils.translateKey("wuxiacraft.level_message.congrats_" + msgN) + " " + targetLevel.getLevelName(targetSublevel)), false);
 						NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, getCultTechFromEntity(player), getSkillCapFromEntity(player), false), (EntityPlayerMP) player);
 					}
 				});
@@ -243,9 +254,9 @@ public class CultivationUtils {
 		}
 	}
 
-	public static void callTribulation(@Nonnull EntityLivingBase player, double tribulationStrength) {
+	public static void callTribulation(@Nonnull EntityLivingBase player, double tribulationStrength, Cultivation.System system, BaseSystemLevel level, int subLevel) {
 		if (!player.world.isRemote) {
-			BoltsScheduler boltsScheduler = new BoltsScheduler(player, tribulationStrength);
+			BoltsScheduler boltsScheduler = new BoltsScheduler(player, tribulationStrength, system, level, subLevel);
 			boltsScheduler.start();
 		}
 	}

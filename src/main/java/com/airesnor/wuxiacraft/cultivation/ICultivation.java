@@ -7,21 +7,21 @@ public interface ICultivation {
 	 *
 	 * @param amount the amount of progress gained
 	 */
-	boolean addBodyProgress(double amount, boolean allowBreakThrough);
+	boolean addBodyProgress(double amount, boolean allowBreakThrough) throws Cultivation.RequiresTribulation;
 
 	/**
 	 * Adds progress and also change sub levels and levels
 	 *
 	 * @param amount the amount of progress gained
 	 */
-	boolean addDivineProgress(double amount, boolean allowBreakThrough);
+	boolean addDivineProgress(double amount, boolean allowBreakThrough) throws Cultivation.RequiresTribulation;
 
 	/**
 	 * Adds progress and also change sub levels and levels
 	 *
 	 * @param amount the amount of progress gained
 	 */
-	boolean addEssenceProgress(double amount, boolean allowBreakThrough);
+	boolean addEssenceProgress(double amount, boolean allowBreakThrough) throws Cultivation.RequiresTribulation;
 
 	/**
 	 * Adds progress to specified system
@@ -30,7 +30,7 @@ public interface ICultivation {
 	 * @param system            the system to be added progress to
 	 * @param allowBreakThrough if the progress source allows a breakthrough
 	 */
-	boolean addSystemProgress(double amount, Cultivation.System system, boolean allowBreakThrough);
+	boolean addSystemProgress(double amount, Cultivation.System system, boolean allowBreakThrough) throws Cultivation.RequiresTribulation;
 
 	void addBodyFoundation(double amount);
 
@@ -250,24 +250,28 @@ public interface ICultivation {
 
 	/**
 	 * Sets the amount of energy available to cast spells
+	 *
 	 * @param amount to be set
 	 */
 	void setEnergy(double amount);
 
 	/**
 	 * Adds energy to cast spells
+	 *
 	 * @param amount Energy to be added
 	 */
 	void addEnergy(double amount);
 
 	/**
 	 * Removes the energy and doesn't allow to get negative
+	 *
 	 * @param amount Energy to be removed
 	 */
 	void remEnergy(double amount);
 
 	/**
 	 * Check if there is enough energy for some action
+	 *
 	 * @param amount energy to be checked
 	 * @return if it has the required amount
 	 */
@@ -275,6 +279,7 @@ public interface ICultivation {
 
 	/**
 	 * Sets relative max speed based on player total available speed
+	 *
 	 * @param handicap The percentage of the speed
 	 */
 	void setSpeedHandicap(int handicap);
@@ -311,6 +316,7 @@ public interface ICultivation {
 
 	/**
 	 * Sets total cooldown that has to be waited
+	 *
 	 * @param cooldown the time in tick that has to be waited
 	 */
 	void setPillCooldown(int cooldown);
@@ -322,6 +328,7 @@ public interface ICultivation {
 
 	/**
 	 * Sets the max speed a player want to use
+	 *
 	 * @param maxSpeed the value in speed
 	 */
 	void setMaxSpeed(float maxSpeed);
@@ -338,7 +345,8 @@ public interface ICultivation {
 
 	/**
 	 * Sets the max break block speed a player want to use
-	 * @param hasteLimit  the max break block speed
+	 *
+	 * @param hasteLimit the max break block speed
 	 */
 	void setHasteLimit(float hasteLimit);
 
@@ -349,12 +357,14 @@ public interface ICultivation {
 
 	/**
 	 * Sets the jump limit a player want to jump
+	 *
 	 * @param jumpLimit The multiplier of vanilla jump
 	 */
 	void setJumpLimit(float jumpLimit);
 
 	/**
 	 * Sets if the player want to suppress it's own cultivation advancement
+	 *
 	 * @param suppress whether will stop receiving progress
 	 */
 	void setSuppress(boolean suppress);
@@ -366,6 +376,7 @@ public interface ICultivation {
 
 	/**
 	 * Sets which system will evolve from cultivate;
+	 *
 	 * @param selectedSystem The new selected cultivation system
 	 */
 	void setSelectedSystem(Cultivation.System selectedSystem);
@@ -377,6 +388,7 @@ public interface ICultivation {
 
 	/**
 	 * Sets it's own cultivation using another one as parameter
+	 *
 	 * @param cultivation The cultivation to be mirrored
 	 */
 	void copyFrom(ICultivation cultivation);
