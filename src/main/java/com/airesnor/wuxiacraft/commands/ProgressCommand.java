@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.commands;
 
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.command.CommandBase;
@@ -90,6 +91,9 @@ public class ProgressCommand extends CommandBase {
                             TextComponentString text = new TextComponentString("Couldn't read number: " + args[3]);
                             text.getStyle().setColor(TextFormatting.RED);
                             sender.sendMessage(text);
+                        } catch (Cultivation.RequiresTribulation trib) {
+                            double strength = cultivation.getSystemLevel(trib.system).getModifierBySubLevel(trib.sublevel);
+                            CultivationUtils.callTribulation(targetPlayer, strength, trib.system, trib.level, trib.sublevel);
                         }
                     } else {
                         TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
@@ -113,14 +117,14 @@ public class ProgressCommand extends CommandBase {
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         List<String> completions = new ArrayList<>();
         if (args.length == 1) {
-            completions.add("add");
-            completions.add("set");
+            if ("add".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("add");
+            if ("set".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("set");
         } else if (args.length == 2) {
             completions.addAll(Arrays.asList(server.getOnlinePlayerNames()));
         } else if(args.length == 3) {
-            completions.add("body");
-            completions.add("divine");
-            completions.add("essence");
+            if ("body".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("body");
+            else if ("divine".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("divine");
+            else if ("essence".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("essence");
         }
         return completions;
     }

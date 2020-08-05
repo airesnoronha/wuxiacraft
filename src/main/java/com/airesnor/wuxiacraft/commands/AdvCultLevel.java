@@ -1,11 +1,15 @@
 package com.airesnor.wuxiacraft.commands;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.networking.CultivationMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
-import net.minecraft.command.*;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.command.NumberInvalidException;
+import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -16,7 +20,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
@@ -203,7 +206,12 @@ public class AdvCultLevel extends CommandBase {
 					case "body":
 						for (int i = 0; i < levelCount; i++) {
 							double amount = cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel());
-							cultivation.addBodyProgress(amount, true);
+							try {
+								cultivation.addBodyProgress(amount, true);
+							} catch (Cultivation.RequiresTribulation trib) {
+								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
+										trib.level, trib.sublevel);
+							}
 						}
 						break;
 					case "divine":

@@ -33,6 +33,21 @@ public class Cultivation implements ICultivation {
 
 	private System selectedSystem;
 
+	public class RequiresTribulation extends Exception {
+		public final double tribulationStrength;
+		public final System system;
+		public final BaseSystemLevel level;
+		public final int sublevel;
+
+		RequiresTribulation(double tribulationStrength, System system, BaseSystemLevel level, int sublevel) {
+			super("This breakthrough requires a tribulation ...");
+			this.tribulationStrength = tribulationStrength;
+			this.system = system;
+			this.level = level;
+			this.sublevel = sublevel;
+		}
+	}
+
 
 	public Cultivation() {
 		this.bodyProgress = 0;
@@ -59,7 +74,7 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public boolean addBodyProgress(double amount, boolean allowBreakthrough) {
+	public boolean addBodyProgress(double amount, boolean allowBreakthrough) throws RequiresTribulation {
 		boolean leveled = false;
 		this.bodyProgress += amount;
 		if (allowBreakthrough) {
@@ -73,10 +88,22 @@ public class Cultivation implements ICultivation {
 						&& this.essenceLevel == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) // if this tehn all above
 						|| this.bodyLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL; // or not in this level
 				if (essenceCondition && divineCondition) { // can breaktrough
+					if (this.bodyLevel.tribulationEachSubLevel && this.bodySubLevel < this.bodyLevel.subLevels - 1) {
+						double strength = this.bodyLevel.getModifierBySubLevel(this.bodySubLevel + 1);
+						throw new RequiresTribulation(strength, System.BODY, this.bodyLevel, this.bodySubLevel + 1);
+					}
+					if (this.bodyLevel.tribulationEachSubLevel && this.bodySubLevel < this.bodyLevel.subLevels - 1) {
+						double strength = this.bodyLevel.getModifierBySubLevel(this.bodySubLevel + 1);
+						throw new RequiresTribulation(strength, System.BODY, this.bodyLevel, this.bodySubLevel + 1);
+					}
 					this.bodyProgress -= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel);
 					leveled = true;
 					this.bodySubLevel++;
 					if (this.bodySubLevel == this.bodyLevel.subLevels) {
+						if (this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS).callsTribulation) {
+							double strength = this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS).getModifierBySubLevel(0);
+							throw new RequiresTribulation(strength, System.BODY, this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS), 0);
+						}
 						this.bodySubLevel = 0;
 						this.bodyLevel = this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS);
 					}
@@ -87,7 +114,7 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public boolean addDivineProgress(double amount, boolean allowBreakthrough) {
+	public boolean addDivineProgress(double amount, boolean allowBreakthrough) throws RequiresTribulation {
 		boolean leveled = false;
 		this.divineProgress += amount;
 		if (allowBreakthrough) {
@@ -101,10 +128,18 @@ public class Cultivation implements ICultivation {
 						&& this.essenceLevel == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) // if this tehn all above
 						|| this.bodyLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL; // or not in this level
 				if (bodyCondition && essenceCondition) { // can breaktrough
+					if (this.divineLevel.tribulationEachSubLevel && this.divineSubLevel < this.divineLevel.subLevels - 1) {
+						double strength = this.divineLevel.getModifierBySubLevel(this.divineSubLevel + 1);
+						throw new RequiresTribulation(strength, System.DIVINE, this.divineLevel, this.divineSubLevel + 1);
+					}
 					this.divineProgress -= this.divineLevel.getProgressBySubLevel(this.divineSubLevel);
 					leveled = true;
 					this.divineSubLevel++;
 					if (this.divineSubLevel == this.divineLevel.subLevels) {
+						if (this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS).callsTribulation) {
+							double strength = this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS).getModifierBySubLevel(0);
+							throw new RequiresTribulation(strength, System.DIVINE, this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS), 0);
+						}
 						this.divineSubLevel = 0;
 						this.divineLevel = this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS);
 					}
@@ -115,7 +150,7 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public boolean addEssenceProgress(double amount, boolean allowBreakthrough) {
+	public boolean addEssenceProgress(double amount, boolean allowBreakthrough) throws RequiresTribulation {
 		boolean leveled = false;
 		this.essenceProgress += amount;
 		if (allowBreakthrough) {
@@ -129,10 +164,18 @@ public class Cultivation implements ICultivation {
 						&& this.divineLevel == BaseSystemLevel.DEFAULT_DIVINE_LEVEL)
 						|| this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL;
 				if (bodyCondition && divineCondition) { // can breaktrough
+					if (this.essenceLevel.tribulationEachSubLevel && this.essenceSubLevel < this.essenceLevel.subLevels - 1) {
+						double strength = this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel + 1);
+						throw new RequiresTribulation(strength, System.ESSENCE, this.essenceLevel, this.essenceSubLevel + 1);
+					}
 					this.essenceProgress -= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel);
 					leveled = true;
 					this.essenceSubLevel++;
 					if (this.essenceSubLevel == this.essenceLevel.subLevels) {
+						if (this.bodyLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS).callsTribulation) {
+							double strength = this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS).getModifierBySubLevel(0);
+							throw new RequiresTribulation(strength, System.ESSENCE, this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS), 0);
+						}
 						this.essenceSubLevel = 0;
 						this.essenceLevel = this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
 					}
@@ -143,7 +186,7 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public boolean addSystemProgress(double amount, System system, boolean allowBreakThrough) {
+	public boolean addSystemProgress(double amount, System system, boolean allowBreakThrough) throws RequiresTribulation {
 		switch (system) {
 			case BODY:
 				addBodyProgress(amount, allowBreakThrough);
