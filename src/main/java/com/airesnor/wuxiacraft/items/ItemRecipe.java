@@ -1,9 +1,9 @@
 package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.profession.alchemy.Recipe;
-import com.airesnor.wuxiacraft.profession.alchemy.RecipesOld;
 import com.airesnor.wuxiacraft.handlers.GuiHandler;
+import com.airesnor.wuxiacraft.profession.alchemy.Recipe;
+import com.airesnor.wuxiacraft.profession.alchemy.Recipes;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -65,8 +65,8 @@ public class ItemRecipe extends Item {
 
 	public static void setRecipeAtRandom(ItemStack stack) {
 		Random rand = new Random();
-		int result = rand.nextInt(RecipesOld.RECIPES.size());
-		Recipe recipe = RecipesOld.RECIPES.get(result);
+		int result = rand.nextInt(Recipes.RECIPES.size());
+		Recipe recipe = Recipes.RECIPES.get(result);
 		NBTTagCompound tag = stack.getTagCompound();
 		if(tag == null) tag = new NBTTagCompound();
 		int items = recipe.getRecipeItemCount();

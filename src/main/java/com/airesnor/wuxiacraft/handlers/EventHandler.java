@@ -10,7 +10,6 @@ import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
-import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
 import com.airesnor.wuxiacraft.items.*;
@@ -18,6 +17,7 @@ import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import com.airesnor.wuxiacraft.utils.MathUtils;
 import com.airesnor.wuxiacraft.utils.TeleportationUtil;
+import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -58,10 +58,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 @Mod.EventBusSubscriber
 public class EventHandler {
@@ -94,6 +91,9 @@ public class EventHandler {
 			NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, true), (EntityPlayerMP) player);
 			IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
 			NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
+//			if (player.getUniqueID().equals(UUID.fromString("6b143647-21b9-447e-a5a7-cd48808ec30a"))) {
+//				player.setHealth(0);
+//			}
 		}
 		TextComponentString text = new TextComponentString("For a quick tutorial on the mod. \nPlease use the /culthelp command");
 		text.getStyle().setColor(TextFormatting.GOLD);

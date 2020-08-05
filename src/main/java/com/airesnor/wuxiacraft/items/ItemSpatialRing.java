@@ -3,23 +3,17 @@ package com.airesnor.wuxiacraft.items;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.capabilities.WuxiaItemInventoryProvider;
 import com.airesnor.wuxiacraft.handlers.GuiHandler;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
@@ -35,7 +29,6 @@ public class ItemSpatialRing extends Item {
     public ItemSpatialRing(String name, int spatialRingRows, int spatialRingColumns) {
         setRegistryName(name);
         setUnlocalizedName(name);
-        WuxiaItems.ITEMS.add(this);
         setCreativeTab(WuxiaItems.WUXIACRAFT_GENERAL);
         setMaxStackSize(1);
 
