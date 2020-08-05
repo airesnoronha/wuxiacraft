@@ -217,27 +217,48 @@ public class AdvCultLevel extends CommandBase {
 					case "divine":
 						for (int i = 0; i < levelCount; i++) {
 							double amount = cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel());
-							cultivation.addDivineProgress(amount, true);
+							try {
+								cultivation.addDivineProgress(amount, true);
+							} catch (Cultivation.RequiresTribulation trib) {
+								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
+										trib.level, trib.sublevel);
+							}
 						}
 						break;
 					case "essence":
 						for (int i = 0; i < levelCount; i++) {
 							double amount = cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
-							cultivation.addEssenceProgress(amount, true);
+							try {
+								cultivation.addEssenceProgress(amount, true);
+							} catch (Cultivation.RequiresTribulation trib) {
+								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
+										trib.level, trib.sublevel);
+							}
 						}
 						break;
 					case "three":
 						for (int i = 0; i < levelCount; i++) {
 							double amount = cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel());
-							cultivation.addBodyProgress(amount, true);
-						}
-						for (int i = 0; i < levelCount; i++) {
-							double amount = cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel());
-							cultivation.addDivineProgress(amount, true);
-						}
-						for (int i = 0; i < levelCount; i++) {
-							double amount = cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
-							cultivation.addEssenceProgress(amount, true);
+							try {
+								cultivation.addBodyProgress(amount, true);
+							} catch (Cultivation.RequiresTribulation trib) {
+								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
+										trib.level, trib.sublevel);
+							}
+							amount = cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel());
+							try {
+								cultivation.addDivineProgress(amount, true);
+							} catch (Cultivation.RequiresTribulation trib) {
+								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
+										trib.level, trib.sublevel);
+							}
+							amount = cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
+							try {
+								cultivation.addEssenceProgress(amount, true);
+							} catch (Cultivation.RequiresTribulation trib) {
+								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
+										trib.level, trib.sublevel);
+							}
 						}
 						break;
 				}

@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.networking;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
@@ -79,7 +80,11 @@ public class ProgressMessage implements IMessage {
 								CultivationUtils.cultivatorAddProgress(player, message.system, message.amount, message.techniques, message.allowBreakTrough);
 								break;
 							case 1:
-								cultivation.addEssenceProgress(-message.amount, false);
+								try {
+									cultivation.addEssenceProgress(-message.amount, false);
+								} catch (Cultivation.RequiresTribulation trib) {
+									WuxiaCraft.logger.error("I don't think it'll require tribulation");
+								}
 								break;
 							case 2:
 								cultivation.setEssenceProgress(message.amount);
