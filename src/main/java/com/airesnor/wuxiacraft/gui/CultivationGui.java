@@ -273,20 +273,17 @@ public class CultivationGui extends GuiScreen {
 		GlStateManager.color(1f, 1f, 1f, 1f);
 		drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 
-		//cultivation dragon
-		double progress_fill = (cultivation.getEssenceProgress() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()));
-		int progress_pix = (int) (progress_fill * 124f);
-		drawTexturedModalRect(this.guiLeft + 183, this.guiTop + 5 + (124 - progress_pix), 200, (124 - progress_pix), 16, progress_pix);
-
-		//energy bar
-		double energy_fill = (cultivation.getEnergy() / CultivationUtils.getMaxEnergy(this.player));
-		int energyPix = (int) (28f * energy_fill);
-		drawTexturedModalRect(this.guiLeft + 172, this.guiTop + 5 + 28 - energyPix, 217, 28 - energyPix, 10, energyPix);
+		//suppression
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(this.guiLeft+180, this.guiTop + 5, 0);
+		int tex_y = cultivation.getSuppress() ? 0 : 44;
+		GlStateManager.scale(14f/44f, 14f/44f, 1);
+		drawTexturedModalRect(0, 0, 200, tex_y, 36, 44);
+		GlStateManager.popMatrix();
 
 		//tabs selectors
-		drawTexturedModalRect(this.guiLeft + 6, this.guiTop + 19, 104, 151, 52, 15);
-		drawTexturedModalRect(this.guiLeft + 61, this.guiTop + 19, 104, 151, 52, 15);
-		drawTexturedModalRect(this.guiLeft + 116, this.guiTop + 19, 104, 151, 52, 15);
+		drawTexturedModalRect(this.guiLeft + 5, this.guiTop + 5, 104, 151, 68, 14);
+		drawTexturedModalRect(this.guiLeft + 76, this.guiTop + 5, 104, 151, 68, 14);
 
 		//scrollers
 		if (this.displayItems > this.tab.maxDisplayItems) {
@@ -299,7 +296,7 @@ public class CultivationGui extends GuiScreen {
 		//tabs
 		switch (this.tab) {
 			case FOUNDATION:
-				//drawFoundationBackground();
+				drawCultivationBackground();
 				break;
 			case TECHNIQUES:
 				drawTechniquesBackground();
@@ -334,98 +331,29 @@ public class CultivationGui extends GuiScreen {
 		}
 	}
 
-	/*private void drawFoundationBackground() {
-		drawTexturedModalRect(this.guiLeft + 66, this.guiTop + 55, 0, 173, 54, 52); //cultivator body
-		GlStateManager.pushMatrix();
-		GlStateManager.translate(this.guiLeft + 93, this.guiTop + 88, 0);
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder builder = tessellator.getBuffer();
-		GlStateManager.glLineWidth(2f);
-		GlStateManager.disableTexture2D();
-		GlStateManager.color(1f, 1f, 1f, 1f);
-		builder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
-		builder.pos(0, 0, 0).endVertex();
-		builder.pos(-20, -35, 0).endVertex();
-		builder.pos(-75, -35, 0).endVertex();
-		tessellator.draw();
-		builder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
-		builder.pos(0, 0, 0).endVertex();
-		builder.pos(20, -35, 0).endVertex();
-		builder.pos(75, -35, 0).endVertex();
-		tessellator.draw();
-		builder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
-		builder.pos(0, 0, 0).endVertex();
-		builder.pos(-27, -5, 0).endVertex();
-		builder.pos(-80, -5, 0).endVertex();
-		tessellator.draw();
-		builder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
-		builder.pos(0, 0, 0).endVertex();
-		builder.pos(27, -5, 0).endVertex();
-		builder.pos(80, -5, 0).endVertex();
-		tessellator.draw();
-		builder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
-		builder.pos(0, 0, 0).endVertex();
-		builder.pos(-20, 25, 0).endVertex();
-		builder.pos(-75, 25, 0).endVertex();
-		tessellator.draw();
-		builder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
-		builder.pos(0, 0, 0).endVertex();
-		builder.pos(20, 25, 0).endVertex();
-		builder.pos(75, 25, 0).endVertex();
-		tessellator.draw();
-		GlStateManager.enableTexture2D();
-
-		//plus buttons
-		drawTexturedModalRect(-85, -50, 90, 151, 14, 14);
-		drawTexturedModalRect(71, -50, 90, 151, 14, 14);
-		drawTexturedModalRect(-87, -20, 90, 151, 14, 14);
-		drawTexturedModalRect(73, -20, 90, 151, 14, 14);
-		drawTexturedModalRect(-85, 10, 90, 151, 14, 14);
-		drawTexturedModalRect(71, 10, 90, 151, 14, 14);
-
-		//radio buttons
-		drawTexturedModalRect(-71, -50, foundation.getSelectedAttribute() == 0 ? 76 : 62, 151, 14, 14);
-		drawTexturedModalRect(57, -50, foundation.getSelectedAttribute() == 1 ? 76 : 62, 151, 14, 14);
-		drawTexturedModalRect(-73, -20, foundation.getSelectedAttribute() == 2 ? 76 : 62, 151, 14, 14);
-		drawTexturedModalRect(59, -20, foundation.getSelectedAttribute() == 3 ? 76 : 62, 151, 14, 14);
-		drawTexturedModalRect(-71, 10, foundation.getSelectedAttribute() == 4 ? 76 : 62, 151, 14, 14);
-		drawTexturedModalRect(57, 10, foundation.getSelectedAttribute() == 5 ? 76 : 62, 151, 14, 14);
-
-		//bars
-		float fill = (float)Math.min(1, foundation.getAgilityProgress()/ Foundation.getLevelMaxProgress(foundation.getAgility()));
-		int fill_pix = (int)(49*fill);
-		drawTexturedModalRect(-77, -34, 54, 166, 53, 3);
-		drawTexturedModalRect(-75, -34, 56, 169, fill_pix, 3);
-		fill = (float)Math.min(1, foundation.getConstitutionProgress()/ Foundation.getLevelMaxProgress(foundation.getConstitution()));
-		fill_pix = (int)(49*fill);
-		drawTexturedModalRect(21, -34, 54, 166, 53, 3);
-		drawTexturedModalRect(23, -34, 56, 169, fill_pix, 3);
-		fill = (float)Math.min(1, foundation.getDexterityProgress()/ Foundation.getLevelMaxProgress(foundation.getDexterity()));
-		fill_pix = (int)(49*fill);
-		drawTexturedModalRect(-79, -4, 54, 166, 53, 3);
-		drawTexturedModalRect(-77, -4, 56, 169, fill_pix, 3);
-		fill = (float)Math.min(1, foundation.getResistanceProgress()/ Foundation.getLevelMaxProgress(foundation.getResistance()));
-		fill_pix = (int)(49*fill);
-		drawTexturedModalRect(23, -4, 54, 166, 53, 3);
-		drawTexturedModalRect(25, -4, 56, 169, fill_pix, 3);
-		fill = (float)Math.min(1, foundation.getSpiritProgress()/ Foundation.getLevelMaxProgress(foundation.getSpirit()));
-		fill_pix = (int)(49*fill);
-		drawTexturedModalRect(-77, 26, 54, 166, 53, 3);
-		drawTexturedModalRect(-75, 26, 56, 169, fill_pix, 3);
-		fill = (float)Math.min(1, foundation.getStrengthProgress()/ Foundation.getLevelMaxProgress(foundation.getStrength()));
-		fill_pix = (int)(49*fill);
-		drawTexturedModalRect(21, 26, 54, 166, 53, 3);
-		drawTexturedModalRect(23, 26, 56, 169, fill_pix, 3);
-
-		GlStateManager.popMatrix();
-		//minus button
-		drawTexturedModalRect(this.guiLeft + 64, this.guiTop + 118, 45, 142, 9, 9);
-		drawTexturedModalRect(this.guiLeft + 64, this.guiTop + 118, 72, 142, 9, 9);
-		//plus button
-		drawTexturedModalRect(this.guiLeft + 113, this.guiTop + 118, 45, 142, 9, 9);
-		drawTexturedModalRect(this.guiLeft + 113, this.guiTop + 118, 90, 142, 9, 9);
-
-	}*/
+	private void drawCultivationBackground () {
+		int bodyProgress = (int)(124.0* cultivation.getBodyProgress()/cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel()) );
+		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 34, 0, 173, bodyProgress, 16); //dragon
+		if(cultTech.getBodyTechnique()!=null) {
+			int bodyTech = (int) (138.0 * cultTech.getBodyTechnique().getProficiency()
+					/ cultTech.getBodyTechnique().getTechnique().getMaxProficiency());
+			drawTexturedModalRect(this.guiLeft + 7, this.guiTop+61, 139, 0, bodyTech, 3);
+		}
+		int divineProgress = (int)(124.0* cultivation.getDivineProgress()/cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()) );
+		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 75, 0, 205, divineProgress, 16); //dragon
+		if(cultTech.getDivineTechnique()!=null) {
+			int divineTech = (int) (138.0 * cultTech.getDivineTechnique().getProficiency()
+					/ cultTech.getDivineTechnique().getTechnique().getMaxProficiency());
+			drawTexturedModalRect(this.guiLeft + 7, this.guiTop+102, 139, 0, divineTech, 3);
+		}
+		int essenceProgress = (int)(124.0* cultivation.getEssenceProgress()/cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) );
+		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 116, 0, 189, essenceProgress, 16); //dragon
+		if(cultTech.getEssenceTechnique()!=null) {
+			int essenceTech = (int) (138.0 * cultTech.getEssenceTechnique().getProficiency()
+					/ cultTech.getEssenceTechnique().getTechnique().getMaxProficiency());
+			drawTexturedModalRect(this.guiLeft + 7, this.guiTop+61, 143, 0, essenceTech, 3);
+		}
+	}
 
 	private void drawTechniquesBackground() {
 		List<KnownTechnique> toDisplay = new ArrayList<>();
@@ -483,20 +411,15 @@ public class CultivationGui extends GuiScreen {
 		//display = String.format("Strength: %.2f", cultivation.getCurrentLevel().getStrengthModifierBySubLevel(cultivation.getCurrentSubLevel()));
 		//this.fontRenderer.drawString(display, this.guiLeft + 6,this.guiTop + 45,4210752);
 
-		float fontScale = 0.75f;
+		float fontScale = 1f;
 		//select tab
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(this.guiLeft + 32, this.guiTop + 23, 0);
+		GlStateManager.translate(this.guiLeft + 39, this.guiTop + 8, 0);
 		GlStateManager.scale(fontScale, fontScale, 1);
-		drawCenteredString(this.fontRenderer, "Cultivation", 0, 0, 0xFFFFFF);
+		drawCenteredString(this.fontRenderer, "Cultivation", 0, 0, 0xFFFF00);
 		GlStateManager.popMatrix();
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(this.guiLeft + 87, this.guiTop + 23, 0);
-		GlStateManager.scale(fontScale, fontScale, 1);
-		drawCenteredString(this.fontRenderer, "Techniques", 0, 0, 0xFFFFFF);
-		GlStateManager.popMatrix();
-		GlStateManager.pushMatrix();
-		GlStateManager.translate(this.guiLeft + 142, this.guiTop + 23, 0);
+		GlStateManager.translate(this.guiLeft + 110, this.guiTop + 8, 0);
 		GlStateManager.scale(fontScale, fontScale, 1);
 		drawCenteredString(this.fontRenderer, "Skills", 0, 0, 0xFFFFFF);
 		GlStateManager.popMatrix();
@@ -556,22 +479,43 @@ public class CultivationGui extends GuiScreen {
 
 
 	private void drawCultivationForeground() {
-		this.fontRenderer.drawString(cultivation.getBodyLevel().getLevelName(cultivation.getBodySubLevel()), this.guiLeft + 13, this.guiTop + 38, 0xFFFFFF);
-		this.fontRenderer.drawString(String.format("P: %.2f%% M:%.1f %.3f", (100 * cultivation.getBodyProgress() /
-						cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel())),
-				cultivation.getBodyModifier(),
-				cultivation.getBodyProgress()
-		), this.guiLeft + 13, this.guiTop + 50, 0xFFFFFF);
-		this.fontRenderer.drawString(cultivation.getDivineLevel().getLevelName(cultivation.getDivineSubLevel()), this.guiLeft + 13, this.guiTop + 62, 0xFFFFFF);
-		this.fontRenderer.drawString(String.format("P: %d%% M:%.1f %.3f", (int) (100 * cultivation.getDivineProgress() /
-						cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel())),
-				cultivation.getDivineModifier(),
-				cultivation.getDivineProgress()), this.guiLeft + 13, this.guiTop + 74, 0xFFFFFF);
-		this.fontRenderer.drawString(cultivation.getEssenceLevel().getLevelName(cultivation.getEssenceSubLevel()), this.guiLeft + 13, this.guiTop + 86, 0xFFFFFF);
-		this.fontRenderer.drawString(String.format("P: %d%% M:%.1f %.3f", (int) (100 * cultivation.getEssenceProgress() /
-						cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel())),
-				cultivation.getEssenceModifier(),
-				cultivation.getEssenceProgress()), this.guiLeft + 13, this.guiTop + 98, 0xFFFFFF);
+		float fontScale = 0.8f;
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(this.guiLeft + 13, this.guiTop + 25, 0);
+		GlStateManager.scale(fontScale, fontScale, 1);
+		this.fontRenderer.drawString(cultivation.getBodyLevel().getLevelName(cultivation.getBodySubLevel()), 0, 0, 0xFFFFFF);
+		GlStateManager.popMatrix();
+		if(cultTech.getBodyTechnique() != null) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 13, this.guiTop + 52, 0);
+			GlStateManager.scale(fontScale, fontScale, 1);
+			this.fontRenderer.drawString(cultTech.getBodyTechnique().getTechnique().getName(), 0, 0, 0xFFFFFF);
+			GlStateManager.popMatrix();
+		}
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(this.guiLeft + 13, this.guiTop + 66, 0);
+		GlStateManager.scale(fontScale, fontScale, 1);
+		this.fontRenderer.drawString(cultivation.getDivineLevel().getLevelName(cultivation.getDivineSubLevel()), 0, 0, 0xFFFFFF);
+		GlStateManager.popMatrix();
+		if(cultTech.getDivineTechnique() != null) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 13, this.guiTop + 93, 0);
+			GlStateManager.scale(fontScale, fontScale, 1);
+			this.fontRenderer.drawString(cultTech.getDivineTechnique().getTechnique().getName(), 0, 0, 0xFFFFFF);
+			GlStateManager.popMatrix();
+		}
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(this.guiLeft + 13, this.guiTop + 107, 0);
+		GlStateManager.scale(fontScale, fontScale, 1);
+		this.fontRenderer.drawString(cultivation.getEssenceLevel().getLevelName(cultivation.getEssenceSubLevel()), 0, 0, 0xFFFFFF);
+		GlStateManager.popMatrix();
+		if(cultTech.getEssenceTechnique() != null) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 13, this.guiTop + 134, 0);
+			GlStateManager.scale(fontScale, fontScale, 1);
+			this.fontRenderer.drawString(cultTech.getEssenceTechnique().getTechnique().getName(), 0, 0, 0xFFFFFF);
+			GlStateManager.popMatrix();
+		}
 	}
 
 	private void drawTechniquesForeground() {
@@ -607,17 +551,9 @@ public class CultivationGui extends GuiScreen {
 
 	private void drawTooltips(int mouseX, int mouseY) {
 		GlStateManager.color(1f, 1f, 1f, 1f);
-		//progress %
-		if (inBounds(mouseX, mouseY, this.guiLeft + 183, this.guiTop + 5, 16, 124)) {
-			int progress_fill = (int) (cultivation.getEssenceProgress() * 100f / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()));
-			String line = String.format("%d%%", progress_fill);
-			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
-			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
-		}
-		//energy %
-		if (inBounds(mouseX, mouseY, this.guiLeft + 172, this.guiTop + 5, 10, 28)) {
-			int energy_fill = (int) (cultivation.getEnergy() * 100f / CultivationUtils.getMaxEnergy(this.player));
-			String line = String.format("%d%%", energy_fill);
+		// suppress cultivation
+		if (inBounds(mouseX, mouseY, this.guiLeft + 180, this.guiTop + 5, 12, 14)) {
+			String line = "Suppress cultivation";
 			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
 			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
 		}
