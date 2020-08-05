@@ -528,20 +528,20 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public double getBodyModifier() {
-		return this.bodyLevel.getModifierBySubLevel(this.bodySubLevel) *
-				(0.6 + ((this.bodyProgress + this.bodyFoundation) / this.bodyLevel.getProgressBySubLevel(this.bodySubLevel)) * 0.4);
+		return Math.max(1, this.bodyLevel.getModifierBySubLevel(this.bodySubLevel) *
+				(0.6 + ((this.bodyProgress + this.bodyFoundation) / this.bodyLevel.getProgressBySubLevel(this.bodySubLevel)) * 0.4));
 	}
 
 	@Override
 	public double getDivineModifier() {
-		return this.divineLevel.getModifierBySubLevel(this.divineSubLevel) *
-				(0.6 + ((this.divineProgress + this.divineFoundation) / this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) * 0.4);
+		return Math.max(1, this.divineLevel.getModifierBySubLevel(this.divineSubLevel) *
+				(0.6 + ((this.divineProgress + this.divineFoundation) / this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) * 0.4));
 	}
 
 	@Override
 	public double getEssenceModifier() {
-		return this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel) *
-				(0.6 + ((this.essenceProgress + this.essenceFoundation) / this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)) * 0.4);
+		return Math.max(1, this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel) *
+				(0.6 + ((this.essenceProgress + this.essenceFoundation) / this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)) * 0.4));
 	}
 
 	@Override
