@@ -33,7 +33,7 @@ public class Cultivation implements ICultivation {
 
 	private System selectedSystem;
 
-	public class RequiresTribulation extends Exception {
+	public static class RequiresTribulation extends Exception {
 		public final double tribulationStrength;
 		public final System system;
 		public final BaseSystemLevel level;
@@ -80,18 +80,11 @@ public class Cultivation implements ICultivation {
 		if (allowBreakthrough) {
 			if (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel)) {
 				boolean divineCondition = (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineLevel.subLevels - 1)
-						&& this.divineSubLevel >= this.divineLevel.subLevels - 1
-						&& this.divineLevel == BaseSystemLevel.DEFAULT_DIVINE_LEVEL)
-						|| this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL;
+						&& this.divineSubLevel >= this.divineLevel.subLevels - 1) || this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL;
+				// if this tehn all above
 				boolean essenceCondition = (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceLevel.subLevels - 1)
-						&& this.essenceSubLevel >= this.essenceLevel.subLevels - 1
-						&& this.essenceLevel == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) // if this tehn all above
-						|| this.bodyLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL; // or not in this level
+						&& this.essenceSubLevel >= this.essenceLevel.subLevels - 1) || this.essenceLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL; // or not in this level
 				if (essenceCondition && divineCondition) { // can breaktrough
-					if (this.bodyLevel.tribulationEachSubLevel && this.bodySubLevel < this.bodyLevel.subLevels - 1) {
-						double strength = this.bodyLevel.getModifierBySubLevel(this.bodySubLevel + 1);
-						throw new RequiresTribulation(strength, System.BODY, this.bodyLevel, this.bodySubLevel + 1);
-					}
 					if (this.bodyLevel.tribulationEachSubLevel && this.bodySubLevel < this.bodyLevel.subLevels - 1) {
 						double strength = this.bodyLevel.getModifierBySubLevel(this.bodySubLevel + 1);
 						throw new RequiresTribulation(strength, System.BODY, this.bodyLevel, this.bodySubLevel + 1);
@@ -119,14 +112,11 @@ public class Cultivation implements ICultivation {
 		this.divineProgress += amount;
 		if (allowBreakthrough) {
 			if (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) {
+				// if this tehn all above
 				boolean bodyCondition = (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodyLevel.subLevels - 1)
-						&& this.bodySubLevel >= this.bodyLevel.subLevels - 1
-						&& this.bodyLevel == BaseSystemLevel.DEFAULT_BODY_LEVEL) // if this tehn all above
-						|| this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL; // or not in this level
+						&& this.bodySubLevel >= this.bodyLevel.subLevels - 1) || this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL; // or not in this level
 				boolean essenceCondition = (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceLevel.subLevels - 1)
-						&& this.essenceSubLevel >= this.essenceLevel.subLevels - 1
-						&& this.essenceLevel == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) // if this tehn all above
-						|| this.bodyLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL; // or not in this level
+						&& this.essenceSubLevel >= this.essenceLevel.subLevels - 1)	|| this.essenceLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL;
 				if (bodyCondition && essenceCondition) { // can breaktrough
 					if (this.divineLevel.tribulationEachSubLevel && this.divineSubLevel < this.divineLevel.subLevels - 1) {
 						double strength = this.divineLevel.getModifierBySubLevel(this.divineSubLevel + 1);
@@ -155,14 +145,11 @@ public class Cultivation implements ICultivation {
 		this.essenceProgress += amount;
 		if (allowBreakthrough) {
 			if (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)) {
+				// if this tehn all above
 				boolean bodyCondition = (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodyLevel.subLevels - 1)
-						&& this.bodySubLevel >= this.bodyLevel.subLevels - 1
-						&& this.bodyLevel == BaseSystemLevel.DEFAULT_BODY_LEVEL) // if this tehn all above
-						|| this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL; // or not in this level
+						&& this.bodySubLevel >= this.bodyLevel.subLevels - 1) || this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL; // or not in this level
 				boolean divineCondition = (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineLevel.subLevels - 1)
-						&& this.divineSubLevel >= this.divineLevel.subLevels - 1
-						&& this.divineLevel == BaseSystemLevel.DEFAULT_DIVINE_LEVEL)
-						|| this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL;
+						&& this.divineSubLevel >= this.divineLevel.subLevels - 1) || this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL;
 				if (bodyCondition && divineCondition) { // can breaktrough
 					if (this.essenceLevel.tribulationEachSubLevel && this.essenceSubLevel < this.essenceLevel.subLevels - 1) {
 						double strength = this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel + 1);
@@ -172,7 +159,7 @@ public class Cultivation implements ICultivation {
 					leveled = true;
 					this.essenceSubLevel++;
 					if (this.essenceSubLevel == this.essenceLevel.subLevels) {
-						if (this.bodyLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS).callsTribulation) {
+						if (this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS).callsTribulation) {
 							double strength = this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS).getModifierBySubLevel(0);
 							throw new RequiresTribulation(strength, System.ESSENCE, this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS), 0);
 						}

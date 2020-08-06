@@ -2,6 +2,8 @@ package com.airesnor.wuxiacraft.commands;
 
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.networking.CultivationMessage;
+import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -58,33 +60,63 @@ public class ProgressCommand extends CommandBase {
                         ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
                         try {
                             double amount = Double.parseDouble(args[3]);
+                            TextComponentString text;
                             switch(args[2]) {
                                 case "body":
                                     if (args[0].equalsIgnoreCase("set")) {
                                         cultivation.setBodyProgress(amount);
                                         wrongUsage = false;
                                     } else if (args[0].equalsIgnoreCase("add")) {
-                                        cultivation.addBodyProgress(amount, true);
+                                        cultivation.addBodyProgress(amount, false);
                                         wrongUsage = false;
                                     }
+                                    text = new TextComponentString("Your cultivation base has been modified ...");
+                                    text.getStyle().setColor(TextFormatting.GRAY);
+                                    targetPlayer.sendMessage(text);
+                                    NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
                                     break;
                                 case "divine":
                                     if (args[0].equalsIgnoreCase("set")) {
                                         cultivation.setDivineProgress(amount);
                                         wrongUsage = false;
                                     } else if (args[0].equalsIgnoreCase("add")) {
-                                        cultivation.addDivineProgress(amount, true);
+                                        cultivation.addDivineProgress(amount, false);
                                         wrongUsage = false;
                                     }
+                                    text = new TextComponentString("Your cultivation base has been modified ...");
+                                    text.getStyle().setColor(TextFormatting.GRAY);
+                                    targetPlayer.sendMessage(text);
+                                    NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
                                     break;
                                 case "essence":
                                     if (args[0].equalsIgnoreCase("set")) {
                                         cultivation.setEssenceProgress(amount);
                                         wrongUsage = false;
                                     } else if (args[0].equalsIgnoreCase("add")) {
-                                        cultivation.addEssenceProgress(amount, true);
+                                        cultivation.addEssenceProgress(amount, false);
                                         wrongUsage = false;
                                     }
+                                    text = new TextComponentString("Your cultivation base has been modified ...");
+                                    text.getStyle().setColor(TextFormatting.GRAY);
+                                    targetPlayer.sendMessage(text);
+                                    NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
+                                    break;
+                                case "three":
+                                    if (args[0].equalsIgnoreCase("set")) {
+                                        cultivation.setBodyProgress(amount);
+                                        cultivation.setDivineProgress(amount);
+                                        cultivation.setEssenceProgress(amount);
+                                        wrongUsage = false;
+                                    } else if (args[0].equalsIgnoreCase("add")) {
+                                        cultivation.addBodyProgress(amount, false);
+                                        cultivation.addDivineProgress(amount, false);
+                                        cultivation.addEssenceProgress(amount, false);
+                                        wrongUsage = false;
+                                    }
+                                    text = new TextComponentString("Your cultivation base has been modified ...");
+                                    text.getStyle().setColor(TextFormatting.GRAY);
+                                    targetPlayer.sendMessage(text);
+                                    NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
                                     break;
                             }
                         } catch (NumberFormatException e) {
@@ -125,6 +157,7 @@ public class ProgressCommand extends CommandBase {
             if ("body".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("body");
             else if ("divine".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("divine");
             else if ("essence".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("essence");
+            else if ("three".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("three");
         }
         return completions;
     }
