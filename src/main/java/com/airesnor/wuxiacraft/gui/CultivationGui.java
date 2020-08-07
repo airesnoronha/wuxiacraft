@@ -247,18 +247,18 @@ public class CultivationGui extends GuiScreen {
 				if (index >= this.offset && index < (this.offset + Tabs.SKILLS.maxDisplayItems)) {
 					int pos = index - this.offset;
 					if (skillCap.getKnownSkills().contains(totalSkills.get(index))) {
-						if (inBounds(mouseX, mouseY, this.guiLeft + 8, this.guiTop + 37 + pos * 12, 9, 9)) {
+						if (inBounds(mouseX, mouseY, this.guiLeft + 8, this.guiTop + 25 + pos * 12, 9, 9)) {
 							removeSkill(totalSkills.get(index));
 						}
 					}
-					if (inBounds(mouseX, mouseY, this.guiLeft + 20, this.guiTop + 37 + pos * 12, 9, 9)) {
+					if (inBounds(mouseX, mouseY, this.guiLeft + 20, this.guiTop + 25 + pos * 12, 9, 9)) {
 						selectSkill(index);
 					}
 				} else if (index >= (this.offset + Tabs.SKILLS.maxDisplayItems)) {
 					break;
 				}
 			}
-			if (inBounds(mouseX, mouseY, this.guiLeft + 20, this.guiTop + 133, 9, 9)) {
+			if (inBounds(mouseX, mouseY, this.guiLeft + 20, this.guiTop + 155, 9, 9)) {
 				this.toggleDeselectAllSkills();
 			}
 		}
@@ -272,9 +272,9 @@ public class CultivationGui extends GuiScreen {
 
 		//suppression
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(this.guiLeft+180, this.guiTop + 5, 0);
+		GlStateManager.translate(this.guiLeft + 180, this.guiTop + 5, 0);
 		int tex_y = cultivation.getSuppress() ? 0 : 44;
-		GlStateManager.scale(14f/44f, 14f/44f, 1);
+		GlStateManager.scale(14f / 44f, 14f / 44f, 1);
 		drawTexturedModalRect(0, 0, 200, tex_y, 36, 44);
 		GlStateManager.popMatrix();
 
@@ -328,27 +328,27 @@ public class CultivationGui extends GuiScreen {
 		}
 	}
 
-	private void drawCultivationBackground () {
-		int bodyProgress = (int)(124.0* cultivation.getBodyProgress()/cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel()) );
+	private void drawCultivationBackground() {
+		int bodyProgress = (int) (124.0 * cultivation.getBodyProgress() / cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel()));
 		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 34, 0, 195, bodyProgress, 16); //dragon
-		if(cultTech.getBodyTechnique()!=null) {
+		if (cultTech.getBodyTechnique() != null) {
 			int bodyTech = (int) (138.0 * cultTech.getBodyTechnique().getProficiency()
 					/ cultTech.getBodyTechnique().getTechnique().getMaxProficiency());
-			drawTexturedModalRect(this.guiLeft + 7, this.guiTop+61, 0, 161, bodyTech, 3);
+			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 61, 0, 161, bodyTech, 3);
 		}
-		int divineProgress = (int)(124.0* cultivation.getDivineProgress()/cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()) );
+		int divineProgress = (int) (124.0 * cultivation.getDivineProgress() / cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()));
 		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 75, 0, 227, divineProgress, 16); //dragon
-		if(cultTech.getDivineTechnique()!=null) {
+		if (cultTech.getDivineTechnique() != null) {
 			int divineTech = (int) (138.0 * cultTech.getDivineTechnique().getProficiency()
 					/ cultTech.getDivineTechnique().getTechnique().getMaxProficiency());
-			drawTexturedModalRect(this.guiLeft + 7, this.guiTop+102, 0, 161, divineTech, 3);
+			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 102, 0, 161, divineTech, 3);
 		}
-		int essenceProgress = (int)(124.0* cultivation.getEssenceProgress()/cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) );
+		int essenceProgress = (int) (124.0 * cultivation.getEssenceProgress() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()));
 		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 116, 0, 211, essenceProgress, 16); //dragon
-		if(cultTech.getEssenceTechnique()!=null) {
+		if (cultTech.getEssenceTechnique() != null) {
 			int essenceTech = (int) (138.0 * cultTech.getEssenceTechnique().getProficiency()
 					/ cultTech.getEssenceTechnique().getTechnique().getMaxProficiency());
-			drawTexturedModalRect(this.guiLeft + 7, this.guiTop+61, 0, 161, essenceTech, 3);
+			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 143, 0, 161, essenceTech, 3);
 		}
 	}
 
@@ -381,22 +381,22 @@ public class CultivationGui extends GuiScreen {
 			if (index >= this.offset && index < (this.offset + Tabs.SKILLS.maxDisplayItems)) {
 				int pos = index - this.offset;
 				if (skillCap.getKnownSkills().contains(totalSkills.get(index))) {
-					drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 37 + pos * 12, 45, 142, 9, 9);
-					drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 37 + pos * 12, 72, 142, 9, 9);
+					drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 25 + pos * 12, 45, 164, 9, 9);
+					drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 25 + pos * 12, 72, 164, 9, 9);
 				}
 				if (skillCap.getSelectedSkills().contains(index)) {
-					drawTexturedModalRect(this.guiLeft + 20, this.guiTop + 37 + pos * 12, 126, 142, 9, 9);
+					drawTexturedModalRect(this.guiLeft + 20, this.guiTop + 25 + pos * 12, 126, 164, 9, 9);
 				} else {
-					drawTexturedModalRect(this.guiLeft + 20, this.guiTop + 37 + pos * 12, 117, 142, 9, 9);
+					drawTexturedModalRect(this.guiLeft + 20, this.guiTop + 25 + pos * 12, 117, 164, 9, 9);
 				}
 			} else if (index >= (this.offset + Tabs.SKILLS.maxDisplayItems)) {
 				break;
 			}
 		}
 		if (skillCap.getSelectedSkills().isEmpty()) {
-			drawTexturedModalRect(this.guiLeft + 20, this.guiTop + 133, 117, 142, 9, 9);
+			drawTexturedModalRect(this.guiLeft + 20, this.guiTop + 155, 117, 164, 9, 9);
 		} else {
-			drawTexturedModalRect(this.guiLeft + 20, this.guiTop + 133, 126, 142, 9, 9);
+			drawTexturedModalRect(this.guiLeft + 20, this.guiTop + 155, 126, 164, 9, 9);
 		}
 	}
 
@@ -481,9 +481,9 @@ public class CultivationGui extends GuiScreen {
 		GlStateManager.translate(this.guiLeft + 13, this.guiTop + 25, 0);
 		GlStateManager.scale(fontScale, fontScale, 1);
 		this.fontRenderer.drawString(cultivation.getBodyLevel().getLevelName(cultivation.getBodySubLevel()), 0, 0, 0xFFFFFF);
-		this.fontRenderer.drawStringWithShadow(String.format("%.2f",cultivation.getBodyProgress()), 20, 18, 0x00FF20);
+		this.fontRenderer.drawStringWithShadow(String.format("%.2f", cultivation.getBodyProgress()), 20, 18, 0x00FF20);
 		GlStateManager.popMatrix();
-		if(cultTech.getBodyTechnique() != null) {
+		if (cultTech.getBodyTechnique() != null) {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(this.guiLeft + 13, this.guiTop + 52, 0);
 			GlStateManager.scale(fontScale, fontScale, 1);
@@ -494,9 +494,9 @@ public class CultivationGui extends GuiScreen {
 		GlStateManager.translate(this.guiLeft + 13, this.guiTop + 66, 0);
 		GlStateManager.scale(fontScale, fontScale, 1);
 		this.fontRenderer.drawString(cultivation.getDivineLevel().getLevelName(cultivation.getDivineSubLevel()), 0, 0, 0xFFFFFF);
-		this.fontRenderer.drawStringWithShadow(String.format("%.2f",cultivation.getDivineProgress()), 20, 18, 0x00FF20);
+		this.fontRenderer.drawStringWithShadow(String.format("%.2f", cultivation.getDivineProgress()), 20, 18, 0x00FF20);
 		GlStateManager.popMatrix();
-		if(cultTech.getDivineTechnique() != null) {
+		if (cultTech.getDivineTechnique() != null) {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(this.guiLeft + 13, this.guiTop + 93, 0);
 			GlStateManager.scale(fontScale, fontScale, 1);
@@ -507,9 +507,9 @@ public class CultivationGui extends GuiScreen {
 		GlStateManager.translate(this.guiLeft + 13, this.guiTop + 107, 0);
 		GlStateManager.scale(fontScale, fontScale, 1);
 		this.fontRenderer.drawString(cultivation.getEssenceLevel().getLevelName(cultivation.getEssenceSubLevel()), 0, 0, 0xFFFFFF);
-		this.fontRenderer.drawStringWithShadow(String.format("%.2f",cultivation.getEssenceProgress()), 20, 18, 0x00FF20);
+		this.fontRenderer.drawStringWithShadow(String.format("%.2f", cultivation.getEssenceProgress()), 20, 18, 0x00FF20);
 		GlStateManager.popMatrix();
-		if(cultTech.getEssenceTechnique() != null) {
+		if (cultTech.getEssenceTechnique() != null) {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(this.guiLeft + 13, this.guiTop + 134, 0);
 			GlStateManager.scale(fontScale, fontScale, 1);
@@ -542,7 +542,7 @@ public class CultivationGui extends GuiScreen {
 			int index = totalSkills.indexOf(skill);
 			if (index >= this.offset && index < (this.offset + Tabs.SKILLS.maxDisplayItems)) {
 				int pos = index - this.offset;
-				this.fontRenderer.drawString(skill.getName(), this.guiLeft + 31, this.guiTop + 37 + pos * 12, 0xFFFFFF);
+				this.fontRenderer.drawString(skill.getName(), this.guiLeft + 31, this.guiTop + 25 + pos * 12, 0xFFFFFF);
 			} else if (index >= (this.offset + Tabs.SKILLS.maxDisplayItems)) {
 				break;
 			}
@@ -560,7 +560,7 @@ public class CultivationGui extends GuiScreen {
 		//tabs
 		switch (this.tab) {
 			case FOUNDATION:
-				//drawFoundationTooltips(mouseX, mouseY);
+				drawCultivationTooltips(mouseX, mouseY);
 				break;
 			case TECHNIQUES:
 				drawTechniquesTooltips(mouseX, mouseY);
@@ -578,62 +578,46 @@ public class CultivationGui extends GuiScreen {
 		//}
 	}
 
-	/*private void drawFoundationTooltips(int mouseX, int mouseY) {
+	private void drawCultivationTooltips(int mouseX, int mouseY) {
 		boolean drawing = false;
 		String line = "";
-		if(inBounds(mouseX, mouseY, this.guiLeft+16, this.guiTop+54, 54, 3)) {
+		//% first
+		if(inBounds(mouseX, mouseY, this.guiLeft+7, this.guiTop+34, 124, 16)) {
 			drawing = true;
-			line = String.format("%d%%", (int)(this.foundation.getAgilityProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getAgility())));
+			line = String.format("%.2f%%", this.cultivation.getBodyProgress()*100.0/this.cultivation.getBodyLevel().getProgressBySubLevel(this.cultivation.getBodySubLevel()));
 		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+114, this.guiTop+54, 54, 3)) {
+		else if(inBounds(mouseX, mouseY, this.guiLeft+7, this.guiTop+75, 124, 16)) {
 			drawing = true;
-			line = String.format("%d%%", (int)(this.foundation.getConstitutionProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getConstitution())));
+			line = String.format("%.2f%%", this.cultivation.getDivineProgress()*100.0/this.cultivation.getDivineLevel().getProgressBySubLevel(this.cultivation.getDivineSubLevel()));
 		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+14, this.guiTop+84, 54, 3)) {
+		else if(inBounds(mouseX, mouseY, this.guiLeft+7, this.guiTop+116, 124, 16)) {
 			drawing = true;
-			line = String.format("%d%%", (int)(this.foundation.getDexterityProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getDexterity())));
+			line = String.format("%.2f%%", this.cultivation.getEssenceProgress()*100.0/this.cultivation.getEssenceLevel().getProgressBySubLevel(this.cultivation.getEssenceSubLevel()));
 		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+116, this.guiTop+84, 54, 3)) {
-			drawing = true;
-			line = String.format("%d%%", (int)(this.foundation.getResistanceProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getResistance())));
+		//techniques 2nd
+		if(this.cultTech.getBodyTechnique() != null) {
+			if (inBounds(mouseX, mouseY, this.guiLeft + 7, this.guiTop + 52, 138, 12)) {
+				drawing = true;
+				line = this.cultTech.getBodyTechnique().getCurrentCheckpoint();
+			}
 		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+16, this.guiTop+114, 54, 3)) {
-			drawing = true;
-			line = String.format("%d%%", (int)(this.foundation.getSpiritProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getSpirit())));
+		if(this.cultTech.getDivineTechnique() != null) {
+			if (inBounds(mouseX, mouseY, this.guiLeft + 7, this.guiTop + 93, 138, 12)) {
+				drawing = true;
+				line = this.cultTech.getDivineTechnique().getCurrentCheckpoint();
+			}
 		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+114, this.guiTop+114, 54, 3)) {
-			drawing = true;
-			line = String.format("%d%%", (int)(this.foundation.getStrengthProgress()*100f/Foundation.getLevelMaxProgress(this.foundation.getStrength())));
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+36, this.guiTop+41, 44, 11)) {
-			drawing = true;
-			line = String.format("Agility: %d", this.foundation.getAgility());
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+104, this.guiTop+41, 44, 11)) {
-			drawing = true;
-			line = String.format("Constitution: %d", this.foundation.getConstitution());
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+34, this.guiTop+71, 44, 11)) {
-			drawing = true;
-			line = String.format("Dexterity: %d", this.foundation.getDexterity());
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+106, this.guiTop+71, 44, 11)) {
-			drawing = true;
-			line = String.format("Resistance: %d", this.foundation.getResistance());
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+36, this.guiTop+101, 44, 11)) {
-			drawing = true;
-			line = String.format("Spirit: %d", this.foundation.getSpirit());
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+104, this.guiTop+101, 44, 11)) {
-			drawing = true;
-			line = String.format("Strength: %d", this.foundation.getStrength());
+		if(this.cultTech.getEssenceTechnique() != null) {
+			if (inBounds(mouseX, mouseY, this.guiLeft + 7, this.guiTop + 134, 138, 12)) {
+				drawing = true;
+				line = this.cultTech.getEssenceTechnique().getCurrentCheckpoint();
+			}
 		}
 		if(drawing) {
 			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
 			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
 		}
-	}*/
+	}
 
 	private void drawTechniquesTooltips(int mouseX, int mouseY) {
 		List<KnownTechnique> toDisplay = new ArrayList<>();
@@ -649,7 +633,6 @@ public class CultivationGui extends GuiScreen {
 				int pos = index - this.offset;
 				if (inBounds(mouseX, mouseY, this.guiLeft + 19, this.guiTop + 35 + pos * 19 + 11, 139, 3)) {
 					String line = "No success";
-					//TODO save this while loading the screen to save this loop every frame
 					double highestFoundBeneath = 0; // in case checkpoints aren't in order
 					for (Pair<Double, String> checkpoints : t.getTechnique().getCheckpoints()) {
 						if (checkpoints.getKey() > highestFoundBeneath) {
@@ -668,9 +651,17 @@ public class CultivationGui extends GuiScreen {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private void drawSkillsTooltips(int mouseX, int mouseY) {
-
+		boolean drawing = false;
+		String line = "";
+		if (inBounds(mouseX, mouseY, this.guiLeft + 20, this.guiTop + 155, 9, 9)) {
+			drawing = true;
+			line = skillCap.getSelectedSkills().size() > 0 ? "Deselect Skills" : "Select All Skills";
+		}
+		if (drawing) {
+			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
+			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
+		}
 	}
 
 	private void toggleDeselectAllSkills() {
@@ -877,7 +868,7 @@ public class CultivationGui extends GuiScreen {
 	public enum Tabs {
 		FOUNDATION(0),
 		TECHNIQUES(5),
-		SKILLS(7);
+		SKILLS(10);
 
 		public final int maxDisplayItems;
 

@@ -152,7 +152,11 @@ public class ProgressCommand extends CommandBase {
             if ("add".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("add");
             if ("set".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("set");
         } else if (args.length == 2) {
-            completions.addAll(Arrays.asList(server.getOnlinePlayerNames()));
+            for(String name : server.getOnlinePlayerNames()) {
+                if(name.toLowerCase().startsWith(args[1].toLowerCase())) {
+                    completions.add(name);
+                }
+            }
         } else if(args.length == 3) {
             if ("body".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("body");
             else if ("divine".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("divine");

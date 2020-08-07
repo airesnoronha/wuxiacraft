@@ -82,6 +82,7 @@ public class SkillCultivate extends Skill {
 						CultivationUtils.cultivatorAddProgress(actor, system, amount, true, true);
 						cultivation.remEnergy(energy);
 						NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, system, amount, true, true, actor.getUniqueID()));
+						cultTech.getTechniqueBySystem(system).getTechnique().cultivationEffect.activate(actor);
 					}
 				}
 				LastUseCultivateMillis = System.currentTimeMillis();

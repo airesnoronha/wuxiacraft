@@ -29,6 +29,20 @@ public class KnownTechnique {
 		return technique;
 	}
 
+	public String getCurrentCheckpoint() {
+		String current = "No success";
+		double highestComparedCheckpointProficiency = 0; //in case checkpoints aren't in order
+		for(Pair<Double, String> checkpoint : technique.getCheckpoints()) {
+			if (checkpoint.getKey() > highestComparedCheckpointProficiency) {
+				if(this.proficiency > checkpoint.getKey()) {
+					highestComparedCheckpointProficiency = checkpoint.getKey();
+					current = checkpoint.getValue();
+				}
+			}
+		}
+		return current;
+	}
+
 	public List<PotionEffect> getTechniqueEffects() {
 		List<PotionEffect> effects = new ArrayList<>();
 		for(Pair<Double, PotionEffect> effect : this.getTechnique().getEffects()) {

@@ -27,11 +27,7 @@ public class Barrier implements IBarrier {
 
     @Override
     public void setBarrierAmount(float amount) {
-        if (amount < 0.0f) {
-            this.barrierAmount = 0.0f;
-        } else {
-            this.barrierAmount = amount;
-        }
+        this.barrierAmount = Math.max(amount, 0.0f);
     }
 
     @Override
@@ -85,6 +81,11 @@ public class Barrier implements IBarrier {
     }
 
     @Override
+    public float getMaxBarrierAmount(double essenceModifier) {
+        return (float)Math.max(0, (essenceModifier-3.0)*0.5);
+    }
+
+    @Override
     public void setBarrierRegenRate(float regenRate) {
         this.barrierRegenRate = regenRate;
     }
@@ -110,7 +111,7 @@ public class Barrier implements IBarrier {
     }
 
     @Override
-    public void addBarrierCoodown(int cooldown) {
+    public void addBarrierCooldown(int cooldown) {
         this.barrierCooldown += Math.max(0, cooldown);
     }
 

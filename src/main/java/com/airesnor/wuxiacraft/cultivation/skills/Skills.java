@@ -58,6 +58,9 @@ public class Skills {
     // TODO Overlay Swing (Sword marking skill that makes target vulnerable) from HuoYuhao
     // TODO Natural embodiment (mimicry) from HuoYuhao
     // TODO Eye of terror (gaze and slows target and fear) from HuoYuhao
+    // TODO -- add a soul mark
+    // TODO -- add a spiritual pressure
+    // TODO -- add a spirit arrow attack
 
     public static final List<Skill> SKILLS = new ArrayList<>();
 

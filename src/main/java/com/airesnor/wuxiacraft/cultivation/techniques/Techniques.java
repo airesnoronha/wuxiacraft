@@ -1,10 +1,19 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
+import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
+import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,19 +35,21 @@ public class Techniques {
 		TECHNIQUES.add(MERCIFUL_PALM_OF_BUDDHA);
 		TECHNIQUES.add(PHOENIX_BODY_ART);
 		TECHNIQUES.add(DRAGON_BODY_TEMPERING);
+		TECHNIQUES.add(CAT_BODY_TRANSFORMATION_ARTS);
 		TECHNIQUES.add(WIDE_WATER_FLOW);
-		TECHNIQUES.add(BACIC_LIGHTNIG_GUIDE);
+		TECHNIQUES.add(BASIC_LIGHTNING_GUIDE);
 		TECHNIQUES.add(FOREST_HEART_MANUAL);
 		TECHNIQUES.add(LIGHT_CLOUD_STEPS);
 		TECHNIQUES.add(BLOOMING_FOREST_ART);
-		TECHNIQUES.add(COLOSSAL_MOUNATIN_CONTROL);
+		TECHNIQUES.add(COLOSSAL_MOUNTAIN_CONTROL);
 		TECHNIQUES.add(WIND_STORM_ART);
 		TECHNIQUES.add(DRAGON_SPEAR_ART);
 		TECHNIQUES.add(YANG_BURNING_ART);
 		TECHNIQUES.add(COLD_SWORD_ART);
-		TECHNIQUES.add(EARTH_SPLITTING_SWORD_ARD);
+		TECHNIQUES.add(EARTH_SPLITTING_SWORD_ART);
 		TECHNIQUES.add(EARTH_ASSIMILATING_QI);
 		TECHNIQUES.add(THUNDER_FIRE_ART);
+		TECHNIQUES.add(DIVINE_FART_CULTIVATION_ART);
 		TECHNIQUES.add(IGNITED_SOUL);
 		TECHNIQUES.add(BURNING_FLAME_SOUL);
 		TECHNIQUES.add(THUNDER_WALL_SOUL_ARTS);
@@ -151,8 +162,8 @@ public class Techniques {
 			.addCheckpoint(1500000, "Great Success")
 			.addCheckpoint(23000000, "Perfected");
 
-	// TODO -- call random lightning strikes to kill players while cultivating, and if he survives gains a small cultivation base bonus o.O
 	//From Asura
+	//Call random tribulation while cultivating
 	public static final Technique LIGHTNING_THUNDER_BODY_ART = new Technique("lightning_thunder_body_art", Cultivation.System.BODY,
 			new TechniquesModifiers(4, 2, 5, 2, 3, 3), 1.5, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
@@ -161,7 +172,17 @@ public class Techniques {
 			.addCheckpoint(600000, "Natural Success")
 			.addCheckpoint(1500000, "Great Success")
 			.addCheckpoint(23000000, "Perfected")
-			.addElement(Element.LIGHTNING);
+			.addElement(Element.LIGHTNING)
+			.setCultivationEffect(actor -> {
+						if (!actor.world.isRemote) {
+							if (actor.getRNG().nextFloat() < 0.01) {
+								ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
+								CultivationUtils.callCustomThunder(actor, cultivation.getBodyModifier() * 5, 0.15 * cultivation.getBodyModifier());
+							}
+						}
+						return true;
+					}
+			);
 
 	//From Fruit
 	public static final Technique MONKEY_KING_VITALITY_ART = new Technique("monkey_king_vitality_art", Cultivation.System.BODY,
@@ -187,7 +208,7 @@ public class Techniques {
 
 	// TODO -- transformations
 	//From Asura
-	public static final Technique PHOENIX_BODY_ART = new Technique("phoenix_body_Art", Cultivation.System.BODY,
+	public static final Technique PHOENIX_BODY_ART = new Technique("phoenix_body_art", Cultivation.System.BODY,
 			new TechniquesModifiers(4, 2, 5, 2, 3, 5), 1.5, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
@@ -233,8 +254,7 @@ public class Techniques {
 			.addElement(Element.WATER);
 
 	//From Dremtas White Tiger
-	@SuppressWarnings("SpellCheckingInspection")
-	public static final Technique BACIC_LIGHTNIG_GUIDE = new Technique("bacic_lightnig_guide", Cultivation.System.ESSENCE,
+	public static final Technique BASIC_LIGHTNING_GUIDE = new Technique("basic_lightning_guide", Cultivation.System.ESSENCE,
 			new TechniquesModifiers(2, 5, 3, 4, 4, 5), 1.6, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
@@ -255,7 +275,7 @@ public class Techniques {
 			.addCheckpoint(23000000, "Perfected")
 			.addElement(Element.WOOD);
 
-	// TODO -- multiple jumps
+	// TODO -- multiple jumps --  i guess this is hard
 	//From Febian
 	public static final Technique LIGHT_CLOUD_STEPS = new Technique("light_cloud_steps", Cultivation.System.ESSENCE,
 			new TechniquesModifiers(4, 2, 6, 3, 4, 3), 1.7, 2300000, 800)
@@ -279,8 +299,7 @@ public class Techniques {
 			.addElement(Element.WOOD);
 
 	//From Dremtas White Tiger
-	@SuppressWarnings("SpellCheckingInspection")
-	public static final Technique COLOSSAL_MOUNATIN_CONTROL = new Technique("colossal_mounatin_control", Cultivation.System.ESSENCE,
+	public static final Technique COLOSSAL_MOUNTAIN_CONTROL = new Technique("colossal_mountain_control", Cultivation.System.ESSENCE,
 			new TechniquesModifiers(5, 2, 4, 3, 4, 4), 1.7, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
@@ -337,7 +356,7 @@ public class Techniques {
 
 	//todo - turn it into a weapon technique (sword)
 	//From Anime4You -- former Wuxia4You (sad i liked it better)
-	public static final Technique EARTH_SPLITTING_SWORD_ARD = new Technique("earth_splitting_sword_Art", Cultivation.System.ESSENCE,
+	public static final Technique EARTH_SPLITTING_SWORD_ART = new Technique("earth_splitting_sword_art", Cultivation.System.ESSENCE,
 			new TechniquesModifiers(3, 4, 2, 4, 5, 3), 1.5, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
@@ -369,11 +388,30 @@ public class Techniques {
 			.addElement(Element.FIRE)
 			.addElement(Element.LIGHTNING);
 
+	public static final Technique DIVINE_FART_CULTIVATION_ART = new Technique("divine_fart_cultivation_art", Cultivation.System.ESSENCE,
+			new TechniquesModifiers(2, 3, 1, 5, 3, 4), 4.5, 2300000, 800)
+			.addCheckpoint(1000, "Minor Success")
+			.addCheckpoint(10000, "Small Success")
+			.addCheckpoint(90000, "Middle Success")
+			.addCheckpoint(600000, "Natural Success")
+			.addCheckpoint(1500000, "Great Success")
+			.addCheckpoint(23000000, "Perfected")
+			.setCultivationEffect(actor -> {
+				if (!actor.world.isRemote) {
+					AxisAlignedBB range = new AxisAlignedBB(new BlockPos(actor.posX, actor.posY, actor.posZ));
+					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
+					range.grow(Math.min(72, cultivation.getEssenceModifier()));
+					List<EntityLivingBase> targets = actor.world.getEntitiesWithinAABB(EntityLivingBase.class, range);
+					for (EntityLivingBase target : targets) {
+						target.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 120, 0, false, true));
+					}
+					actor.world.playSound(null, actor.posX, actor.posY + 0.4, actor.posZ, new SoundEvent(new ResourceLocation(WuxiaCraft.MOD_ID, "fart")), SoundCategory.HOSTILE, 30, 30);
+				}
+				return true;
+			});
+
 	//Soul ones
 
-	// TODO -- add a soul mark
-	// TODO -- add a spiritual pressure
-	// TODO -- add a spirit arrow attack
 	//From Asura
 	public static final Technique IGNITED_SOUL = new Technique("ignited_soul", Cultivation.System.DIVINE,
 			new TechniquesModifiers(5, 2, 4, 3, 4, 2), 1.9, 2300000, 800)
@@ -443,8 +481,8 @@ public class Techniques {
 			.addElement(Element.LIGHT)
 			.addElement(Element.WATER);
 
-	//TODO add damage against living
 	//From Febian
+	//Does extra damage against living
 	public static final Technique NINE_SPRINGS_SOUL = new Technique("nine_springs_soul", Cultivation.System.DIVINE,
 			new TechniquesModifiers(2, 1, 3, 1, 3, 4), 1.9, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
@@ -455,8 +493,8 @@ public class Techniques {
 			.addCheckpoint(23000000, "Perfected")
 			.addElement(Element.DARK);
 
-	// TODO -- any killing in this system drops back a realm
 	//From HuoYuhao
+	//If player kills, he loses something
 	public static final Technique BUDDHA_S_HEAVENLY_WAY = new Technique("buddha_s_heavenly_way", Cultivation.System.DIVINE,
 			new TechniquesModifiers(2, 1, 3, 1, 3, 9), 1.9, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")

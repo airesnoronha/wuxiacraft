@@ -2,8 +2,10 @@ package com.airesnor.wuxiacraft.cultivation.techniques;
 
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
+import com.airesnor.wuxiacraft.cultivation.skills.ISkillAction;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.utils.TranslateUtils;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -20,6 +22,8 @@ public class Technique {
 	private final double cultivationSpeed;
 	private final double maxProficiency;
 	private final double efficientTillModifier; // this technique may work well until the system level modifier
+
+	public ISkillAction cultivationEffect;
 
 	private final List<Pair<Double, PotionEffect>> effects;
 	private final List<Pair<Double, Skill>> skills;
@@ -52,6 +56,7 @@ public class Technique {
 		this.effects = new ArrayList<>();
 		this.skills = new ArrayList<>();
 		this.checkpoints = new ArrayList<>();
+		this.cultivationEffect = actor -> true;
 	}
 
 	Technique addElement(Element element) {
@@ -71,6 +76,11 @@ public class Technique {
 
 	Technique addCheckpoint(double proficiency, String checkpoint) {
 		this.checkpoints.add(Pair.of(proficiency, checkpoint));
+		return this;
+	}
+
+	public Technique setCultivationEffect(ISkillAction effect) {
+		this.cultivationEffect = effect;
 		return this;
 	}
 

@@ -26,6 +26,8 @@ public interface IBarrier {
 
     int getBarrierHits();
 
+    float getMaxBarrierAmount(double essenceModifier);
+
     //Barrier Regen
 
     void setBarrierRegenRate(float regenRate);
@@ -40,7 +42,7 @@ public interface IBarrier {
 
     void setBarrierCooldown(int cooldown);
 
-    void addBarrierCoodown(int cooldown);
+    void addBarrierCooldown(int cooldown);
 
     void removeBarrierCooldown(int cooldown);
 

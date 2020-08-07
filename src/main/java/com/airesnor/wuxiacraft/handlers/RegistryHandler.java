@@ -28,7 +28,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -224,6 +226,11 @@ public class RegistryHandler {
 	@SubscribeEvent
 	public void onPotionRegister(RegistryEvent.Register<Potion> event) {
 		event.getRegistry().register(Skills.ENLIGHTENMENT);
+	}
+
+	@SubscribeEvent
+	public void onRegisterSound(RegistryEvent.Register<SoundEvent> event) {
+		event.getRegistry().register(new SoundEvent(new ResourceLocation(WuxiaCraft.MOD_ID, "fart")).setRegistryName("fart"));
 	}
 
 }

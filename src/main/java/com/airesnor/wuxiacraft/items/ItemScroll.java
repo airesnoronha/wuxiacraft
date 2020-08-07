@@ -30,8 +30,8 @@ public class ItemScroll extends Item {
 	private final Technique technique;
 
 	public ItemScroll(Technique technique) {
-		setUnlocalizedName(technique.getUName() + "_scroll");
-		setRegistryName(technique.getUName() + "_scroll");
+		setUnlocalizedName(technique.getUName() + ".scroll");
+		setRegistryName(technique.getUName() + ".scroll");
 		setCreativeTab(WuxiaItems.SCROLLS);
 		this.technique = technique;
 		this.maxStackSize = 1;

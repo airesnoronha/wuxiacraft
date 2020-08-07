@@ -12,6 +12,7 @@ import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
+import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import com.airesnor.wuxiacraft.cultivation.techniques.TechniquesModifiers;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
@@ -165,7 +166,7 @@ public class EventHandler {
 
 			double energy = CultivationUtils.getMaxEnergy(player) * 0.00025;
 			//add a little of soul modifier to help out since soul affects perception
-			energy *= (1+cultivation.getDivineModifier()*0.003);
+			energy *= (1 + cultivation.getDivineModifier() * 0.003);
 			cultivation.addEnergy(energy);
 			if (cultivation.getEnergy() > CultivationUtils.getMaxEnergy(player)) {
 				cultivation.setEnergy(CultivationUtils.getMaxEnergy(player));
@@ -419,7 +420,7 @@ public class EventHandler {
 	public void onCultivatorFall(LivingFallEvent event) {
 		EntityLivingBase player = event.getEntityLiving();
 		if (event.getEntityLiving().world.isRemote || event.getDistance() < 3) return;
-		if (CultivationUtils.getMaxEnergy(player)> 100000) {
+		if (CultivationUtils.getMaxEnergy(player) > 100000) {
 			event.setDistance(0);
 		} else {
 			float agilityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() - // difference between whats -->
@@ -435,6 +436,9 @@ public class EventHandler {
 	/**
 	 * When the player hits an entity, gain a little progress, but i'm regretting
 	 * Also applies 1 damage to entity if wearing dagger
+	 * <p>
+	 * Extra from techniques if attacker kills using buddha soul technique, he loses sub levels and progress and foundation
+	 * Extra from techniques, if attacker has nine springs, he can deal extra damage against living
 	 *
 	 * @param event Description of whats happening
 	 */
@@ -445,6 +449,20 @@ public class EventHandler {
 			if (!player.world.isRemote) {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				CultivationUtils.cultivatorAddProgress(player, Cultivation.System.BODY, 0.25f, false, false);
+				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(event.getEntityLiving());
+				if (cultTech.getDivineTechnique() != null) {
+					if (event.getEntityLiving().getHealth() <= 0) {
+						if (cultTech.getDivineTechnique().getTechnique().equals(Techniques.BUDDHA_S_HEAVENLY_WAY)) {
+							cultivation.setDivineSubLevel(0);
+							cultivation.setDivineProgress(0);
+							cultivation.setDivineFoundation(cultivation.getDivineFoundation() * 0.3);
+						}
+					} else if (cultTech.getDivineTechnique().getTechnique().equals(Techniques.NINE_SPRINGS_SOUL)) {
+						double modifier = cultivation.getDivineModifier() * (cultTech.getDivineTechnique().getProficiency()
+								/ cultTech.getDivineTechnique().getTechnique().getMaxProficiency()) * 0.5;
+						event.setAmount(event.getAmount() * (1 + (float)modifier));
+					}
+				}
 				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) player);
 			}
 			ItemStack stack = player.getHeldItem(EnumHand.MAIN_HAND);
@@ -513,6 +531,9 @@ public class EventHandler {
 			cultivation.setBodyLevel(oldCultivation.getBodyLevel());
 			cultivation.setDivineLevel(oldCultivation.getDivineLevel());
 			cultivation.setEssenceLevel(oldCultivation.getEssenceLevel());
+			cultivation.setBodyFoundation(oldCultivation.getBodyFoundation() * 0.9);
+			cultivation.setDivineFoundation(oldCultivation.getDivineFoundation() * 0.9);
+			cultivation.setEssenceFoundation(oldCultivation.getEssenceFoundation() * 0.9);
 		} else {
 			cultivation.copyFrom(oldCultivation);
 		}
@@ -585,18 +606,15 @@ public class EventHandler {
 							ICultTech cultTech = CultivationUtils.getCultTechFromEntity(event.player);
 							boolean found = false;
 							int targetDimension = WuxiaDimensions.FIRE.getId();
-							if (cultTech.hasElement(Element.FIRE)|| cultTech.hasElement(Element.EARTH) || cultTech.hasElement(Element.METAL) || cultTech.hasElement(Element.WATER) || cultTech.hasElement(Element.WOOD)) {
+							if (cultTech.hasElement(Element.FIRE) || cultTech.hasElement(Element.EARTH) || cultTech.hasElement(Element.METAL) || cultTech.hasElement(Element.WATER) || cultTech.hasElement(Element.WOOD)) {
 								found = true;
 								if (cultTech.hasElement(Element.EARTH)) {
 									targetDimension = WuxiaDimensions.EARTH.getId();
-								}
-								else if (cultTech.hasElement(Element.METAL)) {
+								} else if (cultTech.hasElement(Element.METAL)) {
 									targetDimension = WuxiaDimensions.METAL.getId();
-								}
-								else if (cultTech.hasElement(Element.WATER)) {
+								} else if (cultTech.hasElement(Element.WATER)) {
 									targetDimension = WuxiaDimensions.WATER.getId();
-								}
-								else if (cultTech.hasElement(Element.WOOD)) {
+								} else if (cultTech.hasElement(Element.WOOD)) {
 									targetDimension = WuxiaDimensions.WOOD.getId();
 								}
 							}
@@ -840,7 +858,7 @@ public class EventHandler {
 		AttributeModifier health_mod = new AttributeModifier(health_mod_name, hp * 0.8, 0);
 		//since armor base is 0, it'll add 2*strength as armor
 		//I'll use for now strength for increase every other stat, since it's almost the same after all
-		AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, armor*0.4, 0);
+		AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, armor * 0.4, 0);
 		AttributeModifier speed_mod = new AttributeModifier(speed_mod_name, level_spd_mod, 0);
 		AttributeModifier attack_speed_mod = new AttributeModifier(attack_speed_mod_name, atk_sp / 24f, 0);
 
@@ -921,12 +939,13 @@ public class EventHandler {
 	}
 
 	// TODO - Handle the damage cancelling selectively
+
 	/**
 	 * Handles the barrier, cancels all damage at the moment
 	 *
-	 * @param event LivingAttackEvent
+	 * @param event   LivingAttackEvent
 	 * @param barrier Barrier instance of the player
-	 * @param player EntityPlayer instance of player
+	 * @param player  EntityPlayer instance of player
 	 */
 	public void handleBarrier(LivingAttackEvent event, IBarrier barrier, EntityPlayer player) {
 		if (barrier.getBarrierAmount() > 0.0f && event.getAmount() < barrier.getBarrierAmount()) {
@@ -951,7 +970,6 @@ public class EventHandler {
 		}
 	}
 
-	// TODO - make it so that the barrier does not infinitely regen and only regen up to the maximum the current cultivation level would allow
 	/**
 	 * Handles the player barrier update every 20 ticks / 1 second
 	 *
@@ -964,6 +982,7 @@ public class EventHandler {
 			if (!player.world.isRemote && player.ticksExisted % 20 == 0) {
 				IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+				//Aires: I vote to remEnergy only when barrier regen
 				//Energy Drain while the barrier is active
 				if (barrier.isBarrierActive() && !barrier.isBarrierBroken()) {
 					cultivation.remEnergy(CultivationUtils.getMaxEnergy(player) * 0.00005F);
@@ -971,6 +990,7 @@ public class EventHandler {
 				//Barrier regen when the barrier is not broken
 				if (!barrier.isBarrierBroken() && barrier.isBarrierRegenActive()) {
 					barrier.addBarrierAmount(barrier.getBarrierRegenRate());
+					barrier.setBarrierAmount(Math.min(barrier.getBarrierAmount(), barrier.getMaxBarrierAmount(cultivation.getEssenceModifier())));
 				}
 				//Cooldown
 				if (barrier.getBarrierCooldown() <= 0) {

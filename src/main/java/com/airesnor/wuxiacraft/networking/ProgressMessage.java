@@ -3,6 +3,7 @@ package com.airesnor.wuxiacraft.networking;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
@@ -78,6 +79,8 @@ public class ProgressMessage implements IMessage {
 						switch (message.op) {
 							case 0:
 								CultivationUtils.cultivatorAddProgress(player, message.system, message.amount, message.techniques, message.allowBreakTrough);
+								ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
+								cultTech.getTechniqueBySystem(message.system).getTechnique().cultivationEffect.activate(player); //this runs server side
 								break;
 							case 1:
 								try {

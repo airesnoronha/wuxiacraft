@@ -130,8 +130,8 @@ public class RendererHandler {
 	@SubscribeEvent
 	public void onRenderHealthBar(RenderGameOverlayEvent.Pre event) {
 		if (event.isCancelable() && event.getType() == RenderGameOverlayEvent.ElementType.HEALTH) {
-			GuiIngameForge.left_height += 5;
-			GuiIngameForge.right_height += 5;
+			//GuiIngameForge.left_height += 5; //this was because of the dragon
+			//GuiIngameForge.right_height += 5;
 			if (Minecraft.getMinecraft().player.getMaxHealth() > 40f) {
 				event.setCanceled(true);
 				drawCustomHealthBar(event.getResolution());
@@ -228,7 +228,7 @@ public class RendererHandler {
 
 		//Show spinning dantian
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(middleX, height - 45, 0);
+		GlStateManager.translate(middleX, height - 40, 0);
 		float showDiameter = 30;
 		GlStateManager.scale(showDiameter / 256f, showDiameter / 256f, 1); //scale to certain size
 		GlStateManager.scale(energy_fill, energy_fill, 1); //fill the bar
@@ -238,17 +238,17 @@ public class RendererHandler {
 		GlStateManager.popMatrix();
 
 		//Show Progress dragon
-		GlStateManager.pushMatrix();
+		/*GlStateManager.pushMatrix();
 		int dragonWidth = 228;
 		GlStateManager.translate(middleX - dragonWidth / 2f, height - 40f, 0);
 		GlStateManager.rotate(0.65f, 0, 0, 1);
 		GlStateManager.scale(1, 0.35, 1);
 		mc.ingameGUI.drawTexturedModalRect(0, 0, 5, 206, (int) (dragonWidth * progress_fill / 100f), 50);
-		GlStateManager.popMatrix();
+		GlStateManager.popMatrix();*/
 
 		GlStateManager.popMatrix();
 
-		String message = String.format("Energy: %.4f (%d%%)",
+		/*String message = String.format("Energy: %.4f (%d%%)",
 				cultivation.getEnergy(), (int)(cultivation.getEnergy()*100.0/CultivationUtils.getMaxEnergy(player)));
 		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 90, Integer.parseInt("FFAA00", 16));
 

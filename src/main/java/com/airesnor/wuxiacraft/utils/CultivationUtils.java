@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.utils;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.capabilities.*;
 import com.airesnor.wuxiacraft.cultivation.*;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
@@ -173,16 +174,16 @@ public class CultivationUtils {
 		private final EntityLivingBase player;
 		private final double tribulationStrength;
 		private BaseSystemLevel targetLevel;
-		private int targetSublevel;
+		private int targetSubLevel;
 		private Cultivation.System system;
 		private boolean customTribulation;
 
-		public BoltsScheduler(EntityLivingBase player, double tribulationStrength, Cultivation.System system, BaseSystemLevel targetLevel, int targetSublevel) {
+		public BoltsScheduler(EntityLivingBase player, double tribulationStrength, Cultivation.System system, BaseSystemLevel targetLevel, int targetSubLevel) {
 			this.player = player;
 			this.tribulationStrength = tribulationStrength;
 			this.system = system;
 			this.targetLevel = targetLevel;
-			this.targetSublevel = targetSublevel;
+			this.targetSubLevel = targetSubLevel;
 		}
 
 		public BoltsScheduler(EntityLivingBase player, double tribulationStrength, boolean customTribulation) {
@@ -226,7 +227,7 @@ public class CultivationUtils {
 										cultivation.getBodyLevel().getProgressBySubLevel(cultivation
 												.getBodySubLevel()));
 								cultivation.setBodyLevel(this.targetLevel);
-								cultivation.setBodySubLevel(this.targetSublevel);
+								cultivation.setBodySubLevel(this.targetSubLevel);
 								cultivation.addBodyFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
 								break;
 							case DIVINE:
@@ -234,7 +235,7 @@ public class CultivationUtils {
 										cultivation.getDivineLevel().getProgressBySubLevel(cultivation
 												.getDivineSubLevel()));
 								cultivation.setDivineLevel(this.targetLevel);
-								cultivation.setDivineSubLevel(this.targetSublevel);
+								cultivation.setDivineSubLevel(this.targetSubLevel);
 								cultivation.addDivineFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
 								break;
 							case ESSENCE:
@@ -242,11 +243,11 @@ public class CultivationUtils {
 										cultivation.getEssenceLevel().getProgressBySubLevel(cultivation
 												.getEssenceSubLevel()));
 								cultivation.setEssenceLevel(this.targetLevel);
-								cultivation.setEssenceSubLevel(this.targetSublevel);
+								cultivation.setEssenceSubLevel(this.targetSubLevel);
 								cultivation.addEssenceFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
 								break;
 						}
-						((EntityPlayer) player).sendStatusMessage(new TextComponentString(TranslateUtils.translateKey("wuxiacraft.level_message.congrats_" + msgN) + " " + targetLevel.getLevelName(targetSublevel)), false);
+						((EntityPlayer) player).sendStatusMessage(new TextComponentString(TranslateUtils.translateKey("wuxiacraft.level_message.congrats_" + msgN) + " " + targetLevel.getLevelName(targetSubLevel)), false);
 						NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, getCultTechFromEntity(player), getSkillCapFromEntity(player), false), (EntityPlayerMP) player);
 					}
 				});
@@ -265,6 +266,52 @@ public class CultivationUtils {
 		if (!player.world.isRemote) {
 			BoltsScheduler boltsScheduler = new BoltsScheduler(player, tribulationStrength, customTribulation);
 			boltsScheduler.start();
+		}
+	}
+
+	private static class CustomThunder extends Thread {
+
+		private final EntityLivingBase player;
+		private final double strength;
+		private final double reward;
+
+		public CustomThunder(EntityLivingBase player, double strength, double reward) {
+			this.player = player;
+			this.strength = strength;
+			this.reward = reward;
+		}
+
+		@Override
+		public void run() {
+			if (player.world instanceof WorldServer) {
+				WorldServer world = (WorldServer) player.world;
+				world.addScheduledTask(() -> {
+					EntityLightningBolt lightningBolt = new EntityLightningBolt(world, player.posX, player.posY + 1.0, player.posZ, true); // effect only won't cause damage
+					world.addWeatherEffect(lightningBolt);
+					player.attackEntityFrom(DamageSource.LIGHTNING_BOLT.setDamageIsAbsolute().setDamageBypassesArmor(), (float)this.strength);
+				});
+				try {
+					sleep(750);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				world.addScheduledTask(() -> {
+					if (player.isEntityAlive()) {
+						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+						try {
+							cultivation.addBodyProgress(this.reward, false);
+						} catch (Cultivation.RequiresTribulation tribulation) {
+							WuxiaCraft.logger.error("Something is wrong with " + player.getName() + " cultivation technique...");
+						}
+					}
+				});
+			}
+		}
+	}
+
+	public static void callCustomThunder(EntityLivingBase player, double strength, double reward) {
+		if(!player.world.isRemote) {
+			new CustomThunder(player, strength, reward).start();
 		}
 	}
 
