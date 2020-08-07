@@ -248,6 +248,17 @@ public class RendererHandler {
 
 		GlStateManager.popMatrix();
 
+		//Show dragons now
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(5, height-16, 0);
+		int bodyProgress = (int)(124*cultivation.getBodyProgress()/cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel()));
+		int divineProgress = (int)(124*cultivation.getDivineProgress()/cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()));
+		int essenceProgress = (int)(124*cultivation.getEssenceProgress()/cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()));
+		mc.ingameGUI.drawTexturedModalRect(0,-16, 0,208,bodyProgress,16);
+		mc.ingameGUI.drawTexturedModalRect(0,-8, 0,240,divineProgress, 16);
+		mc.ingameGUI.drawTexturedModalRect(0,0, 0,224,essenceProgress,16);
+		GlStateManager.popMatrix();
+
 		/*String message = String.format("Energy: %.4f (%d%%)",
 				cultivation.getEnergy(), (int)(cultivation.getEnergy()*100.0/CultivationUtils.getMaxEnergy(player)));
 		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 90, Integer.parseInt("FFAA00", 16));
