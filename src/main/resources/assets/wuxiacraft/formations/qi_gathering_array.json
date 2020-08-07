@@ -1,13 +1,13 @@
 {
 	"formationName": "wuxiacraft:weak_qi_gathering_array",
 	"positions": [
-		{ "blockState": "wuxiacraft:blood_rune_body_refinement","x": -1, "y": 0,"z": 0 },
-		{ "blockState": "wuxiacraft:blood_rune_body_refinement","x": 1, "y": 0,"z": 0 },
-		{ "blockState": "wuxiacraft:blood_rune_body_refinement","x": 0, "y": 0,"z": -1 },
-		{ "blockState": "wuxiacraft:blood_rune_body_refinement","x": 0, "y": 0,"z": 1 },
-		{ "blockState": "wuxiacraft:blood_rune_body_refinement","x": -1, "y": 0,"z": 1 },
-		{ "blockState": "wuxiacraft:blood_rune_body_refinement","x": 1, "y": 0,"z": 1 },
-		{ "blockState": "wuxiacraft:blood_rune_body_refinement","x": -1, "y": 0,"z": -1 },
-		{ "blockState": "wuxiacraft:blood_rune_body_refinement","x": 1, "y": 0,"z": -1 }
+		{ "blockState": "wuxiacraft:paint_rune","x": -1, "y": 0,"z": 0 },
+		{ "blockState": "wuxiacraft:paint_rune","x": 1, "y": 0,"z": 0 },
+		{ "blockState": "wuxiacraft:paint_rune","x": 0, "y": 0,"z": -1 },
+		{ "blockState": "wuxiacraft:paint_rune","x": 0, "y": 0,"z": 1 },
+		{ "blockState": "wuxiacraft:paint_rune","x": -1, "y": 0,"z": 1 },
+		{ "blockState": "wuxiacraft:paint_rune","x": 1, "y": 0,"z": 1 },
+		{ "blockState": "wuxiacraft:paint_rune","x": -1, "y": 0,"z": -1 },
+		{ "blockState": "wuxiacraft:paint_rune","x": 1, "y": 0,"z": -1 }
 	]
 }

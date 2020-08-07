@@ -319,15 +319,18 @@ public class Techniques {
 			.addElement(Element.EARTH);
 
 	//todo - turn it into a weapon technique (spear)
-	//From Asura
+	//From Asura -- Immortal 3 Level
 	public static final Technique DRAGON_SPEAR_ART = new Technique("dragon_spear_art", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(2, 6, 3, 5, 3, 2), 1.7, 2300000, 800)
-			.addCheckpoint(1000, "Minor Success")
-			.addCheckpoint(10000, "Small Success")
-			.addCheckpoint(90000, "Middle Success")
-			.addCheckpoint(600000, "Natural Success")
-			.addCheckpoint(1500000, "Great Success")
-			.addCheckpoint(23000000, "Perfected")
+			new TechniquesModifiers(4, 19, 5, 12, 25, 19), 1.7, 70000000, 320529.05)
+			.addCheckpoint(3454, "Worm Stage")
+			.addCheckpoint(11931, "Snake Stage")
+			.addCheckpoint(41213, "Python Stage")
+			.addCheckpoint(142360, "Flood Dragon Stage")
+			.addCheckpoint(491742, "Dragon Stage")
+			.addCheckpoint(1698575, "Elder Dragon Stage")
+			.addCheckpoint(5867219, "Ancient Dragon Stage")
+			.addCheckpoint(20266550, "Divine Dragon Stage")
+			.addCheckpoint(70000000, "Eternal Dragon Stage")
 			.addElement(Element.EARTH);
 
 	//From Anime4You -- former Wuxia4You (sad i liked it better)
