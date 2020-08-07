@@ -1,0 +1,15 @@
+{
+  "fart": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "wuxiacraft:fart_1",
+        "stream": true
+      },
+      {
+        "name": "wuxiacraft:fart_2",
+        "stream": true
+      }
+    ]
+  }
+}

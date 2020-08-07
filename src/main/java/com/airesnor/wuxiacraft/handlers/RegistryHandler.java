@@ -228,6 +228,8 @@ public class RegistryHandler {
 		event.getRegistry().register(Skills.ENLIGHTENMENT);
 	}
 
+	public static final SoundEvent fartSound = new SoundEvent(new ResourceLocation(WuxiaCraft.MOD_ID, "fart")).setRegistryName("fart");
+
 	@SubscribeEvent
 	public void onRegisterSound(RegistryEvent.Register<SoundEvent> event) {
 		event.getRegistry().register(new SoundEvent(new ResourceLocation(WuxiaCraft.MOD_ID, "fart")).setRegistryName("fart"));

@@ -1,17 +1,15 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
+import com.airesnor.wuxiacraft.handlers.RegistryHandler;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 
@@ -388,6 +386,8 @@ public class Techniques {
 			.addElement(Element.FIRE)
 			.addElement(Element.LIGHTNING);
 
+
+	//TODO -- fart sounds
 	public static final Technique DIVINE_FART_CULTIVATION_ART = new Technique("divine_fart_cultivation_art", Cultivation.System.ESSENCE,
 			new TechniquesModifiers(2, 3, 1, 5, 3, 4), 4.5, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
@@ -405,7 +405,7 @@ public class Techniques {
 					for (EntityLivingBase target : targets) {
 						target.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 120, 0, false, true));
 					}
-					actor.world.playSound(null, actor.posX, actor.posY + 0.4, actor.posZ, new SoundEvent(new ResourceLocation(WuxiaCraft.MOD_ID, "fart")), SoundCategory.HOSTILE, 30, 30);
+					actor.world.playSound(null, actor.posX, actor.posY + 0.4, actor.posZ, RegistryHandler.fartSound, SoundCategory.HOSTILE, 1, 1);
 				}
 				return true;
 			});

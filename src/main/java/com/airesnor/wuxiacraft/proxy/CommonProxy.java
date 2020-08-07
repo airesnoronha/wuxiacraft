@@ -106,6 +106,8 @@ public class CommonProxy {
 		BaseSystemLevel.initializeLevels();
 		Techniques.init();
 
+		MinecraftForge.EVENT_BUS.register(new RegistryHandler());
+
 		reflectOnField(SharedMonsterAttributes.class, new String[]{"MAX_HEALTH", "field_111267_a"}, (new RangedAttribute(null, "generic.maxHealth", 20.0D, Float.MIN_VALUE, 1000000000000000.0D)).setDescription("Max Health").setShouldWatch(true));
 		reflectOnField(SharedMonsterAttributes.class, new String[]{"ARMOR", "field_188791_g"}, (new RangedAttribute(null, "generic.armor", 0.0D, 0.0D, 100000000000000.0D)).setShouldWatch(true));
 		reflectOnField(SharedMonsterAttributes.class, new String[]{"MOVEMENT_SPEED", "field_111263_d"}, (new RangedAttribute(null, "generic.movementSpeed", 0.699999988079071D, 0.0D, 4096.0D)).setDescription("Movement Speed").setShouldWatch(true));
