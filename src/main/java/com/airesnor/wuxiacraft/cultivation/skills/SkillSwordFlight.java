@@ -17,12 +17,11 @@ public class SkillSwordFlight extends Skill {
 		setWhenCasting(actor -> {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
-			skillCap.stepCastProgress(-(float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() + 1f);
 			if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
 				if (cultivation.hasEnergy(cost)) {
 					cultivation.remEnergy(cost);
-					if ((int) skillCap.getCastProgress() % 5 == 4)
-						NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, 9 * 5, actor.getUniqueID()));
+					if (((int) skillCap.getCastProgress()) % 5 == 4)
+						NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, cost * 5, actor.getUniqueID()));
 					float agility = (float)actor.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() * 0.7f;
 					float dexterity = (float)actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() * 0.3f;
 					float speed = (agility + dexterity) * speedMultiplier;

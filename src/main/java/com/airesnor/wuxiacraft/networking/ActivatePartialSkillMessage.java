@@ -59,8 +59,12 @@ public class ActivatePartialSkillMessage implements IMessage {
 							Skills.BARRAGE_MINOR_BEAM.activate(player);
 							CultivationUtils.getCultivationFromEntity(player).remEnergy(message.energy);
 						}
-						if ("applySlowness".equals(message.skillName)) {
+						else if ("applySlowness".equals(message.skillName)) {
 							Skills.APPLY_SLOWNESS.activate(player);
+							CultivationUtils.getCultivationFromEntity(player).remEnergy(message.energy);
+						}
+						else if ("pressureEveryoneNear".equals(message.skillName)) {
+							Skills.PRESSURE_EVERYONE_NEAR.activate(player);
 							CultivationUtils.getCultivationFromEntity(player).remEnergy(message.energy);
 						}
 					}

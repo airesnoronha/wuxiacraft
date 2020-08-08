@@ -552,8 +552,15 @@ public class Cultivation implements ICultivation {
 		this.bodyProgress = cultivation.getBodyProgress();
 		this.divineProgress = cultivation.getDivineProgress();
 		this.essenceProgress = cultivation.getEssenceProgress();
+		this.bodyFoundation = cultivation.getBodyFoundation();
+		this.divineFoundation = cultivation.getDivineFoundation();
+		this.essenceFoundation = cultivation.getEssenceFoundation();
 		this.setEnergy(cultivation.getEnergy());
 		this.setPillCooldown(cultivation.getPillCooldown());
 		this.setSuppress(cultivation.getSuppress());
+	}
+
+	public void applySystemPenalty(System system) {
+
 	}
 }

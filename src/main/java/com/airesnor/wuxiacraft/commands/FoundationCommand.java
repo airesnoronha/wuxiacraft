@@ -1,7 +1,8 @@
 package com.airesnor.wuxiacraft.commands;
 
-import com.airesnor.wuxiacraft.cultivation.Foundation;
-import com.airesnor.wuxiacraft.cultivation.IFoundation;
+import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.networking.CultivationMessage;
+import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -31,7 +32,7 @@ public class FoundationCommand extends CommandBase {
 	@Nonnull
 	@ParametersAreNonnullByDefault
 	public String getUsage(ICommandSender sender) {
-		return "/foundation";
+		return "/foundation [set:add] <player> <system> <amount>";
 	}
 
 	@Override
@@ -43,265 +44,119 @@ public class FoundationCommand extends CommandBase {
 		return aliases;
 	}
 	@Override
+	@ParametersAreNonnullByDefault
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-
-	/*if (sender instanceof EntityPlayerMP) {
-			EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-			boolean wrongUsage = true;
-			if (!player.world.isRemote) {
-				if (args.length == 1) {
-					if (args[0].equals("get")) {
-						wrongUsage = false;
-						IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
-						TextComponentString text = new TextComponentString("Player " + player.getName() + " foundation: ");
-						sender.sendMessage(text);
-						text = new TextComponentString("  Agi: " + foundation.getAgility());
-						sender.sendMessage(text);
-						text = new TextComponentString("  Con: " + foundation.getConstitution());
-						sender.sendMessage(text);
-						text = new TextComponentString("  Dex: " + foundation.getDexterity());
-						sender.sendMessage(text);
-						text = new TextComponentString("  Res: " + foundation.getResistance());
-						sender.sendMessage(text);
-						text = new TextComponentString("  Spi: " + foundation.getSpirit());
-						sender.sendMessage(text);
-						text = new TextComponentString("  Str: " + foundation.getStrength());
-						sender.sendMessage(text);
-					}
-					if (args[0].equals("reset")) {
-						wrongUsage = false;
-						IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
-						foundation.copyFrom(new Foundation());
-						TextComponentString text = new TextComponentString("Foundation for player "+player.getName()+" was reseted.");
-						sender.sendMessage(text);
-					}
-				} else if (args.length == 2) {
-					if (args[1].equals("get")) {
-						wrongUsage = false;
-						EntityPlayerMP target = server.getPlayerList().getPlayerByUsername(args[0]);
-						if (target != null) {
-							IFoundation foundation = CultivationUtils.getFoundationFromEntity(target);
-							TextComponentString text = new TextComponentString("Player " + target.getName() + " foundation: ");
-							sender.sendMessage(text);
-							text = new TextComponentString("  Agi: " + foundation.getAgility());
-							sender.sendMessage(text);
-							text = new TextComponentString("  Con: " + foundation.getConstitution());
-							sender.sendMessage(text);
-							text = new TextComponentString("  Dex: " + foundation.getDexterity());
-							sender.sendMessage(text);
-							text = new TextComponentString("  Res: " + foundation.getResistance());
-							sender.sendMessage(text);
-							text = new TextComponentString("  Spi: " + foundation.getSpirit());
-							sender.sendMessage(text);
-							text = new TextComponentString("  Str: " + foundation.getStrength());
-							sender.sendMessage(text);
-						} else {
-							TextComponentString text = new TextComponentString("Couldn't find player " + args[0]);
+		if (sender instanceof EntityPlayerMP) {
+			EntityPlayerMP playerMP = (EntityPlayerMP) sender;
+			if (!playerMP.world.isRemote) {
+				boolean wrongUsage = true;
+				if (args.length == 4) {
+					EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
+					if (targetPlayer != null) {
+						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
+						try {
+							double amount = Double.parseDouble(args[3]);
+							TextComponentString text;
+							switch(args[2]) {
+								case "body":
+									if (args[0].equalsIgnoreCase("set")) {
+										cultivation.setBodyFoundation(amount);
+										wrongUsage = false;
+									} else if (args[0].equalsIgnoreCase("add")) {
+										cultivation.addBodyFoundation(amount);
+										wrongUsage = false;
+									}
+									text = new TextComponentString("Your cultivation base has been modified ...");
+									text.getStyle().setColor(TextFormatting.GRAY);
+									targetPlayer.sendMessage(text);
+									NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
+									break;
+								case "divine":
+									if (args[0].equalsIgnoreCase("set")) {
+										cultivation.setDivineFoundation(amount);
+										wrongUsage = false;
+									} else if (args[0].equalsIgnoreCase("add")) {
+										cultivation.addDivineFoundation(amount);
+										wrongUsage = false;
+									}
+									text = new TextComponentString("Your cultivation base has been modified ...");
+									text.getStyle().setColor(TextFormatting.GRAY);
+									targetPlayer.sendMessage(text);
+									NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
+									break;
+								case "essence":
+									if (args[0].equalsIgnoreCase("set")) {
+										cultivation.setEssenceFoundation(amount);
+										wrongUsage = false;
+									} else if (args[0].equalsIgnoreCase("add")) {
+										cultivation.addEssenceFoundation(amount);
+										wrongUsage = false;
+									}
+									text = new TextComponentString("Your cultivation base has been modified ...");
+									text.getStyle().setColor(TextFormatting.GRAY);
+									targetPlayer.sendMessage(text);
+									NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
+									break;
+								case "three":
+									if (args[0].equalsIgnoreCase("set")) {
+										cultivation.setBodyFoundation(amount);
+										cultivation.setDivineFoundation(amount);
+										cultivation.setEssenceFoundation(amount);
+										wrongUsage = false;
+									} else if (args[0].equalsIgnoreCase("add")) {
+										cultivation.addBodyFoundation(amount);
+										cultivation.addDivineFoundation(amount);
+										cultivation.addEssenceFoundation(amount);
+										wrongUsage = false;
+									}
+									text = new TextComponentString("Your cultivation base has been modified ...");
+									text.getStyle().setColor(TextFormatting.GRAY);
+									targetPlayer.sendMessage(text);
+									NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
+									break;
+							}
+						} catch (NumberFormatException e) {
+							TextComponentString text = new TextComponentString("Couldn't read number: " + args[3]);
 							text.getStyle().setColor(TextFormatting.RED);
 							sender.sendMessage(text);
-						}
-					}
-					if (args[1].equals("reset")) {
-						wrongUsage = false;
-						EntityPlayerMP target = server.getPlayerList().getPlayerByUsername(args[0]);
-						if (target != null) {
-							IFoundation foundation = CultivationUtils.getFoundationFromEntity(target);
-							foundation.copyFrom(new Foundation());
-							TextComponentString text = new TextComponentString("Foundation for player "+target.getName()+" was reseted.");
-							sender.sendMessage(text);
-						} else {
-							TextComponentString text = new TextComponentString("Couldn't find player " + args[0]);
-							text.getStyle().setColor(TextFormatting.RED);
-							sender.sendMessage(text);
-						}
-					}
-				} else if (args.length == 3) {
-					if(args[0].equals("set") || args[0].equals("add") || args[0].equals("rem") ) {
-						wrongUsage = false;
-						int op = 0;
-						if(args[0].equals("add")) op = 1;
-						else if(args[0].equals("rem")) op = 2;
-						int targetAttr = -1;
-						switch (args[1]) {
-							case "agi":
-								targetAttr = 0;
-								break;
-							case "con":
-								targetAttr = 1;
-								break;
-							case "dex":
-								targetAttr = 2;
-								break;
-							case "res":
-								targetAttr = 3;
-								break;
-							case "spi":
-								targetAttr = 4;
-								break;
-							case "str":
-								targetAttr = 5;
-								break;
-							case "all":
-								targetAttr = 6;
-								break;
-						}
-						if(targetAttr == -1) {
-							wrongUsage = true;
-						} else {
-							long value = -1;
-							try {
-								value = parseLong(args[2]);
-							} catch (NumberFormatException e) {
-								TextComponentString text = new TextComponentString("Couldn't recognize number " + args[2]);
-								text.getStyle().setColor(TextFormatting.RED);
-								sender.sendMessage(text);
-								wrongUsage = true;
-							}
-							if(value >= 0) {
-								setAttrValue(op, targetAttr, value, player);
-							}
-						}
-					}
-				} else if (args.length == 4) {
-					EntityPlayerMP target = server.getPlayerList().getPlayerByUsername(args[0]);
-					if (target != null) {
-						if (args[1].equals("set") || args[1].equals("add") || args[1].equals("rem")) {
-							wrongUsage = false;
-							int op = 0;
-							if (args[1].equals("add")) op = 1;
-							else if (args[1].equals("rem")) op = 2;
-							int targetAttr = -1;
-							switch (args[2]) {
-								case "agi":
-									targetAttr = 0;
-									break;
-								case "con":
-									targetAttr = 1;
-									break;
-								case "dex":
-									targetAttr = 2;
-									break;
-								case "res":
-									targetAttr = 3;
-									break;
-								case "spi":
-									targetAttr = 4;
-									break;
-								case "str":
-									targetAttr = 5;
-									break;
-								case "all":
-									targetAttr = 6;
-									break;
-							}
-							if (targetAttr == -1) {
-								wrongUsage = true;
-							} else {
-								long value = -1;
-								try {
-									value = parseLong(args[3]);
-								} catch (NumberFormatException e) {
-									TextComponentString text = new TextComponentString("Couldn't recognize number " + args[3]);
-									text.getStyle().setColor(TextFormatting.RED);
-									sender.sendMessage(text);
-									wrongUsage = true;
-								}
-								if (value >= 0) {
-									setAttrValue(op, targetAttr, value, target);
-								}
-							}
 						}
 					} else {
-						TextComponentString text = new TextComponentString("Couldn't find player " + args[0]);
+						TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
 						text.getStyle().setColor(TextFormatting.RED);
 						sender.sendMessage(text);
+						wrongUsage = true;
 					}
 				}
 				if (wrongUsage) {
-					TextComponentString text = new TextComponentString("Invalid arguments, use /foundt [player] <get>:<reset>:(<set|add|rem> <attr> <value>)");
+					TextComponentString text = new TextComponentString("Invalid arguments, use " + this.getUsage(sender));
 					text.getStyle().setColor(TextFormatting.RED);
 					sender.sendMessage(text);
 				}
 			}
-		} else {
-			if (args.length > 0) {
-				boolean wrongUsage = true;
-				EntityPlayerMP player = server.getPlayerList().getPlayerByUsername(args[0]);
-				if (player != null) {
-					if (args.length == 2) {
-						if (args[1].equals("get")) {
-							wrongUsage = false;
-							IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
-							TextComponentString text = new TextComponentString("Player " + player.getName() + " foundation: ");
-							sender.sendMessage(text);
-							text = new TextComponentString("  Agi: " + foundation.getAgility());
-							sender.sendMessage(text);
-							text = new TextComponentString("  Con: " + foundation.getConstitution());
-							sender.sendMessage(text);
-							text = new TextComponentString("  Dex: " + foundation.getDexterity());
-							sender.sendMessage(text);
-							text = new TextComponentString("  Res: " + foundation.getResistance());
-							sender.sendMessage(text);
-							text = new TextComponentString("  Spi: " + foundation.getSpirit());
-							sender.sendMessage(text);
-							text = new TextComponentString("  Str: " + foundation.getStrength());
-							sender.sendMessage(text);
-						}
-						else if (args[1].equals("reset")) {
-							wrongUsage = false;
-							IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
-							foundation.copyFrom(new Foundation());
-							TextComponentString text = new TextComponentString("Foundation for player "+player.getName()+" was reseted.");
-							sender.sendMessage(text);
-						}
-					}else if (args.length == 4) {
-						if(args[1].equals("set") || args[1].equals("add") || args[1].equals("rem") ) {
-							wrongUsage = false;
-							int op = 0;
-							if(args[1].equals("add")) op = 1;
-							else if(args[1].equals("rem")) op = 2;
-							int targetAttr = -1;
-							if(args[2].equals("agi")) targetAttr = 0;
-							else if(args[2].equals("con")) targetAttr = 1;
-							else if(args[2].equals("dex")) targetAttr = 2;
-							else if(args[2].equals("res")) targetAttr = 3;
-							else if(args[2].equals("spi")) targetAttr = 4;
-							else if(args[2].equals("str")) targetAttr = 5;
-							else if(args[2].equals("all")) targetAttr = 6;
-							if(targetAttr == -1) {
-								wrongUsage = true;
-							} else {
-								long value =-1;
-								try {
-									value = parseLong(args[3]);
-								} catch (NumberFormatException e) {
-									TextComponentString text = new TextComponentString("Couldn't recognize number " + args[3]);
-									text.getStyle().setColor(TextFormatting.RED);
-									sender.sendMessage(text);
-									wrongUsage = true;
-								}
-								if(value >= 0) {
-									setAttrValue(op, targetAttr, value, player);
-								}
-							}
-						}
-					}
-					if (wrongUsage)  {
-						TextComponentString text = new TextComponentString("Invalid arguments, use /foundt [player] <get>:<reset>:(<set|add|rem> <attr> <value>)");
-						text.getStyle().setColor(TextFormatting.RED);
-						sender.sendMessage(text);
-					}
-				} else {
-					TextComponentString text = new TextComponentString("Couldn't find player " + args[0] + "!");
-					text.getStyle().setColor(TextFormatting.RED);
-					sender.sendMessage(text);
+		} else throw new CommandException("Not used correctly!");
+	}
+
+	@Override
+	@Nonnull
+	@ParametersAreNonnullByDefault
+	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
+		List<String> completions = new ArrayList<>();
+		if (args.length == 1) {
+			if ("add".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("add");
+			if ("set".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("set");
+		} else if (args.length == 2) {
+			for(String name : server.getOnlinePlayerNames()) {
+				if(name.toLowerCase().startsWith(args[1].toLowerCase())) {
+					completions.add(name);
 				}
-			} else {
-				TextComponentString text = new TextComponentString("Invalid arguments, use /foundt [player] <get>:<reset>:(<set|add|rem> <attr> <value>)");
-				text.getStyle().setColor(TextFormatting.RED);
-				sender.sendMessage(text);
 			}
+		} else if(args.length == 3) {
+			if ("body".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("body");
+			else if ("divine".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("divine");
+			else if ("essence".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("essence");
+			else if ("three".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("three");
 		}
+		return completions;
 	}
 
 	@Override
@@ -310,119 +165,7 @@ public class FoundationCommand extends CommandBase {
 	}
 
 	@Override
-	@ParametersAreNonnullByDefault
-	@Nonnull
-	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
-		List<String> completions = new ArrayList<>();
-		if(args.length == 1) {
-			for (String player : server.getPlayerList().getOnlinePlayerNames()) {
-				if(player.toLowerCase().startsWith(args[0].toLowerCase())) {
-					completions.add(player);
-				}
-			}
-		} else if(args.length == 2) {
-			if("get".toLowerCase().startsWith(args[1])) {
-				completions.add("get");
-			}
-			if("reset".toLowerCase().startsWith(args[1])) {
-				completions.add("reset");
-			}
-			if("set".toLowerCase().startsWith(args[1])) {
-				completions.add("set");
-			}
-			if("add".toLowerCase().startsWith(args[1])) {
-				completions.add("add");
-			}
-			if("rem".toLowerCase().startsWith(args[1])) {
-				completions.add("rem");
-			}
-		} else if(args.length == 3) {
-			if(args[1].equalsIgnoreCase("set") || args[1].equalsIgnoreCase("add") || args[1].equalsIgnoreCase("rem")) {
-				if("agi".toLowerCase().startsWith(args[2])) {
-					completions.add("agi");
-				}
-				if("con".toLowerCase().startsWith(args[2])) {
-					completions.add("con");
-				}
-				if("dex".toLowerCase().startsWith(args[2])) {
-					completions.add("dex");
-				}
-				if("res".toLowerCase().startsWith(args[2])) {
-					completions.add("res");
-				}
-				if("spi".toLowerCase().startsWith(args[2])) {
-					completions.add("spi");
-				}
-				if("str".toLowerCase().startsWith(args[2])) {
-					completions.add("str");
-				}
-				if("all".toLowerCase().startsWith(args[2])) {
-					completions.add("all");
-				}
-			}
-		}
-		return completions;
-	}
-
-	@Override
 	public boolean isUsernameIndex(String[] args, int index) {
 		return false;
-	}
-
-	private void setAttrValue(int op, int targetAttr, long value, EntityPlayerMP target) {
-		IFoundation foundation = CultivationUtils.getFoundationFromEntity(target);
-		long newValue = 0;
-		switch (targetAttr) {
-			case 0:
-				newValue = foundation.getAgility();
-				if(op == 0) newValue = value;
-				else if(op == 1) newValue += value;
-				else if(op == 2) newValue = Math.max(0, newValue - value);
-				foundation.setAgility(newValue);
-				break;
-			case 1:
-				newValue = foundation.getConstitution();
-				if(op == 0) newValue = value;
-				else if(op == 1) newValue += value;
-				else if(op == 2) newValue = Math.max(0, newValue - value);
-				foundation.setConstitution(newValue);
-				break;
-			case 2:
-				newValue = foundation.getDexterity();
-				if(op == 0) newValue = value;
-				else if(op == 1) newValue += value;
-				else if(op == 2) newValue = Math.max(0, newValue - value);
-				foundation.setDexterity(newValue);
-				break;
-			case 3:
-				newValue = foundation.getResistance();
-				if(op == 0) newValue = value;
-				else if(op == 1) newValue += value;
-				else if(op == 2) newValue = Math.max(0, newValue - value);
-				foundation.setResistance(newValue);
-				break;
-			case 4:
-				newValue = foundation.getSpirit();
-				if(op == 0) newValue = value;
-				else if(op == 1) newValue += value;
-				else if(op == 2) newValue = Math.max(0, newValue - value);
-				foundation.setSpirit(newValue);
-				break;
-			case 5:
-				newValue = foundation.getStrength();
-				if(op == 0) newValue = value;
-				else if(op == 1) newValue += value;
-				else if(op == 2) newValue = Math.max(0, newValue - value);
-				foundation.setStrength(newValue);
-				break;
-			case 6:
-				setAttrValue(op, 0, value, target);
-				setAttrValue(op, 1, value, target);
-				setAttrValue(op, 2, value, target);
-				setAttrValue(op, 3, value, target);
-				setAttrValue(op, 4, value, target);
-				setAttrValue(op, 5, value, target);
-				break;
-		}*/
 	}
 }

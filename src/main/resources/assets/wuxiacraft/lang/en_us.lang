@@ -329,8 +329,10 @@ wuxiacraft.skills.weak_sword_flight=Weak Sword Flight
 wuxiacraft.skills.light_feet_skill=Light Feet Skill
 wuxiacraft.skills.light_feet_leap=Light Feet Leap
 wuxiacraft.skills.minor_body_reinforcement=Minor Body Reinforcement
-wuxiacraft.skills.minor_power_punch=Minor Power Crasho
+wuxiacraft.skills.minor_power_punch=Minor Power Punch
 wuxiacraft.skills.adept_sword_flight=Adept Sword Flight
+wuxiacraft.skills.spirit_arrow=Spiritual arrow
+wuxiacraft.skills.spirit_pressure=Spiritual Pressure
 
 #Recipes
 wuxiacraft.recipes.name.body_refinement_pill_recipe=Body Refinement Pill Recipe

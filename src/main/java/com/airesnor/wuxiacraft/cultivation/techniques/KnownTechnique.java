@@ -78,6 +78,7 @@ public class KnownTechnique {
 	}
 
 	public double getCultivationSpeed(double modifier) {
+		double speed = technique.getCultivationSpeed() + (0.5 + 0.5 * this.proficiency / this.technique.getMaxProficiency() );
 		if(modifier > technique.getEfficientTillModifier()) {
 			return technique.getCultivationSpeed() * (technique.getEfficientTillModifier() / (modifier*2)); //Eventually will amount to almost nothing
 		}

@@ -9,9 +9,11 @@ import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.mobs.renders.RenderGiantAnt;
 import com.airesnor.wuxiacraft.entities.mobs.renders.RenderGiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.renders.RenderWanderingCultivator;
+import com.airesnor.wuxiacraft.entities.skills.SoulArrowThrowable;
 import com.airesnor.wuxiacraft.entities.skills.SwordBeamThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
 import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
+import com.airesnor.wuxiacraft.entities.skills.models.RenderSoulArrow;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderSwordBeam;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterBlade;
 import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterNeedle;
@@ -91,6 +93,7 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerEntityRenderingHandler(GiantAnt.class, RenderGiantAnt::new);
 		RenderingRegistry.registerEntityRenderingHandler(GiantBee.class, RenderGiantBee::new);
 		RenderingRegistry.registerEntityRenderingHandler(WanderingCultivator.class, RenderWanderingCultivator::new);
+		RenderingRegistry.registerEntityRenderingHandler(SoulArrowThrowable.class, RenderSoulArrow::new);
 
 		MinecraftForge.EVENT_BUS.register(new RendererHandler());
 

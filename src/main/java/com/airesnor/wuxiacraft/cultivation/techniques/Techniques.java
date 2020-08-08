@@ -196,7 +196,7 @@ public class Techniques {
 	// TODO -- Add a golden buddha statue
 	//From HuoYuhao -- Keep reminding myself he's a fire cultivator o.O
 	public static final Technique MERCIFUL_PALM_OF_BUDDHA = new Technique("merciful_palm_of_buddha", Cultivation.System.BODY,
-			new TechniquesModifiers(4, 2, 5, 2, 3, 4), 1.5, 2300000, 800)
+			new TechniquesModifiers(2, 3, 6, 1, 4, 4), 1.5, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -204,16 +204,20 @@ public class Techniques {
 			.addCheckpoint(1500000, "Great Success")
 			.addCheckpoint(23000000, "Perfected");
 
-	// TODO -- transformations
+	// TODO -- model transformations
+	// TODO -- Painful to change a body transformation art
 	//From Asura
 	public static final Technique PHOENIX_BODY_ART = new Technique("phoenix_body_art", Cultivation.System.BODY,
-			new TechniquesModifiers(4, 2, 5, 2, 3, 5), 1.5, 2300000, 800)
-			.addCheckpoint(1000, "Minor Success")
-			.addCheckpoint(10000, "Small Success")
-			.addCheckpoint(90000, "Middle Success")
-			.addCheckpoint(600000, "Natural Success")
-			.addCheckpoint(1500000, "Great Success")
-			.addCheckpoint(23000000, "Perfected")
+			new TechniquesModifiers(16, 16, 22, 9, 24, 19), 1.5, 10370000000.0, 176722.67)
+			.addCheckpoint(1000, "Blood Cleaning")
+			.addCheckpoint(10000, "Crimson Blood")
+			.addCheckpoint(90000, "Black Blood")
+			.addCheckpoint(600000, "Bone Refining Stage 1")
+			.addCheckpoint(1500000, "Bone Refining Stage 2")
+			.addCheckpoint(1500000, "Bone Refining Stage 3")
+			.addCheckpoint(1500000, "Full Phoenix Body")
+			.addCheckpoint(1500000, "True Phoenix Body")
+			.addCheckpoint(23000000, "Reborn By Fire") //TODO -- set player on fire
 			.addElement(Element.FIRE);
 
 	//From Anime4You -- former Wuxia4You (liked this one better)
@@ -276,7 +280,7 @@ public class Techniques {
 	// TODO -- multiple jumps --  i guess this is hard
 	//From Febian
 	public static final Technique LIGHT_CLOUD_STEPS = new Technique("light_cloud_steps", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(4, 2, 6, 3, 4, 3), 1.7, 2300000, 800)
+			new TechniquesModifiers(1, 6, 2, 7, 4, 5), 1.8, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")

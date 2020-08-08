@@ -2,12 +2,10 @@ package com.airesnor.wuxiacraft.cultivation.skills;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
+import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
-import com.airesnor.wuxiacraft.entities.skills.FireThrowable;
-import com.airesnor.wuxiacraft.entities.skills.SwordBeamThrowable;
-import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
-import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
+import com.airesnor.wuxiacraft.entities.skills.*;
 import com.airesnor.wuxiacraft.handlers.RendererHandler;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
@@ -35,6 +33,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -53,14 +52,16 @@ public class Skills {
     // TODO Hell's Pond (healing for undead) from fruit
     // TODO Thunder God's Punishment (strikes lightning at target while casting) from fruit
     // TODO Demon God's flash (tp at looking) from fruit
-    // TODO Sword God's Mercy (Exxxxxtra big sword beam) from fruit
+    // TODO Sword God's Mercy (Extra big sword beam) from fruit
     // TODO Green Lotus (A wood life steal skill) from Asura
     // TODO Overlay Swing (Sword marking skill that makes target vulnerable) from HuoYuhao
     // TODO Natural embodiment (mimicry) from HuoYuhao
     // TODO Eye of terror (gaze and slows target and fear) from HuoYuhao
+
     // TODO -- add a soul mark
     // TODO -- add a spiritual pressure
-    // TODO -- add a spirit arrow attack
+
+    //TODO -- add proficiency to each of the skills
 
     public static final List<Skill> SKILLS = new ArrayList<>();
 
@@ -89,6 +90,8 @@ public class Skills {
         SKILLS.add(MINOR_POWER_PUNCH);
         SKILLS.add(MINOR_BODY_REINFORCEMENT);
         SKILLS.add(ADEPT_SWORD_FLIGHT);
+        SKILLS.add(SPIRIT_ARROW);
+        SKILLS.add(SPIRIT_PRESSURE);
     }
 
     public static final Potion ENLIGHTENMENT = new EnlightenmentPotion("enlightenment");
@@ -541,9 +544,59 @@ public class Skills {
                 return activated;
             });
 
+    public static final Skill SPIRIT_ARROW = new Skill("spirit_arrow", false, true, 30f, 1.2f, 3f, 2f)
+            .setAction(actor ->  {
+                ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
+                float strength = (float)cultivation.getDivineModifier() * 1.5f;
+                SoulArrowThrowable soulArrowThrowable = new SoulArrowThrowable(actor.world, actor, strength, 300);
+                soulArrowThrowable.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, Math.min(1.8f, 0.8f + strength*0.2f * 0.12f), 0.2f);
+                actor.world.spawnEntity(soulArrowThrowable);
+               return true;
+            });
+
+    public static final ISkillAction PRESSURE_EVERYONE_NEAR = actor -> {
+        ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
+        boolean activated = false;
+        if(cultivation.hasEnergy(1.2f)) {
+            activated = true;
+            AxisAlignedBB range = new AxisAlignedBB(new BlockPos(actor.posX, actor.posY, actor.posZ))
+                    .grow(Math.min(cultivation.getDivineModifier(), 128));
+            List<EntityLivingBase> targets =  actor.world.getEntitiesWithinAABB(EntityLivingBase.class, range, t -> t!=actor);
+            for (EntityLivingBase target : targets) {
+                ICultivation targetCultivation = CultivationUtils.getCultivationFromEntity(target);
+                if(targetCultivation.getDivineModifier()*0.6 < cultivation.getDivineModifier()) {
+                    target.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 300, 3, false, true));
+                    target.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 100, 3, false, true));
+                } else if (targetCultivation.getDivineModifier()*0.8 < cultivation.getDivineModifier()) {
+                    target.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 300, 2, false, true));
+                    target.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 100, 2, false, true));
+                } else if (targetCultivation.getDivineModifier()*0.9 < cultivation.getDivineModifier()) {
+                    target.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 300, 1, false, true));
+                    target.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 100, 1, false, true));
+                } else if (targetCultivation.getDivineModifier() < cultivation.getDivineModifier()) {
+                    target.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 300, 0, false, true));
+                    target.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 300, 0, false, true));
+                }
+            }
+        }
+        return activated;
+    };
+
+    public static final Skill SPIRIT_PRESSURE = new Skill("spirit_pressure", true, true, 0f, 0f, 500f, 1f)
+            .setAction(actor -> true)
+            .setWhenCasting(actor -> {
+                ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
+                if(cultivation.hasEnergy(1.2f)) {
+                    cultivation.remEnergy(1.2f);
+                    NetworkWrapper.INSTANCE.sendToServer( new ActivatePartialSkillMessage("pressureEveryoneNear", 1.2f, actor.getUniqueID()));
+                    return true;
+                }
+                return false;
+            });
+
     public static final Skill MINOR_BODY_REINFORCEMENT = new SkillPotionEffectSelf("minor_body_reinforcement", new PotionEffect(MobEffects.STRENGTH, 1800, 2, false, true), 120f, 1.2f, 180f, 20f, "Aires Adures");
 
     public static final Skill WEAK_SWORD_FLIGHT = new SkillSwordFlight("weak_sword_flight", 0.6f, 1.5f, 9f, 500f, 200f, "Aires Adures");
 
-    public static final Skill ADEPT_SWORD_FLIGHT = new SkillSwordFlight("weak_sword_flight", 0.8f, 2.5f, 26f, 2000f, 100f, "Aires Adures");
+    public static final Skill ADEPT_SWORD_FLIGHT = new SkillSwordFlight("adept_sword_flight", 0.8f, 2.5f, 26f, 2000f, 100f, "Aires Adures");
 }

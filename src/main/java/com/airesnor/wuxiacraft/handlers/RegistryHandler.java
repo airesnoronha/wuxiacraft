@@ -205,6 +205,12 @@ public class RegistryHandler {
 				.name("sword_beam_throwable")
 				.tracker(200, 10, true)
 				.build();
+		EntityEntry soulArrowThrowable = EntityEntryBuilder.create()
+				.entity(SwordBeamThrowable.class)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "soul_arrow_throwable"), 6)
+				.name("soul_arrow_throwable")
+				.tracker(200, 10, true)
+				.build();
 		event.getRegistry().register(giantAntEntity);
 		event.getRegistry().register(giantBeeEntity);
 		event.getRegistry().register(wanderingCultivatorEntity);
@@ -212,6 +218,7 @@ public class RegistryHandler {
 		event.getRegistry().register(waterNeedleThrowable);
 		event.getRegistry().register(waterBladeThrowable);
 		event.getRegistry().register(swordBeamThrowable);
+		event.getRegistry().register(soulArrowThrowable);
 	}
 
 	//ain't an event
