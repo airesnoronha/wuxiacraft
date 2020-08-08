@@ -167,7 +167,7 @@ public class EventHandler {
 
 			double energy = CultivationUtils.getMaxEnergy(player) * 0.00025;
 			//add a little of soul modifier to help out since soul affects perception
-			energy *= (1 + cultivation.getDivineModifier() * 0.003);
+			energy += cultivation.getDivineModifier() * 0.003;
 			cultivation.addEnergy(energy);
 			if (cultivation.getEnergy() > CultivationUtils.getMaxEnergy(player)) {
 				cultivation.setEnergy(CultivationUtils.getMaxEnergy(player));
@@ -839,7 +839,7 @@ public class EventHandler {
 
 		double str = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.2;
 		str *= (1 + tm.strength);
-		double spd = ((cultivation.getBodyModifier()-1) * 0.2 + (cultivation.getEssenceModifier()-1) * 0.4 + (cultivation.getDivineModifier()-1) * 0.1) * 0.6;
+		double spd = ((cultivation.getBodyModifier()-1) * 0.2 + (cultivation.getEssenceModifier()-1) * 0.4 + (cultivation.getDivineModifier()-1) * 0.1) * 0.2;
 		spd *= (1 + tm.movementSpeed);
 		double hp = (cultivation.getBodyModifier() - 1) + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.2;
 		hp *= (1 + tm.maxHealth);
@@ -848,7 +848,7 @@ public class EventHandler {
 		double atk_sp = (cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) + 0.6;
 		atk_sp *= (1 + tm.attackSpeed);
 
-		double level_spd_mod = (spd - 1) * player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
+		double level_spd_mod = spd * player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
 		if (cultivation.getMaxSpeed() >= 0) {
 			double max_speed = cultivation.getMaxSpeed() * player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
 			level_spd_mod = Math.min(max_speed, level_spd_mod);

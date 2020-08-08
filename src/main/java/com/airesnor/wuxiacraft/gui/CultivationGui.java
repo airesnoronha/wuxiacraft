@@ -305,13 +305,13 @@ public class CultivationGui extends GuiScreen {
 		double agilityModifier = player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() - player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
 		double dexterityModifier = player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() - player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getBaseValue();
 		double strengthModifier = player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() - player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue();
-		double spd = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.6;
+		double spd = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;
 
 		GL11.glColor4f(1f, 1f, 1f, 1f);
 		int[] iconPos = new int[]{27, 27, 99, 108};
 		int[] fills = new int[]{
 				Math.min(27, (int) ((27f * cultivation.getSpeedHandicap()) / 100f)),
-				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / (spd - 1))),
+				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / spd)),
 				Math.min(27, (int) (27f * (cultivation.getHasteLimit() / (0.1f * (strengthModifier * 0.7 + dexterityModifier * 0.3))))),
 				Math.min(27, (int) (27f * (cultivation.getJumpLimit()) / (0.5f * (agilityModifier * 0.3 + strengthModifier * 0.7))))
 		};
@@ -684,7 +684,7 @@ public class CultivationGui extends GuiScreen {
 		// suppress cultivation
 		if (inBounds(mouseX, mouseY, this.guiLeft + 180, this.guiTop + 5, 12, 14)) {
 			String line = "Suppress cultivation";
-			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
+			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 164);
 			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
 		}
 		//tabs
@@ -745,7 +745,7 @@ public class CultivationGui extends GuiScreen {
 		if (inBounds(mouseX, mouseY, this.guiLeft + 134, this.guiTop + 25, 30, 30)) {
 			double foundationOverMaxBase = cultivation.getBodyFoundation() / cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel());
 			drawing = true;
-			if (foundationOverMaxBase < 0) {
+			if (foundationOverMaxBase < 1) {
 				line = "Unstable Foundation";
 			} else if (MathUtils.between(foundationOverMaxBase, 1, 3)) {
 				line = "Weak Foundation";
@@ -762,7 +762,7 @@ public class CultivationGui extends GuiScreen {
 		if (inBounds(mouseX, mouseY, this.guiLeft + 134, this.guiTop + 66, 30, 30)) {
 			double foundationOverMaxBase = cultivation.getDivineFoundation() / cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel());
 			drawing = true;
-			if (foundationOverMaxBase < 0) {
+			if (foundationOverMaxBase < 1) {
 				line = "Unstable Foundation";
 			} else if (MathUtils.between(foundationOverMaxBase, 1, 3)) {
 				line = "Weak Foundation";
@@ -779,7 +779,7 @@ public class CultivationGui extends GuiScreen {
 		if (inBounds(mouseX, mouseY, this.guiLeft + 134, this.guiTop + 107, 30, 30)) {
 			double foundationOverMaxBase = cultivation.getEssenceFoundation() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
 			drawing = true;
-			if (foundationOverMaxBase < 0) {
+			if (foundationOverMaxBase < 1) {
 				line = "Unstable Foundation";
 			} else if (MathUtils.between(foundationOverMaxBase, 1, 3)) {
 				line = "Weak Foundation";
@@ -794,7 +794,7 @@ public class CultivationGui extends GuiScreen {
 			}
 		}
 		if (drawing) {
-			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
+			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 164);
 			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
 		}
 	}
@@ -839,7 +839,7 @@ public class CultivationGui extends GuiScreen {
 			line = skillCap.getSelectedSkills().size() > 0 ? "Deselect Skills" : "Select All Skills";
 		}
 		if (drawing) {
-			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
+			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 164);
 			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
 		}
 	}

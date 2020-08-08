@@ -161,7 +161,7 @@ public class CultivationUtils {
 					cultivation.addEssenceProgress(amount * 0.3, allowBreakThrough);
 				}
 			} catch (Cultivation.RequiresTribulation trib) {
-				callTribulation(player, trib.tribulationStrength, trib.system, trib.level, trib.sublevel);
+				callTribulation(player, trib.tribulationStrength, trib.system, trib.level, trib.subLevel);
 			}
 		} else {
 			cultivation.addSystemFoundation(amount, system);

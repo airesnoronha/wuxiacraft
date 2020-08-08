@@ -23,6 +23,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
@@ -255,13 +256,14 @@ public class RendererHandler {
 		mc.ingameGUI.drawTexturedModalRect(0,0, 0,224,essenceProgress,16);
 		GlStateManager.popMatrix();
 
-		/*if (cultTech.getBodyTechnique() != null && player != null) {
+		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
+		if (player != null) {
 			String message = String.format("Speed: %.2f %.4f %.4f", cultivation.getMaxSpeed(),
 					player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue(),
 					player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue());
 			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 100, Integer.parseInt("FFAA00", 16));
 			GlStateManager.color(1,1,1,1);
-		}*/
+		}
 
 		/*String message = String.format("Energy: %.4f (%d%%)",
 				cultivation.getEnergy(), (int)(cultivation.getEnergy()*100.0/CultivationUtils.getMaxEnergy(player)));
