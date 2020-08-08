@@ -144,7 +144,7 @@ public class Sect {
             Pair<String, Integer> rank = ranks.get(i);
             if (rank.getLeft().equalsIgnoreCase(rankName)) {
                 ranks.remove(i);
-                ranks.add(i, Pair.of(rankName, permissionLevel));
+                ranks.add(i, Pair.of(rank.getLeft(), permissionLevel));
                 break;
             }
         }
@@ -225,6 +225,17 @@ public class Sect {
         }
     }
 
+    public boolean isAlly(String sectName) {
+        boolean isAlly = false;
+        for (String ally : allies) {
+            if (ally.equalsIgnoreCase(sectName)) {
+                isAlly = true;
+                break;
+            }
+        }
+        return isAlly;
+    }
+
     public List<String> getAllies() {
         return allies;
     }
@@ -245,6 +256,17 @@ public class Sect {
                 break;
             }
         }
+    }
+
+    public boolean isEnemy(String sectName) {
+        boolean isEnemy = false;
+        for (String enemy : enemies) {
+            if (enemy.equalsIgnoreCase(sectName)) {
+                isEnemy = true;
+                break;
+            }
+        }
+        return isEnemy;
     }
 
     public List<String> getEnemies() {

@@ -14,7 +14,7 @@ import java.util.List;
 public class WorldSectData extends WorldSavedData {
 
     private static final String DATA_NAME = WuxiaCraft.MOD_ID + "_SectData";
-    public static List<Sect> SECTS;
+    public List<Sect> SECTS;
 
     public WorldSectData() {
         super(DATA_NAME);
