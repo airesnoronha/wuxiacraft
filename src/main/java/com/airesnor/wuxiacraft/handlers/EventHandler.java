@@ -368,7 +368,7 @@ public class EventHandler {
 				float totalRem = 0f;
 				float fly_cost = 2500f;
 				float dist_cost = 1320f;
-				if ( cultivation.getEssenceLevel().getModifierBySubLevel(cultivation.getEssenceSubLevel()) < 160000) { // cannot fly freely
+				if (cultivation.getEssenceLevel().getModifierBySubLevel(cultivation.getEssenceSubLevel()) < 160000) { // cannot fly freely
 					totalRem += fly_cost;
 				}
 				if (distance > 0) {
@@ -461,7 +461,7 @@ public class EventHandler {
 					} else if (cultTech.getDivineTechnique().getTechnique().equals(Techniques.NINE_SPRINGS_SOUL)) {
 						double modifier = cultivation.getDivineModifier() * (cultTech.getDivineTechnique().getProficiency()
 								/ cultTech.getDivineTechnique().getTechnique().getMaxProficiency()) * 0.5;
-						event.setAmount(event.getAmount() * (1 + (float)modifier));
+						event.setAmount(event.getAmount() * (1 + (float) modifier));
 					}
 				}
 				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) player);
@@ -500,7 +500,7 @@ public class EventHandler {
 		float baseSpeed = event.getOriginalSpeed();
 		double strengthModifier = event.getEntityPlayer().getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() - event.getEntityPlayer().getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue();
 		double dexterityModifier = event.getEntityPlayer().getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() - event.getEntityPlayer().getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getBaseValue();
-		float hasteModifier = (float) (0.1f * baseSpeed * (strengthModifier*0.7 + dexterityModifier*0.3));
+		float hasteModifier = (float) (0.1f * baseSpeed * (strengthModifier * 0.7 + dexterityModifier * 0.3));
 		if (cultivation.getHasteLimit() >= 0) {
 			hasteModifier = Math.min(hasteModifier, cultivation.getHasteLimit() * baseSpeed);
 		}
@@ -839,7 +839,7 @@ public class EventHandler {
 
 		double str = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.2;
 		str *= (1 + tm.strength);
-		double spd = ((cultivation.getBodyModifier()-1) * 0.2 + (cultivation.getEssenceModifier()-1) * 0.4 + (cultivation.getDivineModifier()-1) * 0.1) * 0.2;
+		double spd = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;
 		spd *= (1 + tm.movementSpeed);
 		double hp = (cultivation.getBodyModifier() - 1) + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.2;
 		hp *= (1 + tm.maxHealth);

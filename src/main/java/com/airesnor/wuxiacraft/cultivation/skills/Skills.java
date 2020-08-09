@@ -8,10 +8,7 @@ import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.entities.skills.*;
 import com.airesnor.wuxiacraft.handlers.RendererHandler;
 import com.airesnor.wuxiacraft.networking.*;
-import com.airesnor.wuxiacraft.utils.CultivationUtils;
-import com.airesnor.wuxiacraft.utils.OreUtils;
-import com.airesnor.wuxiacraft.utils.SkillUtils;
-import com.airesnor.wuxiacraft.utils.TreeUtils;
+import com.airesnor.wuxiacraft.utils.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
@@ -352,7 +349,7 @@ public class Skills {
                 }
                 WaterNeedleThrowable needle = new WaterNeedleThrowable(actor.world, actor, damage, 300);
                 needle.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, Math.min(1.8f, 0.8f + speed * 0.12f), 0.2f);
-                actor.world.spawnEntity(needle);
+                WorldUtils.spawnEntity(actor.world, needle);
                 return true;
             });
 
@@ -550,7 +547,7 @@ public class Skills {
                 float strength = (float)cultivation.getDivineModifier() * 1.5f;
                 SoulArrowThrowable soulArrowThrowable = new SoulArrowThrowable(actor.world, actor, strength, 300);
                 soulArrowThrowable.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, Math.min(1.8f, 0.8f + strength*0.2f * 0.12f), 0.2f);
-                actor.world.spawnEntity(soulArrowThrowable);
+                WorldUtils.spawnEntity(actor.world, soulArrowThrowable);
                return true;
             });
 

@@ -84,6 +84,7 @@ public class CommonProxy {
 		NetworkWrapper.INSTANCE.registerMessage(UnifiedCapabilitySyncMessage.Handler.class, UnifiedCapabilitySyncMessage.class, 168007, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(CultivationLevelsMessage.Handler.class, CultivationLevelsMessage.class, 168008, Side.CLIENT);
 		NetworkWrapper.INSTANCE.registerMessage(BarrierMessage.Handler.class, BarrierMessage.class, 168009, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(SpawnEntityOnClientMessage.Handler.class, SpawnEntityOnClientMessage.class, 168010, Side.CLIENT);
 
 		MinecraftForge.EVENT_BUS.register(new CapabilitiesHandler());
 		MinecraftForge.EVENT_BUS.register(new EventHandler());

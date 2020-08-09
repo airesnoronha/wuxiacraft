@@ -191,18 +191,19 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public boolean addSystemProgress(double amount, System system, boolean allowBreakThrough) throws RequiresTribulation {
+		boolean leveled = false;
 		switch (system) {
 			case BODY:
-				addBodyProgress(amount, allowBreakThrough);
+				leveled = addBodyProgress(amount, allowBreakThrough);
 				break;
 			case DIVINE:
-				addDivineProgress(amount, allowBreakThrough);
+				leveled = addDivineProgress(amount, allowBreakThrough);
 				break;
 			case ESSENCE:
-				addEssenceProgress(amount, allowBreakThrough);
+				leveled = addEssenceProgress(amount, allowBreakThrough);
 				break;
 		}
-		return false;
+		return leveled;
 	}
 
 	@Override

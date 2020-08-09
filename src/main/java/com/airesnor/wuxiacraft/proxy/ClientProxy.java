@@ -3,6 +3,8 @@ package com.airesnor.wuxiacraft.proxy;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.OBJBlockModelLoader;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
+import com.airesnor.wuxiacraft.entities.effects.EntityLevelUpHalo;
+import com.airesnor.wuxiacraft.entities.effects.models.RenderLevelUpHalo;
 import com.airesnor.wuxiacraft.entities.mobs.GiantAnt;
 import com.airesnor.wuxiacraft.entities.mobs.GiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
@@ -85,8 +87,6 @@ public class ClientProxy extends CommonProxy {
 
 		MinecraftForge.EVENT_BUS.register(new PreClientEvents());
 
-		WuxiaCraftConfig.clientPreInit();
-
 		RenderingRegistry.registerEntityRenderingHandler(WaterNeedleThrowable.class, RenderWaterNeedle::new);
 		RenderingRegistry.registerEntityRenderingHandler(WaterBladeThrowable.class, RenderWaterBlade::new);
 		RenderingRegistry.registerEntityRenderingHandler(SwordBeamThrowable.class, RenderSwordBeam::new);
@@ -94,6 +94,9 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerEntityRenderingHandler(GiantBee.class, RenderGiantBee::new);
 		RenderingRegistry.registerEntityRenderingHandler(WanderingCultivator.class, RenderWanderingCultivator::new);
 		RenderingRegistry.registerEntityRenderingHandler(SoulArrowThrowable.class, RenderSoulArrow::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityLevelUpHalo.class, RenderLevelUpHalo::new);
+
+		WuxiaCraftConfig.clientPreInit();
 
 		MinecraftForge.EVENT_BUS.register(new RendererHandler());
 
