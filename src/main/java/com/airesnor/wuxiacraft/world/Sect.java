@@ -8,6 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
+// TODO - fix the error checking of this
 public class Sect {
 
     private String sectName;
@@ -16,8 +17,8 @@ public class Sect {
     private List<Pair<String, Integer>> defaultRanks;
     private List<Pair<UUID, String>> members;
     private List<UUID> invitations;
-    private List<String> allies;
-    private List<String> enemies;
+    private List<Pair<String, Boolean>> allies;
+    private List<Pair<String, Boolean>> enemies;
 
     private boolean disband;
     private long disbandTime;
@@ -100,11 +101,15 @@ public class Sect {
     }
 
     public void addRank(String rankName, int permissionLevel) {
+        boolean exists = false;
         for (Pair<String, Integer> rank : ranks) {
-            if (!rank.getLeft().equalsIgnoreCase(rankName)) {
-                ranks.add(Pair.of(rankName, permissionLevel));
+            if (rank.getLeft().equalsIgnoreCase(rankName)) {
+                exists = true;
                 break;
             }
+        }
+        if (!exists) {
+            ranks.add(Pair.of(rankName, permissionLevel));
         }
         Comparator<Pair<String, Integer>> rankComparable = Comparator.comparingInt(Pair::getRight);
         ranks.sort(rankComparable);
@@ -151,12 +156,16 @@ public class Sect {
     }
 
     public void addMember(UUID memberUUID, String rankName) {
+        boolean exists = false;
         for (Pair<UUID, String> member : members) {
-            if (!member.getLeft().equals(memberUUID)) {
-                members.add(Pair.of(memberUUID, rankName));
-                removePlayerFromInvitations(memberUUID);
+            if (member.getLeft().equals(memberUUID)) {
+                exists = true;
                 break;
             }
+        }
+        if (!exists) {
+            members.add(Pair.of(memberUUID, rankName));
+            removePlayerFromInvitations(memberUUID);
         }
     }
 
@@ -195,11 +204,15 @@ public class Sect {
     }
 
     public void addPlayerToInvitation(UUID playerUUID) {
+        boolean exists = false;
         for (UUID invitation : invitations) {
-            if (!invitation.equals(playerUUID)) {
-                invitations.add(playerUUID);
+            if (invitation.equals(playerUUID)) {
+                exists = true;
                 break;
             }
+        }
+        if (!exists) {
+            invitations.add(playerUUID);
         }
     }
 
@@ -207,18 +220,22 @@ public class Sect {
         return invitations;
     }
 
-    public void addAlly(String sectName) {
-        for (String allyName : allies) {
-            if (!allyName.equalsIgnoreCase(sectName)) {
-                allies.add(sectName);
+    public void addAlly(String sectName, boolean remove) {
+        boolean exists = false;
+        for (Pair<String, Boolean> ally : allies) {
+            if (ally.getLeft().equalsIgnoreCase(sectName)) {
+                exists = true;
                 break;
             }
+        }
+        if (!exists) {
+            allies.add(Pair.of(sectName, remove));
         }
     }
 
     public void removeAlly(String sectName) {
         for (int i = 0; i < allies.size(); i++) {
-            if (allies.get(i).equalsIgnoreCase(sectName)) {
+            if (allies.get(i).getLeft().equalsIgnoreCase(sectName)) {
                 allies.remove(i);
                 break;
             }
@@ -227,8 +244,8 @@ public class Sect {
 
     public boolean isAlly(String sectName) {
         boolean isAlly = false;
-        for (String ally : allies) {
-            if (ally.equalsIgnoreCase(sectName)) {
+        for (Pair<String, Boolean> ally : allies) {
+            if (ally.getLeft().equalsIgnoreCase(sectName)) {
                 isAlly = true;
                 break;
             }
@@ -236,22 +253,26 @@ public class Sect {
         return isAlly;
     }
 
-    public List<String> getAllies() {
+    public List<Pair<String, Boolean>> getAllies() {
         return allies;
     }
 
-    public void addEnemy(String sectName) {
-        for (String enemyName : enemies) {
-            if (!enemyName.equalsIgnoreCase(sectName)) {
-                enemies.add(sectName);
+    public void addEnemy(String sectName, boolean remove) {
+        boolean exists = false;
+        for (Pair<String, Boolean> enemy : enemies) {
+            if (enemy.getLeft().equalsIgnoreCase(sectName)) {
+                exists = true;
                 break;
             }
+        }
+        if (!exists) {
+            enemies.add(Pair.of(sectName, remove));
         }
     }
 
     public void removeEnemy(String sectName) {
         for (int i = 0; i < enemies.size(); i++) {
-            if (enemies.get(i).equalsIgnoreCase(sectName)) {
+            if (enemies.get(i).getLeft().equalsIgnoreCase(sectName)) {
                 enemies.remove(i);
                 break;
             }
@@ -260,8 +281,8 @@ public class Sect {
 
     public boolean isEnemy(String sectName) {
         boolean isEnemy = false;
-        for (String enemy : enemies) {
-            if (enemy.equalsIgnoreCase(sectName)) {
+        for (Pair<String, Boolean> enemy : enemies) {
+            if (enemy.getLeft().equalsIgnoreCase(sectName)) {
                 isEnemy = true;
                 break;
             }
@@ -269,7 +290,7 @@ public class Sect {
         return isEnemy;
     }
 
-    public List<String> getEnemies() {
+    public List<Pair<String, Boolean>> getEnemies() {
         return enemies;
     }
 
@@ -330,11 +351,11 @@ public class Sect {
         }
         for (int i = 0; i < allyList.tagCount(); i++) {
             NBTTagCompound tagCompound = allyList.getCompoundTagAt(i);
-            addAlly(tagCompound.getString("ally"));
+            addAlly(tagCompound.getString("allyName"), tagCompound.getBoolean("allyRemove"));
         }
         for (int i = 0; i < enemyList.tagCount(); i++) {
             NBTTagCompound tagCompound = enemyList.getCompoundTagAt(i);
-            addEnemy(tagCompound.getString("enemy"));
+            addEnemy(tagCompound.getString("enemyName"), tagCompound.getBoolean("enemyRemove"));
         }
         this.setDisband(nbt.getBoolean("disbanding"));
         this.setDisbandTime(nbt.getLong("disbandTime"));
@@ -369,14 +390,16 @@ public class Sect {
             invitationCompund.setUniqueId("playerInvitationUUID", invitation);
             invitationList.appendTag(invitationCompund);
         }
-        for (String ally : allies) {
+        for (Pair<String, Boolean> ally : allies) {
             NBTTagCompound allyCompound = new NBTTagCompound();
-            allyCompound.setString("ally", ally);
+            allyCompound.setString("allyName", ally.getLeft());
+            allyCompound.setBoolean("allyRemove", ally.getRight());
             allyList.appendTag(allyCompound);
         }
-        for (String enemy : enemies) {
+        for (Pair<String, Boolean> enemy : enemies) {
             NBTTagCompound enemyCompound = new NBTTagCompound();
-            enemyCompound.setString("enemy", enemy);
+            enemyCompound.setString("enemyName", enemy.getLeft());
+            enemyCompound.setBoolean("enemyRemove", enemy.getRight());
             enemyList.appendTag(enemyCompound);
         }
         tag.setTag("rankList", rankList);

@@ -317,7 +317,19 @@ public class SectCommand extends CommandBase {
             }
             text = new TextComponentString("Sect Allies: WIP");
             playerMP.sendMessage(text);
-            text = new TextComponentString("Sect Enemies: WIP");
+            String allyOutput = "";
+            for (Pair<String, Boolean> ally : sectInfo.getAllies()) {
+                allyOutput += ally.getLeft() + ", ";
+            }
+            text = new TextComponentString(String.format("%5s", allyOutput));
+            playerMP.sendMessage(text);
+            text = new TextComponentString("Sect Enemies:");
+            playerMP.sendMessage(text);
+            String enemyOutput = "";
+            for (Pair<String, Boolean> enemy: sectInfo.getEnemies()) {
+                enemyOutput += enemy.getLeft() + ", ";
+            }
+            text = new TextComponentString(String.format("%5s", enemyOutput));
             playerMP.sendMessage(text);
         } else {
             TextComponentString text = new TextComponentString("You do not belong to a sect.");
@@ -947,19 +959,21 @@ public class SectCommand extends CommandBase {
         }
     }
 
-    public void enemySubCommand(MinecraftServer server, String[] args, EntityPlayerMP playerMP, WorldSectData sectData) { // TODO - this another time, only sectLeader can do this
-        // make it so it also checks allies and removes them from allies
+    public void enemySubCommand(MinecraftServer server, String[] args, EntityPlayerMP playerMP, WorldSectData sectData) {
         Sect sect = Sect.getSectByPlayer(playerMP, sectData);
         if (sect != null) {
             Sect enemySect = Sect.getSectByName(args[1], sectData);
             if (enemySect != null) {
                 if (sect.getSectLeader().equals(playerMP.getUniqueID())) {
                     if (sect.isEnemy(enemySect.getSectName())) {
-
+                        sect.removeEnemy(enemySect.getSectName());
+                        TextComponentString text = new TextComponentString("You no longer consider " + enemySect.getSectName() + " as an enemy.");
+                        text.getStyle().setColor(TextFormatting.GREEN);
+                        playerMP.sendMessage(text);
                     } else {
                         TextComponentString text = new TextComponentString("You are now enemies with the sect: " + enemySect.getSectName());
-                        text.getStyle().setColor(TextFormatting.RED);
-                        sect.addEnemy(enemySect.getSectName());
+                        text.getStyle().setColor(TextFormatting.GREEN);
+                        sect.addEnemy(enemySect.getSectName(), false);
                         playerMP.sendMessage(text);
                         for (Pair<UUID, String> member : sect.getMembers()) {
                             EntityPlayerMP memberPlayer = server.getPlayerList().getPlayerByUUID(member.getLeft());
@@ -968,8 +982,8 @@ public class SectCommand extends CommandBase {
                             }
                         }
                         text = new TextComponentString("You are now enemies with the sect: " + sect.getSectName());
-                        text.getStyle().setColor(TextFormatting.RED);
-                        enemySect.addEnemy(sect.getSectName());
+                        text.getStyle().setColor(TextFormatting.GREEN);
+                        enemySect.addEnemy(sect.getSectName(), false);
                         for (Pair<UUID, String> enemyMembers : enemySect.getMembers()) {
                             EntityPlayerMP enemyPlayer = server.getPlayerList().getPlayerByUUID(enemyMembers.getLeft());
                             if (enemyPlayer != null) {
@@ -979,6 +993,12 @@ public class SectCommand extends CommandBase {
                         EntityPlayerMP enemySectLeader = server.getPlayerList().getPlayerByUUID(enemySect.getSectLeader());
                         if (enemySectLeader != null) {
                             enemySectLeader.sendMessage(text);
+                        }
+                        if (sect.isAlly(enemySect.getSectName())) {
+                            sect.removeAlly(enemySect.getSectName());
+                        }
+                        if (enemySect.isAlly(sect.getSectName())) {
+                            enemySect.removeAlly(sect.getSectName());
                         }
                     }
                 } else {
