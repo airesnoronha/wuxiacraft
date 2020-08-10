@@ -393,16 +393,23 @@ public class EventHandler {
 	 *
 	 * @param event Description of whats happening
 	 */
+	@SuppressWarnings("ConstantConditions")
 	@SubscribeEvent
 	public void onPlayerJump(LivingEvent.LivingJumpEvent event) {
 		if (event.getEntityLiving() instanceof EntityPlayer) {
 			EntityLivingBase player = event.getEntityLiving();
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.getEntityLiving());
 			double baseJumpSpeed = event.getEntity().motionY;
-			float agilityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() - // difference between whats -->
-					player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()) * 0.3f; // agility to bend the body to spring up
-			float strengthModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() - // --> been added to it's base so vanilla players won't feel
-					player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue()) * 0.7f; // strength in the legs to jump higher
+			float agilityModifier = 0;  // agility to bend the body to spring up
+			if(player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED) != null) {
+				agilityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() - // difference between whats -->
+						player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()) * 0.3f;// --> been added to it's base so vanilla players won't feel
+			}
+			float strengthModifier =  0;// strength in the legs to jump higher
+			if(player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE) != null) {
+				strengthModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() -
+						player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue()) * 0.7f;
+			}
 			double jumpSpeed = 0.5f * (agilityModifier + strengthModifier) * baseJumpSpeed;
 			if (cultivation.getJumpLimit() >= 0) {
 				jumpSpeed = Math.min(jumpSpeed, cultivation.getJumpLimit() * baseJumpSpeed);
@@ -416,19 +423,30 @@ public class EventHandler {
 	 *
 	 * @param event Description of whats happening
 	 */
+	@SuppressWarnings("ConstantConditions")
 	@SubscribeEvent
 	public void onCultivatorFall(LivingFallEvent event) {
 		EntityLivingBase player = event.getEntityLiving();
+		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.getEntityLiving());
 		if (event.getEntityLiving().world.isRemote || event.getDistance() < 3) return;
-		if (CultivationUtils.getMaxEnergy(player) > 100000) {
+		if ((cultivation.getBodyModifier() + cultivation.getEssenceModifier()*  0.8 + cultivation.getDivineModifier() * 0.2) > 100000) {
 			event.setDistance(0);
 		} else {
-			float agilityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() - // difference between whats -->
-					player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()) * 0.4f; // agility to bend the body to lessen the impact
-			float strengthModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() - // --> been added to it's base so vanilla players won't feel
-					player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue()) * 0.4f; // strength to resist the impact
-			float constitutionModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue() -
-					player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getBaseValue()) * 0.2f; // natural body resistance
+			float agilityModifier = 0;  // agility to bend the body to spring up
+			if(player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED) != null) {
+				agilityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() - // difference between whats -->
+						player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()) * 0.3f;// --> been added to it's base so vanilla players won't feel
+			}
+			float strengthModifier =  0;// strength in the legs to jump higher
+			if(player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE) != null) {
+				strengthModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() -
+						player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue()) * 0.7f;
+			}
+			float constitutionModifier = 0; // natural body resistance
+			if(player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH) != null) {
+				constitutionModifier =  (float) (player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue() -
+						player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getBaseValue()) * 0.2f;
+			}
 			event.setDistance(event.getDistance() - 1.85f * (agilityModifier + strengthModifier + constitutionModifier));
 		}
 	}
