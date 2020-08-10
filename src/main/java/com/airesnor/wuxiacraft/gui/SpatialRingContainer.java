@@ -20,19 +20,20 @@ public class SpatialRingContainer extends Container {
         this.inv = player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         this.inventorySize = inv.getSlots();
         this.spatialRingRows = ((ItemSpatialRing) player.getHeldItemMainhand().getItem()).getSpatialRingRows();
-        this.spatialRingColumns = ((ItemSpatialRing) player.getHeldItemMainhand().getItem()).getSpatialRingColumns();;
+        this.spatialRingColumns = ((ItemSpatialRing) player.getHeldItemMainhand().getItem()).getSpatialRingColumns();
 
-        int xPos = 8;
-        int yPos = 18;
+        int xPos = 119 - (9 * (this.spatialRingColumns - 9));
+        int yPos = 200 - (18 * (this.spatialRingRows - 3));
 
-        //0-53 Space Ring inventory
+        //Space Ring inventory
         for (int y = 0; y < this.spatialRingRows; ++y) {
             for (int x = 0; x < this.spatialRingColumns; ++x) {
-                addSlotToContainer(new SlotItemHandler(inv, x + y * 9, xPos + x * 18, yPos + y * 18));
+                addSlotToContainer(new SlotItemHandler(inv, x + y * this.spatialRingColumns, xPos + x * 18, yPos + y * 18));
             }
         }
 
-        yPos = 140;
+        yPos = yPos + (this.spatialRingRows * 18) + 9;
+        xPos = 119;
         //9-35 Player inventory
         for (int y = 0; y < 3; ++y) {
             for (int x = 0; x < 9; ++x) {
@@ -41,7 +42,7 @@ public class SpatialRingContainer extends Container {
         }
         //0-8 Player inventory
         for (int x = 0; x < 9; ++x) {
-            addSlotToContainer(new Slot(player.inventory, x, xPos + x * 18, 198));
+            addSlotToContainer(new Slot(player.inventory, x, xPos + x * 18, yPos + 58));
         }
     }
 

@@ -9,8 +9,8 @@ public class SpatialRingGui extends GuiContainer {
     public SpatialRingGui(EntityPlayer player) {
         super(new SpatialRingContainer(player));
 
-        this.xSize = 200;
-        this.ySize = 250;
+        this.xSize = 400;
+        this.ySize = 500;
     }
 
     @Override

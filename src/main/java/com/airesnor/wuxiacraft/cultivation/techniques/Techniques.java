@@ -127,7 +127,7 @@ public class Techniques {
 			.addCheckpoint(907300, "Phenomenon Success")
 			.addCheckpoint(4979800, "Divine Body")
 			.addCheckpoint(27330630, "Deity body")
-			.addCheckpoint(1500000000.0, "Tearch body")
+			.addCheckpoint(1500000000.0, "Thearch body")
 			.addElement(Element.WOOD);
 
 	//From Wuxia4You
