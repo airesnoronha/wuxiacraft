@@ -35,6 +35,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod.EventBusSubscriber
 public class RegistryHandler {
@@ -58,6 +60,7 @@ public class RegistryHandler {
 		GameRegistry.registerTileEntity(GrinderTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "grinder_tile_entity"));
 	}
 
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void onModelRegister(ModelRegistryEvent event) {
 		WuxiaCraft.proxy.registerItemRenderer(Item.getItemFromBlock(WuxiaBlocks.MAGICAL_GRINDER), 0, "inventory");

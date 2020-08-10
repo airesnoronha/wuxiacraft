@@ -62,6 +62,7 @@ public class BarrierMessage implements IMessage {
             return null;
         }
 
+        @SideOnly(Side.CLIENT)
         private void handleClientMessage(BarrierMessage message) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 EntityPlayer player = Minecraft.getMinecraft().player;
