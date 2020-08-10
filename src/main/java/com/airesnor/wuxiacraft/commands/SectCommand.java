@@ -492,12 +492,8 @@ public class SectCommand extends CommandBase {
                     if (!playerMP.getUniqueID().equals(targetPlayer.getUniqueID())) {
                         Pair<String, Integer> sectElderRank = sectOfPlayer.getRank("SectElder");
                         int kickPermissionLevel = sectElderRank.getRight();
-                        Pair<UUID, String> memberPlayer = sectOfPlayer.getMemberByUUID(playerMP.getUniqueID());
-                        Pair<String, Integer> playerRank = sectOfPlayer.getRank(memberPlayer.getRight());
-                        Pair<UUID, String> memberTarget = sectOfTarget.getMemberByUUID(targetPlayer.getUniqueID());
-                        Pair<String, Integer> targetRank = sectOfTarget.getRank(memberTarget.getRight());
                         if (sectOfPlayer.getSectLeader().equals(playerMP.getUniqueID())) {
-                            sectOfPlayer.removeMember(memberTarget.getLeft());
+                            sectOfPlayer.removeMember(targetPlayer.getUniqueID());
                             TextComponentString text = new TextComponentString(targetPlayer.getName() + " has been kicked from the sect.");
                             text.getStyle().setColor(TextFormatting.GREEN);
                             playerMP.sendMessage(text);
@@ -507,22 +503,38 @@ public class SectCommand extends CommandBase {
                             LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) targetPlayer.getPrefixes();
                             prefixes.remove(0);
                         } else {
-                            if (playerRank.getRight() >= kickPermissionLevel && playerRank.getRight() > targetRank.getRight()) {
-                                sectOfPlayer.removeMember(memberTarget.getLeft());
-                                TextComponentString text = new TextComponentString(targetPlayer.getName() + " has been kicked from the sect.");
-                                text.getStyle().setColor(TextFormatting.GREEN);
-                                playerMP.sendMessage(text);
-                                text = new TextComponentString("You have been kicked from the sect.");
-                                text.getStyle().setColor(TextFormatting.RED);
-                                targetPlayer.sendMessage(text);
-                                LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) targetPlayer.getPrefixes();
-                                prefixes.remove(0);
-                            } else if (!(playerRank.getRight() >= kickPermissionLevel)) {
-                                TextComponentString text = new TextComponentString("You do not have the permission to kick a member of the sect.");
-                                text.getStyle().setColor(TextFormatting.RED);
-                                playerMP.sendMessage(text);
-                            } else if (!(playerRank.getRight() > targetRank.getRight())) {
-                                TextComponentString text = new TextComponentString(targetPlayer.getName() + " cannot be kicked as they either have the same or higher level of authority than you.");
+                            Pair<UUID, String> memberPlayer = sectOfPlayer.getMemberByUUID(playerMP.getUniqueID());
+                            Pair<String, Integer> playerRank = null;
+                            Pair<UUID, String> memberTarget = sectOfTarget.getMemberByUUID(targetPlayer.getUniqueID());
+                            Pair<String, Integer> targetRank = null;
+                            if (memberPlayer != null) {
+                                playerRank = sectOfPlayer.getRank(memberPlayer.getRight());
+                            }
+                            if (memberTarget != null) {
+                                targetRank = sectOfTarget.getRank(memberTarget.getRight());
+                            }
+                            if (memberPlayer != null && playerRank != null && memberTarget != null && targetRank != null) {
+                                if (playerRank.getRight() >= kickPermissionLevel && playerRank.getRight() > targetRank.getRight()) {
+                                    sectOfPlayer.removeMember(memberTarget.getLeft());
+                                    TextComponentString text = new TextComponentString(targetPlayer.getName() + " has been kicked from the sect.");
+                                    text.getStyle().setColor(TextFormatting.GREEN);
+                                    playerMP.sendMessage(text);
+                                    text = new TextComponentString("You have been kicked from the sect.");
+                                    text.getStyle().setColor(TextFormatting.RED);
+                                    targetPlayer.sendMessage(text);
+                                    LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) targetPlayer.getPrefixes();
+                                    prefixes.remove(0);
+                                } else if (!(playerRank.getRight() >= kickPermissionLevel)) {
+                                    TextComponentString text = new TextComponentString("You do not have the permission to kick a member of the sect.");
+                                    text.getStyle().setColor(TextFormatting.RED);
+                                    playerMP.sendMessage(text);
+                                } else if (!(playerRank.getRight() > targetRank.getRight())) {
+                                    TextComponentString text = new TextComponentString(targetPlayer.getName() + " cannot be kicked as they either have the same or higher level of authority than you.");
+                                    text.getStyle().setColor(TextFormatting.RED);
+                                    playerMP.sendMessage(text);
+                                }
+                            } else if (memberTarget == null && targetRank == null) {
+                                TextComponentString text = new TextComponentString("You can not kick the Sect Leader.");
                                 text.getStyle().setColor(TextFormatting.RED);
                                 playerMP.sendMessage(text);
                             }
@@ -588,6 +600,9 @@ public class SectCommand extends CommandBase {
                 Sect testSect = Sect.getSectByName(args[1], sectData);
                 if (testSect == null) {
                     sect.setSectName(args[1]);
+                    TextComponentString text = new TextComponentString("Sect has been renamed to " + args[1] + ".");
+                    text.getStyle().setColor(TextFormatting.GREEN);
+                    playerMP.sendMessage(text);
                     for (Pair<UUID, String> member : sect.getMembers()) {
                         EntityPlayerMP memberPlayer = server.getPlayerList().getPlayerByUUID(member.getLeft());
                         if (memberPlayer != null) {
@@ -724,7 +739,7 @@ public class SectCommand extends CommandBase {
     }
 
     public void helpSubCommand(EntityPlayerMP playerMP) {
-        TextComponentString text = new TextComponentString("Sect Help Information:");
+        TextComponentString text = new TextComponentString("Sect Help Information:\n-----------------------------------");
         text.getStyle().setColor(TextFormatting.AQUA);
         playerMP.sendMessage(text);
         text = new TextComponentString("/sect create <sectName>");
@@ -763,6 +778,9 @@ public class SectCommand extends CommandBase {
         playerMP.sendMessage(text);
         text = new TextComponentString("/sect enemy <sectName>");
         playerMP.sendMessage(text);
+        text = new TextComponentString("-----------------------------------");
+        text.getStyle().setColor(TextFormatting.AQUA);
+        playerMP.sendMessage(text);
     }
 
     public void inviteSubCommand(MinecraftServer server, String[] args, EntityPlayerMP playerMP, WorldSectData sectData) {
@@ -771,24 +789,55 @@ public class SectCommand extends CommandBase {
         if (sect != null) {
             Pair<String, Integer> sectElderRank = sect.getRank("SectElder");
             int invitePermissionLevel = sectElderRank.getRight();
-            Pair<UUID, String> memberPlayer = sect.getMemberByUUID(playerMP.getUniqueID());
-            Pair<String, Integer> playerRank = sect.getRank(memberPlayer.getRight());
             if (targetPlayer != null) {
                 if (sect.getSectLeader().equals(playerMP.getUniqueID())) {
-                    sect.addPlayerToInvitation(targetPlayer.getUniqueID());
-                    TextComponentString text = new TextComponentString(targetPlayer.getName() + " has been invited to the sect.");
-                    text.getStyle().setColor(TextFormatting.GREEN);
-                    playerMP.sendMessage(text);
-                } else {
-                    if (playerRank.getRight() >= invitePermissionLevel) {
-                        sect.addPlayerToInvitation(targetPlayer.getUniqueID());
-                        TextComponentString text = new TextComponentString(targetPlayer.getName() + " has been invited to the sect.");
-                        text.getStyle().setColor(TextFormatting.GREEN);
-                        playerMP.sendMessage(text);
-                    } else {
-                        TextComponentString text = new TextComponentString("You do not have the authority to invite players to the sect.");
+                    if (sect.getSectLeader().equals(targetPlayer.getUniqueID())) {
+                        TextComponentString text = new TextComponentString("You cannot invite yourself to the sect.");
                         text.getStyle().setColor(TextFormatting.RED);
                         playerMP.sendMessage(text);
+                    } else {
+                        Pair<UUID, String> memberTarget = sect.getMemberByUUID(targetPlayer.getUniqueID());
+                        if (memberTarget != null) {
+                            TextComponentString text = new TextComponentString("That player is already a member of the sect.");
+                            text.getStyle().setColor(TextFormatting.RED);
+                            playerMP.sendMessage(text);
+                        } else {
+                            sect.addPlayerToInvitation(targetPlayer.getUniqueID());
+                            TextComponentString text = new TextComponentString(targetPlayer.getName() + " has been invited to the sect.");
+                            text.getStyle().setColor(TextFormatting.GREEN);
+                            playerMP.sendMessage(text);
+                        }
+                    }
+                } else {
+                    Pair<UUID, String> memberPlayer = sect.getMemberByUUID(playerMP.getUniqueID());
+                    Pair<String, Integer> playerRank = null;
+                    if (memberPlayer != null) {
+                        playerRank = sect.getRank(memberPlayer.getRight());
+                    }
+                    if (playerRank != null) {
+                        if (playerRank.getRight() >= invitePermissionLevel) {
+                            if (sect.getSectLeader().equals(targetPlayer.getUniqueID())) {
+                                TextComponentString text = new TextComponentString("You cannot invite the sect leader to his own sect.");
+                                text.getStyle().setColor(TextFormatting.RED);
+                                playerMP.sendMessage(text);
+                            } else {
+                                Pair<UUID, String> memberTarget = sect.getMemberByUUID(targetPlayer.getUniqueID());
+                                if (memberTarget != null) {
+                                    TextComponentString text = new TextComponentString("That player is already a member of the sect.");
+                                    text.getStyle().setColor(TextFormatting.RED);
+                                    playerMP.sendMessage(text);
+                                } else {
+                                    sect.addPlayerToInvitation(targetPlayer.getUniqueID());
+                                    TextComponentString text = new TextComponentString(targetPlayer.getName() + " has been invited to the sect.");
+                                    text.getStyle().setColor(TextFormatting.GREEN);
+                                    playerMP.sendMessage(text);
+                                }
+                            }
+                        } else {
+                            TextComponentString text = new TextComponentString("You do not have the authority to invite players to the sect.");
+                            text.getStyle().setColor(TextFormatting.RED);
+                            playerMP.sendMessage(text);
+                        }
                     }
                 }
             } else {
