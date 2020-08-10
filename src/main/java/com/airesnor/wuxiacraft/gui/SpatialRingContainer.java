@@ -1,6 +1,6 @@
 package com.airesnor.wuxiacraft.gui;
-
 import com.airesnor.wuxiacraft.items.ItemSpatialRing;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
@@ -11,12 +11,16 @@ import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+
+@SuppressWarnings("FieldCanBeLocal")
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class SpatialRingContainer extends Container {
 
     private final IItemHandler inv;
     private final int inventorySize;
-    private final int spatialRingRows;
-    private final int spatialRingColumns;
+    public final int spatialRingRows;
+    public final int spatialRingColumns;
 
     public SpatialRingContainer(EntityPlayer player) {
         this.inv = player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
@@ -24,18 +28,15 @@ public class SpatialRingContainer extends Container {
         this.spatialRingRows = ((ItemSpatialRing) player.getHeldItemMainhand().getItem()).getSpatialRingRows();
         this.spatialRingColumns = ((ItemSpatialRing) player.getHeldItemMainhand().getItem()).getSpatialRingColumns();
 
-        int xPos = 119 - (9 * (this.spatialRingColumns - 9));
-        int yPos = 200 - (18 * (this.spatialRingRows - 3));
-
         //Space Ring inventory
         for (int y = 0; y < this.spatialRingRows; ++y) {
             for (int x = 0; x < this.spatialRingColumns; ++x) {
-                addSlotToContainer(new SpatialSlot(inv, x + y * this.spatialRingColumns, xPos + x * 18, yPos + y * 18));
+                addSlotToContainer(new SpatialSlot(inv, x + y * this.spatialRingColumns, 11 + x * 18, 11 + y * 18));
             }
         }
 
-        yPos = yPos + (this.spatialRingRows * 18) + 9;
-        xPos = 119;
+        int xPos = ((20 + this.spatialRingColumns*18)/2) - (9*18)/2 + 1;
+        int yPos = 10 + this.spatialRingRows*18 + 8;
         //9-35 Player inventory
         for (int y = 0; y < 3; ++y) {
             for (int x = 0; x < 9; ++x) {
