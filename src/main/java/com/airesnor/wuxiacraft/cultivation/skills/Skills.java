@@ -192,7 +192,7 @@ public class Skills {
                 for (int i = 0; i < 3; i++) {
                     FireThrowable ft = new FireThrowable(actor.world, actor, damage);
                     ft.shoot(actor, shootPitch, shootYaw, 0.3f, 1.2f, 0.4f);
-                    actor.world.spawnEntity(ft);
+                    WorldUtils.spawnEntity(actor.world, ft);
                 }
                 return true;
             });
@@ -209,7 +209,7 @@ public class Skills {
                 for (int i = 0; i < 5; i++) {
                     FireThrowable ft = new FireThrowable(actor.world, actor, damage, 600, 60, 1.2f);
                     ft.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, Math.min(0.8f + speed * 0.4f, 1.8f), 0.4f);
-                    actor.world.spawnEntity(ft);
+                    WorldUtils.spawnEntity(actor.world, ft);
                 }
                 return true;
             });
@@ -247,7 +247,8 @@ public class Skills {
                 item.setCount(block.getBlock().quantityDropped(actor.world.rand));
                 EntityItem oreItem = new EntityItem(actor.world, actor.posX, actor.posY, actor.posZ, item);
                 oreItem.setNoPickupDelay();
-                oreItem.setOwner(actor.getName());
+                //oreItem.setOwner(actor.getName());
+                //i guess items have their own way to spawn in the client
                 actor.world.spawnEntity(oreItem);
             }
             activated = true;
@@ -274,7 +275,8 @@ public class Skills {
                     earthItem.motionY = dy / dist * 0.6f;
                     earthItem.motionZ = dz / dist * 0.6f;
                     earthItem.setNoPickupDelay();
-                    earthItem.setOwner(actor.getName());
+                    //earthItem.setOwner(actor.getName());
+                    //i guess items have their own way to spawn in the client
                     actor.world.spawnEntity(earthItem);
                 }
                 activated = true;
@@ -338,22 +340,22 @@ public class Skills {
     });
 
     // Credits : My Girlfriend
-    public static final Skill WATER_NEEDLE = new Skill("water_needle", false, true, 100f, 1.1f, 20f, 0f, "Lysian Prieto")
+    public static final Skill WATER_NEEDLE = new Skill("water_needle", false, true, 30f, 1.1f, 6f, 0f, "Lysian Prieto")
             .setAction(actor -> {
-                ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
-                float strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
-                float speed = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue();
-                float damage = 4 + (float) (strength * 0.3 + CultivationUtils.getMaxEnergy(actor) * 0.02);
-                if (cultTech.hasElement(Element.WATER)) {
-                    damage *= 1.3;
-                }
-                WaterNeedleThrowable needle = new WaterNeedleThrowable(actor.world, actor, damage, 300);
-                needle.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, Math.min(1.8f, 0.8f + speed * 0.12f), 0.2f);
-                WorldUtils.spawnEntity(actor.world, needle);
+                    ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
+                    float strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
+                    float speed = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue();
+                    float damage = 4 + (float) (strength * 0.3 + CultivationUtils.getMaxEnergy(actor) * 0.02);
+                    if (cultTech.hasElement(Element.WATER)) {
+                        damage *= 1.3;
+                    }
+                    WaterNeedleThrowable needle = new WaterNeedleThrowable(actor.world, actor, damage, 300);
+                    needle.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, Math.min(1.8f, 0.8f + speed * 0.12f), 0.2f);
+                    WorldUtils.spawnEntity(actor.world, needle);
                 return true;
             });
 
-    public static final Skill WATER_BLADE = new Skill("water_blade", false, true, 380f, 2.0f, 120f, 0f).setAction(actor -> {
+    public static final Skill WATER_BLADE = new Skill("water_blade", false, true, 60f, 2.0f, 12f, 0f).setAction(actor -> {
         ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
         ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
         float strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
@@ -369,8 +371,8 @@ public class Skills {
             damage *= 1.3;
         }
         WaterBladeThrowable blade = new WaterBladeThrowable(actor.world, actor, damage, 300);
-        blade.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 0.7f + speed * 0.5f * swordModifier, 0.2f);
-        actor.world.spawnEntity(blade);
+        blade.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 0.001f * (0.7f + speed * 0.5f * swordModifier), 0.2f);
+        WorldUtils.spawnEntity(actor.world, blade);
         return true;
     });
 
@@ -428,7 +430,7 @@ public class Skills {
                     float damage = strength + sword;
                     SwordBeamThrowable sbt = new SwordBeamThrowable(actor.world, actor, damage, 0xEF890A, 300);
                     sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.6f, 0f);
-                    actor.world.spawnEntity(sbt);
+                    WorldUtils.spawnEntity(actor.world, sbt);
                     actor.swingArm(EnumHand.MAIN_HAND);
                 }
                 return activated;
@@ -445,7 +447,7 @@ public class Skills {
         float damage = strength * 0.3f + sword * 0.3f;
         SwordBeamThrowable sbt = new SwordBeamThrowable(actor.world, actor, damage, 0x89EF0A, 300);
         sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.2f, 0f);
-        actor.world.spawnEntity(sbt);
+        WorldUtils.spawnEntity(actor.world, sbt);
         actor.swingArm(EnumHand.MAIN_HAND);
         return true;
     };
@@ -466,7 +468,7 @@ public class Skills {
                     float damage = strength + sword;
                     SwordBeamThrowable sbt = new SwordBeamThrowable(actor.world, actor, damage, 0xEF890A, 300);
                     sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.6f, 0f);
-                    actor.world.spawnEntity(sbt);
+                    WorldUtils.spawnEntity(actor.world, sbt);
                     actor.swingArm(EnumHand.MAIN_HAND);
                     skillCap.resetBarrageCounter();
                 }

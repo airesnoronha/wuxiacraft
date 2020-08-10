@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.entities.skills;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -7,10 +8,11 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-public class SoulArrowThrowable extends EntityThrowable {
+public class SoulArrowThrowable extends EntityThrowable implements IEntityAdditionalSpawnData {
 
 	public float strength;
 	public EntityLivingBase owner;
@@ -43,7 +45,7 @@ public class SoulArrowThrowable extends EntityThrowable {
 
 	@Override
 	public void onUpdate() {
-		if(this.inWater) {
+		if (this.inWater) {
 			this.motionX *= 1.0f / 0.81f;
 			this.motionY *= 1.0f / 0.81f;
 			this.motionZ *= 1.0f / 0.81f;
@@ -63,16 +65,16 @@ public class SoulArrowThrowable extends EntityThrowable {
 	@Override
 	protected void onImpact(RayTraceResult result) {
 		if (result.typeOfHit == RayTraceResult.Type.ENTITY && !result.entityHit.equals(this.owner)) {
-			if(!this.world.isRemote) {
-				if(result.entityHit instanceof EntityLivingBase) {
+			if (result.entityHit instanceof EntityLivingBase) {
+				if (!this.world.isRemote) {
 					this.attackEntityOnDirectHit((EntityLivingBase) result.entityHit);
-					this.setDead();
 				}
+				this.setDead();
 			}
 		} //else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
-			//if (canNotPassThroughHitBlock(result)) {
-			//	this.setDead();
-			//}
+		//if (canNotPassThroughHitBlock(result)) {
+		//	this.setDead();
+		//}
 		//}
 	}
 
@@ -83,4 +85,13 @@ public class SoulArrowThrowable extends EntityThrowable {
 		}
 	}
 
+	@Override
+	public void writeSpawnData(ByteBuf buffer) {
+		buffer.writeInt(this.duration);
+	}
+
+	@Override
+	public void readSpawnData(ByteBuf additionalData) {
+		this.duration = additionalData.readInt();
+	}
 }

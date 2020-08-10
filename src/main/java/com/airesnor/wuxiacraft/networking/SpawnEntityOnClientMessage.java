@@ -10,34 +10,24 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class SpawnEntityOnClientMessage implements IMessage {
 
-	public ResourceLocation entityEntry;
-	public int entityId;
-	public double posX, posY, posZ;
-	public float entityYaw, entityPitch;
-	public double motionX, motionY, motionZ;
+	private ResourceLocation entityEntry;
+	private int entityId;
+	private double posX, posY, posZ;
+	private float entityYaw, entityPitch;
+	private double motionX, motionY, motionZ;
+	public Entity entity;
 
 	public SpawnEntityOnClientMessage() {
 	}
 
-	public SpawnEntityOnClientMessage(ResourceLocation entityEntry, int entityId, double posX, double posY, double posZ, float entityYaw, float entityPitch, double motionX, double motionY, double motionZ) {
-		this.entityEntry = entityEntry;
-		this.entityId = entityId;
-		this.posX = posX;
-		this.posY = posY;
-		this.posZ = posZ;
-		this.entityYaw = entityYaw;
-		this.entityPitch = entityPitch;
-		this.motionX = motionX;
-		this.motionY = motionY;
-		this.motionZ = motionZ;
-	}
-
 	public SpawnEntityOnClientMessage(Entity entity) {
+		this.entity = entity;
 		for(EntityEntry entry : ForgeRegistries.ENTITIES.getValuesCollection()) {
 			if(entity.getClass().equals(entry.getEntityClass())) {
 				this.entityEntry = ForgeRegistries.ENTITIES.getKey(entry);
@@ -66,6 +56,22 @@ public class SpawnEntityOnClientMessage implements IMessage {
 		this.motionZ = buf.readDouble();
 		this.entityYaw = buf.readFloat();
 		this.entityPitch = buf.readFloat();
+		EntityEntry entry = ForgeRegistries.ENTITIES.getValue(this.entityEntry);
+		if(entry != null) {
+			this.entity = entry.newInstance(Minecraft.getMinecraft().world);
+			entity.posX = this.posX;
+			entity.posY = this.posY;
+			entity.posZ = this.posZ;
+			entity.motionX = this.motionX;
+			entity.motionY = this.motionY;
+			entity.motionZ = this.motionZ;
+			entity.rotationPitch = this.entityPitch;
+			entity.rotationYaw = this.entityYaw;
+			entity.setEntityId(this.entityId);
+			if(this.entity instanceof IEntityAdditionalSpawnData) {
+				((IEntityAdditionalSpawnData)(this.entity)).readSpawnData(buf);
+			}
+		}
 	}
 
 	@Override
@@ -80,6 +86,9 @@ public class SpawnEntityOnClientMessage implements IMessage {
 		buf.writeDouble(this.motionZ);
 		buf.writeFloat(this.entityYaw);
 		buf.writeFloat(this.entityPitch);
+		if(this.entity instanceof IEntityAdditionalSpawnData) {
+			((IEntityAdditionalSpawnData)(this.entity)).writeSpawnData(buf);
+		}
 	}
 
 	public static class Handler implements IMessageHandler<SpawnEntityOnClientMessage, IMessage> {

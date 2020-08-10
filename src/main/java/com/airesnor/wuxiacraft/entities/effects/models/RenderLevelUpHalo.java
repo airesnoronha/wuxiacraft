@@ -32,34 +32,34 @@ public class RenderLevelUpHalo extends Render<EntityLevelUpHalo> {
 		GlStateManager.color(0.9f, 0.9f, 0.6f, 0.4f);
 
 		GlStateManager.translate(x, y, z);
-		GlStateManager.scale(entity.ticksExisted + partialTicks, 1, entity.ticksExisted + partialTicks);
-		//GlStateManager.rotate((System.currentTimeMillis() % 3600), 0, 1, 0);
+		GlStateManager.scale((entity.ticksExisted + partialTicks)*3, 1, (entity.ticksExisted + partialTicks)*3);
 
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buf = tessellator.getBuffer();
 		buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
 
-		//4 walls around position in a spinning motion
-		buf.pos(-0.5f, -30f,-0.5f).endVertex();
-		buf.pos(-0.5f, -30f, 0.5f).endVertex();
-		buf.pos(-0.5f, 100f, 0.5f).endVertex();
-		buf.pos(-0.5f, 100f,-0.5f).endVertex();
+		//4 walls around position
+		buf.pos(-0.9f, -30f,-0.9f).endVertex();
+		buf.pos(-0.9f, -30f, 0.9f).endVertex();
+		buf.pos(-0.9f, 100f, 0.9f).endVertex();
+		buf.pos(-0.9f, 100f,-0.9f).endVertex();
 
-		buf.pos( 0.5f, -30f,-0.5f).endVertex();
-		buf.pos( 0.5f, -30f, 0.5f).endVertex();
-		buf.pos( 0.5f, 100f, 0.5f).endVertex();
-		buf.pos( 0.5f, 100f,-0.5f).endVertex();
+		buf.pos( 0.9f, -30f,-0.9f).endVertex();
+		buf.pos( 0.9f, -30f, 0.9f).endVertex();
+		buf.pos( 0.9f, 100f, 0.9f).endVertex();
+		buf.pos( 0.9f, 100f,-0.9f).endVertex();
 
-		buf.pos( 0.5f, -30f,-0.5f).endVertex();
-		buf.pos(-0.5f, -30f,-0.5f).endVertex();
-		buf.pos(-0.5f, 100f,-0.5f).endVertex();
-		buf.pos( 0.5f, 100f,-0.5f).endVertex();
+		buf.pos( 0.9f, -30f,-0.9f).endVertex();
+		buf.pos(-0.9f, -30f,-0.9f).endVertex();
+		buf.pos(-0.9f, 100f,-0.9f).endVertex();
+		buf.pos( 0.9f, 100f,-0.9f).endVertex();
 
-		buf.pos( 0.5f, -30f, 0.5f).endVertex();
-		buf.pos(-0.5f, -30f, 0.5f).endVertex();
-		buf.pos(-0.5f, 100f, 0.5f).endVertex();
-		buf.pos( 0.5f, 100f, 0.5f).endVertex();
+		buf.pos( 0.9f, -30f, 0.9f).endVertex();
+		buf.pos(-0.9f, -30f, 0.9f).endVertex();
+		buf.pos(-0.9f, 100f, 0.9f).endVertex();
+		buf.pos( 0.9f, 100f, 0.9f).endVertex();
 		tessellator.draw();
+
 		GlStateManager.color(0.9f, 0.9f, 0.2f, 0.4f);
 		buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
 		buf.pos(-0.1f, -30f,-0.1f).endVertex();
@@ -81,6 +81,29 @@ public class RenderLevelUpHalo extends Render<EntityLevelUpHalo> {
 		buf.pos(-0.1f, -30f, 0.1f).endVertex();
 		buf.pos(-0.1f, 100f, 0.1f).endVertex();
 		buf.pos( 0.1f, 100f, 0.1f).endVertex();
+		tessellator.draw();
+
+		GlStateManager.color(0.9f, 0.9f, 0.4f, 0.4f);
+		buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+		buf.pos(-0.2f, -30f,-0.2f).endVertex();
+		buf.pos(-0.2f, -30f, 0.2f).endVertex();
+		buf.pos(-0.2f, 100f, 0.2f).endVertex();
+		buf.pos(-0.2f, 100f,-0.2f).endVertex();
+
+		buf.pos( 0.2f, -30f,-0.2f).endVertex();
+		buf.pos( 0.2f, -30f, 0.2f).endVertex();
+		buf.pos( 0.2f, 100f, 0.2f).endVertex();
+		buf.pos( 0.2f, 100f,-0.2f).endVertex();
+
+		buf.pos( 0.2f, -30f,-0.2f).endVertex();
+		buf.pos(-0.2f, -30f,-0.2f).endVertex();
+		buf.pos(-0.2f, 100f,-0.2f).endVertex();
+		buf.pos( 0.2f, 100f,-0.2f).endVertex();
+
+		buf.pos( 0.2f, -30f, 0.2f).endVertex();
+		buf.pos(-0.2f, -30f, 0.2f).endVertex();
+		buf.pos(-0.2f, 100f, 0.2f).endVertex();
+		buf.pos( 0.2f, 100f, 0.2f).endVertex();
 		tessellator.draw();
 		GlStateManager.disableBlend();
 		GlStateManager.enableTexture2D();

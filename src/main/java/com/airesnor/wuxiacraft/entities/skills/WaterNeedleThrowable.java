@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.entities.skills;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -12,11 +13,12 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class WaterNeedleThrowable extends EntityThrowable {
+public class WaterNeedleThrowable extends EntityThrowable implements IEntityAdditionalSpawnData {
 
 	private EntityLivingBase owner;
 
@@ -27,6 +29,8 @@ public class WaterNeedleThrowable extends EntityThrowable {
 	@SuppressWarnings("unused")
 	public WaterNeedleThrowable(World worldIn) {
 		super(worldIn);
+		this.setSize(0.05f, 0.05f);
+		this.setNoGravity(true);
 	}
 
 	public WaterNeedleThrowable(World worldIn, EntityLivingBase owner, float damage, int duration) {
@@ -79,7 +83,7 @@ public class WaterNeedleThrowable extends EntityThrowable {
 
 	@Override
 	public void onEntityUpdate() {
-		super.onEntityUpdate();
+	super.onEntityUpdate();
 
 		if (this.ticksExisted >= this.duration) {
 			this.setDead();
@@ -100,4 +104,13 @@ public class WaterNeedleThrowable extends EntityThrowable {
 		}
 	}
 
+	@Override
+	public void writeSpawnData(ByteBuf buffer) {
+		buffer.writeInt(this.duration);
+	}
+
+	@Override
+	public void readSpawnData(ByteBuf additionalData) {
+		this.duration = additionalData.readInt();
+	}
 }

@@ -234,8 +234,7 @@ public class EventHandler {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-			float dexterityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() -
-					player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getBaseValue()); // ability with hands to cast faster
+			float dexterityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue()); // ability with hands to cast faster
 			if (player.world.isRemote) {
 				long timeDiff = System.currentTimeMillis() - LastPlayerTickTime;
 				if (timeDiff >= 50) { //20 per seconds

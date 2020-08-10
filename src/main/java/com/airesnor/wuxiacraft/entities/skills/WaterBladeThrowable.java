@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.entities.skills;
 
 import com.airesnor.wuxiacraft.utils.TreeUtils;
+import io.netty.buffer.ByteBuf;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -14,12 +15,13 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class WaterBladeThrowable extends EntityThrowable {
+public class WaterBladeThrowable extends EntityThrowable implements IEntityAdditionalSpawnData {
 
 	private EntityLivingBase owner;
 
@@ -33,6 +35,8 @@ public class WaterBladeThrowable extends EntityThrowable {
 	@SuppressWarnings("unused")
 	public WaterBladeThrowable(World worldIn) {
 		super(worldIn);
+		this.setSize(1f, 0.05f);
+		this.setNoGravity(true);
 	}
 
 	@SuppressWarnings("unused")
@@ -111,6 +115,10 @@ public class WaterBladeThrowable extends EntityThrowable {
 			return;
 		}
 
+		if(this.world.isRemote) {
+			this.rotateRoll();
+		}
+
 		if (this.ticksExisted >= 2 && this.world instanceof WorldServer) {
 			WorldServer worldServer = (WorldServer) this.world;
 			worldServer.spawnParticle(EnumParticleTypes.WATER_DROP, false, this.posX, this.posY, this.posZ, 15, this.width, this.height, this.width, 0.005d, 0);
@@ -131,5 +139,24 @@ public class WaterBladeThrowable extends EntityThrowable {
 		this.prevRotationRoll = this.rotationRoll;
 		this.rotationRoll += 2.5f;
 		if(this.rotationRoll > -180f) this.rotationRoll -= 360f;
+	}
+
+	@Override
+	public boolean shouldRenderInPass(int pass) {
+		return pass == 1;
+	}
+
+	@Override
+	public void writeSpawnData(ByteBuf buffer) {
+		buffer.writeInt(this.duration);
+		buffer.writeFloat(this.rotationRoll);
+		buffer.writeFloat(this.rotationRoll);
+	}
+
+	@Override
+	public void readSpawnData(ByteBuf additionalData) {
+		this.duration = additionalData.readInt();
+		this.rotationRoll = additionalData.readFloat();
+		this.prevRotationRoll = this.rotationRoll;
 	}
 }
