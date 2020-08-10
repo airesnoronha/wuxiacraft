@@ -12,6 +12,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import scala.xml.dtd.ELEMENTS;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,7 +129,9 @@ public class Techniques {
 			.addCheckpoint(4979800, "Divine Body")
 			.addCheckpoint(27330630, "Deity body")
 			.addCheckpoint(1500000000.0, "Thearch body")
-			.addElement(Element.WOOD);
+			.addElement(Element.WOOD)
+			.addSkill(6400, Skills.GATHER_WOOD)
+			.addSkill(32000, Skills.ACCELERATE_GROWTH);
 
 	//From Wuxia4You
 	public static final Technique YIN_BODY_ART = new Technique("yin_body_art", Cultivation.System.BODY,
@@ -150,7 +153,9 @@ public class Techniques {
 			.addCheckpoint(600000, "Natural Success")
 			.addCheckpoint(1500000, "Great Success")
 			.addCheckpoint(23000000, "Perfected")
-			.addElement(Element.EARTH);
+			.addElement(Element.EARTH)
+			.addSkill(2000, Skills.EARTH_SUCTION)
+			.addSkill(1000, Skills.EARTHLY_WALL);
 
 	//From Dremtas White Tiger
 	public static final Technique WHITE_TIGER_TEMPERING = new Technique("white_tiger_tempering", Cultivation.System.BODY,
@@ -163,7 +168,7 @@ public class Techniques {
 			.addCheckpoint(23000000, "Perfected");
 
 	//From Asura
-	//Call random tribulation while cultivating
+	// Call random tribulation while cultivating
 	// rank immortal 1
 	public static final Technique LIGHTNING_THUNDER_BODY_ART = new Technique("lightning_thunder_body_art", Cultivation.System.BODY,
 			new TechniquesModifiers(4, 2, 5, 2, 3, 3), 8.2, 190000000.0, 15000)
@@ -260,7 +265,9 @@ public class Techniques {
 			.addCheckpoint(600000, "Natural Success")
 			.addCheckpoint(1500000, "Great Success")
 			.addCheckpoint(23000000, "Perfected")
-			.addElement(Element.WATER);
+			.addElement(Element.WATER)
+			.addSkill(2000, Skills.WATER_NEEDLE)
+			.addSkill(10000, Skills.WATER_BLADE);
 
 	//From Dremtas White Tiger
 	public static final Technique BASIC_LIGHTNING_GUIDE = new Technique("basic_lightning_guide", Cultivation.System.ESSENCE,
@@ -282,7 +289,9 @@ public class Techniques {
 			.addCheckpoint(600000, "Natural Success")
 			.addCheckpoint(1500000, "Great Success")
 			.addCheckpoint(23000000, "Perfected")
-			.addElement(Element.WOOD);
+			.addElement(Element.WOOD)
+			.addSkill(2000, Skills.EARTH_SUCTION)
+			.addSkill(1000, Skills.EARTHLY_WALL);
 
 	// TODO -- multiple jumps --  i guess this is hard
 	//From Febian
@@ -305,7 +314,9 @@ public class Techniques {
 			.addCheckpoint(600000, "Natural Success")
 			.addCheckpoint(1500000, "Great Success")
 			.addCheckpoint(23000000, "Perfected")
-			.addElement(Element.WOOD);
+			.addElement(Element.WOOD)
+			.addSkill(2000, Skills.EARTH_SUCTION)
+			.addSkill(1000, Skills.EARTHLY_WALL);
 
 	//From Dremtas White Tiger
 	public static final Technique COLOSSAL_MOUNTAIN_CONTROL = new Technique("colossal_mountain_control", Cultivation.System.ESSENCE,
@@ -316,7 +327,9 @@ public class Techniques {
 			.addCheckpoint(600000, "Natural Success")
 			.addCheckpoint(1500000, "Great Success")
 			.addCheckpoint(23000000, "Perfected")
-			.addElement(Element.EARTH);
+			.addElement(Element.EARTH)
+			.addSkill(2000, Skills.EARTH_SUCTION)
+			.addSkill(1000, Skills.EARTHLY_WALL);
 
 	//From Asura
 	public static final Technique WIND_STORM_ART = new Technique("wind_storm_art", Cultivation.System.ESSENCE,
@@ -328,7 +341,8 @@ public class Techniques {
 			.addCheckpoint(1225400, "Storm Stage")
 			.addCheckpoint(5080750, "Hurricane Stage")
 			.addCheckpoint(21066000, "Tornadoes Stage")
-			.addElement(Element.EARTH);
+			.addElement(Element.WIND)
+			.addElement(Element.LIGHTNING);
 
 	//todo - turn it into a weapon technique (spear)
 	//From Asura -- Immortal 3 Level
@@ -342,30 +356,39 @@ public class Techniques {
 			.addCheckpoint(1698575, "Elder Dragon Stage")
 			.addCheckpoint(5867219, "Ancient Dragon Stage")
 			.addCheckpoint(20266550, "Divine Dragon Stage")
-			.addCheckpoint(70000000, "Eternal Dragon Stage")
-			.addElement(Element.EARTH);
+			.addCheckpoint(70000000, "Eternal Dragon Stage");
 
 	//From Anime4You -- former Wuxia4You (sad i liked it better)
+	//immortal 2
 	public static final Technique YANG_BURNING_ART = new Technique("yang_burning_art", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(3, 4, 2, 4, 5, 4), 8.9, 2300000, 800)
-			.addCheckpoint(1000, "Minor Success")
-			.addCheckpoint(10000, "Small Success")
-			.addCheckpoint(90000, "Middle Success")
-			.addCheckpoint(600000, "Natural Success")
-			.addCheckpoint(1500000, "Great Success")
-			.addCheckpoint(23000000, "Perfected")
-			.addElement(Element.FIRE);
+			new TechniquesModifiers(3, 4, 2, 4, 5, 4), 8.9, 324561600.00, 47325.73)
+			.addCheckpoint(4650, "Elemental Perception")
+			.addCheckpoint(43290, "Elemental Release")
+			.addCheckpoint(402840, "Yang absorbing")
+			.addCheckpoint(3748476, "Elemental Fusion")
+			.addCheckpoint(34879957, "Burning Way")
+			.addCheckpoint(324561600, "True Yang Burning")
+			.addElement(Element.FIRE)
+			.addSkill(2000, Skills.FLAMES)
+			.addSkill(10000, Skills.FIRE_BAll);
 
 	//todo - turn it into a weapon technique (sword)
 	//From Anime4You -- former Wuxia4You (sad i liked it better)
+	//immortal 3
 	public static final Technique COLD_SWORD_ART = new Technique("cold_sword_art", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(3, 4, 2, 4, 5, 5), 7.1, 2300000, 800)
-			.addCheckpoint(1000, "Minor Success")
-			.addCheckpoint(10000, "Small Success")
-			.addCheckpoint(90000, "Middle Success")
-			.addCheckpoint(600000, "Natural Success")
-			.addCheckpoint(1500000, "Great Success")
-			.addCheckpoint(23000000, "Perfected");
+			new TechniquesModifiers(3, 4, 2, 4, 5, 5), 7.1, 31000000000.0, 940164.60)
+			.addCheckpoint(6800, "Sword Feeling")
+			.addCheckpoint(46200, "Sword Understanding")
+			.addCheckpoint(314150, "Unfeeling Sword")
+			.addCheckpoint(2135500, "Deadly Sword")
+			.addCheckpoint(14516690, "Killing Sword")
+			.addCheckpoint(98682724, "Sword Body Fusion")
+			.addCheckpoint(670833358, "Heartless Sword")
+			.addCheckpoint(4560244962.0, "Death Sword")
+			.addCheckpoint(31000000000.0, "Death God Sword")
+			.addElement(Element.ICE)
+			.addSkill(3000, Skills.WEAK_SWORD_BEAM)
+			.addSkill(13000, Skills.SWORD_BEAM_BARRAGE);
 
 	//todo - turn it into a weapon technique (sword)
 	//From Anime4You -- former Wuxia4You (sad i liked it better)
@@ -376,18 +399,26 @@ public class Techniques {
 			.addCheckpoint(90000, "Middle Success")
 			.addCheckpoint(600000, "Natural Success")
 			.addCheckpoint(1500000, "Great Success")
-			.addCheckpoint(23000000, "Perfected");
+			.addCheckpoint(23000000, "Perfected")
+			.addElement(Element.EARTH)
+			.addSkill(2000, Skills.EARTH_SUCTION)
+			.addSkill(1000, Skills.EARTHLY_WALL)
+			.addSkill(3000, Skills.WEAK_SWORD_BEAM)
+			.addSkill(13000, Skills.SWORD_BEAM_BARRAGE);;
 
 	//From Anime4You -- former Wuxia4You (sad i liked it better)
+	//immortal 2
 	public static final Technique EARTH_ASSIMILATING_QI = new Technique("earth_assimilating_qi", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(3, 4, 2, 4, 5, 3), 5.9, 2300000, 800)
-			.addCheckpoint(1000, "Minor Success")
-			.addCheckpoint(10000, "Small Success")
-			.addCheckpoint(90000, "Middle Success")
-			.addCheckpoint(600000, "Natural Success")
-			.addCheckpoint(1500000, "Great Success")
-			.addCheckpoint(23000000, "Perfected")
-			.addElement(Element.EARTH);
+			new TechniquesModifiers(3, 4, 2, 4, 5, 3), 5.9, 324561600.00, 47325.73)
+			.addCheckpoint(4650, "Elemental Perception")
+			.addCheckpoint(43290, "Element Release")
+			.addCheckpoint(402840, "Earth Conception")
+			.addCheckpoint(3748476, "Earth Fusion")
+			.addCheckpoint(34879957, "True Earth Qi")
+			.addCheckpoint(324561600, "Earths Tremor")
+			.addElement(Element.EARTH)
+			.addSkill(2000, Skills.EARTH_SUCTION)
+			.addSkill(1000, Skills.EARTHLY_WALL);
 
 	//From Zacj -- yellow duck
 	public static final Technique THUNDER_FIRE_ART = new Technique("thunder_fire_art", Cultivation.System.ESSENCE,
@@ -399,7 +430,9 @@ public class Techniques {
 			.addCheckpoint(1500000, "Great Success")
 			.addCheckpoint(23000000, "Perfected")
 			.addElement(Element.FIRE)
-			.addElement(Element.LIGHTNING);
+			.addElement(Element.LIGHTNING)
+			.addSkill(2000, Skills.FLAMES)
+			.addSkill(10000, Skills.FIRE_BAll);
 
 
 	//TODO -- fart sounds
@@ -436,7 +469,9 @@ public class Techniques {
 			.addCheckpoint(600000, "Natural Success")
 			.addCheckpoint(1500000, "Great Success")
 			.addCheckpoint(23000000, "Perfected")
-			.addElement(Element.FIRE);
+			.addElement(Element.FIRE)
+			.addSkill(2000, Skills.FLAMES)
+			.addSkill(10000, Skills.FIRE_BAll);
 
 	//From Anime4You -- former Wuxia4You (liked this one better)
 	public static final Technique BURNING_FLAME_SOUL = new Technique("burning_flame_soul", Cultivation.System.DIVINE,
@@ -447,7 +482,9 @@ public class Techniques {
 			.addCheckpoint(600000, "Natural Success")
 			.addCheckpoint(1500000, "Great Success")
 			.addCheckpoint(23000000, "Perfected")
-			.addElement(Element.FIRE);
+			.addElement(Element.FIRE)
+			.addSkill(2000, Skills.FLAMES)
+			.addSkill(10000, Skills.FIRE_BAll);
 
 	//From Anime4You -- former Wuxia4You (liked this one better)
 	//Today ...  was gonna be the day ...
@@ -470,7 +507,9 @@ public class Techniques {
 			.addCheckpoint(600000, "Natural Success")
 			.addCheckpoint(1500000, "Great Success")
 			.addCheckpoint(23000000, "Perfected")
-			.addElement(Element.WATER);
+			.addElement(Element.WATER)
+			.addSkill(2000, Skills.WATER_NEEDLE)
+			.addSkill(10000, Skills.WATER_BLADE);
 
 	//From Asura
 	public static final Technique SUN_SOUL_ART = new Technique("sun_soul_art", Cultivation.System.DIVINE,
@@ -482,7 +521,9 @@ public class Techniques {
 			.addCheckpoint(1500000, "Great Success")
 			.addCheckpoint(23000000, "Perfected")
 			.addElement(Element.LIGHT)
-			.addElement(Element.WATER);
+			.addElement(Element.FIRE)
+			.addSkill(2000, Skills.FLAMES)
+			.addSkill(10000, Skills.FIRE_BAll);
 
 	//From Febian
 	public static final Technique AMORPHOUS_METALLIC_SOUL = new Technique("amorphous_metallic_soul", Cultivation.System.DIVINE,
@@ -493,8 +534,9 @@ public class Techniques {
 			.addCheckpoint(600000, "Natural Success")
 			.addCheckpoint(1500000, "Great Success")
 			.addCheckpoint(23000000, "Perfected")
-			.addElement(Element.LIGHT)
-			.addElement(Element.WATER);
+			.addElement(Element.METAL)
+			.addSkill(2000, Skills.METAL_DETECTION)
+			.addSkill(10000, Skills.ORE_SUCTION);
 
 	//From Febian
 	//Does extra damage against living

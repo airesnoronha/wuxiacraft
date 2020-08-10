@@ -256,7 +256,7 @@ public class EventHandler {
 									if (skillCap.getCastProgress() < selectedSkill.getCastTime() && selectedSkill.castingEffect(player)) {
 										if (selectedSkill.castNotSpeedable) skillCap.stepCastProgress(1);
 										else
-											skillCap.stepCastProgress(dexterityModifier * 0.4f);
+											skillCap.stepCastProgress(Math.min(dexterityModifier * 0.4f, selectedSkill.getCastTime()/10));
 									}
 									if (skillCap.getCastProgress() >= selectedSkill.getCastTime()) {
 										if (selectedSkill.activate(player)) {

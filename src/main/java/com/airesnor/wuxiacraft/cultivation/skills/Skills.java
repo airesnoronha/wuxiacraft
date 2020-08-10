@@ -107,7 +107,7 @@ public class Skills {
 
     public static final Skill CULTIVATE_ESSENCE = new SkillCultivate("cultivate_essence", Cultivation.System.ESSENCE);
 
-    public static final Skill GATHER_WOOD = new Skill("gather_wood", false, false, 80f, 3f, 20f, 0f)
+    public static final Skill GATHER_WOOD = new Skill("gather_wood", false, false, 40f, 3f, 7f, 0f)
             .setAction(actor -> {
                 World worldIn = actor.world;
                 boolean activated = false;
@@ -140,7 +140,7 @@ public class Skills {
                 return activated;
             });
 
-    public static final Skill ACCELERATE_GROWTH = new Skill("accelerate_growth", false, false, 120f, 1f, 60f, 0f)
+    public static final Skill ACCELERATE_GROWTH = new Skill("accelerate_growth", false, false, 60f, 1f, 15f, 0f)
             .setAction(actor -> {
                 World worldIn = actor.world;
                 BlockPos pos = SkillUtils.rayTraceBlock(actor, 6, 1f);
@@ -179,7 +179,7 @@ public class Skills {
                 return activated;
             });
 
-    public static final Skill FLAMES = new Skill("flames", false, true, 80f, 1.5f, 20f, 0f)
+    public static final Skill FLAMES = new Skill("flames", false, true, 30f, 1.5f, 10f, 0f)
             .setAction(actor -> {
                 float shootPitch = actor.rotationPitch;
                 float shootYaw = actor.rotationYawHead;
@@ -197,7 +197,7 @@ public class Skills {
                 return true;
             });
 
-    public static final Skill FIRE_BAll = new Skill("fire_ball", false, true, 480f, 3f, 120f, 0f)
+    public static final Skill FIRE_BAll = new Skill("fire_ball", false, true, 80f, 3f, 25f, 0f)
             .setAction(actor -> {
                 ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
                 float strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
@@ -214,7 +214,7 @@ public class Skills {
                 return true;
             });
 
-    public static final Skill METAL_DETECTION = new Skill("metal_detection", false, false, 400f, 0.6f, 180f, 0f)
+    public static final Skill METAL_DETECTION = new Skill("metal_detection", false, false, 80f, 0.6f, 20f, 0f)
             .setAction(actor -> {
                 if (actor.world.isRemote) {
                     if (actor instanceof EntityPlayer) {
@@ -232,7 +232,7 @@ public class Skills {
                 return true;
             });
 
-    public static final Skill ORE_SUCTION = new Skill("ore_suction", false, false, 250f, 2.5f, 160f, 0f).setAction(actor -> {
+    public static final Skill ORE_SUCTION = new Skill("ore_suction", false, false, 120f, 2.5f, 130f, 0f).setAction(actor -> {
         boolean activated = false;
         final int max_range = 64;
         float strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
@@ -256,7 +256,7 @@ public class Skills {
         return activated;
     });
 
-    public static final Skill EARTH_SUCTION = new Skill("earth_suction", false, false, 60f, 0.8f, 20f, 0f).setAction(actor -> {
+    public static final Skill EARTH_SUCTION = new Skill("earth_suction", false, false, 10f, 0.8f, 10f, 0f).setAction(actor -> {
         boolean activated = false;
         BlockPos pos = SkillUtils.rayTraceBlock(actor, 5f, 1f);
         if (pos != null) {
@@ -285,7 +285,7 @@ public class Skills {
         return activated;
     });
 
-    public static final Skill EARTHLY_WALL = new Skill("earthly_wall", false, false, 320f, 0.8f, 50f, 0f).setAction(actor -> {
+    public static final Skill EARTHLY_WALL = new Skill("earthly_wall", false, false, 80f, 0.8f, 10f, 0f).setAction(actor -> {
         boolean activated = false;
         BlockPos pos = SkillUtils.rayTraceBlock(actor, 5f, 1f);
         if (pos != null) {
@@ -340,7 +340,7 @@ public class Skills {
     });
 
     // Credits : My Girlfriend
-    public static final Skill WATER_NEEDLE = new Skill("water_needle", false, true, 30f, 1.1f, 6f, 0f, "Lysian Prieto")
+    public static final Skill WATER_NEEDLE = new Skill("water_needle", false, true, 30f, 1.1f, 12f, 0f, "Lysian Prieto")
             .setAction(actor -> {
                     ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
                     float strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
@@ -355,7 +355,7 @@ public class Skills {
                 return true;
             });
 
-    public static final Skill WATER_BLADE = new Skill("water_blade", false, true, 60f, 2.0f, 12f, 0f).setAction(actor -> {
+    public static final Skill WATER_BLADE = new Skill("water_blade", false, true, 60f, 2.0f, 24f, 0f).setAction(actor -> {
         ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
         ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
         float strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
@@ -376,13 +376,13 @@ public class Skills {
         return true;
     });
 
-    public static final Skill SELF_HEALING = new Skill("self_healing", false, false, 160f, 1f, 80f, 0f).setAction(actor -> {
+    public static final Skill SELF_HEALING = new Skill("self_healing", false, false, 40f, 1f, 12f, 0f).setAction(actor -> {
         float strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
         actor.heal(Math.max(15f, strength * 0.05f));
         return true;
     });
 
-    public static final Skill HEALING_HANDS = new Skill("healing_hands", false, false, 220f, 1.4f, 120f, 0f).setAction(actor -> {
+    public static final Skill HEALING_HANDS = new Skill("healing_hands", false, false, 70f, 1.4f, 15f, 0f).setAction(actor -> {
         boolean activated = false;
         Entity result = SkillUtils.rayTraceEntities(actor, 10f, 1f);
         if (result instanceof EntityLiving) {
@@ -396,7 +396,7 @@ public class Skills {
     });
 
     //Credits: My Girlfriend
-    public static final Skill WALL_CROSSING = new Skill("wall_crossing", false, false, 400f, 3.0f, 130f, 0f, "Lysian Prieto").setAction(actor -> {
+    public static final Skill WALL_CROSSING = new Skill("wall_crossing", false, false, 90f, 3.0f, 20f, 0f, "Lysian Prieto").setAction(actor -> {
         boolean activated = false;
         EnumFacing facing = EnumFacing.fromAngle(actor.rotationYaw);
         BlockPos pos = SkillUtils.rayTraceBlock(actor, 4f, 1f);
@@ -415,7 +415,7 @@ public class Skills {
         return activated;
     });
 
-    public static final Skill WEAK_SWORD_BEAM = new Skill("weak_sword_beam", false, true, 180f, 2.5f, 40f, 0f)
+    public static final Skill WEAK_SWORD_BEAM = new Skill("weak_sword_beam", false, true, 25f, 2.5f, 10f, 0f)
             .setAction(actor -> {
                 boolean activated = false;
                 if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
@@ -452,7 +452,7 @@ public class Skills {
         return true;
     };
 
-    public static final Skill SWORD_BEAM_BARRAGE = new Skill("sword_beam_barrage", false, true, 220f, 4f, 150f, 60f)
+    public static final Skill SWORD_BEAM_BARRAGE = new Skill("sword_beam_barrage", false, true, 45f, 4f, 150f, 60f)
             .setAction(actor -> {
                 boolean activated = false;
                 ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
@@ -486,8 +486,8 @@ public class Skills {
                     activated = true;
                     if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
                         BARRAGE_MINOR_BEAM.activate(actor);
-                        CultivationUtils.getCultivationFromEntity(actor).remEnergy(120f);
-                        NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("barrageMinorBeam", 120f, actor.getUniqueID()));
+                        CultivationUtils.getCultivationFromEntity(actor).remEnergy(9f);
+                        NetworkWrapper.INSTANCE.sendToServer(new ActivatePartialSkillMessage("barrageMinorBeam", 9f, actor.getUniqueID()));
                     }
                     skillCap.increaseBarrageReleased();
                 }
@@ -495,9 +495,9 @@ public class Skills {
                 return activated;
             });
 
-    public static final Skill LIGHT_FEET_SKILL = new SkillPotionEffectSelf("light_feet_skill", new PotionEffect(MobEffects.SPEED, 2400, 2, false, true), 180f, 3f, 120f, 20f, "Aires Adures");
+    public static final Skill LIGHT_FEET_SKILL = new SkillPotionEffectSelf("light_feet_skill", new PotionEffect(MobEffects.SPEED, 2400, 2, false, true), 18f, 3f, 12f, 20f, "Aires Adures");
 
-    public static final Skill LIGHT_FEET_LEAP = new Skill("light_feet_leap", false, false, 90f, 1.2f, 30f, 20f)
+    public static final Skill LIGHT_FEET_LEAP = new Skill("light_feet_leap", false, false, 19f, 1.2f, 15f, 20f)
             .setAction(actor -> {
                 int bX = MathHelper.floor(actor.posX);
                 int bY = MathHelper.floor(actor.posY - 1);
@@ -517,7 +517,7 @@ public class Skills {
                 return true;
             });
 
-    public static final Skill MINOR_POWER_PUNCH = new Skill("minor_power_punch", false, true, 150f, 1.2f, 20f, 10f)
+    public static final Skill MINOR_POWER_PUNCH = new Skill("minor_power_punch", false, true, 25f, 1.2f, 12f, 10f)
             .setAction(actor -> {
                 boolean activated = false;
                 Entity target = SkillUtils.rayTraceEntities(actor, 3f, 1f);
@@ -543,7 +543,7 @@ public class Skills {
                 return activated;
             });
 
-    public static final Skill SPIRIT_ARROW = new Skill("spirit_arrow", false, true, 30f, 1.2f, 3f, 2f)
+    public static final Skill SPIRIT_ARROW = new Skill("spirit_arrow", false, true, 15f, 1.2f, 15f, 2f)
             .setAction(actor ->  {
                 ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
                 float strength = (float)cultivation.getDivineModifier() * 1.5f;
@@ -593,9 +593,9 @@ public class Skills {
                 return false;
             });
 
-    public static final Skill MINOR_BODY_REINFORCEMENT = new SkillPotionEffectSelf("minor_body_reinforcement", new PotionEffect(MobEffects.STRENGTH, 1800, 2, false, true), 120f, 1.2f, 180f, 20f, "Aires Adures");
+    public static final Skill MINOR_BODY_REINFORCEMENT = new SkillPotionEffectSelf("minor_body_reinforcement", new PotionEffect(MobEffects.STRENGTH, 1800, 2, false, true), 12f, 1.2f, 18f, 20f, "Aires Adures");
 
-    public static final Skill WEAK_SWORD_FLIGHT = new SkillSwordFlight("weak_sword_flight", 0.6f, 1.5f, 9f, 500f, 200f, "Aires Adures");
+    public static final Skill WEAK_SWORD_FLIGHT = new SkillSwordFlight("weak_sword_flight", 0.6f, 1.5f, 9f, 500f, 0f, "Aires Adures");
 
-    public static final Skill ADEPT_SWORD_FLIGHT = new SkillSwordFlight("adept_sword_flight", 0.8f, 2.5f, 26f, 2000f, 100f, "Aires Adures");
+    public static final Skill ADEPT_SWORD_FLIGHT = new SkillSwordFlight("adept_sword_flight", 0.8f, 2.5f, 26f, 2000f, 0f, "Aires Adures");
 }
