@@ -302,9 +302,11 @@ public class CultivationGui extends GuiScreen {
 				drawSkillsBackground();
 				break;
 		}
-		double agilityModifier = player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() - player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
-		double dexterityModifier = player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() - player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getBaseValue();
-		double strengthModifier = player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() - player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue();
+		double agilityModifier = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;  // agility to bend the body to spring up
+		agilityModifier = Math.min(cultivation.getMaxSpeed(), agilityModifier);
+		agilityModifier*= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
+		double dexterityModifier = (cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) + 0.025;
+		double strengthModifier = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.14;
 		double spd = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;
 
 		GL11.glColor4f(1f, 1f, 1f, 1f);
@@ -313,7 +315,7 @@ public class CultivationGui extends GuiScreen {
 				Math.min(27, (int) ((27f * cultivation.getSpeedHandicap()) / 100f)),
 				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / spd)),
 				Math.min(27, (int) (27f * (cultivation.getHasteLimit() / (0.1f * (strengthModifier * 0.7 + dexterityModifier * 0.3))))),
-				Math.min(27, (int) (27f * (cultivation.getJumpLimit()) / (0.5f * (agilityModifier * 0.3 + strengthModifier * 0.7))))
+				Math.min(27, (int) (27f * (cultivation.getJumpLimit()) / (0.5f * (agilityModifier + strengthModifier))))
 		};
 
 		//Regulator bars
@@ -548,7 +550,7 @@ public class CultivationGui extends GuiScreen {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(this.guiLeft + 110, this.guiTop + 8, 0);
 		GlStateManager.scale(fontScale, fontScale, 1);
-		drawCenteredString(this.fontRenderer, "Skills", 0, 0, 0xFFFFFF);
+		drawCenteredString(this.fontRenderer, "Skills", 0, 0, 0xFFFF00);
 		GlStateManager.popMatrix();
 
 		switch (this.tab) {
@@ -606,12 +608,12 @@ public class CultivationGui extends GuiScreen {
 
 
 	private void drawCultivationForeground() {
-		float fontScale = 0.8f;
+		float fontScale = 0.9f;
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(this.guiLeft + 13, this.guiTop + 25, 0);
 		GlStateManager.scale(fontScale, fontScale, 1);
 		this.fontRenderer.drawString(cultivation.getBodyLevel().getLevelName(cultivation.getBodySubLevel()), 0, 0, 0xFFFFFF);
-		this.fontRenderer.drawStringWithShadow(String.format("%.2f %.2f", cultivation.getBodyProgress(), cultivation.getBodyFoundation()), 20, 18, 0x00FF20);
+		//this.fontRenderer.drawStringWithShadow(String.format("%.2f %.2f", cultivation.getBodyProgress(), cultivation.getBodyFoundation()), 20, 18, 0x00FF20);
 		GlStateManager.popMatrix();
 		if (cultTech.getBodyTechnique() != null) {
 			GlStateManager.pushMatrix();
@@ -624,7 +626,7 @@ public class CultivationGui extends GuiScreen {
 		GlStateManager.translate(this.guiLeft + 13, this.guiTop + 66, 0);
 		GlStateManager.scale(fontScale, fontScale, 1);
 		this.fontRenderer.drawString(cultivation.getDivineLevel().getLevelName(cultivation.getDivineSubLevel()), 0, 0, 0xFFFFFF);
-		this.fontRenderer.drawStringWithShadow(String.format("%.2f %.2f", cultivation.getDivineProgress(), cultivation.getDivineFoundation()), 20, 18, 0x00FF20);
+		//this.fontRenderer.drawStringWithShadow(String.format("%.2f %.2f", cultivation.getDivineProgress(), cultivation.getDivineFoundation()), 20, 18, 0x00FF20);
 		GlStateManager.popMatrix();
 		if (cultTech.getDivineTechnique() != null) {
 			GlStateManager.pushMatrix();
@@ -637,7 +639,7 @@ public class CultivationGui extends GuiScreen {
 		GlStateManager.translate(this.guiLeft + 13, this.guiTop + 107, 0);
 		GlStateManager.scale(fontScale, fontScale, 1);
 		this.fontRenderer.drawString(cultivation.getEssenceLevel().getLevelName(cultivation.getEssenceSubLevel()), 0, 0, 0xFFFFFF);
-		this.fontRenderer.drawStringWithShadow(String.format("%.2f %.2f", cultivation.getEssenceProgress(), cultivation.getEssenceFoundation()), 20, 18, 0x00FF20);
+		//this.fontRenderer.drawStringWithShadow(String.format("%.2f %.2f", cultivation.getEssenceProgress(), cultivation.getEssenceFoundation()), 20, 18, 0x00FF20);
 		GlStateManager.popMatrix();
 		if (cultTech.getEssenceTechnique() != null) {
 			GlStateManager.pushMatrix();
