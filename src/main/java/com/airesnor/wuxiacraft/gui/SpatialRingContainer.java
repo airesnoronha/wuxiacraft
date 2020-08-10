@@ -9,6 +9,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 public class SpatialRingContainer extends Container {
 
     private final IItemHandler inv;
@@ -28,7 +30,7 @@ public class SpatialRingContainer extends Container {
         //Space Ring inventory
         for (int y = 0; y < this.spatialRingRows; ++y) {
             for (int x = 0; x < this.spatialRingColumns; ++x) {
-                addSlotToContainer(new SlotItemHandler(inv, x + y * this.spatialRingColumns, xPos + x * 18, yPos + y * 18));
+                addSlotToContainer(new SpatialSlot(inv, x + y * this.spatialRingColumns, xPos + x * 18, yPos + y * 18));
             }
         }
 
@@ -82,5 +84,18 @@ public class SpatialRingContainer extends Container {
 //            slot.onTake(playerIn, stack1);
         }
         return stack0;
+    }
+
+    public static class SpatialSlot extends SlotItemHandler {
+
+        public SpatialSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+            super(itemHandler, index, xPosition, yPosition);
+        }
+
+        @Override
+        @ParametersAreNonnullByDefault
+        public boolean isItemValid(ItemStack stack) {
+            return super.isItemValid(stack) && !(stack.getItem() instanceof ItemSpatialRing);
+        }
     }
 }
