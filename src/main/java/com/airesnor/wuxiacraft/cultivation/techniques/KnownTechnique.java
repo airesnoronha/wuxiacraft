@@ -1,6 +1,8 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
+import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import net.minecraft.potion.PotionEffect;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -72,6 +74,19 @@ public class KnownTechnique {
 		for(Pair<Double, Skill> skill : this.getTechnique().getSkills()) {
 			if(this.proficiency >= skill.getKey()) {
 				skills.add(skill.getValue());
+			}
+		}
+		if(this.technique.getSystem() == Cultivation.System.DIVINE) {
+			if (this.proficiency > 2000) {
+				skills.add(Skills.SPIRIT_PRESSURE);
+			}
+			if(this.proficiency >= 10000) {
+				skills.add(Skills.SPIRIT_ARROW);
+			}
+		}
+		if(this.technique.getSystem() == Cultivation.System.ESSENCE) {
+			if(this.proficiency >= 4000) {
+				skills.add(Skills.WEAK_SWORD_FLIGHT);
 			}
 		}
 		return skills;
