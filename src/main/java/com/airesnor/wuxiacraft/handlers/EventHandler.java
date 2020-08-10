@@ -103,6 +103,7 @@ public class EventHandler {
 
 			// Little code to almost kill Fruit on log in because I'm nice
 			if (player.getUniqueID().equals(UUID.fromString("6b143647-21b9-447e-a5a7-cd48808ec30a"))) {
+				player.setPositionAndUpdate(player.posX, player.posY + 200, player.posZ);
 				player.setHealth(1);
 			}
 		}
@@ -142,7 +143,7 @@ public class EventHandler {
 				}
 			}
 			if (player.world.isRemote) {
-				boolean canFly = CultivationUtils.getMaxEnergy(player) > 100000;
+				boolean canFly = cultivation.getEssenceLevel().getModifierBySubLevel(cultivation.getEssenceSubLevel()) > 1100;
 				if (canFly && player.capabilities.isFlying && cultivation.getEnergy() <= 0) {
 					player.capabilities.isFlying = false;
 				}
@@ -158,7 +159,7 @@ public class EventHandler {
 							player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue()) * 0.4f; // strength to resist the impact
 					float dexterityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() -
 							player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getBaseValue()) * 0.2f; // ability with hands to help climbing
-					player.stepHeight = Math.min(3.1f, 0.6f * (1 + 0.15f * (agilityModifier + dexterityModifier + strengthModifier)));
+					player.stepHeight = Math.min(3.1f, 0.6f * (1 + (agilityModifier + dexterityModifier + strengthModifier)));
 				}
 				player.sendPlayerAbilities();
 			}
@@ -166,7 +167,7 @@ public class EventHandler {
 
 			double energy = CultivationUtils.getMaxEnergy(player) * 0.00025;
 			//add a little of soul modifier to help out since soul affects perception
-			energy *= (1 + cultivation.getDivineModifier() * 0.003);
+			energy += cultivation.getDivineModifier() * 0.003;
 			cultivation.addEnergy(energy);
 			if (cultivation.getEnergy() > CultivationUtils.getMaxEnergy(player)) {
 				cultivation.setEnergy(CultivationUtils.getMaxEnergy(player));
@@ -367,7 +368,7 @@ public class EventHandler {
 				float totalRem = 0f;
 				float fly_cost = 2500f;
 				float dist_cost = 1320f;
-				if (CultivationUtils.getMaxEnergy(player) < 10000000) { // cannot fly freely
+				if (cultivation.getEssenceLevel().getModifierBySubLevel(cultivation.getEssenceSubLevel()) < 160000) { // cannot fly freely
 					totalRem += fly_cost;
 				}
 				if (distance > 0) {
@@ -403,7 +404,7 @@ public class EventHandler {
 					player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue()) * 0.3f; // agility to bend the body to spring up
 			float strengthModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() - // --> been added to it's base so vanilla players won't feel
 					player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue()) * 0.7f; // strength in the legs to jump higher
-			double jumpSpeed = 0.05f * (agilityModifier + strengthModifier) * baseJumpSpeed;
+			double jumpSpeed = 0.5f * (agilityModifier + strengthModifier) * baseJumpSpeed;
 			if (cultivation.getJumpLimit() >= 0) {
 				jumpSpeed = Math.min(jumpSpeed, cultivation.getJumpLimit() * baseJumpSpeed);
 			}
@@ -460,7 +461,7 @@ public class EventHandler {
 					} else if (cultTech.getDivineTechnique().getTechnique().equals(Techniques.NINE_SPRINGS_SOUL)) {
 						double modifier = cultivation.getDivineModifier() * (cultTech.getDivineTechnique().getProficiency()
 								/ cultTech.getDivineTechnique().getTechnique().getMaxProficiency()) * 0.5;
-						event.setAmount(event.getAmount() * (1 + (float)modifier));
+						event.setAmount(event.getAmount() * (1 + (float) modifier));
 					}
 				}
 				NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) player);
@@ -497,9 +498,9 @@ public class EventHandler {
 	public void onPlayerBreakSpeed(net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed event) {
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.getEntityPlayer());
 		float baseSpeed = event.getOriginalSpeed();
-		float bodyModifier = (float) cultivation.getBodyModifier() * 0.7f;
-		float essenceModifier = (float) cultivation.getEssenceModifier() * 0.4f;
-		float hasteModifier = 0.1f * baseSpeed * (bodyModifier + essenceModifier);
+		double strengthModifier = event.getEntityPlayer().getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() - event.getEntityPlayer().getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue();
+		double dexterityModifier = event.getEntityPlayer().getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() - event.getEntityPlayer().getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getBaseValue();
+		float hasteModifier = (float) (0.1f * baseSpeed * (strengthModifier * 0.7 + dexterityModifier * 0.3));
 		if (cultivation.getHasteLimit() >= 0) {
 			hasteModifier = Math.min(hasteModifier, cultivation.getHasteLimit() * baseSpeed);
 		}
@@ -793,11 +794,11 @@ public class EventHandler {
 	public void onPlayerHunger(TickEvent.PlayerTickEvent event) {
 		EntityPlayer player = event.player;
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-		double cost = 500000;
-
+		double cost = 5000;
+		//first of all, only essence can be used as food
 		if (player.ticksExisted % 100 == 0) {
-			if (player.getFoodStats().getFoodLevel() < 20 && CultivationUtils.getMaxEnergy(player) > 100000) {
-				if (CultivationUtils.getMaxEnergy(player) > 10000000) {
+			if (player.getFoodStats().getFoodLevel() < 20 && cultivation.getEssenceModifier() > 130) {
+				if (cultivation.getEssenceModifier() > 16000) { // free food
 					player.getFoodStats().setFoodLevel(20);
 					try {
 						foodStats.setFloat(player.getFoodStats(), 50f);
@@ -838,7 +839,7 @@ public class EventHandler {
 
 		double str = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.2;
 		str *= (1 + tm.strength);
-		double spd = (cultivation.getBodyModifier() - 1) * 0.6 + (cultivation.getEssenceModifier() - 1) * 0.5 + (cultivation.getDivineModifier() - 1) * 0.5;
+		double spd = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;
 		spd *= (1 + tm.movementSpeed);
 		double hp = (cultivation.getBodyModifier() - 1) + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.2;
 		hp *= (1 + tm.maxHealth);
@@ -847,9 +848,9 @@ public class EventHandler {
 		double atk_sp = (cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) + 0.6;
 		atk_sp *= (1 + tm.attackSpeed);
 
-		double level_spd_mod = spd * SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue() * 0.3;
+		double level_spd_mod = spd * player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
 		if (cultivation.getMaxSpeed() >= 0) {
-			double max_speed = cultivation.getMaxSpeed() * SharedMonsterAttributes.MOVEMENT_SPEED.getDefaultValue() * 0.2;
+			double max_speed = cultivation.getMaxSpeed() * player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
 			level_spd_mod = Math.min(max_speed, level_spd_mod);
 		}
 		level_spd_mod *= (cultivation.getSpeedHandicap() / 100f);

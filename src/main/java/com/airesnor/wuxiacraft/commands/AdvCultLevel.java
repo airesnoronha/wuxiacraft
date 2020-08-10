@@ -210,7 +210,7 @@ public class AdvCultLevel extends CommandBase {
 								cultivation.addBodyProgress(amount, true);
 							} catch (Cultivation.RequiresTribulation trib) {
 								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
-										trib.level, trib.sublevel);
+										trib.level, trib.subLevel);
 							}
 						}
 						break;
@@ -221,7 +221,7 @@ public class AdvCultLevel extends CommandBase {
 								cultivation.addDivineProgress(amount, true);
 							} catch (Cultivation.RequiresTribulation trib) {
 								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
-										trib.level, trib.sublevel);
+										trib.level, trib.subLevel);
 							}
 						}
 						break;
@@ -232,7 +232,7 @@ public class AdvCultLevel extends CommandBase {
 								cultivation.addEssenceProgress(amount, true);
 							} catch (Cultivation.RequiresTribulation trib) {
 								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
-										trib.level, trib.sublevel);
+										trib.level, trib.subLevel);
 							}
 						}
 						break;
@@ -243,21 +243,21 @@ public class AdvCultLevel extends CommandBase {
 								cultivation.addBodyProgress(amount, true);
 							} catch (Cultivation.RequiresTribulation trib) {
 								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
-										trib.level, trib.sublevel);
+										trib.level, trib.subLevel);
 							}
 							amount = cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel());
 							try {
 								cultivation.addDivineProgress(amount, true);
 							} catch (Cultivation.RequiresTribulation trib) {
 								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
-										trib.level, trib.sublevel);
+										trib.level, trib.subLevel);
 							}
 							amount = cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
 							try {
 								cultivation.addEssenceProgress(amount, true);
 							} catch (Cultivation.RequiresTribulation trib) {
 								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
-										trib.level, trib.sublevel);
+										trib.level, trib.subLevel);
 							}
 						}
 						break;

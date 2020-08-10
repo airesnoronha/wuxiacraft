@@ -75,7 +75,7 @@ public class Techniques {
 
 	//Body ones
 	public static final Technique BODY_STRENGTH = new Technique("body_strength", Cultivation.System.BODY,
-			new TechniquesModifiers(3, 2, 5, 1.5, 3, 2), 1.5, 2300000, 800)
+			new TechniquesModifiers(3, 2, 5, 1.5, 3, 2), 2.9, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -87,7 +87,7 @@ public class Techniques {
 			.addSkill(300000, Skills.MINOR_POWER_PUNCH);
 
 	public static final Technique LIGHT_FEET = new Technique("light_feet", Cultivation.System.BODY,
-			new TechniquesModifiers(2, 4, 3, 5, 3, 1), 1.5, 2300000, 800)
+			new TechniquesModifiers(2, 4, 3, 5, 3, 1), 2.9, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -100,8 +100,9 @@ public class Techniques {
 
 	// TODO -- Add a "pagoda" above players head while cultivating
 	//From Against the gods
+	//Rank immortal3
 	public static final Technique GREAT_WAY_OF_THE_BUDDHA = new Technique("great_way_of_the_buddha", Cultivation.System.BODY,
-			new TechniquesModifiers(11, 6, 22, 12, 19, 12), 2, 70000000000.0, 420000)
+			new TechniquesModifiers(11, 6, 22, 12, 19, 12), 5.1, 70000000000.0, 420000)
 			.addCheckpoint(4500, "First Stage")
 			.addCheckpoint(20300, "Second Stage")
 			.addCheckpoint(91470, "Third Stage")
@@ -117,8 +118,9 @@ public class Techniques {
 			.addEffect(4500, REGENERATION_I);
 
 	//From Rebirth of the Urban Immortal Cultivator
+	//rank immortal2
 	public static final Technique AZURE_THEARCH_LONGEVITY_BODY = new Technique("azure_thearch_longevity_body", Cultivation.System.BODY,
-			new TechniquesModifiers(17, 12, 15, 8, 8, 18), 4, 1500000000.0, 50000)
+			new TechniquesModifiers(17, 12, 15, 8, 8, 18), 11.2, 1500000000.0, 50000)
 			.addCheckpoint(5400, "Initial Success")
 			.addCheckpoint(30200, "Connate Body")
 			.addCheckpoint(165400, "Great Success")
@@ -130,7 +132,7 @@ public class Techniques {
 
 	//From Wuxia4You
 	public static final Technique YIN_BODY_ART = new Technique("yin_body_art", Cultivation.System.BODY,
-			new TechniquesModifiers(3, 4, 2, 5, 3, 1), 1.5, 2300000, 800)
+			new TechniquesModifiers(3, 4, 2, 5, 3, 1), 3.2, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -141,7 +143,7 @@ public class Techniques {
 
 	//From Dremtas White Tiger
 	public static final Technique BEDROCK_SKIN_NOTES = new Technique("bedrock_skin_notes", Cultivation.System.BODY,
-			new TechniquesModifiers(4, 2, 5, 2, 3, 1.5), 1.5, 2300000, 800)
+			new TechniquesModifiers(4, 2, 5, 2, 3, 1.5), 2.9, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -152,7 +154,7 @@ public class Techniques {
 
 	//From Dremtas White Tiger
 	public static final Technique WHITE_TIGER_TEMPERING = new Technique("white_tiger_tempering", Cultivation.System.BODY,
-			new TechniquesModifiers(2, 4, 3, 5, 4, 2), 1.5, 2300000, 800)
+			new TechniquesModifiers(2, 4, 3, 5, 4, 2), 3.5, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -162,14 +164,17 @@ public class Techniques {
 
 	//From Asura
 	//Call random tribulation while cultivating
+	// rank immortal 1
 	public static final Technique LIGHTNING_THUNDER_BODY_ART = new Technique("lightning_thunder_body_art", Cultivation.System.BODY,
-			new TechniquesModifiers(4, 2, 5, 2, 3, 3), 1.5, 2300000, 800)
-			.addCheckpoint(1000, "Minor Success")
-			.addCheckpoint(10000, "Small Success")
-			.addCheckpoint(90000, "Middle Success")
-			.addCheckpoint(600000, "Natural Success")
-			.addCheckpoint(1500000, "Great Success")
-			.addCheckpoint(23000000, "Perfected")
+			new TechniquesModifiers(4, 2, 5, 2, 3, 3), 8.2, 190000000.0, 15000)
+			.addCheckpoint(4570, "Lightning Cell Nourishment")
+			.addCheckpoint(20890, "Lightning Bolt Muscles")
+			.addCheckpoint(95400, "Thunder Blood Marrow")
+			.addCheckpoint(435900, "Thunder Bones")
+			.addCheckpoint(1991700, "Semi Lightning Thunder Body")
+			.addCheckpoint(9100500, "Lightning Tendon Enhancement ")
+			.addCheckpoint(41582360, "Thunder Meridians Nourishment")
+			.addCheckpoint(190000000.0, "Complete Lightning Thunder Body")
 			.addElement(Element.LIGHTNING)
 			.setCultivationEffect(actor -> {
 						if (!actor.world.isRemote) {
@@ -183,20 +188,21 @@ public class Techniques {
 			);
 
 	//From Fruit
+	//rank immortal 1
 	public static final Technique MONKEY_KING_VITALITY_ART = new Technique("monkey_king_vitality_art", Cultivation.System.BODY,
-			new TechniquesModifiers(4, 2, 5, 2, 3, 2), 1.5, 2300000, 800)
-			.addCheckpoint(1000, "Minor Success")
-			.addCheckpoint(10000, "Small Success")
-			.addCheckpoint(90000, "Middle Success")
-			.addCheckpoint(600000, "Natural Success")
-			.addCheckpoint(1500000, "Great Success")
-			.addCheckpoint(23000000, "Perfected");
+			new TechniquesModifiers(4, 2, 5, 2, 3, 2), 4.7, 190000000.0, 15000)
+			.addCheckpoint(7600, "Infant Monkey Stage")
+			.addCheckpoint(574500, "Young Monkey")
+			.addCheckpoint(435900, "Monkey King")
+			.addCheckpoint(3305000, "Monkey Emperor")
+			.addCheckpoint(25058900, "Immortal Monkey")
+			.addCheckpoint(190000000.0, "Ape Rebirth");
 
 
 	// TODO -- Add a golden buddha statue
 	//From HuoYuhao -- Keep reminding myself he's a fire cultivator o.O
 	public static final Technique MERCIFUL_PALM_OF_BUDDHA = new Technique("merciful_palm_of_buddha", Cultivation.System.BODY,
-			new TechniquesModifiers(4, 2, 5, 2, 3, 4), 1.5, 2300000, 800)
+			new TechniquesModifiers(2, 3, 6, 1, 4, 4), 3.8, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -204,21 +210,26 @@ public class Techniques {
 			.addCheckpoint(1500000, "Great Success")
 			.addCheckpoint(23000000, "Perfected");
 
-	// TODO -- transformations
+	// TODO -- model transformations
+	// TODO -- Painful to change a body transformation art
 	//From Asura
+	//rank immortal 2
 	public static final Technique PHOENIX_BODY_ART = new Technique("phoenix_body_art", Cultivation.System.BODY,
-			new TechniquesModifiers(4, 2, 5, 2, 3, 5), 1.5, 2300000, 800)
-			.addCheckpoint(1000, "Minor Success")
-			.addCheckpoint(10000, "Small Success")
-			.addCheckpoint(90000, "Middle Success")
-			.addCheckpoint(600000, "Natural Success")
-			.addCheckpoint(1500000, "Great Success")
-			.addCheckpoint(23000000, "Perfected")
+			new TechniquesModifiers(16, 16, 22, 9, 24, 19), 4.2, 10370000000.0, 176722.67)
+			.addCheckpoint(6020, "Blood Cleaning")
+			.addCheckpoint(36300, "Crimson Blood")
+			.addCheckpoint(218100, "Black Blood")
+			.addCheckpoint(1312600, "Bone Refining Stage 1")
+			.addCheckpoint(79000500, "Bone Refining Stage 2")
+			.addCheckpoint(47553900, "Bone Refining Stage 3")
+			.addCheckpoint(286231100, "Full Phoenix Body")
+			.addCheckpoint(1722851250, "True Phoenix Body")
+			.addCheckpoint(10370000000.0, "Reborn By Fire") //TODO -- set player on fire
 			.addElement(Element.FIRE);
 
 	//From Anime4You -- former Wuxia4You (liked this one better)
 	public static final Technique DRAGON_BODY_TEMPERING = new Technique("dragon_body_tempering", Cultivation.System.BODY,
-			new TechniquesModifiers(4, 2, 5, 2, 3, 4), 1.5, 2300000, 800)
+			new TechniquesModifiers(4, 2, 5, 2, 3, 4), 3.1, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -229,7 +240,7 @@ public class Techniques {
 
 	//From that cat dude -- Ziso
 	public static final Technique CAT_BODY_TRANSFORMATION_ARTS = new Technique("cat_body_transformation_Arts", Cultivation.System.BODY,
-			new TechniquesModifiers(4, 2, 5, 2, 3, 4), 1.5, 2300000, 800)
+			new TechniquesModifiers(4, 2, 5, 2, 3, 4), 6.2, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -242,7 +253,7 @@ public class Techniques {
 	//Essence ones
 	//From Wuxia4You suggestion
 	public static final Technique WIDE_WATER_FLOW = new Technique("wide_water_flow", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(5, 3, 2, 4, 3, 6), 1.8, 2300000, 800)
+			new TechniquesModifiers(5, 3, 2, 4, 3, 6), 6.2, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -253,7 +264,7 @@ public class Techniques {
 
 	//From Dremtas White Tiger
 	public static final Technique BASIC_LIGHTNING_GUIDE = new Technique("basic_lightning_guide", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(2, 5, 3, 4, 4, 5), 1.6, 2300000, 800)
+			new TechniquesModifiers(2, 5, 3, 4, 4, 5), 3.4, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -276,7 +287,7 @@ public class Techniques {
 	// TODO -- multiple jumps --  i guess this is hard
 	//From Febian
 	public static final Technique LIGHT_CLOUD_STEPS = new Technique("light_cloud_steps", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(4, 2, 6, 3, 4, 3), 1.7, 2300000, 800)
+			new TechniquesModifiers(1, 6, 2, 7, 4, 5), 7.2, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -287,7 +298,7 @@ public class Techniques {
 
 	//From Anime4You -- former Wuxia4You (liked this one better)
 	public static final Technique BLOOMING_FOREST_ART = new Technique("blooming_forest_art", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(4, 2, 6, 3, 4, 8), 1.7, 2300000, 800)
+			new TechniquesModifiers(4, 2, 6, 3, 4, 8), 8.1, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -298,7 +309,7 @@ public class Techniques {
 
 	//From Dremtas White Tiger
 	public static final Technique COLOSSAL_MOUNTAIN_CONTROL = new Technique("colossal_mountain_control", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(5, 2, 4, 3, 4, 4), 1.7, 2300000, 800)
+			new TechniquesModifiers(5, 2, 4, 3, 4, 4), 6.4, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -309,19 +320,20 @@ public class Techniques {
 
 	//From Asura
 	public static final Technique WIND_STORM_ART = new Technique("wind_storm_art", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(2, 6, 3, 5, 3, 3), 1.7, 2300000, 800)
-			.addCheckpoint(1000, "Minor Success")
-			.addCheckpoint(10000, "Small Success")
-			.addCheckpoint(90000, "Middle Success")
-			.addCheckpoint(600000, "Natural Success")
-			.addCheckpoint(1500000, "Great Success")
-			.addCheckpoint(23000000, "Perfected")
+			new TechniquesModifiers(2, 6, 3, 5, 3, 3), 10.2, 21066000.0, 6752.12)
+			.addCheckpoint(4150, "Breeze Stage")
+			.addCheckpoint(17200, "Gust Stage")
+			.addCheckpoint(71300, "Violent Gust Stage")
+			.addCheckpoint(295550, "Gale Stage")
+			.addCheckpoint(1225400, "Storm Stage")
+			.addCheckpoint(5080750, "Hurricane Stage")
+			.addCheckpoint(21066000, "Tornadoes Stage")
 			.addElement(Element.EARTH);
 
 	//todo - turn it into a weapon technique (spear)
 	//From Asura -- Immortal 3 Level
 	public static final Technique DRAGON_SPEAR_ART = new Technique("dragon_spear_art", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(4, 19, 5, 12, 25, 19), 1.7, 70000000, 320529.05)
+			new TechniquesModifiers(4, 19, 5, 12, 25, 19), 12.1, 70000000, 320529.05)
 			.addCheckpoint(3454, "Worm Stage")
 			.addCheckpoint(11931, "Snake Stage")
 			.addCheckpoint(41213, "Python Stage")
@@ -335,7 +347,7 @@ public class Techniques {
 
 	//From Anime4You -- former Wuxia4You (sad i liked it better)
 	public static final Technique YANG_BURNING_ART = new Technique("yang_burning_art", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(3, 4, 2, 4, 5, 4), 1.5, 2300000, 800)
+			new TechniquesModifiers(3, 4, 2, 4, 5, 4), 8.9, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -347,7 +359,7 @@ public class Techniques {
 	//todo - turn it into a weapon technique (sword)
 	//From Anime4You -- former Wuxia4You (sad i liked it better)
 	public static final Technique COLD_SWORD_ART = new Technique("cold_sword_art", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(3, 4, 2, 4, 5, 5), 1.5, 2300000, 800)
+			new TechniquesModifiers(3, 4, 2, 4, 5, 5), 7.1, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -358,7 +370,7 @@ public class Techniques {
 	//todo - turn it into a weapon technique (sword)
 	//From Anime4You -- former Wuxia4You (sad i liked it better)
 	public static final Technique EARTH_SPLITTING_SWORD_ART = new Technique("earth_splitting_sword_art", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(3, 4, 2, 4, 5, 3), 1.5, 2300000, 800)
+			new TechniquesModifiers(3, 4, 2, 4, 5, 3), 9.2, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -368,7 +380,7 @@ public class Techniques {
 
 	//From Anime4You -- former Wuxia4You (sad i liked it better)
 	public static final Technique EARTH_ASSIMILATING_QI = new Technique("earth_assimilating_qi", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(3, 4, 2, 4, 5, 3), 1.5, 2300000, 800)
+			new TechniquesModifiers(3, 4, 2, 4, 5, 3), 5.9, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -379,7 +391,7 @@ public class Techniques {
 
 	//From Zacj -- yellow duck
 	public static final Technique THUNDER_FIRE_ART = new Technique("thunder_fire_art", Cultivation.System.ESSENCE,
-			new TechniquesModifiers(3, 4, 2, 4, 5, 4), 1.5, 2300000, 800)
+			new TechniquesModifiers(3, 4, 2, 4, 5, 4), 8.8, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -417,7 +429,7 @@ public class Techniques {
 
 	//From Asura
 	public static final Technique IGNITED_SOUL = new Technique("ignited_soul", Cultivation.System.DIVINE,
-			new TechniquesModifiers(5, 2, 4, 3, 4, 2), 1.9, 2300000, 800)
+			new TechniquesModifiers(5, 2, 4, 3, 4, 2), 4.2, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -428,7 +440,7 @@ public class Techniques {
 
 	//From Anime4You -- former Wuxia4You (liked this one better)
 	public static final Technique BURNING_FLAME_SOUL = new Technique("burning_flame_soul", Cultivation.System.DIVINE,
-			new TechniquesModifiers(5, 2, 4, 3, 4, 3), 1.9, 2300000, 800)
+			new TechniquesModifiers(5, 2, 4, 3, 4, 3), 3.5, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -440,7 +452,7 @@ public class Techniques {
 	//From Anime4You -- former Wuxia4You (liked this one better)
 	//Today ...  was gonna be the day ...
 	public static final Technique THUNDER_WALL_SOUL_ARTS = new Technique("thunder_wall_soul_arts", Cultivation.System.DIVINE,
-			new TechniquesModifiers(5, 2, 4, 3, 4, 1), 1.9, 2300000, 800)
+			new TechniquesModifiers(5, 2, 4, 3, 4, 1), 8.9, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -451,7 +463,7 @@ public class Techniques {
 
 	//From Dremtas White Tiger
 	public static final Technique AQUATIC_SOUL_MANIPULATION = new Technique("aquatic_soul_manipulation", Cultivation.System.DIVINE,
-			new TechniquesModifiers(2, 1, 3, 1, 3, 2), 1.9, 2300000, 800)
+			new TechniquesModifiers(2, 1, 3, 1, 3, 2), 4.5, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -462,7 +474,7 @@ public class Techniques {
 
 	//From Asura
 	public static final Technique SUN_SOUL_ART = new Technique("sun_soul_art", Cultivation.System.DIVINE,
-			new TechniquesModifiers(2, 1, 3, 1, 3, 2), 1.9, 2300000, 800)
+			new TechniquesModifiers(2, 1, 3, 1, 3, 2), 2.8, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -474,7 +486,7 @@ public class Techniques {
 
 	//From Febian
 	public static final Technique AMORPHOUS_METALLIC_SOUL = new Technique("amorphous_metallic_soul", Cultivation.System.DIVINE,
-			new TechniquesModifiers(2, 1, 3, 1, 3, 7), 1.9, 2300000, 800)
+			new TechniquesModifiers(2, 1, 3, 1, 3, 7), 6.1, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -487,7 +499,7 @@ public class Techniques {
 	//From Febian
 	//Does extra damage against living
 	public static final Technique NINE_SPRINGS_SOUL = new Technique("nine_springs_soul", Cultivation.System.DIVINE,
-			new TechniquesModifiers(2, 1, 3, 1, 3, 4), 1.9, 2300000, 800)
+			new TechniquesModifiers(2, 1, 3, 1, 3, 4), 6.2, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")
@@ -499,7 +511,7 @@ public class Techniques {
 	//From HuoYuhao
 	//If player kills, he loses something
 	public static final Technique BUDDHA_S_HEAVENLY_WAY = new Technique("buddha_s_heavenly_way", Cultivation.System.DIVINE,
-			new TechniquesModifiers(2, 1, 3, 1, 3, 9), 1.9, 2300000, 800)
+			new TechniquesModifiers(2, 1, 3, 1, 3, 9), 15.1, 2300000, 800)
 			.addCheckpoint(1000, "Minor Success")
 			.addCheckpoint(10000, "Small Success")
 			.addCheckpoint(90000, "Middle Success")

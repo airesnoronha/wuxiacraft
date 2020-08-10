@@ -23,6 +23,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
@@ -130,8 +131,6 @@ public class RendererHandler {
 	@SubscribeEvent
 	public void onRenderHealthBar(RenderGameOverlayEvent.Pre event) {
 		if (event.isCancelable() && event.getType() == RenderGameOverlayEvent.ElementType.HEALTH) {
-			//GuiIngameForge.left_height += 5; //this was because of the dragon
-			//GuiIngameForge.right_height += 5;
 			if (Minecraft.getMinecraft().player.getMaxHealth() > 40f) {
 				event.setCanceled(true);
 				drawCustomHealthBar(event.getResolution());
@@ -215,12 +214,10 @@ public class RendererHandler {
 
 		EntityPlayer player = mc.world.getPlayerEntityByUUID(mc.player.getUniqueID());
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 
 		mc.renderEngine.bindTexture(hud_bars);
 
 		double energy_fill = cultivation.getEnergy() / cultivation.getMaxEnergy();
-		double progress_fill = cultivation.getEssenceProgress() * 100f / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
 
 		int middleX = (width) / 2;
 
@@ -259,15 +256,18 @@ public class RendererHandler {
 		mc.ingameGUI.drawTexturedModalRect(0,0, 0,224,essenceProgress,16);
 		GlStateManager.popMatrix();
 
+		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
+		if (player != null) {
+			String message = String.format("Speed: %.2f %.4f %.4f", cultivation.getMaxSpeed(),
+					player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue(),
+					player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue());
+			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 100, Integer.parseInt("FFAA00", 16));
+			GlStateManager.color(1,1,1,1);
+		}
+
 		/*String message = String.format("Energy: %.4f (%d%%)",
 				cultivation.getEnergy(), (int)(cultivation.getEnergy()*100.0/CultivationUtils.getMaxEnergy(player)));
 		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 90, Integer.parseInt("FFAA00", 16));
-
-		if (cultTech.getBodyTechnique() != null) {
-			message = String.format("Body Technique: %s %.4f", cultTech.getBodyTechnique().getTechnique().getName(),
-					cultTech.getBodyTechnique().getProficiency());
-			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 100, Integer.parseInt("FFAA00", 16));
-		}
 
 		if (cultTech.getEssenceTechnique() != null) {
 			message = String.format("Essence Technique: %s %.4f", cultTech.getEssenceTechnique().getTechnique().getName(),

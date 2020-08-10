@@ -9,6 +9,7 @@ import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.cultivation.techniques.CultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
+import com.airesnor.wuxiacraft.entities.effects.EntityLevelUpHalo;
 import com.airesnor.wuxiacraft.entities.mobs.EntityCultivator;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.UnifiedCapabilitySyncMessage;
@@ -120,7 +121,9 @@ public class CultivationUtils {
 	public static void cultivatorAddProgress(EntityLivingBase player, Cultivation.System system, double amount, boolean techniques, boolean allowBreakThrough) {
 		ICultivation cultivation = getCultivationFromEntity(player);
 		ICultTech cultTech = getCultTechFromEntity(player);
-		amount *= cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system));
+		if(cultTech.getTechniqueBySystem(system) != null) {
+			amount *= cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system));
+		}
 		double enlightenment = 1;
 		PotionEffect effect = player.getActivePotionEffect(Skills.ENLIGHTENMENT);
 		if (effect != null) {
@@ -149,7 +152,7 @@ public class CultivationUtils {
 		}
 		if (!cultivation.getSuppress()) {
 			try {
-				cultivation.addSystemProgress(amount, system, allowBreakThrough);
+				boolean leveled = cultivation.addSystemProgress(amount, system, allowBreakThrough);
 				cultivation.addSystemFoundation(amount * 0.05, system); //5% extra to foundations
 				if (cultivation.getBodyLevel() == BaseSystemLevel.DEFAULT_BODY_LEVEL) {
 					cultivation.addBodyProgress(amount * 0.3, allowBreakThrough);
@@ -160,8 +163,12 @@ public class CultivationUtils {
 				if (cultivation.getEssenceLevel() == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
 					cultivation.addEssenceProgress(amount * 0.3, allowBreakThrough);
 				}
-			} catch (Cultivation.RequiresTribulation trib) {
-				callTribulation(player, trib.tribulationStrength, trib.system, trib.level, trib.sublevel);
+				if(leveled && !player.world.isRemote) {
+					EntityLevelUpHalo halo = new EntityLevelUpHalo(player.world, player.posX, player.posY + 1, player.posZ);
+					WorldUtils.spawnEntity(player.world, halo);
+				}
+			} catch (Cultivation.RequiresTribulation tribulation) {
+				callTribulation(player, tribulation.tribulationStrength, tribulation.system, tribulation.level, tribulation.subLevel);
 			}
 		} else {
 			cultivation.addSystemFoundation(amount, system);

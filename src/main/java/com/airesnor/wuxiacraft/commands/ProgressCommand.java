@@ -18,7 +18,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ProgressCommand extends CommandBase {
@@ -124,8 +123,8 @@ public class ProgressCommand extends CommandBase {
                             text.getStyle().setColor(TextFormatting.RED);
                             sender.sendMessage(text);
                         } catch (Cultivation.RequiresTribulation trib) {
-                            double strength = cultivation.getSystemLevel(trib.system).getModifierBySubLevel(trib.sublevel);
-                            CultivationUtils.callTribulation(targetPlayer, strength, trib.system, trib.level, trib.sublevel);
+                            double strength = cultivation.getSystemLevel(trib.system).getModifierBySubLevel(trib.subLevel);
+                            CultivationUtils.callTribulation(targetPlayer, strength, trib.system, trib.level, trib.subLevel);
                         }
                     } else {
                         TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);

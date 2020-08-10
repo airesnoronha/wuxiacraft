@@ -4,16 +4,13 @@ import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.SpiritVeinOre;
 import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
-import com.airesnor.wuxiacraft.items.ItemHerb;
+import com.airesnor.wuxiacraft.entities.effects.EntityLevelUpHalo;
+import com.airesnor.wuxiacraft.entities.skills.*;
 import com.airesnor.wuxiacraft.items.WuxiaHerbs;
 import com.airesnor.wuxiacraft.world.dimensions.biomes.WuxiaBiomes;
 import com.airesnor.wuxiacraft.entities.mobs.GiantAnt;
 import com.airesnor.wuxiacraft.entities.mobs.GiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
-import com.airesnor.wuxiacraft.entities.skills.FireThrowable;
-import com.airesnor.wuxiacraft.entities.skills.SwordBeamThrowable;
-import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
-import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
 import com.airesnor.wuxiacraft.entities.tileentity.*;
 import com.airesnor.wuxiacraft.formation.FormationTileEntity;
 import com.airesnor.wuxiacraft.items.ItemScroll;
@@ -205,6 +202,18 @@ public class RegistryHandler {
 				.name("sword_beam_throwable")
 				.tracker(200, 10, true)
 				.build();
+		EntityEntry soulArrowThrowable = EntityEntryBuilder.create()
+				.entity(SoulArrowThrowable.class)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "soul_arrow_throwable"), 7)
+				.name("soul_arrow_throwable")
+				.tracker(200, 10, true)
+				.build();
+		EntityEntry entityLevelUpHalo = EntityEntryBuilder.create()
+				.entity(EntityLevelUpHalo.class)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "entity_level_up_halo"), 8)
+				.name("entity_level_up_halo")
+				.tracker(300, 10, true)
+				.build();
 		event.getRegistry().register(giantAntEntity);
 		event.getRegistry().register(giantBeeEntity);
 		event.getRegistry().register(wanderingCultivatorEntity);
@@ -212,6 +221,8 @@ public class RegistryHandler {
 		event.getRegistry().register(waterNeedleThrowable);
 		event.getRegistry().register(waterBladeThrowable);
 		event.getRegistry().register(swordBeamThrowable);
+		event.getRegistry().register(soulArrowThrowable);
+		event.getRegistry().register(entityLevelUpHalo);
 	}
 
 	//ain't an event

@@ -22,7 +22,7 @@ public class SkillCultivate extends Skill {
 	public static boolean particleStep = false;
 
 	public SkillCultivate(String name, Cultivation.System system) {
-		super(name, true, false, 1f, 0, 300f, 0f);
+		super(name, true, false, 1f, 0, 200f, 0f);
 		setAction(actor -> {
 			if (!actor.world.isRemote) {
 				int bound = 100;
@@ -41,11 +41,8 @@ public class SkillCultivate extends Skill {
 					actor.addPotionEffect(effect);
 				}
 			}
-			if (actor.getEntityWorld().getBiome(new BlockPos(actor.getPosition().getX(), actor.getPosition().getY(), actor.getPosition().getZ())) == WuxiaBiomes.EXTREMEQI) {
-				CultivationUtils.cultivatorAddProgress(actor, system, 0.002f, true, true);
-			} else {
-				CultivationUtils.cultivatorAddProgress(actor, system, 0.001f, true, true);
-			}
+			//can only breakthrough when cycle is over
+			CultivationUtils.cultivatorAddProgress(actor, system, 0.001f, true, true);
 			return true;
 		});
 		setWhenCasting(actor -> {
@@ -79,9 +76,9 @@ public class SkillCultivate extends Skill {
 						if (actor.getEntityWorld().getBiome(new BlockPos(actor.getPosition().getX(), actor.getPosition().getY(), actor.getPosition().getZ())) == WuxiaBiomes.EXTREMEQI) {
 							amount *= 1.5;
 						}
-						CultivationUtils.cultivatorAddProgress(actor, system, amount, true, true);
+						CultivationUtils.cultivatorAddProgress(actor, system, amount, true, false);
 						cultivation.remEnergy(energy);
-						NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, system, amount, true, true, actor.getUniqueID()));
+						NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, system, amount, true, false, actor.getUniqueID()));
 						cultTech.getTechniqueBySystem(system).getTechnique().cultivationEffect.activate(actor);
 					}
 				}

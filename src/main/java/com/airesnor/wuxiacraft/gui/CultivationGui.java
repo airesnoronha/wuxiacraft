@@ -107,24 +107,24 @@ public class CultivationGui extends GuiScreen {
 		}
 
 		//offset ++
-		if (inBounds(mouseX, mouseY, this.guiLeft + 172, this.guiTop + 118, 9, 9)) {
+		else if (inBounds(mouseX, mouseY, this.guiLeft + 172, this.guiTop + 118, 9, 9)) {
 			this.offset = Math.min(this.displayItems - this.tab.maxDisplayItems, this.offset + 1);
 		}
 
 		//suppress
-		if (inBounds(mouseX, mouseY, this.guiLeft + 180, this.guiTop + 5, 12, 14)) {
+		else if (inBounds(mouseX, mouseY, this.guiLeft + 180, this.guiTop + 5, 12, 14)) {
 			cultivation.setSuppress(!cultivation.getSuppress());
 			NetworkWrapper.INSTANCE.sendToServer(new SuppressCultivationMessage(cultivation.getSuppress(), player.getUniqueID()));
 		}
 
 		//select tabs
-		if (inBounds(mouseX, mouseY, this.guiLeft + 5, this.guiTop + 5, 68, 14)) {
+		else if (inBounds(mouseX, mouseY, this.guiLeft + 5, this.guiTop + 5, 68, 14)) {
 			this.changeToTab(Tabs.FOUNDATION);
 		}
 		//if (inBounds(mouseX, mouseY, this.guiLeft + 61, this.guiTop + 19, 52, 15)) {
 		//	this.changeToTab(Tabs.TECHNIQUES);
 		//}
-		if (inBounds(mouseX, mouseY, this.guiLeft + 76, this.guiTop + 5, 68, 14)) {
+		else if (inBounds(mouseX, mouseY, this.guiLeft + 76, this.guiTop + 5, 68, 14)) {
 			this.changeToTab(Tabs.SKILLS);
 		}
 
@@ -302,17 +302,18 @@ public class CultivationGui extends GuiScreen {
 				drawSkillsBackground();
 				break;
 		}
-		double agilityModifier = player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue();
-		double dexterityModifier = player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue();
-		double strengthModifier = player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
+		double agilityModifier = player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() - player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
+		double dexterityModifier = player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() - player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getBaseValue();
+		double strengthModifier = player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() - player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue();
+		double spd = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;
 
 		GL11.glColor4f(1f, 1f, 1f, 1f);
 		int[] iconPos = new int[]{27, 27, 99, 108};
 		int[] fills = new int[]{
 				Math.min(27, (int) ((27f * cultivation.getSpeedHandicap()) / 100f)),
-				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / (agilityModifier * 0.005))),
-				Math.min(27, (int) (27f * (cultivation.getHasteLimit() / (0.1f * (dexterityModifier * 0.5 + strengthModifier * 0.5))))),
-				Math.min(27, (int) (27f * (cultivation.getJumpLimit()) / (0.05f * (agilityModifier * 0.3 + strengthModifier * 0.7))))
+				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / spd)),
+				Math.min(27, (int) (27f * (cultivation.getHasteLimit() / (0.1f * (strengthModifier * 0.7 + dexterityModifier * 0.3))))),
+				Math.min(27, (int) (27f * (cultivation.getJumpLimit()) / (0.5f * (agilityModifier * 0.3 + strengthModifier * 0.7))))
 		};
 
 		//Regulator bars
@@ -336,6 +337,49 @@ public class CultivationGui extends GuiScreen {
 					/ cultTech.getBodyTechnique().getTechnique().getMaxProficiency());
 			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 61, 0, 161, bodyTech, 3);
 		}
+		double foundationOverMaxBase = cultivation.getBodyFoundation() / cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel());
+		if (foundationOverMaxBase < 1) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 25 + 15, 0);
+			GlStateManager.scale(foundationOverMaxBase, foundationOverMaxBase, 0);
+			drawTexturedModalRect(-15, -15, 125, 187, 30, 30); //red
+			GlStateManager.popMatrix();
+		} else if (MathUtils.between(foundationOverMaxBase, 1, 3)) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 25 + 15, 0);
+			drawTexturedModalRect(-15, -15, 125, 187, 30, 30); //red
+			GlStateManager.scale((foundationOverMaxBase - 1) / 2, (foundationOverMaxBase - 1) / 2, 0);
+			drawTexturedModalRect(-15, -15, 155, 187, 30, 30); //yellow
+			GlStateManager.popMatrix();
+		} else if (MathUtils.between(foundationOverMaxBase, 3, 6)) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 25 + 15, 0);
+			drawTexturedModalRect(-15, -15, 155, 187, 30, 30); //yellow
+			GlStateManager.scale((foundationOverMaxBase - 3) / 3, (foundationOverMaxBase - 3) / 3, 0);
+			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); // green
+			GlStateManager.popMatrix();
+		} else if (MathUtils.between(foundationOverMaxBase, 6, 10)) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 25 + 15, 0);
+			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); //green
+			GlStateManager.scale((foundationOverMaxBase - 6) / 4, (foundationOverMaxBase - 6) / 4, 0);
+			drawTexturedModalRect(-15, -15, 215, 187, 30, 30); // blue
+			GlStateManager.popMatrix();
+		} else if (MathUtils.between(foundationOverMaxBase, 10, 20)) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 25 + 15, 0);
+			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); //blue
+			GlStateManager.scale((foundationOverMaxBase - 10) / 10, (foundationOverMaxBase - 10) / 10, 0);
+			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
+			GlStateManager.popMatrix();
+		} else if (foundationOverMaxBase > 20) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 25 + 15, 0);
+			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
+			GlStateManager.scale((foundationOverMaxBase - 20) / 80, (foundationOverMaxBase - 20) / 80, 0); //till 100x
+			drawTexturedModalRect(-15, -15, 155, 217, 30, 30); // white
+			GlStateManager.popMatrix();
+		}
 		int divineProgress = (int) (124.0 * cultivation.getDivineProgress() / cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()));
 		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 75, 0, 227, divineProgress, 16); //dragon
 		if (cultTech.getDivineTechnique() != null) {
@@ -343,12 +387,98 @@ public class CultivationGui extends GuiScreen {
 					/ cultTech.getDivineTechnique().getTechnique().getMaxProficiency());
 			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 102, 0, 161, divineTech, 3);
 		}
+		foundationOverMaxBase = cultivation.getDivineFoundation() / cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel());
+		if (foundationOverMaxBase < 1) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 66 + 15, 0);
+			GlStateManager.scale(foundationOverMaxBase, foundationOverMaxBase, 0);
+			drawTexturedModalRect(-15, -15, 125, 187, 30, 30); //red
+			GlStateManager.popMatrix();
+		} else if (MathUtils.between(foundationOverMaxBase, 1, 3)) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 66 + 15, 0);
+			drawTexturedModalRect(-15, -15, 125, 187, 30, 30); //red
+			GlStateManager.scale((foundationOverMaxBase - 1) / 2, (foundationOverMaxBase - 1) / 2, 0);
+			drawTexturedModalRect(-15, -15, 155, 187, 30, 30); //yellow
+			GlStateManager.popMatrix();
+		} else if (MathUtils.between(foundationOverMaxBase, 3, 6)) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 66 + 15, 0);
+			drawTexturedModalRect(-15, -15, 155, 187, 30, 30); //yellow
+			GlStateManager.scale((foundationOverMaxBase - 3) / 3, (foundationOverMaxBase - 3) / 3, 0);
+			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); // green
+			GlStateManager.popMatrix();
+		} else if (MathUtils.between(foundationOverMaxBase, 6, 10)) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 66 + 15, 0);
+			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); //green
+			GlStateManager.scale((foundationOverMaxBase - 6) / 4, (foundationOverMaxBase - 6) / 4, 0);
+			drawTexturedModalRect(-15, -15, 215, 187, 30, 30); // blue
+			GlStateManager.popMatrix();
+		} else if (MathUtils.between(foundationOverMaxBase, 10, 20)) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 66 + 15, 0);
+			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); //blue
+			GlStateManager.scale((foundationOverMaxBase - 10) / 10, (foundationOverMaxBase - 10) / 10, 0);
+			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
+			GlStateManager.popMatrix();
+		} else if (foundationOverMaxBase > 20) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 66 + 15, 0);
+			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
+			GlStateManager.scale((foundationOverMaxBase - 20) / 80, (foundationOverMaxBase - 20) / 80, 0); //till 100x
+			drawTexturedModalRect(-15, -15, 155, 217, 30, 30); // white
+			GlStateManager.popMatrix();
+		}
 		int essenceProgress = (int) (124.0 * cultivation.getEssenceProgress() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()));
 		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 116, 0, 211, essenceProgress, 16); //dragon
 		if (cultTech.getEssenceTechnique() != null) {
 			int essenceTech = (int) (138.0 * cultTech.getEssenceTechnique().getProficiency()
 					/ cultTech.getEssenceTechnique().getTechnique().getMaxProficiency());
 			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 143, 0, 161, essenceTech, 3);
+		}
+		foundationOverMaxBase = cultivation.getEssenceFoundation() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
+		if (foundationOverMaxBase < 1) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 107 + 15, 0);
+			GlStateManager.scale(foundationOverMaxBase, foundationOverMaxBase, 0);
+			drawTexturedModalRect(-15, -15, 125, 187, 30, 30); //red
+			GlStateManager.popMatrix();
+		} else if (MathUtils.between(foundationOverMaxBase, 1, 3)) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 107 + 15, 0);
+			drawTexturedModalRect(-15, -15, 125, 187, 30, 30); //red
+			GlStateManager.scale((foundationOverMaxBase - 1) / 2, (foundationOverMaxBase - 1) / 2, 0);
+			drawTexturedModalRect(-15, -15, 155, 187, 30, 30); //yellow
+			GlStateManager.popMatrix();
+		} else if (MathUtils.between(foundationOverMaxBase, 3, 6)) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 107 + 15, 0);
+			drawTexturedModalRect(-15, -15, 155, 187, 30, 30); //yellow
+			GlStateManager.scale((foundationOverMaxBase - 3) / 3, (foundationOverMaxBase - 3) / 3, 0);
+			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); // green
+			GlStateManager.popMatrix();
+		} else if (MathUtils.between(foundationOverMaxBase, 6, 10)) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 107 + 15, 0);
+			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); //green
+			GlStateManager.scale((foundationOverMaxBase - 6) / 4, (foundationOverMaxBase - 6) / 4, 0);
+			drawTexturedModalRect(-15, -15, 215, 187, 30, 30); // blue
+			GlStateManager.popMatrix();
+		} else if (MathUtils.between(foundationOverMaxBase, 10, 20)) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 107 + 15, 0);
+			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); //blue
+			GlStateManager.scale((foundationOverMaxBase - 10) / 10, (foundationOverMaxBase - 10) / 10, 0);
+			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
+			GlStateManager.popMatrix();
+		} else if (foundationOverMaxBase > 20) {
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 107 + 15, 0);
+			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
+			GlStateManager.scale((foundationOverMaxBase - 20) / 80, (foundationOverMaxBase - 20) / 80, 0); //till 100x
+			drawTexturedModalRect(-15, -15, 155, 217, 30, 30); // white
+			GlStateManager.popMatrix();
 		}
 	}
 
@@ -481,7 +611,7 @@ public class CultivationGui extends GuiScreen {
 		GlStateManager.translate(this.guiLeft + 13, this.guiTop + 25, 0);
 		GlStateManager.scale(fontScale, fontScale, 1);
 		this.fontRenderer.drawString(cultivation.getBodyLevel().getLevelName(cultivation.getBodySubLevel()), 0, 0, 0xFFFFFF);
-		this.fontRenderer.drawStringWithShadow(String.format("%.2f", cultivation.getBodyProgress()), 20, 18, 0x00FF20);
+		this.fontRenderer.drawStringWithShadow(String.format("%.2f %.2f", cultivation.getBodyProgress(), cultivation.getBodyFoundation()), 20, 18, 0x00FF20);
 		GlStateManager.popMatrix();
 		if (cultTech.getBodyTechnique() != null) {
 			GlStateManager.pushMatrix();
@@ -494,7 +624,7 @@ public class CultivationGui extends GuiScreen {
 		GlStateManager.translate(this.guiLeft + 13, this.guiTop + 66, 0);
 		GlStateManager.scale(fontScale, fontScale, 1);
 		this.fontRenderer.drawString(cultivation.getDivineLevel().getLevelName(cultivation.getDivineSubLevel()), 0, 0, 0xFFFFFF);
-		this.fontRenderer.drawStringWithShadow(String.format("%.2f", cultivation.getDivineProgress()), 20, 18, 0x00FF20);
+		this.fontRenderer.drawStringWithShadow(String.format("%.2f %.2f", cultivation.getDivineProgress(), cultivation.getDivineFoundation()), 20, 18, 0x00FF20);
 		GlStateManager.popMatrix();
 		if (cultTech.getDivineTechnique() != null) {
 			GlStateManager.pushMatrix();
@@ -507,7 +637,7 @@ public class CultivationGui extends GuiScreen {
 		GlStateManager.translate(this.guiLeft + 13, this.guiTop + 107, 0);
 		GlStateManager.scale(fontScale, fontScale, 1);
 		this.fontRenderer.drawString(cultivation.getEssenceLevel().getLevelName(cultivation.getEssenceSubLevel()), 0, 0, 0xFFFFFF);
-		this.fontRenderer.drawStringWithShadow(String.format("%.2f", cultivation.getEssenceProgress()), 20, 18, 0x00FF20);
+		this.fontRenderer.drawStringWithShadow(String.format("%.2f %.2f", cultivation.getEssenceProgress(), cultivation.getEssenceFoundation()), 20, 18, 0x00FF20);
 		GlStateManager.popMatrix();
 		if (cultTech.getEssenceTechnique() != null) {
 			GlStateManager.pushMatrix();
@@ -554,7 +684,7 @@ public class CultivationGui extends GuiScreen {
 		// suppress cultivation
 		if (inBounds(mouseX, mouseY, this.guiLeft + 180, this.guiTop + 5, 12, 14)) {
 			String line = "Suppress cultivation";
-			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
+			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 164);
 			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
 		}
 		//tabs
@@ -582,39 +712,89 @@ public class CultivationGui extends GuiScreen {
 		boolean drawing = false;
 		String line = "";
 		//% first
-		if(inBounds(mouseX, mouseY, this.guiLeft+7, this.guiTop+34, 124, 16)) {
+		if (inBounds(mouseX, mouseY, this.guiLeft + 7, this.guiTop + 34, 124, 16)) {
 			drawing = true;
-			line = String.format("%.2f%%", this.cultivation.getBodyProgress()*100.0/this.cultivation.getBodyLevel().getProgressBySubLevel(this.cultivation.getBodySubLevel()));
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+7, this.guiTop+75, 124, 16)) {
+			line = String.format("%.2f%%", this.cultivation.getBodyProgress() * 100.0 / this.cultivation.getBodyLevel().getProgressBySubLevel(this.cultivation.getBodySubLevel()));
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 7, this.guiTop + 75, 124, 16)) {
 			drawing = true;
-			line = String.format("%.2f%%", this.cultivation.getDivineProgress()*100.0/this.cultivation.getDivineLevel().getProgressBySubLevel(this.cultivation.getDivineSubLevel()));
-		}
-		else if(inBounds(mouseX, mouseY, this.guiLeft+7, this.guiTop+116, 124, 16)) {
+			line = String.format("%.2f%%", this.cultivation.getDivineProgress() * 100.0 / this.cultivation.getDivineLevel().getProgressBySubLevel(this.cultivation.getDivineSubLevel()));
+		} else if (inBounds(mouseX, mouseY, this.guiLeft + 7, this.guiTop + 116, 124, 16)) {
 			drawing = true;
-			line = String.format("%.2f%%", this.cultivation.getEssenceProgress()*100.0/this.cultivation.getEssenceLevel().getProgressBySubLevel(this.cultivation.getEssenceSubLevel()));
+			line = String.format("%.2f%%", this.cultivation.getEssenceProgress() * 100.0 / this.cultivation.getEssenceLevel().getProgressBySubLevel(this.cultivation.getEssenceSubLevel()));
 		}
 		//techniques 2nd
-		if(this.cultTech.getBodyTechnique() != null) {
-			if (inBounds(mouseX, mouseY, this.guiLeft + 7, this.guiTop + 52, 138, 12)) {
+		if (inBounds(mouseX, mouseY, this.guiLeft + 7, this.guiTop + 52, 138, 12)) {
+			if (this.cultTech.getBodyTechnique() != null) {
 				drawing = true;
 				line = this.cultTech.getBodyTechnique().getCurrentCheckpoint();
 			}
 		}
-		if(this.cultTech.getDivineTechnique() != null) {
-			if (inBounds(mouseX, mouseY, this.guiLeft + 7, this.guiTop + 93, 138, 12)) {
+		if (inBounds(mouseX, mouseY, this.guiLeft + 7, this.guiTop + 93, 138, 12)) {
+			if (this.cultTech.getDivineTechnique() != null) {
 				drawing = true;
 				line = this.cultTech.getDivineTechnique().getCurrentCheckpoint();
 			}
 		}
-		if(this.cultTech.getEssenceTechnique() != null) {
-			if (inBounds(mouseX, mouseY, this.guiLeft + 7, this.guiTop + 134, 138, 12)) {
+		if (inBounds(mouseX, mouseY, this.guiLeft + 7, this.guiTop + 134, 138, 12)) {
+			if (this.cultTech.getEssenceTechnique() != null) {
 				drawing = true;
 				line = this.cultTech.getEssenceTechnique().getCurrentCheckpoint();
 			}
 		}
-		if(drawing) {
-			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
+		// foundation third
+		if (inBounds(mouseX, mouseY, this.guiLeft + 134, this.guiTop + 25, 30, 30)) {
+			double foundationOverMaxBase = cultivation.getBodyFoundation() / cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel());
+			drawing = true;
+			if (foundationOverMaxBase < 1) {
+				line = "Unstable Foundation";
+			} else if (MathUtils.between(foundationOverMaxBase, 1, 3)) {
+				line = "Weak Foundation";
+			} else if (MathUtils.between(foundationOverMaxBase, 3, 6)) {
+				line = "Average Foundation";
+			} else if (MathUtils.between(foundationOverMaxBase, 6, 10)) {
+				line = "Strong Foundation";
+			} else if (MathUtils.between(foundationOverMaxBase, 10, 20)) {
+				line = "Unbreakable Foundation";
+			} else if (MathUtils.between(foundationOverMaxBase, 20, 100)) {
+				line = "Peerless Foundation";
+			}
+		}
+		if (inBounds(mouseX, mouseY, this.guiLeft + 134, this.guiTop + 66, 30, 30)) {
+			double foundationOverMaxBase = cultivation.getDivineFoundation() / cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel());
+			drawing = true;
+			if (foundationOverMaxBase < 1) {
+				line = "Unstable Foundation";
+			} else if (MathUtils.between(foundationOverMaxBase, 1, 3)) {
+				line = "Weak Foundation";
+			} else if (MathUtils.between(foundationOverMaxBase, 3, 6)) {
+				line = "Average Foundation";
+			} else if (MathUtils.between(foundationOverMaxBase, 6, 10)) {
+				line = "Strong Foundation";
+			} else if (MathUtils.between(foundationOverMaxBase, 10, 20)) {
+				line = "Unbreakable Foundation";
+			} else if (MathUtils.between(foundationOverMaxBase, 20, 100)) {
+				line = "Peerless Foundation";
+			}
+		}
+		if (inBounds(mouseX, mouseY, this.guiLeft + 134, this.guiTop + 107, 30, 30)) {
+			double foundationOverMaxBase = cultivation.getEssenceFoundation() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
+			drawing = true;
+			if (foundationOverMaxBase < 1) {
+				line = "Unstable Foundation";
+			} else if (MathUtils.between(foundationOverMaxBase, 1, 3)) {
+				line = "Weak Foundation";
+			} else if (MathUtils.between(foundationOverMaxBase, 3, 6)) {
+				line = "Average Foundation";
+			} else if (MathUtils.between(foundationOverMaxBase, 6, 10)) {
+				line = "Strong Foundation";
+			} else if (MathUtils.between(foundationOverMaxBase, 10, 20)) {
+				line = "Unbreakable Foundation";
+			} else if (MathUtils.between(foundationOverMaxBase, 20, 100)) {
+				line = "Peerless Foundation";
+			}
+		}
+		if (drawing) {
+			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 164);
 			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
 		}
 	}
@@ -659,7 +839,7 @@ public class CultivationGui extends GuiScreen {
 			line = skillCap.getSelectedSkills().size() > 0 ? "Deselect Skills" : "Select All Skills";
 		}
 		if (drawing) {
-			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 142);
+			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 164);
 			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
 		}
 	}
