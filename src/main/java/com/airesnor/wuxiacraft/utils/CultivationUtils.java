@@ -165,7 +165,7 @@ public class CultivationUtils {
 				}
 				if(leveled && !player.world.isRemote) {
 					EntityLevelUpHalo halo = new EntityLevelUpHalo(player.world, player.posX, player.posY + 1, player.posZ);
-					WorldUtils.spawnEntity(player.world, halo);
+					WorldUtils.spawnEntity((WorldServer) player.world, halo);
 				}
 			} catch (Cultivation.RequiresTribulation tribulation) {
 				callTribulation(player, tribulation.tribulationStrength, tribulation.system, tribulation.level, tribulation.subLevel);
