@@ -9,6 +9,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 public class EntityAIReleaseSkills extends EntityAIBase {
 
@@ -105,17 +106,19 @@ public class EntityAIReleaseSkills extends EntityAIBase {
 			if (skillCap.isCasting() && cultivation.hasEnergy(this.selectedSkill.getCost())) {
 				if (skillCap.getCastProgress() < selectedSkill.getCastTime())
 					skillCap.stepCastProgress((float) this.attacker.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue());
-				selectedSkill.castingEffect(this.attacker);
+				//selectedSkill.castingEffect(this.attacker);
 			} else if (skillCap.isDoneCasting()) {
 				skillCap.resetCastProgress();
 				skillCap.setDoneCasting(false);
 			}
 			if (skillCap.isCasting() && skillCap.getCastProgress() >= selectedSkill.getCastTime() && skillCap.getCooldown() <= 0) {
 				if (cultivation.hasEnergy(selectedSkill.getCost())) {
-					if (selectedSkill.activate(attacker)) {
-						cultivation.remEnergy(selectedSkill.getCost());
-						skillCap.resetCastProgress();
-						skillCap.stepCooldown(selectedSkill.getCooldown());
+					if (world instanceof WorldServer) {
+						if (selectedSkill.activate(attacker)) {
+							cultivation.remEnergy(selectedSkill.getCost());
+							skillCap.resetCastProgress();
+							skillCap.stepCooldown(selectedSkill.getCooldown());
+						}
 					}
 				}
 			}

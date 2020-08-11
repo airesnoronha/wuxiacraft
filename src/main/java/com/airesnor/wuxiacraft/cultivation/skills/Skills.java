@@ -183,7 +183,7 @@ public class Skills {
 
 	public static final Skill FLAMES = new Skill("flames", false, true, 30f, 1.5f, 10f, 0f)
 			.setAction(actor -> {
-				if (!actor.world.isRemote) {
+				if (actor.world instanceof WorldServer) {
 					float shootPitch = actor.rotationPitch;
 					float shootYaw = actor.rotationYawHead;
 					ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
@@ -195,7 +195,7 @@ public class Skills {
 					for (int i = 0; i < 3; i++) {
 						FireThrowable ft = new FireThrowable(actor.world, actor, damage);
 						ft.shoot(actor, shootPitch, shootYaw, 0.3f, 1.2f, 0.4f);
-						WorldUtils.spawnEntity(actor.world, ft);
+						WorldUtils.spawnEntity((WorldServer) actor.world, ft);
 					}
 				}
 				return true;
@@ -203,7 +203,7 @@ public class Skills {
 
 	public static final Skill FIRE_BAll = new Skill("fire_ball", false, true, 80f, 3f, 25f, 0f)
 			.setAction(actor -> {
-				if (!actor.world.isRemote) {
+				if (actor.world instanceof WorldServer) {
 					ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
 					float strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
 					float speed = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue();
@@ -214,7 +214,7 @@ public class Skills {
 					for (int i = 0; i < 5; i++) {
 						FireThrowable ft = new FireThrowable(actor.world, actor, damage, 600, 60, 1.2f);
 						ft.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, Math.min(0.8f + speed * 0.4f, 1.8f), 0.4f);
-						WorldUtils.spawnEntity(actor.world, ft);
+						WorldUtils.spawnEntity((WorldServer) actor.world, ft);
 					}
 				}
 				return true;
@@ -245,7 +245,7 @@ public class Skills {
 		int range = Math.min(max_range, 8 + (int) (Math.floor(0.1 * (1 - strength))));
 		List<BlockPos> positions = OreUtils.findOres(actor.world, actor.getPosition(), range);
 		for (BlockPos pos : positions) {
-			if (!actor.world.isRemote) {
+			if (actor.world instanceof WorldServer) {
 				IBlockState block = actor.world.getBlockState(pos);
 				IBlockState stone = Blocks.STONE.getDefaultState();
 				actor.world.setBlockState(pos, stone);
@@ -267,7 +267,7 @@ public class Skills {
 		BlockPos pos = SkillUtils.rayTraceBlock(actor, 5f, 1f);
 		if (pos != null) {
 			if (OreUtils.earthTypes.contains(actor.world.getBlockState(pos).getBlock())) {
-				if (!actor.world.isRemote) {
+				if (actor.world instanceof WorldServer) {
 					IBlockState block = actor.world.getBlockState(pos);
 					actor.world.setBlockToAir(pos);
 					ItemStack item = new ItemStack(block.getBlock().getItemDropped(block, actor.world.rand, 0));
@@ -348,7 +348,7 @@ public class Skills {
 	// Credits : My Girlfriend
 	public static final Skill WATER_NEEDLE = new Skill("water_needle", false, true, 30f, 1.1f, 12f, 0f, "Lysian Prieto")
 			.setAction(actor -> {
-				if (!actor.world.isRemote) {
+				if (actor.world instanceof WorldServer) {
 					ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
 					float strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
 					float speed = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue();
@@ -358,13 +358,13 @@ public class Skills {
 					}
 					WaterNeedleThrowable needle = new WaterNeedleThrowable(actor.world, actor, damage, 300);
 					needle.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, Math.min(1.8f, 0.8f + speed * 0.12f), 0.2f);
-					WorldUtils.spawnEntity(actor.world, needle);
+					WorldUtils.spawnEntity((WorldServer) actor.world, needle);
 				}
 				return true;
 			});
 
 	public static final Skill WATER_BLADE = new Skill("water_blade", false, true, 60f, 2.0f, 24f, 0f).setAction(actor -> {
-		if (!actor.world.isRemote) {
+		if (actor.world instanceof WorldServer) {
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(actor);
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
 			float strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
@@ -381,7 +381,7 @@ public class Skills {
 			}
 			WaterBladeThrowable blade = new WaterBladeThrowable(actor.world, actor, damage, 300);
 			blade.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 0.001f * (0.7f + speed * 0.5f * swordModifier), 0.2f);
-			WorldUtils.spawnEntity(actor.world, blade);
+			WorldUtils.spawnEntity((WorldServer) actor.world, blade);
 		}
 		return true;
 	});
@@ -430,7 +430,7 @@ public class Skills {
 				boolean activated = false;
 				if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
 					activated = true;
-					if (!actor.world.isRemote) {
+					if (actor.world instanceof WorldServer) {
 						float attack_strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
 						float speed = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue();
 						float spirit = (float) CultivationUtils.getCultivationFromEntity(actor).getMaxEnergy() * 0.1f;
@@ -441,7 +441,7 @@ public class Skills {
 						float damage = strength + sword;
 						SwordBeamThrowable sbt = new SwordBeamThrowable(actor.world, actor, damage, 0xEF890A, 300);
 						sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.6f, 0f);
-						WorldUtils.spawnEntity(actor.world, sbt);
+						WorldUtils.spawnEntity((WorldServer) actor.world, sbt);
 					}
 					actor.swingArm(EnumHand.MAIN_HAND);
 				}
@@ -460,7 +460,7 @@ public class Skills {
 			float damage = strength * 0.3f + sword * 0.3f;
 			SwordBeamThrowable sbt = new SwordBeamThrowable(actor.world, actor, damage, 0x89EF0A, 300);
 			sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.2f, 0f);
-			WorldUtils.spawnEntity(actor.world, sbt);
+			WorldUtils.spawnEntity((WorldServer) actor.world, sbt);
 		}
 		actor.swingArm(EnumHand.MAIN_HAND);
 		return true;
@@ -483,7 +483,7 @@ public class Skills {
 						float damage = strength + sword;
 						SwordBeamThrowable sbt = new SwordBeamThrowable(actor.world, actor, damage, 0xEF890A, 300);
 						sbt.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 1.0f, 1.6f, 0f);
-						WorldUtils.spawnEntity(actor.world, sbt);
+						WorldUtils.spawnEntity((WorldServer) actor.world, sbt);
 					}
 					actor.swingArm(EnumHand.MAIN_HAND);
 					skillCap.resetBarrageCounter();
@@ -566,7 +566,7 @@ public class Skills {
 					float strength = (float) cultivation.getDivineModifier() * 1.5f;
 					SoulArrowThrowable soulArrowThrowable = new SoulArrowThrowable(actor.world, actor, strength, 300);
 					soulArrowThrowable.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, Math.min(1.8f, 0.8f + strength * 0.2f * 0.12f), 0.2f);
-					WorldUtils.spawnEntity(actor.world, soulArrowThrowable);
+					WorldUtils.spawnEntity((WorldServer) actor.world, soulArrowThrowable);
 				}
 				return true;
 			});
