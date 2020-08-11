@@ -935,12 +935,12 @@ public class EventHandler {
 			IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
 			if (barrier.isBarrierActive() && !barrier.isBarrierBroken()) {
 				handleBarrier(event, barrier, player);
+				TextComponentString message = new TextComponentString("Barrier Amount: " + barrier.getBarrierAmount());
+				message.getStyle().setColor(TextFormatting.AQUA);
+				player.sendMessage(message);
 			} else {
 				event.setCanceled(false);
 			}
-			TextComponentString message = new TextComponentString("Barrier Amount: " + barrier.getBarrierAmount());
-			message.getStyle().setColor(TextFormatting.AQUA);
-			player.sendMessage(message);
 		}
 	}
 

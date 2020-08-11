@@ -65,7 +65,7 @@ public class SectCommand extends CommandBase {
                     } else if (args[0].equalsIgnoreCase("disband")) {
                         disbandSubCommand(server, playerMP, sectData);
                     } else if (args[0].equalsIgnoreCase("leave")) {
-                        leaveSubCommand(playerMP, sectData);
+                        leaveSubCommand(server, playerMP, sectData);
                     } else if (args[0].equalsIgnoreCase("help")) {
                         helpSubCommand(playerMP);
                     } else if (args[0].equalsIgnoreCase("invites")) {
@@ -501,7 +501,13 @@ public class SectCommand extends CommandBase {
                             text.getStyle().setColor(TextFormatting.RED);
                             targetPlayer.sendMessage(text);
                             LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) targetPlayer.getPrefixes();
-                            prefixes.remove(0);
+                            List<ITextComponent> toRemove = new ArrayList<>();
+                            for (ITextComponent component : prefixes) {
+                                if (component.getUnformattedText().equalsIgnoreCase("[" + sectOfPlayer.getSectName() + "]")) {
+                                    toRemove.add(component);
+                                }
+                            }
+                            prefixes.removeAll(toRemove);
                         } else {
                             Pair<UUID, String> memberPlayer = sectOfPlayer.getMemberByUUID(playerMP.getUniqueID());
                             Pair<String, Integer> playerRank = null;
@@ -523,7 +529,13 @@ public class SectCommand extends CommandBase {
                                     text.getStyle().setColor(TextFormatting.RED);
                                     targetPlayer.sendMessage(text);
                                     LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) targetPlayer.getPrefixes();
-                                    prefixes.remove(0);
+                                    List<ITextComponent> toRemove = new ArrayList<>();
+                                    for (ITextComponent component : prefixes) {
+                                        if (component.getUnformattedText().equalsIgnoreCase("[" + sectOfPlayer.getSectName() + "]")) {
+                                            toRemove.add(component);
+                                        }
+                                    }
+                                    prefixes.removeAll(toRemove);
                                 } else if (!(playerRank.getRight() >= kickPermissionLevel)) {
                                     TextComponentString text = new TextComponentString("You do not have the permission to kick a member of the sect.");
                                     text.getStyle().setColor(TextFormatting.RED);
@@ -565,7 +577,7 @@ public class SectCommand extends CommandBase {
         }
     }
 
-    public void leaveSubCommand(EntityPlayerMP playerMP, WorldSectData sectData) {
+    public void leaveSubCommand(MinecraftServer server, EntityPlayerMP playerMP, WorldSectData sectData) {
         Sect sect = Sect.getSectByPlayer(playerMP, sectData);
         if (sect != null) {
             if (sect.getSectLeader().equals(playerMP.getUniqueID())) {
@@ -573,6 +585,33 @@ public class SectCommand extends CommandBase {
                     sect.setDisband(false);
                 }
                 if (sect.isDisbanding()) {
+                    String oldSectName = "[" + sect.getSectName() + "]";
+                    List<Pair<UUID, String>> members = sect.getMembers();
+                    UUID sectLeaderUUID = sect.getSectLeader();
+                    for (Pair<UUID, String> member : members) {
+                        EntityPlayerMP memberPlayer = server.getPlayerList().getPlayerByUUID(member.getLeft());
+                        if (memberPlayer != null) {
+                            LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) memberPlayer.getPrefixes();
+                            List<ITextComponent> toRemove = new ArrayList<>();
+                            for (ITextComponent component : prefixes) {
+                                if (component.getUnformattedText().equalsIgnoreCase(oldSectName)) {
+                                    toRemove.add(component);
+                                }
+                            }
+                            prefixes.removeAll(toRemove);
+                        }
+                    }
+                    EntityPlayerMP sectLeaderPlayer = server.getPlayerList().getPlayerByUUID(sectLeaderUUID);
+                    if (sectLeaderPlayer != null) {
+                        LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) sectLeaderPlayer.getPrefixes();
+                        List<ITextComponent> toRemove = new ArrayList<>();
+                        for (ITextComponent component : prefixes) {
+                            if (component.getUnformattedText().equalsIgnoreCase(oldSectName)) {
+                                toRemove.add(component);
+                            }
+                        }
+                        prefixes.removeAll(toRemove);
+                    }
                     sectData.SECTS.remove(sect);
                 } else {
                     TextComponentString text = new TextComponentString("Please note that leaving the sect as the sect leader will disband the sect. Please type the command \"/sect leave\" one more time to confirm you would like to leave the sect. You have a total of 30 seconds to confirm the disbanding of the sect.");
@@ -582,9 +621,16 @@ public class SectCommand extends CommandBase {
                     sect.setDisbandTime(System.currentTimeMillis());
                 }
             } else {
+                String oldSectName = "[" + sect.getSectName() + "]";
                 sect.removeMember(playerMP.getUniqueID());
                 LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) playerMP.getPrefixes();
-                prefixes.remove(0);
+                List<ITextComponent> toRemove = new ArrayList<>();
+                for (ITextComponent component : prefixes) {
+                    if (component.getUnformattedText().equalsIgnoreCase(oldSectName)) {
+                        toRemove.add(component);
+                    }
+                }
+                prefixes.removeAll(toRemove);
             }
         } else {
             TextComponentString text = new TextComponentString("Couldn't find sect of player: " + playerMP.getName());
@@ -599,6 +645,7 @@ public class SectCommand extends CommandBase {
             if (sect.getSectLeader().equals(playerMP.getUniqueID())) {
                 Sect testSect = Sect.getSectByName(args[1], sectData);
                 if (testSect == null) {
+                    String sectOldName = "[" + sect.getSectName() + "]";
                     sect.setSectName(args[1]);
                     TextComponentString text = new TextComponentString("Sect has been renamed to " + args[1] + ".");
                     text.getStyle().setColor(TextFormatting.GREEN);
@@ -607,16 +654,28 @@ public class SectCommand extends CommandBase {
                         EntityPlayerMP memberPlayer = server.getPlayerList().getPlayerByUUID(member.getLeft());
                         if (memberPlayer != null) {
                             LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) memberPlayer.getPrefixes();
-                            prefixes.remove(0);
+                            List<ITextComponent> toRemove = new ArrayList<>();
                             TextComponentString prefix = new TextComponentString("[" + args[1] + "]");
                             prefix.getStyle().setColor(TextFormatting.AQUA);
+                            for (ITextComponent component : prefixes) {
+                                if (component.getUnformattedText().equalsIgnoreCase(sectOldName)) {
+                                    toRemove.add(component);
+                                }
+                            }
+                            prefixes.removeAll(toRemove);
                             prefixes.add(0, prefix);
                         }
                     }
                     EntityPlayerMP sectLeader = server.getPlayerList().getPlayerByUUID(sect.getSectLeader());
                     if (sectLeader != null) {
                         LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) sectLeader.getPrefixes();
-                        prefixes.remove(0);
+                        List<ITextComponent> toRemove = new ArrayList<>();
+                        for (ITextComponent component : prefixes) {
+                            if (component.getUnformattedText().equalsIgnoreCase(sectOldName)) {
+                                toRemove.add(component);
+                            }
+                        }
+                        prefixes.removeAll(toRemove);
                         TextComponentString prefix = new TextComponentString("[" + args[1] + "]");
                         prefix.getStyle().setColor(TextFormatting.AQUA);
                         prefixes.add(0, prefix);
