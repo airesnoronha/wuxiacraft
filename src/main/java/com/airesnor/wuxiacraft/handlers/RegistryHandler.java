@@ -155,7 +155,7 @@ public class RegistryHandler {
 				.name("wandering_cultivator")
 				.tracker(150, 3, false)
 				.egg(0x202020, 0xFACB27)
-				.spawn(EnumCreatureType.MONSTER, 5, 1, 1,
+				.spawn(EnumCreatureType.MONSTER, 7, 1, 1,
 						Biomes.BEACH,
 						Biomes.BIRCH_FOREST,
 						Biomes.DESERT,
