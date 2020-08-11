@@ -194,6 +194,16 @@ public class Sect {
         return sectMember;
     }
 
+    public void setMemberRank(UUID uuid, String rank) {
+        for (int i = 0; i < members.size(); i++) {
+            Pair<UUID, String> member = members.get(i);
+            if (member.getLeft().equals(uuid)) {
+                members.remove(i);
+                members.add(i, Pair.of(uuid, rank));
+            }
+        }
+    }
+
     public void removePlayerFromInvitations(UUID playerUUID) {
         for (int i = 0; i < invitations.size(); i++) {
             if (invitations.get(i).equals(playerUUID)) {
