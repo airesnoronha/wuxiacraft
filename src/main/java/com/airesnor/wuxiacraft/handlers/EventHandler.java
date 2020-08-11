@@ -155,10 +155,10 @@ public class EventHandler {
 				if (!player.isSneaking() && WuxiaCraftConfig.disableStepAssist) {
 					double agilityModifier = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;  // agility to bend the body to spring up
 					agilityModifier = Math.min(cultivation.getMaxSpeed(), agilityModifier);
-					agilityModifier*= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
+					agilityModifier *= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
 					double dexterityModifier = (cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) + 0.025;
 					double strengthModifier = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.14;
-					player.stepHeight = Math.min(3.1f, 0.6f * (1 + (float)(agilityModifier + dexterityModifier + strengthModifier)));
+					player.stepHeight = Math.min(3.1f, 0.6f * (1 + (float) (agilityModifier + dexterityModifier + strengthModifier)));
 				}
 				player.sendPlayerAbilities();
 			}
@@ -180,11 +180,15 @@ public class EventHandler {
 				Sect sect = Sect.getSectByPlayer(player, sectData);
 				if (sect != null) {
 					LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) player.getPrefixes();
+					List<ITextComponent> toRemove = new ArrayList<>();
 					TextComponentString prefix = new TextComponentString("[" + sect.getSectName() + "]");
-					prefix.getStyle().setColor(TextFormatting.AQUA);
-					if (prefixes.contains(prefix)) {
-						prefixes.remove(prefix);
+					for (ITextComponent component : prefixes) {
+						if (component.getUnformattedText().equalsIgnoreCase(prefix.getText())) {
+							toRemove.add(component);
+						}
 					}
+					prefixes.removeAll(toRemove);
+					prefix.getStyle().setColor(TextFormatting.AQUA);
 					prefixes.add(0, prefix);
 				}
 			}
@@ -257,7 +261,7 @@ public class EventHandler {
 									if (skillCap.getCastProgress() < selectedSkill.getCastTime() && selectedSkill.castingEffect(player)) {
 										if (selectedSkill.castNotSpeedable) skillCap.stepCastProgress(1);
 										else
-											skillCap.stepCastProgress(Math.min(dexterityModifier * 0.4f, selectedSkill.getCastTime()/10));
+											skillCap.stepCastProgress(Math.min(dexterityModifier * 0.4f, selectedSkill.getCastTime() / 10));
 									}
 									if (skillCap.getCastProgress() >= selectedSkill.getCastTime()) {
 										if (selectedSkill.activate(player)) {
@@ -402,7 +406,7 @@ public class EventHandler {
 			double baseJumpSpeed = event.getEntity().motionY;
 			double agilityModifier = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;  // agility to bend the body to spring up
 			agilityModifier = Math.min(cultivation.getMaxSpeed(), agilityModifier);
-			agilityModifier*= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
+			agilityModifier *= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
 			double strengthModifier = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.14;
 			double jumpSpeed = 0.5f * (agilityModifier + strengthModifier);
 			if (cultivation.getJumpLimit() >= 0) {
@@ -423,15 +427,15 @@ public class EventHandler {
 		EntityLivingBase player = event.getEntityLiving();
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.getEntityLiving());
 		if (event.getEntityLiving().world.isRemote || event.getDistance() < 3) return;
-		if ((cultivation.getBodyModifier() + cultivation.getEssenceModifier()*  0.8 + cultivation.getDivineModifier() * 0.2) > 100000) {
+		if ((cultivation.getBodyModifier() + cultivation.getEssenceModifier() * 0.8 + cultivation.getDivineModifier() * 0.2) > 100000) {
 			event.setDistance(0);
 		} else {
 			double agilityModifier = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;  // agility to bend the body to spring up
 			agilityModifier = Math.min(cultivation.getMaxSpeed(), agilityModifier);
-			agilityModifier*= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
+			agilityModifier *= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
 			double strengthModifier = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.14;
 			double constitutionModifier = (cultivation.getBodyModifier() - 1) + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.16; // natural body resistance
-			event.setDistance(event.getDistance() - 1.85f * (float)(agilityModifier + strengthModifier + constitutionModifier));
+			event.setDistance(event.getDistance() - 1.85f * (float) (agilityModifier + strengthModifier + constitutionModifier));
 		}
 	}
 

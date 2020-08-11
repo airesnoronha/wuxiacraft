@@ -57,7 +57,14 @@ public class SpawnEntityOnClientMessage implements IMessage {
 		this.entityYaw = buf.readFloat();
 		this.entityPitch = buf.readFloat();
 		EntityEntry entry = ForgeRegistries.ENTITIES.getValue(this.entityEntry);
-		if(entry != null) {
+		if (entry != null) {
+			handleClientEntityEntry(entry, buf);
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void handleClientEntityEntry(EntityEntry entry, ByteBuf buf) {
+		if (entry != null) {
 			this.entity = entry.newInstance(Minecraft.getMinecraft().world);
 			entity.posX = this.posX;
 			entity.posY = this.posY;
@@ -68,8 +75,8 @@ public class SpawnEntityOnClientMessage implements IMessage {
 			entity.rotationPitch = this.entityPitch;
 			entity.rotationYaw = this.entityYaw;
 			entity.setEntityId(this.entityId);
-			if(this.entity instanceof IEntityAdditionalSpawnData) {
-				((IEntityAdditionalSpawnData)(this.entity)).readSpawnData(buf);
+			if (this.entity instanceof IEntityAdditionalSpawnData) {
+				((IEntityAdditionalSpawnData) (this.entity)).readSpawnData(buf);
 			}
 		}
 	}

@@ -9,7 +9,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
 public class EntityAIReleaseSkills extends EntityAIBase {
 
@@ -26,7 +25,7 @@ public class EntityAIReleaseSkills extends EntityAIBase {
 		this.minAttackRange = 5f;
 		this.maxAttackRange = 25f;
 
-		this.optimalRange = this.minAttackRange + (this.maxAttackRange -this.minAttackRange) * 0.3;
+		this.optimalRange = this.minAttackRange + (this.maxAttackRange - this.minAttackRange) * 0.3;
 		this.setMutexBits(3);
 	}
 
@@ -47,8 +46,8 @@ public class EntityAIReleaseSkills extends EntityAIBase {
 
 	@Override
 	public boolean shouldContinueExecuting() {
-		if(this.selectedSkill != null) {
-			boolean inRange =  this.shouldExecute();
+		if (this.selectedSkill != null) {
+			boolean inRange = this.shouldExecute();
 			boolean hasEnergy = attacker.getCultivation().hasEnergy(this.selectedSkill.getCost());
 			return inRange && hasEnergy;
 		}
@@ -62,13 +61,13 @@ public class EntityAIReleaseSkills extends EntityAIBase {
 
 	@Override
 	public void startExecuting() {
-		if(attacker.getSkillCap().getKnownSkills().size() > 0) {
-			for(Skill skill : attacker.getSkillCap().getKnownSkills()) {
-				if(this.selectedSkill == null) {
+		if (attacker.getSkillCap().getKnownSkills().size() > 0) {
+			for (Skill skill : attacker.getSkillCap().getKnownSkills()) {
+				if (this.selectedSkill == null) {
 					this.selectedSkill = skill;
 				} else {
-					if(this.attacker.getCultivation().hasEnergy(skill.getCost())) {
-						if(this.selectedSkill.getCost() < skill.getCost()) {
+					if (this.attacker.getCultivation().hasEnergy(skill.getCost())) {
+						if (this.selectedSkill.getCost() < skill.getCost()) {
 							this.selectedSkill = skill;
 						}
 					}
@@ -87,16 +86,16 @@ public class EntityAIReleaseSkills extends EntityAIBase {
 
 	@Override
 	public void updateTask() {
-		if(this.attacker.getAttackTarget() != null) {
+		if (this.attacker.getAttackTarget() != null) {
 			this.attacker.getLookHelper().setLookPositionWithEntity(this.attacker.getAttackTarget(), 30.0F, 30.0F);
 			EntityLivingBase target = attacker.getAttackTarget();
 			boolean outOfRange = attacker.getDistance(target) > optimalRange;
-			if(attacker.getNavigator().noPath()){
-				if(outOfRange) {
+			if (attacker.getNavigator().noPath()) {
+				if (outOfRange) {
 					attacker.getNavigator().tryMoveToEntityLiving(target, 0.3f);
 				}
 			}
-			if(!outOfRange) {
+			if (!outOfRange) {
 				this.attacker.getNavigator().clearPath();
 			}
 		}
@@ -113,12 +112,10 @@ public class EntityAIReleaseSkills extends EntityAIBase {
 			}
 			if (skillCap.isCasting() && skillCap.getCastProgress() >= selectedSkill.getCastTime() && skillCap.getCooldown() <= 0) {
 				if (cultivation.hasEnergy(selectedSkill.getCost())) {
-					if (world instanceof WorldServer) {
-						if (selectedSkill.activate(attacker)) {
-							cultivation.remEnergy(selectedSkill.getCost());
-							skillCap.resetCastProgress();
-							skillCap.stepCooldown(selectedSkill.getCooldown());
-						}
+					if (selectedSkill.activate(attacker)) {
+						cultivation.remEnergy(selectedSkill.getCost());
+						skillCap.resetCastProgress();
+						skillCap.stepCooldown(selectedSkill.getCooldown());
 					}
 				}
 			}
