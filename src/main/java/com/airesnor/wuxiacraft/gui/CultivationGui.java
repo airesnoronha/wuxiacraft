@@ -39,6 +39,18 @@ public class CultivationGui extends GuiScreen {
 	private int offset = 0;
 	private int displayItems = 0;
 
+
+	public enum RequireConfirmAction {
+		REMOVE_BODY_TECHNIQUE,
+		REMOVE_DIVINE_TECHNIQUE,
+		REMOVE_ESSENCE_TECHNIQUE,
+		REMOVE_SKILL
+	}
+
+	public int confirmActionMeta = 0;
+	private RequireConfirmAction requireConfirmAction = RequireConfirmAction.REMOVE_BODY_TECHNIQUE;
+	private boolean confirmScreen = false;
+
 	//private static double amountAddedToFoundationPerClick = 1;
 
 	private Tabs tab;
@@ -77,6 +89,10 @@ public class CultivationGui extends GuiScreen {
 		this.drawBackgroundLayer();
 		this.drawForegroundLayer();
 		this.drawTooltips(mouseX, mouseY);
+		if (confirmScreen) {
+			drawConfirmScreenBackground();
+			drawConfirmScreenForeground();
+		}
 		GlStateManager.disableBlend();
 	}
 
@@ -100,57 +116,86 @@ public class CultivationGui extends GuiScreen {
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
+		if (!confirmScreen) {
 
-		//offset --
-		if (inBounds(mouseX, mouseY, this.guiLeft + 172, this.guiTop + 36, 9, 9)) {
-			this.offset = Math.max(0, this.offset - 1);
-		}
+			//offset --
+			if (inBounds(mouseX, mouseY, this.guiLeft + 172, this.guiTop + 36, 9, 9)) {
+				this.offset = Math.max(0, this.offset - 1);
+			}
 
-		//offset ++
-		else if (inBounds(mouseX, mouseY, this.guiLeft + 172, this.guiTop + 118, 9, 9)) {
-			this.offset = Math.min(this.displayItems - this.tab.maxDisplayItems, this.offset + 1);
-		}
+			//offset ++
+			else if (inBounds(mouseX, mouseY, this.guiLeft + 172, this.guiTop + 118, 9, 9)) {
+				this.offset = Math.min(this.displayItems - this.tab.maxDisplayItems, this.offset + 1);
+			}
 
-		//suppress
-		else if (inBounds(mouseX, mouseY, this.guiLeft + 180, this.guiTop + 5, 12, 14)) {
-			cultivation.setSuppress(!cultivation.getSuppress());
-			NetworkWrapper.INSTANCE.sendToServer(new SuppressCultivationMessage(cultivation.getSuppress(), player.getUniqueID()));
-		}
+			//suppress
+			else if (inBounds(mouseX, mouseY, this.guiLeft + 180, this.guiTop + 5, 12, 14)) {
+				cultivation.setSuppress(!cultivation.getSuppress());
+				NetworkWrapper.INSTANCE.sendToServer(new SuppressCultivationMessage(cultivation.getSuppress(), player.getUniqueID()));
+			}
 
-		//select tabs
-		else if (inBounds(mouseX, mouseY, this.guiLeft + 5, this.guiTop + 5, 68, 14)) {
-			this.changeToTab(Tabs.FOUNDATION);
-		}
-		//if (inBounds(mouseX, mouseY, this.guiLeft + 61, this.guiTop + 19, 52, 15)) {
-		//	this.changeToTab(Tabs.TECHNIQUES);
-		//}
-		else if (inBounds(mouseX, mouseY, this.guiLeft + 76, this.guiTop + 5, 68, 14)) {
-			this.changeToTab(Tabs.SKILLS);
-		}
+			//select tabs
+			else if (inBounds(mouseX, mouseY, this.guiLeft + 5, this.guiTop + 5, 68, 14)) {
+				this.changeToTab(Tabs.FOUNDATION);
+			}
+			//if (inBounds(mouseX, mouseY, this.guiLeft + 61, this.guiTop + 19, 52, 15)) {
+			//	this.changeToTab(Tabs.TECHNIQUES);
+			//}
+			else if (inBounds(mouseX, mouseY, this.guiLeft + 76, this.guiTop + 5, 68, 14)) {
+				this.changeToTab(Tabs.SKILLS);
+			}
 
-		//tabs
-		switch (this.tab) {
-			case FOUNDATION:
-				//handleMouseFoundation(mouseX, mouseY);
-				break;
-			case TECHNIQUES:
-				handleMouseTechniques(mouseX, mouseY);
-				break;
-			case SKILLS:
-				handleMouseSkills(mouseX, mouseY, mouseButton);
-				break;
-		}
+			//tabs
+			switch (this.tab) {
+				case FOUNDATION:
+					handleMouseCultivation(mouseX, mouseY);
+					break;
+				case TECHNIQUES:
+					handleMouseTechniques(mouseX, mouseY);
+					break;
+				case SKILLS:
+					handleMouseSkills(mouseX, mouseY, mouseButton);
+					break;
+			}
 
-		//techniques
+			//techniques
 
-		//regulator bars
-		for (int i = 0; i < 4; i++) {
-			if (inBounds(mouseX, mouseY, this.guiLeft - 61 + 13, this.guiTop + i * 15 + 3, 9, 9)) {
-				handleBarButtonClick(i, 0);
-			} else if (inBounds(mouseX, mouseY, this.guiLeft - 61 + 51, this.guiTop + i * 15 + 3, 9, 9)) {
-				handleBarButtonClick(i, 1);
+			//regulator bars
+			for (int i = 0; i < 4; i++) {
+				if (inBounds(mouseX, mouseY, this.guiLeft - 61 + 13, this.guiTop + i * 15 + 3, 9, 9)) {
+					handleBarButtonClick(i, 0);
+				} else if (inBounds(mouseX, mouseY, this.guiLeft - 61 + 51, this.guiTop + i * 15 + 3, 9, 9)) {
+					handleBarButtonClick(i, 1);
+				}
+			}
+		} else {
+			if (inBounds(mouseX, mouseY, this.guiLeft + 63, this.guiTop + 80, 30, 12)) {
+				handleConfirmScreenYes();
+			} else if (inBounds(mouseX, mouseY, this.guiLeft + 108, this.guiTop + 80, 30, 12)) {
+				this.confirmScreen = false;
+				this.confirmActionMeta = 0;
 			}
 		}
+	}
+
+	private void handleConfirmScreenYes() {
+		switch (this.requireConfirmAction) {
+			case REMOVE_BODY_TECHNIQUE:
+				NetworkWrapper.INSTANCE.sendToServer(new RemoveTechniqueMessage(this.cultTech.getBodyTechnique().getTechnique(), this.player.getUniqueID()));
+				this.cultTech.setBodyTechnique(null);
+				break;
+			case REMOVE_DIVINE_TECHNIQUE:
+				NetworkWrapper.INSTANCE.sendToServer(new RemoveTechniqueMessage(this.cultTech.getDivineTechnique().getTechnique(), this.player.getUniqueID()));
+				this.cultTech.setDivineTechnique(null);
+				break;
+			case REMOVE_ESSENCE_TECHNIQUE:
+				NetworkWrapper.INSTANCE.sendToServer(new RemoveTechniqueMessage(this.cultTech.getEssenceTechnique().getTechnique(), this.player.getUniqueID()));
+				this.cultTech.setEssenceTechnique(null);
+				break;
+			case REMOVE_SKILL:
+				break;
+		}
+		this.confirmScreen = false;
 	}
 
 	private void changeToTab(Tabs tab) {
@@ -168,47 +213,29 @@ public class CultivationGui extends GuiScreen {
 		}
 	}
 
-	/*
-	private void handleMouseFoundation(int mouseX, int mouseY) {
-		if (inBounds(mouseX, mouseY, this.guiLeft + 8, this.guiTop + 38, 14, 14)) {
-			addProgressToFoundation(0);
-		} else if (inBounds(mouseX, mouseY, this.guiLeft + 164, this.guiTop + 38, 14, 14)) {
-			addProgressToFoundation(1);
-		} else if (inBounds(mouseX, mouseY, this.guiLeft + 6, this.guiTop + 68, 14, 14)) {
-			addProgressToFoundation(2);
-		} else if (inBounds(mouseX, mouseY, this.guiLeft + 166, this.guiTop + 68, 14, 14)) {
-			addProgressToFoundation(3);
-		} else if (inBounds(mouseX, mouseY, this.guiLeft + 8, this.guiTop + 98, 14, 14)) {
-			addProgressToFoundation(4);
-		} else if (inBounds(mouseX, mouseY, this.guiLeft + 164, this.guiTop + 98, 14, 14)) {
-			addProgressToFoundation(5);
-		} else if (inBounds(mouseX, mouseY, this.guiLeft + 22, this.guiTop + 38, 14, 14)) {
-			selectFoundationAttribute(0);
-		} else if (inBounds(mouseX, mouseY, this.guiLeft + 150, this.guiTop + 38, 14, 14)) {
-			selectFoundationAttribute(1);
-		} else if (inBounds(mouseX, mouseY, this.guiLeft + 20, this.guiTop + 68, 14, 14)) {
-			selectFoundationAttribute(2);
-		} else if (inBounds(mouseX, mouseY, this.guiLeft + 152, this.guiTop + 68, 14, 14)) {
-			selectFoundationAttribute(3);
-		} else if (inBounds(mouseX, mouseY, this.guiLeft + 22, this.guiTop + 98, 14, 14)) {
-			selectFoundationAttribute(4);
-		} else if (inBounds(mouseX, mouseY, this.guiLeft + 150, this.guiTop + 98, 14, 14)) {
-			selectFoundationAttribute(5);
-		} else if (inBounds(mouseX, mouseY, this.guiLeft + 64, this.guiTop + 118, 14, 14)) {
-			amountAddedToFoundationPerClick = MathUtils.clamp(amountAddedToFoundationPerClick - 1, 0, 100);
-		} else if (inBounds(mouseX, mouseY, this.guiLeft + 113, this.guiTop + 118, 14, 14)) {
-			amountAddedToFoundationPerClick = MathUtils.clamp(amountAddedToFoundationPerClick + 1, 0, 100);
-		}
-		if(inBounds(mouseX, mouseY, this.guiLeft + 73, this.guiTop + 118, 40, 9)) {
-			if(!this.perClickFocus) {
-				perClickOnFocus();
-			}
-		} else {
-			if(this.perClickFocus) {
-				perClickLoseFocus();
+	private void handleMouseCultivation(int mouseX, int mouseY) {
+		if (inBounds(mouseX, mouseY, this.guiLeft + 7, this.guiTop + 51, 9, 9)) {
+			if (this.cultTech.getBodyTechnique() != null) {
+				this.confirmScreen = true;
+				requireConfirmAction = RequireConfirmAction.REMOVE_BODY_TECHNIQUE;
+				confirmActionMeta = 0;
 			}
 		}
-	}*/
+		if (inBounds(mouseX, mouseY, this.guiLeft + 7, this.guiTop + 92, 9, 9)) {
+			if (this.cultTech.getDivineTechnique() != null) {
+				this.confirmScreen = true;
+				requireConfirmAction = RequireConfirmAction.REMOVE_DIVINE_TECHNIQUE;
+				confirmActionMeta = 0;
+			}
+		}
+		if (inBounds(mouseX, mouseY, this.guiLeft + 7, this.guiTop + 133, 9, 9)) {
+			if (this.cultTech.getEssenceTechnique() != null) {
+				this.confirmScreen = true;
+				requireConfirmAction = RequireConfirmAction.REMOVE_ESSENCE_TECHNIQUE;
+				confirmActionMeta = 0;
+			}
+		}
+	}
 
 	@SuppressWarnings("unused")
 	private void handleMouseTechniques(int mouseX, int mouseY) {
@@ -304,7 +331,7 @@ public class CultivationGui extends GuiScreen {
 		}
 		double agilityModifier = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;  // agility to bend the body to spring up
 		agilityModifier = Math.min(cultivation.getMaxSpeed(), agilityModifier);
-		agilityModifier*= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
+		agilityModifier *= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
 		double dexterityModifier = (cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) + 0.025;
 		double strengthModifier = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.14;
 		double spd = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;
@@ -335,6 +362,8 @@ public class CultivationGui extends GuiScreen {
 		int bodyProgress = (int) (124.0 * cultivation.getBodyProgress() / cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel()));
 		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 34, 0, 195, bodyProgress, 16); //dragon
 		if (cultTech.getBodyTechnique() != null) {
+			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 51, 45, 164, 9, 9); //rem button bg
+			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 51, 72, 164, 9, 9); //rem button
 			int bodyTech = (int) (138.0 * cultTech.getBodyTechnique().getProficiency()
 					/ cultTech.getBodyTechnique().getTechnique().getMaxProficiency());
 			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 61, 0, 161, bodyTech, 3);
@@ -385,6 +414,8 @@ public class CultivationGui extends GuiScreen {
 		int divineProgress = (int) (124.0 * cultivation.getDivineProgress() / cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()));
 		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 75, 0, 227, divineProgress, 16); //dragon
 		if (cultTech.getDivineTechnique() != null) {
+			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 92, 45, 164, 9, 9); //rem button bg
+			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 92, 72, 164, 9, 9); //rem button
 			int divineTech = (int) (138.0 * cultTech.getDivineTechnique().getProficiency()
 					/ cultTech.getDivineTechnique().getTechnique().getMaxProficiency());
 			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 102, 0, 161, divineTech, 3);
@@ -435,6 +466,8 @@ public class CultivationGui extends GuiScreen {
 		int essenceProgress = (int) (124.0 * cultivation.getEssenceProgress() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()));
 		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 116, 0, 211, essenceProgress, 16); //dragon
 		if (cultTech.getEssenceTechnique() != null) {
+			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 133, 45, 164, 9, 9); //rem button bg
+			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 133, 72, 164, 9, 9); //rem button
 			int essenceTech = (int) (138.0 * cultTech.getEssenceTechnique().getProficiency()
 					/ cultTech.getEssenceTechnique().getTechnique().getMaxProficiency());
 			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 143, 0, 161, essenceTech, 3);
@@ -532,6 +565,15 @@ public class CultivationGui extends GuiScreen {
 		}
 	}
 
+	private void drawConfirmScreenBackground() {
+		GlStateManager.color(0.8f, 0.8f, 0.7f, 1.0f);
+		drawFramedBox(this.guiLeft + 50, this.guiTop + 50, 100, 55, 3, 81, 164); //whole box bg
+		drawFramedBox(this.guiLeft + 63, this.guiTop + 80, 30, 12, 3, 45, 164); //yes button bg
+		drawFramedBox(this.guiLeft + 108, this.guiTop + 80, 30, 12, 3, 45, 164); //no button bg
+		GlStateManager.color(1f, 1f, 1f, 1f);
+
+	}
+
 	private void drawForegroundLayer() {
 		//this.fontRenderer.drawString(cultivation.getEssenceLevel().getLevelName(cultivation.getEssenceSubLevel()), this.guiLeft + 6, this.guiTop + 7, 0xFFFFFF);
 
@@ -617,7 +659,7 @@ public class CultivationGui extends GuiScreen {
 		GlStateManager.popMatrix();
 		if (cultTech.getBodyTechnique() != null) {
 			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 13, this.guiTop + 52, 0);
+			GlStateManager.translate(this.guiLeft + 21, this.guiTop + 52, 0);
 			GlStateManager.scale(fontScale, fontScale, 1);
 			this.fontRenderer.drawString(cultTech.getBodyTechnique().getTechnique().getName(), 0, 0, 0xFFFFFF);
 			GlStateManager.popMatrix();
@@ -681,27 +723,37 @@ public class CultivationGui extends GuiScreen {
 		}
 	}
 
+	private void drawConfirmScreenForeground() {
+		this.drawCenteredString(this.fontRenderer, "Are you sure?", this.guiLeft + 100, this.guiTop + 60, 0xFFFF00);
+
+		this.drawCenteredString(this.fontRenderer, "Yes", this.guiLeft + 78, this.guiTop + 82, 0xFFFFFF);
+
+		this.drawCenteredString(this.fontRenderer, "No", this.guiLeft + 123, this.guiTop + 82, 0xFFFFFF);
+
+	}
+
 	private void drawTooltips(int mouseX, int mouseY) {
 		GlStateManager.color(1f, 1f, 1f, 1f);
 		// suppress cultivation
-		if (inBounds(mouseX, mouseY, this.guiLeft + 180, this.guiTop + 5, 12, 14)) {
-			String line = "Suppress cultivation";
-			drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 164);
-			this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
+		if (!confirmScreen) {
+			if (inBounds(mouseX, mouseY, this.guiLeft + 180, this.guiTop + 5, 12, 14)) {
+				String line = "Suppress cultivation";
+				drawFramedBox(mouseX + 6, mouseY - 1, 8 + fontRenderer.getStringWidth(line), 17, 3, 81, 164);
+				this.fontRenderer.drawString(line, mouseX + 10, mouseY + 3, 0xFFFFFF);
+			}
+			//tabs
+			switch (this.tab) {
+				case FOUNDATION:
+					drawCultivationTooltips(mouseX, mouseY);
+					break;
+				case TECHNIQUES:
+					drawTechniquesTooltips(mouseX, mouseY);
+					break;
+				case SKILLS:
+					drawSkillsTooltips(mouseX, mouseY);
+					break;
+			}
 		}
-		//tabs
-		switch (this.tab) {
-			case FOUNDATION:
-				drawCultivationTooltips(mouseX, mouseY);
-				break;
-			case TECHNIQUES:
-				drawTechniquesTooltips(mouseX, mouseY);
-				break;
-			case SKILLS:
-				drawSkillsTooltips(mouseX, mouseY);
-				break;
-		}
-
 		//suppress
 		//if(inBounds(mouseX, mouseY, this.guiLeft+148, this.guiTop+23, 9,9)) {
 		//	String line = "Suppress Cultivation";

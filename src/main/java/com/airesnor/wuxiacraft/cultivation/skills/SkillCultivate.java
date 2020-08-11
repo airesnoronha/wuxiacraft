@@ -49,22 +49,20 @@ public class SkillCultivate extends Skill {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
 			double amount = cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system)) * 0.03; //trust me this is necessary
-			double energy =  cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system)) * 1.45;
+			double energy = cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system)) * 1.45;
 			boolean hasEnergy = cultivation.hasEnergy(energy);
 			long timeDiff = System.currentTimeMillis() - LastUseCultivateMillis;
 			//TODO make server calculate the particles everytime it receives a progress message
 			if (timeDiff >= (particleStep ? 500 : 250)) { //4 per second
-				for (Element element : Element.ELEMENTS) {
+				for (Element element : cultTech.getTechniqueBySystem(system).getTechnique().getElements()) {
 					int particles = 12;
-					if(cultTech.hasElement(element)) {
-						for (int i = 0; i < particles; i++) {
-							float randX = 2 * actor.world.rand.nextFloat() - 1;
-							float randY = 2 * actor.world.rand.nextFloat() - 1;
-							float randZ = 2 * actor.world.rand.nextFloat() - 1;
-							float dist = (float) Math.sqrt(randX * randX + randY * randY + randZ * randZ) * 30f;
-							SpawnParticleMessage spm = new SpawnParticleMessage(element.getParticle(), false, actor.posX + randX, actor.posY + 0.9f + randY, actor.posZ + randZ, -randX / dist, -randY / dist, -randZ / dist, 0);
-							NetworkWrapper.INSTANCE.sendToServer(spm);
-						}
+					for (int i = 0; i < particles; i++) {
+						float randX = 2 * actor.world.rand.nextFloat() - 1;
+						float randY = 2 * actor.world.rand.nextFloat() - 1;
+						float randZ = 2 * actor.world.rand.nextFloat() - 1;
+						float dist = (float) Math.sqrt(randX * randX + randY * randY + randZ * randZ) * 30f;
+						SpawnParticleMessage spm = new SpawnParticleMessage(element.getParticle(), false, actor.posX + randX, actor.posY + 0.9f + randY, actor.posZ + randZ, -randX / dist, -randY / dist, -randZ / dist, 0);
+						NetworkWrapper.INSTANCE.sendToServer(spm);
 					}
 				}
 				particleStep = timeDiff < 500;

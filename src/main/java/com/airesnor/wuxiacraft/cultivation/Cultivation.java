@@ -80,11 +80,11 @@ public class Cultivation implements ICultivation {
 		boolean leveled = false;
 		this.bodyProgress += amount;
 		if (allowBreakthrough) {
-			Random rnd = new Random();
-			if (rnd.nextFloat() > (this.bodyProgress + this.bodyFoundation) / (4 * this.bodyLevel.getProgressBySubLevel(this.bodySubLevel))) {
-				applySystemPenalty(System.BODY);
-			} else {
 				if (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel)) {
+					Random rnd = new Random();
+					if (rnd.nextFloat() > (this.bodyProgress + this.bodyFoundation) / (4 * this.bodyLevel.getProgressBySubLevel(this.bodySubLevel))) {
+						applySystemPenalty(System.BODY);
+					} else {
 					boolean divineCondition = (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineLevel.subLevels - 1)
 							&& this.divineSubLevel >= this.divineLevel.subLevels - 1) || this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL;
 					// if this then all above
@@ -118,11 +118,11 @@ public class Cultivation implements ICultivation {
 		boolean leveled = false;
 		this.divineProgress += amount;
 		if (allowBreakthrough) {
-			Random rnd = new Random();
-			if (rnd.nextFloat() > (this.divineProgress + this.divineFoundation) / (4 * this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))) {
-				applySystemPenalty(System.DIVINE);
-			} else {
 				if (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) {
+					Random rnd = new Random();
+					if (rnd.nextFloat() > (this.divineProgress + this.divineFoundation) / (4 * this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))) {
+						applySystemPenalty(System.DIVINE);
+					} else {
 					// if this then all above
 					boolean bodyCondition = (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodyLevel.subLevels - 1)
 							&& this.bodySubLevel >= this.bodyLevel.subLevels - 1) || this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL; // or not in this level
@@ -156,11 +156,11 @@ public class Cultivation implements ICultivation {
 		boolean leveled = false;
 		this.essenceProgress += amount;
 		if (allowBreakthrough) {
-			Random rnd = new Random();
-			if (rnd.nextFloat() > (this.essenceProgress + this.essenceFoundation) / (4 * this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))) {
-				applySystemPenalty(System.ESSENCE);
-			} else {
 				if (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)) {
+					Random rnd = new Random();
+					if (rnd.nextFloat() > (this.essenceProgress + this.essenceFoundation) / (4 * this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))) {
+						applySystemPenalty(System.ESSENCE);
+					} else {
 					// if this then all above
 					boolean bodyCondition = (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodyLevel.subLevels - 1)
 							&& this.bodySubLevel >= this.bodyLevel.subLevels - 1) || this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL; // or not in this level
