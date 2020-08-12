@@ -129,7 +129,7 @@ public class Cultivation implements ICultivation {
 		if (allowBreakthrough) {
 			if (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) {
 				Random rnd = new Random();
-				if (rnd.nextFloat() > (this.divineProgress + this.divineFoundation) / (4 * this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))
+				if (rnd.nextFloat() > (this.divineProgress + this.divineFoundation) / (4 * this.divineLevel.getProgressBySubLevel(this.divineSubLevel))
 						&& this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL) {
 					applySystemPenalty(System.DIVINE);
 				} else {
