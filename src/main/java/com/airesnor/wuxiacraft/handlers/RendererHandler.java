@@ -262,7 +262,7 @@ public class RendererHandler {
 					player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue());
 			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 100, Integer.parseInt("FFAA00", 16));
 			GlStateManager.color(1,1,1,1);
-		}*/
+		}
 
 		String message = String.format("Body Mod: %.4f",
 				cultivation.getBodyModifier());
