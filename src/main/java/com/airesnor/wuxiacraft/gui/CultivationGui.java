@@ -407,7 +407,7 @@ public class CultivationGui extends GuiScreen {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 25 + 15, 0);
 			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
-			GlStateManager.scale((foundationOverMaxBase - 20) / 80, (foundationOverMaxBase - 20) / 80, 0); //till 100x
+			GlStateManager.scale(Math.min(1, (foundationOverMaxBase - 20) / 80), Math.min(1, (foundationOverMaxBase - 20) / 80), 0); //till 100x
 			drawTexturedModalRect(-15, -15, 155, 217, 30, 30); // white
 			GlStateManager.popMatrix();
 		}
@@ -459,7 +459,7 @@ public class CultivationGui extends GuiScreen {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 66 + 15, 0);
 			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
-			GlStateManager.scale((foundationOverMaxBase - 20) / 80, (foundationOverMaxBase - 20) / 80, 0); //till 100x
+			GlStateManager.scale(Math.min(1, (foundationOverMaxBase - 20) / 80), Math.min(1, (foundationOverMaxBase - 20) / 80), 0); //till 100x
 			drawTexturedModalRect(-15, -15, 155, 217, 30, 30); // white
 			GlStateManager.popMatrix();
 		}
@@ -511,7 +511,7 @@ public class CultivationGui extends GuiScreen {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 107 + 15, 0);
 			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
-			GlStateManager.scale((foundationOverMaxBase - 20) / 80, (foundationOverMaxBase - 20) / 80, 0); //till 100x
+			GlStateManager.scale(Math.min(1, (foundationOverMaxBase - 20) / 80), Math.min(1, (foundationOverMaxBase - 20) / 80), 0); //till 100x
 			drawTexturedModalRect(-15, -15, 155, 217, 30, 30); // white
 			GlStateManager.popMatrix();
 		}

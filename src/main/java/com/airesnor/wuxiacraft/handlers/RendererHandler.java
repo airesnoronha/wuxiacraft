@@ -23,7 +23,6 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
@@ -265,11 +264,11 @@ public class RendererHandler {
 			GlStateManager.color(1,1,1,1);
 		}*/
 
-		/*String message = String.format("Energy: %.4f (%d%%)",
-				cultivation.getEnergy(), (int)(cultivation.getEnergy()*100.0/CultivationUtils.getMaxEnergy(player)));
+		String message = String.format("Body Mod: %.4f",
+				cultivation.getBodyModifier());
 		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 90, Integer.parseInt("FFAA00", 16));
 
-		if (cultTech.getEssenceTechnique() != null) {
+		/*if (cultTech.getEssenceTechnique() != null) {
 			message = String.format("Essence Technique: %s %.4f", cultTech.getEssenceTechnique().getTechnique().getName(),
 					cultTech.getEssenceTechnique().getProficiency());
 			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 120, Integer.parseInt("FFAA00", 16));
