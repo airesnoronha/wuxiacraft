@@ -79,12 +79,17 @@ public class Cultivation implements ICultivation {
 	public boolean addBodyProgress(double amount, boolean allowBreakthrough) throws RequiresTribulation {
 		boolean leveled = false;
 		this.bodyProgress += amount;
+		if (this.bodyProgress > this.bodyLevel.getProgressBySubLevel(this.bodySubLevel) + 200.0) { //players are abusing of their cultivation base in earlier levels
+			this.bodyFoundation += this.bodyProgress - (this.bodyLevel.getProgressBySubLevel(this.bodySubLevel) + 100.0);
+			this.bodyProgress = this.bodyLevel.getProgressBySubLevel(this.bodySubLevel) + 200.0;
+		}
 		if (allowBreakthrough) {
-				if (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel)) {
-					Random rnd = new Random();
-					if (rnd.nextFloat() > (this.bodyProgress + this.bodyFoundation) / (4 * this.bodyLevel.getProgressBySubLevel(this.bodySubLevel))) {
-						applySystemPenalty(System.BODY);
-					} else {
+			if (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel)) {
+				Random rnd = new Random();
+				if (rnd.nextFloat() > (this.bodyProgress + this.bodyFoundation) / (4 * this.bodyLevel.getProgressBySubLevel(this.bodySubLevel))
+						&& this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL) {
+					applySystemPenalty(System.BODY);
+				} else {
 					boolean divineCondition = (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineLevel.subLevels - 1)
 							&& this.divineSubLevel >= this.divineLevel.subLevels - 1) || this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL;
 					// if this then all above
@@ -117,12 +122,17 @@ public class Cultivation implements ICultivation {
 	public boolean addDivineProgress(double amount, boolean allowBreakthrough) throws RequiresTribulation {
 		boolean leveled = false;
 		this.divineProgress += amount;
+		if (this.divineProgress > this.divineLevel.getProgressBySubLevel(this.divineSubLevel) + 200.0) { //players are abusing of their cultivation base in earlier levels
+			this.divineFoundation += this.divineProgress - (this.divineLevel.getProgressBySubLevel(this.divineSubLevel) + 100.0);
+			this.divineProgress = this.divineLevel.getProgressBySubLevel(this.divineSubLevel) + 200.0;
+		}
 		if (allowBreakthrough) {
-				if (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) {
-					Random rnd = new Random();
-					if (rnd.nextFloat() > (this.divineProgress + this.divineFoundation) / (4 * this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))) {
-						applySystemPenalty(System.DIVINE);
-					} else {
+			if (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) {
+				Random rnd = new Random();
+				if (rnd.nextFloat() > (this.divineProgress + this.divineFoundation) / (4 * this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))
+						&& this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL) {
+					applySystemPenalty(System.DIVINE);
+				} else {
 					// if this then all above
 					boolean bodyCondition = (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodyLevel.subLevels - 1)
 							&& this.bodySubLevel >= this.bodyLevel.subLevels - 1) || this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL; // or not in this level
@@ -155,12 +165,17 @@ public class Cultivation implements ICultivation {
 	public boolean addEssenceProgress(double amount, boolean allowBreakthrough) throws RequiresTribulation {
 		boolean leveled = false;
 		this.essenceProgress += amount;
+		if (this.essenceProgress > this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) + 200.0) { //players are abusing of their cultivation base in earlier levels
+			this.essenceFoundation += this.essenceProgress - (this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) + 100.0);
+			this.essenceProgress = this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) + 200.0;
+		}
 		if (allowBreakthrough) {
-				if (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)) {
-					Random rnd = new Random();
-					if (rnd.nextFloat() > (this.essenceProgress + this.essenceFoundation) / (4 * this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))) {
-						applySystemPenalty(System.ESSENCE);
-					} else {
+			if (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)) {
+				Random rnd = new Random();
+				if (rnd.nextFloat() > (this.essenceProgress + this.essenceFoundation) / (4 * this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))
+						&& this.essenceLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
+					applySystemPenalty(System.ESSENCE);
+				} else {
 					// if this then all above
 					boolean bodyCondition = (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodyLevel.subLevels - 1)
 							&& this.bodySubLevel >= this.bodyLevel.subLevels - 1) || this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL; // or not in this level
@@ -581,15 +596,15 @@ public class Cultivation implements ICultivation {
 	public void applySystemPenalty(System system) {
 		switch (system) {
 			case BODY:
-				this.setBodyFoundation(this.bodyFoundation * 0.7);
+				this.setBodyFoundation(Math.max(this.bodyFoundation * 0.7, this.bodyFoundation - 3*this.bodyLevel.getProgressBySubLevel(this.bodySubLevel)));
 				this.setBodyProgress(this.bodyProgress * 0.3);
 				break;
 			case DIVINE:
-				this.setDivineFoundation(this.divineFoundation * 0.7);
+				this.setDivineFoundation(Math.max(this.divineFoundation * 0.7, this.divineFoundation - 3*this.divineLevel.getProgressBySubLevel(this.divineSubLevel)));
 				this.setDivineProgress(this.divineProgress * 0.3);
 				break;
 			case ESSENCE:
-				this.setEssenceFoundation(this.essenceFoundation * 0.7);
+				this.setEssenceFoundation(Math.max(this.essenceFoundation * 0.7, this.essenceFoundation - 3*this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)));
 				this.setEssenceProgress(this.essenceProgress * 0.3);
 				break;
 		}

@@ -537,9 +537,15 @@ public class EventHandler {
 			cultivation.setBodyLevel(oldCultivation.getBodyLevel());
 			cultivation.setDivineLevel(oldCultivation.getDivineLevel());
 			cultivation.setEssenceLevel(oldCultivation.getEssenceLevel());
-			cultivation.setBodyFoundation(oldCultivation.getBodyFoundation() * 0.9);
-			cultivation.setDivineFoundation(oldCultivation.getDivineFoundation() * 0.9);
-			cultivation.setEssenceFoundation(oldCultivation.getEssenceFoundation() * 0.9);
+			cultivation.setBodySubLevel(Math.max(3 * (oldCultivation.getBodySubLevel() / 3), 0));
+			cultivation.setDivineSubLevel(Math.max(3 * (oldCultivation.getDivineSubLevel() / 3), 0));
+			cultivation.setEssenceSubLevel(Math.max(3 * (oldCultivation.getEssenceSubLevel() / 3), 0));
+			cultivation.setBodyFoundation(Math.max(oldCultivation.getBodyFoundation() * 0.8,
+					oldCultivation.getBodyFoundation() - 3 * oldCultivation.getBodyLevel().getProgressBySubLevel(oldCultivation.getBodySubLevel())));
+			cultivation.setDivineFoundation(Math.max(oldCultivation.getDivineFoundation() * 0.8,
+					oldCultivation.getDivineFoundation() - 3 * oldCultivation.getDivineLevel().getProgressBySubLevel(oldCultivation.getDivineSubLevel())));
+			cultivation.setEssenceFoundation(Math.max(oldCultivation.getEssenceFoundation() * 0.8,
+					oldCultivation.getEssenceFoundation() - 3 * oldCultivation.getEssenceLevel().getProgressBySubLevel(oldCultivation.getEssenceSubLevel())));
 		} else {
 			cultivation.copyFrom(oldCultivation);
 		}
@@ -603,7 +609,7 @@ public class EventHandler {
 	public void onPlayerFlyToAnotherDimension(TickEvent.PlayerTickEvent event) {
 		if (event.side == Side.SERVER) {
 			if (event.phase == TickEvent.Phase.END) {
-				if (event.player.posY >= 2048) {
+				if (event.player.posY >= 3072) {
 					if (event.player.world.provider.getDimension() == 0) {
 						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.player);
 						if (CultivationUtils.getMaxEnergy(event.player) > 100000) { //if energy may work as a parameter for levels

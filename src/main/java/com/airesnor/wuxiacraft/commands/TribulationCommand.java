@@ -85,7 +85,11 @@ public class TribulationCommand extends CommandBase {
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         List<String> completions = new ArrayList<>();
         if (args.length == 1) {
-            completions.addAll(Arrays.asList(server.getOnlinePlayerNames()));
+            for(String name : server.getOnlinePlayerNames()) {
+                if(name.toLowerCase().startsWith(args[0].toLowerCase())) {
+                    completions.add(name);
+                }
+            }
         }
         return completions;
     }
