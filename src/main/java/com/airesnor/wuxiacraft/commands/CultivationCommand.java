@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.commands;
 
 import com.airesnor.wuxiacraft.cultivation.BaseSystemLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.networking.CultivationMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
@@ -99,6 +100,7 @@ public class CultivationCommand extends CommandBase {
 								TextComponentString text = new TextComponentString("Your level was set to " + level.getLevelName(rank));
 								sender.sendMessage(text);
 								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) sender);
+								EventHandler.applyModifiers( (EntityPlayerMP) sender);
 								levelFound = true;
 								break;
 							}
@@ -123,6 +125,7 @@ public class CultivationCommand extends CommandBase {
 								TextComponentString text = new TextComponentString("Your level was set to " + level.getLevelName(rank));
 								sender.sendMessage(text);
 								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) sender);
+								EventHandler.applyModifiers( (EntityPlayerMP) sender);
 								levelFound = true;
 								break;
 							}
@@ -147,6 +150,7 @@ public class CultivationCommand extends CommandBase {
 								TextComponentString text = new TextComponentString("Your level was set to " + level.getLevelName(rank));
 								sender.sendMessage(text);
 								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) sender);
+								EventHandler.applyModifiers( (EntityPlayerMP) sender);
 								levelFound = true;
 								break;
 							}
@@ -192,6 +196,7 @@ public class CultivationCommand extends CommandBase {
 								text = new TextComponentString("Target player level was set to " + level.getLevelName(rank));
 								sender.sendMessage(text);
 								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), target);
+								EventHandler.applyModifiers(target);
 								levelFound = true;
 								break;
 							}
@@ -219,6 +224,7 @@ public class CultivationCommand extends CommandBase {
 								text = new TextComponentString("Target player level was set to " + level.getLevelName(rank));
 								sender.sendMessage(text);
 								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), target);
+								EventHandler.applyModifiers(target);
 								levelFound = true;
 								break;
 							}
@@ -246,6 +252,7 @@ public class CultivationCommand extends CommandBase {
 								text = new TextComponentString("Target player level was set to " + level.getLevelName(rank));
 								sender.sendMessage(text);
 								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), target);
+								EventHandler.applyModifiers(target);
 								levelFound = true;
 								break;
 							}

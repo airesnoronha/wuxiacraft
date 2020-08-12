@@ -300,6 +300,19 @@ public class EventHandler {
 
 		IAttributeInstance iattributeinstance = entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
 
+		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(entity);
+		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(entity);
+
+		TechniquesModifiers tm = cultTech.getOverallModifiers();
+		double spd = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;
+		spd *= (1 + tm.movementSpeed);
+		double level_spd_mod = spd * entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
+		if (cultivation.getMaxSpeed() >= 0) {
+			double max_speed = cultivation.getMaxSpeed() * entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
+			level_spd_mod = Math.min(max_speed, level_spd_mod);
+		}
+		level_spd_mod *= (cultivation.getSpeedHandicap() / 100f);
+
 		double cultivation_speed = 0f;
 		for (AttributeModifier mod : iattributeinstance.getModifiers()) {
 			if (mod.getName().equals(speed_mod_name)) {
@@ -307,7 +320,7 @@ public class EventHandler {
 			}
 		}
 
-		f = (float) ((double) f * (((iattributeinstance.getAttributeValue() - cultivation_speed) / (double) entity.capabilities.getWalkSpeed() + 1.0D) / 2.0D));
+		f = (float) ((double) f * (((iattributeinstance.getAttributeValue() - level_spd_mod) / (double) entity.capabilities.getWalkSpeed() + 1.0D) / 2.0D));
 
 
 		if (entity.capabilities.getWalkSpeed() == 0.0F || Float.isNaN(f) || Float.isInfinite(f)) {

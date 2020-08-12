@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.networking;
 
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -75,6 +76,7 @@ public class SpeedHandicapMessage implements IMessage {
 						cultivation.setHasteLimit(message.hasteLimit);
 						cultivation.setJumpLimit(message.jumpLimit);
 					}
+					EventHandler.applyModifiers(player);
 				});
 			}
 			if (ctx.side == Side.CLIENT) {
