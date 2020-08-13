@@ -68,13 +68,14 @@ public class WuxiaCraft {
 	}
 
 	public void registerGameRules(FMLServerStartingEvent event) {
-		event.getServer().getWorld(0).getGameRules().addGameRule("doPlayerSkillSetFire", "true", GameRules.ValueType.BOOLEAN_VALUE);
-		event.getServer().getWorld(0).getGameRules().addGameRule("doMobSkillSetFire", "true", GameRules.ValueType.BOOLEAN_VALUE);
-		event.getServer().getWorld(0).getGameRules().addGameRule("tribulationMultiplier", "16", GameRules.ValueType.NUMERICAL_VALUE);
-		event.getServer().getWorld(WuxiaDimensions.FIRE.getId()).getGameRules().addGameRule("tribulationMultiplier", "16", GameRules.ValueType.NUMERICAL_VALUE);
-		event.getServer().getWorld(WuxiaDimensions.EARTH.getId()).getGameRules().addGameRule("tribulationMultiplier", "16", GameRules.ValueType.NUMERICAL_VALUE);
-		event.getServer().getWorld(WuxiaDimensions.METAL.getId()).getGameRules().addGameRule("tribulationMultiplier", "16", GameRules.ValueType.NUMERICAL_VALUE);
-		event.getServer().getWorld(WuxiaDimensions.WATER.getId()).getGameRules().addGameRule("tribulationMultiplier", "16", GameRules.ValueType.NUMERICAL_VALUE);
-		event.getServer().getWorld(WuxiaDimensions.WOOD.getId()).getGameRules().addGameRule("tribulationMultiplier", "16", GameRules.ValueType.NUMERICAL_VALUE);
+		if(!event.getServer().getWorld(0).getGameRules().hasRule("doPlayerSkillSetFire")) {
+			event.getServer().getWorld(0).getGameRules().addGameRule("doPlayerSkillSetFire", "true", GameRules.ValueType.BOOLEAN_VALUE);
+		}
+		if(!event.getServer().getWorld(0).getGameRules().hasRule("doMobSkillSetFire")) {
+			event.getServer().getWorld(0).getGameRules().addGameRule("doMobSkillSetFire", "true", GameRules.ValueType.BOOLEAN_VALUE);
+		}
+		if(!event.getServer().getWorld(0).getGameRules().hasRule("tribulationMultiplier")) {
+			event.getServer().getWorld(0).getGameRules().addGameRule("tribulationMultiplier", "1", GameRules.ValueType.NUMERICAL_VALUE);
+		}
 	}
 }

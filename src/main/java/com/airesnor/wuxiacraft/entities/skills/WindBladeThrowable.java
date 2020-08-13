@@ -15,30 +15,28 @@ import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class SwordBeamThrowable extends EntityThrowable implements IEntityAdditionalSpawnData {
+public class WindBladeThrowable extends EntityThrowable implements IEntityAdditionalSpawnData {
 
 	private float damage;
-	public int color;
 	private int duration;
 	public float roll;
 
 	private EntityLivingBase owner;
 
 	@SuppressWarnings("unused")
-	public SwordBeamThrowable(World worldIn) {
+	public WindBladeThrowable(World worldIn) {
 		super(worldIn);
 	}
 
-	public SwordBeamThrowable(World worldIn, EntityLivingBase owner, float damage, int color, int duration) {
+	public WindBladeThrowable(World worldIn, EntityLivingBase owner, float damage, int duration) {
 		super(worldIn, owner.posX, owner.posY + owner.getEyeHeight() - 0.1, owner.posZ);
 		this.owner = owner;
 		this.damage = damage;
-		this.color = color;
 		this.duration = duration;
 		this.setNoGravity(true);
 		this.handleWaterMovement();
-		setSize(0.5f,1f);
-		this.roll = -30f + this.world.rand.nextFloat()*60f;
+		setSize(0.5f, 1f);
+		this.roll = -30f + this.world.rand.nextFloat() * 60f;
 	}
 
 	@Override
@@ -51,10 +49,10 @@ public class SwordBeamThrowable extends EntityThrowable implements IEntityAdditi
 
 	@Override
 	public void onUpdate() {
-		if(this.inWater) {
-			this.motionX *= 1.0f / 0.81f;
-			this.motionY *= 1.0f / 0.81f;
-			this.motionZ *= 1.0f / 0.81f;
+		if (this.inWater) {
+			this.motionX *= 0.5f;
+			this.motionY *= 0.5f;
+			this.motionZ *= 0.5f;
 		}
 		super.onUpdate();
 	}
@@ -70,18 +68,18 @@ public class SwordBeamThrowable extends EntityThrowable implements IEntityAdditi
 
 	@Override
 	protected void onImpact(RayTraceResult result) {
-			if (result.typeOfHit == RayTraceResult.Type.ENTITY && !result.entityHit.equals(this.owner)) {
-				if(!this.world.isRemote) {
-					if(result.entityHit instanceof EntityLivingBase) {
-						this.attackEntityOnDirectHit((EntityLivingBase) result.entityHit);
-						this.setDead();
-					}
-				}
-			} else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
-				if (canNotPassThroughHitBlock(result)) {
+		if (result.typeOfHit == RayTraceResult.Type.ENTITY && !result.entityHit.equals(this.owner)) {
+			if (!this.world.isRemote) {
+				if (result.entityHit instanceof EntityLivingBase) {
+					this.attackEntityOnDirectHit((EntityLivingBase) result.entityHit);
 					this.setDead();
 				}
 			}
+		} else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
+			if (canNotPassThroughHitBlock(result)) {
+				this.setDead();
+			}
+		}
 	}
 
 	private void attackEntityOnDirectHit(EntityLivingBase hitEntity) {
@@ -100,12 +98,10 @@ public class SwordBeamThrowable extends EntityThrowable implements IEntityAdditi
 	@Override
 	public void writeSpawnData(ByteBuf buffer) {
 		buffer.writeInt(this.duration);
-		buffer.writeInt(this.color);
 	}
 
 	@Override
 	public void readSpawnData(ByteBuf additionalData) {
 		this.duration = additionalData.readInt();
-		this.color = additionalData.readInt();
 	}
 }

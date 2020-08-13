@@ -26,6 +26,7 @@ public class CultTechMessage implements IMessage {
 		this.cultTech = cultTech;
 	}
 
+	@SuppressWarnings("unused")
 	public CultTechMessage() {
 		this.cultTech = new CultTech();
 	}

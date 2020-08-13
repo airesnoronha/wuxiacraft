@@ -6,6 +6,7 @@ import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -25,6 +26,7 @@ public class RemoveTechniqueMessage implements IMessage {
 		this.senderUUID = senderUUID;
 	}
 
+	@SuppressWarnings("unused")
 	public RemoveTechniqueMessage() {
 		this.toBeRemoved = null;
 		this.senderUUID = null;
@@ -62,6 +64,7 @@ public class RemoveTechniqueMessage implements IMessage {
 							} else if (cultTech.getEssenceTechnique().getTechnique().equals(message.toBeRemoved)) {
 								cultTech.setEssenceTechnique(null);
 							}
+							NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), (EntityPlayerMP) player);
 						}
 					}
 				});

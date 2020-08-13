@@ -333,6 +333,9 @@ wuxiacraft.skills.minor_power_punch=Minor Power Punch
 wuxiacraft.skills.adept_sword_flight=Adept Sword Flight
 wuxiacraft.skills.spirit_arrow=Spiritual arrow
 wuxiacraft.skills.spirit_pressure=Spiritual Pressure
+wuxiacraft.skills.wind_blade=Wind Blade
+wuxiacraft.skills.wooden_prison=Wooden Prison
+wuxiacraft.skills.weak_lightning_bolt=Lightning Arrow
 
 #Recipes
 wuxiacraft.recipes.name.body_refinement_pill_recipe=Body Refinement Pill Recipe

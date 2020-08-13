@@ -6,6 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
@@ -13,32 +14,31 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 
 @ParametersAreNonnullByDefault
-public class SwordBeamThrowable extends EntityThrowable implements IEntityAdditionalSpawnData {
+public class ThunderBoltThrowable extends EntityThrowable implements IEntityAdditionalSpawnData {
 
 	private float damage;
-	public int color;
 	private int duration;
 	public float roll;
 
 	private EntityLivingBase owner;
 
 	@SuppressWarnings("unused")
-	public SwordBeamThrowable(World worldIn) {
+	public ThunderBoltThrowable(World worldIn) {
 		super(worldIn);
 	}
 
-	public SwordBeamThrowable(World worldIn, EntityLivingBase owner, float damage, int color, int duration) {
+	public ThunderBoltThrowable(World worldIn, EntityLivingBase owner, float damage, int duration) {
 		super(worldIn, owner.posX, owner.posY + owner.getEyeHeight() - 0.1, owner.posZ);
 		this.owner = owner;
 		this.damage = damage;
-		this.color = color;
 		this.duration = duration;
 		this.setNoGravity(true);
 		this.handleWaterMovement();
-		setSize(0.5f,1f);
-		this.roll = -30f + this.world.rand.nextFloat()*60f;
+		setSize(0.5f, 1f);
+		this.roll = -30f + this.world.rand.nextFloat() * 60f;
 	}
 
 	@Override
@@ -51,10 +51,10 @@ public class SwordBeamThrowable extends EntityThrowable implements IEntityAdditi
 
 	@Override
 	public void onUpdate() {
-		if(this.inWater) {
-			this.motionX *= 1.0f / 0.81f;
-			this.motionY *= 1.0f / 0.81f;
-			this.motionZ *= 1.0f / 0.81f;
+		if (this.inWater) {
+			this.motionX *= 1.3f / 0.81f;
+			this.motionY *= 1.3f / 0.81f;
+			this.motionZ *= 1.3f / 0.81f;
 		}
 		super.onUpdate();
 	}
@@ -70,22 +70,35 @@ public class SwordBeamThrowable extends EntityThrowable implements IEntityAdditi
 
 	@Override
 	protected void onImpact(RayTraceResult result) {
-			if (result.typeOfHit == RayTraceResult.Type.ENTITY && !result.entityHit.equals(this.owner)) {
-				if(!this.world.isRemote) {
-					if(result.entityHit instanceof EntityLivingBase) {
-						this.attackEntityOnDirectHit((EntityLivingBase) result.entityHit);
-						this.setDead();
-					}
-				}
-			} else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
-				if (canNotPassThroughHitBlock(result)) {
+		if (result.typeOfHit == RayTraceResult.Type.ENTITY && !result.entityHit.equals(this.owner)) {
+			if (result.entityHit instanceof EntityLivingBase) {
+				if (!this.world.isRemote) {
+					this.attackEntityOnDirectHit((EntityLivingBase) result.entityHit);
 					this.setDead();
 				}
 			}
+		} else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
+			if (canNotPassThroughHitBlock(result)) {
+				this.setDead();
+			}
+		}
 	}
 
 	private void attackEntityOnDirectHit(EntityLivingBase hitEntity) {
-		hitEntity.attackEntityFrom(DamageSource.causeMobDamage(owner).setMagicDamage().setProjectile(), this.damage);
+		float damage = this.damage;
+		if(hitEntity.isInWater()) {
+			damage *= 4f;
+			AxisAlignedBB range = new AxisAlignedBB(new BlockPos(hitEntity.posX, hitEntity.posY, hitEntity.posZ)).grow(32f);
+			List<EntityLivingBase> targets = hitEntity.world.getEntitiesWithinAABB(EntityLivingBase.class, range, t -> {
+				assert t != null;
+				return t.isInWater();
+			});
+			for(EntityLivingBase target : targets) {
+				target.attackEntityFrom(DamageSource.causeMobDamage(owner).setMagicDamage().setProjectile(), this.damage);
+			}
+		}
+		hitEntity.attackEntityFrom(DamageSource.causeMobDamage(owner).setMagicDamage().setProjectile(), damage);
+
 		if (this.owner != null) {
 			hitEntity.setLastAttackedEntity(this.owner);
 		}
@@ -98,14 +111,17 @@ public class SwordBeamThrowable extends EntityThrowable implements IEntityAdditi
 	}
 
 	@Override
+	public boolean shouldRenderInPass(int pass) {
+		return pass == 1;
+	}
+
+	@Override
 	public void writeSpawnData(ByteBuf buffer) {
 		buffer.writeInt(this.duration);
-		buffer.writeInt(this.color);
 	}
 
 	@Override
 	public void readSpawnData(ByteBuf additionalData) {
 		this.duration = additionalData.readInt();
-		this.color = additionalData.readInt();
 	}
 }

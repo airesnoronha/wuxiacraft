@@ -5,14 +5,12 @@ import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillAction;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.utils.TranslateUtils;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings({"SameParameterValue", "unused"})
 public class Technique {
 
 	private final Cultivation.System system;
@@ -28,6 +26,7 @@ public class Technique {
 	private final List<Pair<Double, PotionEffect>> effects;
 	private final List<Pair<Double, Skill>> skills;
 	private final List<Pair<Double, String>> checkpoints;
+	private final List<Technique> compatibles;
 
 	public Cultivation.System getSystem() {
 		return system;
@@ -56,6 +55,7 @@ public class Technique {
 		this.effects = new ArrayList<>();
 		this.skills = new ArrayList<>();
 		this.checkpoints = new ArrayList<>();
+		this.compatibles = new ArrayList<>();
 		this.cultivationEffect = actor -> true;
 	}
 
@@ -79,9 +79,18 @@ public class Technique {
 		return this;
 	}
 
+	Technique addCompatible(Technique compatible) {
+		this.compatibles.add(compatible);
+		return this;
+	}
+
 	public Technique setCultivationEffect(ISkillAction effect) {
 		this.cultivationEffect = effect;
 		return this;
+	}
+
+	public List<Technique> getCompatibles() {
+		return compatibles;
 	}
 
 	public List<Element> getElements() {

@@ -13,6 +13,7 @@ import com.airesnor.wuxiacraft.entities.effects.EntityLevelUpHalo;
 import com.airesnor.wuxiacraft.entities.mobs.EntityCultivator;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.UnifiedCapabilitySyncMessage;
+import com.airesnor.wuxiacraft.world.data.WorldVariables;
 import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.effect.EntityLightningBolt;
@@ -205,10 +206,14 @@ public class CultivationUtils {
 				WorldServer world = (WorldServer) player.world;
 				ICultivation cultivation = getCultivationFromEntity(player);
 
-				double resistance = cultivation.getBodyModifier() * 0.6 + cultivation.getEssenceModifier() * 0.8 + cultivation.getDivineModifier() * 0.4; //new foundation system is already a way to resist tribulation
-				int multiplier = world.getGameRules().hasRule("tribulationMultiplier") ? world.getGameRules().getInt("tribulationMultiplier") : 18; // even harder for those that weren't on the script
-				double strength = this.tribulationStrength * multiplier;
-				final int bolts = MathUtils.clamp(1 + (int) (Math.round(resistance / strength)), 1, 12);
+				double resistance = 1;
+				if(this.system != null) {
+					resistance = cultivation.getSystemModifier(this.system); //new foundation system is already a way to resist tribulation
+				}
+				double multiplier = world.getGameRules().hasRule("tribulationMultiplier") ? world.getGameRules().getInt("tribulationMultiplier") : 1;
+				double worldMultiplier = WorldVariables.get(world).getTribulationMultiplier();
+				double strength = this.tribulationStrength * multiplier * worldMultiplier;
+				final int bolts = MathUtils.clamp(1 + (int) (Math.round(resistance*3 / strength)), 1, 12);
 				float damage = (float) Math.max(2, strength - resistance);
 				for (int i = 0; i < bolts; i++) {
 					boolean survived = player.isEntityAlive();

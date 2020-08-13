@@ -104,7 +104,7 @@ public class EntityAIReleaseSkills extends EntityAIBase {
 			ISkillCap skillCap = this.attacker.getSkillCap();
 			if (skillCap.isCasting() && cultivation.hasEnergy(this.selectedSkill.getCost())) {
 				if (skillCap.getCastProgress() < selectedSkill.getCastTime())
-					skillCap.stepCastProgress((float) this.attacker.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue());
+					skillCap.stepCastProgress((float) Math.min(this.attacker.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue()*0.2, selectedSkill.getCastTime()/40.0));
 				//selectedSkill.castingEffect(this.attacker);
 			} else if (skillCap.isDoneCasting()) {
 				skillCap.resetCastProgress();

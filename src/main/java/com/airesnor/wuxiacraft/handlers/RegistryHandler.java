@@ -211,10 +211,22 @@ public class RegistryHandler {
 				.name("soul_arrow_throwable")
 				.tracker(200, 10, true)
 				.build();
+		EntityEntry windBladeThrowable = EntityEntryBuilder.create()
+				.entity(WindBladeThrowable.class)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "wind_blade_throwable"), 9)
+				.name("wind_blade_throwable")
+				.tracker(200, 10, true)
+				.build();
 		EntityEntry entityLevelUpHalo = EntityEntryBuilder.create()
 				.entity(EntityLevelUpHalo.class)
 				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "entity_level_up_halo"), 8)
 				.name("entity_level_up_halo")
+				.tracker(300, 10, true)
+				.build();
+		EntityEntry thunderBoltThrowable = EntityEntryBuilder.create()
+				.entity(ThunderBoltThrowable.class)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "thunder_bolt_throwable"), 10)
+				.name("thunder_bolt_throwable")
 				.tracker(300, 10, true)
 				.build();
 		event.getRegistry().register(giantAntEntity);
@@ -225,7 +237,9 @@ public class RegistryHandler {
 		event.getRegistry().register(waterBladeThrowable);
 		event.getRegistry().register(swordBeamThrowable);
 		event.getRegistry().register(soulArrowThrowable);
+		event.getRegistry().register(windBladeThrowable);
 		event.getRegistry().register(entityLevelUpHalo);
+		event.getRegistry().register(thunderBoltThrowable);
 	}
 
 	//ain't an event

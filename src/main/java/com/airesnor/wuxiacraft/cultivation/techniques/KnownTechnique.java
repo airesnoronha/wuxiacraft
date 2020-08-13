@@ -92,6 +92,10 @@ public class KnownTechnique {
 		return skills;
 	}
 
+	public List<Technique> getCompatibles() {
+		return this.technique.getCompatibles();
+	}
+
 	public double getCultivationSpeed(double modifier) {
 		double speed = technique.getCultivationSpeed() + (0.5 + 2.5 * this.proficiency / this.technique.getMaxProficiency() );
 		if(modifier > technique.getEfficientTillModifier()) {

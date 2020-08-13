@@ -11,14 +11,8 @@ import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.mobs.renders.RenderGiantAnt;
 import com.airesnor.wuxiacraft.entities.mobs.renders.RenderGiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.renders.RenderWanderingCultivator;
-import com.airesnor.wuxiacraft.entities.skills.SoulArrowThrowable;
-import com.airesnor.wuxiacraft.entities.skills.SwordBeamThrowable;
-import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
-import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
-import com.airesnor.wuxiacraft.entities.skills.models.RenderSoulArrow;
-import com.airesnor.wuxiacraft.entities.skills.models.RenderSwordBeam;
-import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterBlade;
-import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterNeedle;
+import com.airesnor.wuxiacraft.entities.skills.*;
+import com.airesnor.wuxiacraft.entities.skills.models.*;
 import com.airesnor.wuxiacraft.entities.tileentity.GrinderTESR;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTESR;
 import com.airesnor.wuxiacraft.formation.FormationTESR;
@@ -95,6 +89,8 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerEntityRenderingHandler(WanderingCultivator.class, RenderWanderingCultivator::new);
 		RenderingRegistry.registerEntityRenderingHandler(SoulArrowThrowable.class, RenderSoulArrow::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityLevelUpHalo.class, RenderLevelUpHalo::new);
+		RenderingRegistry.registerEntityRenderingHandler(WindBladeThrowable.class, RenderWindBlade::new);
+		RenderingRegistry.registerEntityRenderingHandler(ThunderBoltThrowable.class, RenderThunderBolt::new);
 
 		WuxiaCraftConfig.clientPreInit();
 

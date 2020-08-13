@@ -399,7 +399,7 @@ public class CultivationGui extends GuiScreen {
 		} else if (MathUtils.between(foundationOverMaxBase, 10, 20)) {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 25 + 15, 0);
-			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); //blue
+			drawTexturedModalRect(-15, -15, 215, 187, 30, 30); //blue
 			GlStateManager.scale((foundationOverMaxBase - 10) / 10, (foundationOverMaxBase - 10) / 10, 0);
 			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
 			GlStateManager.popMatrix();
@@ -451,7 +451,7 @@ public class CultivationGui extends GuiScreen {
 		} else if (MathUtils.between(foundationOverMaxBase, 10, 20)) {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 66 + 15, 0);
-			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); //blue
+			drawTexturedModalRect(-15, -15, 215, 187, 30, 30); //blue
 			GlStateManager.scale((foundationOverMaxBase - 10) / 10, (foundationOverMaxBase - 10) / 10, 0);
 			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
 			GlStateManager.popMatrix();
@@ -503,7 +503,7 @@ public class CultivationGui extends GuiScreen {
 		} else if (MathUtils.between(foundationOverMaxBase, 10, 20)) {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 107 + 15, 0);
-			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); //blue
+			drawTexturedModalRect(-15, -15, 215, 187, 30, 30); //blue
 			GlStateManager.scale((foundationOverMaxBase - 10) / 10, (foundationOverMaxBase - 10) / 10, 0);
 			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
 			GlStateManager.popMatrix();
@@ -809,7 +809,7 @@ public class CultivationGui extends GuiScreen {
 				line = "Strong Foundation";
 			} else if (MathUtils.between(foundationOverMaxBase, 10, 20)) {
 				line = "Unbreakable Foundation";
-			} else if (MathUtils.between(foundationOverMaxBase, 20, 100)) {
+			} else if (foundationOverMaxBase > 20) {
 				line = "Peerless Foundation";
 			}
 		}
@@ -826,7 +826,7 @@ public class CultivationGui extends GuiScreen {
 				line = "Strong Foundation";
 			} else if (MathUtils.between(foundationOverMaxBase, 10, 20)) {
 				line = "Unbreakable Foundation";
-			} else if (MathUtils.between(foundationOverMaxBase, 20, 100)) {
+			} else if (foundationOverMaxBase > 20) {
 				line = "Peerless Foundation";
 			}
 		}
@@ -843,7 +843,7 @@ public class CultivationGui extends GuiScreen {
 				line = "Strong Foundation";
 			} else if (MathUtils.between(foundationOverMaxBase, 10, 20)) {
 				line = "Unbreakable Foundation";
-			} else if (MathUtils.between(foundationOverMaxBase, 20, 100)) {
+			} else if (foundationOverMaxBase > 20) {
 				line = "Peerless Foundation";
 			}
 		}

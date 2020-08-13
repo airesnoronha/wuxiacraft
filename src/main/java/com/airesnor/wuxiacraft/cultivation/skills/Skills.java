@@ -4,6 +4,7 @@ import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
+import com.airesnor.wuxiacraft.cultivation.skills.threads.ThreadWoodenPrison;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.entities.skills.*;
 import com.airesnor.wuxiacraft.handlers.RendererHandler;
@@ -91,6 +92,9 @@ public class Skills {
 		SKILLS.add(ADEPT_SWORD_FLIGHT);
 		SKILLS.add(SPIRIT_ARROW);
 		SKILLS.add(SPIRIT_PRESSURE);
+		SKILLS.add(WIND_BLADE);
+		SKILLS.add(WOODEN_PRISON);
+		SKILLS.add(WEAK_LIGHTNING_BOLT);
 	}
 
 	public static final Potion ENLIGHTENMENT = new EnlightenmentPotion("enlightenment");
@@ -380,7 +384,7 @@ public class Skills {
 				damage *= 1.3;
 			}
 			WaterBladeThrowable blade = new WaterBladeThrowable(actor.world, actor, damage, 300);
-			blade.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 0.001f * (0.7f + speed * 0.5f * swordModifier), 0.2f);
+			blade.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0.3f, 0.7f + speed * 0.5f * swordModifier, 0.2f);
 			WorldUtils.spawnEntity((WorldServer) actor.world, blade);
 		}
 		return true;
@@ -571,6 +575,22 @@ public class Skills {
 				return true;
 			});
 
+	public static final Skill WIND_BLADE = new Skill("wind_blade", false, true, 25f, 1.2f, 15f, 2f)
+			.setAction(actor -> {
+				if (!actor.world.isRemote) {
+					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
+					float strength = (float) cultivation.getEssenceModifier() * 0.9f;
+					if (actor.getHeldItem(EnumHand.MAIN_HAND).getItem() instanceof ItemSword) {
+						strength *= 1.5f;
+					}
+					WindBladeThrowable windBladeThrowable = new WindBladeThrowable(actor.world, actor, strength, 300);
+					windBladeThrowable.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, Math.min(2.4f, 0.8f + strength * 0.4f * 0.12f), 0.2f);
+					WorldUtils.spawnEntity((WorldServer) actor.world, windBladeThrowable);
+				}
+				actor.swingArm(EnumHand.MAIN_HAND);
+				return true;
+			});
+
 	public static final ISkillAction PRESSURE_EVERYONE_NEAR = actor -> {
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 		boolean activated = false;
@@ -609,6 +629,35 @@ public class Skills {
 					return true;
 				}
 				return false;
+			});
+
+	public static final Skill WOODEN_PRISON = new Skill("wooden_prison", false, true, 64f, 3.2f, 33f, 1f)
+			.setAction(actor -> {
+				BlockPos target = actor.getPosition().down();
+				Entity entity = SkillUtils.rayTraceEntities(actor, 30, 0f);
+				if(entity != null) {
+					target = entity.getPosition().down();
+				} else {
+					BlockPos position = SkillUtils.rayTraceBlock(actor, 30, 0f);
+					target = position != null ? position : target;
+				}
+				if(actor.world instanceof WorldServer) {
+					new ThreadWoodenPrison((WorldServer) actor.world, target).start();
+				}
+				return true;
+			});
+
+	public static final Skill WEAK_LIGHTNING_BOLT = new Skill("weak_lightning_bolt", false, true, 25f, 1.2f, 14f, 0f)
+			.setAction(actor -> {
+				if (!actor.world.isRemote) {
+					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
+					float strength = (float) cultivation.getEssenceModifier() * 1.1f;
+					ThunderBoltThrowable thunderBoltThrowable = new ThunderBoltThrowable(actor.world, actor, strength, 300);
+					thunderBoltThrowable.shoot(actor, actor.rotationPitch, actor.rotationYawHead, 0.3f, Math.min(3.2f, 0.8f + strength * 0.4f * 0.12f), 0.2f);
+					WorldUtils.spawnEntity((WorldServer) actor.world, thunderBoltThrowable);
+				}
+				actor.swingArm(EnumHand.MAIN_HAND);
+				return true;
 			});
 
 	public static final Skill MINOR_BODY_REINFORCEMENT = new SkillPotionEffectSelf("minor_body_reinforcement", new PotionEffect(MobEffects.STRENGTH, 1800, 2, false, true), 12f, 1.2f, 18f, 20f, "Aires Adures");

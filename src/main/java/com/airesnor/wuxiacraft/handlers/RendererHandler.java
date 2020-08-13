@@ -268,6 +268,14 @@ public class RendererHandler {
 				cultivation.getBodyModifier());
 		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 90, Integer.parseInt("FFAA00", 16));
 
+		message = String.format("Divine Mod: %.4f",
+				cultivation.getDivineModifier());
+		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 100, Integer.parseInt("FFAA00", 16));
+
+		message = String.format("Essece Mod: %.4f",
+				cultivation.getEssenceModifier());
+		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 110, Integer.parseInt("FFAA00", 16));
+
 		/*if (cultTech.getEssenceTechnique() != null) {
 			message = String.format("Essence Technique: %s %.4f", cultTech.getEssenceTechnique().getTechnique().getName(),
 					cultTech.getEssenceTechnique().getProficiency());
@@ -288,6 +296,7 @@ public class RendererHandler {
 		message = String.format("Fall Distance: %.2f",player.fallDistance);
 		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 60, Integer.parseInt("FFAA00",16))
 		*/
+		GlStateManager.color(1,1,1,1);
 	}
 
 	@SideOnly(Side.CLIENT)

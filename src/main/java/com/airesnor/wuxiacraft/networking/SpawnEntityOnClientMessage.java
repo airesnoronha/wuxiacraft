@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.networking;
 
+import com.airesnor.wuxiacraft.WuxiaCraft;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -65,7 +66,7 @@ public class SpawnEntityOnClientMessage implements IMessage {
 	@SideOnly(Side.CLIENT)
 	public void handleClientEntityEntry(EntityEntry entry, ByteBuf buf) {
 		if (entry != null) {
-			this.entity = entry.newInstance(Minecraft.getMinecraft().world);
+			this.entity = entry.newInstance(null);
 			entity.posX = this.posX;
 			entity.posY = this.posY;
 			entity.posZ = this.posZ;
@@ -111,19 +112,8 @@ public class SpawnEntityOnClientMessage implements IMessage {
 		@SideOnly(Side.CLIENT)
 		public void handleClientMessage(SpawnEntityOnClientMessage message ) {
 			Minecraft.getMinecraft().addScheduledTask(() -> {
-				EntityEntry entry = ForgeRegistries.ENTITIES.getValue(message.entityEntry);
-				if(entry != null) {
-					Entity entity = entry.newInstance(Minecraft.getMinecraft().world);
-					entity.posX = message.posX;
-					entity.posY = message.posY;
-					entity.posZ = message.posZ;
-					entity.motionX = message.motionX;
-					entity.motionY = message.motionY;
-					entity.motionZ = message.motionZ;
-					entity.rotationPitch = message.entityPitch;
-					entity.rotationYaw = message.entityYaw;
-					entity.setEntityId(message.entityId);
-					Minecraft.getMinecraft().world.spawnEntity(entity);
+				if(message.entity != null) {
+					message.entity.world = Minecraft.getMinecraft().world;
 				}
 
 			});
