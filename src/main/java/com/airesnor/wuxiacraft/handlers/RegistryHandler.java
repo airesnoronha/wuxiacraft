@@ -155,7 +155,7 @@ public class RegistryHandler {
 				.name("wandering_cultivator")
 				.tracker(150, 3, false)
 				.egg(0x202020, 0xFACB27)
-				.spawn(EnumCreatureType.MONSTER, 7, 1, 1,
+				.spawn(EnumCreatureType.MONSTER, 6, 1, 1,
 						Biomes.BEACH,
 						Biomes.BIRCH_FOREST,
 						Biomes.DESERT,
@@ -171,7 +171,7 @@ public class RegistryHandler {
 						Biomes.JUNGLE_EDGE,
 						Biomes.MESA
 				)
-				.spawn(EnumCreatureType.MONSTER, 12, 1, 1,
+				.spawn(EnumCreatureType.MONSTER, 9, 1, 1,
 						Biomes.HELL,
 						WuxiaBiomes.MINING,
 						WuxiaBiomes.EARTH,
