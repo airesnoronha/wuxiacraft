@@ -601,13 +601,13 @@ public class Skills {
 			List<EntityLivingBase> targets = actor.world.getEntitiesWithinAABB(EntityLivingBase.class, range, t -> t != actor);
 			for (EntityLivingBase target : targets) {
 				ICultivation targetCultivation = CultivationUtils.getCultivationFromEntity(target);
-				if (targetCultivation.getDivineModifier() * 0.6 < cultivation.getDivineModifier()) {
+				if (targetCultivation.getDivineModifier() < cultivation.getDivineModifier() * 0.6) {
 					target.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 300, 3, false, true));
 					target.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 100, 3, false, true));
-				} else if (targetCultivation.getDivineModifier() * 0.8 < cultivation.getDivineModifier()) {
+				} else if (targetCultivation.getDivineModifier()< cultivation.getDivineModifier() * 0.8 ) {
 					target.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 300, 2, false, true));
 					target.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 100, 2, false, true));
-				} else if (targetCultivation.getDivineModifier() * 0.9 < cultivation.getDivineModifier()) {
+				} else if (targetCultivation.getDivineModifier() < cultivation.getDivineModifier() * 0.9) {
 					target.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 300, 1, false, true));
 					target.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 100, 1, false, true));
 				} else if (targetCultivation.getDivineModifier() < cultivation.getDivineModifier()) {
