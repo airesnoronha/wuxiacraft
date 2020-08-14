@@ -134,7 +134,7 @@ public class Techniques {
 			.addSkill(3200, Skills.GATHER_WOOD)
 			.addSkill(12000, Skills.ACCELERATE_GROWTH)
 			.addSkill(15000, Skills.WOODEN_PRISON)
-			.addEffect(4500, REGENERATION_I);
+			.addEffect(5400, REGENERATION_I);
 
 	//From Wuxia4You
 	public static final Technique YIN_BODY_ART = new Technique("yin_body_art", Cultivation.System.BODY,
