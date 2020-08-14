@@ -663,39 +663,7 @@ public class EventHandler {
 										break;
 								}
 							}
-							if (MathUtils.inGroup(targetDimension, WuxiaDimensions.WATER.getId(), WuxiaDimensions.WOOD.getId(), WuxiaDimensions.FIRE.getId(), WuxiaDimensions.EARTH.getId(), WuxiaDimensions.METAL.getId())) {
-								final int worldBorderSize = 2000000;
-								if (playerPosX >= worldBorderSize) {
-									playerPosX = worldBorderSize - 10;
-								}
-								if (playerPosZ >= worldBorderSize) {
-									playerPosZ = worldBorderSize - 10;
-								}
-								if (playerPosX <= -worldBorderSize) {
-									playerPosX = -worldBorderSize + 10;
-								}
-								if (playerPosZ <= -worldBorderSize) {
-									playerPosZ = -worldBorderSize + 10;
-								}
-								TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) event.player, targetDimension, playerPosX + 0.5, 1512, playerPosZ + 0.5, event.player.rotationYaw, event.player.rotationPitch);
-							} else if (targetDimension == WuxiaDimensions.MINING.getId()) {
-								final int worldBorderSize = 3000000;
-								if (playerPosX >= worldBorderSize) {
-									playerPosX = worldBorderSize - 10;
-								}
-								if (playerPosZ >= worldBorderSize) {
-									playerPosZ = worldBorderSize - 10;
-								}
-								if (playerPosX <= -worldBorderSize) {
-									playerPosX = -worldBorderSize + 10;
-								}
-								if (playerPosZ <= -worldBorderSize) {
-									playerPosZ = -worldBorderSize + 10;
-								}
-								TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) event.player, targetDimension, playerPosX + 0.5, 1512, playerPosZ + 0.5, event.player.rotationYaw, event.player.rotationPitch);
-							} else {
-								TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) event.player, targetDimension, playerPosX, 1512, playerPosZ, event.player.rotationYaw, event.player.rotationPitch);
-							}
+							TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) event.player, targetDimension, playerPosX, 1512, playerPosZ, event.player.rotationYaw, event.player.rotationPitch);
 							double resistance = cultivation.getBodyModifier() * 0.4 + cultivation.getEssenceModifier() * 0.8 + cultivation.getEssenceModifier() + 0.3;
 							event.player.attackEntityFrom(DamageSource.OUT_OF_WORLD, (float) Math.max(1, 98000 - resistance));
 						}

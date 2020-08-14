@@ -10,12 +10,9 @@ import net.minecraft.world.gen.IChunkGenerator;
 
 public class DimensionWater extends WorldProvider {
 
-    public static int worldBorderSize;
-
     @Override
     protected void init() {
         this.biomeProvider = new BiomeProviderWater(this.world.getSeed());
-        this.worldBorderSize = 2000000;
     }
 
     @Override
@@ -55,7 +52,7 @@ public class DimensionWater extends WorldProvider {
 
     @Override
     public WorldBorder createWorldBorder() {
-        return new WuxiaWorldBorder(this.worldBorderSize);
+        return new WuxiaWorldBorder(0.0D, 0.0D, 150.0D, 5.0D, 15, 5);
     }
 
     @Override
