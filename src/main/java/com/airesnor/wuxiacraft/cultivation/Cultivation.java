@@ -86,36 +86,46 @@ public class Cultivation implements ICultivation {
 		if (allowBreakthrough) {
 			if (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel)) {
 				Random rnd = new Random();
-				if (rnd.nextFloat() > (this.bodyProgress + this.bodyFoundation) / (4 * this.bodyLevel.getProgressBySubLevel(this.bodySubLevel))
-						&& this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL) {
-					applySystemPenalty(System.BODY);
-				} else {
-					boolean divineCondition = (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineLevel.subLevels - 1)
-							&& this.divineSubLevel >= this.divineLevel.subLevels - 1) || this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL;
-					// if this then all above
-					boolean essenceCondition = (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceLevel.subLevels - 1)
-							&& this.essenceSubLevel >= this.essenceLevel.subLevels - 1) || this.essenceLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL; // or not in this level
-					if (essenceCondition && divineCondition) { // can breakthrough
-						if (this.bodyLevel.tribulationEachSubLevel && this.bodySubLevel < this.bodyLevel.subLevels - 1) {
-							double strength = this.bodyLevel.getModifierBySubLevel(this.bodySubLevel + 1);
-							throw new RequiresTribulation(strength, System.BODY, this.bodyLevel, this.bodySubLevel + 1);
+				// if this then all above
+				boolean divineCondition = (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineLevel.subLevels - 1)
+						&& this.divineSubLevel >= this.divineLevel.subLevels - 1) || this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL;
+				boolean essenceCondition = (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceLevel.subLevels - 1)
+						&& this.essenceSubLevel >= this.essenceLevel.subLevels - 1) || this.essenceLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL; // or not in this level
+				if (essenceCondition && divineCondition) { // can breakthrough
+					if (this.bodyLevel.tribulationEachSubLevel && this.bodySubLevel < this.bodyLevel.subLevels - 1) {
+						double strength = this.bodyLevel.getModifierBySubLevel(this.bodySubLevel + 1);
+						throw new RequiresTribulation(strength, System.BODY, this.bodyLevel, this.bodySubLevel + 1);
+					}
+					double oldModifier = this.getBodyModifier();
+					if (this.bodySubLevel + 1 == this.bodyLevel.subLevels) {
+						if (this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS).callsTribulation) {
+							double strength = this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS).getModifierBySubLevel(0);
+							throw new RequiresTribulation(strength, System.BODY, this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS), 0);
 						}
-						double oldModifier = this.getBodyModifier();
-						this.bodyProgress -= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel);
-						this.bodySubLevel++;
-						if (this.bodySubLevel == this.bodyLevel.subLevels) {
-							if (this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS).callsTribulation) {
-								double strength = this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS).getModifierBySubLevel(0);
-								throw new RequiresTribulation(strength, System.BODY, this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS), 0);
-							}
+						if (rnd.nextFloat() > (this.bodyProgress + this.bodyFoundation) / (4 * this.bodyLevel.getProgressBySubLevel(this.bodySubLevel))
+								&& this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL) {
+							applySystemPenalty(System.BODY);
+						} else {
+							this.bodyProgress -= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel);
 							this.bodySubLevel = 0;
 							this.bodyLevel = this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS);
+							leveled = true;
 						}
-						double modifierDifference = oldModifier * 1.3 - this.getBodyModifier();
+					} else {
+						if (rnd.nextFloat() > (this.bodyProgress + this.bodyFoundation) / (4 * this.bodyLevel.getProgressBySubLevel(this.bodySubLevel))
+								&& this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL) {
+							applySystemPenalty(System.BODY);
+						} else {
+							this.bodyProgress -= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel);
+							this.bodySubLevel++;
+							leveled = true;
+						}
+					}
+					if (leveled) {
+						double modifierDifference = oldModifier * 1.1 - this.getBodyModifier();
 						if (modifierDifference > 0) {
 							this.bodyFoundation += this.bodyLevel.getProgressBySubLevel(this.bodySubLevel) * modifierDifference / (0.4 * this.bodyLevel.getModifierBySubLevel(this.bodySubLevel));
 						}
-						leveled = true;
 					}
 				}
 			}
@@ -134,33 +144,43 @@ public class Cultivation implements ICultivation {
 		if (allowBreakthrough) {
 			if (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) {
 				Random rnd = new Random();
-				if (rnd.nextFloat() > (this.divineProgress + this.divineFoundation) / (4 * this.divineLevel.getProgressBySubLevel(this.divineSubLevel))
-						&& this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL) {
-					applySystemPenalty(System.DIVINE);
-				} else {
-					// if this then all above
-					boolean bodyCondition = (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodyLevel.subLevels - 1)
-							&& this.bodySubLevel >= this.bodyLevel.subLevels - 1) || this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL; // or not in this level
-					boolean essenceCondition = (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceLevel.subLevels - 1)
-							&& this.essenceSubLevel >= this.essenceLevel.subLevels - 1) || this.essenceLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL;
-					if (bodyCondition && essenceCondition) { // can breakthrough
-						if (this.divineLevel.tribulationEachSubLevel && this.divineSubLevel < this.divineLevel.subLevels - 1) {
-							double strength = this.divineLevel.getModifierBySubLevel(this.divineSubLevel + 1);
-							throw new RequiresTribulation(strength, System.DIVINE, this.divineLevel, this.divineSubLevel + 1);
+				// if this then all above
+				boolean bodyCondition = (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodyLevel.subLevels - 1)
+						&& this.bodySubLevel >= this.bodyLevel.subLevels - 1) || this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL; // or not in this level
+				boolean essenceCondition = (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceLevel.subLevels - 1)
+						&& this.essenceSubLevel >= this.essenceLevel.subLevels - 1) || this.essenceLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL;
+				if (bodyCondition && essenceCondition) { // can breakthrough
+					if (this.divineLevel.tribulationEachSubLevel && this.divineSubLevel < this.divineLevel.subLevels - 1) {
+						double strength = this.divineLevel.getModifierBySubLevel(this.divineSubLevel + 1);
+						throw new RequiresTribulation(strength, System.DIVINE, this.divineLevel, this.divineSubLevel + 1);
+					}
+					double oldModifier = this.getDivineModifier();
+					if (this.divineSubLevel + 1 == this.divineLevel.subLevels) {
+						if (this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS).callsTribulation) {
+							double strength = this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS).getModifierBySubLevel(0);
+							throw new RequiresTribulation(strength, System.DIVINE, this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS), 0);
 						}
-						double oldModifier = this.getDivineModifier();
-						this.divineProgress -= this.divineLevel.getProgressBySubLevel(this.divineSubLevel);
-						leveled = true;
-						this.divineSubLevel++;
-						if (this.divineSubLevel == this.divineLevel.subLevels) {
-							if (this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS).callsTribulation) {
-								double strength = this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS).getModifierBySubLevel(0);
-								throw new RequiresTribulation(strength, System.DIVINE, this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS), 0);
-							}
+						if (rnd.nextFloat() > (this.divineProgress + this.divineFoundation) / (4 * this.divineLevel.getProgressBySubLevel(this.divineSubLevel))
+								&& this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL) {
+							applySystemPenalty(System.DIVINE);
+						} else {
+							this.divineProgress -= this.divineLevel.getProgressBySubLevel(this.divineSubLevel);
 							this.divineSubLevel = 0;
 							this.divineLevel = this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS);
+							leveled = true;
 						}
-						double modifierDifference = oldModifier * 1.3 - this.getDivineModifier();
+					} else {
+						if (rnd.nextFloat() > (this.divineProgress + this.divineFoundation) / (4 * this.divineLevel.getProgressBySubLevel(this.divineSubLevel))
+								&& this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL) {
+							applySystemPenalty(System.DIVINE);
+						} else {
+							this.divineProgress -= this.divineLevel.getProgressBySubLevel(this.divineSubLevel);
+							this.divineSubLevel++;
+							leveled = true;
+						}
+					}
+					if (leveled) {
+						double modifierDifference = oldModifier * 1.1 - this.getDivineModifier();
 						if (modifierDifference > 0) {
 							this.divineFoundation += this.divineLevel.getProgressBySubLevel(this.divineSubLevel) * modifierDifference / (0.4 * this.divineLevel.getModifierBySubLevel(this.divineSubLevel));
 						}
@@ -182,33 +202,42 @@ public class Cultivation implements ICultivation {
 		if (allowBreakthrough) {
 			if (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)) {
 				Random rnd = new Random();
-				if (rnd.nextFloat() > (this.essenceProgress + this.essenceFoundation) / (4 * this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))
-						&& this.essenceLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
-					applySystemPenalty(System.ESSENCE);
-				} else {
-					// if this then all above
-					boolean bodyCondition = (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodyLevel.subLevels - 1)
-							&& this.bodySubLevel >= this.bodyLevel.subLevels - 1) || this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL; // or not in this level
-					boolean divineCondition = (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineLevel.subLevels - 1)
-							&& this.divineSubLevel >= this.divineLevel.subLevels - 1) || this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL;
-					if (bodyCondition && divineCondition) { // can breakthrough
-						if (this.essenceLevel.tribulationEachSubLevel && this.essenceSubLevel < this.essenceLevel.subLevels - 1) {
-							double strength = this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel + 1);
-							throw new RequiresTribulation(strength, System.ESSENCE, this.essenceLevel, this.essenceSubLevel + 1);
+				boolean bodyCondition = (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodyLevel.subLevels - 1)
+						&& this.bodySubLevel >= this.bodyLevel.subLevels - 1) || this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL; // or not in this level
+				boolean divineCondition = (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineLevel.subLevels - 1)
+						&& this.divineSubLevel >= this.divineLevel.subLevels - 1) || this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL;
+				if (bodyCondition && divineCondition) { // can breakthrough
+					if (this.essenceLevel.tribulationEachSubLevel && this.essenceSubLevel < this.essenceLevel.subLevels - 1) {
+						double strength = this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel + 1);
+						throw new RequiresTribulation(strength, System.ESSENCE, this.essenceLevel, this.essenceSubLevel + 1);
+					}
+					double oldModifier = this.getEssenceModifier();
+					if (this.essenceSubLevel + 1 == this.essenceLevel.subLevels) {
+						if (this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS).callsTribulation) {
+							double strength = this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS).getModifierBySubLevel(0);
+							throw new RequiresTribulation(strength, System.ESSENCE, this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS), 0);
 						}
-						double oldModifier = this.getEssenceModifier();
-						this.essenceProgress -= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel);
-						leveled = true;
-						this.essenceSubLevel++;
-						if (this.essenceSubLevel == this.essenceLevel.subLevels) {
-							if (this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS).callsTribulation) {
-								double strength = this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS).getModifierBySubLevel(0);
-								throw new RequiresTribulation(strength, System.ESSENCE, this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS), 0);
-							}
+						if (rnd.nextFloat() > (this.essenceProgress + this.essenceFoundation) / (4 * this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))
+								&& this.essenceLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
+							applySystemPenalty(System.ESSENCE);
+						} else {
+							this.essenceProgress -= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel);
 							this.essenceSubLevel = 0;
 							this.essenceLevel = this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
+							leveled = true;
 						}
-						double modifierDifference = oldModifier * 1.2 - this.getEssenceModifier();
+					} else {
+						if (rnd.nextFloat() > (this.essenceProgress + this.essenceFoundation) / (4 * this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))
+								&& this.essenceLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
+							applySystemPenalty(System.ESSENCE);
+						} else {
+							this.essenceProgress -= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel);
+							this.essenceSubLevel++;
+							leveled = true;
+						}
+					}
+					if (leveled) {
+						double modifierDifference = oldModifier * 1.1 - this.getEssenceModifier();
 						if (modifierDifference > 0) {
 							this.essenceFoundation += this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) * modifierDifference / (0.4 * this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel));
 						}
@@ -564,19 +593,19 @@ public class Cultivation implements ICultivation {
 	@Override
 	public double getBodyModifier() {
 		return Math.max(1, this.bodyLevel.getModifierBySubLevel(this.bodySubLevel) *
-				(0.6 + Math.min(9, ((this.bodyProgress + this.bodyFoundation) / this.bodyLevel.getProgressBySubLevel(this.bodySubLevel))) * 0.4));
+				(0.6 + Math.min(21, ((this.bodyProgress + this.bodyFoundation) / this.bodyLevel.getProgressBySubLevel(this.bodySubLevel))) * 0.4));
 	}
 
 	@Override
 	public double getDivineModifier() {
 		return Math.max(1, this.divineLevel.getModifierBySubLevel(this.divineSubLevel) *
-				(0.6 + Math.min(9, ((this.divineProgress + this.divineFoundation) / this.divineLevel.getProgressBySubLevel(this.divineSubLevel))) * 0.4));
+				(0.6 + Math.min(21, ((this.divineProgress + this.divineFoundation) / this.divineLevel.getProgressBySubLevel(this.divineSubLevel))) * 0.4));
 	}
 
 	@Override
 	public double getEssenceModifier() {
 		return Math.max(1, this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel) *
-				(0.6 + Math.min(9, ((this.essenceProgress + this.essenceFoundation) / this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))) * 0.4));
+				(0.6 + Math.min(21, ((this.essenceProgress + this.essenceFoundation) / this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))) * 0.4));
 	}
 
 	@Override
@@ -611,15 +640,15 @@ public class Cultivation implements ICultivation {
 	public void applySystemPenalty(System system) {
 		switch (system) {
 			case BODY:
-				this.setBodyFoundation(Math.max(this.bodyFoundation * 0.7, this.bodyFoundation - 3 * this.bodyLevel.getProgressBySubLevel(this.bodySubLevel)));
+				this.setBodyFoundation(Math.max(this.bodyFoundation * 0.9, this.bodyFoundation - this.bodyLevel.getProgressBySubLevel(this.bodySubLevel)));
 				this.setBodyProgress(this.bodyProgress * 0.3);
 				break;
 			case DIVINE:
-				this.setDivineFoundation(Math.max(this.divineFoundation * 0.7, this.divineFoundation - 3 * this.divineLevel.getProgressBySubLevel(this.divineSubLevel)));
+				this.setDivineFoundation(Math.max(this.divineFoundation * 0.9, this.divineFoundation - this.divineLevel.getProgressBySubLevel(this.divineSubLevel)));
 				this.setDivineProgress(this.divineProgress * 0.3);
 				break;
 			case ESSENCE:
-				this.setEssenceFoundation(Math.max(this.essenceFoundation * 0.7, this.essenceFoundation - 3 * this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)));
+				this.setEssenceFoundation(Math.max(this.essenceFoundation * 0.9, this.essenceFoundation - this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)));
 				this.setEssenceProgress(this.essenceProgress * 0.3);
 				break;
 		}

@@ -122,7 +122,7 @@ public class CultivationUtils {
 	public static void cultivatorAddProgress(EntityLivingBase player, Cultivation.System system, double amount, boolean techniques, boolean allowBreakThrough) {
 		ICultivation cultivation = getCultivationFromEntity(player);
 		ICultTech cultTech = getCultTechFromEntity(player);
-		if(cultTech.getTechniqueBySystem(system) != null) {
+		if (cultTech.getTechniqueBySystem(system) != null) {
 			amount *= cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system));
 		}
 		double enlightenment = 1;
@@ -164,7 +164,7 @@ public class CultivationUtils {
 				if (cultivation.getEssenceLevel() == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
 					cultivation.addEssenceProgress(amount * 0.3, allowBreakThrough);
 				}
-				if(leveled && !player.world.isRemote) {
+				if (leveled && !player.world.isRemote) {
 					EntityLevelUpHalo halo = new EntityLevelUpHalo(player.world, player.posX, player.posY + 1, player.posZ);
 					WorldUtils.spawnEntity((WorldServer) player.world, halo);
 				}
@@ -192,6 +192,7 @@ public class CultivationUtils {
 			this.system = system;
 			this.targetLevel = targetLevel;
 			this.targetSubLevel = targetSubLevel;
+			this.customTribulation = false;
 		}
 
 		public BoltsScheduler(EntityLivingBase player, double tribulationStrength, boolean customTribulation) {
@@ -207,13 +208,13 @@ public class CultivationUtils {
 				ICultivation cultivation = getCultivationFromEntity(player);
 
 				double resistance = 1;
-				if(this.system != null) {
+				if (this.system != null) {
 					resistance = cultivation.getSystemModifier(this.system); //new foundation system is already a way to resist tribulation
 				}
 				double multiplier = world.getGameRules().hasRule("tribulationMultiplier") ? world.getGameRules().getInt("tribulationMultiplier") : 1;
 				double worldMultiplier = WorldVariables.get(world).getTribulationMultiplier();
 				double strength = this.tribulationStrength * multiplier * worldMultiplier;
-				final int bolts = MathUtils.clamp(1 + (int) (Math.round(resistance*3 / strength)), 1, 12);
+				final int bolts = MathUtils.clamp(1 + (int) (Math.round(resistance * 3 / strength)), 1, 12);
 				float damage = (float) Math.max(2, strength - resistance);
 				for (int i = 0; i < bolts; i++) {
 					boolean survived = player.isEntityAlive();
@@ -233,6 +234,8 @@ public class CultivationUtils {
 				world.addScheduledTask(() -> {
 					boolean survived = player.isEntityAlive();
 					if (survived && !this.customTribulation) {
+						double oldModifier = cultivation.getSystemModifier(system);
+						double modifierDifference = 0;
 						switch (this.system) {
 							case BODY:
 								cultivation.setBodyProgress(cultivation.getBodyProgress() -
@@ -241,6 +244,11 @@ public class CultivationUtils {
 								cultivation.setBodyLevel(this.targetLevel);
 								cultivation.setBodySubLevel(this.targetSubLevel);
 								cultivation.addBodyFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
+								modifierDifference = oldModifier * 1.3 - cultivation.getBodyModifier();
+								if (modifierDifference > 0) {
+									cultivation.setBodyFoundation(cultivation.getBodyFoundation() + cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel()) * modifierDifference /
+											(0.4 * cultivation.getBodyLevel().getModifierBySubLevel(cultivation.getBodySubLevel())));
+								}
 								break;
 							case DIVINE:
 								cultivation.setDivineProgress(cultivation.getDivineProgress() -
@@ -249,6 +257,11 @@ public class CultivationUtils {
 								cultivation.setDivineLevel(this.targetLevel);
 								cultivation.setDivineSubLevel(this.targetSubLevel);
 								cultivation.addDivineFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
+								modifierDifference = oldModifier * 1.3 - cultivation.getEssenceModifier();
+								if (modifierDifference > 0) {
+									cultivation.setDivineFoundation(cultivation.getDivineFoundation() + cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()) * modifierDifference /
+											(0.4 * cultivation.getDivineLevel().getModifierBySubLevel(cultivation.getDivineSubLevel())));
+								}
 								break;
 							case ESSENCE:
 								cultivation.setEssenceFoundation(cultivation.getEssenceProgress() -
@@ -257,6 +270,11 @@ public class CultivationUtils {
 								cultivation.setEssenceLevel(this.targetLevel);
 								cultivation.setEssenceSubLevel(this.targetSubLevel);
 								cultivation.addEssenceFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
+								modifierDifference = oldModifier * 1.3 - cultivation.getBodyModifier();
+								if (modifierDifference > 0) {
+									cultivation.setEssenceFoundation(cultivation.getEssenceFoundation() + cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) * modifierDifference /
+											(0.4 * cultivation.getEssenceLevel().getModifierBySubLevel(cultivation.getEssenceSubLevel())));
+								}
 								break;
 						}
 						((EntityPlayer) player).sendStatusMessage(new TextComponentString(TranslateUtils.translateKey("wuxiacraft.level_message.congrats_" + msgN) + " " + targetLevel.getLevelName(targetSubLevel)), false);
@@ -300,7 +318,7 @@ public class CultivationUtils {
 				world.addScheduledTask(() -> {
 					EntityLightningBolt lightningBolt = new EntityLightningBolt(world, player.posX, player.posY + 1.0, player.posZ, true); // effect only won't cause damage
 					world.addWeatherEffect(lightningBolt);
-					player.attackEntityFrom(DamageSource.LIGHTNING_BOLT.setDamageIsAbsolute().setDamageBypassesArmor(), (float)this.strength);
+					player.attackEntityFrom(DamageSource.LIGHTNING_BOLT.setDamageIsAbsolute().setDamageBypassesArmor(), (float) this.strength);
 				});
 				try {
 					sleep(750);
@@ -322,7 +340,7 @@ public class CultivationUtils {
 	}
 
 	public static void callCustomThunder(EntityLivingBase player, double strength, double reward) {
-		if(!player.world.isRemote) {
+		if (!player.world.isRemote) {
 			new CustomThunder(player, strength, reward).start();
 		}
 	}

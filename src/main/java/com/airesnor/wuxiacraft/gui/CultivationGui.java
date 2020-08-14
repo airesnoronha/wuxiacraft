@@ -672,7 +672,7 @@ public class CultivationGui extends GuiScreen {
 		GlStateManager.popMatrix();
 		if (cultTech.getDivineTechnique() != null) {
 			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 13, this.guiTop + 93, 0);
+			GlStateManager.translate(this.guiLeft + 21, this.guiTop + 93, 0);
 			GlStateManager.scale(fontScale, fontScale, 1);
 			this.fontRenderer.drawString(cultTech.getDivineTechnique().getTechnique().getName(), 0, 0, 0xFFFFFF);
 			GlStateManager.popMatrix();
@@ -685,7 +685,7 @@ public class CultivationGui extends GuiScreen {
 		GlStateManager.popMatrix();
 		if (cultTech.getEssenceTechnique() != null) {
 			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 13, this.guiTop + 134, 0);
+			GlStateManager.translate(this.guiLeft + 21, this.guiTop + 134, 0);
 			GlStateManager.scale(fontScale, fontScale, 1);
 			this.fontRenderer.drawString(cultTech.getEssenceTechnique().getTechnique().getName(), 0, 0, 0xFFFFFF);
 			GlStateManager.popMatrix();
