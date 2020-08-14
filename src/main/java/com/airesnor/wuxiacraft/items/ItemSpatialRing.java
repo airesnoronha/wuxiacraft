@@ -29,13 +29,13 @@ public class ItemSpatialRing extends Item {
     public ItemSpatialRing(String name, int spatialRingRows, int spatialRingColumns) {
         setRegistryName(name);
         setUnlocalizedName(name);
-        setCreativeTab(WuxiaItems.WUXIACRAFT_GENERAL);
         setMaxStackSize(1);
 
         this.spatialRingSize = spatialRingRows * spatialRingColumns;
         this.spatialRingRows = spatialRingRows;
         this.spatialRingColumns = spatialRingColumns;
 
+        setCreativeTab(WuxiaItems.WUXIACRAFT_GENERAL);
         WuxiaItems.ITEMS.add(this);
     }
 

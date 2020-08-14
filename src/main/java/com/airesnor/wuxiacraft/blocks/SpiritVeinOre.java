@@ -10,10 +10,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTool;
+import net.minecraft.item.*;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -53,7 +50,7 @@ public class SpiritVeinOre extends BlockBase {
 		if(!worldIn.isRemote) {
 			if(!player.isCreative()) {
 				ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
-				if (heldItem.getItem() instanceof ItemTool) {
+				if (heldItem.getItem() instanceof ItemPickaxe) {
 					if (!EnchantmentHelper.getEnchantments(heldItem).containsKey(Enchantments.SILK_TOUCH)) {
 						if (heldItem.getItem().getHarvestLevel(heldItem, Objects.requireNonNull(getHarvestTool(state)), player, state) > 2) {
 							if (this.droppedItem != null) {
