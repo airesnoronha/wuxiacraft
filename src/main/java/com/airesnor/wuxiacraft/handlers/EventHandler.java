@@ -640,7 +640,7 @@ public class EventHandler {
 							}
 							TeleportationUtil.teleportPlayerToDimension((EntityPlayerMP) event.player, targetDimension, playerPosX, 1512, playerPosZ, event.player.rotationYaw, event.player.rotationPitch);
 							double resistance = cultivation.getBodyModifier() * 0.4 + cultivation.getEssenceModifier() * 0.8 + cultivation.getEssenceModifier() + 0.3;
-							event.player.attackEntityFrom(DamageSource.OUT_OF_WORLD, (float) Math.max(1, 98000 - resistance));
+							event.player.attackEntityFrom(DamageSource.OUT_OF_WORLD, (float) Math.max(1, 3200 - resistance));
 						}
 					} else if (MathUtils.inGroup(event.player.world.provider.getDimension(),
 							WuxiaDimensions.EARTH.getId(),
