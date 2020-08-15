@@ -1,10 +1,8 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
-import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.PotionEffect;
 
 import java.util.List;
@@ -33,7 +31,7 @@ public interface ICultTech {
 
 	List<PotionEffect> getTechniquesEffects();
 
-	TechniquesModifiers getOverallModifiers();
+	TechniqueModifiers getOverallModifiers();
 
 	void copyFrom(ICultTech cultTech);
 

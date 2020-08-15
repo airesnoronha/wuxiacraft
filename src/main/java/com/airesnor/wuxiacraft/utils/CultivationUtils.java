@@ -16,6 +16,7 @@ import com.airesnor.wuxiacraft.networking.UnifiedCapabilitySyncMessage;
 import com.airesnor.wuxiacraft.world.data.WorldVariables;
 import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -117,6 +118,43 @@ public class CultivationUtils {
 		double energy = getCultivationFromEntity(entityIn).getMaxEnergy();
 		energy *= (1 + getCultTechFromEntity(entityIn).getOverallModifiers().maxEnergy);
 		return energy;
+	}
+
+	public static double getStrengthFromEntity(EntityLivingBase entityIn) {
+		double strength = getCultivationFromEntity(entityIn).getStrengthModifier();
+		strength *= 1 + getCultTechFromEntity(entityIn).getOverallModifiers().strength;
+		return strength;
+	}
+
+	public static double getDexterityFromEntity(EntityLivingBase entityIn) {
+		double attackSpeed = getCultivationFromEntity(entityIn).getDexterityModifier();
+		attackSpeed *= 1 + getCultTechFromEntity(entityIn).getOverallModifiers().attackSpeed;
+		return attackSpeed;
+	}
+
+	public static double getResistanceFromEntity(EntityLivingBase entityIn) {
+		double armor = getCultivationFromEntity(entityIn).getResistanceModifier();
+		armor *= 1 + getCultTechFromEntity(entityIn).getOverallModifiers().armor;
+		return armor;
+	}
+
+	public static double getConstitutionFromEntity(EntityLivingBase entityIn) {
+		double maxHealth = getCultivationFromEntity(entityIn).getConstitutionModifier();
+		maxHealth *= 1 + getCultTechFromEntity(entityIn).getOverallModifiers().maxHealth;
+		return maxHealth;
+	}
+
+	public static double getAgilityFromEntity(EntityLivingBase entityIn) {
+		ICultivation cultivation = getCultivationFromEntity(entityIn);
+		double movementSpeed = cultivation.getAgilityModifier();
+		movementSpeed *= 1 + getCultTechFromEntity(entityIn).getOverallModifiers().movementSpeed;
+
+		if (cultivation.getMaxSpeed() >= 0) {
+			double max_speed = cultivation.getMaxSpeed();
+			movementSpeed = Math.min(max_speed, movementSpeed);
+		}
+		movementSpeed *= (cultivation.getSpeedHandicap() / 100f);
+		return movementSpeed;
 	}
 
 	public static void cultivatorAddProgress(EntityLivingBase player, Cultivation.System system, double amount, boolean techniques, boolean allowBreakThrough) {

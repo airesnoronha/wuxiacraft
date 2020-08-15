@@ -1,7 +1,9 @@
 package com.airesnor.wuxiacraft.commands;
 
-import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.networking.CultivationMessage;
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
+import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
+import com.airesnor.wuxiacraft.cultivation.techniques.KnownTechnique;
+import com.airesnor.wuxiacraft.networking.CultTechMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.command.CommandBase;
@@ -20,19 +22,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
-public class FoundationCommand extends CommandBase {
+public class ProficiencyCommand extends CommandBase {
 
 	@Override
 	@Nonnull
 	public String getName() {
-		return "foundation";
+		return "proficiency";
 	}
 
 	@Override
 	@Nonnull
 	@ParametersAreNonnullByDefault
 	public String getUsage(ICommandSender sender) {
-		return "/foundation [get <player>]:[set:add <player> <system> <amount>]";
+		return "/proficiency [get <player>]:[set:add <player> <system> <amount>]";
 	}
 
 	@Override
@@ -40,7 +42,7 @@ public class FoundationCommand extends CommandBase {
 	public List<String> getAliases() {
 		List<String> aliases = new ArrayList<>();
 		//noinspection SpellCheckingInspection
-		aliases.add("foundt");
+		aliases.add("profi");
 		return aliases;
 	}
 	@Override
@@ -54,22 +56,19 @@ public class FoundationCommand extends CommandBase {
 					if("get".equalsIgnoreCase(args[0])) {
 						EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
 						if (targetPlayer != null) {
-							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
-							double foundationOverMaxBase = cultivation.getBodyFoundation()/cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel());
-							double foundationInducedModifier = cultivation.getBodyLevel().getModifierBySubLevel(cultivation.getBodySubLevel()) * foundationOverMaxBase * 0.4;
-							TextComponentString text = new TextComponentString(String.format("Body foundation: %.1f %.2fx %.2f",
-									cultivation.getBodyFoundation(), foundationOverMaxBase, foundationInducedModifier));
-							sender.sendMessage(text);
-							foundationOverMaxBase = cultivation.getDivineFoundation()/cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel());
-							foundationInducedModifier = cultivation.getDivineLevel().getModifierBySubLevel(cultivation.getDivineSubLevel()) * foundationOverMaxBase * 0.4;
-							text = new TextComponentString(String.format("Divine foundation: %.1f %.2fx %.2f",
-									cultivation.getDivineFoundation(), foundationOverMaxBase, foundationInducedModifier));
-							sender.sendMessage(text);
-							foundationOverMaxBase = cultivation.getEssenceFoundation()/cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
-							foundationInducedModifier = cultivation.getEssenceLevel().getModifierBySubLevel(cultivation.getEssenceSubLevel()) * foundationOverMaxBase * 0.4;
-							text = new TextComponentString(String.format("Essence foundation: %.1f %.2fx %.2f",
-									cultivation.getEssenceFoundation(), foundationOverMaxBase, foundationInducedModifier));
-							sender.sendMessage(text);
+							ICultTech cultTech = CultivationUtils.getCultTechFromEntity(targetPlayer);
+							if(cultTech.getBodyTechnique() != null) {
+								TextComponentString text = new TextComponentString(String.format("Body proficiency: %.2f", cultTech.getBodyTechnique().getProficiency()));
+								sender.sendMessage(text);
+							}
+							if(cultTech.getDivineTechnique() != null) {
+								TextComponentString text = new TextComponentString(String.format("Divine proficiency: %.2f", cultTech.getDivineTechnique().getProficiency()));
+								sender.sendMessage(text);
+							}
+							if(cultTech.getEssenceTechnique() != null) {
+								TextComponentString text = new TextComponentString(String.format("Essence proficiency: %.2f", cultTech.getEssenceTechnique().getProficiency()));
+								sender.sendMessage(text);
+							}
 							wrongUsage = false;
 						} else {
 							TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
@@ -81,66 +80,86 @@ public class FoundationCommand extends CommandBase {
 				else if (args.length == 4) {
 					EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
 					if (targetPlayer != null) {
-						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
+						ICultTech cultTech = CultivationUtils.getCultTechFromEntity(targetPlayer);
 						try {
 							double amount = Double.parseDouble(args[3]);
 							TextComponentString text;
 							switch(args[2]) {
 								case "body":
 									if (args[0].equalsIgnoreCase("set")) {
-										cultivation.setBodyFoundation(amount);
+										if(cultTech.getBodyTechnique() != null) {
+											cultTech.setBodyTechnique(new KnownTechnique(cultTech.getBodyTechnique().getTechnique(), amount));
+										}
 										wrongUsage = false;
 									} else if (args[0].equalsIgnoreCase("add")) {
-										cultivation.addBodyFoundation(amount);
+										cultTech.progress(amount, Cultivation.System.BODY);
 										wrongUsage = false;
 									}
-									text = new TextComponentString("Your cultivation base has been modified ...");
-									text.getStyle().setColor(TextFormatting.GRAY);
-									targetPlayer.sendMessage(text);
-									NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
+									if(!wrongUsage) {
+										text = new TextComponentString("Your proficiency has been modified ...");
+										text.getStyle().setColor(TextFormatting.GRAY);
+										targetPlayer.sendMessage(text);
+										NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), targetPlayer);
+									}
 									break;
 								case "divine":
 									if (args[0].equalsIgnoreCase("set")) {
-										cultivation.setDivineFoundation(amount);
+										if(cultTech.getDivineTechnique() != null) {
+											cultTech.setDivineTechnique(new KnownTechnique(cultTech.getDivineTechnique().getTechnique(), amount));
+										}
 										wrongUsage = false;
 									} else if (args[0].equalsIgnoreCase("add")) {
-										cultivation.addDivineFoundation(amount);
+										cultTech.progress(amount, Cultivation.System.DIVINE);
 										wrongUsage = false;
 									}
-									text = new TextComponentString("Your cultivation base has been modified ...");
-									text.getStyle().setColor(TextFormatting.GRAY);
-									targetPlayer.sendMessage(text);
-									NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
+									if(!wrongUsage) {
+										text = new TextComponentString("Your proficiency has been modified ...");
+										text.getStyle().setColor(TextFormatting.GRAY);
+										targetPlayer.sendMessage(text);
+										NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), targetPlayer);
+									}
 									break;
 								case "essence":
 									if (args[0].equalsIgnoreCase("set")) {
-										cultivation.setEssenceFoundation(amount);
+										if(cultTech.getEssenceTechnique() != null) {
+											cultTech.setEssenceTechnique(new KnownTechnique(cultTech.getEssenceTechnique().getTechnique(), amount));
+										}
 										wrongUsage = false;
 									} else if (args[0].equalsIgnoreCase("add")) {
-										cultivation.addEssenceFoundation(amount);
+										cultTech.progress(amount, Cultivation.System.ESSENCE);
 										wrongUsage = false;
 									}
-									text = new TextComponentString("Your cultivation base has been modified ...");
-									text.getStyle().setColor(TextFormatting.GRAY);
-									targetPlayer.sendMessage(text);
-									NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
+									if(!wrongUsage) {
+										text = new TextComponentString("Your proficiency has been modified ...");
+										text.getStyle().setColor(TextFormatting.GRAY);
+										targetPlayer.sendMessage(text);
+										NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), targetPlayer);
+									}
 									break;
 								case "three":
 									if (args[0].equalsIgnoreCase("set")) {
-										cultivation.setBodyFoundation(amount);
-										cultivation.setDivineFoundation(amount);
-										cultivation.setEssenceFoundation(amount);
+										if(cultTech.getBodyTechnique() != null) {
+											cultTech.setBodyTechnique(new KnownTechnique(cultTech.getBodyTechnique().getTechnique(), amount));
+										}
+										if(cultTech.getDivineTechnique() != null) {
+											cultTech.setDivineTechnique(new KnownTechnique(cultTech.getDivineTechnique().getTechnique(), amount));
+										}
+										if(cultTech.getEssenceTechnique() != null) {
+											cultTech.setEssenceTechnique(new KnownTechnique(cultTech.getEssenceTechnique().getTechnique(), amount));
+										}
 										wrongUsage = false;
 									} else if (args[0].equalsIgnoreCase("add")) {
-										cultivation.addBodyFoundation(amount);
-										cultivation.addDivineFoundation(amount);
-										cultivation.addEssenceFoundation(amount);
+										cultTech.progress(amount, Cultivation.System.BODY);
+										cultTech.progress(amount, Cultivation.System.DIVINE);
+										cultTech.progress(amount, Cultivation.System.ESSENCE);
 										wrongUsage = false;
 									}
-									text = new TextComponentString("Your cultivation base has been modified ...");
-									text.getStyle().setColor(TextFormatting.GRAY);
-									targetPlayer.sendMessage(text);
-									NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
+									if(!wrongUsage) {
+										text = new TextComponentString("Your proficiency has been modified ...");
+										text.getStyle().setColor(TextFormatting.GRAY);
+										targetPlayer.sendMessage(text);
+										NetworkWrapper.INSTANCE.sendTo(new CultTechMessage(cultTech), targetPlayer);
+									}
 									break;
 							}
 						} catch (NumberFormatException e) {

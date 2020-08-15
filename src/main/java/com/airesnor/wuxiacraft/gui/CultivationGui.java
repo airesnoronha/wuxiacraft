@@ -13,10 +13,8 @@ import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import com.airesnor.wuxiacraft.utils.MathUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -331,18 +329,16 @@ public class CultivationGui extends GuiScreen {
 				drawSkillsBackground();
 				break;
 		}
-		double agilityModifier = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;  // agility to bend the body to spring up
-		agilityModifier = Math.min(cultivation.getMaxSpeed(), agilityModifier);
-		agilityModifier *= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
-		double dexterityModifier = (cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) * 0.025;
-		double strengthModifier = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.14;
-		double spd = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;
+		double agilityModifier = CultivationUtils.getAgilityFromEntity(player);
+		double dexterityModifier = CultivationUtils.getDexterityFromEntity(player);
+		double strengthModifier = CultivationUtils.getStrengthFromEntity(player);
+		double maxSpeed = cultivation.getAgilityModifier() * (1 + cultTech.getOverallModifiers().movementSpeed);
 
 		GL11.glColor4f(1f, 1f, 1f, 1f);
 		int[] iconPos = new int[]{27, 27, 99, 108, 135};
 		int[] fills = new int[]{
 				Math.min(27, (int) ((27f * cultivation.getSpeedHandicap()) / 100f)),
-				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / spd)),
+				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / maxSpeed)),
 				Math.min(27, (int) (27f * (cultivation.getHasteLimit() / (0.1f * (strengthModifier * 0.7 + dexterityModifier * 0.3))))),
 				Math.min(27, (int) (27f * (cultivation.getJumpLimit()) / (0.5f * (agilityModifier + strengthModifier)))),
 				Math.min(27, (int) (27f * (cultivation.getStepAssistLimit()) /  (0.06f * (1 + (float) (agilityModifier + dexterityModifier + strengthModifier)))))
@@ -362,7 +358,7 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	private void drawCultivationBackground() {
-		int bodyProgress = (int) (124.0 * cultivation.getBodyProgress() / cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel()));
+		int bodyProgress = (int) Math.min(124, (124.0 * cultivation.getBodyProgress() / cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel())));
 		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 34, 0, 195, bodyProgress, 16); //dragon
 		if (cultTech.getBodyTechnique() != null) {
 			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 51, 45, 164, 9, 9); //rem button bg
@@ -414,7 +410,7 @@ public class CultivationGui extends GuiScreen {
 			drawTexturedModalRect(-15, -15, 155, 217, 30, 30); // white
 			GlStateManager.popMatrix();
 		}
-		int divineProgress = (int) (124.0 * cultivation.getDivineProgress() / cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()));
+		int divineProgress = (int) Math.min(124, (124.0 * cultivation.getDivineProgress() / cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel())));
 		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 75, 0, 227, divineProgress, 16); //dragon
 		if (cultTech.getDivineTechnique() != null) {
 			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 92, 45, 164, 9, 9); //rem button bg
@@ -466,7 +462,7 @@ public class CultivationGui extends GuiScreen {
 			drawTexturedModalRect(-15, -15, 155, 217, 30, 30); // white
 			GlStateManager.popMatrix();
 		}
-		int essenceProgress = (int) (124.0 * cultivation.getEssenceProgress() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()));
+		int essenceProgress = (int) Math.min(124, (124.0 * cultivation.getEssenceProgress() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel())));
 		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 116, 0, 211, essenceProgress, 16); //dragon
 		if (cultTech.getEssenceTechnique() != null) {
 			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 133, 45, 164, 9, 9); //rem button bg

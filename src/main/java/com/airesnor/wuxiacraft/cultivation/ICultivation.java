@@ -391,6 +391,31 @@ public interface ICultivation {
 	void setStepAssistLimit(float stepAssistLimit);
 
 	/**
+	 * @return an increase to the movement speed
+	 */
+	double getAgilityModifier();
+
+	/**
+	 * @return an increase to max hp
+	 */
+	double getConstitutionModifier();
+
+	/**
+	 * @return an increase to the attack speed
+	 */
+	double getDexterityModifier();
+
+	/**
+	 * @return an increase to armor
+	 */
+	double getResistanceModifier();
+
+	/**
+	 * @return an increase to the attack speed
+	 */
+	double getStrengthModifier();
+
+	/**
 	 * Sets it's own cultivation using another one as parameter
 	 *
 	 * @param cultivation The cultivation to be mirrored

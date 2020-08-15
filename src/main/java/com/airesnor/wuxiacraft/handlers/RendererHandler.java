@@ -247,9 +247,9 @@ public class RendererHandler {
 		//Show dragons now
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(5, height-16, 0);
-		int bodyProgress = (int)(124*cultivation.getBodyProgress()/cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel()));
-		int divineProgress = (int)(124*cultivation.getDivineProgress()/cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()));
-		int essenceProgress = (int)(124*cultivation.getEssenceProgress()/cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()));
+		int bodyProgress = (int)Math.min(124, (124*cultivation.getBodyProgress()/cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel())));
+		int divineProgress = (int)Math.min(124, (124*cultivation.getDivineProgress()/cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel())));
+		int essenceProgress = (int)Math.min(124, (124*cultivation.getEssenceProgress()/cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel())));
 		mc.ingameGUI.drawTexturedModalRect(0,-16, 0,208,bodyProgress,16);
 		mc.ingameGUI.drawTexturedModalRect(0,-8, 0,240,divineProgress, 16);
 		mc.ingameGUI.drawTexturedModalRect(0,0, 0,224,essenceProgress,16);
@@ -375,7 +375,7 @@ public class RendererHandler {
 		drawTexturedRect(i, j, 81, 9, 0, 0, 1f, 0.5f);
 		float max_hp = mc.player.getMaxHealth();
 		float hp = mc.player.getHealth();
-		int fill = (int) Math.ceil((hp / max_hp) * 81);
+		int fill = (int) Math.min(Math.ceil((hp / max_hp) * 81), 81);
 		drawTexturedRect(i, j, fill, 9, 0f, 0.5f, (hp / max_hp), 1f);
 		String life = getShortHealthAmount((int) hp) + "/" + getShortHealthAmount((int) max_hp);
 		int width = mc.fontRenderer.getStringWidth(life);

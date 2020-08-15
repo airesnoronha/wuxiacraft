@@ -1,11 +1,11 @@
 package com.airesnor.wuxiacraft.cultivation.skills;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.threads.ThreadWoodenPrison;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
+import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import com.airesnor.wuxiacraft.entities.skills.*;
 import com.airesnor.wuxiacraft.handlers.RendererHandler;
 import com.airesnor.wuxiacraft.networking.ActivatePartialSkillMessage;
@@ -401,9 +401,15 @@ public class Skills {
 		Entity result = SkillUtils.rayTraceEntities(actor, 10f, 1f);
 		if (result instanceof EntityLiving) {
 			EntityLiving entity = (EntityLiving) result;
+			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
 			float strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
+			if(cultTech.getDivineTechnique() != null) {
+				if(cultTech.getDivineTechnique().getTechnique().equals(Techniques.RAGEFUL_ABNEGATION_SAINT_ARTS)) {
+					entity.attackEntityFrom(DamageSource.causeMobDamage(actor), strength);
+					return true;
+				}
+			}
 			entity.heal(Math.max(18f, strength * 0.05f));
-			WuxiaCraft.logger.info("Healing a " + entity + "by " + ((int) Math.max(10f, strength * 0.05f)));
 			activated = true;
 		}
 		return activated;

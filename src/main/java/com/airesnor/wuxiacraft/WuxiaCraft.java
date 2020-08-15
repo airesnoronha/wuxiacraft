@@ -65,6 +65,7 @@ public class WuxiaCraft {
 		event.registerServerCommand(new FoodCommand());
 		event.registerServerCommand(new SectCommand());
 		event.registerServerCommand(new WorldVarCommand());
+		event.registerServerCommand(new ProficiencyCommand());
 	}
 
 	public void registerGameRules(FMLServerStartingEvent event) {

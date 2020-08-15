@@ -13,7 +13,6 @@ import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
-import com.airesnor.wuxiacraft.cultivation.techniques.TechniquesModifiers;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
 import com.airesnor.wuxiacraft.items.ItemDagger;
@@ -153,11 +152,9 @@ public class EventHandler {
 				}
 				player.stepHeight = 0.6f;
 				if (!player.isSneaking() && WuxiaCraftConfig.disableStepAssist) {
-					double agilityModifier = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;  // agility to bend the body to spring up
-					agilityModifier = Math.min(cultivation.getMaxSpeed(), agilityModifier);
-					agilityModifier *= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
-					double dexterityModifier = (cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) * 0.025;
-					double strengthModifier = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.14;
+					double agilityModifier = CultivationUtils.getAgilityFromEntity(player);
+					double dexterityModifier = CultivationUtils.getDexterityFromEntity(player);
+					double strengthModifier = CultivationUtils.getStrengthFromEntity(player);
 					player.stepHeight = Math.min(cultivation.getStepAssistLimit(), 0.06f * (1 + (float) (agilityModifier + dexterityModifier + strengthModifier)));
 				}
 				player.sendPlayerAbilities();
@@ -239,7 +236,7 @@ public class EventHandler {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-			float dexterityModifier = (float)((cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) * 0.025);
+			float dexterityModifier = (float)CultivationUtils.getDexterityFromEntity(player);
 			if (player.world.isRemote) {
 				long timeDiff = System.currentTimeMillis() - LastPlayerTickTime;
 				if (timeDiff >= 50) { //20 per seconds
@@ -300,20 +297,9 @@ public class EventHandler {
 
 		IAttributeInstance iattributeinstance = entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
 
-		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(entity);
-		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(entity);
+		double spd = CultivationUtils.getAgilityFromEntity(entity) * entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
 
-		TechniquesModifiers tm = cultTech.getOverallModifiers();
-		double spd = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;
-		spd *= (1 + tm.movementSpeed);
-		double level_spd_mod = spd * entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
-		if (cultivation.getMaxSpeed() >= 0) {
-			double max_speed = cultivation.getMaxSpeed() * entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
-			level_spd_mod = Math.min(max_speed, level_spd_mod);
-		}
-		level_spd_mod *= (cultivation.getSpeedHandicap() / 100f);
-
-		f = (float) ((double) f * (((iattributeinstance.getAttributeValue() - level_spd_mod) / (double) entity.capabilities.getWalkSpeed() + 1.0D) / 2.0D));
+		f = (float) ((double) f * (((iattributeinstance.getAttributeValue() - spd) / (double) entity.capabilities.getWalkSpeed() + 1.0D) / 2.0D));
 
 
 		if (entity.capabilities.getWalkSpeed() == 0.0F || Float.isNaN(f) || Float.isInfinite(f)) {
@@ -410,11 +396,9 @@ public class EventHandler {
 			EntityLivingBase player = event.getEntityLiving();
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.getEntityLiving());
 			double baseJumpSpeed = event.getEntity().motionY;
-			double agilityModifier = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;  // agility to bend the body to spring up
-			agilityModifier = Math.min(cultivation.getMaxSpeed(), agilityModifier);
-			agilityModifier *= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
-			double strengthModifier = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.14;
-			double jumpSpeed = 0.5f * (agilityModifier + strengthModifier);
+			double agilityModifier = CultivationUtils.getAgilityFromEntity(player);
+			double strengthModifier = CultivationUtils.getStrengthFromEntity(player);
+			double jumpSpeed = 0.08f * (agilityModifier + strengthModifier);
 			if (cultivation.getJumpLimit() >= 0) {
 				jumpSpeed = Math.min(jumpSpeed, cultivation.getJumpLimit());
 			}
@@ -436,11 +420,9 @@ public class EventHandler {
 		if ((cultivation.getBodyModifier() + cultivation.getEssenceModifier() * 0.8 + cultivation.getDivineModifier() * 0.2) > 100000) {
 			event.setDistance(0);
 		} else {
-			double agilityModifier = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;  // agility to bend the body to spring up
-			agilityModifier = Math.min(cultivation.getMaxSpeed(), agilityModifier);
-			agilityModifier *= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
-			double strengthModifier = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.14;
-			double constitutionModifier = (cultivation.getBodyModifier() - 1) + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.16; // natural body resistance
+			double agilityModifier = CultivationUtils.getAgilityFromEntity(player);
+			double constitutionModifier = CultivationUtils.getConstitutionFromEntity(player);
+			double strengthModifier = CultivationUtils.getStrengthFromEntity(player);
 			event.setDistance(event.getDistance() - 1.85f * (float) (agilityModifier + strengthModifier + constitutionModifier));
 		}
 	}
@@ -509,8 +491,8 @@ public class EventHandler {
 	public void onPlayerBreakSpeed(net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed event) {
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(event.getEntityPlayer());
 		float baseSpeed = event.getOriginalSpeed();
-		double strengthModifier = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.14;
-		double dexterityModifier = (cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) + 0.025;
+		double dexterityModifier = CultivationUtils.getDexterityFromEntity(event.getEntityLiving());
+		double strengthModifier = CultivationUtils.getStrengthFromEntity(event.getEntityLiving());
 		float hasteModifier = (float) (0.1f * baseSpeed * (strengthModifier * 0.7 + dexterityModifier * 0.3));
 		if (cultivation.getHasteLimit() >= 0) {
 			hasteModifier = Math.min(hasteModifier, cultivation.getHasteLimit() * baseSpeed);
@@ -812,7 +794,6 @@ public class EventHandler {
 	 */
 	public static void applyModifiers(EntityPlayer player) {
 
-		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 
 		//Adds the potions effects from cult tech
@@ -820,33 +801,20 @@ public class EventHandler {
 			player.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration() + 19, effect.getAmplifier(), effect.getIsAmbient(), effect.doesShowParticles()));
 		}
 
-		TechniquesModifiers tm = cultTech.getOverallModifiers();
-
-		double str = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.14;
-		str *= (1 + tm.strength);
-		double spd = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;
-		spd *= (1 + tm.movementSpeed);
-		double hp = (cultivation.getBodyModifier() - 1) + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.16;
-		hp *= (1 + tm.maxHealth);
-		double armor = (cultivation.getBodyModifier() - 1) * 0.7 + (cultivation.getEssenceModifier() - 1) * 0.7 + (cultivation.getDivineModifier() - 1) * 0.12;
-		armor *= (1 + tm.armor);
-		double atk_sp = (cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) * 0.025;
-		atk_sp *= (1 + tm.attackSpeed);
-
-		double level_spd_mod = spd * player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
-		if (cultivation.getMaxSpeed() >= 0) {
-			double max_speed = cultivation.getMaxSpeed() * player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
-			level_spd_mod = Math.min(max_speed, level_spd_mod);
-		}
-		level_spd_mod *= (cultivation.getSpeedHandicap() / 100f);
+		double str = CultivationUtils.getStrengthFromEntity(player);
+		double spd = CultivationUtils.getAgilityFromEntity(player) * player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
+		double hp = CultivationUtils.getConstitutionFromEntity(player);
+		double armor = CultivationUtils.getResistanceFromEntity(player);
+		double atk_sp = CultivationUtils.getDexterityFromEntity(player);
 
 		AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, str, 0);
 		AttributeModifier health_mod = new AttributeModifier(health_mod_name, hp, 0);
 		//since armor base is 0, it'll add 2*strength as armor
 		//I'll use for now strength for increase every other stat, since it's almost the same after all
 		AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, armor, 0);
-		AttributeModifier speed_mod = new AttributeModifier(speed_mod_name, level_spd_mod, 0);
+		AttributeModifier speed_mod = new AttributeModifier(speed_mod_name, spd, 0);
 		AttributeModifier attack_speed_mod = new AttributeModifier(attack_speed_mod_name, atk_sp, 0);
+		AttributeModifier swim_speed_mod = new AttributeModifier(swim_mod_name, spd * (cultTech.hasElement(Element.WATER) ? 1 : 0.05), 0);
 
 		//remove any previous strength modifiers
 		for (AttributeModifier mod : player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getModifiers()) {
@@ -883,16 +851,11 @@ public class EventHandler {
 			}
 		}
 
-		if (cultTech.hasElement(Element.WATER)) {
-			AttributeModifier swim_speed_mod = new AttributeModifier(swim_mod_name, level_spd_mod, 0);
-
-			//remove any previous swim speed modifiers
-			for (AttributeModifier mod : player.getEntityAttribute(EntityPlayer.SWIM_SPEED).getModifiers()) {
-				if (mod.getName().equals(swim_mod_name)) {
-					player.getEntityAttribute(EntityPlayer.SWIM_SPEED).removeModifier(mod);
-				}
+		//remove any previous swim speed modifiers
+		for (AttributeModifier mod : player.getEntityAttribute(EntityPlayer.SWIM_SPEED).getModifiers()) {
+			if (mod.getName().equals(swim_mod_name)) {
+				player.getEntityAttribute(EntityPlayer.SWIM_SPEED).removeModifier(mod);
 			}
-			player.getEntityAttribute(EntityPlayer.SWIM_SPEED).applyModifier(swim_speed_mod);
 		}
 
 		//apply current modifiers
@@ -901,8 +864,22 @@ public class EventHandler {
 		player.getEntityAttribute(SharedMonsterAttributes.ARMOR).applyModifier(armor_mod);
 		player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).applyModifier(attack_speed_mod);
 		player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(health_mod);
+		player.getEntityAttribute(EntityPlayer.SWIM_SPEED).applyModifier(swim_speed_mod);
 
 		//WuxiaCraft.logger.info(String.format("Applying %s modifiers from %s.", player.getDisplayNameString(), cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel())));
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void onDefendingAgainstTheRageSaint(LivingAttackEvent event) {
+		if(event.getSource().getTrueSource() instanceof EntityPlayer) {
+			ICultTech cultTech = CultivationUtils.getCultTechFromEntity((EntityLivingBase) event.getSource().getTrueSource());
+			if(cultTech.getDivineTechnique() != null) {
+				if(cultTech.getDivineTechnique().getTechnique().equals(Techniques.RAGEFUL_ABNEGATION_SAINT_ARTS)) {
+					event.getEntityLiving().heal(event.getAmount()*0.1f);
+					event.setCanceled(true);
+				}
+			}
+		}
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOW)

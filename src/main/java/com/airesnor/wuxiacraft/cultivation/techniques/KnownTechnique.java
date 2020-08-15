@@ -56,7 +56,7 @@ public class KnownTechnique {
 		return effects;
 	}
 
-	public TechniquesModifiers getModifiers() {
+	public TechniqueModifiers getModifiers() {
 		double unlocked = 0; //from 0 to 1
 		double highestComparedCheckpointProficiency = 0; //in case checkpoints aren't in order
 		for(Triple<Double, Float, String> checkpoint : technique.getCheckpoints()) {

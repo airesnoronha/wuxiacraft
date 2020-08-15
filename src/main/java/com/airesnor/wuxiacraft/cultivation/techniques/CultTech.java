@@ -118,8 +118,8 @@ public class CultTech implements ICultTech {
 	}
 
 	@Override
-	public TechniquesModifiers getOverallModifiers() {
-		TechniquesModifiers tm = new TechniquesModifiers(0, 0, 0, 0, 0, 0);
+	public TechniqueModifiers getOverallModifiers() {
+		TechniqueModifiers tm = new TechniqueModifiers(0, 0, 0, 0, 0, 0);
 		if (this.bodyTechnique != null)
 			tm = tm.add(bodyTechnique.getModifiers());
 		if (this.essenceTechnique != null)

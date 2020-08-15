@@ -16,7 +16,7 @@ public class Technique {
 
 	private final Cultivation.System system;
 	private final String uName;
-	private final TechniquesModifiers baseModifiers;
+	private final TechniqueModifiers baseModifiers;
 	private final List<Element> elements;
 	private final double cultivationSpeed;
 	private final double maxProficiency;
@@ -41,11 +41,11 @@ public class Technique {
 		return this.uName;
 	}
 
-	public TechniquesModifiers getBaseModifiers() {
+	public TechniqueModifiers getBaseModifiers() {
 		return baseModifiers;
 	}
 
-	public Technique(String uName, Cultivation.System system, TechniquesModifiers baseModifiers, double cultSpeed, double maxProficiency, double efficientTillModifier) {
+	public Technique(String uName, Cultivation.System system, TechniqueModifiers baseModifiers, double cultSpeed, double maxProficiency, double efficientTillModifier) {
 		this.system = system;
 		this.uName = uName;
 		this.baseModifiers = baseModifiers;

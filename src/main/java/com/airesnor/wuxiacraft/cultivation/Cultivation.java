@@ -631,6 +631,31 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
+	public double getAgilityModifier() {
+		return ((this.getBodyModifier() - 1) * 0.2 + (this.getEssenceModifier() - 1) * 0.4 + (this.getDivineModifier() - 1) * 0.1) * 0.05;
+	}
+
+	@Override
+	public double getConstitutionModifier() {
+		return ((this.getBodyModifier() - 1) + (this.getEssenceModifier() - 1) * 0.4 + (this.getDivineModifier() - 1) * 0.1) * 0.6;
+	}
+
+	@Override
+	public double getDexterityModifier() {
+		return ((this.getBodyModifier() - 1) * 0.4 + (this.getEssenceModifier() - 1) * 0.8 + (this.getDivineModifier() - 1) * 0.1) * 0.0025;
+	}
+
+	@Override
+	public double getResistanceModifier() {
+		return ((this.getBodyModifier() - 1) * 0.7 + (this.getEssenceModifier() - 1) * 0.7 + (this.getDivineModifier() - 1)*0.1)* 0.012;
+	}
+
+	@Override
+	public double getStrengthModifier() {
+		return ((this.getBodyModifier() - 1) * 0.8 + (this.getEssenceModifier() - 1) * 0.6 + (this.getDivineModifier() - 1) * 0.14) * 0.1;
+	}
+
+	@Override
 	public void copyFrom(ICultivation cultivation) {
 		this.bodyLevel = cultivation.getBodyLevel();
 		this.divineLevel = cultivation.getDivineLevel();

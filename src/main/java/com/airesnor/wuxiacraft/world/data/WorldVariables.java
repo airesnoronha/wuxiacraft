@@ -17,16 +17,16 @@ public class WorldVariables extends WorldSavedData {
 
 	public WorldVariables(int dimId) {
 		super(DATA_NAME);
-		tribulationMultiplier = 10;
+		tribulationMultiplier = 5;
 		if(dimId == 0) {
-			tribulationMultiplier = 7;
+			tribulationMultiplier = 3;
 		}
 		else if(dimId == WuxiaDimensions.EARTH.getId() ||
 			dimId == WuxiaDimensions.FIRE.getId() ||
 			dimId == WuxiaDimensions.METAL.getId() ||
 			dimId == WuxiaDimensions.WATER.getId() ||
 			dimId == WuxiaDimensions.WOOD.getId()) {
-			tribulationMultiplier = 5;
+			tribulationMultiplier = 2;
 		}
 	}
 
