@@ -216,7 +216,7 @@ public class RendererHandler {
 
 		mc.renderEngine.bindTexture(hud_bars);
 
-		double energy_fill = cultivation.getEnergy() / cultivation.getMaxEnergy();
+		double energy_fill = cultivation.getEnergy() / CultivationUtils.getMaxEnergy(player);
 
 		int middleX = (width) / 2;
 
