@@ -292,6 +292,8 @@ wuxiacraft.techniques.nine_springs_soul=Nine Springs Soul
 item.nine_springs_soul.scroll.name=Nine Springs Soul Arts
 wuxiacraft.techniques.buddha_s_heavenly_way=Buddha's Heavenly Way
 item.buddha_s_heavenly_way.scroll.name=Buddha's Heavenly Way
+wuxiacraft.techniques.rageful_abnegation_saint_arts=Rageful Abnegation Saint Arts
+item.rageful_abnegation_saint_arts.scroll.name=Rageful Abnegation Saint Arts
 
 #Elements
 wuxiacraft.elements.fire=Fire
