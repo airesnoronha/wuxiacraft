@@ -5,6 +5,7 @@ import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import net.minecraft.potion.PotionEffect;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +35,11 @@ public class KnownTechnique {
 	public String getCurrentCheckpoint() {
 		String current = "No success";
 		double highestComparedCheckpointProficiency = 0; //in case checkpoints aren't in order
-		for(Pair<Double, String> checkpoint : technique.getCheckpoints()) {
-			if (checkpoint.getKey() > highestComparedCheckpointProficiency) {
-				if(this.proficiency > checkpoint.getKey()) {
-					highestComparedCheckpointProficiency = checkpoint.getKey();
-					current = checkpoint.getValue();
+		for(Triple<Double, Float, String> checkpoint : technique.getCheckpoints()) {
+			if (checkpoint.getLeft() > highestComparedCheckpointProficiency) {
+				if(this.proficiency > checkpoint.getLeft()) {
+					highestComparedCheckpointProficiency = checkpoint.getLeft();
+					current = checkpoint.getRight();
 				}
 			}
 		}
@@ -58,11 +59,11 @@ public class KnownTechnique {
 	public TechniquesModifiers getModifiers() {
 		double unlocked = 0; //from 0 to 1
 		double highestComparedCheckpointProficiency = 0; //in case checkpoints aren't in order
-		for(Pair<Double, String> checkpoint : technique.getCheckpoints()) {
-			if(checkpoint.getKey() > highestComparedCheckpointProficiency) {
-				if(this.proficiency > checkpoint.getKey()) {
-					highestComparedCheckpointProficiency = checkpoint.getKey();
-					unlocked = this.proficiency / this.getTechnique().getMaxProficiency();
+		for(Triple<Double, Float, String> checkpoint : technique.getCheckpoints()) {
+			if(checkpoint.getLeft() > highestComparedCheckpointProficiency) {
+				if(this.proficiency > checkpoint.getLeft()) {
+					highestComparedCheckpointProficiency = checkpoint.getLeft();
+					unlocked = checkpoint.getMiddle() * (1+0.3* + this.proficiency / checkpoint.getLeft());
 				}
 			}
 		}

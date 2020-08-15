@@ -17,6 +17,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -871,11 +872,11 @@ public class CultivationGui extends GuiScreen {
 				if (inBounds(mouseX, mouseY, this.guiLeft + 19, this.guiTop + 35 + pos * 19 + 11, 139, 3)) {
 					String line = "No success";
 					double highestFoundBeneath = 0; // in case checkpoints aren't in order
-					for (Pair<Double, String> checkpoints : t.getTechnique().getCheckpoints()) {
-						if (checkpoints.getKey() > highestFoundBeneath) {
-							if (t.getProficiency() > checkpoints.getKey()) {
-								highestFoundBeneath = checkpoints.getKey();
-								line = checkpoints.getValue();
+					for (Triple<Double, Float, String> checkpoints : t.getTechnique().getCheckpoints()) {
+						if (checkpoints.getLeft() > highestFoundBeneath) {
+							if (t.getProficiency() > checkpoints.getLeft()) {
+								highestFoundBeneath = checkpoints.getLeft();
+								line = checkpoints.getRight();
 							}
 						}
 					}

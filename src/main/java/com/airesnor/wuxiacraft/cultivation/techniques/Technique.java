@@ -7,6 +7,7 @@ import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.utils.TranslateUtils;
 import net.minecraft.potion.PotionEffect;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class Technique {
 
 	private final List<Pair<Double, PotionEffect>> effects;
 	private final List<Pair<Double, Skill>> skills;
-	private final List<Pair<Double, String>> checkpoints;
+	private final List<Triple<Double, Float, String>> checkpoints;
 	private final List<Technique> compatibles;
 
 	public Cultivation.System getSystem() {
@@ -74,8 +75,8 @@ public class Technique {
 		return this;
 	}
 
-	Technique addCheckpoint(double proficiency, String checkpoint) {
-		this.checkpoints.add(Pair.of(proficiency, checkpoint));
+	Technique addCheckpoint(double proficiency, float releaseRate, String checkpoint) {
+		this.checkpoints.add(Triple.of(proficiency, releaseRate, checkpoint));
 		return this;
 	}
 
@@ -117,7 +118,7 @@ public class Technique {
 		return skills;
 	}
 
-	public List<Pair<Double, String>> getCheckpoints() {
+	public List<Triple<Double, Float, String>> getCheckpoints() {
 		return checkpoints;
 	}
 }
