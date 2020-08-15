@@ -283,7 +283,8 @@ public class Techniques {
 			.addCheckpoint(1500000, 0.8f, "Great Success")
 			.addCheckpoint(23000000, 1.0f, "Perfected")
 			.addElement(Element.LIGHTNING)
-			.addSkill(3000, Skills.WEAK_LIGHTNING_BOLT);
+			.addSkill(3000, Skills.WEAK_LIGHTNING_BOLT)
+			.addCompatible(Techniques.WIND_STORM_ART);
 
 	//From Febian
 	public static final Technique FOREST_HEART_MANUAL = new Technique("forest_heart_manual", Cultivation.System.ESSENCE,
@@ -297,7 +298,8 @@ public class Techniques {
 			.addElement(Element.WOOD)
 			.addSkill(3200, Skills.GATHER_WOOD)
 			.addSkill(12000, Skills.ACCELERATE_GROWTH)
-			.addSkill(15000, Skills.WOODEN_PRISON);
+			.addSkill(15000, Skills.WOODEN_PRISON)
+			.addCompatible(Techniques.BLOOMING_FOREST_ART);
 
 	// TODO -- multiple jumps --  i guess this is hard
 	//From Febian
@@ -339,7 +341,8 @@ public class Techniques {
 			.addCheckpoint(23000000, 1.0f, "Perfected")
 			.addElement(Element.EARTH)
 			.addSkill(1000, Skills.EARTH_SUCTION)
-			.addSkill(3000, Skills.EARTHLY_WALL);
+			.addSkill(3000, Skills.EARTHLY_WALL)
+			.addCompatible(Techniques.EARTH_ASSIMILATING_QI);
 
 	//From Asura
 	public static final Technique WIND_STORM_ART = new Technique("wind_storm_art", Cultivation.System.ESSENCE,
@@ -484,7 +487,8 @@ public class Techniques {
 			.addCheckpoint(23000000, 1.0f, "Perfected")
 			.addElement(Element.FIRE)
 			.addSkill(2000, Skills.FLAMES)
-			.addSkill(10000, Skills.FIRE_BAll);
+			.addSkill(10000, Skills.FIRE_BAll)
+			.addCompatible(Techniques.BURNING_FLAME_SOUL);
 
 	//From Anime4You -- former Wuxia4You (liked this one better)
 	//rank immortal 3
@@ -551,7 +555,7 @@ public class Techniques {
 
 	//From Asura
 	public static final Technique SUN_SOUL_ART = new Technique("sun_soul_art", Cultivation.System.DIVINE,
-			new TechniquesModifiers(2, 1, 3, 1, 3, 2), 2.8, 2300000, 800)
+			new TechniquesModifiers(3, 1, 3, 1, 7, 8), 2.8, 2300000, 800)
 			.addCheckpoint(1000, 0.10f, "Minor Success")
 			.addCheckpoint(10000, 0.30f, "Small Success")
 			.addCheckpoint(90000, 0.45f, "Middle Success")
@@ -592,7 +596,7 @@ public class Techniques {
 	//If player kills, he loses something
 	//rank divine 1 -- yeah this one deserves
 	public static final Technique BUDDHA_S_HEAVENLY_WAY = new Technique("buddha_s_heavenly_way", Cultivation.System.DIVINE,
-			new TechniquesModifiers(2, 1, 3, 1, 3, 16), 18.2, 1800000000000.0, 6991714.27)
+			new TechniquesModifiers(8, 1, 7, 1, 4, 16), 18.2, 1800000000000.0, 6991714.27)
 			.addCheckpoint(1350, 0.08f, "Tiny Buddha")
 			.addCheckpoint(9121, 0.16f, "Connate Buddha")
 			.addCheckpoint(61601, 0.24f, "Peaceful Mind")
