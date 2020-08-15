@@ -155,7 +155,7 @@ public class EventHandler {
 					double agilityModifier = CultivationUtils.getAgilityFromEntity(player);
 					double dexterityModifier = CultivationUtils.getDexterityFromEntity(player);
 					double strengthModifier = CultivationUtils.getStrengthFromEntity(player);
-					player.stepHeight = Math.min(cultivation.getStepAssistLimit(), 0.06f * (1 + (float) (agilityModifier + dexterityModifier + strengthModifier)));
+					player.stepHeight = Math.min(cultivation.getStepAssistLimit(), 0.6f * (1 + 0.1f * (float) (agilityModifier + dexterityModifier + strengthModifier)));
 				}
 				player.sendPlayerAbilities();
 			}
@@ -236,7 +236,7 @@ public class EventHandler {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-			float dexterityModifier = (float)CultivationUtils.getDexterityFromEntity(player);
+			float dexterityModifier = (float) CultivationUtils.getDexterityFromEntity(player);
 			if (player.world.isRemote) {
 				long timeDiff = System.currentTimeMillis() - LastPlayerTickTime;
 				if (timeDiff >= 50) { //20 per seconds
@@ -871,11 +871,11 @@ public class EventHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onDefendingAgainstTheRageSaint(LivingAttackEvent event) {
-		if(event.getSource().getTrueSource() instanceof EntityPlayer) {
+		if (event.getSource().getTrueSource() instanceof EntityPlayer) {
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity((EntityLivingBase) event.getSource().getTrueSource());
-			if(cultTech.getDivineTechnique() != null) {
-				if(cultTech.getDivineTechnique().getTechnique().equals(Techniques.RAGEFUL_ABNEGATION_SAINT_ARTS)) {
-					event.getEntityLiving().heal(event.getAmount()*0.1f);
+			if (cultTech.getDivineTechnique() != null) {
+				if (cultTech.getDivineTechnique().getTechnique().equals(Techniques.RAGEFUL_ABNEGATION_SAINT_ARTS)) {
+					event.getEntityLiving().heal(event.getAmount() * 0.1f);
 					event.setCanceled(true);
 				}
 			}
