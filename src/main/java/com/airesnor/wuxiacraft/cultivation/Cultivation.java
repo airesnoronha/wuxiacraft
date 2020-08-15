@@ -27,6 +27,7 @@ public class Cultivation implements ICultivation {
 	private float maxSpeed;
 	private float hasteLimit;
 	private float jumpLimit;
+	private float stepAssistLimit;
 	private boolean suppress;
 
 	public enum System {
@@ -71,6 +72,7 @@ public class Cultivation implements ICultivation {
 		this.maxSpeed = 5.0f;
 		this.hasteLimit = 10.0f;
 		this.jumpLimit = 10.0f;
+		this.stepAssistLimit = 3.0f;
 		this.suppress = false;
 		this.selectedSystem = System.ESSENCE;
 	}
@@ -616,6 +618,16 @@ public class Cultivation implements ICultivation {
 	@Override
 	public void setSelectedSystem(System selectedSystem) {
 		this.selectedSystem = selectedSystem;
+	}
+
+	@Override
+	public float getStepAssistLimit() {
+		return stepAssistLimit;
+	}
+
+	@Override
+	public void setStepAssistLimit(float stepAssistLimit) {
+		this.stepAssistLimit = stepAssistLimit;
 	}
 
 	@Override

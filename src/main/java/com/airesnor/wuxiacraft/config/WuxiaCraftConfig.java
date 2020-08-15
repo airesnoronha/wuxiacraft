@@ -29,6 +29,7 @@ public class WuxiaCraftConfig {
 	public static float maxSpeed;
 	public static float blockBreakLimit;
 	public static float jumpLimit;
+	public static float stepAssistLimit;
 
 	public static final String CATEGORY_MISCELLANEOUS = "miscellaneous";
 	public static boolean EXTREME_QI_BIOME_SPAWN;
@@ -103,6 +104,11 @@ public class WuxiaCraftConfig {
 		propJumpLimit.setComment("Set a multiplier to base jump height that will be the it's limit gained from cultivation level");
 		propJumpLimit.setDefaultValue(5.0f);
 
+		Property propStepAssistLimit = config.get(CATEGORY_GAMEPLAY, "step_assist_limit", 3f);
+		propJumpLimit.setLanguageKey("gui.config.gameplay.step_assist_limit.name");
+		propJumpLimit.setComment("Set many blocks step assist permitted");
+		propJumpLimit.setDefaultValue(3.0f);
+
 		//Dimensions
 		Property propDimensionMining = config.get(CATEGORY_DIMENSION, "dimension_mining", 200);
 		propDimensionMining.setComment("Set the ID for the Mining Dimension");
@@ -139,6 +145,7 @@ public class WuxiaCraftConfig {
 		propOrder.add(propStepAssist.getName());
 		propOrder.add(propBreakSpeed.getName());
 		propOrder.add(propJumpLimit.getName());
+		propOrder.add(propStepAssistLimit.getName());
 		config.setCategoryPropertyOrder(CATEGORY_GAMEPLAY, propOrder);
 
 		propOrder.add(propDimensionMining.getName());
@@ -158,6 +165,7 @@ public class WuxiaCraftConfig {
 			disableStepAssist = propStepAssist.getBoolean();
 			blockBreakLimit = (float) propBreakSpeed.getDouble();
 			jumpLimit = (float) propJumpLimit.getDouble();
+			stepAssistLimit = (float) propStepAssistLimit.getDouble();
 			DIMENSION_MINING = propDimensionMining.getInt();
 			DIMENSION_FIRE = propDimensionFire.getInt();
 			DIMENSION_EARTH = propDimensionEarth.getInt();
@@ -172,6 +180,7 @@ public class WuxiaCraftConfig {
 		propStepAssist.set(disableStepAssist);
 		propBreakSpeed.set(blockBreakLimit);
 		propJumpLimit.set(jumpLimit);
+		propStepAssistLimit.set(stepAssistLimit);
 		propDimensionMining.set(DIMENSION_MINING);
 		propDimensionFire.set(DIMENSION_FIRE);
 		propDimensionEarth.set(DIMENSION_EARTH);
@@ -192,7 +201,7 @@ public class WuxiaCraftConfig {
 				syncFromGui();
 				WuxiaCraft.logger.info("Sending a config update to server");
 				syncCultivationFromConfigToClient();
-				NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(speedHandicap, maxSpeed, blockBreakLimit, jumpLimit, Minecraft.getMinecraft().player.getUniqueID()));
+				NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(speedHandicap, maxSpeed, blockBreakLimit, jumpLimit, stepAssistLimit, Minecraft.getMinecraft().player.getUniqueID()));
 			}
 		}
 	}
@@ -205,6 +214,7 @@ public class WuxiaCraftConfig {
 			cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
 			cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
 			cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);
+			cultivation.setStepAssistLimit(WuxiaCraftConfig.stepAssistLimit);
 		});
 	}
 }

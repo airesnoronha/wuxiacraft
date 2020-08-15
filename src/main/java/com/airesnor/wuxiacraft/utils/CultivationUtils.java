@@ -209,20 +209,22 @@ public class CultivationUtils {
 
 				double resistance = 1;
 				if (this.system != null) {
-					resistance = cultivation.getSystemModifier(this.system); //new foundation system is already a way to resist tribulation
+					resistance = cultivation.getSystemModifier(this.system) + cultivation.getEssenceModifier() *0.05 + cultivation.getBodyModifier() * 0.05 + cultivation.getDivineModifier()*0.05; //new foundation system is already a way to resist tribulation
 				}
 				double multiplier = world.getGameRules().hasRule("tribulationMultiplier") ? world.getGameRules().getInt("tribulationMultiplier") : 1;
 				double worldMultiplier = WorldVariables.get(world).getTribulationMultiplier();
 				double strength = this.tribulationStrength * multiplier * worldMultiplier;
 				final int bolts = MathUtils.clamp(1 + (int) (Math.round(resistance * 3 / strength)), 1, 12);
 				float damage = (float) Math.max(2, strength - resistance);
+				boolean isRaining = world.isRaining();
+				world.addScheduledTask(() -> world.getWorldInfo().setRaining(true));
 				for (int i = 0; i < bolts; i++) {
 					boolean survived = player.isEntityAlive();
 					if (!survived) return;
 					world.addScheduledTask(() -> {
 						EntityLightningBolt lightningBolt = new EntityLightningBolt(world, player.posX, player.posY + 1.0, player.posZ, true); // effect only won't cause damage
 						world.addWeatherEffect(lightningBolt);
-						player.attackEntityFrom(DamageSource.LIGHTNING_BOLT.setDamageIsAbsolute().setDamageBypassesArmor(), damage / bolts);
+						player.attackEntityFrom(DamageSource.LIGHTNING_BOLT.setDamageIsAbsolute().setDamageBypassesArmor(), (float)Math.max(damage, strength*0.1) );
 					});
 					try {
 						sleep(750);
@@ -230,6 +232,7 @@ public class CultivationUtils {
 						e.printStackTrace();
 					}
 				}
+				world.addScheduledTask(() -> world.getWorldInfo().setRaining(isRaining));
 				int msgN = player.world.rand.nextInt(CONGRATS_MESSAGE_COUNT);
 				world.addScheduledTask(() -> {
 					boolean survived = player.isEntityAlive();
@@ -257,9 +260,9 @@ public class CultivationUtils {
 								cultivation.setDivineLevel(this.targetLevel);
 								cultivation.setDivineSubLevel(this.targetSubLevel);
 								cultivation.addDivineFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
-								modifierDifference = oldModifier * 1.3 - cultivation.getEssenceModifier();
+								modifierDifference = oldModifier * 1.3 - cultivation.getDivineModifier();
 								if (modifierDifference > 0) {
-									cultivation.setDivineFoundation(cultivation.getDivineFoundation() + cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()) * modifierDifference /
+									cultivation.addDivineFoundation(cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()) * modifierDifference /
 											(0.4 * cultivation.getDivineLevel().getModifierBySubLevel(cultivation.getDivineSubLevel())));
 								}
 								break;
@@ -270,9 +273,9 @@ public class CultivationUtils {
 								cultivation.setEssenceLevel(this.targetLevel);
 								cultivation.setEssenceSubLevel(this.targetSubLevel);
 								cultivation.addEssenceFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
-								modifierDifference = oldModifier * 1.3 - cultivation.getBodyModifier();
+								modifierDifference = oldModifier * 1.3 - cultivation.getEssenceModifier();
 								if (modifierDifference > 0) {
-									cultivation.setEssenceFoundation(cultivation.getEssenceFoundation() + cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) * modifierDifference /
+									cultivation.addEssenceFoundation(cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) * modifierDifference /
 											(0.4 * cultivation.getEssenceLevel().getModifierBySubLevel(cultivation.getEssenceSubLevel())));
 								}
 								break;

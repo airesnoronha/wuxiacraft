@@ -156,9 +156,9 @@ public class EventHandler {
 					double agilityModifier = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;  // agility to bend the body to spring up
 					agilityModifier = Math.min(cultivation.getMaxSpeed(), agilityModifier);
 					agilityModifier *= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
-					double dexterityModifier = (cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) + 0.025;
+					double dexterityModifier = (cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) * 0.025;
 					double strengthModifier = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.14;
-					player.stepHeight = Math.min(3.1f, 0.6f * (1 + (float) (agilityModifier + dexterityModifier + strengthModifier)));
+					player.stepHeight = Math.min(cultivation.getStepAssistLimit(), 0.06f * (1 + (float) (agilityModifier + dexterityModifier + strengthModifier)));
 				}
 				player.sendPlayerAbilities();
 			}
@@ -239,7 +239,7 @@ public class EventHandler {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-			float dexterityModifier = (float) (player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue()); // ability with hands to cast faster
+			float dexterityModifier = (float)((cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) * 0.025);
 			if (player.world.isRemote) {
 				long timeDiff = System.currentTimeMillis() - LastPlayerTickTime;
 				if (timeDiff >= 50) { //20 per seconds
@@ -312,13 +312,6 @@ public class EventHandler {
 			level_spd_mod = Math.min(max_speed, level_spd_mod);
 		}
 		level_spd_mod *= (cultivation.getSpeedHandicap() / 100f);
-
-		double cultivation_speed = 0f;
-		for (AttributeModifier mod : iattributeinstance.getModifiers()) {
-			if (mod.getName().equals(speed_mod_name)) {
-				cultivation_speed += mod.getAmount();
-			}
-		}
 
 		f = (float) ((double) f * (((iattributeinstance.getAttributeValue() - level_spd_mod) / (double) entity.capabilities.getWalkSpeed() + 1.0D) / 2.0D));
 
@@ -837,7 +830,7 @@ public class EventHandler {
 		hp *= (1 + tm.maxHealth);
 		double armor = (cultivation.getBodyModifier() - 1) * 0.7 + (cultivation.getEssenceModifier() - 1) * 0.7 + (cultivation.getDivineModifier() - 1) * 0.12;
 		armor *= (1 + tm.armor);
-		double atk_sp = (cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) + 0.025;
+		double atk_sp = (cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) * 0.025;
 		atk_sp *= (1 + tm.attackSpeed);
 
 		double level_spd_mod = spd * player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();

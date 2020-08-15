@@ -17,6 +17,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
@@ -38,7 +39,6 @@ public class CultivationGui extends GuiScreen {
 	private final EntityPlayer player;
 	private int offset = 0;
 	private int displayItems = 0;
-
 
 	public enum RequireConfirmAction {
 		REMOVE_BODY_TECHNIQUE,
@@ -161,11 +161,12 @@ public class CultivationGui extends GuiScreen {
 			//techniques
 
 			//regulator bars
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < 5; i++) {
+				boolean shiftModifier = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
 				if (inBounds(mouseX, mouseY, this.guiLeft - 61 + 13, this.guiTop + i * 15 + 3, 9, 9)) {
-					handleBarButtonClick(i, 0);
+					handleBarButtonClick(i, 0, shiftModifier);
 				} else if (inBounds(mouseX, mouseY, this.guiLeft - 61 + 51, this.guiTop + i * 15 + 3, 9, 9)) {
-					handleBarButtonClick(i, 1);
+					handleBarButtonClick(i, 1, shiftModifier);
 				}
 			}
 		} else {
@@ -332,21 +333,22 @@ public class CultivationGui extends GuiScreen {
 		double agilityModifier = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;  // agility to bend the body to spring up
 		agilityModifier = Math.min(cultivation.getMaxSpeed(), agilityModifier);
 		agilityModifier *= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
-		double dexterityModifier = (cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) + 0.025;
+		double dexterityModifier = (cultivation.getBodyModifier() - 1) * 0.4 + (cultivation.getEssenceModifier() - 1) * 0.8 + (cultivation.getDivineModifier() - 1) * 0.025;
 		double strengthModifier = (cultivation.getBodyModifier() - 1) * 0.8 + (cultivation.getEssenceModifier() - 1) * 0.6 + (cultivation.getDivineModifier() - 1) * 0.14;
 		double spd = ((cultivation.getBodyModifier() - 1) * 0.2 + (cultivation.getEssenceModifier() - 1) * 0.4 + (cultivation.getDivineModifier() - 1) * 0.1) * 0.2;
 
 		GL11.glColor4f(1f, 1f, 1f, 1f);
-		int[] iconPos = new int[]{27, 27, 99, 108};
+		int[] iconPos = new int[]{27, 27, 99, 108, 135};
 		int[] fills = new int[]{
 				Math.min(27, (int) ((27f * cultivation.getSpeedHandicap()) / 100f)),
 				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / spd)),
 				Math.min(27, (int) (27f * (cultivation.getHasteLimit() / (0.1f * (strengthModifier * 0.7 + dexterityModifier * 0.3))))),
-				Math.min(27, (int) (27f * (cultivation.getJumpLimit()) / (0.5f * (agilityModifier + strengthModifier))))
+				Math.min(27, (int) (27f * (cultivation.getJumpLimit()) / (0.5f * (agilityModifier + strengthModifier)))),
+				Math.min(27, (int) (27f * (cultivation.getStepAssistLimit()) /  (0.06f * (1 + (float) (agilityModifier + dexterityModifier + strengthModifier)))))
 		};
 
 		//Regulator bars
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 5; i++) {
 			drawTexturedModalRect(this.guiLeft - 61, this.guiTop + i * 15, 0, 173, 61, 15); //bg
 			drawTexturedModalRect(this.guiLeft - 61 + 23, this.guiTop + i * 15 + 4, 0, 188, 27, 7); //bar bg
 			drawTexturedModalRect(this.guiLeft - 61 + 23, this.guiTop + i * 15 + 4, 27, 188, fills[i], 7); //bar fill
@@ -612,8 +614,9 @@ public class CultivationGui extends GuiScreen {
 		barDescriptions.add(String.format("%.1f", cultivation.getMaxSpeed()));
 		barDescriptions.add(String.format("%.1f", cultivation.getHasteLimit()));
 		barDescriptions.add(String.format("%.1f", cultivation.getJumpLimit()));
+		barDescriptions.add(String.format("%.1f", cultivation.getStepAssistLimit()));
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 5; i++) {
 			this.fontRenderer.drawString(barDescriptions.get(i), this.guiLeft - 61 + 27, this.guiTop + 4 + i * 15, 0xEFEF00);
 		}
 	}
@@ -1035,28 +1038,33 @@ public class CultivationGui extends GuiScreen {
 		drawTexturedModalRect(x + borderSize + i, y + borderSize + j, textureX + borderSize, textureY + borderSize, leftOverX, leftOverY);
 	}
 
-	private void handleBarButtonClick(int prop, int op) {
+	private void handleBarButtonClick(int prop, int op, boolean shiftModifier) {
+		float step = shiftModifier ? 1.0f : 0.1f;
 		switch (prop) {
 			case 0:
 				if (op == 0) WuxiaCraftConfig.speedHandicap = Math.max(0, WuxiaCraftConfig.speedHandicap - 5);
 				if (op == 1) WuxiaCraftConfig.speedHandicap = Math.min(100, WuxiaCraftConfig.speedHandicap + 5);
 				break;
 			case 1:
-				if (op == 0) WuxiaCraftConfig.maxSpeed -= 1f;
-				if (op == 1) WuxiaCraftConfig.maxSpeed += 1f;
+				if (op == 0) WuxiaCraftConfig.maxSpeed -= step;
+				if (op == 1) WuxiaCraftConfig.maxSpeed += step;
 				break;
 			case 2:
-				if (op == 0) WuxiaCraftConfig.blockBreakLimit -= 1f;
-				if (op == 1) WuxiaCraftConfig.blockBreakLimit += 1f;
+				if (op == 0) WuxiaCraftConfig.blockBreakLimit -= step;
+				if (op == 1) WuxiaCraftConfig.blockBreakLimit += step;
 				break;
 			case 3:
-				if (op == 0) WuxiaCraftConfig.jumpLimit -= 1f;
-				if (op == 1) WuxiaCraftConfig.jumpLimit += 1f;
+				if (op == 0) WuxiaCraftConfig.jumpLimit -= step;
+				if (op == 1) WuxiaCraftConfig.jumpLimit += step;
+				break;
+			case 4:
+				if (op == 0) WuxiaCraftConfig.stepAssistLimit -= step;
+				if (op == 1) WuxiaCraftConfig.stepAssistLimit += step;
 				break;
 		}
 		WuxiaCraftConfig.syncFromFields();
 		WuxiaCraftConfig.syncCultivationFromConfigToClient();
-		NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit, player.getUniqueID()));
+		NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit, WuxiaCraftConfig.stepAssistLimit, player.getUniqueID()));
 	}
 
 	/*private void handlerPerClickKey(char typedChar, int keyCode) {

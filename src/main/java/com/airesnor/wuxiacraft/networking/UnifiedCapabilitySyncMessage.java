@@ -94,7 +94,8 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 				cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
 				cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
 				cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);
-				NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit, player.getUniqueID()));
+				cultivation.setStepAssistLimit(WuxiaCraftConfig.stepAssistLimit);
+				NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit, WuxiaCraftConfig.stepAssistLimit, player.getUniqueID()));
 			});
 			return null;
 		}

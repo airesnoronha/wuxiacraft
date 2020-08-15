@@ -167,17 +167,17 @@ public interface ICultivation {
 	void setEssenceSubLevel(int subLevel);
 
 	/**
-	 * @param bodyFoundation
+	 * @param bodyFoundation sets the amount of foundation of the body
 	 */
 	void setBodyFoundation(double bodyFoundation);
 
 	/**
-	 * @param divineFoundation
+	 * @param divineFoundation sets the amount of foundation of the divinity
 	 */
 	void setDivineFoundation(double divineFoundation);
 
 	/**
-	 * @param essenceFoundation
+	 * @param essenceFoundation sets the amount of foundation of the essence
 	 */
 	void setEssenceFoundation(double essenceFoundation);
 
@@ -238,7 +238,7 @@ public interface ICultivation {
 	double getSystemModifier(Cultivation.System system);
 
 	/**
-	 * @param system
+	 * @param system the required system
 	 * @return specified system accumulated foundation
 	 */
 	double getSystemFoundation(Cultivation.System system);
@@ -385,6 +385,10 @@ public interface ICultivation {
 	 * @return The selected system to cultivate
 	 */
 	Cultivation.System getSelectedSystem();
+
+	float getStepAssistLimit();
+
+	void setStepAssistLimit(float stepAssistLimit);
 
 	/**
 	 * Sets it's own cultivation using another one as parameter
