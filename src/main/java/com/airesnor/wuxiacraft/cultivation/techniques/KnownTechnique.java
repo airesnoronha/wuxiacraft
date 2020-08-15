@@ -63,7 +63,7 @@ public class KnownTechnique {
 			if(checkpoint.getLeft() > highestComparedCheckpointProficiency) {
 				if(this.proficiency > checkpoint.getLeft()) {
 					highestComparedCheckpointProficiency = checkpoint.getLeft();
-					unlocked = checkpoint.getMiddle() * (1+0.3* + this.proficiency / checkpoint.getLeft());
+					unlocked = checkpoint.getMiddle();
 				}
 			}
 		}
