@@ -6,6 +6,8 @@ import com.airesnor.wuxiacraft.profession.alchemy.Recipes;
 import com.airesnor.wuxiacraft.networking.AddRecipeItemMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.MathUtils;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -18,6 +20,8 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -207,7 +211,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 	@Override
 	public void update() {
 		if (isLit()) {
-			if(ticksAlive % 20 == 0) {
+			if (ticksAlive % 20 == 0) {
 				int light = Math.min(15, Math.max(world.getLight(getPos()), (int) this.burnSpeed));
 				world.setLightFor(EnumSkyBlock.BLOCK, getPos(), light);
 			}
@@ -218,19 +222,19 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 				this.resetBurnSettings();
 			}
 			if (world.isRemote) {
-				if(this.ticksAlive % 5 == 0) {
+				if (this.ticksAlive % 5 == 0) {
 					Random rand = new Random();
 					int qty = (int) (2f * this.burnSpeed);
 					for (int i = 0; i < qty; i++) {
 						float x = getPos().getX() + 0.5f + (2 * rand.nextFloat() - 1f) * 0.3f;
 						float z = getPos().getZ() + 0.5f + (2 * rand.nextFloat() - 1f) * 0.3f;
 						float y = getPos().getY();
-						this.world.spawnParticle(EnumParticleTypes.FLAME, false, x,y,z, 0,0.01f,0,0);
+						this.world.spawnParticle(EnumParticleTypes.FLAME, false, x, y, z, 0, 0.01f, 0, 0);
 					}
 				}
 			}
 		} else {
-			if(this.ticksAlive % 20 == 0 ) {
+			if (this.ticksAlive % 20 == 0) {
 				world.setLightFor(EnumSkyBlock.BLOCK, getPos(), 0);
 			}
 		}
@@ -238,7 +242,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 
 //        this.activeRecipe = null;
 
-		if(this.ticksAlive% 20 == 0) {
+		if (this.ticksAlive % 20 == 0) {
 			checkLightAround();
 			if (!this.recipeInputs.isEmpty()) {
 				this.setHasWater(true);
@@ -302,36 +306,56 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 	}
 
 	public void wiggleFan(float strength, float maxFanStrength) {
-		this.burnSpeed = Math.min(this.burnSpeed + strength, maxFanStrength);
+		if(!this.world.isRemote) {
+			this.burnSpeed = Math.min(this.burnSpeed + strength, maxFanStrength);
+			IBlockState state = this.world.getBlockState(this.getPos());
+			this.world.notifyBlockUpdate(this.pos, state, state, 3);
+		}
 	}
 
 	public void addWood(int time) {
-		this.hasFirewood = true;
-		this.timeLit = time;
-		this.maxTimeLit = time;
+		if (!this.world.isRemote) {
+			this.hasFirewood = true;
+			this.timeLit = time;
+			this.maxTimeLit = time;
+			IBlockState state = this.world.getBlockState(this.getPos());
+			this.world.notifyBlockUpdate(this.pos, state, state, 3);
+		}
 	}
 
 	public void setOnFire() {
-		this.isLit = true;
-		this.burnSpeed = 1.2f;
+		if (!this.world.isRemote) {
+			this.isLit = true;
+			this.burnSpeed = 1.2f;
+			IBlockState state = this.world.getBlockState(this.getPos());
+			this.world.notifyBlockUpdate(this.pos, state, state, 3);
+		}
 	}
 
 	private void resetBurnSettings() {
-		this.isLit = false;
-		this.burnSpeed = 0.4f;
-		this.timeLit = 0;
-		this.hasFirewood = false;
+		if (!this.world.isRemote) {
+			this.isLit = false;
+			this.burnSpeed = 0.4f;
+			this.timeLit = 0;
+			this.hasFirewood = false;
+			IBlockState state = this.world.getBlockState(this.getPos());
+			this.world.notifyBlockUpdate(this.pos, state, state, 3);
+		}
 	}
 
 	public void emptyCauldron() {
-		this.recipeInputs.clear();
-		this.cookTime = 0;
-		this.burningTime = 0;
-		this.changeRecipeCounter = 0;
-		this.changeRecipeTimer = 0;
-		this.activeRecipeSet = false;
-		this.inputsSize = 0;
-		this.activeRecipe = null;
+		if (!this.world.isRemote) {
+			this.recipeInputs.clear();
+			this.cookTime = 0;
+			this.burningTime = 0;
+			this.changeRecipeCounter = 0;
+			this.changeRecipeTimer = 0;
+			this.activeRecipeSet = false;
+			this.inputsSize = 0;
+			this.activeRecipe = null;
+			IBlockState state = this.world.getBlockState(this.getPos());
+			this.world.notifyBlockUpdate(this.pos, state, state, 3);
+		}
 	}
 
 	public void checkLightAround() {
@@ -350,17 +374,23 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 	}
 
 	public void addRecipeInput(Item item) {
-		if(this.world.isRemote) {
-			float temperature  = this.getTemperature();
+		if (!this.world.isRemote) {
+			float temperature = this.getTemperature();
 			this.recipeInputs.add(Pair.of(temperature, item));
 			WuxiaCraft.logger.info("Adding item at " + String.format("%.2f degrees", temperature));
-			NetworkWrapper.INSTANCE.sendToServer(new AddRecipeItemMessage(this.getPos(), item, temperature));
+			//NetworkWrapper.INSTANCE.sendToServer(new AddRecipeItemMessage(this.getPos(), item, temperature));
+			IBlockState state = this.world.getBlockState(this.getPos());
+			this.world.notifyBlockUpdate(this.pos, state, state, 3);
 		}
 	}
+
+
 	public void addServerRecipeInput(Item item, float temperature) {
-		if(!this.world.isRemote) {
+		if (!this.world.isRemote) {
 			this.recipeInputs.add(Pair.of(temperature, item));
-			WuxiaCraft.logger.info("Adding item on server at " + String.format("%.2f degrees",temperature));
+			WuxiaCraft.logger.info("Adding item on server at " + String.format("%.2f degrees", temperature));
+			IBlockState state = this.world.getBlockState(this.getPos());
+			this.world.notifyBlockUpdate(this.pos, state, state, 3);
 		}
 	}
 

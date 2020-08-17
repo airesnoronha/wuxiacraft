@@ -92,7 +92,7 @@ public class WorldVarCommand extends CommandBase {
 					WuxiaCraft.logger.error("Couldn't parse argument multiplier number");
 				}
 				WorldVariables.get(DimensionManager.getWorld(dim)).setTribulationMultiplier(multiplier);
-				TextComponentString text = new TextComponentString(String.format("Setting Tribulation Multipliers ot : %d", WorldVariables.get(DimensionManager.getWorld(dim)).getTribulationMultiplier()));
+				TextComponentString text = new TextComponentString(String.format("Setting Tribulation Multipliers to : %d", WorldVariables.get(DimensionManager.getWorld(dim)).getTribulationMultiplier()));
 				sender.sendMessage(text);
 			} else if ("tribMult".equalsIgnoreCase(args[1])) {
 				int dim = 0;
@@ -130,7 +130,7 @@ public class WorldVarCommand extends CommandBase {
 					WuxiaCraft.logger.error("Couldn't parse argument multiplier number");
 				}
 				WorldVariables.get(DimensionManager.getWorld(dim)).setTribulationMultiplier(multiplier);
-				TextComponentString text = new TextComponentString(String.format("Setting Tribulation Multipliers ot : %d", WorldVariables.get(DimensionManager.getWorld(dim)).getTribulationMultiplier()));
+				TextComponentString text = new TextComponentString(String.format("Setting Tribulation Multipliers to : %d", WorldVariables.get(DimensionManager.getWorld(dim)).getTribulationMultiplier()));
 				sender.sendMessage(text);
 			}
 		} else {

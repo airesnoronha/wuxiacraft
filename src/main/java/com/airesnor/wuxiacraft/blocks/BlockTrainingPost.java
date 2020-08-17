@@ -66,7 +66,6 @@ public class BlockTrainingPost extends Block {
 			if(!worldIn.isRemote) {
 				ItemStack stack = getItem(worldIn, pos, state);
 				EntityItem item = new EntityItem(worldIn, pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5, stack);
-				item.setOwner(playerIn.getName());
 				item.setNoPickupDelay();
 				worldIn.spawnEntity(item);
 			}
