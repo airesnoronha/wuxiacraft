@@ -42,6 +42,9 @@ public class WuxiaCraftConfig {
 	public static int DIMENSION_WATER;
 	public static int DIMENSION_WOOD;
 
+	public static final String CATEGORY_SERVER= "server";
+	public static float maxServerSpeed;
+
 	public static void preInit() {
 		File configFile = new File(Loader.instance().getConfigDir(), "WuxiaCraft.cfg");
 		config = new Configuration(configFile);
@@ -76,6 +79,7 @@ public class WuxiaCraftConfig {
 		config.setCategoryComment(CATEGORY_GAMEPLAY, "Set Gameplay aspects");
 		config.setCategoryComment(CATEGORY_DIMENSION, "Set Dimension IDs");
 		config.setCategoryComment(CATEGORY_MISCELLANEOUS, "Set Miscellaneous Items");
+		config.setCategoryComment(CATEGORY_SERVER, "Set Server limiters to help not going crazy");
 
 		//Gameplay
 		Property propHandicap = config.get(CATEGORY_GAMEPLAY, "speed_handicap", 100);
@@ -139,6 +143,11 @@ public class WuxiaCraftConfig {
 		propExtremeQiBiomeSpawn.setComment("Set whether the Extreme Qi biome will spawn in overworld");
 		propExtremeQiBiomeSpawn.set(true);
 
+		//Server
+		Property propMaxServerSpeed = config.get(CATEGORY_SERVER, "max_server_speed", 10.0);
+		propMaxServerSpeed.setComment("Sets the maximum speed a player can have in the server");
+		propMaxServerSpeed.setDefaultValue(10.0);
+
 		List<String> propOrder = new ArrayList<>();
 		propOrder.add(propHandicap.getName());
 		propOrder.add(propMaxSpeed.getName());
@@ -173,6 +182,7 @@ public class WuxiaCraftConfig {
 			DIMENSION_WATER = propDimensionWater.getInt();
 			DIMENSION_WOOD = propDimensionWood.getInt();
 			EXTREME_QI_BIOME_SPAWN = propExtremeQiBiomeSpawn.getBoolean();
+			maxServerSpeed = (float) propMaxServerSpeed.getDouble();
 		}
 
 		propHandicap.set(speedHandicap);
@@ -188,6 +198,7 @@ public class WuxiaCraftConfig {
 		propDimensionWater.set(DIMENSION_WATER);
 		propDimensionWood.set(DIMENSION_WOOD);
 		propExtremeQiBiomeSpawn.set(EXTREME_QI_BIOME_SPAWN);
+		propMaxServerSpeed.set(maxServerSpeed);
 
 		if (config.hasChanged())
 			config.save();

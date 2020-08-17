@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.commands;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.world.data.WorldVariables;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.command.CommandBase;
@@ -49,10 +50,14 @@ public class WorldVarCommand extends CommandBase {
 			}
 			if ("tribMult".toLowerCase().startsWith(args[0].toLowerCase())) {
 				completions.add("tribMult");
+			} else if ("maxSpeed".toLowerCase().startsWith(args[0].toLowerCase())) {
+				completions.add("maxSpeed");
 			}
 		} else if (args.length == 2) {
 			if ("tribMult".toLowerCase().startsWith(args[0].toLowerCase())) {
 				completions.add("tribMult");
+			} else if ("maxSpeed".toLowerCase().startsWith(args[0].toLowerCase())) {
+				completions.add("maxSpeed");
 			}
 		}
 		return completions;
@@ -68,6 +73,10 @@ public class WorldVarCommand extends CommandBase {
 					dim = ((EntityPlayerMP) sender).world.provider.getDimension();
 				}
 				TextComponentString text = new TextComponentString(String.format("Tribulation Multipliers: %d", WorldVariables.get(DimensionManager.getWorld(dim)).getTribulationMultiplier()));
+				sender.sendMessage(text);
+			}
+			if ("maxSpeed".equalsIgnoreCase(args[0])) {
+				TextComponentString text = new TextComponentString(String.format("Max Server Speed: %.1f", WuxiaCraftConfig.maxServerSpeed));
 				sender.sendMessage(text);
 			}
 		} else if (args.length == 2) {
@@ -93,6 +102,17 @@ public class WorldVarCommand extends CommandBase {
 					WuxiaCraft.logger.error("Couldn't parse argument number");
 				}
 				TextComponentString text = new TextComponentString(String.format("Tribulation Multipliers: %d", WorldVariables.get(DimensionManager.getWorld(dim)).getTribulationMultiplier()));
+				sender.sendMessage(text);
+			} else if("maxSpeed".equalsIgnoreCase(args[0])) {
+				float limiter = 10f;
+				try {
+					limiter = (float)parseDouble(args[1]);
+				} catch (NumberFormatException e) {
+					WuxiaCraft.logger.error("Couldn't parse argument multiplier number");
+				}
+				WuxiaCraftConfig.maxServerSpeed = limiter;
+				WuxiaCraftConfig.syncFromFields();
+				TextComponentString text = new TextComponentString(String.format("Setting Max Server Speed to: %.1f", WuxiaCraftConfig.maxServerSpeed));
 				sender.sendMessage(text);
 			}
 		} else if (args.length == 3) {

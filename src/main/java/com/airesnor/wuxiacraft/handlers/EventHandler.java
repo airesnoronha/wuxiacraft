@@ -283,6 +283,11 @@ public class EventHandler {
 	}
 
 	/**
+	 * Used client side knowing the server side limiter
+	 */
+	public static double maxServerSpeed = 10.0;
+
+	/**
 	 * Desperate tentative of not increasing the FOV, reduced a lot
 	 *
 	 * @param e Description of whats happening
@@ -297,7 +302,12 @@ public class EventHandler {
 
 		IAttributeInstance iattributeinstance = entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
 
-		double spd = CultivationUtils.getAgilityFromEntity(entity) * entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
+		double spd = CultivationUtils.getAgilityFromEntity(entity);
+		if(maxServerSpeed >= 0) {
+			spd = Math.min(spd, maxServerSpeed);
+		}
+
+		spd *= entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
 
 		f = (float) ((double) f * (((iattributeinstance.getAttributeValue() - spd) / (double) entity.capabilities.getWalkSpeed() + 1.0D) / 2.0D));
 
@@ -761,14 +771,14 @@ public class EventHandler {
 	public void onPlayerHunger(TickEvent.PlayerTickEvent event) {
 		EntityPlayer player = event.player;
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-		double cost = 5000;
+		double cost = 9000;
 		//first of all, only essence can be used as food
 		if (player.ticksExisted % 100 == 0) {
 			if (player.getFoodStats().getFoodLevel() < 20 && cultivation.getEssenceModifier() > 130) {
 				if (cultivation.getEssenceModifier() > 16000) { // free food
 					player.getFoodStats().setFoodLevel(20);
 					try {
-						foodStats.setFloat(player.getFoodStats(), 50f);
+						foodStats.setFloat(player.getFoodStats(), 20f);
 					} catch (Exception e) {
 						WuxiaCraft.logger.error("Couldn't help with food, sorry!");
 						e.printStackTrace();
@@ -776,7 +786,7 @@ public class EventHandler {
 				} else if (cultivation.hasEnergy(cost)) {
 					player.getFoodStats().setFoodLevel(20);
 					try {
-						foodStats.setFloat(player.getFoodStats(), 50f);
+						foodStats.setFloat(player.getFoodStats(), 20f);
 						cultivation.remEnergy(cost);
 					} catch (Exception e) {
 						WuxiaCraft.logger.error("Couldn't help with food, sorry!");
@@ -801,8 +811,13 @@ public class EventHandler {
 			player.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration() + 19, effect.getAmplifier(), effect.getIsAmbient(), effect.doesShowParticles()));
 		}
 
+		double spd = CultivationUtils.getAgilityFromEntity(player);
+		if(WuxiaCraftConfig.maxServerSpeed >= 0) {
+			spd = Math.min(spd, WuxiaCraftConfig.maxServerSpeed);
+		}
+		spd *= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
+
 		double str = CultivationUtils.getStrengthFromEntity(player);
-		double spd = CultivationUtils.getAgilityFromEntity(player) * player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
 		double hp = CultivationUtils.getConstitutionFromEntity(player);
 		double armor = CultivationUtils.getResistanceFromEntity(player);
 		double atk_sp = CultivationUtils.getDexterityFromEntity(player);

@@ -340,7 +340,7 @@ public class CultivationGui extends GuiScreen {
 				Math.min(27, (int) ((27f * cultivation.getSpeedHandicap()) / 100f)),
 				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / maxSpeed)),
 				Math.min(27, (int) (27f * (cultivation.getHasteLimit() / (0.1f * (strengthModifier * 0.7 + dexterityModifier * 0.3))))),
-				Math.min(27, (int) (27f * (cultivation.getJumpLimit()) / (0.5f * (agilityModifier + strengthModifier)))),
+				Math.min(27, (int) (27f * (cultivation.getJumpLimit()) / (0.08f * (agilityModifier + strengthModifier)))),
 				Math.min(27, (int) (27f * (cultivation.getStepAssistLimit()) / (0.6f * (1 + 0.1f * (float) (agilityModifier + dexterityModifier + strengthModifier)))))
 		};
 

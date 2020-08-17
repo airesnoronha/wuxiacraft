@@ -8,6 +8,7 @@ import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
 import com.airesnor.wuxiacraft.cultivation.techniques.CultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
+import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -26,6 +27,7 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 	public ICultTech cultTech;
 	public ISkillCap skillCap;
 	public boolean shouldSetCdaCP;
+	public double maxServerSpeed;
 
 	@SuppressWarnings("unused")
 	public UnifiedCapabilitySyncMessage() {
@@ -33,6 +35,7 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 		cultTech = new CultTech();
 		skillCap = new SkillCap();
 		this.shouldSetCdaCP = false;
+		this.maxServerSpeed = WuxiaCraftConfig.maxServerSpeed;
 	}
 
 	public UnifiedCapabilitySyncMessage(ICultivation cultivation, ICultTech cultTech, ISkillCap skillCap, boolean shouldSetCdaCP) {
@@ -40,6 +43,7 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 		this.cultTech = cultTech;
 		this.skillCap = skillCap;
 		this.shouldSetCdaCP = shouldSetCdaCP;
+		this.maxServerSpeed = WuxiaCraftConfig.maxServerSpeed;
 	}
 
 	@Override
@@ -54,6 +58,7 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 		//noinspection ConstantConditions
 		SkillsProvider.SKILL_CAP_CAPABILITY.getStorage().readNBT(SkillsProvider.SKILL_CAP_CAPABILITY, this.skillCap, null, tag);
 		this.shouldSetCdaCP = buf.readBoolean();
+		this.maxServerSpeed = buf.readDouble();
 	}
 
 	@Override
@@ -68,6 +73,7 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 		tag = (NBTTagCompound) SkillsProvider.SKILL_CAP_CAPABILITY.getStorage().writeNBT(SkillsProvider.SKILL_CAP_CAPABILITY, this.skillCap, null);
 		ByteBufUtils.writeTag(buf, tag);
 		buf.writeBoolean(shouldSetCdaCP);
+		buf.writeDouble(this.maxServerSpeed);
 	}
 
 	public static class Handler implements IMessageHandler<UnifiedCapabilitySyncMessage, IMessage> {
@@ -95,6 +101,7 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 				cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
 				cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);
 				cultivation.setStepAssistLimit(WuxiaCraftConfig.stepAssistLimit);
+				EventHandler.maxServerSpeed = message.maxServerSpeed;
 				NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.blockBreakLimit, WuxiaCraftConfig.jumpLimit, WuxiaCraftConfig.stepAssistLimit, player.getUniqueID()));
 			});
 			return null;
