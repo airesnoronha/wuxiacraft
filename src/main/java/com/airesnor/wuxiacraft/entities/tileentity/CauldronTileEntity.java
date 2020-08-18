@@ -360,7 +360,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 		getWorld().checkLightFor(EnumSkyBlock.BLOCK, getPos().east());
 		getWorld().checkLightFor(EnumSkyBlock.BLOCK, getPos().south());
 		getWorld().checkLightFor(EnumSkyBlock.BLOCK, getPos().west());
-		getWorld().markBlockRangeForRenderUpdate(getPos(), new BlockPos(16, 16, 16));
+		getWorld().markBlockRangeForRenderUpdate(getPos().west(16).south(16).down(16),getPos().east(16).north(16).up(16));
 	}
 
 	public void prepareToDie() {

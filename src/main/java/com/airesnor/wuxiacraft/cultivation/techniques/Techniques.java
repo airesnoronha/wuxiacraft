@@ -190,7 +190,7 @@ public class Techniques {
 						if (!actor.world.isRemote) {
 							if (actor.getRNG().nextFloat() < 0.01) {
 								ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-								CultivationUtils.callCustomThunder(actor, cultivation.getBodyModifier() * 5, 0.15 * cultivation.getBodyModifier());
+								CultivationUtils.callCustomThunder(actor, cultivation.getBodyModifier() * 2, 0.15 * cultivation.getBodyModifier());
 							}
 						}
 						return true;

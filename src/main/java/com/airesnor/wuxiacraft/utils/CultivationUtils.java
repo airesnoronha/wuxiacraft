@@ -160,7 +160,7 @@ public class CultivationUtils {
 	public static void cultivatorAddProgress(EntityLivingBase player, Cultivation.System system, double amount, boolean techniques, boolean allowBreakThrough) {
 		ICultivation cultivation = getCultivationFromEntity(player);
 		ICultTech cultTech = getCultTechFromEntity(player);
-		if (cultTech.getTechniqueBySystem(system) != null) {
+		if (cultTech.getTechniqueBySystem(system) != null && techniques) {
 			amount *= cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system));
 		}
 		double enlightenment = 1;

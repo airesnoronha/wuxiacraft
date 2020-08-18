@@ -155,7 +155,7 @@ public class EventHandler {
 					double agilityModifier = CultivationUtils.getAgilityFromEntity(player);
 					double dexterityModifier = CultivationUtils.getDexterityFromEntity(player);
 					double strengthModifier = CultivationUtils.getStrengthFromEntity(player);
-					player.stepHeight = Math.min(cultivation.getStepAssistLimit(), 0.6f * (1 + 0.1f * (float) (agilityModifier + dexterityModifier + strengthModifier)));
+					player.stepHeight = Math.min(cultivation.getStepAssistLimit(), 0.6f * (1 + 0.15f * (float) (agilityModifier + dexterityModifier + strengthModifier)));
 				}
 				player.sendPlayerAbilities();
 			}
@@ -433,7 +433,7 @@ public class EventHandler {
 			double agilityModifier = CultivationUtils.getAgilityFromEntity(player);
 			double constitutionModifier = CultivationUtils.getConstitutionFromEntity(player);
 			double strengthModifier = CultivationUtils.getStrengthFromEntity(player);
-			event.setDistance(event.getDistance() - 1.85f * (float) (agilityModifier + strengthModifier + constitutionModifier));
+			event.setDistance(event.getDistance() - 0.9f * (float) (agilityModifier + strengthModifier + constitutionModifier));
 		}
 	}
 
