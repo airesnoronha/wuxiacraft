@@ -632,17 +632,17 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public double getAgilityModifier() {
-		return ((this.getBodyModifier() - 1) * 0.2 + (this.getEssenceModifier() - 1) * 0.4 + (this.getDivineModifier() - 1) * 0.1) * 0.05;
+		return ((this.getBodyModifier() - 1) * 0.2 + (this.getEssenceModifier() - 1) * 0.4 + (this.getDivineModifier() - 1) * 0.1) * 0.03;
 	}
 
 	@Override
 	public double getConstitutionModifier() {
-		return ((this.getBodyModifier() - 1) + (this.getEssenceModifier() - 1) * 0.4 + (this.getDivineModifier() - 1) * 0.1) * 0.6;
+		return ((this.getBodyModifier() - 1) + (this.getEssenceModifier() - 1) * 0.4 + (this.getDivineModifier() - 1) * 0.1) * 0.8;
 	}
 
 	@Override
 	public double getDexterityModifier() {
-		return ((this.getBodyModifier() - 1) * 0.4 + (this.getEssenceModifier() - 1) * 0.8 + (this.getDivineModifier() - 1) * 0.1) * 0.0025;
+		return ((this.getBodyModifier() - 1) * 0.4 + (this.getEssenceModifier() - 1) * 0.8 + (this.getDivineModifier() - 1) * 0.1) * 0.01;
 	}
 
 	@Override
@@ -652,7 +652,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public double getStrengthModifier() {
-		return ((this.getBodyModifier() - 1) * 0.8 + (this.getEssenceModifier() - 1) * 0.6 + (this.getDivineModifier() - 1) * 0.14) * 0.1;
+		return ((this.getBodyModifier() - 1) * 0.8 + (this.getEssenceModifier() - 1) * 0.6 + (this.getDivineModifier() - 1) * 0.14) * 0.2;
 	}
 
 	@Override

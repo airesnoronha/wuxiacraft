@@ -66,16 +66,18 @@ public class WuxiaItems {
 			.setMaxStackSize(64).setCreativeTab(WUXIACRAFT_GENERAL);
 
 	//pills
-	public static final Item BODY_REFINEMENT_PILL = new ItemProgressPill("body_refinement_pill", 50f, 200);
-	public static final Item TRAINING_PILL = new ItemProgressPill("training_pill", 90f, 250);
-	public static final Item REINFORCEMENT_PILL = new ItemProgressPill("reinforcement_pill", 150f, 300);
-	public static final Item BODY_CREATION_PILL = new ItemProgressPill("body_creation_pill", 300f, 350);
-	public static final Item SOUL_REFINEMENT_PILL = new ItemProgressPill("soul_refinement_pill", 250f, 220);
-	public static final Item SOUL_ASPECT_PILL = new ItemProgressPill("soul_aspect_pill", 310f, 380);
-	public static final Item WANDERING_GHOST_PILL = new ItemProgressPill("wandering_ghost_pill", 420f, 440);
-	public static final Item QI_PATHS_REFINEMENT_PILL = new ItemProgressPill("qi_paths_refinement_pill", 480f, 240);
-	public static final Item MERIDIAN_INJECTION_PILL = new ItemProgressPill("meridian_injection_pill", 560f, 360);
-	public static final Item DANTIAN_CONDENSING_PILL = new ItemProgressPill("dantian_condensing_pill", 720f, 320);
+	public static final Item BODY_REFINEMENT_PILL = new ItemProgressPill("body_refinement_pill", Cultivation.System.BODY, 240f, 100);
+	public static final Item TRAINING_PILL = new ItemProgressPill("training_pill", Cultivation.System.BODY, 480f, 150);
+	public static final Item REINFORCEMENT_PILL = new ItemProgressPill("reinforcement_pill", Cultivation.System.BODY, 720f, 180);
+	public static final Item BODY_CREATION_PILL = new ItemProgressPill("body_creation_pill", Cultivation.System.BODY, 960f, 200);
+	public static final Item SOUL_EXPANSION_PILL = new ItemProgressPill("soul_expansion_pill", Cultivation.System.DIVINE, 240f, 100);
+	public static final Item SOUL_REFINEMENT_PILL = new ItemProgressPill("soul_refinement_pill", Cultivation.System.DIVINE, 480f, 150);
+	public static final Item SOUL_ASPECT_PILL = new ItemProgressPill("soul_aspect_pill", Cultivation.System.DIVINE, 720f, 180);
+	public static final Item WANDERING_GHOST_PILL = new ItemProgressPill("wandering_ghost_pill", Cultivation.System.DIVINE, 960f, 200);
+	public static final Item QI_FLOW_PILL = new ItemProgressPill("qi_flow_pill", Cultivation.System.ESSENCE, 240f, 100);
+	public static final Item QI_PATHS_REFINEMENT_PILL = new ItemProgressPill("qi_paths_refinement_pill", Cultivation.System.ESSENCE, 480f, 150);
+	public static final Item MERIDIAN_INJECTION_PILL = new ItemProgressPill("meridian_injection_pill", Cultivation.System.ESSENCE, 720f, 180);
+	public static final Item DANTIAN_CONDENSING_PILL = new ItemProgressPill("dantian_condensing_pill", Cultivation.System.ESSENCE, 960f, 200);
 	public static final Item ENERGY_RECOVERY_PILL = new ItemEnergyPill("energy_recovery_pill", 30f);
 	public static final Item MINOR_ENERGY_REPLENISHING_PILL = new ItemEnergyPill("minor_energy_replenishing_pill", 50f);
 	public static final Item ENERGY_STREAM_PILL = new ItemEnergyPill("energy_stream_pill", 80f);

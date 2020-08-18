@@ -3,11 +3,8 @@ package com.airesnor.wuxiacraft.entities.tileentity;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.profession.alchemy.Recipe;
 import com.airesnor.wuxiacraft.profession.alchemy.Recipes;
-import com.airesnor.wuxiacraft.networking.AddRecipeItemMessage;
-import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.MathUtils;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,8 +17,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -306,7 +301,7 @@ public class CauldronTileEntity extends TileEntity implements ITickable {
 	}
 
 	public void wiggleFan(float strength, float maxFanStrength) {
-		if(!this.world.isRemote) {
+		if (!this.world.isRemote) {
 			this.burnSpeed = Math.min(this.burnSpeed + strength, maxFanStrength);
 			IBlockState state = this.world.getBlockState(this.getPos());
 			this.world.notifyBlockUpdate(this.pos, state, state, 3);
