@@ -110,7 +110,7 @@ public class BaseSystemLevel {
 	 */
 	public double getProgressBySubLevel(int subLevel){
 		if(MathUtils.between(subLevel, 0, this.subLevels -1)) {
-			double value = this.baseProgress * (Math.pow(1.085, subLevel));
+			double value = this.baseProgress * (Math.pow(1.2, subLevel));
 			if(subLevel == this.subLevels-1) {
 				value*=1.5;
 			}
@@ -126,7 +126,7 @@ public class BaseSystemLevel {
 	 */
 	public double getModifierBySubLevel(int subLevel) {
 		if(MathUtils.between(subLevel, 0, this.subLevels -1)) {
-			return this.baseModifier * (1 + subLevel * 0.48);
+			return this.baseModifier * (1 + subLevel * 0.72);
 		}
 		return this.baseModifier;
 	}

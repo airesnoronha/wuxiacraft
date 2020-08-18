@@ -257,7 +257,7 @@ public class Techniques {
 			.addCheckpoint(2461400000000.0 * 8, 1.0f, "Divine Dragon Body");
 
 	//From that cat dude -- Ziso
-	public static final Technique CAT_BODY_TRANSFORMATION_ARTS = new Technique("cat_body_transformation_Arts", Cultivation.System.BODY,
+	public static final Technique CAT_BODY_TRANSFORMATION_ARTS = new Technique("cat_body_transformation_arts", Cultivation.System.BODY,
 			new TechniqueModifiers(0.2, 1.8, 0.6, 2.2, 0.8, 0.4), 6.2, 23000000.0 * 8, 800)
 			.addCheckpoint(1000.0 * 8, 0.10f, "Minor Success")
 			.addCheckpoint(10000.0 * 8, 0.30f, "Small Success")

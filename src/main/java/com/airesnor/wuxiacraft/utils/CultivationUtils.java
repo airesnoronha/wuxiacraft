@@ -279,9 +279,7 @@ public class CultivationUtils {
 						double modifierDifference = 0;
 						switch (this.system) {
 							case BODY:
-								cultivation.setBodyProgress(cultivation.getBodyProgress() -
-										cultivation.getBodyLevel().getProgressBySubLevel(cultivation
-												.getBodySubLevel()));
+								cultivation.setBodyProgress(0);
 								cultivation.setBodyLevel(this.targetLevel);
 								cultivation.setBodySubLevel(this.targetSubLevel);
 								cultivation.addBodyFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
@@ -292,9 +290,7 @@ public class CultivationUtils {
 								}
 								break;
 							case DIVINE:
-								cultivation.setDivineProgress(cultivation.getDivineProgress() -
-										cultivation.getDivineLevel().getProgressBySubLevel(cultivation
-												.getDivineSubLevel()));
+								cultivation.setDivineProgress(0);
 								cultivation.setDivineLevel(this.targetLevel);
 								cultivation.setDivineSubLevel(this.targetSubLevel);
 								cultivation.addDivineFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
@@ -305,9 +301,7 @@ public class CultivationUtils {
 								}
 								break;
 							case ESSENCE:
-								cultivation.setEssenceFoundation(cultivation.getEssenceProgress() -
-										cultivation.getEssenceLevel().getProgressBySubLevel(cultivation
-												.getEssenceSubLevel()));
+								cultivation.setEssenceProgress(0);
 								cultivation.setEssenceLevel(this.targetLevel);
 								cultivation.setEssenceSubLevel(this.targetSubLevel);
 								cultivation.addEssenceFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
