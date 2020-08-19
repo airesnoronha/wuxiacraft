@@ -23,13 +23,15 @@ public class SpeedHandicapMessage implements IMessage {
 	public float maxSpeed;
 	public float hasteLimit;
 	public float jumpLimit;
+	public float stepAssistLimit;
 	public UUID senderUUID;
 
-	public SpeedHandicapMessage(int handicap, float maxSpeed, float hasteLimit, float jumpLimit, UUID senderUUID) {
+	public SpeedHandicapMessage(int handicap, float maxSpeed, float hasteLimit, float jumpLimit, float stepAssistLimit, UUID senderUUID) {
 		this.handicap = handicap;
 		this.maxSpeed = maxSpeed;
 		this.hasteLimit = hasteLimit;
 		this.jumpLimit = jumpLimit;
+		this.stepAssistLimit = stepAssistLimit;
 		this.senderUUID = senderUUID;
 	}
 
@@ -38,6 +40,7 @@ public class SpeedHandicapMessage implements IMessage {
 		this.maxSpeed = 0;
 		this.hasteLimit = 0;
 		this.jumpLimit = 0;
+		this.stepAssistLimit = 0;
 		this.senderUUID = null;
 	}
 
@@ -48,6 +51,7 @@ public class SpeedHandicapMessage implements IMessage {
 		this.maxSpeed = buf.readFloat();
 		this.hasteLimit = buf.readFloat();
 		this.jumpLimit = buf.readFloat();
+		this.stepAssistLimit = buf.readFloat();
 		this.senderUUID = packetBuffer.readUniqueId();
 	}
 
@@ -58,6 +62,7 @@ public class SpeedHandicapMessage implements IMessage {
 		buf.writeFloat(this.maxSpeed);
 		buf.writeFloat(this.hasteLimit);
 		buf.writeFloat(this.jumpLimit);
+		buf.writeFloat(this.stepAssistLimit);
 		packetBuffer.writeUniqueId(this.senderUUID);
 	}
 
@@ -75,6 +80,7 @@ public class SpeedHandicapMessage implements IMessage {
 						cultivation.setMaxSpeed(message.maxSpeed);
 						cultivation.setHasteLimit(message.hasteLimit);
 						cultivation.setJumpLimit(message.jumpLimit);
+						cultivation.setStepAssistLimit(message.stepAssistLimit);
 					}
 					EventHandler.applyModifiers(player);
 				});
@@ -93,8 +99,9 @@ public class SpeedHandicapMessage implements IMessage {
 				cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
 				cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
 				cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);
+				cultivation.setStepAssistLimit(WuxiaCraftConfig.stepAssistLimit);
 				UUID playerUUID = Minecraft.getMinecraft().player.getUniqueID();
-				NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.jumpLimit, playerUUID));
+				NetworkWrapper.INSTANCE.sendToServer(new SpeedHandicapMessage(WuxiaCraftConfig.speedHandicap, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.maxSpeed, WuxiaCraftConfig.jumpLimit, WuxiaCraftConfig.stepAssistLimit, playerUUID));
 			});
 			return null;
 		}

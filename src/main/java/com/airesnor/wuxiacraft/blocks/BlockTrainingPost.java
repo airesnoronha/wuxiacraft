@@ -66,7 +66,6 @@ public class BlockTrainingPost extends Block {
 			if(!worldIn.isRemote) {
 				ItemStack stack = getItem(worldIn, pos, state);
 				EntityItem item = new EntityItem(worldIn, pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5, stack);
-				item.setOwner(playerIn.getName());
 				item.setNoPickupDelay();
 				worldIn.spawnEntity(item);
 			}
@@ -81,7 +80,7 @@ public class BlockTrainingPost extends Block {
 	public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn) {
 		super.onBlockClicked(worldIn, pos, playerIn);
 		double amount = this.amount * playerIn.getCooledAttackStrength(0.5f); //game always use 0.5 idk y
-		CultivationUtils.cultivatorAddProgress(playerIn, Cultivation.System.BODY, amount, false, false);
+		CultivationUtils.cultivatorAddProgress(playerIn, Cultivation.System.BODY, amount, true, false);
 		playerIn.attackEntityFrom(DamageSource.GENERIC.setDamageBypassesArmor(), (float)amount);
 	}
 

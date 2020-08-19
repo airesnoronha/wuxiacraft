@@ -23,11 +23,13 @@ public class ItemProgressPill extends ItemBase {
 
 	final float amount;
 	final int cooldown;
+	final Cultivation.System system;
 
-	public ItemProgressPill(String item_name, float amount, int cooldown) {
+	public ItemProgressPill(String item_name, Cultivation.System system, float amount, int cooldown) {
 		super(item_name);
 		this.amount = amount;
 		this.cooldown = cooldown;
+		this.system = system;
 		setCreativeTab(WuxiaItems.PILLS);
 	}
 
@@ -41,11 +43,11 @@ public class ItemProgressPill extends ItemBase {
 				if (stack.isEmpty())
 					stack = ItemStack.EMPTY;
 				cultivation.setPillCooldown(cooldown);
-				if(this.amount <= cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) * 0.1f) {
-					CultivationUtils.cultivatorAddProgress(player, Cultivation.System.ESSENCE, this.amount, false, true);
+				if(this.amount <= cultivation.getSystemLevel(this.system).getProgressBySubLevel(cultivation.getSystemSubLevel(this.system)) * 0.2f) {
+					CultivationUtils.cultivatorAddProgress(player, this.system, this.amount, false, false);
 				} else {
 					worldIn.createExplosion(entityLiving, entityLiving.posX, entityLiving.posY, entityLiving.posZ, 3f, true);
-					entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), this.amount*2);
+					entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), this.amount*0.7f);
 				}
 			}
 		}

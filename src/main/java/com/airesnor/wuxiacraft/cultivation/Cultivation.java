@@ -27,6 +27,7 @@ public class Cultivation implements ICultivation {
 	private float maxSpeed;
 	private float hasteLimit;
 	private float jumpLimit;
+	private float stepAssistLimit;
 	private boolean suppress;
 
 	public enum System {
@@ -71,6 +72,7 @@ public class Cultivation implements ICultivation {
 		this.maxSpeed = 5.0f;
 		this.hasteLimit = 10.0f;
 		this.jumpLimit = 10.0f;
+		this.stepAssistLimit = 3.0f;
 		this.suppress = false;
 		this.selectedSystem = System.ESSENCE;
 	}
@@ -616,6 +618,41 @@ public class Cultivation implements ICultivation {
 	@Override
 	public void setSelectedSystem(System selectedSystem) {
 		this.selectedSystem = selectedSystem;
+	}
+
+	@Override
+	public float getStepAssistLimit() {
+		return stepAssistLimit;
+	}
+
+	@Override
+	public void setStepAssistLimit(float stepAssistLimit) {
+		this.stepAssistLimit = stepAssistLimit;
+	}
+
+	@Override
+	public double getAgilityModifier() {
+		return ((this.getBodyModifier() - 1) * 0.2 + (this.getEssenceModifier() - 1) * 0.4 + (this.getDivineModifier() - 1) * 0.1) * 0.03;
+	}
+
+	@Override
+	public double getConstitutionModifier() {
+		return ((this.getBodyModifier() - 1) + (this.getEssenceModifier() - 1) * 0.4 + (this.getDivineModifier() - 1) * 0.1) * 0.8;
+	}
+
+	@Override
+	public double getDexterityModifier() {
+		return ((this.getBodyModifier() - 1) * 0.4 + (this.getEssenceModifier() - 1) * 0.8 + (this.getDivineModifier() - 1) * 0.1) * 0.01;
+	}
+
+	@Override
+	public double getResistanceModifier() {
+		return ((this.getBodyModifier() - 1) * 0.7 + (this.getEssenceModifier() - 1) * 0.7 + (this.getDivineModifier() - 1)*0.1)* 0.012;
+	}
+
+	@Override
+	public double getStrengthModifier() {
+		return ((this.getBodyModifier() - 1) * 0.8 + (this.getEssenceModifier() - 1) * 0.6 + (this.getDivineModifier() - 1) * 0.14) * 0.2;
 	}
 
 	@Override

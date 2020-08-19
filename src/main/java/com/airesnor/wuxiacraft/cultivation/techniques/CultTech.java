@@ -44,17 +44,26 @@ public class CultTech implements ICultTech {
 				if(this.bodyTechnique == null) {
 					this.bodyTechnique = new KnownTechnique(technique, 0);
 					added = true;
+				} else if(this.bodyTechnique.getTechnique().getCompatibles().contains(technique)) {
+					this.bodyTechnique = new KnownTechnique(technique, this.bodyTechnique.getProficiency());
+					added = true;
 				}
 				break;
 			case DIVINE:
 				if(this.divineTechnique == null) {
 					this.divineTechnique = new KnownTechnique(technique, 0);
 					added = true;
+				} else if(this.divineTechnique.getTechnique().getCompatibles().contains(technique)) {
+					this.divineTechnique = new KnownTechnique(technique, this.divineTechnique.getProficiency());
+					added = true;
 				}
 				break;
 			case ESSENCE:
 				if(this.essenceTechnique == null) {
 					this.essenceTechnique = new KnownTechnique(technique, 0);
+					added = true;
+				} else if(this.essenceTechnique.getTechnique().getCompatibles().contains(technique)) {
+					this.essenceTechnique = new KnownTechnique(technique, this.essenceTechnique.getProficiency());
 					added = true;
 				}
 				break;
@@ -109,8 +118,8 @@ public class CultTech implements ICultTech {
 	}
 
 	@Override
-	public TechniquesModifiers getOverallModifiers() {
-		TechniquesModifiers tm = new TechniquesModifiers(0, 0, 0, 0, 0, 0);
+	public TechniqueModifiers getOverallModifiers() {
+		TechniqueModifiers tm = new TechniqueModifiers(0, 0, 0, 0, 0, 0);
 		if (this.bodyTechnique != null)
 			tm = tm.add(bodyTechnique.getModifiers());
 		if (this.essenceTechnique != null)

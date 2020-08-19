@@ -56,4 +56,9 @@ public class WorldVariables extends WorldSavedData {
 	public int getTribulationMultiplier() {
 		return tribulationMultiplier;
 	}
+
+	public void setTribulationMultiplier(int tribulationMultiplier) {
+		this.tribulationMultiplier = tribulationMultiplier;
+		this.markDirty();
+	}
 }

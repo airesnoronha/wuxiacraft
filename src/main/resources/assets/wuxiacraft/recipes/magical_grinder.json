@@ -1,7 +1,7 @@
 {
 	"type": "minecraft:crafting_shaped",
 	"result": {
-		"item": "wuxiacraft:iron_cauldron",
+		"item": "wuxiacraft:magical_grinder",
 		"count": 1
 	},
 	"pattern": [

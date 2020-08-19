@@ -220,19 +220,17 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	}
 
 	protected void applyCultivationBonuses() {
-		double strengthMod = cultivation.getEssenceModifier()-1f;
-		double speedMod = cultivation.getEssenceModifier()*0.4-1f;
 
 		this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MAX_HEALTH)
-				.applyModifier(new AttributeModifier(MOB_HEALTH_MOD_NAME, strengthMod*3f, 0));
+				.applyModifier(new AttributeModifier(MOB_HEALTH_MOD_NAME, this.cultivation.getConstitutionModifier()*1.5f, 0));
 		this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ARMOR)
-				.applyModifier(new AttributeModifier(MOB_ARMOR_MOD_NAME, strengthMod*0.7f, 0));
+				.applyModifier(new AttributeModifier(MOB_ARMOR_MOD_NAME, this.cultivation.getResistanceModifier()*1.5f, 0));
 		this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MOVEMENT_SPEED)
-				.applyModifier(new AttributeModifier(MOB_M_SPEED_MOD_NAME, speedMod*0.2f, 0));
+				.applyModifier(new AttributeModifier(MOB_M_SPEED_MOD_NAME, Math.min(this.cultivation.getAgilityModifier()*0.15, 1.5), 0));
 		this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ATTACK_SPEED)
-				.applyModifier(new AttributeModifier(MOB_A_SPEED_MOD_NAME, speedMod, 1));
+				.applyModifier(new AttributeModifier(MOB_A_SPEED_MOD_NAME, this.cultivation.getDexterityModifier()*1.5f, 1));
 		this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE)
-				.applyModifier(new AttributeModifier(MOB_DAMAGE_MOD_NAME, strengthMod, 0));
+				.applyModifier(new AttributeModifier(MOB_DAMAGE_MOD_NAME, this.cultivation.getStrengthModifier()*1.5f, 0));
 		this.heal(100000f);
 	}
 

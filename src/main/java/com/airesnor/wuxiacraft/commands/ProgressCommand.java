@@ -157,10 +157,10 @@ public class ProgressCommand extends CommandBase {
                 }
             }
         } else if(args.length == 3) {
-            if ("body".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("body");
-            else if ("divine".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("divine");
-            else if ("essence".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("essence");
-            else if ("three".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("three");
+            if ("body".toLowerCase().startsWith(args[2].toLowerCase())) completions.add("body");
+            else if ("divine".toLowerCase().startsWith(args[2].toLowerCase())) completions.add("divine");
+            else if ("essence".toLowerCase().startsWith(args[2].toLowerCase())) completions.add("essence");
+            else if ("three".toLowerCase().startsWith(args[2].toLowerCase())) completions.add("three");
         }
         return completions;
     }

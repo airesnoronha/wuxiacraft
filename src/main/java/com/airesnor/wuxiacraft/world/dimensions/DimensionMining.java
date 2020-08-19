@@ -32,7 +32,7 @@ public class DimensionMining extends WorldProvider {
 
     @Override
     public boolean canRespawnHere() {
-        return true;
+        return false;
     }
 
     @Override

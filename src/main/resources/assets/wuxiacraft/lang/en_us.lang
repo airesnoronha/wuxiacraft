@@ -46,6 +46,8 @@ item.health_incarnate_pill.name=Health Incarnate Pill
 item.physician_miracle_pill.name=Physician Miracle Pill
 item.small_healing_pill.name=Small Healing Pill
 item.almost_resurrect_pill.name=Almost Resurrect Pill
+item.soul_expansion_pill.name=Soul Expansion Pill
+item.qi_flow_pill.name=Qi Flow Pill
 item.weak_life_stone.name=Weak Life Stone
 item.soul_stone.name=Soul Stone
 item.primordial_stone.name=Primordial Stone
@@ -292,6 +294,8 @@ wuxiacraft.techniques.nine_springs_soul=Nine Springs Soul
 item.nine_springs_soul.scroll.name=Nine Springs Soul Arts
 wuxiacraft.techniques.buddha_s_heavenly_way=Buddha's Heavenly Way
 item.buddha_s_heavenly_way.scroll.name=Buddha's Heavenly Way
+wuxiacraft.techniques.rageful_abnegation_saint_arts=Rageful Abnegation Saint Arts
+item.rageful_abnegation_saint_arts.scroll.name=Rageful Abnegation Saint Arts
 
 #Elements
 wuxiacraft.elements.fire=Fire

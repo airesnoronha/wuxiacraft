@@ -12,13 +12,41 @@
 				{
 					"type": "item",
 					"name": "wuxiacraft:body_refinement_pill",
-					"weight": 15,
+					"weight": 12,
 					"functions": [
 						{
 							"function": "set_count",
 							"count": {
 								"min": 1,
-								"max": 2
+								"max": 3
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"name": "wuxiacraft:qi_flow_pill",
+					"weight": 12,
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 3
+							}
+						}
+					]
+				},
+				{
+					"type": "item",
+					"name": "wuxiacraft:soul_expansion_pill",
+					"weight": 12,
+					"functions": [
+						{
+							"function": "set_count",
+							"count": {
+								"min": 1,
+								"max": 3
 							}
 						}
 					]
@@ -243,7 +271,7 @@
 				{
 					"type": "item",
 					"name": "wuxiacraft:training_pill",
-					"weight": 20,
+					"weight": 8,
 					"functions": [
 						{
 							"function": "set_count",
@@ -257,17 +285,17 @@
 				{
 					"type": "item",
 					"name": "wuxiacraft:reinforcement_pill",
-					"weight": 12
+					"weight": 5
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:body_creation_pill",
-					"weight": 12
+					"weight": 3
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:soul_refinement_pill",
-					"weight": 16,
+					"weight": 8,
 					"functions": [
 						{
 							"function": "set_count",
@@ -281,7 +309,7 @@
 				{
 					"type": "item",
 					"name": "wuxiacraft:qi_paths_refinement_pill",
-					"weight": 12,
+					"weight": 8,
 					"functions": [
 						{
 							"function": "set_count",
@@ -295,22 +323,22 @@
 				{
 					"type": "item",
 					"name": "wuxiacraft:soul_aspect_pill",
-					"weight": 12
+					"weight": 5
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:wandering_ghost_pill",
-					"weight": 12
+					"weight": 3
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:meridian_injection_pill",
-					"weight": 8
+					"weight": 5
 				},
 				{
 					"type": "item",
 					"name": "wuxiacraft:dantian_condensing_pill",
-					"weight": 5
+					"weight": 3
 				},
 				{
 					"type": "item",

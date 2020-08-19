@@ -1,7 +1,6 @@
 package com.airesnor.wuxiacraft;
 
 import com.airesnor.wuxiacraft.commands.*;
-import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
 import com.airesnor.wuxiacraft.proxy.CommonProxy;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.fml.common.Mod;
@@ -65,6 +64,8 @@ public class WuxiaCraft {
 		event.registerServerCommand(new BarrierCommand());
 		event.registerServerCommand(new FoodCommand());
 		event.registerServerCommand(new SectCommand());
+		event.registerServerCommand(new WorldVarCommand());
+		event.registerServerCommand(new ProficiencyCommand());
 	}
 
 	public void registerGameRules(FMLServerStartingEvent event) {
