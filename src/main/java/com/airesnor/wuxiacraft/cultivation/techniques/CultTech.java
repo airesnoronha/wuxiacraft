@@ -25,6 +25,7 @@ public class CultTech implements ICultTech {
 			case BODY:
 				if (this.bodyTechnique != null)
 					this.bodyTechnique.progress(amount);
+				break;
 			case DIVINE:
 				if (this.divineTechnique != null)
 					this.divineTechnique.progress(amount);
