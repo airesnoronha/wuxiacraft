@@ -50,7 +50,7 @@ public class SpiritVeinOre extends BlockBase {
 		if(!worldIn.isRemote) {
 			if(!player.isCreative()) {
 				ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
-				if (heldItem.getItem() instanceof ItemPickaxe) {
+				if (heldItem.getItem() instanceof ItemTool || heldItem.getItem() instanceof ItemPickaxe) {
 					if (!EnchantmentHelper.getEnchantments(heldItem).containsKey(Enchantments.SILK_TOUCH)) {
 						if (heldItem.getItem().getHarvestLevel(heldItem, Objects.requireNonNull(getHarvestTool(state)), player, state) > 2) {
 							if (this.droppedItem != null) {
