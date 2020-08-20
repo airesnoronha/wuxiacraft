@@ -86,6 +86,7 @@ item.tiny_dust_diamond.name=Tiny Diamond Dust
 item.dust_iron.name=Iron Dust
 item.dust_gold.name=Gold Dust
 item.dust_diamond.name=Diamond Dust
+item.spatial_stone.name=Spatial Stone
 item.low_grade_spatial_ring.name=Low Grade Spatial Ring
 item.mid_grade_spatial_ring.name=Mid Grade Spatial Ring
 item.high_grade_spatial_ring.name=High Grade Spatial Ring
@@ -340,6 +341,7 @@ wuxiacraft.skills.spirit_pressure=Spiritual Pressure
 wuxiacraft.skills.wind_blade=Wind Blade
 wuxiacraft.skills.wooden_prison=Wooden Prison
 wuxiacraft.skills.weak_lightning_bolt=Lightning Arrow
+wuxiacraft.skills.landslide=Landslide
 
 #Recipes
 wuxiacraft.recipes.name.body_refinement_pill_recipe=Body Refinement Pill Recipe

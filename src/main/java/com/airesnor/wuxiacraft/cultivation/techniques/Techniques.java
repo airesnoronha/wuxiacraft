@@ -159,6 +159,7 @@ public class Techniques {
 			.addCheckpoint(23000000.0 * 8, 1.0f, "Perfected")
 			.addElement(Element.EARTH)
 			.addSkill(2000 * 8, Skills.EARTH_SUCTION)
+			.addSkill(8000 * 8, Skills.LANDSLIDE)
 			.addSkill(1000 * 8, Skills.EARTHLY_WALL);
 
 	//From Dremtas White Tiger
@@ -351,6 +352,7 @@ public class Techniques {
 			.addElement(Element.EARTH)
 			.addSkill(1000 * 8, Skills.EARTH_SUCTION)
 			.addSkill(3000 * 8, Skills.EARTHLY_WALL)
+			.addSkill(6000 * 8, Skills.LANDSLIDE)
 			.addCompatible(Techniques.EARTH_ASSIMILATING_QI);
 
 	//From Asura
@@ -386,7 +388,7 @@ public class Techniques {
 	//From Anime4You -- former Wuxia4You (sad i liked it better)
 	//immortal 2
 	public static final Technique YANG_BURNING_ART = new Technique("yang_burning_art", Cultivation.System.ESSENCE,
-			new TechniqueModifiers(1.6, 2.0, 0.8, 1.2, 2.2, 2.3), 8.9, 324561600.0*8, 47325.73)
+			new TechniqueModifiers(1.6, 2.0, 0.8, 1.2, 2.2, 2.3), 8.9, 324561600.0 * 8, 47325.73)
 			.addCheckpoint(4650.0 * 8, 0.16f, "Elemental Perception")
 			.addCheckpoint(43290.0 * 8, 0.32f, "Elemental Release")
 			.addCheckpoint(402840.0 * 8, 0.48f, "Yang absorbing")
@@ -401,7 +403,7 @@ public class Techniques {
 	//From Anime4You -- former Wuxia4You (sad i liked it better)
 	//immortal 3
 	public static final Technique COLD_SWORD_ART = new Technique("cold_sword_art", Cultivation.System.ESSENCE,
-			new TechniqueModifiers(1.6, 2.7, 1.8, 2.2, 3.0, 4.0), 8.2, 31000000000.0*8, 940164.60)
+			new TechniqueModifiers(1.6, 2.7, 1.8, 2.2, 3.0, 4.0), 8.2, 31000000000.0 * 8, 940164.60)
 			.addCheckpoint(6800.0 * 8, 0.11f, "Sword Feeling")
 			.addCheckpoint(46200.0 * 8, 0.22f, "Sword Understanding")
 			.addCheckpoint(314150.0 * 8, 0.33f, "Unfeeling Sword")
@@ -430,6 +432,7 @@ public class Techniques {
 			.addElement(Element.EARTH)
 			.addSkill(2000 * 8, Skills.EARTH_SUCTION)
 			.addSkill(1000 * 8, Skills.EARTHLY_WALL)
+			.addSkill(6000 * 8, Skills.LANDSLIDE)
 			.addSkill(3000 * 8, Skills.WEAK_SWORD_BEAM)
 			.addSkill(13000 * 8, Skills.SWORD_BEAM_BARRAGE);
 
@@ -445,6 +448,7 @@ public class Techniques {
 			.addCheckpoint(324561600.0 * 8, 1f, "Earths Tremor")
 			.addElement(Element.EARTH)
 			.addSkill(2000 * 8, Skills.EARTH_SUCTION)
+			.addSkill(6000 * 8, Skills.LANDSLIDE)
 			.addSkill(1000 * 8, Skills.EARTHLY_WALL);
 
 	//From Zacj -- yellow duck
@@ -577,7 +581,9 @@ public class Techniques {
 			.addElement(Element.LIGHT)
 			.addElement(Element.FIRE)
 			.addSkill(2000 * 8, Skills.FLAMES)
-			.addSkill(10000 * 8, Skills.FIRE_BAll);
+			.addSkill(10000 * 8, Skills.FIRE_BAll)
+			.addSkill(6000 * 8, Skills.HEALING_HANDS)
+			.addSkill(18000 * 8, Skills.SELF_HEALING);
 
 	//From Febian
 	public static final Technique AMORPHOUS_METALLIC_SOUL = new Technique("amorphous_metallic_soul", Cultivation.System.DIVINE,
@@ -639,6 +645,8 @@ public class Techniques {
 			.addCheckpoint(266533802983.0 * 8, 0.88f, "Total Abnegation")
 			.addCheckpoint(1800000000000.0 * 8, 1.0f, "Total Saint")
 			.addElement(Element.LIGHT)
-			.addEffect(32000 * 8, STRENGTH_I);
+			.addEffect(32000 * 8, STRENGTH_I)
+			.addSkill(6000 * 8, Skills.HEALING_HANDS)
+			.addSkill(18000 * 8, Skills.SELF_HEALING);
 
 }

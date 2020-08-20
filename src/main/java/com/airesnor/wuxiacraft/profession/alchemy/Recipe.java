@@ -142,7 +142,10 @@ public class Recipe {
 
 	public int getYieldResult() {
 		Random random = new Random();
-		int range = random.nextInt(this.yieldRange * 2) - this.yieldRange;
+		int range = 0;
+		if(this.yieldRange > 0) {
+			range = random.nextInt(this.yieldRange * 2) - this.yieldRange;
+		}
 		return this.yields + range;
 	}
 

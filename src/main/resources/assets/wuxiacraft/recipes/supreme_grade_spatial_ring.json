@@ -1,0 +1,26 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"result": {
+		"item": "wuxiacraft:supreme_grade_spatial_ring",
+		"count": 1
+	},
+	"pattern": [
+		"ses",
+		"grg",
+		"sgs"
+	],
+	"key": {
+		"s": {
+			"item": "wuxiacraft:spatial_stone"
+		},
+		"e": {
+			"item": "minecraft:ender_pearl"
+		},
+		"g": {
+			"item": "minecraft:gold_ingot"
+		},
+		"r": {
+			"item": "wuxiacraft:top_grade_spatial_ring"
+		}
+	}
+}

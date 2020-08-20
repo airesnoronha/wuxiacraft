@@ -23,7 +23,7 @@ public class SkillSwordFlight extends Skill {
 					if (((int) skillCap.getCastProgress()) % 5 == 4)
 						NetworkWrapper.INSTANCE.sendToServer(new EnergyMessage(1, cost * 5, actor.getUniqueID()));
 					float agility = (float)actor.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() * 0.7f;
-					float dexterity = (float)actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() * 0.3f;
+					float dexterity = (float)actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue() * 0.4f;
 					float speed = (agility + dexterity) * speedMultiplier;
 					speed = Math.min(maxSpeed, speed);
 					float yaw = actor.rotationYawHead;

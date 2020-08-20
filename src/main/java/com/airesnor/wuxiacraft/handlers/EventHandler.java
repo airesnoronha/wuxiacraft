@@ -29,6 +29,7 @@ import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -40,12 +41,11 @@ import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.FoodStats;
+import net.minecraft.stats.StatList;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
@@ -303,7 +303,7 @@ public class EventHandler {
 		IAttributeInstance iattributeinstance = entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
 
 		double spd = CultivationUtils.getAgilityFromEntity(entity);
-		if(maxServerSpeed >= 0) {
+		if (maxServerSpeed >= 0) {
 			spd = Math.min(spd, maxServerSpeed);
 		}
 
@@ -798,6 +798,92 @@ public class EventHandler {
 	}
 
 	/**
+	 * Apply new armor and resistance logics
+	 *
+	 * @param event A description of whats happening
+	 */
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void onPlayerHurt(LivingHurtEvent event) {
+		if (!(event.getEntityLiving() instanceof EntityPlayer)) return;
+		if (event.getAmount() <= 0) return;
+		EntityPlayer player = (EntityPlayer) event.getEntityLiving();
+		if (!player.isEntityInvulnerable(event.getSource())) {
+			event.setCanceled(true);
+			float damage = event.getAmount();
+			if (!event.getSource().isUnblockable()) {
+				damage = applyArmorCalculations(damage, player.getTotalArmorValue(), (float) player.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue());
+			}
+			if (damage <= 0) return;
+			damage = applyPotionDamageCalculations(player, event.getSource(), damage);
+			if (damage <= 0) return;
+			float beforeAbsorption = damage;
+			damage = Math.max(damage - player.getAbsorptionAmount(), 0.0F);
+			player.setAbsorptionAmount(player.getAbsorptionAmount() - (beforeAbsorption - damage));
+			if (damage <= 0) return;
+			damage = net.minecraftforge.common.ForgeHooks.onLivingDamage(player, event.getSource(), damage);
+
+			if(damage > 0) {
+				player.addExhaustion(event.getSource().getHungerDamage());
+				float health = player.getHealth();
+				player.getCombatTracker().trackDamage(event.getSource(), health, damage);
+				player.setHealth(health - damage);
+
+				if (damage < 3.4028235E37F)
+				{
+					player.addStat(StatList.DAMAGE_TAKEN, Math.round(damage * 10.0F));
+				}
+			}
+		}
+	}
+
+	/**
+	 * Direct copy from {@link EntityLivingBase} because it's protected
+	 *
+	 * @param player The target player
+	 * @param source The Damage Source
+	 * @param damage The damage value
+	 * @return return the new damage value
+	 */
+	private static float applyPotionDamageCalculations(EntityPlayer player, DamageSource source, float damage) {
+		if (source.isDamageAbsolute()) {
+			return damage;
+		} else {
+			if (player.isPotionActive(MobEffects.RESISTANCE) && source != DamageSource.OUT_OF_WORLD) {
+				//noinspection ConstantConditions
+				int i = (player.getActivePotionEffect(MobEffects.RESISTANCE).getAmplifier() + 1) * 5;
+				int j = 25 - i;
+				float f = damage * (float) j;
+				damage = f / 25.0F;
+			}
+
+			if (damage <= 0.0F) {
+				return 0.0F;
+			} else {
+				int k = EnchantmentHelper.getEnchantmentModifierDamage(player.getArmorInventoryList(), source);
+
+				if (k > 0) {
+					damage = CombatRules.getDamageAfterMagicAbsorb(damage, (float) k);
+				}
+
+				return damage;
+			}
+		}
+	}
+
+	/**
+	 * New armor reduction logics, this way armor scales all the way
+	 * @param damage the damage input
+	 * @param armor the armor to resist
+	 * @param toughness the armor toughness
+	 * @return the damage taken
+	 */
+	private static float applyArmorCalculations(float damage, float armor, float toughness) {
+		float toughnessMod = (2.0F + toughness) / 4.0F;
+		float finalArmor = armor * (0.5f + toughnessMod);
+		return Math.max(0, damage - finalArmor);
+	}
+
+	/**
 	 * Applies the modifiers to the corresponding player based on its cultivation
 	 *
 	 * @param player Player to be applied
@@ -812,7 +898,7 @@ public class EventHandler {
 		}
 
 		double spd = CultivationUtils.getAgilityFromEntity(player);
-		if(WuxiaCraftConfig.maxServerSpeed >= 0) {
+		if (WuxiaCraftConfig.maxServerSpeed >= 0) {
 			spd = Math.min(spd, WuxiaCraftConfig.maxServerSpeed);
 		}
 		spd *= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();

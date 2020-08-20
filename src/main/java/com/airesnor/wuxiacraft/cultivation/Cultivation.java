@@ -647,7 +647,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public double getResistanceModifier() {
-		return ((this.getBodyModifier() - 1) * 0.7 + (this.getEssenceModifier() - 1) * 0.7 + (this.getDivineModifier() - 1)*0.1)* 0.012;
+		return ((this.getBodyModifier() - 1) * 0.7 + (this.getEssenceModifier() - 1) * 0.7 + (this.getDivineModifier() - 1)*0.1)* 0.062;
 	}
 
 	@Override

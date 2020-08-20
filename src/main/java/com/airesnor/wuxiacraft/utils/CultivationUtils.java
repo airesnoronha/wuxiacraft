@@ -3,6 +3,8 @@ package com.airesnor.wuxiacraft.utils;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.capabilities.*;
 import com.airesnor.wuxiacraft.cultivation.*;
+import com.airesnor.wuxiacraft.cultivation.aura.AuraCap;
+import com.airesnor.wuxiacraft.cultivation.aura.IAuraCap;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
@@ -16,7 +18,6 @@ import com.airesnor.wuxiacraft.networking.UnifiedCapabilitySyncMessage;
 import com.airesnor.wuxiacraft.world.data.WorldVariables;
 import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -112,6 +113,19 @@ public class CultivationUtils {
 			barrier = new Barrier();
 		}
 		return barrier;
+	}
+
+	@Nonnull
+	public static IAuraCap getAuraFromEntity(EntityLivingBase entityIn) {
+		IAuraCap auraCap = null;
+		if(entityIn instanceof EntityPlayer) {
+			//noinspection ConstantConditions
+			auraCap = entityIn.getCapability(AuraCapProvider.AURA_CAPABILITY, null);
+		}
+		if(auraCap == null) {
+			auraCap = new AuraCap();
+		}
+		return auraCap;
 	}
 
 	public static double getMaxEnergy(EntityLivingBase entityIn) {
@@ -222,7 +236,7 @@ public class CultivationUtils {
 		private BaseSystemLevel targetLevel;
 		private int targetSubLevel;
 		private Cultivation.System system;
-		private boolean customTribulation;
+		private final boolean customTribulation;
 
 		public BoltsScheduler(EntityLivingBase player, double tribulationStrength, Cultivation.System system, BaseSystemLevel targetLevel, int targetSubLevel) {
 			this.player = player;
@@ -276,7 +290,7 @@ public class CultivationUtils {
 					boolean survived = player.isEntityAlive();
 					if (survived && !this.customTribulation) {
 						double oldModifier = cultivation.getSystemModifier(system);
-						double modifierDifference = 0;
+						double modifierDifference;
 						switch (this.system) {
 							case BODY:
 								cultivation.setBodyProgress(0);

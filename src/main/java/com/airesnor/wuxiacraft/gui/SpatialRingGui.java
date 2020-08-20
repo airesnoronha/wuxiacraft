@@ -48,22 +48,22 @@ public class SpatialRingGui extends GuiContainer {
 		for (int j = 0; j < totalSpaceY / 133; j++) {
 			drawnX = 0;
 			for (int i = 0; i < totalSpaceX / 200; i++) {
-				drawTexturedModalRect(this.guiLeft + 8 + drawnX, this.guiTop + 8+drawnY, 0, 0, 200, 133);
-				drawnX+=200;
+				drawTexturedModalRect(this.guiLeft + 8 + drawnX, this.guiTop + 8 + drawnY, 0, 0, 200, 133);
+				drawnX += 200;
 			}
-			if(drawnX < totalSpaceX) {
-				drawTexturedModalRect(this.guiLeft + 8 + drawnX, this.guiTop + 8+drawnY, 0, 0, totalSpaceX-drawnX, 133);
+			if (drawnX < totalSpaceX) {
+				drawTexturedModalRect(this.guiLeft + 8 + drawnX, this.guiTop + 8 + drawnY, 0, 0, totalSpaceX - drawnX, 133);
 			}
 			drawnY += 133;
 		}
-		if(drawnY < totalSpaceY) {
+		if (drawnY < totalSpaceY) {
 			drawnX = 0;
 			for (int i = 0; i < totalSpaceX / 200; i++) {
-				drawTexturedModalRect(this.guiLeft + 8 + drawnX, this.guiTop + 8+drawnY, 0, 0, 200, totalSpaceY-drawnY);
-				drawnX+=200;
+				drawTexturedModalRect(this.guiLeft + 8 + drawnX, this.guiTop + 8 + drawnY, 0, 0, 200, totalSpaceY - drawnY);
+				drawnX += 200;
 			}
-			if(drawnX < totalSpaceX) {
-				drawTexturedModalRect(this.guiLeft + 8 + drawnX, this.guiTop + 8+drawnY, 0, 0, totalSpaceX-drawnX, totalSpaceY-drawnY);
+			if (drawnX < totalSpaceX) {
+				drawTexturedModalRect(this.guiLeft + 8 + drawnX, this.guiTop + 8 + drawnY, 0, 0, totalSpaceX - drawnX, totalSpaceY - drawnY);
 			}
 		}
 
@@ -75,7 +75,7 @@ public class SpatialRingGui extends GuiContainer {
 			}
 		}
 
-		int xPos = ((20 + this.spatialRingColumns * 18) / 2) - (9 * 18) / 2;
+		int xPos = ((20 + Math.max(9, this.spatialRingColumns) * 18) / 2) - (9 * 18) / 2;
 		int yPos = 10 + this.spatialRingRows * 18 + 7;
 		GlStateManager.color(1f, 1f, 1f, 1f);
 		//9-35 Player inventory

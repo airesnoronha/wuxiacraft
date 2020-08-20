@@ -78,15 +78,15 @@ public class KnownTechnique {
 			}
 		}
 		if(this.technique.getSystem() == Cultivation.System.DIVINE) {
-			if (this.proficiency > 2000) {
+			if (this.proficiency > 2000*8) {
 				skills.add(Skills.SPIRIT_PRESSURE);
 			}
-			if(this.proficiency >= 10000) {
+			if(this.proficiency >= 10000*8) {
 				skills.add(Skills.SPIRIT_ARROW);
 			}
 		}
 		if(this.technique.getSystem() == Cultivation.System.ESSENCE) {
-			if(this.proficiency >= 4000) {
+			if(this.proficiency >= 4000*8) {
 				skills.add(Skills.WEAK_SWORD_FLIGHT);
 			}
 		}
