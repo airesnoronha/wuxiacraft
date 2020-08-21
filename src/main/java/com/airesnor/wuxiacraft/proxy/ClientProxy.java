@@ -18,6 +18,7 @@ import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTESR;
 import com.airesnor.wuxiacraft.formation.FormationTESR;
 import com.airesnor.wuxiacraft.formation.FormationTileEntity;
 import com.airesnor.wuxiacraft.gui.SkillsGui;
+import com.airesnor.wuxiacraft.handlers.EntityRenderHandler;
 import com.airesnor.wuxiacraft.handlers.PreClientEvents;
 import com.airesnor.wuxiacraft.handlers.RendererHandler;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -122,6 +123,8 @@ public class ClientProxy extends CommonProxy {
 		for (KeyBinding keyBinding : keyBindings) {
 			ClientRegistry.registerKeyBinding(keyBinding);
 		}
+
+		MinecraftForge.EVENT_BUS.register(EntityRenderHandler.class);
 
 		RenderGiantAnt.init();
 		RenderGiantBee.init();
