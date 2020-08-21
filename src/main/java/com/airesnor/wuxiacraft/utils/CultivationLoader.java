@@ -15,7 +15,7 @@ public class CultivationLoader {
 
 	public static void loadLevelsFromConfig() {
 		File levelsFile = new File(Loader.instance().getConfigDir(), "wuxiacraft/cultivationLevels.json");
-		LinkedList<CultivationLevel> loadedLevels = new LinkedList<>(CultivationLevel.DEFAULTS);
+		List<CultivationLevel> loadedLevels = new ArrayList<>(CultivationLevel.DEFAULTS);
 		Gson gson = new Gson();
 		try {
 			Reader reader = new FileReader(levelsFile);

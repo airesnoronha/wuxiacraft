@@ -15,6 +15,7 @@ public class CapabilitiesHandler {
 	private final ResourceLocation SKILLS_CAP = new ResourceLocation(WuxiaCraft.MOD_ID, "skillscap");
 	private final ResourceLocation FOUNDATION_CAP = new ResourceLocation(WuxiaCraft.MOD_ID, "foundation");
 	private final ResourceLocation SEALING_CAP = new ResourceLocation(WuxiaCraft.MOD_ID, "sealing");
+	private final ResourceLocation BARRIER_CAP = new ResourceLocation(WuxiaCraft.MOD_ID, "barrier");
 
 	@SubscribeEvent
 	public void attachCapability(AttachCapabilitiesEvent<Entity> event) {
@@ -25,6 +26,7 @@ public class CapabilitiesHandler {
 		event.addCapability(SKILLS_CAP, new SkillsProvider());
 		event.addCapability(FOUNDATION_CAP, new FoundationProvider());
 		event.addCapability(SEALING_CAP, new SealingProvider());
+		event.addCapability(BARRIER_CAP, new BarrierProvider());
 	}
 
 }

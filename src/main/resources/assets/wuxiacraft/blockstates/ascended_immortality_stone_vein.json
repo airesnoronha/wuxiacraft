@@ -1,5 +1,6 @@
 {
   "variants": {
-	"normal": {"model":  "wuxiacraft:spirit_vein_ore"}
+	"normal": {"model":  "wuxiacraft:spirit_vein_ore"},
+    "inventory": {"model":  "wuxiacraft:spirit_vein_ore"}
   }
 }

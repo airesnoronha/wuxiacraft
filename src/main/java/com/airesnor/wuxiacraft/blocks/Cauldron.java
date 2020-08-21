@@ -1,9 +1,6 @@
 package com.airesnor.wuxiacraft.blocks;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.entities.tileentity.CauldronTESR;
 import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
-import com.airesnor.wuxiacraft.items.IHasModel;
 import com.airesnor.wuxiacraft.items.ItemFan;
 import com.airesnor.wuxiacraft.items.WuxiaItems;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
@@ -26,9 +23,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -40,9 +38,10 @@ import java.util.Random;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class Cauldron extends BlockContainer implements IHasModel {
+public class Cauldron extends BlockContainer {
 
-	private static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0,0,0,1,0.81, 1);
+	private static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0, 0, 0, 1, 0.81, 1);
+	private int rightClickCounter;
 
 	public static final IProperty<Integer> CAULDRON = PropertyInteger.create("cauldron", 0, 2);
 
@@ -54,16 +53,10 @@ public class Cauldron extends BlockContainer implements IHasModel {
 
 		setHardness(1f);
 		setResistance(25f);
+		rightClickCounter = 0;
 
 		WuxiaBlocks.BLOCKS.add(this);
 		WuxiaItems.ITEMS.add(new ItemBlock(this).setRegistryName(name));
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerModels() {
-		WuxiaCraft.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
-		ClientRegistry.bindTileEntitySpecialRenderer(CauldronTileEntity.class, new CauldronTESR());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -149,54 +142,76 @@ public class Cauldron extends BlockContainer implements IHasModel {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		boolean used = false;
-		CauldronTileEntity te = getTE(worldIn, pos);
-		if(te!=null) {
-			if (!playerIn.getHeldItem(hand).isEmpty()) {
-				ItemStack itemStack = playerIn.getHeldItem(hand);
-				if (!te.isHasFirewood()) {
-					if (itemStack.getItem() == net.minecraft.init.Items.STICK) {
-						used = true;
-						te.addWood(2000);
-						if (!playerIn.isCreative())
-							itemStack.shrink(1);
-						playerIn.openContainer.detectAndSendChanges();
-					}
-					if (itemStack.getItem() == net.minecraft.init.Items.COAL) {
-						used = true;
-						te.addWood(16000);
-						if (!playerIn.isCreative())
-							itemStack.shrink(1);
-						playerIn.openContainer.detectAndSendChanges();
-					}
+		if (!worldIn.isRemote) {
+			CauldronTileEntity te = getTE(worldIn, pos);
+			if (te != null) {
+				if (!playerIn.getHeldItem(hand).isEmpty()) {
+					ItemStack itemStack = playerIn.getHeldItem(hand);
+					if (!te.hasFirewood()) {
+						if (itemStack.getItem() == net.minecraft.init.Items.STICK) {
+							used = true;
+							te.addWood(2000);
+							if (!playerIn.isCreative())
+								itemStack.shrink(1);
+							playerIn.openContainer.detectAndSendChanges();
+						}
+						if (itemStack.getItem() == net.minecraft.init.Items.COAL) {
+							used = true;
+							te.addWood(16000);
+							if (!playerIn.isCreative())
+								itemStack.shrink(1);
+							playerIn.openContainer.detectAndSendChanges();
+						}
 
-					if (itemStack.getItem() == ItemBlock.getItemFromBlock(net.minecraft.init.Blocks.COAL_BLOCK)) {
-						used = true;
-						te.addWood(64000);
-						if (!playerIn.isCreative())
-							itemStack.shrink(1);
-						playerIn.openContainer.detectAndSendChanges();
+						if (itemStack.getItem() == ItemBlock.getItemFromBlock(net.minecraft.init.Blocks.COAL_BLOCK)) {
+							used = true;
+							te.addWood(64000);
+							if (!playerIn.isCreative())
+								itemStack.shrink(1);
+							playerIn.openContainer.detectAndSendChanges();
+						}
+					}
+					if (itemStack.getItem() == net.minecraft.init.Items.FLINT_AND_STEEL) {
+						if (te.hasFirewood() && !te.isLit()) {
+							used = true;
+							itemStack.damageItem(1, playerIn);
+							te.setOnFire();
+							playerIn.openContainer.detectAndSendChanges();
+						}
+					}
+					if (itemStack.getItem() instanceof ItemFan) {
+						if (te.isLit()) {
+							ItemFan item = (ItemFan) itemStack.getItem();
+							te.wiggleFan(item.getFanStrength(), item.getMaxFanStrength());
+							used = true;
+						}
 					}
 				}
-				if (itemStack.getItem() == net.minecraft.init.Items.FLINT_AND_STEEL) {
-					if (te.isHasFirewood() && !te.isLit()) {
-						used = true;
-						itemStack.damageItem(1, playerIn);
-						te.setOnFire();
-						playerIn.openContainer.detectAndSendChanges();
+				/*if (playerIn.getHeldItem(hand).isEmpty() && !playerIn.isSneaking()) {
+					TextComponentString text = new TextComponentString("Burning Time: " + te.getBurningTime());
+					playerIn.sendMessage(text);
+				}*/
+				if (playerIn.getHeldItem(hand).isEmpty() && playerIn.isSneaking()) {
+					TextComponentString text = new TextComponentString("The Cauldron has been emptied.");
+					text.getStyle().setColor(TextFormatting.GREEN);
+					if (te.hasWater()) {
+						if (te.getCauldronState() == CauldronTileEntity.EnumCauldronState.WRONG_RECIPE) {
+							te.emptyCauldron();
+							if (!playerIn.world.isRemote) {
+								playerIn.sendMessage(text);
+							}
+							used = true;
+						} else if (te.getCauldronState() != CauldronTileEntity.EnumCauldronState.WRONG_RECIPE && rightClickCounter >= 2) {
+							te.emptyCauldron();
+							if (!playerIn.world.isRemote) {
+								playerIn.sendMessage(text);
+							}
+							used = true;
+							rightClickCounter = 0;
+						} else if (te.getCauldronState() != CauldronTileEntity.EnumCauldronState.WRONG_RECIPE) {
+							rightClickCounter++;
+						}
 					}
-				}
-				if (itemStack.getItem() instanceof ItemFan) {
-					if (te.isLit()) {
-						ItemFan item = (ItemFan) itemStack.getItem();
-						te.wiggleFan(item.getFanStrength(), item.getMaxFanStrength());
-						used = true;
-					}
-				}
-			}
-			if (playerIn.getHeldItem(hand).isEmpty() && playerIn.isSneaking()) {
-				if (te.getCauldronState() == CauldronTileEntity.EnumCauldronState.WRONG_RECIPE && te.isHasWater()) {
-					te.emptyCauldron();
-					used = true;
 				}
 			}
 		}
@@ -213,7 +228,7 @@ public class Cauldron extends BlockContainer implements IHasModel {
 	@ParametersAreNonnullByDefault
 	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
 		CauldronTileEntity te = getTE(world, pos);
-		if(te!=null) {
+		if (te != null) {
 			te.prepareToDie();
 		}
 		return super.removedByPlayer(state, world, pos, player, willHarvest);
@@ -221,13 +236,12 @@ public class Cauldron extends BlockContainer implements IHasModel {
 
 	@Override
 	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
-		if(worldIn.isRemote) {
+		if (!worldIn.isRemote) {
 			CauldronTileEntity te = getTE(worldIn, pos);
 			if (te != null) {
-				if (entityIn instanceof EntityItem && te.isAcceptingItems()) {
+				if (entityIn instanceof EntityItem) {
 					ItemStack stack = ((EntityItem) entityIn).getItem().copy();
 					te.addRecipeInput(stack.getItem());
-					NetworkWrapper.INSTANCE.sendToServer(new ShrinkEntityItemMessage(entityIn.getUniqueID().toString()));
 					stack.shrink(1);
 					if (stack.isEmpty()) entityIn.setDead();
 				}

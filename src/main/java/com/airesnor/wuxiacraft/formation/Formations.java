@@ -1,6 +1,6 @@
 package com.airesnor.wuxiacraft.formation;
 
-import com.airesnor.wuxiacraft.dimensions.WuxiaDimensions;
+import com.airesnor.wuxiacraft.world.dimensions.WuxiaDimensions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +11,12 @@ public class Formations {
 	public static final List<Formation> FORMATIONS = new ArrayList<>();
 
 	//passive generation
-	public static final Formation WEAK_QI_GATHERING_ARRAY = new FormationQiGathering("weak_qi_gathering_array", 0.08f, 32f);
-	public static final Formation FIVE_ELEMENTS_GATHERING_ARRAY = new FormationQiGathering("five_elements_gathering_array", 0.22f, 48f);
-	public static final Formation YIN_YANG_GATHERING_ARRAY = new FormationQiGathering("yin_yang_gathering_array", 0.5f, 64f);
-	public static final Formation NATURE_SPIRIT_GATHERING_ARRAY = new FormationQiGathering("nature_spirit_gathering_array", 2.2, 72f);
-	public static final Formation GOLDEN_YANG_QI_ARRAY = new FormationQiGathering("golden_yang_qi_array", 6.8, 72f);
-	public static final Formation HEAVENLY_QI_BORROW_ARRAY = new FormationQiGathering("heavenly_qi_borrow_array", 32.4, 72f);
+	public static final Formation WEAK_QI_GATHERING_ARRAY = new FormationQiGathering("weak_qi_gathering_array", 0.12f, 32f);
+	public static final Formation FIVE_ELEMENTS_GATHERING_ARRAY = new FormationQiGathering("five_elements_gathering_array", 0.46f, 48f);
+	public static final Formation YIN_YANG_GATHERING_ARRAY = new FormationQiGathering("yin_yang_gathering_array", 1.2f, 64f);
+	public static final Formation NATURE_SPIRIT_GATHERING_ARRAY = new FormationQiGathering("nature_spirit_gathering_array", 4.5, 72f);
+	public static final Formation GOLDEN_YANG_QI_ARRAY = new FormationQiGathering("golden_yang_qi_array", 12.2, 72f);
+	public static final Formation HEAVENLY_QI_BORROW_ARRAY = new FormationQiGathering("heavenly_qi_borrow_array", 36.6, 72f);
 
 	//furnace powering
 	public static final Formation FURNACE_POWERING_FORMATION = new FormationFurnacePower("furnace_powering_formation", 15f, 100f, 16f);

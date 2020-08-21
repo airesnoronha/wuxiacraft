@@ -1,38 +1,42 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.blocks.SpiritVeinOre;
 import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
-import com.airesnor.wuxiacraft.dimensions.biomes.WuxiaBiomes;
+import com.airesnor.wuxiacraft.entities.effects.EntityLevelUpHalo;
+import com.airesnor.wuxiacraft.entities.skills.*;
+import com.airesnor.wuxiacraft.items.WuxiaHerbs;
+import com.airesnor.wuxiacraft.world.dimensions.biomes.WuxiaBiomes;
 import com.airesnor.wuxiacraft.entities.mobs.GiantAnt;
 import com.airesnor.wuxiacraft.entities.mobs.GiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
-import com.airesnor.wuxiacraft.entities.skills.FireThrowable;
-import com.airesnor.wuxiacraft.entities.skills.SwordBeamThrowable;
-import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
-import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
-import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
-import com.airesnor.wuxiacraft.entities.tileentity.GrinderTileEntity;
-import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
+import com.airesnor.wuxiacraft.entities.tileentity.*;
 import com.airesnor.wuxiacraft.formation.FormationTileEntity;
-import com.airesnor.wuxiacraft.items.IHasModel;
+import com.airesnor.wuxiacraft.items.ItemScroll;
 import com.airesnor.wuxiacraft.items.WuxiaItems;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod.EventBusSubscriber
 public class RegistryHandler {
@@ -41,6 +45,7 @@ public class RegistryHandler {
 	public static void onItemRegister(RegistryEvent.Register<Item> event) {
 		WuxiaCraft.logger.info("Registering items.");
 		event.getRegistry().registerAll(WuxiaItems.ITEMS.toArray(new Item[0]));
+		event.getRegistry().registerAll(WuxiaHerbs.HERBS.toArray(new Item[0]));
 
 	}
 
@@ -55,18 +60,33 @@ public class RegistryHandler {
 		GameRegistry.registerTileEntity(GrinderTileEntity.class, new ResourceLocation(WuxiaCraft.MOD_ID, "grinder_tile_entity"));
 	}
 
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void onModelRegister(ModelRegistryEvent event) {
+		WuxiaCraft.proxy.registerItemRenderer(Item.getItemFromBlock(WuxiaBlocks.MAGICAL_GRINDER), 0, "inventory");
+		ClientRegistry.bindTileEntitySpecialRenderer(GrinderTileEntity.class, new GrinderTESR());
+		WuxiaCraft.proxy.registerCustomModelLocation(WuxiaItems.BLOOD_BOTTLE, 0, "inventory", "wuxiacraft:blood_bottle");
+		WuxiaCraft.proxy.registerCustomModelLocation(WuxiaItems.RECIPE_SCROLL, 0, "inventory", "wuxiacraft:recipe_scroll");
+
 		for (Item item : WuxiaItems.ITEMS) {
-			if (item instanceof IHasModel) {
-				((IHasModel) item).registerModels();
+			if (item instanceof ItemScroll) {
+				WuxiaCraft.proxy.registerScrollModel(item, 0, "inventory");
+			} else {
+				WuxiaCraft.proxy.registerItemRenderer(item, 0, "inventory");
 			}
+		}
+		for (Item item : WuxiaHerbs.HERBS) {
+			WuxiaCraft.proxy.registerItemRenderer(item, 0, "inventory");
 		}
 		for (Block block : WuxiaBlocks.BLOCKS) {
-			if (block instanceof IHasModel) {
-				((IHasModel) block).registerModels();
+			if (block instanceof SpiritVeinOre) {
+				WuxiaCraft.proxy.registerCustomModelLocation(ItemBlock.getItemFromBlock(block), 0, "inventory", "wuxiacraft:spirit_vein_ore");
+			} else {
+				WuxiaCraft.proxy.registerItemRenderer(Item.getItemFromBlock(block), 0, "inventory");
 			}
 		}
+		ClientRegistry.bindTileEntitySpecialRenderer(CauldronTileEntity.class, new CauldronTESR());
+		ClientRegistry.bindTileEntitySpecialRenderer(SpiritStoneStackTileEntity.class, new SpiritStoneStackTESR());
 	}
 
 	@SubscribeEvent
@@ -135,7 +155,7 @@ public class RegistryHandler {
 				.name("wandering_cultivator")
 				.tracker(150, 3, false)
 				.egg(0x202020, 0xFACB27)
-				.spawn(EnumCreatureType.MONSTER, 5, 1, 1,
+				.spawn(EnumCreatureType.MONSTER, 6, 1, 1,
 						Biomes.BEACH,
 						Biomes.BIRCH_FOREST,
 						Biomes.DESERT,
@@ -151,14 +171,15 @@ public class RegistryHandler {
 						Biomes.JUNGLE_EDGE,
 						Biomes.MESA
 				)
-				.spawn(EnumCreatureType.MONSTER, 12, 1, 1,
+				.spawn(EnumCreatureType.MONSTER, 9, 1, 1,
 						Biomes.HELL,
 						WuxiaBiomes.MINING,
 						WuxiaBiomes.EARTH,
 						WuxiaBiomes.FIRE,
 						WuxiaBiomes.METAL,
 						WuxiaBiomes.WATER,
-						WuxiaBiomes.WOOD)
+						WuxiaBiomes.WOOD,
+						WuxiaBiomes.EXTREMEQI)
 				.build();
 		EntityEntry fireThrowable = EntityEntryBuilder.create()
 				.entity(FireThrowable.class)
@@ -184,6 +205,30 @@ public class RegistryHandler {
 				.name("sword_beam_throwable")
 				.tracker(200, 10, true)
 				.build();
+		EntityEntry soulArrowThrowable = EntityEntryBuilder.create()
+				.entity(SoulArrowThrowable.class)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "soul_arrow_throwable"), 7)
+				.name("soul_arrow_throwable")
+				.tracker(200, 10, true)
+				.build();
+		EntityEntry windBladeThrowable = EntityEntryBuilder.create()
+				.entity(WindBladeThrowable.class)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "wind_blade_throwable"), 9)
+				.name("wind_blade_throwable")
+				.tracker(200, 10, true)
+				.build();
+		EntityEntry entityLevelUpHalo = EntityEntryBuilder.create()
+				.entity(EntityLevelUpHalo.class)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "entity_level_up_halo"), 8)
+				.name("entity_level_up_halo")
+				.tracker(300, 10, true)
+				.build();
+		EntityEntry thunderBoltThrowable = EntityEntryBuilder.create()
+				.entity(ThunderBoltThrowable.class)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "thunder_bolt_throwable"), 10)
+				.name("thunder_bolt_throwable")
+				.tracker(300, 10, true)
+				.build();
 		event.getRegistry().register(giantAntEntity);
 		event.getRegistry().register(giantBeeEntity);
 		event.getRegistry().register(wanderingCultivatorEntity);
@@ -191,6 +236,10 @@ public class RegistryHandler {
 		event.getRegistry().register(waterNeedleThrowable);
 		event.getRegistry().register(waterBladeThrowable);
 		event.getRegistry().register(swordBeamThrowable);
+		event.getRegistry().register(soulArrowThrowable);
+		event.getRegistry().register(windBladeThrowable);
+		event.getRegistry().register(entityLevelUpHalo);
+		event.getRegistry().register(thunderBoltThrowable);
 	}
 
 	//ain't an event
@@ -205,6 +254,13 @@ public class RegistryHandler {
 	@SubscribeEvent
 	public void onPotionRegister(RegistryEvent.Register<Potion> event) {
 		event.getRegistry().register(Skills.ENLIGHTENMENT);
+	}
+
+	public static final SoundEvent fartSound = new SoundEvent(new ResourceLocation(WuxiaCraft.MOD_ID, "fart")).setRegistryName("fart");
+
+	@SubscribeEvent
+	public void onRegisterSound(RegistryEvent.Register<SoundEvent> event) {
+		event.getRegistry().register(new SoundEvent(new ResourceLocation(WuxiaCraft.MOD_ID, "fart")).setRegistryName("fart"));
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.items;
 
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import mcp.MethodsReturnNonnullByDefault;
@@ -22,11 +23,13 @@ public class ItemProgressPill extends ItemBase {
 
 	final float amount;
 	final int cooldown;
+	final Cultivation.System system;
 
-	public ItemProgressPill(String item_name, float amount, int cooldown) {
+	public ItemProgressPill(String item_name, Cultivation.System system, float amount, int cooldown) {
 		super(item_name);
 		this.amount = amount;
 		this.cooldown = cooldown;
+		this.system = system;
 		setCreativeTab(WuxiaItems.PILLS);
 	}
 
@@ -35,16 +38,16 @@ public class ItemProgressPill extends ItemBase {
 		if (entityLiving instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) entityLiving;
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-			if (cultivation.getPillCooldown() == 0) {
+			if (cultivation.getPillCooldown() <= 0) {
 				stack.shrink(player.isCreative() ? 0 : 1);
 				if (stack.isEmpty())
 					stack = ItemStack.EMPTY;
 				cultivation.setPillCooldown(cooldown);
-				if(this.amount <= cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.1f) {
-					CultivationUtils.cultivatorAddProgress(player, this.amount, false, false, true);
+				if(this.amount <= cultivation.getSystemLevel(this.system).getProgressBySubLevel(cultivation.getSystemSubLevel(this.system)) * 0.2f) {
+					CultivationUtils.cultivatorAddProgress(player, this.system, this.amount, false, false);
 				} else {
 					worldIn.createExplosion(entityLiving, entityLiving.posX, entityLiving.posY, entityLiving.posZ, 3f, true);
-					entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), this.amount*2);
+					entityLiving.attackEntityFrom(DamageSource.causeExplosionDamage(entityLiving), this.amount*0.7f);
 				}
 			}
 		}

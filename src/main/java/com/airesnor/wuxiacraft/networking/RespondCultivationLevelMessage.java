@@ -1,25 +1,33 @@
 package com.airesnor.wuxiacraft.networking;
 
-import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
+import com.airesnor.wuxiacraft.cultivation.BaseSystemLevel;
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
+import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.handlers.RendererHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.UUID;
 
 public class RespondCultivationLevelMessage implements IMessage {
 
-	public CultivationLevel responderLevel;
+	public BaseSystemLevel responderLevel;
 	public int responderSubLevel;
-	public String responderName;
 	public UUID responderUUID;
 
-	public RespondCultivationLevelMessage(CultivationLevel responderLevel, int responderSubLevel, UUID responderUUID) {
+	public RespondCultivationLevelMessage(BaseSystemLevel responderLevel, int responderSubLevel, UUID responderUUID) {
 		this.responderLevel = responderLevel;
 		this.responderSubLevel = responderSubLevel;
 		this.responderUUID = responderUUID;
 	}
 
+	@SuppressWarnings("unused")
 	public RespondCultivationLevelMessage() {
 	}
 
@@ -27,12 +35,8 @@ public class RespondCultivationLevelMessage implements IMessage {
 	public void fromBytes(ByteBuf buf) {
 		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		this.responderSubLevel = buf.readInt();
-		int length = buf.readInt();
-		byte[] bytes = new byte[30];
-		buf.readBytes(bytes, 0, length);
-		bytes[length] = '\0';
-		String cultlevelname = new String(bytes, 0, length);
-		this.responderLevel = CultivationLevel.REGISTERED_LEVELS.get(cultlevelname);
+		String cultLevelName = ByteBufUtils.readUTF8String(buf);
+		this.responderLevel = BaseSystemLevel.getLevelInListByName(BaseSystemLevel.ESSENCE_LEVELS, cultLevelName);
 		this.responderUUID = packetBuffer.readUniqueId();
 	}
 
@@ -40,9 +44,28 @@ public class RespondCultivationLevelMessage implements IMessage {
 	public void toBytes(ByteBuf buf) {
 		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		buf.writeInt(this.responderSubLevel);
-		byte[] bytes = this.responderLevel.levelName.getBytes();
-		buf.writeInt(bytes.length);
-		buf.writeBytes(bytes);
+		ByteBufUtils.writeUTF8String(buf, this.responderLevel.levelName);
 		packetBuffer.writeUniqueId(this.responderUUID);
 	}
+
+	public static class Handler implements IMessageHandler<RespondCultivationLevelMessage, IMessage> {
+		@Override
+		public IMessage onMessage(RespondCultivationLevelMessage message, MessageContext ctx) {
+			if (ctx.side == Side.CLIENT) {
+				return handleMessageClient(message);
+			}
+			return null;
+		}
+
+		@SideOnly(Side.CLIENT)
+		private IMessage handleMessageClient(RespondCultivationLevelMessage message) {
+			ICultivation cultivation = new Cultivation();
+			cultivation.setEssenceLevel(message.responderLevel);
+			cultivation.setEssenceSubLevel(message.responderSubLevel);
+			UUID uuid = message.responderUUID;
+			RendererHandler.knownCultivations.put(uuid, cultivation);
+			return null;
+		}
+	}
+
 }

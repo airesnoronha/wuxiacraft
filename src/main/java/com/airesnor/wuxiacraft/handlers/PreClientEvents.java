@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class PreClientEvents {
 
 	@SubscribeEvent
-	public void onTextureStitch(TextureStitchEvent event) {
+	public void onTextureStitch(TextureStitchEvent.Pre event) {
 		//Manually add the mod textures because my OBJBlockModelLoader won't do that, shame
 		event.getMap().registerSprite(new ResourceLocation("wuxiacraft:blocks/iron_cauldron"));
 	}

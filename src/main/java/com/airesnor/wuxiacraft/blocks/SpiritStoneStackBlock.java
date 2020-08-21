@@ -1,8 +1,6 @@
 package com.airesnor.wuxiacraft.blocks;
 
-import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTESR;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTileEntity;
-import com.airesnor.wuxiacraft.items.IHasModel;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
@@ -17,9 +15,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -27,7 +22,7 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class SpiritStoneStackBlock extends BlockContainer implements IHasModel {
+public class SpiritStoneStackBlock extends BlockContainer {
 
 	public SpiritStoneStackBlock(String name) {
 		super(Materials.RUNE);
@@ -124,12 +119,6 @@ public class SpiritStoneStackBlock extends BlockContainer implements IHasModel {
 	@Nullable
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
 		return new SpiritStoneStackTileEntity();
-	}
-
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void registerModels() {
-		ClientRegistry.bindTileEntitySpecialRenderer(SpiritStoneStackTileEntity.class, new SpiritStoneStackTESR());
 	}
 
 	@Override

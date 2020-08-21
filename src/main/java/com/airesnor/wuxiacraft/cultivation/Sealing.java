@@ -2,348 +2,206 @@ package com.airesnor.wuxiacraft.cultivation;
 
 public class Sealing implements ISealing {
 
-    //Cultivation
-    private double progress;
-    private CultivationLevel level;
-    private int subLevel;
-    private double energy;
-    private float maxSpeed;
-    private float hasteLimit;
-    private float jumpLimit;
+    private final ICultivation sealedCultivation;
 
-    //Foundation
-    private long agility; // move speed
-    private long constitution; // max health
-    private long dexterity; // attack speed
-    private long resistance; // armor
-    private long spirit; // max energy
-    private long strength; //attack damage
+    private boolean bodySealed;
 
-    private double agilityProgress;
-    private double constitutionProgress;
-    private double dexterityProgress;
-    private double resistanceProgress;
-    private double spiritProgress;
-    private double strengthProgress;
+    private boolean divineSealed;
 
-    //Sealing
-    private boolean cultivationSealed;
-    private boolean foundationSealed;
+    private boolean essenceSealed;
 
     public Sealing() {
-        //Cultivation
-        this.subLevel = 0;
-        this.progress = 0;
-        this.level = CultivationLevel.BASE_LEVEL;
-        this.energy = 0;
-        this.maxSpeed = 5.0f;
-        this.hasteLimit = 10.0f;
-        this.jumpLimit = 10.0f;
-
-        //Foundation
-        this.agility = 0;
-        this.constitution = 0;
-        this.dexterity = 0;
-        this.resistance = 0;
-        this.spirit = 0;
-        this.strength = 0;
-        this.agilityProgress = 0;
-        this.constitutionProgress = 0;
-        this.dexterityProgress = 0;
-        this.resistanceProgress = 0;
-        this.spiritProgress = 0;
-        this.strengthProgress = 0;
-
-        //Sealing
-        this.cultivationSealed = false;
-        this.foundationSealed = false;
-    }
-
-    //Cultivation
-
-    @Override
-    public double getCurrentProgress() {
-        return this.progress;
+        sealedCultivation = new Cultivation();
+        bodySealed = false;
+        divineSealed = false;
+        essenceSealed = false;
     }
 
     @Override
-    public void setProgress(double amount) {
-        this.progress = Math.max(0, amount);
+    public boolean isBodySealed() {
+        return bodySealed;
     }
 
     @Override
-    public CultivationLevel getCurrentLevel() {
-        return this.level;
+    public boolean isDivineSealed() {
+        return divineSealed;
     }
 
     @Override
-    public void setCurrentLevel(CultivationLevel level) {
-        this.level = level;
+    public boolean isEssenceSealed() {
+        return essenceSealed;
     }
 
     @Override
-    public int getCurrentSubLevel() {
-        return this.subLevel;
-    }
-
-    @Override
-    public void setCurrentSubLevel(int subLevel) {
-        this.subLevel = subLevel;
-    }
-
-    @Override
-    public double getEnergy() {
-        return this.energy;
-    }
-
-    @Override
-    public void setEnergy(double amount) {
-        this.energy = Math.max(0, amount);
-    }
-
-    @Override
-    public float getMaxSpeed() {
-        return this.maxSpeed;
-    }
-
-    @Override
-    public void setMaxSpeed(float maxSpeed) {
-        this.maxSpeed = maxSpeed;
-    }
-
-    @Override
-    public float getHasteLimit() {
-        return this.hasteLimit;
-    }
-
-    @Override
-    public void setHasteLimit(float hasteLimit) {
-        this.hasteLimit = hasteLimit;
-    }
-
-    @Override
-    public float getJumpLimit() {
-        return this.jumpLimit;
-    }
-
-    @Override
-    public void setJumpLimit(float jumpLimit) {
-        this.jumpLimit = jumpLimit;
-    }
-
-    @Override
-    public void copyFromCultivation(ICultivation cultivation) {
-        this.setCurrentLevel(cultivation.getCurrentLevel());
-        this.setCurrentSubLevel(cultivation.getCurrentSubLevel());
-        this.setProgress(cultivation.getCurrentProgress());
-        this.setEnergy(cultivation.getEnergy());
-    }
-
-    //Foundation
-
-
-    @Override
-    public long getAgility() {
-        return agility;
-    }
-
-    @Override
-    public void setAgility(long agility) {
-        this.agility = agility;
-    }
-
-    @Override
-    public long getConstitution() {
-        return constitution;
-    }
-
-    @Override
-    public void setConstitution(long constitution) {
-        this.constitution = constitution;
-    }
-
-    @Override
-    public long getDexterity() {
-        return dexterity;
-    }
-
-    @Override
-    public void setDexterity(long dexterity) {
-        this.dexterity = dexterity;
-    }
-
-    @Override
-    public long getResistance() {
-        return resistance;
-    }
-
-    @Override
-    public void setResistance(long resistance) {
-        this.resistance = resistance;
-    }
-
-    @Override
-    public long getSpirit() {
-        return spirit;
-    }
-
-    @Override
-    public void setSpirit(long spirit) {
-        this.spirit = spirit;
-    }
-
-    @Override
-    public long getStrength() {
-        return strength;
-    }
-
-    @Override
-    public void setStrength(long strength) {
-        this.strength = strength;
-    }
-
-    @Override
-    public double getAgilityProgress() {
-        return agilityProgress;
-    }
-
-    @Override
-    public void setAgilityProgress(double agilityProgress) {
-        this.agilityProgress = agilityProgress;
-    }
-
-    @Override
-    public double getConstitutionProgress() {
-        return constitutionProgress;
-    }
-
-    @Override
-    public void setConstitutionProgress(double constitutionProgress) {
-        this.constitutionProgress = constitutionProgress;
-    }
-
-    @Override
-    public double getDexterityProgress() {
-        return dexterityProgress;
-    }
-
-    @Override
-    public void setDexterityProgress(double dexterityProgress) {
-        this.dexterityProgress = dexterityProgress;
-    }
-
-    @Override
-    public double getResistanceProgress() {
-        return resistanceProgress;
-    }
-
-    @Override
-    public void setResistanceProgress(double resistanceProgress) {
-        this.resistanceProgress = resistanceProgress;
-    }
-
-    @Override
-    public double getSpiritProgress() {
-        return spiritProgress;
-    }
-
-    @Override
-    public void setSpiritProgress(double spiritProgress) {
-        this.spiritProgress = spiritProgress;
-    }
-
-    @Override
-    public double getStrengthProgress() {
-        return strengthProgress;
-    }
-
-    @Override
-    public void setStrengthProgress(double strengthProgress) {
-        this.strengthProgress = strengthProgress;
-    }
-
-    @Override
-    public void copyFromFoundation(IFoundation foundation) {
-        this.agility = foundation.getAgility();
-        this.agilityProgress = foundation.getAgilityProgress();
-        this.constitution = foundation.getConstitution();
-        this.constitutionProgress = foundation.getConstitutionProgress();
-        this.dexterity = foundation.getDexterity();
-        this.dexterityProgress = foundation.getDexterityProgress();
-        this.resistance = foundation.getResistance();
-        this.resistanceProgress = foundation.getResistanceProgress();
-        this.spirit = foundation.getSpirit();
-        this.spiritProgress = foundation.getSpiritProgress();
-        this.strength = foundation.getStrength();
-        this.strengthProgress = foundation.getStrengthProgress();
-    }
-
-    @Override
-    public void copyFromBoth(ICultivation cultivation, IFoundation foundation) {
-        //Cultivation
-        this.setCurrentLevel(cultivation.getCurrentLevel());
-        this.setCurrentSubLevel(cultivation.getCurrentSubLevel());
-        this.setProgress(cultivation.getCurrentProgress());
-        this.setEnergy(cultivation.getEnergy());
-        //Foundation
-        this.agility = foundation.getAgility();
-        this.agilityProgress = foundation.getAgilityProgress();
-        this.constitution = foundation.getConstitution();
-        this.constitutionProgress = foundation.getConstitutionProgress();
-        this.dexterity = foundation.getDexterity();
-        this.dexterityProgress = foundation.getDexterityProgress();
-        this.resistance = foundation.getResistance();
-        this.resistanceProgress = foundation.getResistanceProgress();
-        this.spirit = foundation.getSpirit();
-        this.spiritProgress = foundation.getSpiritProgress();
-        this.strength = foundation.getStrength();
-        this.strengthProgress = foundation.getStrengthProgress();
-    }
-
-    @Override
-    public void copyFrom(ISealing sealing) {
-        this.setCurrentLevel(sealing.getCurrentLevel());
-        this.setCurrentSubLevel(sealing.getCurrentSubLevel());
-        this.setProgress(sealing.getCurrentProgress());
-        this.setEnergy(sealing.getEnergy());
-        this.agility = sealing.getAgility();
-        this.agilityProgress = sealing.getAgilityProgress();
-        this.constitution = sealing.getConstitution();
-        this.constitutionProgress = sealing.getConstitutionProgress();
-        this.dexterity = sealing.getDexterity();
-        this.dexterityProgress = sealing.getDexterityProgress();
-        this.resistance = sealing.getResistance();
-        this.resistanceProgress = sealing.getResistanceProgress();
-        this.spirit = sealing.getSpirit();
-        this.spiritProgress = sealing.getSpiritProgress();
-        this.strength = sealing.getStrength();
-        this.strengthProgress = sealing.getStrengthProgress();
-    }
-
-    @Override
-    public void setSealed(String type, boolean sealed) {
-        if (type.equalsIgnoreCase("cultivation")) {
-            this.cultivationSealed = sealed;
-        } else if (type.equalsIgnoreCase("foundation")) {
-            this.foundationSealed = sealed;
-        } else if (type.equalsIgnoreCase("both")) {
-            this.cultivationSealed = sealed;
-            this.foundationSealed = sealed;
+    public void sealBody(ICultivation cultivation, BaseSystemLevel toLevel, int toRank) throws IllegalArgumentException {
+        if (BaseSystemLevel.BODY_LEVELS.contains(toLevel)) {
+            if (!toLevel.greaterThan(cultivation.getBodyLevel(), BaseSystemLevel.BODY_LEVELS)) { //like how can you seal something that isn't there
+                if ((toLevel.equals(cultivation.getBodyLevel()) && toRank < cultivation.getBodySubLevel()) || //checks sub rank if same level
+                        cultivation.getBodyLevel().greaterThan(toLevel, BaseSystemLevel.BODY_LEVELS)) { // or if toLevel is smaller than cultivation level
+                    this.sealedCultivation.setBodyLevel(cultivation.getBodyLevel());
+                    this.sealedCultivation.setBodySubLevel(cultivation.getBodySubLevel());
+                    cultivation.setBodyLevel(toLevel);
+                    cultivation.setBodySubLevel(toRank);
+                    this.bodySealed = true;
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("toLevel is not a body level");
         }
     }
 
     @Override
-    public boolean isBothSealed() {
-        return this.cultivationSealed && this.foundationSealed;
+    public void sealDivine(ICultivation cultivation, BaseSystemLevel toLevel, int toRank) throws IllegalArgumentException {
+        if (BaseSystemLevel.DIVINE_LEVELS.contains(toLevel)) {
+            if (!toLevel.greaterThan(cultivation.getDivineLevel(), BaseSystemLevel.DIVINE_LEVELS)) { //like how can you seal something that isn't there
+                if ((toLevel.equals(cultivation.getEssenceLevel()) && toRank < cultivation.getEssenceSubLevel()) || //checks sub rank if same level
+                        cultivation.getEssenceLevel().greaterThan(toLevel, BaseSystemLevel.ESSENCE_LEVELS)) { // or if toLevel is smaller than cultivation level
+                    this.sealedCultivation.setDivineLevel(cultivation.getDivineLevel());
+                    this.sealedCultivation.setDivineSubLevel(cultivation.getDivineSubLevel());
+                    cultivation.setDivineLevel(toLevel);
+                    cultivation.setDivineSubLevel(toRank);
+                    this.bodySealed = true;
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("toLevel is not a divine level");
+        }
     }
 
     @Override
-    public boolean isCultivationSealed() {
-        return cultivationSealed;
+    public void sealEssence(ICultivation cultivation, BaseSystemLevel toLevel, int toRank) throws IllegalArgumentException {
+        if (BaseSystemLevel.ESSENCE_LEVELS.contains(toLevel)) {
+            if (!toLevel.greaterThan(cultivation.getEssenceLevel(), BaseSystemLevel.ESSENCE_LEVELS)) { //like how can you seal something that isn't there
+                if ((toLevel.equals(cultivation.getEssenceLevel()) && toRank < cultivation.getEssenceSubLevel()) || //checks sub rank if same level
+                        cultivation.getEssenceLevel().greaterThan(toLevel, BaseSystemLevel.ESSENCE_LEVELS)) { // or if toLevel is smaller than cultivation level
+                    this.sealedCultivation.setEssenceLevel(cultivation.getEssenceLevel());
+                    this.sealedCultivation.setEssenceSubLevel(cultivation.getEssenceSubLevel());
+                    cultivation.setEssenceLevel(toLevel);
+                    cultivation.setEssenceSubLevel(toRank);
+                    this.bodySealed = true;
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("toLevel is not an essence level");
+        }
     }
 
     @Override
-    public boolean isFoundationSealed() {
-        return foundationSealed;
+    public void releaseBody(ICultivation cultivation) {
+        cultivation.setDivineLevel(this.sealedCultivation.getDivineLevel());
+        cultivation.setDivineSubLevel(this.sealedCultivation.getDivineSubLevel());
+        this.sealedCultivation.setBodyLevel(BaseSystemLevel.DEFAULT_BODY_LEVEL);
+        this.sealedCultivation.setBodySubLevel(0);
+        this.bodySealed = false;
+    }
+
+    @Override
+    public void releaseDivine(ICultivation cultivation) {
+        cultivation.setDivineLevel(this.sealedCultivation.getDivineLevel());
+        cultivation.setDivineSubLevel(this.sealedCultivation.getDivineSubLevel());
+        this.sealedCultivation.setDivineLevel(BaseSystemLevel.DEFAULT_DIVINE_LEVEL);
+        this.sealedCultivation.setDivineSubLevel(0);
+        this.divineSealed = false;
+    }
+
+    @Override
+    public void releaseEssence(ICultivation cultivation) {
+        cultivation.setDivineLevel(this.sealedCultivation.getDivineLevel());
+        cultivation.setDivineSubLevel(this.sealedCultivation.getDivineSubLevel());
+        this.sealedCultivation.setEssenceLevel(BaseSystemLevel.DEFAULT_ESSENCE_LEVEL);
+        this.sealedCultivation.setEssenceSubLevel(0);
+        this.essenceSealed = false;
+    }
+
+    @Override
+    public void changeBodySeal(ICultivation cultivation, BaseSystemLevel toLevel, int toRank) throws IllegalArgumentException, IllegalStateException {
+        if (this.bodySealed) {
+            if (BaseSystemLevel.BODY_LEVELS.contains(toLevel)) {
+                if (!toLevel.greaterThan(sealedCultivation.getBodyLevel(), BaseSystemLevel.BODY_LEVELS)) { //like how can you seal something that isn't there
+                    if ((toLevel.equals(sealedCultivation.getBodyLevel()) && toRank < sealedCultivation.getBodySubLevel()) || //checks sub rank if same level
+                            sealedCultivation.getBodyLevel().greaterThan(toLevel, BaseSystemLevel.BODY_LEVELS)) { // or if toLevel is smaller than cultivation level
+                        cultivation.setBodyLevel(toLevel);
+                        cultivation.setBodySubLevel(toRank);
+                    }
+                }
+            } else {
+                throw new IllegalArgumentException("toLevel is not a body level");
+            }
+        } else {
+            throw new IllegalStateException("Body isn't sealed");
+        }
+    }
+
+    @Override
+    public void changeDivineSeal(ICultivation cultivation, BaseSystemLevel toLevel, int toRank) throws IllegalArgumentException, IllegalStateException  {
+        if (this.divineSealed) {
+            if (BaseSystemLevel.BODY_LEVELS.contains(toLevel)) {
+                if (!toLevel.greaterThan(sealedCultivation.getDivineLevel(), BaseSystemLevel.DIVINE_LEVELS)) { //like how can you seal something that isn't there
+                    if ((toLevel.equals(sealedCultivation.getDivineLevel()) && toRank < sealedCultivation.getDivineSubLevel()) || //checks sub rank if same level
+                            sealedCultivation.getDivineLevel().greaterThan(toLevel, BaseSystemLevel.DIVINE_LEVELS)) { // or if toLevel is smaller than cultivation level
+                        cultivation.setDivineLevel(toLevel);
+                        cultivation.setDivineSubLevel(toRank);
+                    }
+                }
+            } else {
+                throw new IllegalArgumentException("toLevel is not a divine level");
+            }
+        } else {
+            throw new IllegalStateException("Divinity isn't sealed");
+        }
+
+    }
+
+    @Override
+    public void changeEssenceSeal(ICultivation cultivation, BaseSystemLevel toLevel, int toRank) throws IllegalArgumentException, IllegalStateException  {
+        if (this.essenceSealed) {
+            if (BaseSystemLevel.ESSENCE_LEVELS.contains(toLevel)) {
+                if (!toLevel.greaterThan(sealedCultivation.getEssenceLevel(), BaseSystemLevel.ESSENCE_LEVELS)) { //like how can you seal something that isn't there
+                    if ((toLevel.equals(sealedCultivation.getEssenceLevel()) && toRank < sealedCultivation.getEssenceSubLevel()) || //checks sub rank if same level
+                            sealedCultivation.getEssenceLevel().greaterThan(toLevel, BaseSystemLevel.ESSENCE_LEVELS)) { // or if toLevel is smaller than cultivation level
+                        cultivation.setEssenceLevel(toLevel);
+                        cultivation.setEssenceSubLevel(toRank);
+                    }
+                }
+            } else {
+                throw new IllegalArgumentException("toLevel is not an essence level");
+            }
+        } else {
+            throw new IllegalStateException("Essence isn't sealed");
+        }
+
+    }
+
+    @Override
+    public void setBodySealed(boolean sealed) {
+        this.bodySealed = sealed;
+    }
+
+    @Override
+    public void setDivineSealed(boolean sealed) {
+        this.divineSealed = sealed;
+    }
+
+    @Override
+    public void setEssenceSealed(boolean sealed) {
+        this.essenceSealed = sealed;
+    }
+
+    @Override
+    public ICultivation getSealedCultivation() {
+        return this.sealedCultivation;
+    }
+
+    @Override
+    public void setSealedCultivation(ICultivation cultivation) {
+        this.sealedCultivation.copyFrom(cultivation);
+    }
+
+    @Override
+    public void copyFrom(ISealing sealing) {
+        this.sealedCultivation.copyFrom(sealing.getSealedCultivation());
+        this.bodySealed = sealing.isBodySealed();
+        this.divineSealed = sealing.isDivineSealed();
+        this.essenceSealed = sealing.isEssenceSealed();
     }
 }

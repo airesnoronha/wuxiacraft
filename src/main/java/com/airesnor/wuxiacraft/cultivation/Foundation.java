@@ -312,7 +312,7 @@ public class Foundation implements IFoundation {
 	}
 
 	@Override
-	public void applyDeathPunishment(ICultivation cultivation) {
+	public void applyDeathPunishment(ICultivation cultivation) { /*
 		long toLose = (long) Math.max(4, (cultivation.getStrengthIncrease()* 0.3)); //lose around 15 % of what it would need to level up
 		this.agility = Math.max(this.agility-toLose, 0);
 		this.constitution = Math.max(this.constitution-toLose, 0);
@@ -325,11 +325,11 @@ public class Foundation implements IFoundation {
 		this.dexterityProgress = 0;
 		this.resistanceProgress = 0;
 		this.spiritProgress = 0;
-		this.strengthProgress = 0;
+		this.strengthProgress = 0;*/
 	}
 
 	@Override
-	public void keepMaxLevel(ICultivation cultivation) {
+	public void keepMaxLevel(ICultivation cultivation) { /*
 		long maxStat = cultivation.getCurrentLevel().getFoundationMaxStat(cultivation.getCurrentSubLevel());
 		if(this.agility >= maxStat) {
 			this.agility = maxStat;
@@ -360,6 +360,6 @@ public class Foundation implements IFoundation {
 			this.strength = maxStat;
 			cultivation.addProgress(this.spiritProgress, false);
 			this.strengthProgress = 0;
-		}
+		}*/
 	}
 }

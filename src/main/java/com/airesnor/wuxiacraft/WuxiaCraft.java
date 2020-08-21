@@ -1,7 +1,6 @@
 package com.airesnor.wuxiacraft;
 
 import com.airesnor.wuxiacraft.commands.*;
-import com.airesnor.wuxiacraft.dimensions.WuxiaDimensions;
 import com.airesnor.wuxiacraft.proxy.CommonProxy;
 import net.minecraft.world.GameRules;
 import net.minecraftforge.fml.common.Mod;
@@ -42,6 +41,11 @@ public class WuxiaCraft {
 
 	@EventHandler
 	public void onServerStart(FMLServerStartingEvent event) {
+		registerCommands(event);
+		registerGameRules(event);
+	}
+
+	public void registerCommands(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CultivationCommand());
 		event.registerServerCommand(new CultTechsCommand());
 		event.registerServerCommand(new AdvCultLevel());
@@ -57,13 +61,22 @@ public class WuxiaCraft {
 		event.registerServerCommand(new FoundationCommand());
 		event.registerServerCommand(new TribulationCommand());
 		event.registerServerCommand(new SealCommand());
-		event.getServer().getWorld(0).getGameRules().addGameRule("doPlayerSkillSetFire", "true", GameRules.ValueType.BOOLEAN_VALUE);
-		event.getServer().getWorld(0).getGameRules().addGameRule("doMobSkillSetFire", "true", GameRules.ValueType.BOOLEAN_VALUE);
-		event.getServer().getWorld(0).getGameRules().addGameRule("tribulationMultiplier", "16", GameRules.ValueType.NUMERICAL_VALUE);
-		event.getServer().getWorld(WuxiaDimensions.FIRE.getId()).getGameRules().addGameRule("tribulationMultiplier", "14", GameRules.ValueType.NUMERICAL_VALUE);
-		event.getServer().getWorld(WuxiaDimensions.EARTH.getId()).getGameRules().addGameRule("tribulationMultiplier", "14", GameRules.ValueType.NUMERICAL_VALUE);
-		event.getServer().getWorld(WuxiaDimensions.METAL.getId()).getGameRules().addGameRule("tribulationMultiplier", "14", GameRules.ValueType.NUMERICAL_VALUE);
-		event.getServer().getWorld(WuxiaDimensions.WATER.getId()).getGameRules().addGameRule("tribulationMultiplier", "14", GameRules.ValueType.NUMERICAL_VALUE);
-		event.getServer().getWorld(WuxiaDimensions.WOOD.getId()).getGameRules().addGameRule("tribulationMultiplier", "14", GameRules.ValueType.NUMERICAL_VALUE);
+		event.registerServerCommand(new BarrierCommand());
+		event.registerServerCommand(new FoodCommand());
+		event.registerServerCommand(new SectCommand());
+		event.registerServerCommand(new WorldVarCommand());
+		event.registerServerCommand(new ProficiencyCommand());
+	}
+
+	public void registerGameRules(FMLServerStartingEvent event) {
+		if(!event.getServer().getWorld(0).getGameRules().hasRule("doPlayerSkillSetFire")) {
+			event.getServer().getWorld(0).getGameRules().addGameRule("doPlayerSkillSetFire", "true", GameRules.ValueType.BOOLEAN_VALUE);
+		}
+		if(!event.getServer().getWorld(0).getGameRules().hasRule("doMobSkillSetFire")) {
+			event.getServer().getWorld(0).getGameRules().addGameRule("doMobSkillSetFire", "true", GameRules.ValueType.BOOLEAN_VALUE);
+		}
+		if(!event.getServer().getWorld(0).getGameRules().hasRule("tribulationMultiplier")) {
+			event.getServer().getWorld(0).getGameRules().addGameRule("tribulationMultiplier", "1", GameRules.ValueType.NUMERICAL_VALUE);
+		}
 	}
 }

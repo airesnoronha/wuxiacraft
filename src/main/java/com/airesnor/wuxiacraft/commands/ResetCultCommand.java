@@ -52,9 +52,7 @@ public class ResetCultCommand extends CommandBase {
 				EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				cultivation.copyFrom(new Cultivation());
-				IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
-				foundation.copyFrom(new Foundation());
-				NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, CultivationUtils.getCultTechFromEntity(player), CultivationUtils.getSkillCapFromEntity(player), foundation, true), player);
+				NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, CultivationUtils.getCultTechFromEntity(player), CultivationUtils.getSkillCapFromEntity(player), true), player);
 				EventHandler.applyModifiers(player);
 			}
 			else {

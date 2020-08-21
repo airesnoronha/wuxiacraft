@@ -1,44 +1,36 @@
 package com.airesnor.wuxiacraft.cultivation.techniques;
 
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
+import com.airesnor.wuxiacraft.cultivation.skills.ISkillAction;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.utils.TranslateUtils;
 import net.minecraft.potion.PotionEffect;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings({"SameParameterValue", "unused"})
 public class Technique {
 
-	private final TechniqueTier tier;
+	private final Cultivation.System system;
 	private final String uName;
-	private final TechniquesModifiers baseModifiers;
-	private final List<PotionEffect> smallCompletionEffects;
-	private final List<PotionEffect> greatCompletionEffects;
-	private final List<PotionEffect> perfectionCompletionEffects;
+	private final TechniqueModifiers baseModifiers;
 	private final List<Element> elements;
-	private float cultivationSpeed;
+	private final double cultivationSpeed;
+	private final double maxProficiency;
+	private final double efficientTillModifier; // this technique may work well until the system level modifier
 
-	private final List<Skill> smallCompletionSkills;
-	private final List<Skill> greatCompletionSkills;
+	public ISkillAction cultivationEffect;
 
-	public List<Skill> getSmallCompletionSkills() {
-		return smallCompletionSkills;
-	}
+	private final List<Pair<Double, PotionEffect>> effects;
+	private final List<Pair<Double, Skill>> skills;
+	private final List<Triple<Double, Float, String>> checkpoints;
+	private final List<Technique> compatibles;
 
-	public List<Skill> getGreatCompletionSkills() {
-		return greatCompletionSkills;
-	}
-
-	public List<Skill> getPerfectionCompletionSkills() {
-		return perfectionCompletionSkills;
-	}
-
-	private final List<Skill> perfectionCompletionSkills;
-
-	public TechniqueTier getTier() {
-		return this.tier;
+	public Cultivation.System getSystem() {
+		return system;
 	}
 
 	public String getName() {
@@ -49,66 +41,23 @@ public class Technique {
 		return this.uName;
 	}
 
-	public TechniquesModifiers getBaseModifiers() {
+	public TechniqueModifiers getBaseModifiers() {
 		return baseModifiers;
 	}
 
-	public Technique(TechniqueTier tier, String uName, TechniquesModifiers baseModifiers) {
-		this.tier = tier;
+	public Technique(String uName, Cultivation.System system, TechniqueModifiers baseModifiers, double cultSpeed, double maxProficiency, double efficientTillModifier) {
+		this.system = system;
 		this.uName = uName;
 		this.baseModifiers = baseModifiers;
-		this.smallCompletionEffects = new ArrayList<>();
-		this.greatCompletionEffects = new ArrayList<>();
-		this.perfectionCompletionEffects = new ArrayList<>();
-		this.elements = new ArrayList<>();
-		this.smallCompletionSkills = new ArrayList<>();
-		this.greatCompletionSkills = new ArrayList<>();
-		this.perfectionCompletionSkills = new ArrayList<>();
-		this.cultivationSpeed = 1;
-	}
-
-	public Technique(TechniqueTier tier, String uName, TechniquesModifiers baseModifiers, float cultSpeed) {
-		this.tier = tier;
-		this.uName = uName;
-		this.baseModifiers = baseModifiers;
-		this.smallCompletionEffects = new ArrayList<>();
-		this.greatCompletionEffects = new ArrayList<>();
-		this.perfectionCompletionEffects = new ArrayList<>();
-		this.elements = new ArrayList<>();
-		this.smallCompletionSkills = new ArrayList<>();
-		this.greatCompletionSkills = new ArrayList<>();
-		this.perfectionCompletionSkills = new ArrayList<>();
 		this.cultivationSpeed = cultSpeed;
-	}
-
-	Technique addSmallEffect(PotionEffect potion) {
-		this.smallCompletionEffects.add(potion);
-		return this;
-	}
-
-	Technique addGreatEffect(PotionEffect potion) {
-		this.greatCompletionEffects.add(potion);
-		return this;
-	}
-
-	Technique addPerfectionEffect(PotionEffect potion) {
-		this.perfectionCompletionEffects.add(potion);
-		return this;
-	}
-
-	Technique addSmallSkill(Skill skill) {
-		this.smallCompletionSkills.add(skill);
-		return this;
-	}
-
-	Technique addGreatSkill(Skill skill) {
-		this.greatCompletionSkills.add(skill);
-		return this;
-	}
-
-	Technique addPerfectSkill(Skill skill) {
-		this.perfectionCompletionSkills.add(skill);
-		return this;
+		this.maxProficiency = maxProficiency;
+		this.efficientTillModifier = efficientTillModifier;
+		this.elements = new ArrayList<>();
+		this.effects = new ArrayList<>();
+		this.skills = new ArrayList<>();
+		this.checkpoints = new ArrayList<>();
+		this.compatibles = new ArrayList<>();
+		this.cultivationEffect = actor -> true;
 	}
 
 	Technique addElement(Element element) {
@@ -116,28 +65,60 @@ public class Technique {
 		return this;
 	}
 
-	public List<PotionEffect> getSmallCompletionEffects() {
-		return this.smallCompletionEffects;
+	Technique addSkill(double proficiency, Skill skill) {
+		this.skills.add(Pair.of(proficiency, skill));
+		return this;
 	}
 
-	public List<PotionEffect> getGreatCompletionEffects() {
-		return this.greatCompletionEffects;
+	Technique addEffect(double proficiency, PotionEffect effect) {
+		this.effects.add(Pair.of(proficiency, effect));
+		return this;
 	}
 
-	public List<PotionEffect> getPerfectionCompletionEffects() {
-		return this.perfectionCompletionEffects;
+	Technique addCheckpoint(double proficiency, float releaseRate, String checkpoint) {
+		this.checkpoints.add(Triple.of(proficiency, releaseRate, checkpoint));
+		return this;
+	}
+
+	Technique addCompatible(Technique compatible) {
+		this.compatibles.add(compatible);
+		return this;
+	}
+
+	public Technique setCultivationEffect(ISkillAction effect) {
+		this.cultivationEffect = effect;
+		return this;
+	}
+
+	public List<Technique> getCompatibles() {
+		return compatibles;
 	}
 
 	public List<Element> getElements() {
 		return this.elements;
 	}
 
-	public float getCultivationSpeed() {
+	public double getCultivationSpeed() {
 		return cultivationSpeed;
 	}
 
-	public Technique setCultivationSpeed(float speed) {
-		this.cultivationSpeed = speed;
-		return this;
+	public double getMaxProficiency() {
+		return maxProficiency;
+	}
+
+	public double getEfficientTillModifier() {
+		return efficientTillModifier;
+	}
+
+	public List<Pair<Double, PotionEffect>> getEffects() {
+		return effects;
+	}
+
+	public List<Pair<Double, Skill>> getSkills() {
+		return skills;
+	}
+
+	public List<Triple<Double, Float, String>> getCheckpoints() {
+		return checkpoints;
 	}
 }

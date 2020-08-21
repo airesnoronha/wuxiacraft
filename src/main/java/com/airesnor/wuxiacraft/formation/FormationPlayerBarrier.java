@@ -1,13 +1,12 @@
 package com.airesnor.wuxiacraft.formation;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -39,6 +38,7 @@ public class FormationPlayerBarrier extends Formation {
 		this.strength = strength;
 	}
 
+	@SuppressWarnings("unused")
 	public FormationPlayerBarrier setDisplayFormation(ResourceLocation newTexture) {
 		this.displayFormation = newTexture;
 		return this;
@@ -103,13 +103,13 @@ public class FormationPlayerBarrier extends Formation {
 				double dz = player.posZ - (source.getZ() + 0.5);
 				double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
 				if (distance < preferredRange) {
-					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-					if (cultivation.getStrengthIncrease() < this.strength * 2) {
+					double strength = player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
+					if (strength < this.strength * 2) {
 						if (!player.isCreative()) {
 							double inverseDistance = preferredRange - distance;
-							double mx = (dx / distance) * inverseDistance * this.strength / cultivation.getStrengthIncrease();
-							double my = (dy / distance) * inverseDistance * this.strength / cultivation.getStrengthIncrease();
-							double mz = (dz / distance) * inverseDistance * this.strength / cultivation.getStrengthIncrease();
+							double mx = (dx / distance) * inverseDistance * this.strength / strength;
+							double my = (dy / distance) * inverseDistance * this.strength / strength;
+							double mz = (dz / distance) * inverseDistance * this.strength / strength;
 							player.motionX += mx;
 							player.motionY += my;
 							player.motionZ += mz;
@@ -117,10 +117,10 @@ public class FormationPlayerBarrier extends Formation {
 						}
 					} else {
 						if (!player.isCreative()) {
-							player.motionX *= (cultivation.getStrengthIncrease() - this.strength) / cultivation.getStrengthIncrease(); //slows players
-							player.motionY *= player.motionY > 0 ? (cultivation.getStrengthIncrease() - this.strength) / cultivation.getStrengthIncrease() //slows jumping
-									: (cultivation.getStrengthIncrease() + this.strength) / cultivation.getStrengthIncrease(); //increase fall speed
-							player.motionZ *= (cultivation.getStrengthIncrease() - this.strength) / cultivation.getStrengthIncrease(); //slows players
+							player.motionX *= (strength - this.strength) / strength; //slows players
+							player.motionY *= player.motionY > 0 ? (strength - this.strength) / strength //slows jumping
+									: (strength + this.strength) / strength; //increase fall speed
+							player.motionZ *= (strength - this.strength) / strength; //slows players
 							player.velocityChanged = true;
 						}
 					}

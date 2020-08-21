@@ -35,13 +35,15 @@ public class WuxiaBlocks {
 	public static final Block SPIRIT_STONE_STACK_BLOCK = new SpiritStoneStackBlock("spirit_stone_stack_block");
 
 	public static final Block PAINT_RUNE = new BlockRune("paint_rune");
-	public static final Map<String, Block> BLOOD_RUNES = new HashMap<>();
+
+	//No more blood runes for a while because levels got too complex
+	/*public static final Map<String, Block> BLOOD_RUNES = new HashMap<>();
 
 	public static void initBloodRunes() {
 		for (CultivationLevel level : CultivationLevel.REGISTERED_LEVELS.values()) {
 			BLOOD_RUNES.put(level.getUName(), new BlockRune("blood_rune_" + level.getUName()));
 		}
-	}
+	}*/
 
 	public static final Block FORMATION_CORE = new FormationCoreBlock("formation_core");
 
@@ -60,10 +62,9 @@ public class WuxiaBlocks {
 			}
 		}
 	}
-
 	public static final Block WEAK_LIFE_STONE_VEIN = new SpiritVeinOre("weak_life_stone_vein").setDroppedItem(WuxiaItems.WEAK_LIFE_STONE);
 	public static final Block SOUL_STONE_VEIN = new SpiritVeinOre("soul_stone_vein").setDroppedItem(WuxiaItems.SOUL_STONE);
-	public static final Block PRIMORDIAL_STONE = new SpiritVeinOre("primordial_stone_vein").setDroppedItem(WuxiaItems.PRIMORDIAL_STONE);
+	public static final Block PRIMORDIAL_STONE_VEIN = new SpiritVeinOre("primordial_stone_vein").setDroppedItem(WuxiaItems.PRIMORDIAL_STONE);
 	public static final Block FIVE_ELEMENT_PURE_CRYSTAL_VEIN = new SpiritVeinOre("five_element_pure_crystal_vein").setDroppedItem(WuxiaItems.FIVE_ELEMENT_PURE_CRYSTAL);
 	public static final Block PURE_QI_CRYSTAL_VEIN = new SpiritVeinOre("pure_qi_crystal_vein").setDroppedItem(WuxiaItems.PURE_QI_CRYSTAL);
 	public static final Block EARTH_LAW_CRYSTAL_VEIN = new SpiritVeinOre("earth_law_crystal_vein").setDroppedItem(WuxiaItems.EARTH_LAW_CRYSTAL);

@@ -1,9 +1,9 @@
 package com.airesnor.wuxiacraft.items;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.alchemy.Recipe;
-import com.airesnor.wuxiacraft.alchemy.Recipes;
 import com.airesnor.wuxiacraft.handlers.GuiHandler;
+import com.airesnor.wuxiacraft.profession.alchemy.Recipe;
+import com.airesnor.wuxiacraft.profession.alchemy.Recipes;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -25,18 +25,13 @@ import java.util.Random;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class ItemRecipe extends Item implements IHasModel {
+public class ItemRecipe extends Item {
 
 	public ItemRecipe(String name) {
 		setRegistryName(name);
 		setUnlocalizedName(name);
 		WuxiaItems.ITEMS.add(this);
 		setMaxStackSize(1);
-	}
-
-	@Override
-	public void registerModels() {
-		WuxiaCraft.proxy.registerCustomModelLocation(this, 0, "inventory", "wuxiacraft:recipe_scroll");
 	}
 
 	@Override

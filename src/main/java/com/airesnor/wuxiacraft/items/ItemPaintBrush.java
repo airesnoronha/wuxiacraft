@@ -6,7 +6,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -52,7 +51,7 @@ public class ItemPaintBrush extends ItemBase {
 					worldIn.notifyBlockUpdate(pos, state, state, 3);
 				}
 			} else {
-				Block rune = null;
+				/*Block rune = null;
 				if (bottle.getItem() == WuxiaItems.BLOOD_BOTTLE) {
 					NBTTagCompound tag = bottle.getTagCompound();
 					if (tag != null) {
@@ -61,9 +60,9 @@ public class ItemPaintBrush extends ItemBase {
 						}
 					}
 				} else if (bottle.getItem() == WuxiaItems.PAINT_BOTTLE) {
-					rune = WuxiaBlocks.PAINT_RUNE;
-				}
-				if (rune == null) rune = WuxiaBlocks.BLOOD_RUNES.get("body_refinement");
+				}*/
+				Block rune = WuxiaBlocks.PAINT_RUNE;
+				//if (rune == null) rune = WuxiaBlocks.BLOOD_RUNES.get("body_refinement");
 				BlockPos placement = pos.up();
 				if (player.canPlayerEdit(placement, facing, player.getHeldItem(hand)) && worldIn.mayPlace(rune, placement, true, EnumFacing.UP, player) && rune.canPlaceBlockAt(worldIn, placement)) {
 					if (!worldIn.isRemote) {

@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.formation;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
@@ -84,10 +85,10 @@ public class FormationCultivationHelper extends Formation {
 		for (EntityPlayer player : targets) {
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 			Skill skill = skillCap.getSelectedSkill(CultivationUtils.getCultTechFromEntity(player));
-			if (skill == Skills.CULTIVATE) {
+			if (skill == Skills.CULTIVATE_ESSENCE) {
 				if (parent.hasEnergy(this.getOperationCost() * (selected.size() + 1))) {
 					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-					if (!(this.amount <= cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.06)) {
+					if (!(this.amount <= cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) * 0.06)) {
 						worldIn.createExplosion(player, player.posX, player.posY + 0.9, player.posZ, 2f, true);
 						player.attackEntityFrom(DamageSource.causeExplosionDamage(player), (float) this.amount * 2);
 					}
@@ -128,12 +129,12 @@ public class FormationCultivationHelper extends Formation {
 					if (skillCap.isCasting()) {
 						Skill skill = skillCap.getSelectedSkill(CultivationUtils.getCultTechFromEntity(player));
 						if (!skillCap.hasFormationActivated()) {
-							if (skill == Skills.CULTIVATE) {
+							if (skill == Skills.CULTIVATE_ESSENCE) {
 								skillCap.setFormationActivated(true);
 								ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-								if (this.amount <= cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()) * 0.06) {
-									CultivationUtils.cultivatorAddProgress(player, this.amount, true, false, false);
-									NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, this.amount, true, false, false, player.getUniqueID()));
+								if (this.amount <= cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) * 0.06) {
+									CultivationUtils.cultivatorAddProgress(player, Cultivation.System.ESSENCE, this.amount, true, false);
+									NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, Cultivation.System.ESSENCE, this.amount, true, false, player.getUniqueID()));
 								}
 							}
 						}

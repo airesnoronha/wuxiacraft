@@ -1,8 +1,7 @@
 package com.airesnor.wuxiacraft.blocks;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.items.IHasModel;
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.items.WuxiaItems;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import mcp.MethodsReturnNonnullByDefault;
@@ -18,7 +17,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
@@ -33,7 +31,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class BlockTrainingPost extends Block implements IHasModel {
+public class BlockTrainingPost extends Block {
 
 	public static final PropertyEnum<BlockDoor.EnumDoorHalf> HALF = PropertyEnum.create("half", BlockDoor.EnumDoorHalf.class);
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
@@ -68,7 +66,6 @@ public class BlockTrainingPost extends Block implements IHasModel {
 			if(!worldIn.isRemote) {
 				ItemStack stack = getItem(worldIn, pos, state);
 				EntityItem item = new EntityItem(worldIn, pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5, stack);
-				item.setOwner(playerIn.getName());
 				item.setNoPickupDelay();
 				worldIn.spawnEntity(item);
 			}
@@ -83,8 +80,7 @@ public class BlockTrainingPost extends Block implements IHasModel {
 	public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn) {
 		super.onBlockClicked(worldIn, pos, playerIn);
 		double amount = this.amount * playerIn.getCooledAttackStrength(0.5f); //game always use 0.5 idk y
-		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(playerIn);
-		CultivationUtils.cultivatorAddProgress(playerIn, amount, false, false, false);
+		CultivationUtils.cultivatorAddProgress(playerIn, Cultivation.System.BODY, amount, true, false);
 		playerIn.attackEntityFrom(DamageSource.GENERIC.setDamageBypassesArmor(), (float)amount);
 	}
 
@@ -135,11 +131,6 @@ public class BlockTrainingPost extends Block implements IHasModel {
 				break;
 		}
 		return value;
-	}
-
-	@Override
-	public void registerModels() {
-		WuxiaCraft.proxy.registerItemRenderer(ItemBlock.getItemFromBlock(this), 0, "inventory");
 	}
 
 	@SuppressWarnings("deprecation")

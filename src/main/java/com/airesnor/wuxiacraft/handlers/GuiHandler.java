@@ -2,9 +2,8 @@ package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.entities.tileentity.GrinderTileEntity;
 import com.airesnor.wuxiacraft.gui.*;
-import com.airesnor.wuxiacraft.items.ItemSpaceRing;
+import com.airesnor.wuxiacraft.items.ItemSpatialRing;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -18,7 +17,7 @@ public class GuiHandler implements IGuiHandler {
 	public static final int SKILLS_GUI_ID = 1;
 	public static final int RECIPE_GUI_ID = 2;
 	public static final int GRINDER_GUI_ID = 3;
-	public static final int SPACE_RING_GUI_ID = 4;
+	public static final int SPATIAL_RING_GUI_ID = 4;
 
 	@Nullable
 	@Override
@@ -26,13 +25,20 @@ public class GuiHandler implements IGuiHandler {
 		BlockPos pos = new BlockPos(x, y, z);
 		switch (ID) {
 			case GRINDER_GUI_ID:
+				//noinspection ConstantConditions
 				return new GrinderContainer(player.inventory, (GrinderTileEntity) world.getTileEntity(pos));
 			case CULTIVATION_GUI_ID:
+				break;
 			case SKILLS_GUI_ID:
+				break;
 			case RECIPE_GUI_ID:
 				return null;
-			case SPACE_RING_GUI_ID:
-				return new SpaceRingContainer(player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), player);
+			case SPATIAL_RING_GUI_ID:
+				if (player.getHeldItemMainhand().getItem() instanceof ItemSpatialRing) {
+					return new SpatialRingContainer(player);
+				} else {
+					return null;
+				}
 		}
 		return null;
 	}
@@ -50,8 +56,12 @@ public class GuiHandler implements IGuiHandler {
 				return new RecipeGui(player);
 			case GRINDER_GUI_ID:
 				return new GrinderGui(player.inventory, (GrinderTileEntity) world.getTileEntity(pos));
-			case SPACE_RING_GUI_ID:
-				return new SpaceRingGui(player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), player);
+			case SPATIAL_RING_GUI_ID:
+				if (player.getHeldItemMainhand().getItem() instanceof ItemSpatialRing) {
+					return new SpatialRingGui(player);
+				} else {
+					return null;
+				}
 		}
 		return null;
 	}

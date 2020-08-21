@@ -113,13 +113,13 @@ public class HealthCommand extends CommandBase {
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
 		List<String> completions = new ArrayList<>();
 		if (args.length == 1) {
-			if (args[0].toLowerCase().startsWith(args[0]))
+			if ("set".toLowerCase().startsWith(args[0]))
 				completions.add("set");
-			if (args[0].toLowerCase().startsWith(args[0]))
+			if ("heal".toLowerCase().startsWith(args[0]))
 				completions.add("heal");
-			if (args[0].toLowerCase().startsWith(args[0]))
+			if ("get".toLowerCase().startsWith(args[0]))
 				completions.add("get");
-		}else if(args.length == 2) {
+		} else if(args.length == 2) {
 			for(String player : server.getPlayerList().getOnlinePlayerNames()) {
 				if(player.toLowerCase().startsWith(args[1].toLowerCase())) {
 					completions.add(player);

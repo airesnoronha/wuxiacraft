@@ -3,18 +3,16 @@ package com.airesnor.wuxiacraft.proxy;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.OBJBlockModelLoader;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
+import com.airesnor.wuxiacraft.entities.effects.EntityLevelUpHalo;
+import com.airesnor.wuxiacraft.entities.effects.models.RenderLevelUpHalo;
 import com.airesnor.wuxiacraft.entities.mobs.GiantAnt;
 import com.airesnor.wuxiacraft.entities.mobs.GiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.mobs.renders.RenderGiantAnt;
 import com.airesnor.wuxiacraft.entities.mobs.renders.RenderGiantBee;
 import com.airesnor.wuxiacraft.entities.mobs.renders.RenderWanderingCultivator;
-import com.airesnor.wuxiacraft.entities.skills.SwordBeamThrowable;
-import com.airesnor.wuxiacraft.entities.skills.WaterBladeThrowable;
-import com.airesnor.wuxiacraft.entities.skills.WaterNeedleThrowable;
-import com.airesnor.wuxiacraft.entities.skills.models.RenderSwordBeam;
-import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterBlade;
-import com.airesnor.wuxiacraft.entities.skills.models.RenderWaterNeedle;
+import com.airesnor.wuxiacraft.entities.skills.*;
+import com.airesnor.wuxiacraft.entities.skills.models.*;
 import com.airesnor.wuxiacraft.entities.tileentity.GrinderTESR;
 import com.airesnor.wuxiacraft.entities.tileentity.SpiritStoneStackTESR;
 import com.airesnor.wuxiacraft.formation.FormationTESR;
@@ -48,6 +46,7 @@ public class ClientProxy extends CommonProxy {
 	public static final int KEY_SELECT_DOWN = 6;
 	public static final int KEY_SELECT_1 = 7;
 	public static final int KEY_UNLEASH_SPEED = 17;
+	public static final int KEY_TOGGLE_BARRIER = 18;
 
 	public static KeyBinding[] keyBindings;
 
@@ -82,14 +81,18 @@ public class ClientProxy extends CommonProxy {
 
 		MinecraftForge.EVENT_BUS.register(new PreClientEvents());
 
-		WuxiaCraftConfig.clientPreInit();
-
 		RenderingRegistry.registerEntityRenderingHandler(WaterNeedleThrowable.class, RenderWaterNeedle::new);
 		RenderingRegistry.registerEntityRenderingHandler(WaterBladeThrowable.class, RenderWaterBlade::new);
 		RenderingRegistry.registerEntityRenderingHandler(SwordBeamThrowable.class, RenderSwordBeam::new);
 		RenderingRegistry.registerEntityRenderingHandler(GiantAnt.class, RenderGiantAnt::new);
 		RenderingRegistry.registerEntityRenderingHandler(GiantBee.class, RenderGiantBee::new);
 		RenderingRegistry.registerEntityRenderingHandler(WanderingCultivator.class, RenderWanderingCultivator::new);
+		RenderingRegistry.registerEntityRenderingHandler(SoulArrowThrowable.class, RenderSoulArrow::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityLevelUpHalo.class, RenderLevelUpHalo::new);
+		RenderingRegistry.registerEntityRenderingHandler(WindBladeThrowable.class, RenderWindBlade::new);
+		RenderingRegistry.registerEntityRenderingHandler(ThunderBoltThrowable.class, RenderThunderBolt::new);
+
+		WuxiaCraftConfig.clientPreInit();
 
 		MinecraftForge.EVENT_BUS.register(new RendererHandler());
 
@@ -102,7 +105,7 @@ public class ClientProxy extends CommonProxy {
 
 		SkillsGui.init();
 
-		keyBindings = new KeyBinding[18];
+		keyBindings = new KeyBinding[19];
 		keyBindings[KEY_SPEED_UP] = new KeyBinding("key.wuxiacraft.speed_up", Keyboard.KEY_EQUALS, "key.wuxiacraft.category");
 		keyBindings[KEY_SPEED_DOWN] = new KeyBinding("key.wuxiacraft.speed_down", Keyboard.KEY_MINUS, "key.wuxiacraft.category");
 		keyBindings[KEY_CULT_GUI] = new KeyBinding("key.wuxiacraft.cult_gui", Keyboard.KEY_K, "key.wuxiacraft.category");
@@ -115,6 +118,7 @@ public class ClientProxy extends CommonProxy {
 			keyBindings[KEY_SELECT_1 + i] = new KeyBinding("key.wuxiacraft.select_" + j, KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Keyboard.KEY_1 + i, "key.wuxiacraft.category");
 		}
 		keyBindings[KEY_UNLEASH_SPEED] = new KeyBinding("key.wuxiacraft.unleash_speed", Keyboard.KEY_U, "key.wuxiacraft.category");
+		keyBindings[KEY_TOGGLE_BARRIER] = new KeyBinding("key.wuxiacraft.toggle_barrier", Keyboard.KEY_SEMICOLON, "key.wuxiacraft.category");
 		for (KeyBinding keyBinding : keyBindings) {
 			ClientRegistry.registerKeyBinding(keyBinding);
 		}

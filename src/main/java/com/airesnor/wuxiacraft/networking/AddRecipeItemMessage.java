@@ -1,12 +1,16 @@
 package com.airesnor.wuxiacraft.networking;
 
+import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-
-import java.util.Objects;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class AddRecipeItemMessage implements IMessage {
 
@@ -20,8 +24,7 @@ public class AddRecipeItemMessage implements IMessage {
 		this.temperature = temperature;
 	}
 
-	public AddRecipeItemMessage() {
-	}
+	public AddRecipeItemMessage() {}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
@@ -30,11 +33,7 @@ public class AddRecipeItemMessage implements IMessage {
 		int z = buf.readInt();
 		this.pos = new BlockPos(x,y,z);
 		this.temperature = buf.readFloat();
-		int length = buf.readInt();
-		byte [] itemNameBytes = new byte [length];
-		buf.readBytes(itemNameBytes, 0, length);
-		String itemName = new String(itemNameBytes);
-		this.item = GameRegistry.makeItemStack(itemName, 0, 1, "").getItem();
+		this.item = ByteBufUtils.readItemStack(buf).getItem();
 	}
 
 	@Override
@@ -43,9 +42,25 @@ public class AddRecipeItemMessage implements IMessage {
 		buf.writeInt(pos.getY());
 		buf.writeInt(pos.getZ());
 		buf.writeFloat(this.temperature);
-		String itemName = Objects.requireNonNull(this.item.getRegistryName()).toString();
-		byte [] itemNameBytes = itemName.getBytes();
-		buf.writeInt(itemNameBytes.length);
-		buf.writeBytes(itemNameBytes);
+		ByteBufUtils.writeItemStack(buf, this.item.getDefaultInstance());
 	}
+
+	public static class Handler implements IMessageHandler<AddRecipeItemMessage, IMessage> {
+
+		@Override
+		public IMessage onMessage(AddRecipeItemMessage message, MessageContext ctx) {
+			if(ctx.side == Side.SERVER) {
+				final EntityPlayerMP player = ctx.getServerHandler().player;
+				player.getServerWorld().addScheduledTask(() -> {
+					WorldServer world = player.getServerWorld();
+					CauldronTileEntity entity = (CauldronTileEntity) world.getTileEntity(message.pos);
+					if(entity != null) {
+						entity.addServerRecipeInput(message.item, message.temperature);
+					}
+				});
+			}
+			return null;
+		}
+	}
+
 }

@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.entities.skills;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -9,11 +10,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class SwordBeamThrowable extends EntityThrowable {
+public class SwordBeamThrowable extends EntityThrowable implements IEntityAdditionalSpawnData {
 
 	private float damage;
 	public int color;
@@ -93,5 +95,17 @@ public class SwordBeamThrowable extends EntityThrowable {
 		BlockPos hitBlockPos = result.getBlockPos();
 		IBlockState hitState = this.world.getBlockState(hitBlockPos);
 		return hitState.getMaterial().blocksMovement();
+	}
+
+	@Override
+	public void writeSpawnData(ByteBuf buffer) {
+		buffer.writeInt(this.duration);
+		buffer.writeInt(this.color);
+	}
+
+	@Override
+	public void readSpawnData(ByteBuf additionalData) {
+		this.duration = additionalData.readInt();
+		this.color = additionalData.readInt();
 	}
 }

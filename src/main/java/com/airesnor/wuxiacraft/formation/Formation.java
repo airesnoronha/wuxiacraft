@@ -48,8 +48,7 @@ public abstract class Formation {
 	 * @param parent  The tile entity containing the formation
 	 */
 	@SideOnly(Side.CLIENT)
-	public void doClientUpdate(@Nonnull World worldIn,@Nonnull BlockPos source,@Nonnull FormationTileEntity parent) {
-	}
+	public void doClientUpdate(@Nonnull World worldIn,@Nonnull BlockPos source,@Nonnull FormationTileEntity parent) {}
 
 	/**
 	 * Sometimes, interrupting a formation may lead to disaster (I hope)
@@ -59,9 +58,7 @@ public abstract class Formation {
 	 * @param interrupters who might have interrupted this formation (generally anyone near the formation disturbance by 6 blocks)
 	 */
 	@SuppressWarnings("EmptyMethod")
-	public void onInterrupt(@Nonnull World worldIn, @Nullable BlockPos source, @Nullable List<EntityLivingBase> interrupters) {
-
-	}
+	public void onInterrupt(@Nonnull World worldIn, @Nullable BlockPos source, @Nullable List<EntityLivingBase> interrupters) {}
 
 	/**
 	 * If formation will render something client side
@@ -70,9 +67,7 @@ public abstract class Formation {
 	 * @param z core z+0.5
 	 */
 	@SideOnly(Side.CLIENT)
-	public void render(double x, double y, double z) {
-
-	}
+	public void render(double x, double y, double z) {}
 
 	public String getName() {
 		return TranslateUtils.translateKey("wuxiacraft.formations." + this.name + ".name");

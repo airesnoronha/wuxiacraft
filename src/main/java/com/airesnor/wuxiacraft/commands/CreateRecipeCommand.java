@@ -1,9 +1,9 @@
 package com.airesnor.wuxiacraft.commands;
 
-import com.airesnor.wuxiacraft.alchemy.Recipe;
-import com.airesnor.wuxiacraft.alchemy.Recipes;
 import com.airesnor.wuxiacraft.items.ItemRecipe;
 import com.airesnor.wuxiacraft.items.WuxiaItems;
+import com.airesnor.wuxiacraft.profession.alchemy.Recipe;
+import com.airesnor.wuxiacraft.profession.alchemy.Recipes;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;

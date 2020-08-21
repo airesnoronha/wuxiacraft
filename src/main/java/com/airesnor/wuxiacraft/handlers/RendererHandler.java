@@ -1,11 +1,11 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.alchemy.Recipe;
+import com.airesnor.wuxiacraft.profession.alchemy.Recipe;
 import com.airesnor.wuxiacraft.blocks.Cauldron;
+import com.airesnor.wuxiacraft.cultivation.BaseSystemLevel;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
@@ -130,8 +130,6 @@ public class RendererHandler {
 	@SubscribeEvent
 	public void onRenderHealthBar(RenderGameOverlayEvent.Pre event) {
 		if (event.isCancelable() && event.getType() == RenderGameOverlayEvent.ElementType.HEALTH) {
-			GuiIngameForge.left_height += 5;
-			GuiIngameForge.right_height += 5;
 			if (Minecraft.getMinecraft().player.getMaxHealth() > 40f) {
 				event.setCanceled(true);
 				drawCustomHealthBar(event.getResolution());
@@ -158,17 +156,16 @@ public class RendererHandler {
 				float f1 = mc.getRenderManager().playerViewX;
 				drawCultivationPlate(cultivation, x, y, z, f, f1, thirdPerson, sneaking);
 			}
-		}
-		else if (e.getEntity() instanceof WanderingCultivator) {
+		} else if (e.getEntity() instanceof WanderingCultivator) {
 			WanderingCultivator cultivator = (WanderingCultivator) e.getEntity();
 			ICultivation playerCultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
 			ICultivation cultivation = new Cultivation();
-			if(cultivator.getCultivationLevel().isGreaterThan(playerCultivation.getCurrentLevel())) {
-				cultivation.setCurrentLevel(playerCultivation.getCurrentLevel().getNextLevel());
-				cultivation.setCurrentSubLevel(-1);
+			if (cultivator.getCultivation().getEssenceLevel().greaterThan(playerCultivation.getEssenceLevel(), BaseSystemLevel.ESSENCE_LEVELS)) {
+				cultivation.setEssenceLevel(playerCultivation.getEssenceLevel().nextLevel(BaseSystemLevel.ESSENCE_LEVELS));
+				cultivation.setEssenceSubLevel(-1);
 			} else {
-				cultivation.setCurrentLevel(cultivator.getCultivationLevel());
-				cultivation.setCurrentSubLevel(cultivator.getCultivationSubLevel());
+				cultivation.setEssenceLevel(cultivator.getCultivation().getEssenceLevel());
+				cultivation.setEssenceSubLevel(cultivator.getCultivation().getEssenceSubLevel());
 			}
 			Minecraft mc = Minecraft.getMinecraft();
 			boolean sneaking = cultivator.isSneaking();
@@ -206,6 +203,7 @@ public class RendererHandler {
 		GlStateManager.enableTexture2D();
 	}
 
+	@SuppressWarnings("SpellCheckingInspection")
 	@SideOnly(Side.CLIENT)
 	public void drawHudElements(ScaledResolution res) {
 		Minecraft mc = Minecraft.getMinecraft();
@@ -215,12 +213,10 @@ public class RendererHandler {
 
 		EntityPlayer player = mc.world.getPlayerEntityByUUID(mc.player.getUniqueID());
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-		IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
 
 		mc.renderEngine.bindTexture(hud_bars);
 
-		double energy_fill = cultivation.getEnergy() / cultivation.getMaxEnergy(foundation);
-		double progress_fill = cultivation.getCurrentProgress() * 100f / cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel());
+		double energy_fill = cultivation.getEnergy() / CultivationUtils.getMaxEnergy(player);
 
 		int middleX = (width) / 2;
 
@@ -228,7 +224,7 @@ public class RendererHandler {
 
 		//Show spinning dantian
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(middleX, height - 45, 0);
+		GlStateManager.translate(middleX, height - 40, 0);
 		float showDiameter = 30;
 		GlStateManager.scale(showDiameter / 256f, showDiameter / 256f, 1); //scale to certain size
 		GlStateManager.scale(energy_fill, energy_fill, 1); //fill the bar
@@ -238,26 +234,59 @@ public class RendererHandler {
 		GlStateManager.popMatrix();
 
 		//Show Progress dragon
-		GlStateManager.pushMatrix();
+		/*GlStateManager.pushMatrix();
 		int dragonWidth = 228;
 		GlStateManager.translate(middleX - dragonWidth / 2f, height - 40f, 0);
 		GlStateManager.rotate(0.65f, 0, 0, 1);
 		GlStateManager.scale(1, 0.35, 1);
 		mc.ingameGUI.drawTexturedModalRect(0, 0, 5, 206, (int) (dragonWidth * progress_fill / 100f), 50);
-		GlStateManager.popMatrix();
+		GlStateManager.popMatrix();*/
 
 		GlStateManager.popMatrix();
 
+		//Show dragons now
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(5, height-16, 0);
+		int bodyProgress = (int)Math.min(124, (124*cultivation.getBodyProgress()/cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel())));
+		int divineProgress = (int)Math.min(124, (124*cultivation.getDivineProgress()/cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel())));
+		int essenceProgress = (int)Math.min(124, (124*cultivation.getEssenceProgress()/cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel())));
+		mc.ingameGUI.drawTexturedModalRect(0,-16, 0,208,bodyProgress,16);
+		mc.ingameGUI.drawTexturedModalRect(0,-8, 0,240,divineProgress, 16);
+		mc.ingameGUI.drawTexturedModalRect(0,0, 0,224,essenceProgress,16);
+		GlStateManager.popMatrix();
+
+		/*ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
+		if (player != null) {
+			String message = String.format("Speed: %.2f %.4f %.4f", cultivation.getMaxSpeed(),
+					player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue(),
+					player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue());
+			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 100, Integer.parseInt("FFAA00", 16));
+			GlStateManager.color(1,1,1,1);
+		}
+
+		String message = String.format("Body Mod: %.4f",
+				cultivation.getBodyModifier());
+		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 90, Integer.parseInt("FFAA00", 16));
+
+		message = String.format("Divine Mod: %.4f",
+				cultivation.getDivineModifier());
+		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 100, Integer.parseInt("FFAA00", 16));
+
+		message = String.format("Essece Mod: %.4f",
+				cultivation.getEssenceModifier());
+		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 110, Integer.parseInt("FFAA00", 16));
+
+		/*if (cultTech.getEssenceTechnique() != null) {
+			message = String.format("Essence Technique: %s %.4f", cultTech.getEssenceTechnique().getTechnique().getName(),
+					cultTech.getEssenceTechnique().getProficiency());
+			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 120, Integer.parseInt("FFAA00", 16));
+		}
+		if (cultTech.getDivineTechnique() != null) {
+			message  = String.format("Divine Technique: %s %.4f", cultTech.getDivineTechnique().getTechnique().getName(),
+					cultTech.getDivineTechnique().getProficiency());
+			mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 130, Integer.parseInt("FFAA00", 16));
+		}
 		/*
-		String message = String.format("Energy: %.0f (%.2f%%)",cultivation.getEnergy(), energy_fill);
-		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 20, Integer.parseInt("FFAA00",16));
-
-		message = String.format("Progress: %.2f (%.2f%%)",cultivation.getCurrentProgress(), progress_fill);
-		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 30, Integer.parseInt("FFAA00",16));
-
-		message = String.format("Player: %s, %s",player.getDisplayNameString(), cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
-		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 10, Integer.parseInt("FFAA00",16));
-
 		message = String.format("Speed: %.3f(%.3f->%d%%)",player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue(),cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()), WuxiaCraftConfig.speedHandicap);
 		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 40, Integer.parseInt("FFAA00",16));
 
@@ -267,6 +296,7 @@ public class RendererHandler {
 		message = String.format("Fall Distance: %.2f",player.fallDistance);
 		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 60, Integer.parseInt("FFAA00",16))
 		*/
+		GlStateManager.color(1,1,1,1);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -276,7 +306,7 @@ public class RendererHandler {
 		GlStateManager.translate(res.getScaledWidth() / 2f - 94f, res.getScaledHeight() - 32, 0);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(icons);
 		ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(mc.player);
-		int coolDownBar = MathUtils.clamp((int)(skillCap.getCooldown()/skillCap.getMaxCooldown() * 188), 0, 188);
+		int coolDownBar = MathUtils.clamp((int) (skillCap.getCooldown() / skillCap.getMaxCooldown() * 188), 0, 188);
 		mc.ingameGUI.drawTexturedModalRect(0, 0, 0, 10, coolDownBar, 11);
 		GlStateManager.popMatrix();
 	}
@@ -316,7 +346,7 @@ public class RendererHandler {
 		int y = res.getScaledHeight() - 40;
 		List<Skill> totalKnown = skillCap.getTotalKnowSkill(cultTech);
 		for (int i = 0; i < skillCap.getSelectedSkills().size(); i++) {
-			if(totalKnown.size() > 0 && MathUtils.between(skillCap.getSelectedSkills().get(i), 0, totalKnown.size())) { // this way won't select unwanted skills
+			if (totalKnown.size() > 0 && MathUtils.between(skillCap.getSelectedSkills().get(i), 0, totalKnown.size())) { // this way won't select unwanted skills
 				Skill skill = totalKnown.get(MathUtils.clamp(skillCap.getSelectedSkills().get(i), 0, totalKnown.size() - 1));
 				if (i == skillCap.getActiveSkill()) {
 					mc.renderEngine.bindTexture(skills_bg);
@@ -345,7 +375,7 @@ public class RendererHandler {
 		drawTexturedRect(i, j, 81, 9, 0, 0, 1f, 0.5f);
 		float max_hp = mc.player.getMaxHealth();
 		float hp = mc.player.getHealth();
-		int fill = (int) Math.ceil((hp / max_hp) * 81);
+		int fill = (int) Math.min(Math.ceil((hp / max_hp) * 81), 81);
 		drawTexturedRect(i, j, fill, 9, 0f, 0.5f, (hp / max_hp), 1f);
 		String life = getShortHealthAmount((int) hp) + "/" + getShortHealthAmount((int) max_hp);
 		int width = mc.fontRenderer.getStringWidth(life);
@@ -365,7 +395,7 @@ public class RendererHandler {
 					GlStateManager.pushMatrix();
 					mc.getTextureManager().bindTexture(cauldron_info);
 					CauldronTileEntity te = (CauldronTileEntity) mc.player.world.getTileEntity(rtr.getBlockPos());
-					if(te!=null) {
+					if (te != null) {
 						float fireStrength = te.getBurnSpeed() / 25f;
 						float timeLeft = te.getTimeLit() / te.getMaxTimeLit();
 						float temperature = te.getTemperature() / te.getMaxTemperature();
@@ -449,7 +479,7 @@ public class RendererHandler {
 
 	public static void drawCultivationPlate(ICultivation cultivation, float x, float y, float z, float viewYaw, float viewPitch, boolean thirdPerson, boolean sneaking) {
 		Minecraft mc = Minecraft.getMinecraft();
-		String str = cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel());
+		String str = cultivation.getEssenceLevel().getLevelName(cultivation.getEssenceSubLevel());
 		FontRenderer fr = mc.getRenderManager().getFontRenderer();
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x, y, z);
@@ -493,35 +523,29 @@ public class RendererHandler {
 
 	public static String getShortHealthAmount(int amount) {
 		String value = "";
-		if(amount < 0) {
+		if (amount < 0) {
 			value += "-";
 		}
 		amount = Math.abs(amount);
-		if(amount < 1000) {
+		if (amount < 1000) {
 			value += amount;
-		}
-		else if(amount < 10000) {
-			float mills =  amount / 1000f;
+		} else if (amount < 10000) {
+			float mills = amount / 1000f;
 			value += String.format("%.1fk", mills);
-		}
-		else if(amount < 100000) {
-			float mills =  amount / 1000f;
+		} else if (amount < 100000) {
+			float mills = amount / 1000f;
 			value += String.format("%.0fk", mills);
-		}
-		else if(amount < 1000000) {
-			float mills =  amount / 1000000f;
+		} else if (amount < 1000000) {
+			float mills = amount / 1000000f;
 			value += String.format("%.2fM", mills);
-		}
-		else if(amount < 10000000) {
-			float mills =  amount / 1000000f;
+		} else if (amount < 10000000) {
+			float mills = amount / 1000000f;
 			value += String.format("%.1fM", mills);
-		}
-		else if(amount < 100000000) {
-			float mills =  amount / 1000000f;
+		} else if (amount < 100000000) {
+			float mills = amount / 1000000f;
 			value += String.format("%.0fM", mills);
-		}
-		else if(amount < 1000000000) {
-			float mills =  amount / 1000000000f;
+		} else if (amount < 1000000000) {
+			float mills = amount / 1000000000f;
 			value += String.format("%.2fG", mills);
 		}
 		return value;

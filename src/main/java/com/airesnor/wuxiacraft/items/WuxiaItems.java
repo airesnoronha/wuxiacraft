@@ -1,6 +1,8 @@
 package com.airesnor.wuxiacraft.items;
 
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.techniques.Technique;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.block.BlockPlanks;
@@ -11,10 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class WuxiaItems {
@@ -27,7 +26,9 @@ public class WuxiaItems {
 	public static final CreativeTabs SCROLLS = new CreativeTabs("wuxiacraft.scrolls") {
 		@Override
 		public ItemStack getTabIconItem() {
-			return new ItemStack(BODY_STRENGTH_SCROLL);
+			if(TECHNIQUES_SCROLL.size() > 0)
+			return new ItemStack(TECHNIQUES_SCROLL.get(0));
+			return new ItemStack(RECIPE_SCROLL);
 		}
 	};
 
@@ -59,22 +60,24 @@ public class WuxiaItems {
 	public static final Item NATURAL_ODDITY_LOW = new ItemMonsterCore("natural_oddity_low").setUseDuration(100)
 			.setWhenUsing(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, 0.56874F, false, false, true);
+				CultivationUtils.cultivatorAddProgress(actor, Cultivation.System.ESSENCE, 0.56874F, false, true);
 				return true;
 			})
 			.setMaxStackSize(64).setCreativeTab(WUXIACRAFT_GENERAL);
 
 	//pills
-	public static final Item BODY_REFINEMENT_PILL = new ItemProgressPill("body_refinement_pill", 50f, 200);
-	public static final Item TRAINING_PILL = new ItemProgressPill("training_pill", 60f, 250);
-	public static final Item REINFORCEMENT_PILL = new ItemProgressPill("reinforcement_pill", 70f, 300);
-	public static final Item BODY_CREATION_PILL = new ItemProgressPill("body_creation_pill", 80f, 350);
-	public static final Item SOUL_REFINEMENT_PILL = new ItemProgressPill("soul_refinement_pill", 89.54f, 220);
-	public static final Item SOUL_ASPECT_PILL = new ItemProgressPill("soul_aspect_pill", 110f, 380);
-	public static final Item WANDERING_GHOST_PILL = new ItemProgressPill("wandering_ghost_pill", 140f, 440);
-	public static final Item QI_PATHS_REFINEMENT_PILL = new ItemProgressPill("qi_paths_refinement_pill", 169.97f, 240);
-	public static final Item MERIDIAN_INJECTION_PILL = new ItemProgressPill("meridian_injection_pill", 200f, 360);
-	public static final Item DANTIAN_CONDENSING_PILL = new ItemProgressPill("dantian_condensing_pill", 342f, 320);
+	public static final Item BODY_REFINEMENT_PILL = new ItemProgressPill("body_refinement_pill", Cultivation.System.BODY, 240f, 100);
+	public static final Item TRAINING_PILL = new ItemProgressPill("training_pill", Cultivation.System.BODY, 480f, 150);
+	public static final Item REINFORCEMENT_PILL = new ItemProgressPill("reinforcement_pill", Cultivation.System.BODY, 720f, 180);
+	public static final Item BODY_CREATION_PILL = new ItemProgressPill("body_creation_pill", Cultivation.System.BODY, 960f, 200);
+	public static final Item SOUL_EXPANSION_PILL = new ItemProgressPill("soul_expansion_pill", Cultivation.System.DIVINE, 240f, 100);
+	public static final Item SOUL_REFINEMENT_PILL = new ItemProgressPill("soul_refinement_pill", Cultivation.System.DIVINE, 480f, 150);
+	public static final Item SOUL_ASPECT_PILL = new ItemProgressPill("soul_aspect_pill", Cultivation.System.DIVINE, 720f, 180);
+	public static final Item WANDERING_GHOST_PILL = new ItemProgressPill("wandering_ghost_pill", Cultivation.System.DIVINE, 960f, 200);
+	public static final Item QI_FLOW_PILL = new ItemProgressPill("qi_flow_pill", Cultivation.System.ESSENCE, 240f, 100);
+	public static final Item QI_PATHS_REFINEMENT_PILL = new ItemProgressPill("qi_paths_refinement_pill", Cultivation.System.ESSENCE, 480f, 150);
+	public static final Item MERIDIAN_INJECTION_PILL = new ItemProgressPill("meridian_injection_pill", Cultivation.System.ESSENCE, 720f, 180);
+	public static final Item DANTIAN_CONDENSING_PILL = new ItemProgressPill("dantian_condensing_pill", Cultivation.System.ESSENCE, 960f, 200);
 	public static final Item ENERGY_RECOVERY_PILL = new ItemEnergyPill("energy_recovery_pill", 30f);
 	public static final Item MINOR_ENERGY_REPLENISHING_PILL = new ItemEnergyPill("minor_energy_replenishing_pill", 50f);
 	public static final Item ENERGY_STREAM_PILL = new ItemEnergyPill("energy_stream_pill", 80f);
@@ -116,20 +119,12 @@ public class WuxiaItems {
 	public static final Item SMALLER_FASTING_PILL = new ItemFastingPill("smaller_fasting_pill", 100f);
 	public static final Item SMALL_FASTING_PILL = new ItemFastingPill("small_fasting_pill", 200f);
 
-	//Scrolls
-	public static final Item BODY_STRENGTH_SCROLL = new ItemScroll(Techniques.BODY_STRENGTH);
-	public static final Item LIGHT_FEET_SCROLL = new ItemScroll(Techniques.LIGHT_FEET);
-	public static final Item ASSASSIN_MANUAL_SCROLL = new ItemScroll(Techniques.ASSASSIN_MANUAL);
-	public static final Item BASIC_MEDICINE_SCROLL = new ItemScroll(Techniques.BASIC_MEDICINE);
-	public static final Item SWORD_HEART_SCROLL = new ItemScroll(Techniques.SWORD_HEART);
-	public static final Item AXE_RAGE_SCROLL = new ItemScroll(Techniques.AXE_RAGE);
-	public static final Item FIRE_BENDING_SCROLL = new ItemScroll(Techniques.FIRE_BENDING);
-	public static final Item MOUNTAIN_RAISER_SCROLL = new ItemScroll(Techniques.MOUNTAIN_RAISER);
-	public static final Item METAL_MANIPULATION_SCROLL = new ItemScroll(Techniques.METAL_MANIPULATION);
-	public static final Item SURGING_WAVES_SCROLL = new ItemScroll(Techniques.SURGING_WAVES);
-	public static final Item BOTANICAL_GROWTH_SCROLL = new ItemScroll(Techniques.BOTANICAL_GROWTH);
-	public static final Item SWORD_FLIGHT_JOURNAL_SCROLL = new ItemScroll(Techniques.SWORD_FLIGHT_JOURNAL);
-	public static final Item SKY_CROSSER_SWORD_SCROLL = new ItemScroll(Techniques.SKY_CROSSER_SWORD);
+	//Scrolls -- hopes this works
+	public static final LinkedList<Item> TECHNIQUES_SCROLL = new LinkedList<>();
+	static {
+		for(Technique t : Techniques.TECHNIQUES)
+		TECHNIQUES_SCROLL.add(new ItemScroll(t));
+	}
 
 	//FANS
 	public static final Item FEATHER_FAN = new ItemFan("feather_fan").setMaxStrength(10f).setStrength(1f);
@@ -138,7 +133,7 @@ public class WuxiaItems {
 	public static final Item GIANT_ANT_CORE = new ItemMonsterCore("giant_ant_core").setUseDuration(100)
 			.setWhenUsing(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, 0.45786f, false, false, true);
+				CultivationUtils.cultivatorAddProgress(actor, Cultivation.System.BODY, 0.45786f, false, true);
 				return true;
 			})
 			.setUseAction(actor -> {
@@ -151,7 +146,7 @@ public class WuxiaItems {
 	public static final Item GIANT_BEE_CORE = new ItemMonsterCore("giant_bee_core").setUseDuration(80)
 			.setWhenUsing(actor -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
-				CultivationUtils.cultivatorAddProgress(actor, 0.45786f, false, false, true);
+				CultivationUtils.cultivatorAddProgress(actor, Cultivation.System.BODY, 0.45786f, false, true);
 				return true;
 			})
 			.setUseAction(actor -> {
@@ -215,6 +210,13 @@ public class WuxiaItems {
 	public static final Item DUST_GOLD = new ItemBase("dust_gold");
 	public static final Item DUST_DIAMOND = new ItemBase("dust_diamond");
 
-	public static final Item SPACE_RING = new ItemSpaceRing("space_ring", 6, 9);
+	public static final Item SPATIAL_STONE = new ItemSpatialRing("spatial_stone", 1, 5);
 
+	// Spatial Rings
+	public static final Item LOW_GRADE_SPATIAL_RING = new ItemSpatialRing("low_grade_spatial_ring", 3, 9);
+	public static final Item MID_GRADE_SPATIAL_RING = new ItemSpatialRing("mid_grade_spatial_ring", 4, 10);
+	public static final Item HIGH_GRADE_SPATIAL_RING = new ItemSpatialRing("high_grade_spatial_ring", 5, 11);
+	public static final Item PEAK_GRADE_SPATIAL_RING = new ItemSpatialRing("peak_grade_spatial_ring", 6, 12);
+	public static final Item TOP_GRADE_SPATIAL_RING = new ItemSpatialRing("top_grade_spatial_ring", 7, 13);
+	public static final Item SUPREME_GRADE_SPATIAL_RING = new ItemSpatialRing("supreme_grade_spatial_ring", 8, 14);
 }

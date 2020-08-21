@@ -1,4 +1,4 @@
-//Items
+#Items
 item.crunchy_bar.name=Crunchy Bar
 item.natural_oddity_low.name=Low Tier Natural Oddity
 item.feather_fan.name=Feather Fan
@@ -46,6 +46,8 @@ item.health_incarnate_pill.name=Health Incarnate Pill
 item.physician_miracle_pill.name=Physician Miracle Pill
 item.small_healing_pill.name=Small Healing Pill
 item.almost_resurrect_pill.name=Almost Resurrect Pill
+item.soul_expansion_pill.name=Soul Expansion Pill
+item.qi_flow_pill.name=Qi Flow Pill
 item.weak_life_stone.name=Weak Life Stone
 item.soul_stone.name=Soul Stone
 item.primordial_stone.name=Primordial Stone
@@ -69,7 +71,6 @@ item.divine_origin_stone.name=Divine Origin Stone
 item.boundless_void_crystal.name=Boundless Void Crystal
 item.fallen_star_core.name=Fallen Star Core
 item.primordial_chaos_stone.name=Primordial Chaos Stone
-item.paint_brush.name=Paint Brush
 item.empty_bottle.name=Empty Bottle
 item.blood_bottle.name=Blood Bottle
 item.paint_brush.name=Paint Brush
@@ -85,15 +86,22 @@ item.tiny_dust_diamond.name=Tiny Diamond Dust
 item.dust_iron.name=Iron Dust
 item.dust_gold.name=Gold Dust
 item.dust_diamond.name=Diamond Dust
+item.spatial_stone.name=Spatial Stone
+item.low_grade_spatial_ring.name=Low Grade Spatial Ring
+item.mid_grade_spatial_ring.name=Mid Grade Spatial Ring
+item.high_grade_spatial_ring.name=High Grade Spatial Ring
+item.peak_grade_spatial_ring.name=Peak Grade Spatial Ring
+item.top_grade_spatial_ring.name=Top Grade Spatial Ring
+item.supreme_grade_spatial_ring.name=Supreme Grade Spatial Ring
 
-//Creative tabs
+#Creative tabs
 itemGroup.wuxiacraft.scrolls=Cultivation Techniques
 itemGroup.wuxiacraft.general=Wuxiacraft
 itemGroup.wuxiacraft.blocks=Wuxiacraft Blocks
 itemGroup.wuxiacraft.cores=Monster Cores
 itemGroup.wuxiacraft.pills=Pills
 
-//Blocks
+#Blocks
 tile.natural_oddity_ore.name=Natural Oddity Ore
 tile.iron_cauldron.name=Iron Cauldron
 tile.spirit_stone_stack_block.name=Spirit Stone Stack
@@ -141,7 +149,7 @@ tile.fiery_stone.name=Fiery Stone
 tile.icy_stone.name=Icy Stone
 tile.metallic_stone.name=Metallic Stone
 
-//Configuration
+#Configuration
 gui.config.main_title=WuxiaCraft
 gui.config.category.gameplay=Gameplay
 gui.config.gameplay.speed_handicap.name=Speed handicap
@@ -150,7 +158,7 @@ gui.config.gameplay.max_speed.name=Max Speed
 gui.config.gameplay.haste_limit.name=Break Block Limit
 gui.config.gameplay.jump_limit.name=Jump Limit
 
-//Key bindings
+#Key bindings
 key.wuxiacraft.category=WuxiaCraft
 key.wuxiacraft.speed_up=Increase speed handicap
 key.wuxiacraft.speed_down=Decrease speed handicap
@@ -170,14 +178,15 @@ key.wuxiacraft.select_8=Select skill in 8
 key.wuxiacraft.select_9=Select skill in 9
 key.wuxiacraft.select_0=Select skill in 10
 key.wuxiacraft.unleash_speed=Toggle Speed Limit
+key.wuxiacraft.toggle_barrier=Toggle Barrier
 
-//tiers
+#tiers
 wuxiacraft.tier.mortal=Mortal
 wuxiacraft.tier.martial=Martial
 wuxiacraft.tier.Immortal=Immortal
 wuxiacraft.tier.Divine=Divine
 
-//cultivation levels
+#cultivation levels
 wuxiacraft.cultivation.body_refinement=Body Refinement
 wuxiacraft.cultivation.soul_refinement=Soul Refinement
 wuxiacraft.cultivation.qi_paths_refinement=Qi Paths Refinement
@@ -195,13 +204,13 @@ wuxiacraft.cultivation.divine_law=Divine Law
 wuxiacraft.cultivation.divine_phenomenon=Divine Phenomenon
 wuxiacraft.cultivation.true_god=True God
 
-//cultivation category
-wuxiacraft.category.energy_perception
-wuxiacraft.category.martial_law
-wuxiacraft.category.immortal_foundation
-wuxiacraft.category.divine_law
+#cultivation category
+wuxiacraft.category.energy_perception=Energy Perception
+wuxiacraft.category.martial_law=Martial Law
+wuxiacraft.category.immortal_foundation=Immortal Foundation
+wuxiacraft.category.divine_law=Divine Law
 
-//Labels
+#Labels
 wuxiacraft.label.cultivation=Cultivation
 wuxiacraft.label.rank=Rank
 wuxiacraft.label.tier=Tier
@@ -215,35 +224,81 @@ wuxiacraft.label.pickaxe=Pickaxe
 wuxiacraft.label.shovel=Shovel
 wuxiacraft.label.skills_gui.title=Skills List
 
-//Techniques
+#Techniques
 wuxiacraft.techniques.body_strength=Body Strength Manual
-item.body_strength_scroll.name=Body Strength Manual
+item.body_strength.scroll.name=Body Strength Manual
 wuxiacraft.techniques.light_feet=Light Feet Scroll
-item.light_feet_scroll.name=Light Feet Scroll
-wuxiacraft.techniques.assassin_manual=Assassin Manual
-item.assassin_manual_scroll.name=Assassin Manual
-wuxiacraft.techniques.basic_medicine=Basic Medicine Guide
-item.basic_medicine_scroll.name=Basic Medicine Guide
-wuxiacraft.techniques.sword_heart=Sword Heart Technique
-item.sword_heart_scroll.name=Sword Heart Manual
-wuxiacraft.techniques.axe_rage=Axe Rage Journal
-item.axe_rage_scroll.name=Axe Rage Journal
-wuxiacraft.techniques.fire_bending=Fire Bending Manual
-item.fire_bending_scroll.name=Fire Bending Manual
-wuxiacraft.techniques.mountain_raiser=Mountain Raising Scroll
-item.mountain_raiser_scroll.name=Mountain Raising Scroll
-wuxiacraft.techniques.metal_manipulation=Metal Manipulation
-item.metal_manipulation_scroll.name=Metal Manipulation Manual
-wuxiacraft.techniques.surging_waves=Surging Waves Scroll
-item.surging_waves_scroll.name=Surging Waves Scroll
-wuxiacraft.techniques.botanical_growth=Botanical Growth Journal
-item.botanical_growth_scroll.name=Botanical Growth Journal
-wuxiacraft.techniques.sword_flight_journal=Sword Flight Journal
-item.sword_flight_journal_scroll.name=Sword Flight Journal
-wuxiacraft.techniques.sky_crosser_sword=Sky Crosser Sword
-item.sky_crosser_sword_scroll.name=Sky Crosser Sword Manual
+item.light_feet.scroll.name=Light Feet Scroll
+wuxiacraft.techniques.great_way_of_the_buddha=Great Way Of The Buddha
+item.great_way_of_the_buddha.scroll.name=Great Way Of The Buddha
+wuxiacraft.techniques.azure_thearch_longevity_body=Azure Thearch Longevity Body
+item.azure_thearch_longevity_body.scroll.name=Azure Thearch Longevity Body Manual
+wuxiacraft.techniques.yin_body_art=Yin Body Art
+item.yin_body_art.scroll.name=Yin Body Art Notes
+wuxiacraft.techniques.bedrock_skin_notes=Bedrock Skin Notes
+item.bedrock_skin_notes.scroll.name=Bedrock Skin Notes
+wuxiacraft.techniques.white_tiger_tempering=White Tiger Tempering
+item.white_tiger_tempering.scroll.name=White Tiger Tempering Technique
+wuxiacraft.techniques.lightning_thunder_body_art=Lightning Thunder Body Art
+item.lightning_thunder_body_art.scroll.name=Lightning Thunder Body Art Remnants
+wuxiacraft.techniques.monkey_king_vitality_art=Monkey King Vitality Arts
+item.monkey_king_vitality_art.scroll.name=Monkey King Vitality Arts
+wuxiacraft.techniques.merciful_palm_of_buddha=Merciful Palm of Buddha
+item.merciful_palm_of_buddha.scroll.name=Merciful Palm of Buddha Sutra
+wuxiacraft.techniques.phoenix_body_art=Phoenix Body Art
+item.phoenix_body_art.scroll.name=Phoenix Body Art
+wuxiacraft.techniques.dragon_body_tempering=Dragon Body Tempering
+item.dragon_body_tempering.scroll.name=Dragon Body Tempering Manual
+wuxiacraft.techniques.cat_body_transformation_arts=Ziso's Turning Into Cats Manual
+item.cat_body_transformation_arts.scroll.name=Ziso's Turning Into Cats Manual
+wuxiacraft.techniques.wide_water_flow=Wide Water Flow
+item.wide_water_flow.scroll.name=Wide Water Flow Manual
+wuxiacraft.techniques.basic_lightning_guide=Basic Lightning Guide
+item.basic_lightning_guide.scroll.name=Basic Lightning Guide Arts
+wuxiacraft.techniques.forest_heart_manual=Forest Heart
+item.forest_heart_manual.scroll.name=Forest Heart Manual
+wuxiacraft.techniques.light_cloud_steps=Light Cloud Steps
+item.light_cloud_steps.scroll.name=Light Cloud Steps Scroll
+wuxiacraft.techniques.blooming_forest_art=Blooming Forest Art
+item.blooming_forest_art.scroll.name=Blooming Forest Art
+wuxiacraft.techniques.colossal_mountain_control=Colossal Mountain Control
+item.colossal_mountain_control.scroll.name=Colossal Mountain Control Scroll
+wuxiacraft.techniques.wind_storm_art=Wind Storm Art
+item.wind_storm_art.scroll.name=Wind Storm Art
+wuxiacraft.techniques.dragon_spear_art=Dragon Spear Art
+item.dragon_spear_art.scroll.name=Dragon Spear Art
+wuxiacraft.techniques.yang_burning_art=Yang Burning Art
+item.yang_burning_art.scroll.name=Yang Burning Art
+wuxiacraft.techniques.cold_sword_art=Cold Sword Art
+item.cold_sword_art.scroll.name=Cold Sword Art
+wuxiacraft.techniques.earth_splitting_sword_art=Earth Splitting Sword Art
+item.earth_splitting_sword_art.scroll.name=Earth Splitting Sword Art
+wuxiacraft.techniques.earth_assimilating_qi=Earth Assimilating Qi
+item.earth_assimilating_qi.scroll.name=Earth Assimilating Qi Manual
+wuxiacraft.techniques.thunder_fire_art=Thunder Fire Art
+item.thunder_fire_art.scroll.name=Thunder Fire Art
+wuxiacraft.techniques.divine_fart_cultivation_art=Divine Fart Cultivation Art
+item.divine_fart_cultivation_art.scroll.name=Divine Fart Cultivation Art
+wuxiacraft.techniques.ignited_soul=Ignited Soul
+item.ignited_soul.scroll.name=Ignited Soul Manual
+wuxiacraft.techniques.burning_flame_soul=Burning Flame Soul
+item.burning_flame_soul.scroll.name=Burning Flame Soul Scroll
+wuxiacraft.techniques.thunder_wall_soul_arts=Thunder Wall Soul Arts
+item.thunder_wall_soul_arts.scroll.name=Thunder Wall Soul Arts
+wuxiacraft.techniques.aquatic_soul_manipulation=Aquatic Soul Manipulation
+item.aquatic_soul_manipulation.scroll.name=Aquatic Soul Manipulation Manual
+wuxiacraft.techniques.sun_soul_art=Sun Soul Art
+item.sun_soul_art.scroll.name=Sun Soul Arts
+wuxiacraft.techniques.amorphous_metallic_soul=Amorphous Metallic Soul
+item.amorphous_metallic_soul.scroll.name=Amorphous Metallic Soul
+wuxiacraft.techniques.nine_springs_soul=Nine Springs Soul
+item.nine_springs_soul.scroll.name=Nine Springs Soul Arts
+wuxiacraft.techniques.buddha_s_heavenly_way=Buddha's Heavenly Way
+item.buddha_s_heavenly_way.scroll.name=Buddha's Heavenly Way
+wuxiacraft.techniques.rageful_abnegation_saint_arts=Rageful Abnegation Saint Arts
+item.rageful_abnegation_saint_arts.scroll.name=Rageful Abnegation Saint Arts
 
-//Elements
+#Elements
 wuxiacraft.elements.fire=Fire
 wuxiacraft.elements.earth=Earth
 wuxiacraft.elements.metal=Metal
@@ -255,8 +310,11 @@ wuxiacraft.elements.wind=Wind
 wuxiacraft.elements.lightning=Lightning
 wuxiacraft.elements.ice=Ice
 
-//Skills
+#Skills
 wuxiacraft.skills.cultivate=Cultivate
+wuxiacraft.skills.cultivate_body=Body Cultivation
+wuxiacraft.skills.cultivate_divine=Divinity Cultivation
+wuxiacraft.skills.cultivate_essence=Essence Cultivation
 wuxiacraft.skills.gather_wood=Gather Wood
 wuxiacraft.skills.accelerate_growth=Accelerate Growth
 wuxiacraft.skills.flames=Throw Flames
@@ -276,10 +334,16 @@ wuxiacraft.skills.weak_sword_flight=Weak Sword Flight
 wuxiacraft.skills.light_feet_skill=Light Feet Skill
 wuxiacraft.skills.light_feet_leap=Light Feet Leap
 wuxiacraft.skills.minor_body_reinforcement=Minor Body Reinforcement
-wuxiacraft.skills.minor_power_punch=Minor Power Crasho
+wuxiacraft.skills.minor_power_punch=Minor Power Punch
 wuxiacraft.skills.adept_sword_flight=Adept Sword Flight
+wuxiacraft.skills.spirit_arrow=Spiritual arrow
+wuxiacraft.skills.spirit_pressure=Spiritual Pressure
+wuxiacraft.skills.wind_blade=Wind Blade
+wuxiacraft.skills.wooden_prison=Wooden Prison
+wuxiacraft.skills.weak_lightning_bolt=Lightning Arrow
+wuxiacraft.skills.landslide=Landslide
 
-//Recipes
+#Recipes
 wuxiacraft.recipes.name.body_refinement_pill_recipe=Body Refinement Pill Recipe
 wuxiacraft.recipes.name.training_pill_recipe=Training Pill Recipe
 wuxiacraft.recipes.name.reinforcement_pill_recipe=Reinforcement Pill Recipe
@@ -320,28 +384,29 @@ wuxiacraft.recipes.name.turtle_shell_pill_recipe=Turtle Shell Pill Recipe
 wuxiacraft.recipes.name.minor_fasting_pill_recipe=Minor Fasting Pill Recipe
 
 
-//Congratulation messages
+#Congratulation messages
 wuxiacraft.level_message.congrats_0=Congratulations! You are now at
 wuxiacraft.level_message.congrats_1=Woooow! You broken through to
 wuxiacraft.level_message.congrats_2=Beware! There is a new cultivator at
 wuxiacraft.level_message.congrats_3=You just reached
 wuxiacraft.level_message.congrats_4=A big cultivator has always passed by
 
-//entities
+#entities
 entity.giant_ant.name=Giant Ant
 entity.giant_bee.name=Giant Bee
 entity.wandering_cultivator.name=Wandering Cultivator
 
-//Temperatures
+#Temperatures
 wuxiacraft.temperatures.cold=Cold
 wuxiacraft.temperatures.warm=Warm
 wuxiacraft.temperatures.hot=Hot
 wuxiacraft.temperatures.melting=Melting
 wuxiacraft.temperatures.super_hot=Super Hot
 
-//Potion effects
+#Potion effects
 effect.enlightenment=Enlightenment
 Not used correctly!=wrongUsage
 
-//World Types and Biomes
+#World Types and Biomes
 generator.Mining=Mining
+generator.Wuxia=Wuxia

@@ -6,8 +6,8 @@ import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.entities.mobs.EntityCultivator;
 import com.airesnor.wuxiacraft.utils.MathUtils;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.pathfinding.Path;
 import net.minecraft.world.World;
 
 public class EntityAIReleaseSkills extends EntityAIBase {
@@ -19,18 +19,13 @@ public class EntityAIReleaseSkills extends EntityAIBase {
 	Skill selectedSkill;
 	private final double optimalRange;
 
-	/**
-	 * The PathEntity of our entity.
-	 */
-	Path path;
-
 	public EntityAIReleaseSkills(EntityCultivator cultivator) {
 		this.attacker = cultivator;
 		this.world = cultivator.world;
 		this.minAttackRange = 5f;
 		this.maxAttackRange = 25f;
 
-		this.optimalRange = this.minAttackRange + (this.maxAttackRange -this.minAttackRange) * 0.3;
+		this.optimalRange = this.minAttackRange + (this.maxAttackRange - this.minAttackRange) * 0.3;
 		this.setMutexBits(3);
 	}
 
@@ -51,8 +46,8 @@ public class EntityAIReleaseSkills extends EntityAIBase {
 
 	@Override
 	public boolean shouldContinueExecuting() {
-		if(this.selectedSkill != null) {
-			boolean inRange =  this.shouldExecute();
+		if (this.selectedSkill != null) {
+			boolean inRange = this.shouldExecute();
 			boolean hasEnergy = attacker.getCultivation().hasEnergy(this.selectedSkill.getCost());
 			return inRange && hasEnergy;
 		}
@@ -66,13 +61,13 @@ public class EntityAIReleaseSkills extends EntityAIBase {
 
 	@Override
 	public void startExecuting() {
-		if(attacker.getSkillCap().getKnownSkills().size() > 0) {
-			for(Skill skill : attacker.getSkillCap().getKnownSkills()) {
-				if(this.selectedSkill == null) {
+		if (attacker.getSkillCap().getKnownSkills().size() > 0) {
+			for (Skill skill : attacker.getSkillCap().getKnownSkills()) {
+				if (this.selectedSkill == null) {
 					this.selectedSkill = skill;
 				} else {
-					if(this.attacker.getCultivation().hasEnergy(skill.getCost())) {
-						if(this.selectedSkill.getCost() < skill.getCost()) {
+					if (this.attacker.getCultivation().hasEnergy(skill.getCost())) {
+						if (this.selectedSkill.getCost() < skill.getCost()) {
 							this.selectedSkill = skill;
 						}
 					}
@@ -91,16 +86,16 @@ public class EntityAIReleaseSkills extends EntityAIBase {
 
 	@Override
 	public void updateTask() {
-		if(this.attacker.getAttackTarget() != null) {
+		if (this.attacker.getAttackTarget() != null) {
 			this.attacker.getLookHelper().setLookPositionWithEntity(this.attacker.getAttackTarget(), 30.0F, 30.0F);
 			EntityLivingBase target = attacker.getAttackTarget();
 			boolean outOfRange = attacker.getDistance(target) > optimalRange;
-			if(attacker.getNavigator().noPath()){
-				if(outOfRange) {
+			if (attacker.getNavigator().noPath()) {
+				if (outOfRange) {
 					attacker.getNavigator().tryMoveToEntityLiving(target, 0.3f);
 				}
 			}
-			if(!outOfRange) {
+			if (!outOfRange) {
 				this.attacker.getNavigator().clearPath();
 			}
 		}
@@ -109,8 +104,8 @@ public class EntityAIReleaseSkills extends EntityAIBase {
 			ISkillCap skillCap = this.attacker.getSkillCap();
 			if (skillCap.isCasting() && cultivation.hasEnergy(this.selectedSkill.getCost())) {
 				if (skillCap.getCastProgress() < selectedSkill.getCastTime())
-					skillCap.stepCastProgress((float) cultivation.getSpeedIncrease());
-				selectedSkill.castingEffect(this.attacker);
+					skillCap.stepCastProgress((float) Math.min(this.attacker.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getAttributeValue()*0.2, selectedSkill.getCastTime()/40.0));
+				//selectedSkill.castingEffect(this.attacker);
 			} else if (skillCap.isDoneCasting()) {
 				skillCap.resetCastProgress();
 				skillCap.setDoneCasting(false);

@@ -1,15 +1,14 @@
 package com.airesnor.wuxiacraft.commands;
 
-import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
+import com.airesnor.wuxiacraft.cultivation.BaseSystemLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.cultivation.IFoundation;
+import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.networking.CultivationMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.command.NumberInvalidException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -35,7 +34,7 @@ public class CultivationCommand extends CommandBase {
 	@Nonnull
 	@ParametersAreNonnullByDefault
 	public String getUsage(ICommandSender sender) {
-		return "/cultivation or /cultivation target";
+		return "/cult [get player]:[set [<player>] <system> <cultivation_level> <rank>]";
 	}
 
 	@Override
@@ -47,194 +46,236 @@ public class CultivationCommand extends CommandBase {
 	}
 
 	@Override
-	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		if (sender instanceof EntityPlayerMP) {
-			EntityPlayerMP player = getCommandSenderAsPlayer(sender);
-			if (!player.world.isRemote) {
-				boolean wrongUsage = true;
-				if (args.length == 0) {
-					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-					IFoundation foundation = CultivationUtils.getFoundationFromEntity(player);
-					String message = String.format("You are at %s", cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
-					TextComponentString text = new TextComponentString(message);
+	public int getRequiredPermissionLevel() {
+		return 2;
+	}
+
+	@Override
+	public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
+		boolean wrongUsage = false;
+		if (args.length == 2) {
+			if (args[0].equalsIgnoreCase("get")) {
+				EntityPlayerMP target = server.getPlayerList().getPlayerByUsername(args[1]);
+				if (target == null) {
+					TextComponentString text = new TextComponentString("Couldn't find target player!");
+					text.getStyle().setColor(TextFormatting.RED);
 					sender.sendMessage(text);
-					message = String.format("Progress: %d/%d", (long) cultivation.getCurrentProgress(), (long) cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
-					text = new TextComponentString(message);
+				} else {
+					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(target);
+					TextComponentString text = new TextComponentString(String.format("Body level: %s\n",
+							cultivation.getBodyLevel().getLevelName(cultivation.getBodySubLevel())));
+					text.appendText(String.format("Progress: %.0f/%.0f\n", cultivation.getBodyProgress(),
+							cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel())));
+					text.appendText(String.format("Divine level: %s\n",
+							cultivation.getDivineLevel().getLevelName(cultivation.getDivineSubLevel())));
+					text.appendText(String.format("Progress: %.0f/%.0f\n", cultivation.getDivineProgress(),
+							cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel())));
+					text.appendText(String.format("Essence level: %s\n",
+							cultivation.getEssenceLevel().getLevelName(cultivation.getEssenceSubLevel())));
+					text.appendText(String.format("Progress: %.0f/%.0f\n", cultivation.getEssenceProgress(),
+							cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel())));
+					text.appendText(String.format("Energy: %.0f/%.0f (%d%%)\n", cultivation.getEnergy(),
+							CultivationUtils.getMaxEnergy(target), (int) (cultivation.getEnergy() * 100 / CultivationUtils.getMaxEnergy(target))));
 					sender.sendMessage(text);
-					//message = String.format("Energy: %d/%d", (int) cultivation.getEnergy(), (int) cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()));
-					message = String.format("Energy: %d/%d", (long) cultivation.getEnergy(), (long) cultivation.getMaxEnergy(foundation));
-					text = new TextComponentString(message);
-					sender.sendMessage(text);
-					message = String.format("Speed: %d/%d%%", (long) cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()), cultivation.getSpeedHandicap());
-					text = new TextComponentString(message);
-					sender.sendMessage(text);
-					wrongUsage = false;
-				} else if (args.length == 2) {
-					if (args[0].equals("get")) {
-						EntityPlayer target = server.getPlayerList().getPlayerByUsername(args[1]);
-						if (target == null) {
-							String message = String.format("Player %s not found", args[1]);
-							TextComponentString text = new TextComponentString(message);
-							sender.sendMessage(text);
-							wrongUsage = true;
-						} else {
-							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(target);
-							IFoundation foundation = CultivationUtils.getFoundationFromEntity(target);
-							if (target.getUniqueID().equals(player.getUniqueID())) {
-								String message = String.format("You are at %s", cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
-								TextComponentString text = new TextComponentString(message);
+				}
+			} else {
+				wrongUsage = true;
+			}
+		} else if (args.length == 4) {
+			if (args[0].equalsIgnoreCase("set")) {
+				if (sender instanceof EntityPlayerMP) {
+					ICultivation cultivation = CultivationUtils.getCultivationFromEntity((EntityPlayerMP) sender);
+					if (args[1].equalsIgnoreCase("body")) {
+						boolean levelFound = false;
+						for (BaseSystemLevel level : BaseSystemLevel.BODY_LEVELS) {
+							if (level.levelName.equalsIgnoreCase(args[2])) {
+								int rank = 0;
+								try {
+									rank = parseInt(args[3], 0);
+								} catch (NumberInvalidException e) {
+									e.printStackTrace();
+								}
+								cultivation.setBodyLevel(level);
+								cultivation.setBodySubLevel(rank);
+								TextComponentString text = new TextComponentString("Your level was set to " + level.getLevelName(rank));
 								sender.sendMessage(text);
-								message = String.format("Progress: %d/%d", (long) cultivation.getCurrentProgress(), (long) cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
-								text = new TextComponentString(message);
-								sender.sendMessage(text);
-								message = String.format("Energy: %d/%d", (long) cultivation.getEnergy(), (long) cultivation.getMaxEnergy(foundation));
-								text = new TextComponentString(message);
-								sender.sendMessage(text);
-								message = String.format("Speed: %d/%d%%", (long) cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()), cultivation.getSpeedHandicap());
-								text = new TextComponentString(message);
-								sender.sendMessage(text);
-							} else {
-								String message = String.format("%s is at %s", target.getName(), cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
-								TextComponentString text = new TextComponentString(message);
-								sender.sendMessage(text);
-								message = String.format("Progress: %d/%d", (long) cultivation.getCurrentProgress(), (long) cultivation.getCurrentLevel().getProgressBySubLevel(cultivation.getCurrentSubLevel()));
-								text = new TextComponentString(message);
-								sender.sendMessage(text);
-								message = String.format("Energy: %d/%d", (long) cultivation.getEnergy(), (long) cultivation.getMaxEnergy(foundation));
-								text = new TextComponentString(message);
-								sender.sendMessage(text);
-								message = String.format("Speed: %d/%d%%", (long) cultivation.getCurrentLevel().getSpeedModifierBySubLevel(cultivation.getCurrentSubLevel()), cultivation.getSpeedHandicap());
-								text = new TextComponentString(message);
-								sender.sendMessage(text);
-							}
-							wrongUsage = false;
-						}
-					}
-				} else if (args.length == 3) {
-					if (args[0].equals("set")) {
-						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-						CultivationLevel level = cultivation.getCurrentLevel();
-						boolean found_level = false;
-						for (CultivationLevel l : CultivationLevel.LOADED_LEVELS.values()) {
-							if (l.getUName().equals(args[1])) {
-								level = l;
-								found_level = true;
+								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) sender);
+								EventHandler.applyModifiers( (EntityPlayerMP) sender);
+								levelFound = true;
 								break;
 							}
 						}
-						int subLevel = Integer.parseInt(args[2]) - 1;
-						if (found_level) {
-							cultivation.setCurrentLevel(level);
-							cultivation.setCurrentSubLevel(subLevel);
-							NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
-							TextComponentString text = new TextComponentString("You're now at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
-							sender.sendMessage(text);
-							wrongUsage = false;
-						} else {
-							TextComponentString text = new TextComponentString("Couldn't find level " + args[1]);
+						if (!levelFound) {
+							TextComponentString text = new TextComponentString("Couldn't find target level!");
 							text.getStyle().setColor(TextFormatting.RED);
 							sender.sendMessage(text);
-							wrongUsage = true;
 						}
-					}
-				} else if (args.length == 4) {
-					EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
-					if(targetPlayer != null) {
-						if (args[0].equals("set")) {
-							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
-							CultivationLevel level = cultivation.getCurrentLevel();
-							boolean found_level = false;
-							for (CultivationLevel l : CultivationLevel.LOADED_LEVELS.values()) {
-								if (l.getUName().equals(args[2])) {
-									level = l;
-									found_level = true;
-									break;
+					} else if (args[1].equalsIgnoreCase("divine")) {
+						boolean levelFound = false;
+						for (BaseSystemLevel level : BaseSystemLevel.DIVINE_LEVELS) {
+							if (level.levelName.equalsIgnoreCase(args[2])) {
+								int rank = 0;
+								try {
+									rank = parseInt(args[3], 0);
+								} catch (NumberInvalidException e) {
+									e.printStackTrace();
 								}
-							}
-							int subLevel = Integer.parseInt(args[3]) - 1;
-							if (found_level) {
-								cultivation.setCurrentLevel(level);
-								cultivation.setCurrentSubLevel(subLevel);
-								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
-								if (targetPlayer.getUniqueID().equals(player.getUniqueID())) {
-									TextComponentString text = new TextComponentString("You're now at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
-									sender.sendMessage(text);
-								} else {
-									TextComponentString text = new TextComponentString(targetPlayer.getName() + " is now at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
-									sender.sendMessage(text);
-								}
-								wrongUsage = false;
-							} else {
-								TextComponentString text = new TextComponentString("Couldn't find level " + args[2]);
-								text.getStyle().setColor(TextFormatting.RED);
+								cultivation.setDivineLevel(level);
+								cultivation.setDivineSubLevel(rank);
+								TextComponentString text = new TextComponentString("Your level was set to " + level.getLevelName(rank));
 								sender.sendMessage(text);
-								wrongUsage = true;
+								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) sender);
+								EventHandler.applyModifiers( (EntityPlayerMP) sender);
+								levelFound = true;
+								break;
 							}
+						}
+						if (!levelFound) {
+							TextComponentString text = new TextComponentString("Couldn't find target level!");
+							text.getStyle().setColor(TextFormatting.RED);
+							sender.sendMessage(text);
+						}
+					} else if (args[1].equalsIgnoreCase("essence")) {
+						boolean levelFound = false;
+						for (BaseSystemLevel level : BaseSystemLevel.ESSENCE_LEVELS) {
+							if (level.levelName.equalsIgnoreCase(args[2])) {
+								int rank = 0;
+								try {
+									rank = parseInt(args[3], 0);
+								} catch (NumberInvalidException e) {
+									e.printStackTrace();
+								}
+								cultivation.setEssenceLevel(level);
+								cultivation.setEssenceSubLevel(rank);
+								TextComponentString text = new TextComponentString("Your level was set to " + level.getLevelName(rank));
+								sender.sendMessage(text);
+								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) sender);
+								EventHandler.applyModifiers( (EntityPlayerMP) sender);
+								levelFound = true;
+								break;
+							}
+						}
+						if (!levelFound) {
+							TextComponentString text = new TextComponentString("Couldn't find target level!");
+							text.getStyle().setColor(TextFormatting.RED);
+							sender.sendMessage(text);
 						}
 					} else {
-						TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
-						text.getStyle().setColor(TextFormatting.RED);
-						sender.sendMessage(text);
+						wrongUsage = true;
 					}
-				} else if (args.length == 5) {
-					EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
-					if(targetPlayer != null) {
-						if (args[0].equals("set")) {
-							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
-							CultivationLevel level = cultivation.getCurrentLevel();
-							boolean found_level = false;
-							for (CultivationLevel l : CultivationLevel.LOADED_LEVELS.values()) {
-								if (l.getUName().equals(args[2])) {
-									level = l;
-									found_level = true;
-									break;
-								}
-							}
-							int subLevel = Integer.parseInt(args[3]) - 1;
-							if (found_level) {
-								String keepProgress = args[4];
-								if(keepProgress.equals("true")) {
-									cultivation.setCurrentLevel(level);
-									cultivation.setCurrentSubLevel(subLevel);
-								} else if (keepProgress.equalsIgnoreCase("false")) {
-									cultivation.setCurrentLevel(level);
-									cultivation.setCurrentSubLevel(subLevel);
-									cultivation.setProgress(1);
-								}
-								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), player);
-								if (targetPlayer.getUniqueID().equals(player.getUniqueID())) {
-									TextComponentString text = new TextComponentString("You're now at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
-									sender.sendMessage(text);
-								} else {
-									TextComponentString text = new TextComponentString(targetPlayer.getName() + " is now at " + cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel()));
-									sender.sendMessage(text);
-								}
-								wrongUsage = false;
-							} else {
-								TextComponentString text = new TextComponentString("Couldn't find level " + args[2]);
-								text.getStyle().setColor(TextFormatting.RED);
-								sender.sendMessage(text);
-								wrongUsage = true;
-							}
-						}
-					} else {
-						TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
-						text.getStyle().setColor(TextFormatting.RED);
-						sender.sendMessage(text);
-					}
-				}
-				if (wrongUsage) {
-					TextComponentString text = new TextComponentString("Invalid arguments, use /cult [get player]:[set (player) cultivation_level rank]:[set (player) cultivation_level rank keep_progress]");
+				} else {
+					TextComponentString text = new TextComponentString("Consoles don't cultivate! o.O");
 					text.getStyle().setColor(TextFormatting.RED);
 					sender.sendMessage(text);
 				}
 			}
-		}
-	}
+		} else if (args.length == 5) {
+			if (args[0].equalsIgnoreCase("set")) {
+				EntityPlayerMP target = server.getPlayerList().getPlayerByUsername(args[1]);
+				if (target == null) {
+					TextComponentString text = new TextComponentString("Couldn't find target player!");
+					text.getStyle().setColor(TextFormatting.RED);
+					sender.sendMessage(text);
+				} else {
+					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(target);
+					if (args[2].equalsIgnoreCase("body")) {
+						boolean levelFound = false;
+						for (BaseSystemLevel level : BaseSystemLevel.BODY_LEVELS) {
+							if (level.levelName.equalsIgnoreCase(args[3])) {
+								int rank = 0;
+								try {
+									rank = parseInt(args[4], 0);
+								} catch (NumberInvalidException e) {
+									e.printStackTrace();
+								}
+								cultivation.setBodyLevel(level);
+								cultivation.setBodySubLevel(rank);
+								TextComponentString text = new TextComponentString("Your level was set to " + level.getLevelName(rank));
+								text.getStyle().setColor(TextFormatting.GRAY);
+								target.sendMessage(text);
+								text = new TextComponentString("Target player level was set to " + level.getLevelName(rank));
+								sender.sendMessage(text);
+								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), target);
+								EventHandler.applyModifiers(target);
+								levelFound = true;
+								break;
+							}
+						}
+						if (!levelFound) {
+							TextComponentString text = new TextComponentString("Couldn't find target level!");
+							text.getStyle().setColor(TextFormatting.RED);
+							sender.sendMessage(text);
+						}
+					} else if (args[2].equalsIgnoreCase("divine")) {
+						boolean levelFound = false;
+						for (BaseSystemLevel level : BaseSystemLevel.DIVINE_LEVELS) {
+							if (level.levelName.equalsIgnoreCase(args[3])) {
+								int rank = 0;
+								try {
+									rank = parseInt(args[4], 0);
+								} catch (NumberInvalidException e) {
+									e.printStackTrace();
+								}
+								cultivation.setDivineLevel(level);
+								cultivation.setDivineSubLevel(rank);
+								TextComponentString text = new TextComponentString("Your level was set to " + level.getLevelName(rank));
+								text.getStyle().setColor(TextFormatting.GRAY);
+								target.sendMessage(text);
+								text = new TextComponentString("Target player level was set to " + level.getLevelName(rank));
+								sender.sendMessage(text);
+								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), target);
+								EventHandler.applyModifiers(target);
+								levelFound = true;
+								break;
+							}
+						}
+						if (!levelFound) {
+							TextComponentString text = new TextComponentString("Couldn't find target level!");
+							text.getStyle().setColor(TextFormatting.RED);
+							sender.sendMessage(text);
+						}
+					} else if (args[2].equalsIgnoreCase("essence")) {
+						boolean levelFound = false;
+						for (BaseSystemLevel level : BaseSystemLevel.ESSENCE_LEVELS) {
+							if (level.levelName.equalsIgnoreCase(args[3])) {
+								int rank = 0;
+								try {
+									rank = parseInt(args[4], 0);
+								} catch (NumberInvalidException e) {
+									e.printStackTrace();
+								}
+								cultivation.setEssenceLevel(level);
+								cultivation.setEssenceSubLevel(rank);
+								TextComponentString text = new TextComponentString("Your level was set to " + level.getLevelName(rank));
+								text.getStyle().setColor(TextFormatting.GRAY);
+								target.sendMessage(text);
+								text = new TextComponentString("Target player level was set to " + level.getLevelName(rank));
+								sender.sendMessage(text);
+								NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), target);
+								EventHandler.applyModifiers(target);
+								levelFound = true;
+								break;
+							}
+						}
+						if (!levelFound) {
+							TextComponentString text = new TextComponentString("Couldn't find target level!");
+							text.getStyle().setColor(TextFormatting.RED);
+							sender.sendMessage(text);
+						}
+					} else {
+						wrongUsage = true;
+					}
+				}
+			}
 
-	@Override
-	public int getRequiredPermissionLevel() {
-		return 2;
+		} else {
+			wrongUsage = true;
+		}
+		if (wrongUsage) {
+			TextComponentString text = new TextComponentString("Invalid arguments. use " + this.getUsage(sender));
+			text.getStyle().setColor(TextFormatting.RED);
+			sender.sendMessage(text);
+		}
 	}
 
 	@Override
@@ -242,37 +283,69 @@ public class CultivationCommand extends CommandBase {
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
 		List<String> completions = new ArrayList<>();
 		if (args.length == 1) {
-			if ("get".startsWith(args[0]))
+			if ("get".toLowerCase().startsWith(args[0].toLowerCase()))
 				completions.add("get");
-			if ("set".startsWith(args[0]))
+			if ("set".toLowerCase().startsWith(args[0].toLowerCase()))
 				completions.add("set");
-		}else if (args.length == 2) {
-			for(String player : server.getPlayerList().getOnlinePlayerNames()) {
-				if(player.toLowerCase().startsWith(args[1].toLowerCase())) {
-					completions.add(player);
+		} else if (args.length == 2) {
+			if (args[0].equalsIgnoreCase("set")) {
+				if ("body".toLowerCase().startsWith(args[1].toLowerCase()))
+					completions.add("body");
+				if ("divine".toLowerCase().startsWith(args[1].toLowerCase()))
+					completions.add("divine");
+				if ("essence".toLowerCase().startsWith(args[1].toLowerCase()))
+					completions.add("essence");
+			}
+			for (String name : server.getOnlinePlayerNames()) {
+				if (name.toLowerCase().startsWith(args[1].toLowerCase()))
+					completions.add(name);
+			}
+		} else if (args.length == 3) {
+			if (args[0].equalsIgnoreCase("set")) {
+				if (args[1].equalsIgnoreCase("body")) { // if you skip name so you target self
+					for (BaseSystemLevel level : BaseSystemLevel.BODY_LEVELS) {
+						if (level.levelName.toLowerCase().startsWith(args[2].toLowerCase()))
+							completions.add(level.levelName);
+					}
+				} else if (args[1].equalsIgnoreCase("divine")) {
+					for (BaseSystemLevel level : BaseSystemLevel.DIVINE_LEVELS) {
+						if (level.levelName.toLowerCase().startsWith(args[2].toLowerCase()))
+							completions.add(level.levelName);
+					}
+				} else if (args[1].equalsIgnoreCase("essence")) {
+					for (BaseSystemLevel level : BaseSystemLevel.ESSENCE_LEVELS) {
+						if (level.levelName.toLowerCase().startsWith(args[2].toLowerCase()))
+							completions.add(level.levelName);
+					}
+				} else { //but if with name then here
+					if ("body".toLowerCase().startsWith(args[2].toLowerCase()))
+						completions.add("body");
+					if ("divine".toLowerCase().startsWith(args[2].toLowerCase()))
+						completions.add("divine");
+					if ("essence".toLowerCase().startsWith(args[2].toLowerCase()))
+						completions.add("essence");
 				}
 			}
-			if(args[0].equalsIgnoreCase("set")) {
-				for (CultivationLevel level : CultivationLevel.LOADED_LEVELS.values()) {
-					if (level.getUName().toLowerCase().startsWith(args[1].toLowerCase()))
-						completions.add(level.getUName());
+		} else if (args.length == 4) {
+			if (args[0].equalsIgnoreCase("set")) {
+				if (args[2].equalsIgnoreCase("body")) { // skip name checking
+					for (BaseSystemLevel level : BaseSystemLevel.BODY_LEVELS) {
+						if (level.levelName.toLowerCase().startsWith(args[3].toLowerCase()))
+							completions.add(level.levelName);
+					}
+				} else if (args[2].equalsIgnoreCase("divine")) {
+					for (BaseSystemLevel level : BaseSystemLevel.DIVINE_LEVELS) {
+						if (level.levelName.toLowerCase().startsWith(args[3].toLowerCase()))
+							completions.add(level.levelName);
+					}
+				} else if (args[2].equalsIgnoreCase("essence")) {
+					for (BaseSystemLevel level : BaseSystemLevel.ESSENCE_LEVELS) {
+						if (level.levelName.toLowerCase().startsWith(args[3].toLowerCase()))
+							completions.add(level.levelName);
+					}
 				}
 			}
-		}else if(args.length == 3) {
-			if(args[0].equalsIgnoreCase("set")) {
-				for (CultivationLevel level : CultivationLevel.LOADED_LEVELS.values()) {
-					if (level.levelName.toLowerCase().startsWith(args[2].toLowerCase()))
-						completions.add(level.getUName());
-				}
-			}
-		}else if(args.length == 5) {
-			if("true".startsWith(args[4])){
-				completions.add("true");
-			}
-			if("false".startsWith(args[4])){
-				completions.add("false");
-			}
-		}
+		} //5th arg is a number
 		return completions;
 	}
 

@@ -35,7 +35,7 @@ public class OreUtils {
 		oresToFind.add(WuxiaBlocks.NATURAL_ODDITY_ORE);
 		oresToFind.add(WuxiaBlocks.WEAK_LIFE_STONE_VEIN);
 		oresToFind.add(WuxiaBlocks.SOUL_STONE_VEIN);
-		oresToFind.add(WuxiaBlocks.PRIMORDIAL_STONE);
+		oresToFind.add(WuxiaBlocks.PRIMORDIAL_STONE_VEIN);
 		oresToFind.add(WuxiaBlocks.FIVE_ELEMENT_PURE_CRYSTAL_VEIN);
 		oresToFind.add(WuxiaBlocks.PURE_QI_CRYSTAL_VEIN);
 		oresToFind.add(WuxiaBlocks.EARTH_LAW_CRYSTAL_VEIN);
