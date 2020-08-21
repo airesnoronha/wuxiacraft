@@ -231,7 +231,7 @@ public class Skills {
 			.setAction(actor -> {
 				if (actor.world.isRemote) {
 					if (actor instanceof EntityPlayer) {
-						final int max_range = 72;
+						final int max_range = 32;
 						float strength = (float) CultivationUtils.getStrengthFromEntity(actor);
 						int range = Math.min(max_range, 16 + (int) (Math.floor(0.2 * strength)));
 						OreUtils.findOres(actor.world, actor.getPosition(), range);
@@ -247,7 +247,7 @@ public class Skills {
 
 	public static final Skill ORE_SUCTION = new Skill("ore_suction", false, false, 120f, 2.5f, 80f, 0f).setAction(actor -> {
 		boolean activated = false;
-		final int max_range = 64;
+		final int max_range = 32;
 		float strength = (float) CultivationUtils.getStrengthFromEntity(actor);
 		int range = Math.min(max_range, 8 + (int) (Math.floor(0.01 * (strength))));
 		List<BlockPos> positions = OreUtils.findOres(actor.world, actor.getPosition(), range);
