@@ -3,8 +3,6 @@ package com.airesnor.wuxiacraft.utils;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.capabilities.*;
 import com.airesnor.wuxiacraft.cultivation.*;
-import com.airesnor.wuxiacraft.cultivation.aura.AuraCap;
-import com.airesnor.wuxiacraft.cultivation.aura.IAuraCap;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
@@ -113,19 +111,6 @@ public class CultivationUtils {
 			barrier = new Barrier();
 		}
 		return barrier;
-	}
-
-	@Nonnull
-	public static IAuraCap getAuraFromEntity(EntityLivingBase entityIn) {
-		IAuraCap auraCap = null;
-		if(entityIn instanceof EntityPlayer) {
-			//noinspection ConstantConditions
-			auraCap = entityIn.getCapability(AuraCapProvider.AURA_CAPABILITY, null);
-		}
-		if(auraCap == null) {
-			auraCap = new AuraCap();
-		}
-		return auraCap;
 	}
 
 	public static double getMaxEnergy(EntityLivingBase entityIn) {
