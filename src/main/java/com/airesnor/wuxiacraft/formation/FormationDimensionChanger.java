@@ -32,8 +32,9 @@ public class FormationDimensionChanger extends Formation {
 	@Override
 	public int doUpdate(@Nonnull World worldIn, @Nonnull BlockPos source, @Nonnull FormationTileEntity parent) {
 		int timeAlive = parent.getTimeActivated();
+		int targetDimension = worldIn.provider.getDimension() == this.targetDimension ? 0 : this.targetDimension; //this way they go back by the same way
 		if (timeAlive % 20 == 0) { //avoid suffocation
-			WorldServer world = DimensionManager.getWorld(this.targetDimension);
+			WorldServer world = DimensionManager.getWorld(targetDimension);
 			if(world != null) {
 				world.setBlockToAir(source);
 				world.setBlockToAir(source.up());
@@ -47,7 +48,6 @@ public class FormationDimensionChanger extends Formation {
 			if (parent.hasEnergy(this.getOperationCost() * 99)) { //takes all energy with it
 				parent.remEnergy(this.getOperationCost() * 99);
 				parent.stopFormation(); //can only take one person at a time
-				int targetDimension = player.world.provider.getDimension() == this.targetDimension ? 0 : this.targetDimension; //this way they go back by the same way
 				if(targetDimension != -1 || targetDimension != 0 || targetDimension != 1 || targetDimension != WuxiaDimensions.MINING.getId()) {
 					if(sourceX >= 2000000) {
 						sourceX = 1999990;

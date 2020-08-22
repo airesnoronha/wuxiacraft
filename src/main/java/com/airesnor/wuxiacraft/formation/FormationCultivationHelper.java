@@ -88,7 +88,27 @@ public class FormationCultivationHelper extends Formation {
 			if (skill == Skills.CULTIVATE_ESSENCE) {
 				if (parent.hasEnergy(this.getOperationCost() * (selected.size() + 1))) {
 					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-					if (!(this.amount <= cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) * 0.06)) {
+					if (!(this.amount <= cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) * 0.12)) {
+						worldIn.createExplosion(player, player.posX, player.posY + 0.9, player.posZ, 2f, true);
+						player.attackEntityFrom(DamageSource.causeExplosionDamage(player), (float) this.amount * 2);
+					}
+					selected.add(player);
+				}
+			}
+			else if (skill == Skills.CULTIVATE_DIVINE) {
+				if (parent.hasEnergy(this.getOperationCost() * (selected.size() + 1))) {
+					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+					if (!(this.amount <= cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()) * 0.12)) {
+						worldIn.createExplosion(player, player.posX, player.posY + 0.9, player.posZ, 2f, true);
+						player.attackEntityFrom(DamageSource.causeExplosionDamage(player), (float) this.amount * 2);
+					}
+					selected.add(player);
+				}
+			}
+			else if (skill == Skills.CULTIVATE_BODY) {
+				if (parent.hasEnergy(this.getOperationCost() * (selected.size() + 1))) {
+					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+					if (!(this.amount <= cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel()) * 0.12)) {
 						worldIn.createExplosion(player, player.posX, player.posY + 0.9, player.posZ, 2f, true);
 						player.attackEntityFrom(DamageSource.causeExplosionDamage(player), (float) this.amount * 2);
 					}
@@ -132,9 +152,25 @@ public class FormationCultivationHelper extends Formation {
 							if (skill == Skills.CULTIVATE_ESSENCE) {
 								skillCap.setFormationActivated(true);
 								ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-								if (this.amount <= cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) * 0.06) {
+								if (this.amount <= cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) * 0.12) {
 									CultivationUtils.cultivatorAddProgress(player, Cultivation.System.ESSENCE, this.amount, true, false);
 									NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, Cultivation.System.ESSENCE, this.amount, true, false, player.getUniqueID()));
+								}
+							}
+							else if (skill == Skills.CULTIVATE_DIVINE) {
+								skillCap.setFormationActivated(true);
+								ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+								if (this.amount <= cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()) * 0.12) {
+									CultivationUtils.cultivatorAddProgress(player, Cultivation.System.DIVINE, this.amount, true, false);
+									NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, Cultivation.System.DIVINE, this.amount, true, false, player.getUniqueID()));
+								}
+							}
+							else if (skill == Skills.CULTIVATE_BODY) {
+								skillCap.setFormationActivated(true);
+								ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+								if (this.amount <= cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel()) * 0.12) {
+									CultivationUtils.cultivatorAddProgress(player, Cultivation.System.BODY, this.amount, true, false);
+									NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, Cultivation.System.BODY, this.amount, true, false, player.getUniqueID()));
 								}
 							}
 						}
