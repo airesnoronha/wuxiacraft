@@ -106,9 +106,9 @@ public class FormationQiGathering extends Formation {
 		}
 		List<EntityPlayer> targets = new ArrayList<>();
 		if (parent.getTimeActivated() % 10 == 0) { //search world for players
-			List<EntityPlayer> playersNearby = worldIn.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(source).grow(this.getRange() / 8));
+			List<EntityPlayer> playersNearby = worldIn.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(source).grow(this.getRange() / 4));
 			for (EntityPlayer player : playersNearby) {
-				if (player.getDistanceSq(source) < (this.getRange() / 8) * (this.getRange() / 8)) {
+				if (player.getDistanceSq(source) < (this.getRange() / 4) * (this.getRange() / 4)) {
 					targets.add(player);
 				}
 			}
@@ -155,7 +155,7 @@ public class FormationQiGathering extends Formation {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void doClientUpdate(@Nonnull World worldIn, @Nonnull BlockPos source, @Nonnull FormationTileEntity parent) {
-		if (Minecraft.getMinecraft().player.getDistanceSq(source) < (this.getRange() / 8) * (this.getRange() / 8)) {
+		if (Minecraft.getMinecraft().player.getDistanceSq(source) < (this.getRange() / 4) * (this.getRange() / 4)) {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
 			cultivation.addEnergy((float) this.generation * 2);
 		}

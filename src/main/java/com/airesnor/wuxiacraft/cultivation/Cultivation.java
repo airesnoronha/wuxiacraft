@@ -62,9 +62,9 @@ public class Cultivation implements ICultivation {
 		this.bodySubLevel = 0;
 		this.divineSubLevel = 0;
 		this.divineSubLevel = 0;
-		this.bodyFoundation = 0;
-		this.divineFoundation = 0;
-		this.essenceFoundation = 0;
+		this.bodyFoundation = 6000; // this should be an average foundation
+		this.divineFoundation = 6000;
+		this.essenceFoundation = 6000;
 		this.energy = 0;
 		this.handicap = 100;
 		this.timer = 0;
@@ -123,10 +123,10 @@ public class Cultivation implements ICultivation {
 							leveled = true;
 						}
 					}
-					if (leveled) {
-						double modifierDifference = oldModifier * 1.1 - this.getBodyModifier();
+					if (leveled) { // this will keep the foundation cross levels since it'll grow the same as modifiers but still will get lower since progress grows 1.4 rate
+						double modifierDifference = oldModifier * 1.2 - this.getBodyModifier();
 						if (modifierDifference > 0) {
-							this.bodyFoundation += this.bodyLevel.getProgressBySubLevel(this.bodySubLevel) * modifierDifference / (0.4 * this.bodyLevel.getModifierBySubLevel(this.bodySubLevel));
+							this.bodyFoundation += this.bodyLevel.getProgressBySubLevel(this.bodySubLevel) * modifierDifference / (0.6 * this.bodyLevel.getModifierBySubLevel(this.bodySubLevel));
 						}
 					}
 				}
@@ -181,10 +181,10 @@ public class Cultivation implements ICultivation {
 							leveled = true;
 						}
 					}
-					if (leveled) {
-						double modifierDifference = oldModifier * 1.1 - this.getDivineModifier();
+					if (leveled) { // this will keep the foundation cross levels since it'll grow the same as modifiers but still will get lower since progress grows 1.4 rate
+						double modifierDifference = oldModifier * 1.2 - this.getDivineModifier();
 						if (modifierDifference > 0) {
-							this.divineFoundation += this.divineLevel.getProgressBySubLevel(this.divineSubLevel) * modifierDifference / (0.4 * this.divineLevel.getModifierBySubLevel(this.divineSubLevel));
+							this.divineFoundation += this.divineLevel.getProgressBySubLevel(this.divineSubLevel) * modifierDifference / (0.6 * this.divineLevel.getModifierBySubLevel(this.divineSubLevel));
 						}
 					}
 				}
@@ -197,9 +197,9 @@ public class Cultivation implements ICultivation {
 	public boolean addEssenceProgress(double amount, boolean allowBreakthrough) throws RequiresTribulation {
 		boolean leveled = false;
 		this.essenceProgress += amount;
-		if (this.essenceProgress > this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) + 200.0) { //players are abusing of their cultivation base in earlier levels
-			this.addEssenceFoundation(this.essenceProgress - (this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) + 200.0));
-			this.essenceProgress = this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) + 200.0;
+		if (this.essenceProgress > this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) * 1.1) { //players are abusing of their cultivation base in earlier levels
+			this.addEssenceFoundation(this.essenceProgress - (this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) * 1.1));
+			this.essenceProgress = this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) * 1.1;
 		}
 		if (allowBreakthrough) {
 			if (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)) {
@@ -238,10 +238,10 @@ public class Cultivation implements ICultivation {
 							leveled = true;
 						}
 					}
-					if (leveled) {
-						double modifierDifference = oldModifier * 1.1 - this.getEssenceModifier();
+					if (leveled) { // this will keep the foundation cross levels since it'll grow the same as modifiers but still will get lower since progress grows 1.4 rate
+						double modifierDifference = oldModifier * 1.2 - this.getEssenceModifier();
 						if (modifierDifference > 0) {
-							this.essenceFoundation += this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) * modifierDifference / (0.4 * this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel));
+							this.essenceFoundation += this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) * modifierDifference / (0.6 * this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel));
 						}
 					}
 				}
@@ -269,17 +269,17 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public void addBodyFoundation(double amount) {
-		this.bodyFoundation = Math.max(this.bodyFoundation + amount * 2 / 3, 0);
+		this.bodyFoundation = Math.max(this.bodyFoundation + amount * 1 / 20, 0);
 	}
 
 	@Override
 	public void addDivineFoundation(double amount) {
-		this.divineFoundation = Math.max(this.divineFoundation + amount * 2 / 3, 0);
+		this.divineFoundation = Math.max(this.divineFoundation + amount * 1 / 20, 0);
 	}
 
 	@Override
 	public void addEssenceFoundation(double amount) {
-		this.essenceFoundation = Math.max(this.essenceFoundation + amount * 2 / 3, 0);
+		this.essenceFoundation = Math.max(this.essenceFoundation + amount * 1 / 20, 0);
 	}
 
 	@Override
@@ -595,19 +595,19 @@ public class Cultivation implements ICultivation {
 	@Override
 	public double getBodyModifier() {
 		return Math.max(1, this.bodyLevel.getModifierBySubLevel(this.bodySubLevel) *
-				(0.6 + Math.min(21, ((this.bodyProgress + this.bodyFoundation) / this.bodyLevel.getProgressBySubLevel(this.bodySubLevel))) * 0.4));
+				(0.4 + Math.min(21, ((this.bodyProgress + this.bodyFoundation) / this.bodyLevel.getProgressBySubLevel(this.bodySubLevel))) * 0.6));
 	}
 
 	@Override
 	public double getDivineModifier() {
 		return Math.max(1, this.divineLevel.getModifierBySubLevel(this.divineSubLevel) *
-				(0.6 + Math.min(21, ((this.divineProgress + this.divineFoundation) / this.divineLevel.getProgressBySubLevel(this.divineSubLevel))) * 0.4));
+				(0.4 + Math.min(21, ((this.divineProgress + this.divineFoundation) / this.divineLevel.getProgressBySubLevel(this.divineSubLevel))) * 0.6));
 	}
 
 	@Override
 	public double getEssenceModifier() {
 		return Math.max(1, this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel) *
-				(0.6 + Math.min(21, ((this.essenceProgress + this.essenceFoundation) / this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))) * 0.4));
+				(0.4 + Math.min(21, ((this.essenceProgress + this.essenceFoundation) / this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))) * 0.6));
 	}
 
 	@Override
@@ -647,7 +647,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public double getResistanceModifier() {
-		return ((this.getBodyModifier() - 1) * 0.7 + (this.getEssenceModifier() - 1) * 0.7 + (this.getDivineModifier() - 1)*0.1)* 0.062;
+		return ((this.getBodyModifier() - 1) * 0.7 + (this.getEssenceModifier() - 1) * 0.7 + (this.getDivineModifier() - 1) * 0.1) * 0.062;
 	}
 
 	@Override
