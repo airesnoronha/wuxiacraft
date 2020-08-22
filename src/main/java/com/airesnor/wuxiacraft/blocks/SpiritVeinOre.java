@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.blocks;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.items.ItemSpiritStone;
 import com.airesnor.wuxiacraft.items.WuxiaItems;
 import mcp.MethodsReturnNonnullByDefault;
@@ -14,8 +13,6 @@ import net.minecraft.item.*;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
