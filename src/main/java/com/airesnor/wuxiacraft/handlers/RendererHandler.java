@@ -459,7 +459,7 @@ public class RendererHandler {
 						int y = res.getScaledHeight() - Math.max(GuiIngameForge.left_height, GuiIngameForge.right_height) - 18;
 						int x = res.getScaledWidth() / 2 - 95;
 						mc.ingameGUI.drawTexturedModalRect(x, y, 0, 0, 190, 18);
-						int energyFill = (int)(formation.getEnergy() * 181/ formation.getMaxEnergy());
+						int energyFill = (int)Math.min(181, (formation.getEnergy() * 181/ formation.getMaxEnergy()));
 						int animation = stepAnimation / 3;
 						mc.ingameGUI.drawTexturedModalRect(x + 5, y + 4, 0, 22 + animation * 9, energyFill, 9);
 						stepAnimation++;
