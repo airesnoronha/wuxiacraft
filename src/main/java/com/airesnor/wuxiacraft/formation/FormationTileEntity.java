@@ -174,6 +174,10 @@ public class FormationTileEntity extends TileEntity implements ITickable {
 		}
 	}
 
+	public double getEnergy() {
+		return energy;
+	}
+
 	public double getMaxEnergy() {
 		double limit = 50d;
 		if (this.formation != null) {

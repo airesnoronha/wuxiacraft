@@ -1,6 +1,8 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.formation.FormationCoreBlock;
+import com.airesnor.wuxiacraft.formation.FormationTileEntity;
 import com.airesnor.wuxiacraft.profession.alchemy.Recipe;
 import com.airesnor.wuxiacraft.blocks.Cauldron;
 import com.airesnor.wuxiacraft.cultivation.BaseSystemLevel;
@@ -49,6 +51,7 @@ public class RendererHandler {
 	public static final ResourceLocation icons = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/icons.png");
 	public static final ResourceLocation skills_bg = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/skills_bg.png");
 	public static final ResourceLocation cauldron_info = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/cauldron_info.png");
+	public static final ResourceLocation formation_gui = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/formation_gui.png");
 
 	public static class WorldRenderQueue {
 
@@ -123,7 +126,7 @@ public class RendererHandler {
 		drawHudElements(event.getResolution());
 		drawSkillsBar(event.getResolution());
 
-		drawCauldronInfo(event.getResolution());
+		drawTileEntitiesInfo(event.getResolution());
 		GlStateManager.popAttrib();
 	}
 
@@ -384,8 +387,10 @@ public class RendererHandler {
 		GuiIngameForge.left_height += 11;
 	}
 
+	private static int stepAnimation = 0;
+
 	@SideOnly(Side.CLIENT)
-	public void drawCauldronInfo(ScaledResolution res) {
+	public void drawTileEntitiesInfo(ScaledResolution res) {
 		Minecraft mc = Minecraft.getMinecraft();
 		RayTraceResult rtr = mc.player.rayTrace(4.0, 0);
 		if (rtr != null) {
@@ -446,6 +451,21 @@ public class RendererHandler {
 					}
 
 					GlStateManager.popMatrix();
+				}
+				else  if(state.getBlock() instanceof FormationCoreBlock) {
+					FormationTileEntity formation = (FormationTileEntity) mc.player.world.getTileEntity(rtr.getBlockPos());
+					if(formation != null) {
+						mc.getTextureManager().bindTexture(formation_gui);
+						int y = res.getScaledHeight() - Math.max(GuiIngameForge.left_height, GuiIngameForge.right_height) - 18;
+						int x = res.getScaledWidth() / 2 - 95;
+						mc.ingameGUI.drawTexturedModalRect(x, y, 0, 0, 190, 18);
+						int energyFill = (int)(formation.getEnergy() * 181/ formation.getMaxEnergy());
+						int animation = stepAnimation / 3;
+						mc.ingameGUI.drawTexturedModalRect(x + 5, y + 4, 0, 22 + animation * 9, energyFill, 9);
+						stepAnimation++;
+						if(stepAnimation >= 24) stepAnimation = 0;
+						//mc.fontRenderer.drawStringWithShadow(String.format("Energy: %.2f", formation.getEnergy()), x + 40, y + 5, 0xCF9D15);
+					}
 				}
 			}
 		}

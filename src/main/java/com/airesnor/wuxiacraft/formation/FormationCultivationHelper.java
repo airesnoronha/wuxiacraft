@@ -25,6 +25,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,133 +52,13 @@ public class FormationCultivationHelper extends Formation {
 		return this;
 	}
 
-	@Override
-	@ParametersAreNonnullByDefault
-	public int doUpdate(World worldIn, BlockPos source, FormationTileEntity parent) {
-		List<EntityPlayer> targets = new ArrayList<>();
-		NBTTagCompound info = parent.getFormationInfo();
-		if (parent.getTimeActivated() % 10 == 0) { //find players every half second
-			List<EntityPlayer> players = worldIn.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(source).grow(this.getRange()));
-			for (EntityPlayer player : players) {
-				if (player.getDistance(source.getX() + 0.5, source.getY() + 0.5, source.getZ() + 0.5) < this.getRange()) {
-					targets.add(player);
-				}
-			}
-			info.setInteger("targets", targets.size());
-			for (EntityPlayer target : targets) {
-				int index = targets.indexOf(target);
-				info.setUniqueId("p-" + index, target.getUniqueID());
-			}
-		} else { //get loaded players
-			if (info.hasKey("targets")) {
-				int length = info.getInteger("targets");
-				for (int i = 0; i < length; i++) {
-					UUID uuid = info.getUniqueId("p-" + i);
-					if (uuid != null) {
-						EntityPlayer player = worldIn.getPlayerEntityByUUID(uuid);
-						if (player != null)
-							targets.add(player);
-					}
-				}
-			}
-		}
-		List<EntityPlayer> selected = new ArrayList<>();
-		for (EntityPlayer player : targets) {
-			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-			Skill skill = skillCap.getSelectedSkill(CultivationUtils.getCultTechFromEntity(player));
-			if (skill == Skills.CULTIVATE_ESSENCE) {
-				if (parent.hasEnergy(this.getOperationCost() * (selected.size() + 1))) {
-					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-					if (!(this.amount <= cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) * 0.12)) {
-						worldIn.createExplosion(player, player.posX, player.posY + 0.9, player.posZ, 2f, true);
-						player.attackEntityFrom(DamageSource.causeExplosionDamage(player), (float) this.amount * 2);
-					}
-					selected.add(player);
-				}
-			}
-			else if (skill == Skills.CULTIVATE_DIVINE) {
-				if (parent.hasEnergy(this.getOperationCost() * (selected.size() + 1))) {
-					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-					if (!(this.amount <= cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()) * 0.12)) {
-						worldIn.createExplosion(player, player.posX, player.posY + 0.9, player.posZ, 2f, true);
-						player.attackEntityFrom(DamageSource.causeExplosionDamage(player), (float) this.amount * 2);
-					}
-					selected.add(player);
-				}
-			}
-			else if (skill == Skills.CULTIVATE_BODY) {
-				if (parent.hasEnergy(this.getOperationCost() * (selected.size() + 1))) {
-					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-					if (!(this.amount <= cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel()) * 0.12)) {
-						worldIn.createExplosion(player, player.posX, player.posY + 0.9, player.posZ, 2f, true);
-						player.attackEntityFrom(DamageSource.causeExplosionDamage(player), (float) this.amount * 2);
-					}
-					selected.add(player);
-				}
-			}
-		}
-		info.setInteger("selected", selected.size()); //so client can know who to cultivate
-		for (EntityPlayer player : selected) {
-			int index = selected.indexOf(player);
-			info.setUniqueId("s-" + index, player.getUniqueID());
-		}
-		parent.setFormationInfo(info);
-		return selected.size();
+	public double getAmount() {
+		return amount;
 	}
 
-	@SideOnly(Side.CLIENT)
 	@Override
-	@ParametersAreNonnullByDefault
-	public void doClientUpdate(World worldIn, BlockPos source, FormationTileEntity parent) {
-		if (parent != null) {
-			if (parent.getFormationInfo().hasKey("selected")) {
-				NBTTagCompound info = parent.getFormationInfo();
-				int length = info.getInteger("selected");
-				EntityPlayer player = Minecraft.getMinecraft().player;
-				boolean selected = false;
-				for (int i = 0; i < length; i++) {
-					UUID uuid = info.getUniqueId("s-" + i);
-					if (uuid != null) {
-						if (uuid.equals(player.getUniqueID())) {
-							selected = true;
-							break;
-						}
-					}
-				}
-				if (selected) {
-					ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-					if (skillCap.isCasting()) {
-						Skill skill = skillCap.getSelectedSkill(CultivationUtils.getCultTechFromEntity(player));
-						if (!skillCap.hasFormationActivated()) {
-							if (skill == Skills.CULTIVATE_ESSENCE) {
-								skillCap.setFormationActivated(true);
-								ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-								if (this.amount <= cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) * 0.12) {
-									CultivationUtils.cultivatorAddProgress(player, Cultivation.System.ESSENCE, this.amount, true, false);
-									NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, Cultivation.System.ESSENCE, this.amount, true, false, player.getUniqueID()));
-								}
-							}
-							else if (skill == Skills.CULTIVATE_DIVINE) {
-								skillCap.setFormationActivated(true);
-								ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-								if (this.amount <= cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()) * 0.12) {
-									CultivationUtils.cultivatorAddProgress(player, Cultivation.System.DIVINE, this.amount, true, false);
-									NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, Cultivation.System.DIVINE, this.amount, true, false, player.getUniqueID()));
-								}
-							}
-							else if (skill == Skills.CULTIVATE_BODY) {
-								skillCap.setFormationActivated(true);
-								ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-								if (this.amount <= cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel()) * 0.12) {
-									CultivationUtils.cultivatorAddProgress(player, Cultivation.System.BODY, this.amount, true, false);
-									NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, Cultivation.System.BODY, this.amount, true, false, player.getUniqueID()));
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+	public int doUpdate(@Nonnull World worldIn, @Nonnull BlockPos source, @Nonnull FormationTileEntity parent) {
+		return 0;
 	}
 
 	@SideOnly(Side.CLIENT)
