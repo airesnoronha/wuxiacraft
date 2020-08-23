@@ -77,17 +77,20 @@ public class ProgressMessage implements IMessage {
 			if (ctx.side == Side.SERVER) {
 				final WorldServer world = ctx.getServerHandler().player.getServerWorld();
 				final EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
+				final ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 				FormationTileEntity marked = null;
 				double amount = message.amount;
 				if (message.op == 0 && player != null) {
-					for (TileEntity te : world.loadedTileEntityList) {
-						if (te instanceof FormationTileEntity) {
-							if (((FormationTileEntity) te).getState() == FormationTileEntity.FormationState.ACTIVE && ((FormationTileEntity) te).getFormation() instanceof FormationCultivationHelper) {
-								if (te.getDistanceSq(player.posX, player.posY, player.posZ) <= Math.pow(((FormationTileEntity) te).getFormation().getRange(), 2)) {
-									if (((FormationTileEntity) te).hasEnergy(((FormationTileEntity) te).getFormation().getOperationCost())) {
-										amount += ((FormationCultivationHelper) ((FormationTileEntity) te).getFormation()).getAmount();
-										marked = (FormationTileEntity) te;
-										break;
+					if (!skillCap.hasFormationActivated()) {
+						for (TileEntity te : world.loadedTileEntityList) {
+							if (te instanceof FormationTileEntity) {
+								if (((FormationTileEntity) te).getState() == FormationTileEntity.FormationState.ACTIVE && ((FormationTileEntity) te).getFormation() instanceof FormationCultivationHelper) {
+									if (te.getDistanceSq(player.posX, player.posY, player.posZ) <= Math.pow(((FormationTileEntity) te).getFormation().getRange(), 2)) {
+										if (((FormationTileEntity) te).hasEnergy(((FormationTileEntity) te).getFormation().getOperationCost())) {
+											amount += ((FormationCultivationHelper) ((FormationTileEntity) te).getFormation()).getAmount();
+											marked = (FormationTileEntity) te;
+											break;
+										}
 									}
 								}
 							}
@@ -99,7 +102,6 @@ public class ProgressMessage implements IMessage {
 				world.addScheduledTask(() -> {
 					if (player != null) {
 						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-						ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 						switch (message.op) {
 							case 0:
 								CultivationUtils.cultivatorAddProgress(player, message.system, finalAmount, message.techniques, message.allowBreakTrough);
