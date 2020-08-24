@@ -9,26 +9,3 @@ Right now it's just the start, soon after I plan to make add-on mods to make the
 ### Cultivation system
 
 The ideia is that as the player cultivates, he/she will progress through many levels, being each time harder to breakthrough and sometimes breaking though. I made a system based on what is most read on wuxia novels but it still need tweaking. The levels are the following:
-
-* Energy Perception (5 levels each)
-	* Body Refinement
-	* Soul Refinement
-	* Qi Paths Refinement
-	* DanTian Condensing
-* Martial Law (10 Levels each)
-	* Earth Law
-	* Sky Law
-	* True Law
-	* Martial Law
-* Immortal Foundation (15 levels each)
-	* Immortality Law
-	* Immortality Refinement
-	* Immortal Foundation
-	* True Immortal
-* Divine Law (20 levels each)
-	* Immortal Martial
-	* Divine Law
-	* Divine Phenomenon
-	* True God (Infinite Levels)
-
-Each level category will have a different way of cultivating, aiming for more gameplay.
