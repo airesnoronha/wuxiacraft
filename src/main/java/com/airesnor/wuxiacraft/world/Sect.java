@@ -453,6 +453,31 @@ public class Sect {
         return chosenSect;
     }
 
+    public static Sect getSecyByPlayerUUID(UUID playerUUID, WorldSectData sectData) {
+        boolean isThis = false;
+        Sect chosenSect = null;
+        for (Sect sect : sectData.SECTS) {
+            List<Pair<UUID, String>> members = sect.getMembers();
+            UUID sectLeader = sect.getSectLeader();
+            for (Pair<UUID, String> member : members) {
+                if (member.getLeft().equals(playerUUID)) {
+                    isThis = true;
+                    break;
+                }
+            }
+            if (!isThis) {
+                if (sectLeader.equals(playerUUID)) {
+                    isThis = true;
+                }
+            }
+            if (isThis) {
+                chosenSect = sect;
+                break;
+            }
+        }
+        return chosenSect;
+    }
+
     public static Sect getSectByName(String sectName, WorldSectData sectData) {
         Sect chosenSect = null;
         for (Sect sect : sectData.SECTS) {
