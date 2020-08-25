@@ -181,6 +181,7 @@ public class WuxiaItems {
 	public static final Item FALLEN_STAR_CORE = new ItemSpiritStone("fallen_star_core", 0x3e0404).setAmount(2837890.554); // Divine Phenomenon 1
 	public static final Item PRIMORDIAL_CHAOS_STONE = new ItemSpiritStone("primordial_chaos_stone", 0xe4de1c).setAmount(13685289.995); // True God 1
 
+	public static final Item SPAWN_TALISMAN = new ItemSpawnTalisman("spawn_talisman");
 	public static final Item PAINT_BRUSH = new ItemPaintBrush("paint_brush");
 	public static final Item GOLD_DAGGER = new ItemDagger("gold_dagger");
 	public static final Item BLOOD_BOTTLE = new ItemBloodContainer("blood_bottle");

@@ -11,6 +11,7 @@ import com.airesnor.wuxiacraft.cultivation.ISealing;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
+import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
@@ -879,7 +880,7 @@ public class EventHandler {
 	 */
 	private static float applyArmorCalculations(float damage, float armor, float toughness) {
 		float toughnessMod = (2.0F + toughness) / 4.0F;
-		float finalArmor = armor * (0.5f + toughnessMod);
+		float finalArmor = armor * (0.95f + toughnessMod*0.1f);
 		return Math.max(0, damage - finalArmor);
 	}
 
@@ -972,7 +973,7 @@ public class EventHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onDefendingAgainstTheRageSaint(LivingAttackEvent event) {
-		if (event.getSource().getTrueSource() instanceof EntityPlayer) {
+		if (event.getSource().getTrueSource() instanceof EntityPlayer && !(event.getSource() instanceof Skills.HealingDamageSource)) {
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity((EntityLivingBase) event.getSource().getTrueSource());
 			if (cultTech.getDivineTechnique() != null) {
 				if (cultTech.getDivineTechnique().getTechnique().equals(Techniques.RAGEFUL_ABNEGATION_SAINT_ARTS)) {

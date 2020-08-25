@@ -93,6 +93,7 @@ item.high_grade_spatial_ring.name=High Grade Spatial Ring
 item.peak_grade_spatial_ring.name=Peak Grade Spatial Ring
 item.top_grade_spatial_ring.name=Top Grade Spatial Ring
 item.supreme_grade_spatial_ring.name=Supreme Grade Spatial Ring
+item.spawn_talisman.name=World Return Talisman
 
 #Creative tabs
 itemGroup.wuxiacraft.scrolls=Cultivation Techniques
@@ -410,3 +411,6 @@ Not used correctly!=wrongUsage
 #World Types and Biomes
 generator.Mining=Mining
 generator.Wuxia=Wuxia
+
+#Damage Sources
+death.attack.healing=%1$s died being healed too much by %2$s
