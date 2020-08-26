@@ -299,11 +299,14 @@ public class SectCommand extends CommandBase {
     public void infoSubCommand(MinecraftServer server, EntityPlayerMP playerMP, WorldSectData sectData) {
         Sect sectInfo = Sect.getSectByPlayer(playerMP, sectData);
         if (sectInfo != null) {
-            TextComponentString text = new TextComponentString("Sect Name: " + sectInfo.getSectName());
+            TextComponentString text = new TextComponentString("--------------------------------------------------");
+            text.getStyle().setColor(TextFormatting.AQUA);
             playerMP.sendMessage(text);
-            text = new TextComponentString("Sect Leader: " + server.getPlayerProfileCache().getProfileByUUID(sectInfo.getSectLeader()).getName());
+            text = new TextComponentString(TextFormatting.GREEN + "Sect Name: " + TextFormatting.WHITE + sectInfo.getSectName());
             playerMP.sendMessage(text);
-            text = new TextComponentString("Sect Members: ");
+            text = new TextComponentString(TextFormatting.GREEN + "Sect Leader: " + TextFormatting.WHITE + server.getPlayerProfileCache().getProfileByUUID(sectInfo.getSectLeader()).getName());
+            playerMP.sendMessage(text);
+            text = new TextComponentString(TextFormatting.GREEN + "Sect Members: ");
             playerMP.sendMessage(text);
             String[] memberOutputs = new String[sectInfo.getMembers().size() / 3 + 1];
             int indexToStartFromNext = 0;
@@ -326,7 +329,7 @@ public class SectCommand extends CommandBase {
                 text = new TextComponentString(memberOutput);
                 playerMP.sendMessage(text);
             }
-            text = new TextComponentString("Sect Allies: WIP");
+            text = new TextComponentString(TextFormatting.GREEN + "Sect Allies: WIP");
             playerMP.sendMessage(text);
             String allyOutput = "";
             for (Pair<String, Boolean> ally : sectInfo.getAllies()) {
@@ -334,13 +337,16 @@ public class SectCommand extends CommandBase {
             }
             text = new TextComponentString(String.format("%5s", allyOutput));
             playerMP.sendMessage(text);
-            text = new TextComponentString("Sect Enemies:");
+            text = new TextComponentString(TextFormatting.GREEN + "Sect Enemies:");
             playerMP.sendMessage(text);
             String enemyOutput = "";
             for (Pair<String, Boolean> enemy: sectInfo.getEnemies()) {
                 enemyOutput += enemy.getLeft() + ", ";
             }
             text = new TextComponentString(String.format("%5s", enemyOutput));
+            playerMP.sendMessage(text);
+            text = new TextComponentString("--------------------------------------------------");
+            text.getStyle().setColor(TextFormatting.AQUA);
             playerMP.sendMessage(text);
         } else {
             TextComponentString text = new TextComponentString("You do not belong to a sect.");
@@ -1018,7 +1024,7 @@ public class SectCommand extends CommandBase {
             if (sect.getSectLeader().equals(playerMP.getUniqueID())) {
                 GameProfile targetPlayer = server.getPlayerProfileCache().getGameProfileForUsername(args[1]);
                 if (targetPlayer != null) {
-                    Sect sectOfTarget = Sect.getSecyByPlayerUUID(targetPlayer.getId(), sectData);
+                    Sect sectOfTarget = Sect.getSectByPlayerUUID(targetPlayer.getId(), sectData);
                     if (sectOfTarget != null) {
                         if (sect.getSectName().equalsIgnoreCase(sectOfTarget.getSectName())) { // they are part of the same sect
                             if (sect.getSectLeader().equals(targetPlayer.getId())) {
@@ -1185,13 +1191,16 @@ public class SectCommand extends CommandBase {
     public void viewSubCommand(MinecraftServer server, String[] args, EntityPlayerMP playerMP, WorldSectData sectData) {
         GameProfile targetPlayer = server.getPlayerProfileCache().getGameProfileForUsername(args[1]);
         if (targetPlayer != null) {
-            Sect sectInfo = Sect.getSecyByPlayerUUID(targetPlayer.getId(), sectData);
+            Sect sectInfo = Sect.getSectByPlayerUUID(targetPlayer.getId(), sectData);
             if (sectInfo != null) {
-                TextComponentString text = new TextComponentString("Sect Name: " + sectInfo.getSectName());
+                TextComponentString text = new TextComponentString("--------------------------------------------------");
+                text.getStyle().setColor(TextFormatting.AQUA);
                 playerMP.sendMessage(text);
-                text = new TextComponentString("Sect Leader: " + server.getPlayerProfileCache().getProfileByUUID(sectInfo.getSectLeader()).getName());
+                text = new TextComponentString(TextFormatting.GREEN + "Sect Name: " + TextFormatting.WHITE + sectInfo.getSectName());
                 playerMP.sendMessage(text);
-                text = new TextComponentString("Sect Members: ");
+                text = new TextComponentString(TextFormatting.GREEN + "Sect Leader: " + TextFormatting.WHITE + server.getPlayerProfileCache().getProfileByUUID(sectInfo.getSectLeader()).getName());
+                playerMP.sendMessage(text);
+                text = new TextComponentString(TextFormatting.GREEN + "Sect Members: ");
                 playerMP.sendMessage(text);
                 String[] memberOutputs = new String[sectInfo.getMembers().size() / 3 + 1];
                 int indexToStartFromNext = 0;
@@ -1214,7 +1223,7 @@ public class SectCommand extends CommandBase {
                     text = new TextComponentString(memberOutput);
                     playerMP.sendMessage(text);
                 }
-                text = new TextComponentString("Sect Allies: WIP");
+                text = new TextComponentString(TextFormatting.GREEN + "Sect Allies: WIP");
                 playerMP.sendMessage(text);
                 String allyOutput = "";
                 for (Pair<String, Boolean> ally : sectInfo.getAllies()) {
@@ -1222,13 +1231,16 @@ public class SectCommand extends CommandBase {
                 }
                 text = new TextComponentString(String.format("%5s", allyOutput));
                 playerMP.sendMessage(text);
-                text = new TextComponentString("Sect Enemies:");
+                text = new TextComponentString(TextFormatting.GREEN + "Sect Enemies:");
                 playerMP.sendMessage(text);
                 String enemyOutput = "";
                 for (Pair<String, Boolean> enemy: sectInfo.getEnemies()) {
                     enemyOutput += enemy.getLeft() + ", ";
                 }
                 text = new TextComponentString(String.format("%5s", enemyOutput));
+                playerMP.sendMessage(text);
+                text = new TextComponentString("--------------------------------------------------");
+                text.getStyle().setColor(TextFormatting.AQUA);
                 playerMP.sendMessage(text);
             } else {
                 TextComponentString text = new TextComponentString(targetPlayer.getName() + " does not belong to a sect.");

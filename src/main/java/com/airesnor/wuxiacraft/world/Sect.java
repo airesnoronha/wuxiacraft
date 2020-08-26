@@ -453,7 +453,7 @@ public class Sect {
         return chosenSect;
     }
 
-    public static Sect getSecyByPlayerUUID(UUID playerUUID, WorldSectData sectData) {
+    public static Sect getSectByPlayerUUID(UUID playerUUID, WorldSectData sectData) {
         boolean isThis = false;
         Sect chosenSect = null;
         for (Sect sect : sectData.SECTS) {
