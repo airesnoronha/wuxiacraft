@@ -95,13 +95,11 @@ public class FormationQiGathering extends Formation {
 		for (FormationTileEntity formation : formations) {
 			if (!formation.hasEnergy(formation.getMaxEnergy())) {
 				formation.addEnergy(this.generation);
-				break;
 			}
 		}
 		for (GrinderTileEntity grinder : grinders) {
 			if (!grinder.hasEnergy(grinder.getMaxEnergy())) {
 				grinder.addEnergy(this.generation);
-				break;
 			}
 		}
 		List<EntityPlayer> targets = new ArrayList<>();

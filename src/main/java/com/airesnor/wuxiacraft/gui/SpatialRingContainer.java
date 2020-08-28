@@ -4,6 +4,7 @@ import com.airesnor.wuxiacraft.items.ItemSpatialRing;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -46,7 +47,11 @@ public class SpatialRingContainer extends Container {
 		}
 		//0-8 Player inventory
 		for (int x = 0; x < 9; ++x) {
-			addSlotToContainer(new Slot(player.inventory, x, xPos + x * 18, yPos + 58));
+			if(player.inventory.getCurrentItem().equals(player.inventory.getStackInSlot(x))) {
+				addSlotToContainer(new RingSlot(player.inventory, x, xPos + x * 18, yPos + 58));
+			} else {
+				addSlotToContainer(new Slot(player.inventory, x, xPos + x * 18, yPos + 58));
+			}
 		}
 	}
 
@@ -88,6 +93,8 @@ public class SpatialRingContainer extends Container {
 		return stack0;
 	}
 
+
+
 	public static class SpatialSlot extends SlotItemHandler {
 
 		public SpatialSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
@@ -98,6 +105,18 @@ public class SpatialRingContainer extends Container {
 		@ParametersAreNonnullByDefault
 		public boolean isItemValid(ItemStack stack) {
 			return super.isItemValid(stack) && !(stack.getItem() instanceof ItemSpatialRing);
+		}
+	}
+
+	public static class RingSlot extends Slot {
+
+		public RingSlot(IInventory inventoryIn, int index, int xPosition, int yPosition) {
+			super(inventoryIn, index, xPosition, yPosition);
+		}
+
+		@Override
+		public boolean canTakeStack(EntityPlayer playerIn) {
+			return false;
 		}
 	}
 }

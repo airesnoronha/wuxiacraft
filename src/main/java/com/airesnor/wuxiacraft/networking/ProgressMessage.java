@@ -3,11 +3,15 @@ package com.airesnor.wuxiacraft.networking;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
+import com.airesnor.wuxiacraft.formation.FormationCultivationHelper;
+import com.airesnor.wuxiacraft.formation.FormationTileEntity;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -72,25 +76,60 @@ public class ProgressMessage implements IMessage {
 		public IMessage onMessage(ProgressMessage message, MessageContext ctx) {
 			if (ctx.side == Side.SERVER) {
 				final WorldServer world = ctx.getServerHandler().player.getServerWorld();
+				final EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
+				final ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
+				FormationTileEntity marked = null;
+				double amount = message.amount;
+				if (message.op == 0 && player != null) {
+					if (!skillCap.hasFormationActivated()) {
+						for (TileEntity te : world.loadedTileEntityList) {
+							if (te instanceof FormationTileEntity) {
+								if (((FormationTileEntity) te).getState() == FormationTileEntity.FormationState.ACTIVE && ((FormationTileEntity) te).getFormation() instanceof FormationCultivationHelper) {
+									if (te.getDistanceSq(player.posX, player.posY, player.posZ) <= Math.pow(((FormationTileEntity) te).getFormation().getRange(), 2)) {
+										if (((FormationTileEntity) te).hasEnergy(((FormationTileEntity) te).getFormation().getOperationCost())) {
+											amount += ((FormationCultivationHelper) ((FormationTileEntity) te).getFormation()).getAmount();
+											marked = (FormationTileEntity) te;
+											break;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				final FormationTileEntity markedForEnergyRemoval = marked;
+				final double finalAmount = amount;
 				world.addScheduledTask(() -> {
-					EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
-					if(player != null) {
+					if (player != null) {
 						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 						switch (message.op) {
 							case 0:
-								CultivationUtils.cultivatorAddProgress(player, message.system, message.amount, message.techniques, message.allowBreakTrough);
+								CultivationUtils.cultivatorAddProgress(player, message.system, finalAmount, message.techniques, message.allowBreakTrough);
 								ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 								cultTech.getTechniqueBySystem(message.system).getTechnique().cultivationEffect.activate(player); //this runs server side
+								if (markedForEnergyRemoval != null) {
+									skillCap.setFormationActivated(true);
+									markedForEnergyRemoval.remEnergy(markedForEnergyRemoval.getFormation().getOperationCost());
+								}
 								break;
 							case 1:
 								try {
-									cultivation.addEssenceProgress(-message.amount, false);
-								} catch (Cultivation.RequiresTribulation trib) {
+									cultivation.addSystemProgress(-finalAmount, message.system, false);
+								} catch (Cultivation.RequiresTribulation tribulation) {
 									WuxiaCraft.logger.error("I don't think it'll require tribulation");
 								}
 								break;
 							case 2:
-								cultivation.setEssenceProgress(message.amount);
+								switch (message.system) {
+									case BODY:
+										cultivation.setBodyProgress(finalAmount);
+										break;
+									case DIVINE:
+										cultivation.setDivineProgress(finalAmount);
+										break;
+									case ESSENCE:
+										cultivation.setEssenceProgress(finalAmount);
+								}
 						}
 					}
 				});

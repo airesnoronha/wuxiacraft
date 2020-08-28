@@ -70,7 +70,7 @@ public class ItemSpatialRing extends Item {
         if (tag == null) {
             tag = new NBTTagCompound();
         }
-        tag.setTag("ClientSyncInventory", inventory.serializeNBT());
+        tag.setTag("ClientSyncInventory", inventory.serializeNBT()); 
         return tag;
     }
 
@@ -79,7 +79,9 @@ public class ItemSpatialRing extends Item {
         super.readNBTShareTag(stack, nbt);
         NBTTagCompound tag = stack.getTagCompound();
         ItemStackHandler inventory = (ItemStackHandler) stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        inventory.deserializeNBT(tag.getCompoundTag("ClientSyncInventory"));
+        if (tag != null && tag.hasKey("ClientSyncInventory")) {
+            inventory.deserializeNBT(tag.getCompoundTag("ClientSyncInventory"));
+        }
     }
 
     @Override

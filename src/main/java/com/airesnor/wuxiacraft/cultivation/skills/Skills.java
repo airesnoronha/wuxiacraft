@@ -18,7 +18,6 @@ import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.item.EntityItem;
@@ -30,10 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -400,21 +396,30 @@ public class Skills {
 		return true;
 	});
 
+	public static final class HealingDamageSource extends EntityDamageSource {
+		public HealingDamageSource(Entity damageSourceEntityIn) {
+			super("healing", damageSourceEntityIn);
+		}
+	}
+
 	public static final Skill HEALING_HANDS = new Skill("healing_hands", false, false, 70f, 1.4f, 15f, 0f).setAction(actor -> {
 		boolean activated = false;
 		Entity result = SkillUtils.rayTraceEntities(actor, 10f, 1f);
-		if (result instanceof EntityLiving) {
-			EntityLiving entity = (EntityLiving) result;
+		if (result instanceof EntityLivingBase) {
+			EntityLivingBase entity = (EntityLivingBase) result;
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
-			float strength = (float) actor.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
+			float strength = Math.min(300f, (float) CultivationUtils.getStrengthFromEntity(actor));
 			if (cultTech.getDivineTechnique() != null) {
 				if (cultTech.getDivineTechnique().getTechnique().equals(Techniques.RAGEFUL_ABNEGATION_SAINT_ARTS)) {
-					entity.attackEntityFrom(DamageSource.causeMobDamage(actor), strength);
-					return true;
+					strength = (float) Math.max(3, strength - CultivationUtils.getCultivationFromEntity(entity).getDivineModifier() * 0.3);
+					entity.attackEntityFrom(new HealingDamageSource(actor).setDamageBypassesArmor(), strength);
+					activated = true;
 				}
 			}
-			entity.heal(Math.max(18f, strength * 0.05f));
-			activated = true;
+			if(!activated) {
+				entity.heal(Math.max(18f, strength * 0.05f));
+				activated = true;
+			}
 		}
 		return activated;
 	});
