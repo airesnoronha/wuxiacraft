@@ -5,6 +5,7 @@ import com.airesnor.wuxiacraft.cultivation.IBarrier;
 import com.airesnor.wuxiacraft.networking.BarrierMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -21,16 +22,19 @@ import java.util.List;
 public class BarrierCommand extends CommandBase {
 
     @Override
+    @MethodsReturnNonnullByDefault
     public String getName() {
         return "barrier";
     }
 
     @Override
+    @MethodsReturnNonnullByDefault
     public String getUsage(ICommandSender sender) {
         return "/barrier [set <player> <value> : setActive <player> <true : false> : get <player> : resetCD <player> : reset <player>] ";
     }
 
     @Override
+    @MethodsReturnNonnullByDefault
     public List<String> getAliases() {
         List<String> aliases = new ArrayList<>();
         return aliases;
@@ -55,6 +59,8 @@ public class BarrierCommand extends CommandBase {
                             TextComponentString text = new TextComponentString(targetPlayer.getName() + "'s Barrier:");
                             playerMP.sendMessage(text);
                             text = new TextComponentString("Barrier Amount: " + barrier.getBarrierAmount());
+                            playerMP.sendMessage(text);
+                            text = new TextComponentString("Barrier Max Amount: " + barrier.getBarrierMaxAmount());
                             playerMP.sendMessage(text);
                             text = new TextComponentString("Barrier Regen Rate: " + barrier.getBarrierRegenRate());
                             playerMP.sendMessage(text);

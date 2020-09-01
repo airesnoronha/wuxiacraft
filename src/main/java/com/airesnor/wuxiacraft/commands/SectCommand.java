@@ -9,7 +9,6 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,7 +17,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,6 +42,7 @@ public class SectCommand extends CommandBase {
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
         return true;
     }
@@ -64,15 +63,17 @@ public class SectCommand extends CommandBase {
                     } else if (args[0].equalsIgnoreCase("list")) {
                         listSubCommand(playerMP, sectData);
                     } else if (args[0].equalsIgnoreCase("disband")) {
-                        disbandSubCommand(server, playerMP, sectData);
+                        disbandSubCommand(playerMP, sectData);
                     } else if (args[0].equalsIgnoreCase("leave")) {
-                        leaveSubCommand(server, playerMP, sectData);
+                        leaveSubCommand(playerMP, sectData);
                     } else if (args[0].equalsIgnoreCase("help")) {
                         helpSubCommand(playerMP);
                     } else if (args[0].equalsIgnoreCase("invites")) {
                         invitesSubCommand(server, playerMP, sectData);
                     } else if (args[0].equalsIgnoreCase("ranks")) {
                         ranksSubCommand(playerMP, sectData);
+                    } else {
+                        wrongUsage = true;
                     }
                 } else if (args.length == 2) {
                     if (args[0].equalsIgnoreCase("create")) {
@@ -84,7 +85,7 @@ public class SectCommand extends CommandBase {
                     } else if (args[0].equalsIgnoreCase("kick")) {
                         kickSubCommand(server, args, playerMP, sectData);
                     } else if (args[0].equalsIgnoreCase("rename")) {
-                        renameSubCommand(server, args, playerMP, sectData);
+                        renameSubCommand(args, playerMP, sectData);
                     } else if (args[0].equalsIgnoreCase("deleterank")) {
                         deleteRankSubCommand(args, playerMP, sectData);
                     } else if (args[0].equalsIgnoreCase("setleader")) {
@@ -97,8 +98,12 @@ public class SectCommand extends CommandBase {
                         allySubCommand(server, args, playerMP, sectData);
                     } else if (args[0].equalsIgnoreCase("enemy")) {
                         enemySubCommand(server, args, playerMP, sectData);
-                    } else if (args[0].equalsIgnoreCase("view")) {
-                        viewSubCommand(server, args, playerMP, sectData);
+                    } else if (args[0].equalsIgnoreCase("viewplayer")) {
+                        viewPlayerSubCommand(server, args, playerMP, sectData);
+                    } else if (args[0].equalsIgnoreCase("viewsect")) {
+                        viewSectSubCommand(server, args, playerMP, sectData);
+                    } else {
+                        wrongUsage = true;
                     }
                 } else if (args.length == 3) {
                     if (args[0].equalsIgnoreCase("setrank")) {
@@ -109,11 +114,9 @@ public class SectCommand extends CommandBase {
                         setRankPermissionSubCommand(args, playerMP, sectData);
                     }
                 }
-//                if (wrongUsage) {
-//                    TextComponentString text = new TextComponentString("Invalid arguments, use /sect ");
-//                    text.getStyle().setColor(TextFormatting.RED);
-//                    playerMP.sendMessage(text);
-//                }
+                if (wrongUsage) {
+                    helpSubCommand(playerMP);
+                }
                 sectData.saveChanges();
             }
         }
@@ -121,6 +124,7 @@ public class SectCommand extends CommandBase {
 
     @Override
     @Nonnull
+    @ParametersAreNonnullByDefault
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         WorldSectData sectData = WorldSectData.get(sender.getEntityWorld());
         List<String> completions = new ArrayList<>();
@@ -185,8 +189,11 @@ public class SectCommand extends CommandBase {
             if ("ranks".startsWith(args[0].toLowerCase())) {
                 completions.add("ranks");
             }
-            if ("view".startsWith(args[0].toLowerCase())) {
-                completions.add("view");
+            if ("viewplayer".startsWith(args[0].toLowerCase())) {
+                completions.add("viewPlayer");
+            }
+            if ("viewsect".startsWith(args[0].toLowerCase())) {
+                completions.add("viewSect");
             }
          } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("create") || args[0].equalsIgnoreCase("accept") || args[0].equalsIgnoreCase("decline") ||
@@ -247,10 +254,17 @@ public class SectCommand extends CommandBase {
                     }
                 }
             }
-            if (args[0].equalsIgnoreCase("view")) {
+            if (args[0].equalsIgnoreCase("viewplayer")) {
                 for (String playerName : server.getPlayerProfileCache().getUsernames()) {
                     if (playerName.toLowerCase().startsWith(args[1].toLowerCase())) {
                         completions.add(playerName);
+                    }
+                }
+            }
+            if (args[0].equalsIgnoreCase("viewsect")) {
+                for (Sect sect : sectData.SECTS) {
+                    if (sect.getSectName().toLowerCase().startsWith(args[1].toLowerCase())) {
+                        completions.add(sect.getSectName());
                     }
                 }
             }
@@ -281,10 +295,6 @@ public class SectCommand extends CommandBase {
                 playerMP.sendMessage(text);
             } else {
                 sectData.SECTS.add(new Sect(args[1], playerMP.getUniqueID()));
-                LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) playerMP.getPrefixes();
-                TextComponentString prefix = new TextComponentString("[" + args[1] + "]");
-                prefix.getStyle().setColor(TextFormatting.AQUA);
-                prefixes.add(0, prefix);
                 TextComponentString text = new TextComponentString("Sect " + args[1] + " has been created.");
                 text.getStyle().setColor(TextFormatting.GREEN);
                 playerMP.sendMessage(text);
@@ -298,13 +308,19 @@ public class SectCommand extends CommandBase {
 
     public void infoSubCommand(MinecraftServer server, EntityPlayerMP playerMP, WorldSectData sectData) {
         Sect sectInfo = Sect.getSectByPlayer(playerMP, sectData);
+        TextComponentString text;
         if (sectInfo != null) {
-            TextComponentString text = new TextComponentString("--------------------------------------------------");
+            text = new TextComponentString("--------------------------------------------------");
             text.getStyle().setColor(TextFormatting.AQUA);
             playerMP.sendMessage(text);
             text = new TextComponentString(TextFormatting.GREEN + "Sect Name: " + TextFormatting.WHITE + sectInfo.getSectName());
             playerMP.sendMessage(text);
-            text = new TextComponentString(TextFormatting.GREEN + "Sect Leader: " + TextFormatting.WHITE + server.getPlayerProfileCache().getProfileByUUID(sectInfo.getSectLeader()).getName());
+            String sectLeaderName = "";
+            GameProfile sectLeader = server.getPlayerProfileCache().getProfileByUUID(sectInfo.getSectLeader());
+            if (sectLeader != null) {
+                sectLeaderName = sectLeader.getName();
+            }
+            text = new TextComponentString(TextFormatting.GREEN + "Sect Leader: " + TextFormatting.WHITE + sectLeaderName);
             playerMP.sendMessage(text);
             text = new TextComponentString(TextFormatting.GREEN + "Sect Members: ");
             playerMP.sendMessage(text);
@@ -316,7 +332,11 @@ public class SectCommand extends CommandBase {
                     Pair<UUID, String> member = sectInfo.getMembers().get(j);
                     UUID memberUUID = member.getLeft();
                     String memberRank = member.getRight();
-                    String playerName = server.getPlayerProfileCache().getProfileByUUID(memberUUID).getName();
+                    GameProfile memberProfile = server.getPlayerProfileCache().getProfileByUUID(memberUUID);
+                    String playerName = "";
+                    if (memberProfile != null) {
+                        playerName = memberProfile.getName();
+                    }
                     tempOutput += "[" + memberRank + "]" + playerName + ", ";
                     if (j % 3 == 2 && j != 0) {
                         indexToStartFromNext = j + 1;
@@ -349,7 +369,7 @@ public class SectCommand extends CommandBase {
             text.getStyle().setColor(TextFormatting.AQUA);
             playerMP.sendMessage(text);
         } else {
-            TextComponentString text = new TextComponentString("You do not belong to a sect.");
+            text = new TextComponentString("You do not belong to a sect.");
             text.getStyle().setColor(TextFormatting.RED);
             playerMP.sendMessage(text);
         }
@@ -362,11 +382,11 @@ public class SectCommand extends CommandBase {
                 Pair<String, Integer> sectRank = sect.getRank(args[1]);
                 if (sectRank != null) {
                     sect.setRankPermissionLevel(sectRank.getLeft(), Integer.parseInt(args[2]));
-                    TextComponentString text = new TextComponentString("[" + args[1] + "] permission level has been set to " + args[2] + ".");
+                    TextComponentString text = new TextComponentString("\"" + args[1] + "\" permission level has been set to " + args[2] + ".");
                     text.getStyle().setColor(TextFormatting.GREEN);
                     playerMP.sendMessage(text);
                 } else {
-                    TextComponentString text = new TextComponentString("["+ args[1] + "] is not a rank of the sect.");
+                    TextComponentString text = new TextComponentString("\""+ args[1] + "\" is not a rank of the sect.");
                     text.getStyle().setColor(TextFormatting.RED);
                     playerMP.sendMessage(text);
                 }
@@ -389,11 +409,11 @@ public class SectCommand extends CommandBase {
                 Pair<String, Integer> rank = sect.getRank(args[1]);
                 if (rank == null) {
                     sect.addRank(args[1], Integer.parseInt(args[2]));
-                    TextComponentString text = new TextComponentString("Rank [" + args[1] + "] has been created with a permission level of " + args[2] + ".");
+                    TextComponentString text = new TextComponentString("Rank \"" + args[1] + "\" has been created with a permission level of " + args[2] + ".");
                     text.getStyle().setColor(TextFormatting.GREEN);
                     playerMP.sendMessage(text);
                 } else {
-                    TextComponentString text = new TextComponentString("Rank [" + args[1] + "] already exists. Please choose another rank name.");
+                    TextComponentString text = new TextComponentString("Rank \"" + args[1] + "\" already exists. Please choose another rank name.");
                     text.getStyle().setColor(TextFormatting.RED);
                     playerMP.sendMessage(text);
                 }
@@ -423,17 +443,13 @@ public class SectCommand extends CommandBase {
             if (Sect.getSectByPlayer(playerMP, sectData) == null) {
                 if (isInvitedBySect) {
                     sect.addMember(playerMP.getUniqueID(), sect.getDefaultRank());
-                    LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) playerMP.getPrefixes();
-                    TextComponentString prefix = new TextComponentString("[" + args[1] + "]");
-                    prefix.getStyle().setColor(TextFormatting.AQUA);
-                    prefixes.add(0, prefix);
                 } else {
                     TextComponentString text = new TextComponentString("You have not been invited to that sect.");
                     text.getStyle().setColor(TextFormatting.AQUA);
                     playerMP.sendMessage(text);
                 }
             } else {
-                TextComponentString text = new TextComponentString("You are already in a sect and cannot join another one.");
+                TextComponentString text = new TextComponentString("You are already in a sect and cannot join another one until you leave your current one.");
                 text.getStyle().setColor(TextFormatting.AQUA);
                 playerMP.sendMessage(text);
             }
@@ -469,7 +485,7 @@ public class SectCommand extends CommandBase {
         }
     }
 
-    public void disbandSubCommand(MinecraftServer server, EntityPlayerMP playerMP, WorldSectData sectData) {
+    public void disbandSubCommand(EntityPlayerMP playerMP, WorldSectData sectData) {
         Sect sect = Sect.getSectByPlayer(playerMP, sectData);
         if (sect != null) {
             if (sect.getSectLeader().equals(playerMP.getUniqueID())) {
@@ -499,11 +515,9 @@ public class SectCommand extends CommandBase {
 
     public void kickSubCommand(MinecraftServer server, String[] args, EntityPlayerMP playerMP, WorldSectData sectData) {
         EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
-        Sect sectOfPlayer;
-        Sect sectOfTarget;
         if (targetPlayer != null) {
-            sectOfPlayer = Sect.getSectByPlayer(playerMP, sectData);
-            sectOfTarget = Sect.getSectByPlayer(targetPlayer, sectData);
+            Sect sectOfPlayer = Sect.getSectByPlayer(playerMP, sectData);
+            Sect sectOfTarget = Sect.getSectByPlayer(targetPlayer, sectData);
             if (sectOfPlayer != null && sectOfTarget != null) {
                 if (sectOfPlayer.getSectName().equalsIgnoreCase(sectOfTarget.getSectName())) {
                     if (!playerMP.getUniqueID().equals(targetPlayer.getUniqueID())) {
@@ -517,14 +531,6 @@ public class SectCommand extends CommandBase {
                             text = new TextComponentString("You have been kicked from the sect.");
                             text.getStyle().setColor(TextFormatting.RED);
                             targetPlayer.sendMessage(text);
-                            LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) targetPlayer.getPrefixes();
-                            List<ITextComponent> toRemove = new ArrayList<>();
-                            for (ITextComponent component : prefixes) {
-                                if (component.getUnformattedText().equalsIgnoreCase("[" + sectOfPlayer.getSectName() + "]")) {
-                                    toRemove.add(component);
-                                }
-                            }
-                            prefixes.removeAll(toRemove);
                         } else {
                             Pair<UUID, String> memberPlayer = sectOfPlayer.getMemberByUUID(playerMP.getUniqueID());
                             Pair<String, Integer> playerRank = null;
@@ -545,14 +551,6 @@ public class SectCommand extends CommandBase {
                                     text = new TextComponentString("You have been kicked from the sect.");
                                     text.getStyle().setColor(TextFormatting.RED);
                                     targetPlayer.sendMessage(text);
-                                    LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) targetPlayer.getPrefixes();
-                                    List<ITextComponent> toRemove = new ArrayList<>();
-                                    for (ITextComponent component : prefixes) {
-                                        if (component.getUnformattedText().equalsIgnoreCase("[" + sectOfPlayer.getSectName() + "]")) {
-                                            toRemove.add(component);
-                                        }
-                                    }
-                                    prefixes.removeAll(toRemove);
                                 } else if (!(playerRank.getRight() >= kickPermissionLevel)) {
                                     TextComponentString text = new TextComponentString("You do not have the permission to kick a member of the sect.");
                                     text.getStyle().setColor(TextFormatting.RED);
@@ -594,7 +592,7 @@ public class SectCommand extends CommandBase {
         }
     }
 
-    public void leaveSubCommand(MinecraftServer server, EntityPlayerMP playerMP, WorldSectData sectData) {
+    public void leaveSubCommand(EntityPlayerMP playerMP, WorldSectData sectData) {
         Sect sect = Sect.getSectByPlayer(playerMP, sectData);
         if (sect != null) {
             if (sect.getSectLeader().equals(playerMP.getUniqueID())) {
@@ -602,33 +600,6 @@ public class SectCommand extends CommandBase {
                     sect.setDisband(false);
                 }
                 if (sect.isDisbanding()) {
-                    String oldSectName = "[" + sect.getSectName() + "]";
-                    List<Pair<UUID, String>> members = sect.getMembers();
-                    UUID sectLeaderUUID = sect.getSectLeader();
-                    for (Pair<UUID, String> member : members) {
-                        EntityPlayerMP memberPlayer = server.getPlayerList().getPlayerByUUID(member.getLeft());
-                        if (memberPlayer != null) {
-                            LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) memberPlayer.getPrefixes();
-                            List<ITextComponent> toRemove = new ArrayList<>();
-                            for (ITextComponent component : prefixes) {
-                                if (component.getUnformattedText().equalsIgnoreCase(oldSectName)) {
-                                    toRemove.add(component);
-                                }
-                            }
-                            prefixes.removeAll(toRemove);
-                        }
-                    }
-                    EntityPlayerMP sectLeaderPlayer = server.getPlayerList().getPlayerByUUID(sectLeaderUUID);
-                    if (sectLeaderPlayer != null) {
-                        LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) sectLeaderPlayer.getPrefixes();
-                        List<ITextComponent> toRemove = new ArrayList<>();
-                        for (ITextComponent component : prefixes) {
-                            if (component.getUnformattedText().equalsIgnoreCase(oldSectName)) {
-                                toRemove.add(component);
-                            }
-                        }
-                        prefixes.removeAll(toRemove);
-                    }
                     sectData.SECTS.remove(sect);
                 } else {
                     TextComponentString text = new TextComponentString("Please note that leaving the sect as the sect leader will disband the sect. Please type the command \"/sect leave\" one more time to confirm you would like to leave the sect. You have a total of 30 seconds to confirm the disbanding of the sect.");
@@ -638,16 +609,7 @@ public class SectCommand extends CommandBase {
                     sect.setDisbandTime(System.currentTimeMillis());
                 }
             } else {
-                String oldSectName = "[" + sect.getSectName() + "]";
                 sect.removeMember(playerMP.getUniqueID());
-                LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) playerMP.getPrefixes();
-                List<ITextComponent> toRemove = new ArrayList<>();
-                for (ITextComponent component : prefixes) {
-                    if (component.getUnformattedText().equalsIgnoreCase(oldSectName)) {
-                        toRemove.add(component);
-                    }
-                }
-                prefixes.removeAll(toRemove);
             }
         } else {
             TextComponentString text = new TextComponentString("Couldn't find sect of player: " + playerMP.getName());
@@ -656,47 +618,16 @@ public class SectCommand extends CommandBase {
         }
     }
 
-    public void renameSubCommand(MinecraftServer server, String[] args, EntityPlayerMP playerMP, WorldSectData sectData) {
+    public void renameSubCommand(String[] args, EntityPlayerMP playerMP, WorldSectData sectData) {
         Sect sect = Sect.getSectByPlayer(playerMP, sectData);
         if (sect != null) {
             if (sect.getSectLeader().equals(playerMP.getUniqueID())) {
                 Sect testSect = Sect.getSectByName(args[1], sectData);
                 if (testSect == null) {
-                    String sectOldName = "[" + sect.getSectName() + "]";
                     sect.setSectName(args[1]);
-                    TextComponentString text = new TextComponentString("Sect has been renamed to " + args[1] + ".");
+                    TextComponentString text = new TextComponentString("Sect has been renamed to \"" + args[1] + "\".");
                     text.getStyle().setColor(TextFormatting.GREEN);
                     playerMP.sendMessage(text);
-                    for (Pair<UUID, String> member : sect.getMembers()) {
-                        EntityPlayerMP memberPlayer = server.getPlayerList().getPlayerByUUID(member.getLeft());
-                        if (memberPlayer != null) {
-                            LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) memberPlayer.getPrefixes();
-                            List<ITextComponent> toRemove = new ArrayList<>();
-                            TextComponentString prefix = new TextComponentString("[" + args[1] + "]");
-                            prefix.getStyle().setColor(TextFormatting.AQUA);
-                            for (ITextComponent component : prefixes) {
-                                if (component.getUnformattedText().equalsIgnoreCase(sectOldName)) {
-                                    toRemove.add(component);
-                                }
-                            }
-                            prefixes.removeAll(toRemove);
-                            prefixes.add(0, prefix);
-                        }
-                    }
-                    EntityPlayerMP sectLeader = server.getPlayerList().getPlayerByUUID(sect.getSectLeader());
-                    if (sectLeader != null) {
-                        LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) sectLeader.getPrefixes();
-                        List<ITextComponent> toRemove = new ArrayList<>();
-                        for (ITextComponent component : prefixes) {
-                            if (component.getUnformattedText().equalsIgnoreCase(sectOldName)) {
-                                toRemove.add(component);
-                            }
-                        }
-                        prefixes.removeAll(toRemove);
-                        TextComponentString prefix = new TextComponentString("[" + args[1] + "]");
-                        prefix.getStyle().setColor(TextFormatting.AQUA);
-                        prefixes.add(0, prefix);
-                    }
                 } else {
                     TextComponentString text = new TextComponentString("A sect with that name has already been created. Please rename your sect to something else.");
                     text.getStyle().setColor(TextFormatting.RED);
@@ -1036,11 +967,11 @@ public class SectCommand extends CommandBase {
                                 Pair<String, Integer> sectRank = sect.getRank(args[2]);
                                 if (sectRank != null && memberTarget != null) {
                                     sect.setMemberRank(memberTarget.getLeft(), sectRank.getLeft());
-                                    TextComponentString text = new TextComponentString(targetPlayer.getName() + " has been set to [" + args[2] + "].");
+                                    TextComponentString text = new TextComponentString(targetPlayer.getName() + " has been set to \"" + args[2] + "\".");
                                     text.getStyle().setColor(TextFormatting.GREEN);
                                     playerMP.sendMessage(text);
                                 } else {
-                                    TextComponentString text = new TextComponentString("["+ args[2] + "] is not a rank of the sect.");
+                                    TextComponentString text = new TextComponentString("\""+ args[2] + "\" is not a rank of the sect.");
                                     text.getStyle().setColor(TextFormatting.RED);
                                     playerMP.sendMessage(text);
                                 }
@@ -1188,7 +1119,7 @@ public class SectCommand extends CommandBase {
         }
     }
 
-    public void viewSubCommand(MinecraftServer server, String[] args, EntityPlayerMP playerMP, WorldSectData sectData) {
+    public void viewPlayerSubCommand(MinecraftServer server, String[] args, EntityPlayerMP playerMP, WorldSectData sectData) {
         GameProfile targetPlayer = server.getPlayerProfileCache().getGameProfileForUsername(args[1]);
         if (targetPlayer != null) {
             Sect sectInfo = Sect.getSectByPlayerUUID(targetPlayer.getId(), sectData);
@@ -1198,7 +1129,12 @@ public class SectCommand extends CommandBase {
                 playerMP.sendMessage(text);
                 text = new TextComponentString(TextFormatting.GREEN + "Sect Name: " + TextFormatting.WHITE + sectInfo.getSectName());
                 playerMP.sendMessage(text);
-                text = new TextComponentString(TextFormatting.GREEN + "Sect Leader: " + TextFormatting.WHITE + server.getPlayerProfileCache().getProfileByUUID(sectInfo.getSectLeader()).getName());
+                GameProfile sectLeader = server.getPlayerProfileCache().getProfileByUUID(sectInfo.getSectLeader());
+                String sectLeaderName = "";
+                if (sectLeader != null) {
+                    sectLeaderName = sectLeader.getName();
+                }
+                text = new TextComponentString(TextFormatting.GREEN + "Sect Leader: " + TextFormatting.WHITE + sectLeaderName);
                 playerMP.sendMessage(text);
                 text = new TextComponentString(TextFormatting.GREEN + "Sect Members: ");
                 playerMP.sendMessage(text);
@@ -1210,7 +1146,11 @@ public class SectCommand extends CommandBase {
                         Pair<UUID, String> member = sectInfo.getMembers().get(j);
                         UUID memberUUID = member.getLeft();
                         String memberRank = member.getRight();
-                        String playerName = server.getPlayerProfileCache().getProfileByUUID(memberUUID).getName();
+                        GameProfile memberProfile = server.getPlayerProfileCache().getProfileByUUID(memberUUID);
+                        String playerName = "";
+                        if (memberProfile != null) {
+                            playerName = memberProfile.getName();
+                        }
                         tempOutput += "[" + memberRank + "]" + playerName + ", ";
                         if (j % 3 == 2 && j != 0) {
                             indexToStartFromNext = j + 1;
@@ -1247,6 +1187,74 @@ public class SectCommand extends CommandBase {
                 text.getStyle().setColor(TextFormatting.RED);
                 playerMP.sendMessage(text);
             }
+        }
+    }
+
+    public void viewSectSubCommand(MinecraftServer server, String[] args, EntityPlayerMP playerMP, WorldSectData sectData) {
+        Sect sectInfo = Sect.getSectByName(args[1], sectData);
+        if (sectInfo != null) {
+            TextComponentString text = new TextComponentString("--------------------------------------------------");
+            text.getStyle().setColor(TextFormatting.AQUA);
+            playerMP.sendMessage(text);
+            text = new TextComponentString(TextFormatting.GREEN + "Sect Name: " + TextFormatting.WHITE + sectInfo.getSectName());
+            playerMP.sendMessage(text);
+            GameProfile sectLeader = server.getPlayerProfileCache().getProfileByUUID(sectInfo.getSectLeader());
+            String sectLeaderName = "";
+            if (sectLeader != null) {
+                sectLeaderName = sectLeader.getName();
+            }
+            text = new TextComponentString(TextFormatting.GREEN + "Sect Leader: " + TextFormatting.WHITE + sectLeaderName);
+            playerMP.sendMessage(text);
+            text = new TextComponentString(TextFormatting.GREEN + "Sect Members: ");
+            playerMP.sendMessage(text);
+            String[] memberOutputs = new String[sectInfo.getMembers().size() / 3 + 1];
+            int indexToStartFromNext = 0;
+            for (int i = 0; i < memberOutputs.length; i++) {
+                String tempOutput = "";
+                for (int j = indexToStartFromNext; j < sectInfo.getMembers().size(); j++) {
+                    Pair<UUID, String> member = sectInfo.getMembers().get(j);
+                    UUID memberUUID = member.getLeft();
+                    String memberRank = member.getRight();
+                    GameProfile memberProfile = server.getPlayerProfileCache().getProfileByUUID(memberUUID);
+                    String playerName = "";
+                    if (memberProfile != null) {
+                        playerName = memberProfile.getName();
+                    }
+                    tempOutput += "[" + memberRank + "]" + playerName + ", ";
+                    if (j % 3 == 2 && j != 0) {
+                        indexToStartFromNext = j + 1;
+                        break;
+                    }
+                }
+                memberOutputs[i] = String.format("%5s", tempOutput);
+            }
+            for (String memberOutput : memberOutputs) {
+                text = new TextComponentString(memberOutput);
+                playerMP.sendMessage(text);
+            }
+            text = new TextComponentString(TextFormatting.GREEN + "Sect Allies: WIP");
+            playerMP.sendMessage(text);
+            String allyOutput = "";
+            for (Pair<String, Boolean> ally : sectInfo.getAllies()) {
+                allyOutput += ally.getLeft() + ", ";
+            }
+            text = new TextComponentString(String.format("%5s", allyOutput));
+            playerMP.sendMessage(text);
+            text = new TextComponentString(TextFormatting.GREEN + "Sect Enemies:");
+            playerMP.sendMessage(text);
+            String enemyOutput = "";
+            for (Pair<String, Boolean> enemy: sectInfo.getEnemies()) {
+                enemyOutput += enemy.getLeft() + ", ";
+            }
+            text = new TextComponentString(String.format("%5s", enemyOutput));
+            playerMP.sendMessage(text);
+            text = new TextComponentString("--------------------------------------------------");
+            text.getStyle().setColor(TextFormatting.AQUA);
+            playerMP.sendMessage(text);
+        } else {
+            TextComponentString text = new TextComponentString( "That sect does not exist.");
+            text.getStyle().setColor(TextFormatting.RED);
+            playerMP.sendMessage(text);
         }
     }
 }

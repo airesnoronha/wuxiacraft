@@ -16,17 +16,15 @@ public interface IBarrier {
 
     boolean isBarrierBroken();
 
-    void setCurrentLevelBarrierAmount(float amount);
-
-    float getCurrentLevelBarrierAmount();
-
     void setBarrierHits(int hits);
 
     void stepBarrierHits();
 
     int getBarrierHits();
 
-    float getMaxBarrierAmount(double essenceModifier);
+    void setBarrierMaxAmount(float amount);
+
+    float getBarrierMaxAmount();
 
     //Barrier Regen
 

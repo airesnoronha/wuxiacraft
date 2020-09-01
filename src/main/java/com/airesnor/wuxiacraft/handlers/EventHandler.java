@@ -53,6 +53,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.FOVUpdateEvent;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -113,6 +114,27 @@ public class EventHandler {
 	}
 
 	/**
+	 * Handles what happens when the play chats.
+	 *
+	 * @param event the event when the player chats, server-side
+	 */
+	@SubscribeEvent
+	public void onPlayerChat(ServerChatEvent event) {
+		EntityPlayerMP playerMP = event.getPlayer();
+		if (playerMP != null) {
+			WorldSectData sectData = WorldSectData.get(playerMP.getEntityWorld());
+			Sect sect = Sect.getSectByPlayer(playerMP, sectData);
+			if (sect != null) {
+				String prefix = "[" + sect.getSectName() + "]";
+				ITextComponent component = event.getComponent();
+				ITextComponent newComponent = new TextComponentString(prefix);
+				newComponent.appendSibling(component);
+				event.setComponent(newComponent);
+			}
+		}
+	}
+
+	/**
 	 * The big great logic behind cultivation happens here
 	 * This is the DanTian dark matter
 	 *
@@ -170,26 +192,6 @@ public class EventHandler {
 				cultivation.setEnergy(CultivationUtils.getMaxEnergy(player));
 			}
 
-		}
-		if (event.getEntity() instanceof EntityPlayerMP) {
-			EntityPlayerMP player = (EntityPlayerMP) event.getEntity();
-			if (player.ticksExisted % 200 == 0) {
-				WorldSectData sectData = WorldSectData.get(player.world);
-				Sect sect = Sect.getSectByPlayer(player, sectData);
-				if (sect != null) {
-					LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) player.getPrefixes();
-					List<ITextComponent> toRemove = new ArrayList<>();
-					TextComponentString prefix = new TextComponentString("[" + sect.getSectName() + "]");
-					for (ITextComponent component : prefixes) {
-						if (component.getUnformattedText().equalsIgnoreCase(prefix.getText())) {
-							toRemove.add(component);
-						}
-					}
-					prefixes.removeAll(toRemove);
-					prefix.getStyle().setColor(TextFormatting.AQUA);
-					prefixes.add(0, prefix);
-				}
-			}
 		}
 	}
 
@@ -1048,16 +1050,24 @@ public class EventHandler {
 				IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				//Aires: I vote to remEnergy only when barrier regen
-				//Energy Drain while the barrier is active
+
+				// Misc
+				// TODO - change this so it only sets the barrier max amount and barrier regen rate everytime the player ranks up or dies.
+				barrier.setBarrierMaxAmount((float)Math.max(0, (cultivation.getEssenceModifier()-3.0)*0.5));
+				barrier.setBarrierRegenRate(barrier.getBarrierMaxAmount() * 0.001f);
+
+				// Energy Drain while the barrier is active
 				if (barrier.isBarrierActive() && !barrier.isBarrierBroken()) {
 					cultivation.remEnergy(CultivationUtils.getMaxEnergy(player) * 0.00005F);
 				}
-				//Barrier regen when the barrier is not broken
-				if (!barrier.isBarrierBroken() && barrier.isBarrierRegenActive()) {
+				// Barrier regen when the barrier is not broken
+				if (!barrier.isBarrierBroken() && barrier.isBarrierRegenActive() && barrier.getBarrierAmount() + barrier.getBarrierRegenRate() < barrier.getBarrierMaxAmount()) {
 					barrier.addBarrierAmount(barrier.getBarrierRegenRate());
-					barrier.setBarrierAmount(Math.min(barrier.getBarrierAmount(), barrier.getMaxBarrierAmount(cultivation.getEssenceModifier())));
+					cultivation.remEnergy(CultivationUtils.getMaxEnergy(player) * 0.00005F);
+				} else if (barrier.getBarrierAmount() + barrier.getBarrierRegenRate() >= barrier.getBarrierMaxAmount()) {
+					barrier.setBarrierAmount(barrier.getBarrierMaxAmount());
 				}
-				//Cooldown
+				// Cooldown
 				if (barrier.getBarrierCooldown() <= 0) {
 					barrier.setBarrierBroken(false);
 				} else {
