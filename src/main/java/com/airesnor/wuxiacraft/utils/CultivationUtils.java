@@ -189,6 +189,9 @@ public class CultivationUtils {
 				}
 			}
 		}
+		if(system == Cultivation.System.ESSENCE) {
+			amount *= MathUtils.clamp(cultivation.getDivineModifier() / cultivation.getEssenceLevel().getModifierBySubLevel(cultivation.getEssenceSubLevel()), 1, 20);
+		}
 		if (!cultivation.getSuppress()) {
 			try {
 				boolean leveled = cultivation.addSystemProgress(amount, system, allowBreakThrough);
