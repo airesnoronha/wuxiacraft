@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.commands;
 
 import com.airesnor.wuxiacraft.cultivation.Barrier;
 import com.airesnor.wuxiacraft.cultivation.IBarrier;
+import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.networking.BarrierMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
@@ -98,11 +99,28 @@ public class BarrierCommand extends CommandBase {
                     } else if (args[0].equalsIgnoreCase("reset")) {
                         EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
                         if (targetPlayer != null) {
-                            IBarrier barrier = CultivationUtils.getBarrierFromEntity(playerMP);
+                            IBarrier barrier = CultivationUtils.getBarrierFromEntity(targetPlayer);
                             IBarrier newBarier = new Barrier();
                             barrier.copyFrom(newBarier);
                             NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, targetPlayer.getUniqueID()), (EntityPlayerMP) targetPlayer);
                             TextComponentString text = new TextComponentString(targetPlayer.getName() + "'s barrier has been reset!");
+                            text.getStyle().setColor(TextFormatting.GREEN);
+                            playerMP.sendMessage(text);
+                            wrongUsage = false;
+                        } else {
+                            TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
+                            text.getStyle().setColor(TextFormatting.RED);
+                            sender.sendMessage(text);
+                            wrongUsage = true;
+                        }
+                    } else if (args[0].equalsIgnoreCase("fix")) {
+                        EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
+                        if (targetPlayer != null) {
+                            IBarrier barrier = CultivationUtils.getBarrierFromEntity(targetPlayer);
+                            ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
+                            barrier.setBarrierMaxAmount((float)Math.max(0, (cultivation.getEssenceModifier()-3.0)*0.5));
+                            barrier.setBarrierRegenRate(barrier.getBarrierMaxAmount() * 0.001f);
+                            TextComponentString text = new TextComponentString( targetPlayer.getName() + "'s barrier has been fixed.");
                             text.getStyle().setColor(TextFormatting.GREEN);
                             playerMP.sendMessage(text);
                             wrongUsage = false;
@@ -136,7 +154,7 @@ public class BarrierCommand extends CommandBase {
                     } else if (args[0].equalsIgnoreCase("setActive")) {
                         EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
                         if (targetPlayer != null) {
-                            IBarrier barrier = CultivationUtils.getBarrierFromEntity(playerMP);
+                            IBarrier barrier = CultivationUtils.getBarrierFromEntity(targetPlayer);
                             boolean active = Boolean.parseBoolean(args[2]);
                             barrier.setBarrierActive(active);
                             NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, targetPlayer.getUniqueID()), (EntityPlayerMP) targetPlayer);
@@ -150,7 +168,7 @@ public class BarrierCommand extends CommandBase {
                     } else if (args[0].equalsIgnoreCase("setRegenRate")) {
                         EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
                         if (targetPlayer != null) {
-                            IBarrier barrier = CultivationUtils.getBarrierFromEntity(playerMP);
+                            IBarrier barrier = CultivationUtils.getBarrierFromEntity(targetPlayer);
                             float value = Float.parseFloat(args[2]);
                             if (value >= 0) {
                                 barrier.setBarrierRegenRate(value);
@@ -196,6 +214,9 @@ public class BarrierCommand extends CommandBase {
             }
             if ("setregenrate".startsWith(args[0].toLowerCase())) {
                 completions.add("setRegenRate");
+            }
+            if ("fix".startsWith(args[0].toLowerCase())) {
+                completions.add("fix");
             }
         } else if (args.length == 2) {
             for (String name : server.getPlayerList().getOnlinePlayerNames()) {

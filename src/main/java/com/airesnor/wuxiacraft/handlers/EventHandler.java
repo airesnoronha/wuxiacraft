@@ -556,6 +556,8 @@ public class EventHandler {
 		skillCap.copyFrom(oldSkillCap, true);
 		sealing.copyFrom(oldSealing);
 		barrier.copyFrom(oldBarrier);
+		barrier.setBarrierMaxAmount((float)Math.max(0, (cultivation.getEssenceModifier()-3.0)*0.5));
+		barrier.setBarrierRegenRate(barrier.getBarrierMaxAmount() * 0.001f);
 	}
 
 	/**
@@ -999,7 +1001,9 @@ public class EventHandler {
 				TextComponentString message = new TextComponentString("Barrier Amount: " + barrier.getBarrierAmount());
 				message.getStyle().setColor(TextFormatting.AQUA);
 				player.sendMessage(message);
-			} else {
+			} else if (!barrier.isBarrierActive()) {
+				event.setCanceled(false);
+			} else if (barrier.isBarrierBroken()) {
 				event.setCanceled(false);
 			}
 		}
@@ -1018,23 +1022,22 @@ public class EventHandler {
 		if (barrier.getBarrierAmount() > 0.0f && event.getAmount() < barrier.getBarrierAmount()) {
 			event.setCanceled(true);
 			barrier.removeBarrierAmount(event.getAmount());
-			NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
-		} else if (barrier.getBarrierAmount() > 0.0f && event.getAmount() > barrier.getBarrierAmount()) {
+		} else if (barrier.getBarrierAmount() > 0.0f && event.getAmount() > barrier.getBarrierAmount()) { // barrier 1.0  damage is 2.0
 			event.setCanceled(true);
 			float remainingDamage = event.getAmount() - barrier.getBarrierAmount();
 			barrier.removeBarrierAmount(barrier.getBarrierAmount());
-			player.setHealth(player.getHealth() - remainingDamage);
 			barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
 			barrier.setBarrierBroken(true);
 			barrier.setBarrierActive(false);
-			NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
+			event.setCanceled(false);
+			player.attackEntityFrom(DamageSource.causePlayerDamage(player), remainingDamage);
 		} else if (barrier.getBarrierAmount() <= 0.0f) {
 			event.setCanceled(false);
 			barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
 			barrier.setBarrierBroken(true);
 			barrier.setBarrierActive(false);
-			NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
 		}
+		NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
 	}
 
 	/**
@@ -1050,11 +1053,6 @@ public class EventHandler {
 				IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				//Aires: I vote to remEnergy only when barrier regen
-
-				// Misc
-				// TODO - change this so it only sets the barrier max amount and barrier regen rate everytime the player ranks up or dies.
-				barrier.setBarrierMaxAmount((float)Math.max(0, (cultivation.getEssenceModifier()-3.0)*0.5));
-				barrier.setBarrierRegenRate(barrier.getBarrierMaxAmount() * 0.001f);
 
 				// Energy Drain while the barrier is active
 				if (barrier.isBarrierActive() && !barrier.isBarrierBroken()) {

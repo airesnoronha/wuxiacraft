@@ -159,6 +159,7 @@ public class CultivationUtils {
 	public static void cultivatorAddProgress(EntityLivingBase player, Cultivation.System system, double amount, boolean techniques, boolean allowBreakThrough) {
 		ICultivation cultivation = getCultivationFromEntity(player);
 		ICultTech cultTech = getCultTechFromEntity(player);
+		IBarrier barrier = getBarrierFromEntity(player);
 		if (cultTech.getTechniqueBySystem(system) != null && techniques) {
 			amount *= cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system));
 		}
@@ -204,6 +205,8 @@ public class CultivationUtils {
 				if (leveled && !player.world.isRemote) {
 					EntityLevelUpHalo halo = new EntityLevelUpHalo(player.world, player.posX, player.posY + 1, player.posZ);
 					WorldUtils.spawnEntity((WorldServer) player.world, halo);
+					barrier.setBarrierMaxAmount((float)Math.max(0, (cultivation.getEssenceModifier()-3.0)*0.5));
+					barrier.setBarrierRegenRate(barrier.getBarrierMaxAmount() * 0.001f);
 				}
 			} catch (Cultivation.RequiresTribulation tribulation) {
 				callTribulation(player, tribulation.tribulationStrength, tribulation.system, tribulation.level, tribulation.subLevel);
