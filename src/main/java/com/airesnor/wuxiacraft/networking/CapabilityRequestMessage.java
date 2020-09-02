@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.networking;
 
+import com.airesnor.wuxiacraft.aura.IAuraCap;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
@@ -50,7 +51,8 @@ public class CapabilityRequestMessage implements IMessage {
 					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 					ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 					ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-					return new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, true);
+					IAuraCap auraCap = CultivationUtils.getAuraFromEntity(player);
+					return new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, auraCap, true);
 				}
 			}
 			return null;

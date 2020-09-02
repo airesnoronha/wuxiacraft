@@ -1,5 +1,7 @@
 package com.airesnor.wuxiacraft.networking;
 
+import com.airesnor.wuxiacraft.aura.AuraCap;
+import com.airesnor.wuxiacraft.aura.IAuraCap;
 import com.airesnor.wuxiacraft.capabilities.*;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
@@ -14,6 +16,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -26,6 +29,7 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 	public ICultivation cultivation;
 	public ICultTech cultTech;
 	public ISkillCap skillCap;
+	public IAuraCap auraCap;
 	public boolean shouldSetCdaCP;
 	public double maxServerSpeed;
 
@@ -34,14 +38,16 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 		cultivation = new Cultivation();
 		cultTech = new CultTech();
 		skillCap = new SkillCap();
+		auraCap = new AuraCap();
 		this.shouldSetCdaCP = false;
 		this.maxServerSpeed = WuxiaCraftConfig.maxServerSpeed;
 	}
 
-	public UnifiedCapabilitySyncMessage(ICultivation cultivation, ICultTech cultTech, ISkillCap skillCap, boolean shouldSetCdaCP) {
+	public UnifiedCapabilitySyncMessage(ICultivation cultivation, ICultTech cultTech, ISkillCap skillCap, IAuraCap auraCap, boolean shouldSetCdaCP) {
 		this.cultivation = cultivation;
 		this.cultTech = cultTech;
 		this.skillCap = skillCap;
+		this.auraCap = auraCap;
 		this.shouldSetCdaCP = shouldSetCdaCP;
 		this.maxServerSpeed = WuxiaCraftConfig.maxServerSpeed;
 	}
@@ -57,6 +63,9 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 		tag = ByteBufUtils.readTag(buf);
 		//noinspection ConstantConditions
 		SkillsProvider.SKILL_CAP_CAPABILITY.getStorage().readNBT(SkillsProvider.SKILL_CAP_CAPABILITY, this.skillCap, null, tag);
+		tag = ByteBufUtils.readTag(buf);
+		//noinspection ConstantConditions
+		AuraCapProvider.AURA_CAPABILITY.getStorage().readNBT(AuraCapProvider.AURA_CAPABILITY, this.auraCap, null, tag);
 		this.shouldSetCdaCP = buf.readBoolean();
 		this.maxServerSpeed = buf.readDouble();
 	}
@@ -71,6 +80,9 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 		ByteBufUtils.writeTag(buf, tag);
 		//noinspection ConstantConditions
 		tag = (NBTTagCompound) SkillsProvider.SKILL_CAP_CAPABILITY.getStorage().writeNBT(SkillsProvider.SKILL_CAP_CAPABILITY, this.skillCap, null);
+		ByteBufUtils.writeTag(buf, tag);
+		//noinspection ConstantConditions
+		tag = (NBTTagCompound) AuraCapProvider.AURA_CAPABILITY.getStorage().writeNBT(AuraCapProvider.AURA_CAPABILITY, this.auraCap, null);
 		ByteBufUtils.writeTag(buf, tag);
 		buf.writeBoolean(shouldSetCdaCP);
 		buf.writeDouble(this.maxServerSpeed);
@@ -93,9 +105,11 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
+				IAuraCap auraCap = CultivationUtils.getAuraFromEntity(player);
 				cultivation.copyFrom(message.cultivation);
 				cultTech.copyFrom(message.cultTech);
 				skillCap.copyFrom(message.skillCap, message.shouldSetCdaCP);
+				auraCap.copyFrom(message.auraCap);
 				cultivation.setSpeedHandicap(WuxiaCraftConfig.speedHandicap);
 				cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
 				cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);

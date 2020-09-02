@@ -96,6 +96,7 @@ public class ClientProxy extends CommonProxy {
 		WuxiaCraftConfig.clientPreInit();
 
 		MinecraftForge.EVENT_BUS.register(new RendererHandler());
+		MinecraftForge.EVENT_BUS.register(new EntityRenderHandler());
 
 		ClientRegistry.bindTileEntitySpecialRenderer(FormationTileEntity.class, new FormationTESR());
 	}

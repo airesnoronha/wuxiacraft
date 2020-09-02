@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.proxy;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.aura.IAuraCap;
 import com.airesnor.wuxiacraft.capabilities.*;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.*;
@@ -44,6 +45,17 @@ public class CommonProxy {
 	 */
 	public void registerItemRenderer(Item item, int meta, String id) {}
 
+	private static int ServerSideMessageID = 167000;
+	private static int ClientSideMessageID = 168000;
+
+	private static int nextServerMessageID() {
+		return ServerSideMessageID++;
+	}
+
+	private static int nextClientMessageID() {
+		return ClientSideMessageID++;
+	}
+
 	public void init() {
 
 		OreUtils.loadOresToFind();
@@ -51,40 +63,42 @@ public class CommonProxy {
 		CapabilityManager.INSTANCE.register(ICultivation.class, new CultivationStorage(), new CultivationFactory());
 		CapabilityManager.INSTANCE.register(ICultTech.class, new CultTechStorage(), new CultTechFactory());
 		CapabilityManager.INSTANCE.register(ISkillCap.class, new SkillsStorage(), new SkillsFactory());
-		CapabilityManager.INSTANCE.register(IFoundation.class, new FoundationStorage(), new FoundationFactory());
 		CapabilityManager.INSTANCE.register(ISealing.class, new SealingStorage(), new SealingFactory());
 		CapabilityManager.INSTANCE.register(IBarrier.class, new BarrierStorage(), new BarrierFactory());
+		CapabilityManager.INSTANCE.register(IAuraCap.class, new AuraCapStorage(), new AuraCapFactory());
 
-		NetworkWrapper.INSTANCE.registerMessage(ActivatePartialSkillMessage.Handler.class, ActivatePartialSkillMessage.class, 167001, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(ActivateSkillMessage.Handler.class, ActivateSkillMessage.class, 167002, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(AddRecipeItemMessage.Handler.class, AddRecipeItemMessage.class, 167003, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(AskCultivationLevelMessage.Handler.class, AskCultivationLevelMessage.class, 167004, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(CastSkillMessage.Handler.class, CastSkillMessage.class, 167005, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(EnergyMessage.Handler.class, EnergyMessage.class, 167006, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(ProgressMessage.Handler.class, ProgressMessage.class, 167007, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(RemoveTechniqueMessage.Handler.class, RemoveTechniqueMessage.class, 167008, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(RequestCultGuiMessage.Handler.class, RequestCultGuiMessage.class, 167009, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(SelectSkillMessage.Handler.class, SelectSkillMessage.class, 167010, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(ShrinkEntityItemMessage.Handler.class, ShrinkEntityItemMessage.class, 167011, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(SkillCapMessage.Handler.class, SkillCapMessage.class, 167012, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(SpawnParticleMessage.Handler.class, SpawnParticleMessage.class, 167013, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(SpeedHandicapMessage.Handler.class, SpeedHandicapMessage.class, 167014, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(SuppressCultivationMessage.Handler.class, SuppressCultivationMessage.class, 167015, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(AddProgressToFoundationAttributeMessage.Handler.class, AddProgressToFoundationAttributeMessage.class, 167016, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(SelectFoundationAttributeMessage.Handler.class, SelectFoundationAttributeMessage.class, 167017, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(CapabilityRequestMessage.Handler.class, CapabilityRequestMessage.class, 167018, Side.SERVER);
-		NetworkWrapper.INSTANCE.registerMessage(BarrierMessage.Handler.class, BarrierMessage.class, 167019, Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(ActivatePartialSkillMessage.Handler.class, ActivatePartialSkillMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(ActivateSkillMessage.Handler.class, ActivateSkillMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(AddRecipeItemMessage.Handler.class, AddRecipeItemMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(AskCultivationLevelMessage.Handler.class, AskCultivationLevelMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(CastSkillMessage.Handler.class, CastSkillMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(EnergyMessage.Handler.class, EnergyMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(ProgressMessage.Handler.class, ProgressMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(RemoveTechniqueMessage.Handler.class, RemoveTechniqueMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(RequestCultGuiMessage.Handler.class, RequestCultGuiMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(SelectSkillMessage.Handler.class, SelectSkillMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(ShrinkEntityItemMessage.Handler.class, ShrinkEntityItemMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(SkillCapMessage.Handler.class, SkillCapMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(SpawnParticleMessage.Handler.class, SpawnParticleMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(SpeedHandicapMessage.Handler.class, SpeedHandicapMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(SuppressCultivationMessage.Handler.class, SuppressCultivationMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(AddProgressToFoundationAttributeMessage.Handler.class, AddProgressToFoundationAttributeMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(SelectFoundationAttributeMessage.Handler.class, SelectFoundationAttributeMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(CapabilityRequestMessage.Handler.class, CapabilityRequestMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(BarrierMessage.Handler.class, BarrierMessage.class, nextServerMessageID(), Side.SERVER);
+		NetworkWrapper.INSTANCE.registerMessage(RequestAuraForOtherPlayerMessage.Handler.class, RequestAuraForOtherPlayerMessage.class, nextServerMessageID(), Side.SERVER);
 
-		NetworkWrapper.INSTANCE.registerMessage(CultivationMessage.Handler.class, CultivationMessage.class, 168001, Side.CLIENT);
-		NetworkWrapper.INSTANCE.registerMessage(CultTechMessage.Handler.class, CultTechMessage.class, 168002, Side.CLIENT);
-		NetworkWrapper.INSTANCE.registerMessage(RespondCultivationLevelMessage.Handler.class, RespondCultivationLevelMessage.class, 168003, Side.CLIENT);
-		NetworkWrapper.INSTANCE.registerMessage(SkillCapMessage.Handler.class, SkillCapMessage.class, 168004, Side.CLIENT);
-		NetworkWrapper.INSTANCE.registerMessage(SpawnParticleMessage.Handler.class, SpawnParticleMessage.class, 168005, Side.CLIENT);
-		NetworkWrapper.INSTANCE.registerMessage(SpeedHandicapMessage.Handler.class, SpeedHandicapMessage.class, 168006, Side.CLIENT);
-		NetworkWrapper.INSTANCE.registerMessage(UnifiedCapabilitySyncMessage.Handler.class, UnifiedCapabilitySyncMessage.class, 168007, Side.CLIENT);
-		NetworkWrapper.INSTANCE.registerMessage(CultivationLevelsMessage.Handler.class, CultivationLevelsMessage.class, 168008, Side.CLIENT);
-		NetworkWrapper.INSTANCE.registerMessage(BarrierMessage.Handler.class, BarrierMessage.class, 168009, Side.CLIENT);
-		NetworkWrapper.INSTANCE.registerMessage(SpawnEntityOnClientMessage.Handler.class, SpawnEntityOnClientMessage.class, 168010, Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(CultivationMessage.Handler.class, CultivationMessage.class, nextClientMessageID(), Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(CultTechMessage.Handler.class, CultTechMessage.class, nextClientMessageID(), Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(RespondCultivationLevelMessage.Handler.class, RespondCultivationLevelMessage.class, nextClientMessageID(), Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(SkillCapMessage.Handler.class, SkillCapMessage.class, nextClientMessageID(), Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(SpawnParticleMessage.Handler.class, SpawnParticleMessage.class, nextClientMessageID(), Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(SpeedHandicapMessage.Handler.class, SpeedHandicapMessage.class, nextClientMessageID(), Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(UnifiedCapabilitySyncMessage.Handler.class, UnifiedCapabilitySyncMessage.class, nextClientMessageID(), Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(CultivationLevelsMessage.Handler.class, CultivationLevelsMessage.class, nextClientMessageID(), Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(BarrierMessage.Handler.class, BarrierMessage.class, nextClientMessageID(), Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(SpawnEntityOnClientMessage.Handler.class, SpawnEntityOnClientMessage.class, nextClientMessageID(), Side.CLIENT);
+		NetworkWrapper.INSTANCE.registerMessage(RespondAuraForOtherPlayerMessage.Handler.class, RespondAuraForOtherPlayerMessage.class, nextClientMessageID(), Side.CLIENT);
 
 		MinecraftForge.EVENT_BUS.register(new CapabilitiesHandler());
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
