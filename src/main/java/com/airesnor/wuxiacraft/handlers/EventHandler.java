@@ -1019,23 +1019,50 @@ public class EventHandler {
 	 * @param player  EntityPlayer instance of player
 	 */
 	public void handleBarrier(LivingAttackEvent event, IBarrier barrier, EntityPlayer player) {
-		if (barrier.getBarrierAmount() > 0.0f && event.getAmount() < barrier.getBarrierAmount()) {
-			event.setCanceled(true);
-			barrier.removeBarrierAmount(event.getAmount());
-		} else if (barrier.getBarrierAmount() > 0.0f && event.getAmount() > barrier.getBarrierAmount()) { // barrier 1.0  damage is 2.0
-			event.setCanceled(true);
-			float remainingDamage = event.getAmount() - barrier.getBarrierAmount();
-			barrier.removeBarrierAmount(barrier.getBarrierAmount());
-			barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
-			barrier.setBarrierBroken(true);
-			barrier.setBarrierActive(false);
-			event.setCanceled(false);
-			player.attackEntityFrom(DamageSource.causePlayerDamage(player), remainingDamage);
-		} else if (barrier.getBarrierAmount() <= 0.0f) {
-			event.setCanceled(false);
-			barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
-			barrier.setBarrierBroken(true);
-			barrier.setBarrierActive(false);
+		if (event.getSource().isDamageAbsolute()) {
+			if (barrier.getBarrierAmount() > 0.0f && event.getAmount() < barrier.getBarrierAmount()) {
+				event.setCanceled(true);
+				barrier.removeBarrierAmount(event.getAmount());
+			} else if (barrier.getBarrierAmount() > 0.0f && event.getAmount() > barrier.getBarrierAmount()) {
+				event.setCanceled(true);
+				float remainingDamage = event.getAmount() - barrier.getBarrierAmount();
+				barrier.removeBarrierAmount(barrier.getBarrierAmount());
+				barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
+				barrier.setBarrierBroken(true);
+				barrier.setBarrierActive(false);
+				event.setCanceled(false);
+				if (remainingDamage > 0) {
+					player.attackEntityFrom(DamageSource.causePlayerDamage(player), remainingDamage);
+				}
+			} else if (barrier.getBarrierAmount() <= 0.0f) {
+				event.setCanceled(false);
+				barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
+				barrier.setBarrierBroken(true);
+				barrier.setBarrierActive(false);
+			}
+		} else {
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+			float armour = (float) Math.max(1, cultivation.getEssenceModifier() * 0.6);
+			if (barrier.getBarrierAmount() > 0.0f && (event.getAmount() - armour) < barrier.getBarrierAmount()) {
+				event.setCanceled(true);
+				barrier.removeBarrierAmount(event.getAmount() - armour);
+			} else if (barrier.getBarrierAmount() > 0.0f && (event.getAmount() - armour) > barrier.getBarrierAmount()) {
+				event.setCanceled(true);
+				float remainingDamage = (event.getAmount() - armour) - barrier.getBarrierAmount();
+				barrier.removeBarrierAmount(barrier.getBarrierAmount());
+				barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
+				barrier.setBarrierBroken(true);
+				barrier.setBarrierActive(false);
+				event.setCanceled(false);
+				if (remainingDamage > 0) {
+					player.attackEntityFrom(DamageSource.causePlayerDamage(player), Math.max(0, remainingDamage));
+				}
+			} else if (barrier.getBarrierAmount() <= 0.0f) {
+				event.setCanceled(false);
+				barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
+				barrier.setBarrierBroken(true);
+				barrier.setBarrierActive(false);
+			}
 		}
 		NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
 	}
