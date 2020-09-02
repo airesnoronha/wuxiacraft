@@ -77,6 +77,10 @@ public class ItemPaintBrush extends ItemBase {
 					result = EnumActionResult.SUCCESS;
 				}
 			}
+			if (bottle.getItemDamage() == 0) {
+				int index = player.inventory.mainInventory.indexOf(bottle);
+				player.inventory.mainInventory.set(index, new ItemStack(WuxiaItems.EMPTY_BOTTLE, 1));
+			}
 		}
 		return result;
 	}

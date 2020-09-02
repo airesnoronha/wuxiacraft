@@ -68,7 +68,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber
 public class EventHandler {
@@ -514,9 +517,8 @@ public class EventHandler {
 	}
 
 	/**
-	 * When the player die, he gets punished and loses all sub levels, and energy
-	 * Except true gods that loses 20 levels
-	 * Loose 10% points of every foundation and their progress
+	 * When the player die, he gets punished
+	 * Loose 20% points of every foundation and their progress
 	 *
 	 * @param event Description of what happened, and what will come to be
 	 */
@@ -541,11 +543,17 @@ public class EventHandler {
 			cultivation.setBodySubLevel(Math.max(3 * (oldCultivation.getBodySubLevel() / 3), 0));
 			cultivation.setDivineSubLevel(Math.max(3 * (oldCultivation.getDivineSubLevel() / 3), 0));
 			cultivation.setEssenceSubLevel(Math.max(3 * (oldCultivation.getEssenceSubLevel() / 3), 0));
-			cultivation.setBodyFoundation(Math.max(oldCultivation.getBodyFoundation() * 0.8,
+			double bodyModifier = cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel())
+					/ oldCultivation.getBodyLevel().getProgressBySubLevel(oldCultivation.getBodySubLevel());
+			double divineModifier = cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel())
+					/ oldCultivation.getDivineLevel().getProgressBySubLevel(oldCultivation.getDivineSubLevel());
+			double essenceModifier = cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel())
+					/ oldCultivation.getEssenceLevel().getProgressBySubLevel(oldCultivation.getEssenceSubLevel());
+			cultivation.setBodyFoundation(bodyModifier * Math.max(oldCultivation.getBodyFoundation() * 0.8,
 					oldCultivation.getBodyFoundation() - 3 * oldCultivation.getBodyLevel().getProgressBySubLevel(oldCultivation.getBodySubLevel())));
-			cultivation.setDivineFoundation(Math.max(oldCultivation.getDivineFoundation() * 0.8,
+			cultivation.setDivineFoundation(divineModifier * Math.max(oldCultivation.getDivineFoundation() * 0.8,
 					oldCultivation.getDivineFoundation() - 3 * oldCultivation.getDivineLevel().getProgressBySubLevel(oldCultivation.getDivineSubLevel())));
-			cultivation.setEssenceFoundation(Math.max(oldCultivation.getEssenceFoundation() * 0.8,
+			cultivation.setEssenceFoundation(essenceModifier * Math.max(oldCultivation.getEssenceFoundation() * 0.8,
 					oldCultivation.getEssenceFoundation() - 3 * oldCultivation.getEssenceLevel().getProgressBySubLevel(oldCultivation.getEssenceSubLevel())));
 		} else {
 			cultivation.copyFrom(oldCultivation);
@@ -556,7 +564,7 @@ public class EventHandler {
 		skillCap.copyFrom(oldSkillCap, true);
 		sealing.copyFrom(oldSealing);
 		barrier.copyFrom(oldBarrier);
-		barrier.setBarrierMaxAmount((float)Math.max(0, (cultivation.getEssenceModifier()-3.0)*0.5));
+		barrier.setBarrierMaxAmount((float) Math.max(0, (cultivation.getEssenceModifier() - 3.0) * 0.5));
 		barrier.setBarrierRegenRate(barrier.getBarrierMaxAmount() * 0.001f);
 	}
 
@@ -827,14 +835,13 @@ public class EventHandler {
 			if (damage <= 0) return;
 			damage = net.minecraftforge.common.ForgeHooks.onLivingDamage(player, event.getSource(), damage);
 
-			if(damage > 0) {
+			if (damage > 0) {
 				player.addExhaustion(event.getSource().getHungerDamage());
 				float health = player.getHealth();
 				player.getCombatTracker().trackDamage(event.getSource(), health, damage);
 				player.setHealth(health - damage);
 
-				if (damage < 3.4028235E37F)
-				{
+				if (damage < 3.4028235E37F) {
 					player.addStat(StatList.DAMAGE_TAKEN, Math.round(damage * 10.0F));
 				}
 			}
@@ -877,14 +884,15 @@ public class EventHandler {
 
 	/**
 	 * New armor reduction logics, this way armor scales all the way
-	 * @param damage the damage input
-	 * @param armor the armor to resist
+	 *
+	 * @param damage    the damage input
+	 * @param armor     the armor to resist
 	 * @param toughness the armor toughness
 	 * @return the damage taken
 	 */
 	private static float applyArmorCalculations(float damage, float armor, float toughness) {
 		float toughnessMod = (2.0F + toughness) / 4.0F;
-		float finalArmor = armor * (0.95f + toughnessMod*0.1f);
+		float finalArmor = armor * (0.95f + toughnessMod * 0.1f);
 		return Math.max(0, damage - finalArmor);
 	}
 
