@@ -52,7 +52,22 @@ public class BarrierCommand extends CommandBase {
             EntityPlayerMP playerMP = (EntityPlayerMP) sender;
             if (!playerMP.world.isRemote) {
                 boolean wrongUsage = true;
-                if (args.length == 2) {
+                if (args.length == 1) {
+                    if (args[0].equalsIgnoreCase("fixall")) {
+                        for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
+                            if (player != null) {
+                                IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
+                                ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+                                barrier.setBarrierMaxAmount((float)Math.max(0, (cultivation.getEssenceModifier()-3.0)*0.5));
+                                barrier.setBarrierRegenRate(barrier.getBarrierMaxAmount() * 0.001f);
+                            }
+                        }
+                        TextComponentString text = new TextComponentString( "Everyone who is on the server has their barrier fixed!");
+                        text.getStyle().setColor(TextFormatting.GREEN);
+                        playerMP.sendMessage(text);
+                        wrongUsage = false;
+                    }
+                } else if (args.length == 2) {
                     if (args[0].equalsIgnoreCase("get")) {
                         EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
                         if (targetPlayer != null) {
@@ -217,6 +232,9 @@ public class BarrierCommand extends CommandBase {
             }
             if ("fix".startsWith(args[0].toLowerCase())) {
                 completions.add("fix");
+            }
+            if ("fixall".startsWith(args[0].toLowerCase())) {
+                completions.add("fixAll");
             }
         } else if (args.length == 2) {
             for (String name : server.getPlayerList().getOnlinePlayerNames()) {
