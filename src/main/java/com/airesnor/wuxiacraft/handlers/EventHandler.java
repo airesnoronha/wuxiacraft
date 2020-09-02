@@ -125,9 +125,9 @@ public class EventHandler {
 			WorldSectData sectData = WorldSectData.get(playerMP.getEntityWorld());
 			Sect sect = Sect.getSectByPlayer(playerMP, sectData);
 			if (sect != null) {
-				String prefix = "[" + sect.getSectName() + "]";
+				String prefix = "[" + sect.getSectTag().toUpperCase() + "]";
 				ITextComponent component = event.getComponent();
-				ITextComponent newComponent = new TextComponentString(prefix);
+				ITextComponent newComponent = new TextComponentString(sect.getColour() + prefix);
 				newComponent.appendSibling(component);
 				event.setComponent(newComponent);
 			}

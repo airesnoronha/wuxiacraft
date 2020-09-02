@@ -76,9 +76,7 @@ public class SectCommand extends CommandBase {
                         wrongUsage = true;
                     }
                 } else if (args.length == 2) {
-                    if (args[0].equalsIgnoreCase("create")) {
-                        createSubCommand(args, playerMP, sectData);
-                    } else if (args[0].equalsIgnoreCase("accept") || args[0].equalsIgnoreCase("join")) {
+                    if (args[0].equalsIgnoreCase("accept") || args[0].equalsIgnoreCase("join")) {
                         acceptSubCommand(args, playerMP, sectData);
                     } else if (args[0].equalsIgnoreCase("decline")) {
                         declineSubCommand(args, playerMP, sectData);
@@ -102,11 +100,17 @@ public class SectCommand extends CommandBase {
                         viewPlayerSubCommand(server, args, playerMP, sectData);
                     } else if (args[0].equalsIgnoreCase("viewsect")) {
                         viewSectSubCommand(server, args, playerMP, sectData);
+                    } else if (args[0].equalsIgnoreCase("settag")) {
+                        setTagSubCommand(args, playerMP, sectData);
+                    } else if (args[0].equalsIgnoreCase("settagcolour")) {
+                        setTagColourSubCommand(args, playerMP, sectData);
                     } else {
                         wrongUsage = true;
                     }
                 } else if (args.length == 3) {
-                    if (args[0].equalsIgnoreCase("setrank")) {
+                    if (args[0].equalsIgnoreCase("create")) {
+                        createSubCommand(args, playerMP, sectData);
+                    } else if (args[0].equalsIgnoreCase("setrank")) {
                         setRankSubCommand(server, args, playerMP, sectData);
                     } else if (args[0].equalsIgnoreCase("createrank")) {
                         createRankSubCommand(args, playerMP, sectData);
@@ -195,6 +199,12 @@ public class SectCommand extends CommandBase {
             if ("viewsect".startsWith(args[0].toLowerCase())) {
                 completions.add("viewSect");
             }
+            if ("settag".startsWith(args[0].toLowerCase())) {
+                completions.add("setTag");
+            }
+            if ("settagcolour".startsWith(args[0].toLowerCase())) {
+                completions.add("setTagColour");
+            }
          } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("create") || args[0].equalsIgnoreCase("accept") || args[0].equalsIgnoreCase("decline") ||
                     args[0].equalsIgnoreCase("ally") || args[0].equalsIgnoreCase("enemy")) {
@@ -268,6 +278,15 @@ public class SectCommand extends CommandBase {
                     }
                 }
             }
+            if (args[0].equalsIgnoreCase("settagcolour")) {
+                String[] colours = { "aqua", "black", "dark_aqua", "blue", "dark_blue", "dark_gray", "dark_green",
+                        "dark_purple", "dark_red", "gold", "gray", "green", "light_purple", "red", "white", "yellow" };
+                for (String colour : colours) {
+                    if (colour.toLowerCase().startsWith(args[1].toLowerCase())) {
+                        completions.add(colour);
+                    }
+                }
+            }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("setrank")) {
                 if (sender instanceof  EntityPlayerMP) {
@@ -294,10 +313,29 @@ public class SectCommand extends CommandBase {
                 text.getStyle().setColor(TextFormatting.RED);
                 playerMP.sendMessage(text);
             } else {
-                sectData.SECTS.add(new Sect(args[1], playerMP.getUniqueID()));
-                TextComponentString text = new TextComponentString("Sect " + args[1] + " has been created.");
-                text.getStyle().setColor(TextFormatting.GREEN);
-                playerMP.sendMessage(text);
+                if (args[2].length() <= 5) {
+                    boolean tagExists = false;
+                    for (Sect testSect : sectData.SECTS) {
+                        if (testSect.getSectTag().equalsIgnoreCase(args[2])) {
+                            tagExists = true;
+                            break;
+                        }
+                    }
+                    if (!tagExists) {
+                        sectData.SECTS.add(new Sect(args[1], args[2], playerMP.getUniqueID()));
+                        TextComponentString text = new TextComponentString("Sect " + args[1] + " has been created.");
+                        text.getStyle().setColor(TextFormatting.GREEN);
+                        playerMP.sendMessage(text);
+                    } else {
+                        TextComponentString text = new TextComponentString( "That Sect Tag already exists. Please try again.");
+                        text.getStyle().setColor(TextFormatting.RED);
+                        playerMP.sendMessage(text);
+                    }
+                } else {
+                    TextComponentString text = new TextComponentString( "The Sect Tag cannot be longer than 5 characters. Please try again.");
+                    text.getStyle().setColor(TextFormatting.RED);
+                    playerMP.sendMessage(text);
+                }
             }
         } else {
             TextComponentString text = new TextComponentString("You are already in a sect. To create a new sect you either disband or leave your current sect.");
@@ -314,6 +352,8 @@ public class SectCommand extends CommandBase {
             text.getStyle().setColor(TextFormatting.AQUA);
             playerMP.sendMessage(text);
             text = new TextComponentString(TextFormatting.GREEN + "Sect Name: " + TextFormatting.WHITE + sectInfo.getSectName());
+            playerMP.sendMessage(text);
+            text = new TextComponentString(TextFormatting.GREEN + "Sect Tag: " + TextFormatting.WHITE + sectInfo.getSectTag());
             playerMP.sendMessage(text);
             String sectLeaderName = "";
             GameProfile sectLeader = server.getPlayerProfileCache().getProfileByUUID(sectInfo.getSectLeader());
@@ -749,7 +789,7 @@ public class SectCommand extends CommandBase {
         TextComponentString text = new TextComponentString("Sect Help Information:\n-----------------------------------");
         text.getStyle().setColor(TextFormatting.AQUA);
         playerMP.sendMessage(text);
-        text = new TextComponentString("/sect create <sectName>");
+        text = new TextComponentString("/sect create <sectName> <sectTag>");
         playerMP.sendMessage(text);
         text = new TextComponentString("/sect info");
         playerMP.sendMessage(text);
@@ -769,6 +809,10 @@ public class SectCommand extends CommandBase {
         playerMP.sendMessage(text);
         text = new TextComponentString("/sect rename <newSectName>");
         playerMP.sendMessage(text);
+        text = new TextComponentString("/sect setTag <sectTag>");
+        playerMP.sendMessage(text);
+        text = new TextComponentString("/sect setTagColour <colour>");
+        playerMP.sendMessage(text);
         text = new TextComponentString("/sect deleteRank <rankName>");
         playerMP.sendMessage(text);
         text = new TextComponentString("/sect setLeader <player>");
@@ -784,6 +828,10 @@ public class SectCommand extends CommandBase {
         text = new TextComponentString("/sect ally <sectName>");
         playerMP.sendMessage(text);
         text = new TextComponentString("/sect enemy <sectName>");
+        playerMP.sendMessage(text);
+        text = new TextComponentString("/sect viewSect <sectName>");
+        playerMP.sendMessage(text);
+        text = new TextComponentString("/sect viewPlayer <player>");
         playerMP.sendMessage(text);
         text = new TextComponentString("-----------------------------------");
         text.getStyle().setColor(TextFormatting.AQUA);
@@ -1129,6 +1177,8 @@ public class SectCommand extends CommandBase {
                 playerMP.sendMessage(text);
                 text = new TextComponentString(TextFormatting.GREEN + "Sect Name: " + TextFormatting.WHITE + sectInfo.getSectName());
                 playerMP.sendMessage(text);
+                text = new TextComponentString(TextFormatting.GREEN + "Sect Tag: " + TextFormatting.WHITE + sectInfo.getSectTag());
+                playerMP.sendMessage(text);
                 GameProfile sectLeader = server.getPlayerProfileCache().getProfileByUUID(sectInfo.getSectLeader());
                 String sectLeaderName = "";
                 if (sectLeader != null) {
@@ -1198,6 +1248,8 @@ public class SectCommand extends CommandBase {
             playerMP.sendMessage(text);
             text = new TextComponentString(TextFormatting.GREEN + "Sect Name: " + TextFormatting.WHITE + sectInfo.getSectName());
             playerMP.sendMessage(text);
+            text = new TextComponentString(TextFormatting.GREEN + "Sect Tag: " + TextFormatting.WHITE + sectInfo.getSectTag());
+            playerMP.sendMessage(text);
             GameProfile sectLeader = server.getPlayerProfileCache().getProfileByUUID(sectInfo.getSectLeader());
             String sectLeaderName = "";
             if (sectLeader != null) {
@@ -1253,6 +1305,62 @@ public class SectCommand extends CommandBase {
             playerMP.sendMessage(text);
         } else {
             TextComponentString text = new TextComponentString( "That sect does not exist.");
+            text.getStyle().setColor(TextFormatting.RED);
+            playerMP.sendMessage(text);
+        }
+    }
+
+    public void setTagSubCommand(String[] args, EntityPlayerMP playerMP, WorldSectData sectData) {
+        Sect sect = Sect.getSectByPlayer(playerMP, sectData);
+        if (sect != null) {
+            if (sect.getSectLeader().equals(playerMP.getUniqueID())) {
+                if (args[1].length() <= 5) {
+                    boolean tagExists = false;
+                    for (Sect testSect : sectData.SECTS) {
+                        if (testSect.getSectTag().equalsIgnoreCase(args[1])) {
+                            tagExists = true;
+                            break;
+                        }
+                    }
+                    if (!tagExists) {
+                        sect.setSectTag(args[1]);
+                        TextComponentString text = new TextComponentString( "Sect Tag has been set to \"" + args[1] + "\"");
+                        text.getStyle().setColor(TextFormatting.GREEN);
+                        playerMP.sendMessage(text);
+                    } else {
+                        TextComponentString text = new TextComponentString( "That Sect Tag already exists. Please try again.");
+                        text.getStyle().setColor(TextFormatting.RED);
+                        playerMP.sendMessage(text);
+                    }
+                } else {
+                    TextComponentString text = new TextComponentString( "The Sect Tag cannot be longer than 5 characters. Please try again.");
+                    text.getStyle().setColor(TextFormatting.RED);
+                    playerMP.sendMessage(text);
+                }
+            } else {
+                TextComponentString text = new TextComponentString( "Only the Sect Leader has permission to change the Sect Tag.");
+                text.getStyle().setColor(TextFormatting.RED);
+                playerMP.sendMessage(text);
+            }
+        } else {
+            TextComponentString text = new TextComponentString( "You do not belong to a sect.");
+            text.getStyle().setColor(TextFormatting.RED);
+            playerMP.sendMessage(text);
+        }
+    }
+
+    public void setTagColourSubCommand(String[] args, EntityPlayerMP playerMP, WorldSectData sectData) {
+        Sect sect = Sect.getSectByPlayer(playerMP, sectData);
+        if (sect != null) {
+            if (sect.getSectLeader().equals(playerMP.getUniqueID())) {
+                sect.setColour(args[1]);
+            } else {
+                TextComponentString text = new TextComponentString( "Only the Sect Leader has permission to change the Sect Tag.");
+                text.getStyle().setColor(TextFormatting.RED);
+                playerMP.sendMessage(text);
+            }
+        } else {
+            TextComponentString text = new TextComponentString( "You do not belong to a sect.");
             text.getStyle().setColor(TextFormatting.RED);
             playerMP.sendMessage(text);
         }
