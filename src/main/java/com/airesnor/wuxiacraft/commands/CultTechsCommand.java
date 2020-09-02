@@ -43,7 +43,7 @@ public class CultTechsCommand extends CommandBase {
 	@SuppressWarnings("SpellCheckingInspection")
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "/culttech";
+		return "/culttech <";
 	}
 
 	@Override

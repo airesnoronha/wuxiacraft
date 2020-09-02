@@ -712,6 +712,12 @@ public class Skills {
 				return activated;
 			});
 
+	public static final Skill THROW_WEAK_LIGHT = new Skill("throw_weak_light", false, false, 28f, 0.9f, 12f, 0)
+			.setAction(actor -> {
+
+				return true;
+			});
+
 	public static final Skill MINOR_BODY_REINFORCEMENT = new SkillPotionEffectSelf("minor_body_reinforcement", new PotionEffect(MobEffects.STRENGTH, 1800, 2, false, true), 12f, 1.2f, 18f, 20f, "Aires Adures");
 
 	public static final Skill WEAK_SWORD_FLIGHT = new SkillSwordFlight("weak_sword_flight", 0.6f, 0.9f, 9f, 500f, 0f, "Aires Adures");
