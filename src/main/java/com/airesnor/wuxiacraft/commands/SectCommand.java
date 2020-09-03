@@ -378,7 +378,7 @@ public class SectCommand extends CommandBase {
                         playerName = memberProfile.getName();
                     }
                     tempOutput += "[" + memberRank + "]" + playerName + ", ";
-                    if (j % 3 == 2 && j != 0) {
+                    if (j % 2 == 1 && j != 0) {
                         indexToStartFromNext = j + 1;
                         break;
                     }
@@ -1202,7 +1202,7 @@ public class SectCommand extends CommandBase {
                             playerName = memberProfile.getName();
                         }
                         tempOutput += "[" + memberRank + "]" + playerName + ", ";
-                        if (j % 3 == 2 && j != 0) {
+                        if (j % 2 == 1 && j != 0) {
                             indexToStartFromNext = j + 1;
                             break;
                         }
@@ -1273,7 +1273,7 @@ public class SectCommand extends CommandBase {
                         playerName = memberProfile.getName();
                     }
                     tempOutput += "[" + memberRank + "]" + playerName + ", ";
-                    if (j % 3 == 2 && j != 0) {
+                    if (j % 2 == 1 && j != 0) {
                         indexToStartFromNext = j + 1;
                         break;
                     }
