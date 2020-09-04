@@ -23,6 +23,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.DimensionType;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -249,13 +250,13 @@ public class CultivationUtils {
 			if (player.world instanceof WorldServer) {
 				WorldServer world = (WorldServer) player.world;
 				ICultivation cultivation = getCultivationFromEntity(player);
-
+				World w = player.getEntityWorld();
 				double resistance = 1;
 				if (this.system != null) {
 					resistance = cultivation.getSystemModifier(this.system) + cultivation.getEssenceModifier() *0.05 + cultivation.getBodyModifier() * 0.05 + cultivation.getDivineModifier()*0.05; //new foundation system is already a way to resist tribulation
 				}
 				double multiplier = world.getGameRules().hasRule("tribulationMultiplier") ? world.getGameRules().getInt("tribulationMultiplier") : 1;
-				double worldMultiplier = WorldVariables.get(world).getTribulationMultiplier();
+				double worldMultiplier = WorldVariables.get(w).getTribulationMultiplier();
 				double strength = this.tribulationStrength * multiplier * worldMultiplier;
 				final int bolts = MathUtils.clamp(1 + (int) (Math.round(resistance * 3 / strength)), 1, 12);
 				float damage = (float) Math.max(2, strength - resistance);
