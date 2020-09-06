@@ -49,68 +49,65 @@ public class FoodCommand extends CommandBase {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (sender instanceof EntityPlayerMP) {
-            EntityPlayerMP playerMP = (EntityPlayerMP) sender;
-            if (!playerMP.world.isRemote) {
-                boolean wrongUsage = true;
-                if (args.length == 2) {
-                    EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
-                    if (targetPlayer != null) {
-                        if (args[0].equalsIgnoreCase("get")) {
-                            TextComponentString text = new TextComponentString(targetPlayer.getName() + "'s Food:");
-                            targetPlayer.sendMessage(text);
-                            text = new TextComponentString("Hunger level: " + targetPlayer.getFoodStats().getFoodLevel());
-                            targetPlayer.sendMessage(text);
-                            text = new TextComponentString("Saturation level: " + targetPlayer.getFoodStats().getSaturationLevel());
-                            targetPlayer.sendMessage(text);
-                            wrongUsage = false;
-                        }
-                    } else {
-                        TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
-                        text.getStyle().setColor(TextFormatting.RED);
-                        sender.sendMessage(text);
-                        wrongUsage = true;
+        if (!sender.getEntityWorld().isRemote) {
+            boolean wrongUsage = true;
+            if (args.length == 2) {
+                EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
+                if (targetPlayer != null) {
+                    if (args[0].equalsIgnoreCase("get")) {
+                        TextComponentString text = new TextComponentString(targetPlayer.getName() + "'s Food:");
+                        targetPlayer.sendMessage(text);
+                        text = new TextComponentString("Hunger level: " + targetPlayer.getFoodStats().getFoodLevel());
+                        targetPlayer.sendMessage(text);
+                        text = new TextComponentString("Saturation level: " + targetPlayer.getFoodStats().getSaturationLevel());
+                        targetPlayer.sendMessage(text);
+                        wrongUsage = false;
                     }
-                } else if (args.length == 3) {
-                    EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
-                    if (targetPlayer != null) {
-                        if (args[0].equalsIgnoreCase("set")) {
-                            int value = Integer.parseInt(args[2]);
-                            targetPlayer.getFoodStats().setFoodLevel(value);
-                            try {
-                                foodStats.setFloat(targetPlayer.getFoodStats(), value);
-                            } catch (Exception e) {
-                                WuxiaCraft.logger.error("Couldn't help with food, sorry!");
-                                e.printStackTrace();
-                            }
-                            wrongUsage = false;
-                        } else if (args[0].equalsIgnoreCase("setSaturation")) {
-                            int value = Integer.parseInt(args[2]);
-                            try {
-                                foodStats.setFloat(targetPlayer.getFoodStats(), value);
-                            } catch (Exception e) {
-                                WuxiaCraft.logger.error("Couldn't help with food, sorry!");
-                                e.printStackTrace();
-                            }
-                            wrongUsage = false;
-                        } else if (args[0].equalsIgnoreCase("setHunger")) {
-                            int value = Integer.parseInt(args[2]);
-                            targetPlayer.getFoodStats().setFoodLevel(value);
-                            wrongUsage = false;
-                        }
-                    } else {
-                        TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
-                        text.getStyle().setColor(TextFormatting.RED);
-                        sender.sendMessage(text);
-                        wrongUsage = true;
-                    }
-                }
-
-                if (wrongUsage) {
-                    TextComponentString text = new TextComponentString("Invalid arguments, use /food [set <player> <value> : get <player> : set <player> saturation/hunger <value>]");
+                } else {
+                    TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
                     text.getStyle().setColor(TextFormatting.RED);
                     sender.sendMessage(text);
+                    wrongUsage = true;
                 }
+            } else if (args.length == 3) {
+                EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
+                if (targetPlayer != null) {
+                    if (args[0].equalsIgnoreCase("set")) {
+                        int value = Integer.parseInt(args[2]);
+                        targetPlayer.getFoodStats().setFoodLevel(value);
+                        try {
+                            foodStats.setFloat(targetPlayer.getFoodStats(), value);
+                        } catch (Exception e) {
+                            WuxiaCraft.logger.error("Couldn't help with food, sorry!");
+                            e.printStackTrace();
+                        }
+                        wrongUsage = false;
+                    } else if (args[0].equalsIgnoreCase("setSaturation")) {
+                        int value = Integer.parseInt(args[2]);
+                        try {
+                            foodStats.setFloat(targetPlayer.getFoodStats(), value);
+                        } catch (Exception e) {
+                            WuxiaCraft.logger.error("Couldn't help with food, sorry!");
+                            e.printStackTrace();
+                        }
+                        wrongUsage = false;
+                    } else if (args[0].equalsIgnoreCase("setHunger")) {
+                        int value = Integer.parseInt(args[2]);
+                        targetPlayer.getFoodStats().setFoodLevel(value);
+                        wrongUsage = false;
+                    }
+                } else {
+                    TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
+                    text.getStyle().setColor(TextFormatting.RED);
+                    sender.sendMessage(text);
+                    wrongUsage = true;
+                }
+            }
+
+            if (wrongUsage) {
+                TextComponentString text = new TextComponentString("Invalid arguments, use /food [set <player> <value> : get <player> : set <player> saturation/hunger <value>]");
+                text.getStyle().setColor(TextFormatting.RED);
+                sender.sendMessage(text);
             }
         }
     }

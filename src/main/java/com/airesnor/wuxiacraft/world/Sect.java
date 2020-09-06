@@ -4,6 +4,7 @@ import com.airesnor.wuxiacraft.world.data.WorldSectData;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -12,6 +13,8 @@ import java.util.*;
 public class Sect {
 
     private String sectName;
+    private String sectTag;
+    private String colour;
     private UUID sectLeader;
     private List<Pair<String, Integer>> ranks;
     private List<Pair<String, Integer>> defaultRanks;
@@ -26,8 +29,10 @@ public class Sect {
     private long changeLeaderTime;
 
 
-    public Sect(String sectName, UUID sectLeaderUUID) {
+    public Sect(String sectName, String sectTag, UUID sectLeaderUUID) {
         this.sectName = sectName;
+        this.sectTag = sectTag;
+        this.colour = "white";
         this.sectLeader = sectLeaderUUID;
         this.ranks = new ArrayList<>();
         this.defaultRanks = new ArrayList<>();
@@ -57,6 +62,8 @@ public class Sect {
 
     public Sect() {
         this.sectName = null;
+        this.sectTag = null;
+        this.colour = null;
         this.sectLeader = null;
         this.ranks = new ArrayList<>();
         this.defaultRanks = new ArrayList<>();
@@ -90,6 +97,56 @@ public class Sect {
 
     public String getSectName() {
         return sectName;
+    }
+
+    public void setSectTag(String sectTag) {
+        this.sectTag = sectTag;
+    }
+
+    public String getSectTag() {
+        return sectTag;
+    }
+
+    public void setColour(String colour) {
+        this.colour = colour;
+    }
+
+    public TextFormatting getColour() {
+        TextFormatting textFormatting = TextFormatting.WHITE;
+        if (colour.equalsIgnoreCase("aqua")) {
+            textFormatting = TextFormatting.AQUA;
+        } else if (colour.equalsIgnoreCase("black")) {
+            textFormatting = TextFormatting.BLACK;
+        } else if (colour.equalsIgnoreCase("dark_aqua")) {
+            textFormatting = TextFormatting.DARK_AQUA;
+        } else if (colour.equalsIgnoreCase("blue")) {
+            textFormatting = TextFormatting.BLUE;
+        } else if (colour.equalsIgnoreCase("dark_blue")) {
+            textFormatting = TextFormatting.DARK_BLUE;
+        } else if (colour.equalsIgnoreCase("dark_gray")) {
+            textFormatting = TextFormatting.DARK_GRAY;
+        } else if (colour.equalsIgnoreCase("dark_green")) {
+            textFormatting = TextFormatting.DARK_GREEN;
+        } else if (colour.equalsIgnoreCase("dark_purple")) {
+            textFormatting = TextFormatting.DARK_PURPLE;
+        } else if (colour.equalsIgnoreCase("dark_red")) {
+            textFormatting = TextFormatting.DARK_RED;
+        } else if (colour.equalsIgnoreCase("gold")) {
+            textFormatting = TextFormatting.GOLD;
+        } else if (colour.equalsIgnoreCase("gray")) {
+            textFormatting = TextFormatting.GRAY;
+        } else if (colour.equalsIgnoreCase("green")) {
+            textFormatting = TextFormatting.GREEN;
+        } else if (colour.equalsIgnoreCase("light_purple")) {
+            textFormatting = TextFormatting.LIGHT_PURPLE;
+        } else if (colour.equalsIgnoreCase("red")) {
+            textFormatting = TextFormatting.RED;
+        } else if (colour.equalsIgnoreCase("white")) {
+            textFormatting = TextFormatting.WHITE;
+        } else if (colour.equalsIgnoreCase("yellow")) {
+            textFormatting = TextFormatting.YELLOW;
+        }
+        return textFormatting;
     }
 
     public void setSectLeader(UUID sectLeader) {
@@ -371,6 +428,8 @@ public class Sect {
         this.setDisbandTime(nbt.getLong("disbandTime"));
         this.setChangeLeader(nbt.getBoolean("changeLeader"));
         this.setChangeLeaderTime(nbt.getLong("changeLeaderTime"));
+        this.setSectTag(nbt.getString("sectTag"));
+        this.setColour(nbt.getString("sectTagColour"));
         return this;
     }
 
@@ -421,6 +480,8 @@ public class Sect {
         tag.setLong("disbandTime", disbandTime);
         tag.setBoolean("changeLeader", changeLeader);
         tag.setLong("changeLeaderTime", changeLeaderTime);
+        tag.setString("sectTag", sectTag);
+        tag.setString("sectTagColour", colour);
         return tag;
     }
 

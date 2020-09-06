@@ -76,45 +76,37 @@ public class ProgressMessage implements IMessage {
 		public IMessage onMessage(ProgressMessage message, MessageContext ctx) {
 			if (ctx.side == Side.SERVER) {
 				final WorldServer world = ctx.getServerHandler().player.getServerWorld();
-				final EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
-				final ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-				FormationTileEntity marked = null;
-				double amount = message.amount;
-				if (message.op == 0 && player != null) {
-					if (!skillCap.hasFormationActivated()) {
-						for (TileEntity te : world.loadedTileEntityList) {
-							if (te instanceof FormationTileEntity) {
-								if (((FormationTileEntity) te).getState() == FormationTileEntity.FormationState.ACTIVE && ((FormationTileEntity) te).getFormation() instanceof FormationCultivationHelper) {
-									if (te.getDistanceSq(player.posX, player.posY, player.posZ) <= Math.pow(((FormationTileEntity) te).getFormation().getRange(), 2)) {
-										if (((FormationTileEntity) te).hasEnergy(((FormationTileEntity) te).getFormation().getOperationCost())) {
-											amount += ((FormationCultivationHelper) ((FormationTileEntity) te).getFormation()).getAmount();
-											marked = (FormationTileEntity) te;
-											break;
+				world.addScheduledTask(() -> {
+					EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
+					if (player != null) {
+						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+						ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
+						switch (message.op) {
+							case 0:
+								double amount = message.amount;
+								if (!skillCap.hasFormationActivated()) {
+									for (TileEntity te : world.loadedTileEntityList) {
+										if (te instanceof FormationTileEntity) {
+											if (((FormationTileEntity) te).getState() == FormationTileEntity.FormationState.ACTIVE && ((FormationTileEntity) te).getFormation() instanceof FormationCultivationHelper) {
+												if (te.getDistanceSq(player.posX, player.posY, player.posZ) <= Math.pow(((FormationTileEntity) te).getFormation().getRange(), 2)) {
+													if (((FormationTileEntity) te).hasEnergy(((FormationTileEntity) te).getFormation().getOperationCost())) {
+														amount += ((FormationCultivationHelper) ((FormationTileEntity) te).getFormation()).getAmount();
+														((FormationTileEntity) te).remEnergy(((FormationTileEntity) te).getFormation().getOperationCost());
+														skillCap.setFormationActivated(true);
+														break;
+													}
+												}
+											}
 										}
 									}
 								}
-							}
-						}
-					}
-				}
-				final FormationTileEntity markedForEnergyRemoval = marked;
-				final double finalAmount = amount;
-				world.addScheduledTask(() -> {
-					if (player != null) {
-						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-						switch (message.op) {
-							case 0:
-								CultivationUtils.cultivatorAddProgress(player, message.system, finalAmount, message.techniques, message.allowBreakTrough);
+								CultivationUtils.cultivatorAddProgress(player, message.system, amount, message.techniques, message.allowBreakTrough);
 								ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 								cultTech.getTechniqueBySystem(message.system).getTechnique().cultivationEffect.activate(player); //this runs server side
-								if (markedForEnergyRemoval != null) {
-									skillCap.setFormationActivated(true);
-									markedForEnergyRemoval.remEnergy(markedForEnergyRemoval.getFormation().getOperationCost());
-								}
 								break;
 							case 1:
 								try {
-									cultivation.addSystemProgress(-finalAmount, message.system, false);
+									cultivation.addSystemProgress(-message.amount, message.system, false);
 								} catch (Cultivation.RequiresTribulation tribulation) {
 									WuxiaCraft.logger.error("I don't think it'll require tribulation");
 								}
@@ -122,13 +114,13 @@ public class ProgressMessage implements IMessage {
 							case 2:
 								switch (message.system) {
 									case BODY:
-										cultivation.setBodyProgress(finalAmount);
+										cultivation.setBodyProgress(message.amount);
 										break;
 									case DIVINE:
-										cultivation.setDivineProgress(finalAmount);
+										cultivation.setDivineProgress(message.amount);
 										break;
 									case ESSENCE:
-										cultivation.setEssenceProgress(finalAmount);
+										cultivation.setEssenceProgress(message.amount);
 								}
 						}
 					}

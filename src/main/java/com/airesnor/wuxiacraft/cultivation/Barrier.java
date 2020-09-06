@@ -3,11 +3,11 @@ package com.airesnor.wuxiacraft.cultivation;
 public class Barrier implements IBarrier {
 
     private float barrierAmount;
+    private float barrierMaxAmount;
     private float barrierRegenRate;
     private int barrierCooldown;
     private int barrierMaxCooldown;
     private int barrierHits;
-    private float currentLevelBarrierAmount;
 
     private boolean barrierRegenActive;
     private boolean barrierActive;
@@ -15,6 +15,7 @@ public class Barrier implements IBarrier {
 
     public Barrier() {
         this.barrierAmount = 0;
+        this.barrierMaxAmount = 0;
         this.barrierRegenRate = 0;
         this.barrierCooldown = 0;
         this.barrierMaxCooldown = 3600;
@@ -22,7 +23,6 @@ public class Barrier implements IBarrier {
         this.barrierActive = false;
         this.barrierBroken = false;
         this.barrierHits = 0;
-        this.currentLevelBarrierAmount = 0;
     }
 
     @Override
@@ -56,16 +56,6 @@ public class Barrier implements IBarrier {
     }
 
     @Override
-    public void setCurrentLevelBarrierAmount(float amount) {
-        this.currentLevelBarrierAmount = Math.max(0, amount);
-    }
-
-    @Override
-    public float getCurrentLevelBarrierAmount() {
-        return this.currentLevelBarrierAmount;
-    }
-
-    @Override
     public void setBarrierHits(int hits) {
         this.barrierHits = Math.max(0, hits);
     }
@@ -81,8 +71,13 @@ public class Barrier implements IBarrier {
     }
 
     @Override
-    public float getMaxBarrierAmount(double essenceModifier) {
-        return (float)Math.max(0, (essenceModifier-3.0)*0.5);
+    public void setBarrierMaxAmount(float amount) {
+        this.barrierMaxAmount = Math.max(0, amount);
+    }
+
+    @Override
+    public float getBarrierMaxAmount() {
+        return this.barrierMaxAmount;
     }
 
     @Override
@@ -148,6 +143,7 @@ public class Barrier implements IBarrier {
     @Override
     public void copyFrom(IBarrier barrier) {
         this.barrierAmount = barrier.getBarrierAmount();
+        this.barrierMaxAmount = barrier.getBarrierMaxAmount();
         this.barrierRegenRate = barrier.getBarrierRegenRate();
         this.barrierCooldown = barrier.getBarrierCooldown();
         this.barrierMaxCooldown = barrier.getBarrierMaxCooldown();
