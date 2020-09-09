@@ -364,7 +364,7 @@ public class SectCommand extends CommandBase {
             playerMP.sendMessage(text);
             text = new TextComponentString(TextFormatting.GREEN + "Sect Members: ");
             playerMP.sendMessage(text);
-            String[] memberOutputs = new String[sectInfo.getMembers().size() / 3 + 1];
+            String[] memberOutputs = new String[sectInfo.getMembers().size() / 2 + 1];
             int indexToStartFromNext = 0;
             for (int i = 0; i < memberOutputs.length; i++) {
                 String tempOutput = "";
@@ -1188,7 +1188,7 @@ public class SectCommand extends CommandBase {
                 playerMP.sendMessage(text);
                 text = new TextComponentString(TextFormatting.GREEN + "Sect Members: ");
                 playerMP.sendMessage(text);
-                String[] memberOutputs = new String[sectInfo.getMembers().size() / 3 + 1];
+                String[] memberOutputs = new String[sectInfo.getMembers().size() / 2 + 1];
                 int indexToStartFromNext = 0;
                 for (int i = 0; i < memberOutputs.length; i++) {
                     String tempOutput = "";
@@ -1259,7 +1259,7 @@ public class SectCommand extends CommandBase {
             playerMP.sendMessage(text);
             text = new TextComponentString(TextFormatting.GREEN + "Sect Members: ");
             playerMP.sendMessage(text);
-            String[] memberOutputs = new String[sectInfo.getMembers().size() / 3 + 1];
+            String[] memberOutputs = new String[sectInfo.getMembers().size() / 2 + 1];
             int indexToStartFromNext = 0;
             for (int i = 0; i < memberOutputs.length; i++) {
                 String tempOutput = "";
