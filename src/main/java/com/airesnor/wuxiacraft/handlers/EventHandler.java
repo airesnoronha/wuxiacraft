@@ -42,15 +42,11 @@ import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.MobEffects;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -814,40 +810,94 @@ public class EventHandler {
 	}
 
 	/**
+	 * following the logic that it'll send the damage event right after this one
+	 */
+	private static float beforeDamage = 0;
+	private static boolean originalUnblockable = false;
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void onPlayerHurt(LivingHurtEvent event) {
+		if (!(event.getEntityLiving() instanceof EntityPlayer)) return;
+		if (event.isCanceled()) return; //compatibility with mods and plugins
+		if (event.getAmount() <= 0) return;
+ 		beforeDamage = event.getAmount();
+		originalUnblockable = event.getSource().isUnblockable();
+		if(!originalUnblockable &&
+				event.getSource() != DamageSource.CACTUS &&
+				event.getSource() != DamageSource.FIREWORKS &&
+				event.getSource() != DamageSource.IN_FIRE &&
+				event.getSource() != DamageSource.HOT_FLOOR &&
+				event.getSource() != DamageSource.LAVA &&
+				event.getSource() != DamageSource.ANVIL &&
+				event.getSource() != DamageSource.FALLING_BLOCK &&
+				event.getSource() != DamageSource.LIGHTNING_BOLT) {
+			event.getSource().setDamageBypassesArmor();
+		}
+	}
+
+	/**
 	 * Apply new armor and resistance logics
+	 * Ignores forge armor logics but still applies damage to armor items
 	 * Update: Now it's Sponge compatible
 	 *
 	 * @param event A description of whats happening
 	 */
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void onPlayerHurt(LivingDamageEvent event) {
+	public void onPlayerTakeDamage(LivingDamageEvent event) {
 		if (!(event.getEntityLiving() instanceof EntityPlayer)) return;
-		if(event.isCanceled()) return; //compatibility with mods and plugins
-		if (event.getAmount() <= 0) return;
-		float damage = event.getAmount();
+		if (event.isCanceled()) return; //compatibility with mods and plugins
+		if(beforeDamage <= 0) return; //if it was 0 before the event
+		float damage = beforeDamage;
 		float armor = event.getEntityLiving().getTotalArmorValue();
 		float toughness = (float)event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue();
-		damage = revertCombatRulesArmorLogic(damage, armor, toughness);
-		event.setAmount(applyArmorCalculations(damage, armor, toughness));
-		if(event.getAmount() <= 0) {
+		if(!originalUnblockable) {
+			damage = applyArmorCalculations(damage, armor, toughness);
+			((EntityPlayer)event.getEntityLiving()).addExhaustion(0.1f); //set unblockable removes the hunger damage, lame
+		}
+		originalUnblockable = false;
+		damage = applyPotionDamageCalculations(event.getEntityLiving(), event.getSource(), damage);
+		event.setAmount(damage);
+		if (event.getAmount() <= 0) {
 			event.setCanceled(true);
 		}
 	}
 
 	/**
-	 * Reverts the armor reduction to damage, and yeah, this works!
-	 * This way i disable vanilla armor logics to open way to my logics
-	 *
-	 * @param damage reduced damaged after armor reduction
-	 * @param totalArmor the armor of the player
-	 * @param toughnessAttribute referred armor toughness
-	 * @return the original damage before armor reduction
+	 * Reduces damage, depending on potions
+	 * direct copy from {@link EntityLivingBase}
 	 */
-	private static float revertCombatRulesArmorLogic(float damage, float totalArmor, float toughnessAttribute)
+	private static float applyPotionDamageCalculations(EntityLivingBase target, DamageSource source, float damage)
 	{
-		float f = 2.0F + toughnessAttribute / 4.0F;
-		float f1 = MathHelper.clamp(totalArmor - damage / f, totalArmor * 0.2F, 20.0F);
-		return damage / (1.0F - f1 / 25.0F);
+		if (source.isDamageAbsolute())
+		{
+			return damage;
+		}
+		else
+		{
+			if (target.isPotionActive(MobEffects.RESISTANCE) && source != DamageSource.OUT_OF_WORLD)
+			{
+				int i = (Objects.requireNonNull(target.getActivePotionEffect(MobEffects.RESISTANCE)).getAmplifier() + 1) * 5;
+				int j = 25 - i;
+				float f = damage * (float)j;
+				damage = f / 25.0F;
+			}
+
+			if (damage <= 0.0F)
+			{
+				return 0.0F;
+			}
+			else
+			{
+				int k = EnchantmentHelper.getEnchantmentModifierDamage(target.getArmorInventoryList(), source);
+
+				if (k > 0)
+				{
+					damage = CombatRules.getDamageAfterMagicAbsorb(damage, (float)k);
+				}
+
+				return damage;
+			}
+		}
 	}
 
 	/**
@@ -953,7 +1003,7 @@ public class EventHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onDefendingAgainstTheRageSaint(LivingAttackEvent event) {
-		if(event.isCanceled()) return;
+		if (event.isCanceled()) return;
 		if (event.getSource().getTrueSource() instanceof EntityPlayer && !(event.getSource() instanceof Skills.HealingDamageSource)) {
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity((EntityLivingBase) event.getSource().getTrueSource());
 			if (cultTech.getDivineTechnique() != null) {
@@ -967,7 +1017,7 @@ public class EventHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onPlayerDefense(LivingAttackEvent event) {
-		if(event.isCanceled()) return;
+		if (event.isCanceled()) return;
 		if (!(event.getEntityLiving() instanceof EntityPlayer)) return;
 		if (event.getAmount() <= 0.0f) return;
 
@@ -993,7 +1043,7 @@ public class EventHandler {
 	 * @param player  EntityPlayer instance of player
 	 */
 	public void handleBarrier(LivingAttackEvent event, IBarrier barrier, EntityPlayer player) {
-		if(event.isCanceled()) return;
+		if (event.isCanceled()) return;
 		if (event.getSource().isDamageAbsolute()) {
 			if (barrier.getBarrierAmount() > 0.0f && event.getAmount() <= barrier.getBarrierAmount()) {
 				event.setCanceled(true);
