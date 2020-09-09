@@ -92,6 +92,7 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerEntityRenderingHandler(EntityLevelUpHalo.class, RenderLevelUpHalo::new);
 		RenderingRegistry.registerEntityRenderingHandler(WindBladeThrowable.class, RenderWindBlade::new);
 		RenderingRegistry.registerEntityRenderingHandler(ThunderBoltThrowable.class, RenderThunderBolt::new);
+		RenderingRegistry.registerEntityRenderingHandler(LightThrowable.class, RenderLight::new);
 
 		WuxiaCraftConfig.clientPreInit();
 

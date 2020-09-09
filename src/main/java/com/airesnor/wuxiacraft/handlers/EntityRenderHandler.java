@@ -8,9 +8,11 @@ import com.airesnor.wuxiacraft.networking.RequestAuraForOtherPlayerMessage;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -39,6 +41,26 @@ public class EntityRenderHandler {
 			IAuraCap auraCap = CultivationUtils.getAuraFromEntity(event.getEntity());
 			for(Aura aura : auraCap.getAuraInstances()) {
 				aura.renderPost(event.getX(), event.getY(), event.getZ());
+			}
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void renderPlayerThroughWallsPre(RenderLivingEvent.Pre<EntityOtherPlayerMP> event) {
+		if (event.getEntity() instanceof EntityOtherPlayerMP) {
+			if(Minecraft.getMinecraft().player.isSneaking()) {
+				GlStateManager.disableDepth();
+			}
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void renderPlayerThroughWallsPost(RenderLivingEvent.Post<EntityOtherPlayerMP> event) {
+		if (event.getEntity() instanceof EntityOtherPlayerMP) {
+			if(Minecraft.getMinecraft().player.isSneaking()) {
+				GlStateManager.enableDepth();
 			}
 		}
 	}

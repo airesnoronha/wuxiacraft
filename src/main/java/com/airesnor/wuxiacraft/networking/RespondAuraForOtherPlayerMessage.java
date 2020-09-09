@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.networking;
 
+import com.airesnor.wuxiacraft.aura.AuraCap;
 import com.airesnor.wuxiacraft.aura.IAuraCap;
 import com.airesnor.wuxiacraft.capabilities.AuraCapProvider;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
@@ -23,6 +24,7 @@ public class RespondAuraForOtherPlayerMessage implements IMessage {
 	public IAuraCap auraCap;
 
 	public RespondAuraForOtherPlayerMessage() {
+		this.auraCap = new AuraCap();
 	}
 
 	public RespondAuraForOtherPlayerMessage(UUID target, IAuraCap auraCap) {

@@ -44,7 +44,7 @@ public class BaseAura extends Aura {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x, y, z);
 		GlStateManager.disableLighting();
-		GlStateManager.disableDepth();
+		//GlStateManager.disableDepth();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		GlStateManager.color(color.x, color.y, color.z, 0.3f);
@@ -67,7 +67,7 @@ public class BaseAura extends Aura {
 		}
 		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.enableLighting();
-		GlStateManager.enableDepth();
+		//GlStateManager.enableDepth();
 		GlStateManager.disableBlend();
 		GlStateManager.popMatrix();
 		GlStateManager.popAttrib();
@@ -81,7 +81,7 @@ public class BaseAura extends Aura {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x, y, z);
 		GlStateManager.disableLighting();
-		GlStateManager.disableDepth();
+		//GlStateManager.disableDepth();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		GlStateManager.color(color.x, color.y, color.z, 0.3f);
@@ -104,7 +104,7 @@ public class BaseAura extends Aura {
 		}
 		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.enableLighting();
-		GlStateManager.enableDepth();
+		//GlStateManager.enableDepth();
 		//GlStateManager.disableBlend(); // would glitch inventory
 		GlStateManager.popMatrix();
 		GlStateManager.popAttrib();

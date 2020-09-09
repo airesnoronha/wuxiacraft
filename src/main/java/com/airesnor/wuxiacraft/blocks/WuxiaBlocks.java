@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.blocks;
 
-import com.airesnor.wuxiacraft.cultivation.CultivationLevel;
 import com.airesnor.wuxiacraft.formation.FormationCoreBlock;
 import com.airesnor.wuxiacraft.items.WuxiaItems;
 import net.minecraft.block.Block;
@@ -86,5 +85,10 @@ public class WuxiaBlocks {
 	public static final Block PRIMORDIAL_CHAOS_STONE_VEIN = new SpiritVeinOre("primordial_chaos_stone_vein").setDroppedItem(WuxiaItems.PRIMORDIAL_CHAOS_STONE);
 
 	public static final Block MAGICAL_GRINDER = new MagicalGrinder("magical_grinder");
+
+	public static final Block WEAK_LIGHT_BLOCK = new BlockSkillLight("weak_light_block", 0.25f);
+	public static final Block MEDIUM_LIGHT_BLOCK = new BlockSkillLight("medium_light_block", 0.5f);
+	public static final Block STRONG_LIGHT_BLOCK = new BlockSkillLight("strong_light_block", 0.75f);
+	public static final Block MAXIMA_LIGHT_BLOCK = new BlockSkillLight("maxima_light_block", 1);
 
 }

@@ -1,6 +1,8 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.blocks.BlockRune;
+import com.airesnor.wuxiacraft.blocks.BlockSkillLight;
 import com.airesnor.wuxiacraft.blocks.SpiritVeinOre;
 import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
@@ -82,7 +84,9 @@ public class RegistryHandler {
 			if (block instanceof SpiritVeinOre) {
 				WuxiaCraft.proxy.registerCustomModelLocation(ItemBlock.getItemFromBlock(block), 0, "inventory", "wuxiacraft:spirit_vein_ore");
 			} else {
-				WuxiaCraft.proxy.registerItemRenderer(Item.getItemFromBlock(block), 0, "inventory");
+				if (Item.getItemFromBlock(block) != Items.AIR) {
+					WuxiaCraft.proxy.registerItemRenderer(Item.getItemFromBlock(block), 0, "inventory");
+				}
 			}
 		}
 		ClientRegistry.bindTileEntitySpecialRenderer(CauldronTileEntity.class, new CauldronTESR());
@@ -93,7 +97,7 @@ public class RegistryHandler {
 	public static void onEntityRegister(RegistryEvent.Register<EntityEntry> event) {
 		EntityEntry giantAntEntity = EntityEntryBuilder.create()
 				.entity(GiantAnt.class)
-				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "giant_ant"),0)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "giant_ant"), 0)
 				.name("giant_ant")
 				.tracker(80, 3, false)
 				.egg(0xDA5917, 0xC35D35)
@@ -122,7 +126,7 @@ public class RegistryHandler {
 				.build();
 		EntityEntry giantBeeEntity = EntityEntryBuilder.create()
 				.entity(GiantBee.class)
-				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "giant_bee"),2)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "giant_bee"), 2)
 				.name("giant_bee")
 				.tracker(80, 3, false)
 				.egg(0xFACB27, 0x202020)
@@ -151,7 +155,7 @@ public class RegistryHandler {
 				.build();
 		EntityEntry wanderingCultivatorEntity = EntityEntryBuilder.create()
 				.entity(WanderingCultivator.class)
-				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "wandering_cultivator"),1)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "wandering_cultivator"), 1)
 				.name("wandering_cultivator")
 				.tracker(150, 3, false)
 				.egg(0x202020, 0xFACB27)
@@ -229,6 +233,12 @@ public class RegistryHandler {
 				.name("thunder_bolt_throwable")
 				.tracker(300, 10, true)
 				.build();
+		EntityEntry lightThrowable = EntityEntryBuilder.create()
+				.entity(LightThrowable.class)
+				.id(new ResourceLocation(WuxiaCraft.MOD_ID, "light_throwable"), 11)
+				.name("light_throwable")
+				.tracker(300, 10, true)
+				.build();
 		event.getRegistry().register(giantAntEntity);
 		event.getRegistry().register(giantBeeEntity);
 		event.getRegistry().register(wanderingCultivatorEntity);
@@ -240,6 +250,7 @@ public class RegistryHandler {
 		event.getRegistry().register(windBladeThrowable);
 		event.getRegistry().register(entityLevelUpHalo);
 		event.getRegistry().register(thunderBoltThrowable);
+		event.getRegistry().register(lightThrowable);
 	}
 
 	//ain't an event

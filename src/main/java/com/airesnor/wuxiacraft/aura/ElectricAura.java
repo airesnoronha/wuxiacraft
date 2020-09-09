@@ -72,7 +72,6 @@ public class ElectricAura extends Aura {
 		GlStateManager.translate(x, y, z);
 		GlStateManager.disableLighting();
 		GlStateManager.disableTexture2D();
-		GlStateManager.disableDepth();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		Tessellator tessellator = Tessellator.getInstance();
@@ -107,10 +106,10 @@ public class ElectricAura extends Aura {
 				builder.pos(next.x + squareSize * outerSquareSize, next.y, next.z - squareSize * outerSquareSize).color(color.x, color.y, color.z, 0.3f).endVertex();
 				builder.pos(point.x + squareSize * outerSquareSize, point.y, point.z - squareSize * outerSquareSize).color(color.x, color.y, color.z, 0.3f).endVertex();
 
-				builder.pos(point.x - squareSize, point.y, point.z - squareSize).color(1f, 1f, 1f, 0.5f).endVertex();
-				builder.pos(next.x - squareSize, next.y, next.z - squareSize).color(1f, 1f, 1f, 0.5f).endVertex();
-				builder.pos(next.x + squareSize, next.y, next.z - squareSize).color(1f, 1f, 1f, 0.5f).endVertex();
 				builder.pos(point.x + squareSize, point.y, point.z - squareSize).color(1f, 1f, 1f, 0.5f).endVertex();
+				builder.pos(next.x + squareSize, next.y, next.z - squareSize).color(1f, 1f, 1f, 0.5f).endVertex();
+				builder.pos(next.x - squareSize, next.y, next.z - squareSize).color(1f, 1f, 1f, 0.5f).endVertex();
+				builder.pos(point.x - squareSize, point.y, point.z - squareSize).color(1f, 1f, 1f, 0.5f).endVertex();
 
 				builder.pos(point.x + squareSize, point.y, point.z + squareSize).color(1f, 1f, 1f, 0.5f).endVertex();
 				builder.pos(next.x + squareSize, next.y, next.z + squareSize).color(1f, 1f, 1f, 0.5f).endVertex();
@@ -133,7 +132,6 @@ public class ElectricAura extends Aura {
 		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.enableLighting();
 		GlStateManager.enableTexture2D();
-		GlStateManager.enableDepth();
 		GlStateManager.disableBlend();
 		GlStateManager.popMatrix();
 		GlStateManager.popAttrib();

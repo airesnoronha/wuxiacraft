@@ -149,6 +149,10 @@ tile.magical_grinder.name=Magical Grinder
 tile.fiery_stone.name=Fiery Stone
 tile.icy_stone.name=Icy Stone
 tile.metallic_stone.name=Metallic Stone
+tile.weak_light_block.name=Weak Floating Light
+tile.medium_light_block.name=Medium Floating Light
+tile.strong_light_block.name=Strong Floating Light
+tile.maxima_light_block.name=Maxima Floating Light
 
 #Configuration
 gui.config.main_title=WuxiaCraft
