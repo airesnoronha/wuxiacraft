@@ -42,12 +42,15 @@ import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.MobEffects;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -812,74 +815,39 @@ public class EventHandler {
 
 	/**
 	 * Apply new armor and resistance logics
+	 * Update: Now it's Sponge compatible
 	 *
 	 * @param event A description of whats happening
 	 */
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onPlayerHurt(LivingHurtEvent event) {
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void onPlayerHurt(LivingDamageEvent event) {
 		if (!(event.getEntityLiving() instanceof EntityPlayer)) return;
+		if(event.isCanceled()) return; //compatibility with mods and plugins
 		if (event.getAmount() <= 0) return;
-		EntityPlayer player = (EntityPlayer) event.getEntityLiving();
-		if (!player.isEntityInvulnerable(event.getSource())) {
+		float damage = event.getAmount();
+		float armor = event.getEntityLiving().getTotalArmorValue();
+		float toughness = (float)event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue();
+		damage = revertCombatRulesArmorLogic(damage, armor, toughness);
+		event.setAmount(applyArmorCalculations(damage, armor, toughness));
+		if(event.getAmount() <= 0) {
 			event.setCanceled(true);
-			float damage = event.getAmount();
-			if (!event.getSource().isUnblockable()) {
-				damage = applyArmorCalculations(damage, player.getTotalArmorValue(), (float) player.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue());
-			}
-			if (damage <= 0) return;
-			damage = applyPotionDamageCalculations(player, event.getSource(), damage);
-			if (damage <= 0) return;
-			float beforeAbsorption = damage;
-			damage = Math.max(damage - player.getAbsorptionAmount(), 0.0F);
-			player.setAbsorptionAmount(player.getAbsorptionAmount() - (beforeAbsorption - damage));
-			if (damage <= 0) return;
-			damage = net.minecraftforge.common.ForgeHooks.onLivingDamage(player, event.getSource(), damage);
-
-			if (damage > 0) {
-				player.addExhaustion(event.getSource().getHungerDamage());
-				float health = player.getHealth();
-				player.getCombatTracker().trackDamage(event.getSource(), health, damage);
-				player.setHealth(health - damage);
-
-				if (damage < 3.4028235E37F) {
-					player.addStat(StatList.DAMAGE_TAKEN, Math.round(damage * 10.0F));
-				}
-			}
 		}
 	}
 
 	/**
-	 * Direct copy from {@link EntityLivingBase} because it's protected
+	 * Reverts the armor reduction to damage, and yeah, this works!
+	 * This way i disable vanilla armor logics to open way to my logics
 	 *
-	 * @param player The target player
-	 * @param source The Damage Source
-	 * @param damage The damage value
-	 * @return return the new damage value
+	 * @param damage reduced damaged after armor reduction
+	 * @param totalArmor the armor of the player
+	 * @param toughnessAttribute referred armor toughness
+	 * @return the original damage before armor reduction
 	 */
-	private static float applyPotionDamageCalculations(EntityPlayer player, DamageSource source, float damage) {
-		if (source.isDamageAbsolute()) {
-			return damage;
-		} else {
-			if (player.isPotionActive(MobEffects.RESISTANCE) && source != DamageSource.OUT_OF_WORLD) {
-				//noinspection ConstantConditions
-				int i = (player.getActivePotionEffect(MobEffects.RESISTANCE).getAmplifier() + 1) * 5;
-				int j = 25 - i;
-				float f = damage * (float) j;
-				damage = f / 25.0F;
-			}
-
-			if (damage <= 0.0F) {
-				return 0.0F;
-			} else {
-				int k = EnchantmentHelper.getEnchantmentModifierDamage(player.getArmorInventoryList(), source);
-
-				if (k > 0) {
-					damage = CombatRules.getDamageAfterMagicAbsorb(damage, (float) k);
-				}
-
-				return damage;
-			}
-		}
+	private static float revertCombatRulesArmorLogic(float damage, float totalArmor, float toughnessAttribute)
+	{
+		float f = 2.0F + toughnessAttribute / 4.0F;
+		float f1 = MathHelper.clamp(totalArmor - damage / f, totalArmor * 0.2F, 20.0F);
+		return damage / (1.0F - f1 / 25.0F);
 	}
 
 	/**
@@ -985,6 +953,7 @@ public class EventHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onDefendingAgainstTheRageSaint(LivingAttackEvent event) {
+		if(event.isCanceled()) return;
 		if (event.getSource().getTrueSource() instanceof EntityPlayer && !(event.getSource() instanceof Skills.HealingDamageSource)) {
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity((EntityLivingBase) event.getSource().getTrueSource());
 			if (cultTech.getDivineTechnique() != null) {
@@ -998,6 +967,7 @@ public class EventHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onPlayerDefense(LivingAttackEvent event) {
+		if(event.isCanceled()) return;
 		if (!(event.getEntityLiving() instanceof EntityPlayer)) return;
 		if (event.getAmount() <= 0.0f) return;
 
@@ -1009,11 +979,7 @@ public class EventHandler {
 				TextComponentString message = new TextComponentString("Barrier Amount: " + barrier.getBarrierAmount());
 				message.getStyle().setColor(TextFormatting.AQUA);
 				player.sendMessage(message);
-			} else if (!barrier.isBarrierActive()) {
-				event.setCanceled(false);
-			} else if (barrier.isBarrierBroken()) {
-				event.setCanceled(false);
-			}
+			}//the way it was before was canceling the other cancels, bring it back to execute
 		}
 	}
 
@@ -1027,23 +993,22 @@ public class EventHandler {
 	 * @param player  EntityPlayer instance of player
 	 */
 	public void handleBarrier(LivingAttackEvent event, IBarrier barrier, EntityPlayer player) {
+		if(event.isCanceled()) return;
 		if (event.getSource().isDamageAbsolute()) {
-			if (barrier.getBarrierAmount() > 0.0f && event.getAmount() < barrier.getBarrierAmount()) {
+			if (barrier.getBarrierAmount() > 0.0f && event.getAmount() <= barrier.getBarrierAmount()) {
 				event.setCanceled(true);
 				barrier.removeBarrierAmount(event.getAmount());
 			} else if (barrier.getBarrierAmount() > 0.0f && event.getAmount() > barrier.getBarrierAmount()) {
-				event.setCanceled(true);
 				float remainingDamage = event.getAmount() - barrier.getBarrierAmount();
 				barrier.removeBarrierAmount(barrier.getBarrierAmount());
 				barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
 				barrier.setBarrierBroken(true);
 				barrier.setBarrierActive(false);
-				event.setCanceled(false);
+				event.setCanceled(true);
 				if (remainingDamage > 0) {
-					player.attackEntityFrom(DamageSource.causePlayerDamage(player), remainingDamage);
+					player.attackEntityFrom(event.getSource(), remainingDamage);
 				}
 			} else if (barrier.getBarrierAmount() <= 0.0f) {
-				event.setCanceled(false);
 				barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
 				barrier.setBarrierBroken(true);
 				barrier.setBarrierActive(false);
@@ -1055,18 +1020,16 @@ public class EventHandler {
 				event.setCanceled(true);
 				barrier.removeBarrierAmount(event.getAmount() - armour);
 			} else if (barrier.getBarrierAmount() > 0.0f && (event.getAmount() - armour) > barrier.getBarrierAmount()) {
-				event.setCanceled(true);
 				float remainingDamage = (event.getAmount() - armour) - barrier.getBarrierAmount();
 				barrier.removeBarrierAmount(barrier.getBarrierAmount());
 				barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
 				barrier.setBarrierBroken(true);
 				barrier.setBarrierActive(false);
-				event.setCanceled(false);
+				event.setCanceled(true);
 				if (remainingDamage > 0) {
-					player.attackEntityFrom(DamageSource.causePlayerDamage(player), Math.max(0, remainingDamage));
+					player.attackEntityFrom(event.getSource(), Math.max(0, remainingDamage));
 				}
 			} else if (barrier.getBarrierAmount() <= 0.0f) {
-				event.setCanceled(false);
 				barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
 				barrier.setBarrierBroken(true);
 				barrier.setBarrierActive(false);
