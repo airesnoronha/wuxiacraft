@@ -2,6 +2,8 @@ package com.airesnor.wuxiacraft.world.dimensions;
 
 import com.airesnor.wuxiacraft.world.dimensions.ChunkGen.WoodChunkGen;
 import com.airesnor.wuxiacraft.world.dimensions.biomes.BiomeProviderWood;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
@@ -33,6 +35,16 @@ public class DimensionWood extends WorldProvider {
     @Override
     public boolean canRespawnHere() {
         return true;
+    }
+
+    @Override
+    public boolean canCoordinateBeSpawn(int x, int z) {
+        boolean canSpawnHere = false;
+        BlockPos blockpos = new BlockPos(x, 0, z);
+        if (this.world.getGroundAboveSeaLevel(blockpos).getBlock() == Blocks.GRASS) {
+            canSpawnHere = true;
+        }
+        return canSpawnHere;
     }
 
     @Override

@@ -17,7 +17,7 @@ public class Sect {
     private String colour;
     private UUID sectLeader;
     private List<Pair<String, Integer>> ranks;
-    private List<Pair<String, Integer>> defaultRanks;
+    private final List<Pair<String, Integer>> defaultRanks;
     private List<Pair<UUID, String>> members;
     private List<UUID> invitations;
     private List<Pair<String, Boolean>> allies;
@@ -141,8 +141,6 @@ public class Sect {
             textFormatting = TextFormatting.LIGHT_PURPLE;
         } else if (colour.equalsIgnoreCase("red")) {
             textFormatting = TextFormatting.RED;
-        } else if (colour.equalsIgnoreCase("white")) {
-            textFormatting = TextFormatting.WHITE;
         } else if (colour.equalsIgnoreCase("yellow")) {
             textFormatting = TextFormatting.YELLOW;
         }
@@ -309,6 +307,14 @@ public class Sect {
         }
     }
 
+    public void setWantToRemoveAllyBoolean(String sectName, boolean wantToRemoveAlly) {
+        for (Pair<String, Boolean> ally : allies) {
+            if (ally.getLeft().equalsIgnoreCase(sectName)) {
+                ally.setValue(wantToRemoveAlly);
+            }
+        }
+    }
+
     public boolean isAlly(String sectName) {
         boolean isAlly = false;
         for (Pair<String, Boolean> ally : allies) {
@@ -455,9 +461,9 @@ public class Sect {
             memberList.appendTag(memberCompound);
         }
         for (UUID invitation : invitations) {
-            NBTTagCompound invitationCompund = new NBTTagCompound();
-            invitationCompund.setUniqueId("playerInvitationUUID", invitation);
-            invitationList.appendTag(invitationCompund);
+            NBTTagCompound invitationCompound = new NBTTagCompound();
+            invitationCompound.setUniqueId("playerInvitationUUID", invitation);
+            invitationList.appendTag(invitationCompound);
         }
         for (Pair<String, Boolean> ally : allies) {
             NBTTagCompound allyCompound = new NBTTagCompound();

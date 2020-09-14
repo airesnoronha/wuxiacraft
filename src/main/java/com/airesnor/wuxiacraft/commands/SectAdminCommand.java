@@ -143,11 +143,12 @@ public class SectAdminCommand extends CommandBase {
             EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[2]);
             if (targetPlayer != null) {
                 Sect sectOfTarget = Sect.getSectByPlayer(targetPlayer, sectData);
+                UUID oldSectLeader = sect.getSectLeader();
                 if (sectOfTarget != null) {
                     if (sect.getSectName().equalsIgnoreCase(sectOfTarget.getSectName())) {
-                        UUID oldSectLeader = sect.getSectLeader();
                         sect.addMember(oldSectLeader, sect.getDefaultRanks().get(sect.getDefaultRanks().size() - 1).getKey());
                         sect.setSectLeader(targetPlayer.getUniqueID());
+                        sect.removeMember(targetPlayer.getUniqueID());
                         TextComponentString text = new TextComponentString("The Sect's sect leader has been changed to " + targetPlayer.getName() + ".");
                         text.getStyle().setColor(TextFormatting.GREEN);
                         sender.sendMessage(text);
@@ -157,6 +158,7 @@ public class SectAdminCommand extends CommandBase {
                         sender.sendMessage(text);
                     }
                 } else {
+                    sect.addMember(oldSectLeader, sect.getDefaultRanks().get(sect.getDefaultRanks().size() - 1).getKey());
                     sect.setSectLeader(targetPlayer.getUniqueID());
                     TextComponentString text = new TextComponentString("The Sect's sect leader has been changed to " + targetPlayer.getName() + ".");
                     text.getStyle().setColor(TextFormatting.GREEN);
@@ -191,6 +193,8 @@ public class SectAdminCommand extends CommandBase {
                     text.getStyle().setColor(TextFormatting.RED);
                     sender.sendMessage(text);
                 }
+            } else if (args[2].equalsIgnoreCase("emptynothing")) {
+                sect.setSectTag("");
             } else {
                 TextComponentString text = new TextComponentString( "The Sect Tag cannot be longer than 5 characters. Please try again.");
                 text.getStyle().setColor(TextFormatting.RED);

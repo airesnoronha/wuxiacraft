@@ -746,10 +746,12 @@ public class SectCommand extends CommandBase {
                 if (targetPlayer != null) {
                     if (sect.isChangingLeader()) {
                         boolean leaderChanged = false;
+                        UUID oldSectLeader = sect.getSectLeader();
                         for (Pair<UUID, String> member : sect.getMembers()) {
                             if (member.getLeft().equals(targetPlayer.getId())) {
                                 sect.setSectLeader(member.getLeft());
                                 leaderChanged = true;
+                                sect.removeMember(member.getLeft());
                                 TextComponentString text = new TextComponentString("The sect leader is now " + targetPlayer.getName() + ".");
                                 text.getStyle().setColor(TextFormatting.GREEN);
                                 playerMP.sendMessage(text);
@@ -760,6 +762,8 @@ public class SectCommand extends CommandBase {
                             TextComponentString text = new TextComponentString(targetPlayer.getName() + " is not a member of the sect.");
                             text.getStyle().setColor(TextFormatting.RED);
                             playerMP.sendMessage(text);
+                        } else {
+                            sect.addMember(oldSectLeader, sect.getDefaultRanks().get(sect.getDefaultRanks().size() - 1).getKey());
                         }
                     } else {
                         TextComponentString text = new TextComponentString("To confirm that you would like to pass the sect leader position to " + targetPlayer.getName() + ". Please type the command \"/sect setleader " + targetPlayer.getName() + "\" one more time. You have a total of 30 seconds to confirm passing your position to the player.");
