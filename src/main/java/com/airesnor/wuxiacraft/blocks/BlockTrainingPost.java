@@ -58,16 +58,17 @@ public class BlockTrainingPost extends Block {
 		if(state.getValue(HALF) == BlockDoor.EnumDoorHalf.UPPER) {
 			return this.onBlockActivated(worldIn, pos.down(), worldIn.getBlockState(pos.down()), playerIn, hand, facing, hitX, hitY, hitZ);
 		} else {
-			worldIn.setBlockToAir(pos);
-			worldIn.setBlockToAir(pos.up());
-			if(state.getBlock() != this) {
-				return false;
-			}
-			if(!worldIn.isRemote) {
-				ItemStack stack = getItem(worldIn, pos, state);
-				EntityItem item = new EntityItem(worldIn, pos.getX()+0.5, pos.getY()+0.5, pos.getZ()+0.5, stack);
-				item.setNoPickupDelay();
-				worldIn.spawnEntity(item);
+			if(worldIn.setBlockToAir(pos)) {
+				worldIn.setBlockToAir(pos.up());
+				if (state.getBlock() != this) {
+					return false;
+				}
+				if (!worldIn.isRemote) {
+					ItemStack stack = getItem(worldIn, pos, state);
+					EntityItem item = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
+					item.setNoPickupDelay();
+					worldIn.spawnEntity(item);
+				}
 			}
 		}
 		return true;

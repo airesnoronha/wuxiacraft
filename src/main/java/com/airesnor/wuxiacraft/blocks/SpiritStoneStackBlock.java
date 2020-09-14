@@ -37,7 +37,7 @@ public class SpiritStoneStackBlock extends BlockContainer {
 	public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn) {
 		boolean all = !playerIn.isSneaking();
 		SpiritStoneStackTileEntity te = this.getTileEntity(worldIn, pos);
-		if(te!=null) {
+		if (te != null) {
 			ItemStack stack = te.stack.copy();
 			int quantity = stack.getCount();
 			if (!all) {
@@ -49,20 +49,21 @@ public class SpiritStoneStackBlock extends BlockContainer {
 			te.stack.shrink(quantity);
 			if (!worldIn.isRemote) {
 				if (te.stack.isEmpty()) {
-					worldIn.setBlockToAir(pos);
+					if (worldIn.setBlockToAir(pos)) {
+						double dx = playerIn.posX - (pos.getX() + 0.5);
+						double dy = (playerIn.posY + playerIn.getEyeHeight()) - (pos.getY() + 0.5);
+						double dz = playerIn.posZ - (pos.getZ() + 0.5);
+						double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+						EntityItem item = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
+						item.setOwner(playerIn.getName());
+						item.setNoPickupDelay();
+						float speed = 0.4f;
+						item.motionX = dx / dist * speed;
+						item.motionY = dy / dist * speed;
+						item.motionZ = dz / dist * speed;
+						worldIn.spawnEntity(item);
+					}
 				}
-				double dx = playerIn.posX - (pos.getX() + 0.5);
-				double dy = (playerIn.posY + playerIn.getEyeHeight()) - (pos.getY() + 0.5);
-				double dz = playerIn.posZ - (pos.getZ() + 0.5);
-				double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-				EntityItem item = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, stack);
-				item.setOwner(playerIn.getName());
-				item.setNoPickupDelay();
-				float speed = 0.4f;
-				item.motionX = dx / dist * speed;
-				item.motionY = dy / dist * speed;
-				item.motionZ = dz / dist * speed;
-				worldIn.spawnEntity(item);
 			}
 		}
 	}
@@ -70,10 +71,11 @@ public class SpiritStoneStackBlock extends BlockContainer {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		SpiritStoneStackTileEntity te = this.getTileEntity(worldIn, pos);
-		if(te != null) {
+		if (te != null) {
 			boolean isItem = te.stack.getItem() == playerIn.getHeldItem(hand).getItem();
 			boolean all = !playerIn.isSneaking();
-			if (isItem) {
+			boolean fullDurability = !playerIn.getHeldItem(hand).isItemDamaged();
+			if (isItem && fullDurability) {
 				ItemStack playerStack = playerIn.getHeldItem(hand);
 				if (te.stack.getCount() < te.stack.getMaxStackSize()) {
 					int remaining = te.stack.getMaxStackSize() - te.stack.getCount();
@@ -140,8 +142,8 @@ public class SpiritStoneStackBlock extends BlockContainer {
 	@Override
 	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
 		SpiritStoneStackTileEntity te = getTileEntity(worldIn, pos);
-		if(te != null) {
-			if(te.stack!=null)
+		if (te != null) {
+			if (te.stack != null)
 				return te.stack;
 		}
 		return super.getItem(worldIn, pos, state);
