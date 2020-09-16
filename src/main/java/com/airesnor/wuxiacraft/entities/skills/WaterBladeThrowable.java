@@ -53,7 +53,7 @@ public class WaterBladeThrowable extends EntityThrowable implements IEntityAddit
 		this.thrower = this.owner;
 		this.damage = damage;
 		this.duration = duration;
-		this.rotationRoll = -90f + this.world.rand.nextFloat()*180f;
+		this.rotationRoll = -90f + this.world.rand.nextFloat() * 180f;
 		this.prevRotationRoll = rotationRoll;
 	}
 
@@ -72,7 +72,7 @@ public class WaterBladeThrowable extends EntityThrowable implements IEntityAddit
 	protected void onImpact(RayTraceResult result) {
 		if (!this.world.isRemote) {
 			if (result.typeOfHit == RayTraceResult.Type.ENTITY && !result.entityHit.equals(this.owner)) {
-				if(result.entityHit instanceof EntityLivingBase) {
+				if (result.entityHit instanceof EntityLivingBase) {
 					this.attackEntityOnDirectHit((EntityLivingBase) result.entityHit);
 					this.setDead();
 				}
@@ -81,13 +81,17 @@ public class WaterBladeThrowable extends EntityThrowable implements IEntityAddit
 					this.setDead();
 				}
 				if (TreeUtils.isLog(this.world, result.getBlockPos())) {
-					this.world.destroyBlock(result.getBlockPos(), true);
-				}
-				else if (this.world.getBlockState(result.getBlockPos()).getBlock().equals(Blocks.CACTUS)) {
-					this.world.destroyBlock(result.getBlockPos(), true);
-				}
-				else if(this.world.getBlockState(result.getBlockPos()).getBlock().equals(Blocks.GRASS)) {
-					this.world.setBlockState(result.getBlockPos(), Blocks.DIRT.getDefaultState());
+					if (this.world.mayPlace(Blocks.AIR, result.getBlockPos(), true, result.sideHit, this.owner)) {
+						this.world.destroyBlock(result.getBlockPos(), true);
+					}
+				} else if (this.world.getBlockState(result.getBlockPos()).getBlock().equals(Blocks.CACTUS)) {
+					if (this.world.mayPlace(Blocks.AIR, result.getBlockPos(), true, result.sideHit, this.owner)) {
+						this.world.destroyBlock(result.getBlockPos(), true);
+					}
+				} else if (this.world.getBlockState(result.getBlockPos()).getBlock().equals(Blocks.GRASS)) {
+					if (this.world.mayPlace(Blocks.DIRT, result.getBlockPos(), true, result.sideHit, this.owner)) {
+						this.world.setBlockState(result.getBlockPos(), Blocks.DIRT.getDefaultState());
+					}
 				}
 			}
 		}
@@ -115,7 +119,7 @@ public class WaterBladeThrowable extends EntityThrowable implements IEntityAddit
 			return;
 		}
 
-		if(this.world.isRemote) {
+		if (this.world.isRemote) {
 			this.rotateRoll();
 		}
 
@@ -126,9 +130,9 @@ public class WaterBladeThrowable extends EntityThrowable implements IEntityAddit
 
 		this.rotateRoll();
 
-		if(this.world instanceof WorldServer) {
+		if (this.world instanceof WorldServer) {
 			WorldServer worldServer = (WorldServer) this.world;
-			if(worldServer.getBlockState(this.getPosition()).getBlock() == Blocks.FIRE) {
+			if (worldServer.getBlockState(this.getPosition()).getBlock() == Blocks.FIRE) {
 				this.world.setBlockToAir(this.getPosition());
 				this.setDead();
 			}
@@ -138,7 +142,7 @@ public class WaterBladeThrowable extends EntityThrowable implements IEntityAddit
 	private void rotateRoll() {
 		this.prevRotationRoll = this.rotationRoll;
 		this.rotationRoll += 2.5f;
-		if(this.rotationRoll > -180f) this.rotationRoll -= 360f;
+		if (this.rotationRoll > -180f) this.rotationRoll -= 360f;
 	}
 
 	@Override
