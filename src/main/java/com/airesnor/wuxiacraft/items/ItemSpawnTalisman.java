@@ -34,7 +34,7 @@ public class ItemSpawnTalisman extends ItemBase {
 		}
 		boolean activated = false;
 		BlockPos targetPos = new BlockPos(0, 0, 0);
-		if (worldIn.provider.getDimension() == 0) { //only works at over world
+		if (worldIn.provider.getDimension() == 0) { // Only works in OverWorld
 			int usageStep = tag.hasKey("usageStep") ? tag.getInteger("usageStep") : 0;
 			switch (usageStep) {
 				case 0:
@@ -49,7 +49,7 @@ public class ItemSpawnTalisman extends ItemBase {
 					if (tag.hasKey("iniX") && tag.hasKey("iniY") && tag.hasKey("iniZ")) {
 						targetPos = new BlockPos(tag.getInteger("iniX"), tag.getInteger("iniY"), tag.getInteger("iniZ"));
 						tag.setInteger("usageStep", 0);
-						tag.removeTag("iniX");//save space
+						tag.removeTag("iniX"); //save space
 						tag.removeTag("iniY");
 						tag.removeTag("iniZ");
 						activated = true;
@@ -85,10 +85,20 @@ public class ItemSpawnTalisman extends ItemBase {
 			tag = new NBTTagCompound();
 		}
 		int usageStep = tag.hasKey("usageStep") ? tag.getInteger("usageStep") : 0;
+		int x = 0;
+		int y = 0;
+		int z = 0;
+		if (worldIn != null) {
+			x = tag.hasKey("iniX") ? tag.getInteger("iniX") : worldIn.getSpawnPoint().getX();
+			y = tag.hasKey("iniY") ? tag.getInteger("iniY") : worldIn.getSpawnPoint().getY();
+			z = tag.hasKey("iniZ") ? tag.getInteger("iniZ") : worldIn.getSpawnPoint().getZ();
+		}
 		if(usageStep == 0) {
 			tooltip.add(TextFormatting.GOLD + "Going to world center");
-		} else if (usageStep == 1){
+			tooltip.add(TextFormatting.GOLD + "x = " + x + ", y = " + y + ", z = " + z);
+		} else if (usageStep == 1) {
 			tooltip.add(TextFormatting.GREEN + "Returning to previous position");
+			tooltip.add(TextFormatting.GREEN + "x = " + x + ", y = " + y + ", z = " + z);
 		}
 	}
 }

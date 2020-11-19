@@ -689,16 +689,15 @@ public class SectCommand extends CommandBase {
         Sect sect = Sect.getSectByPlayer(playerMP, sectData);
         if (sect != null) {
             if (sect.getSectLeader().equals(playerMP.getUniqueID())) {
-                String rankName = null;
+                boolean isDefaultRank = false;
                 for (Pair<String, Integer> defaultRank : sect.getDefaultRanks()) {
-                    if (!defaultRank.getLeft().equalsIgnoreCase(args[1])) {
-                        rankName = args[1];
-                    } else {
-                        rankName = null;
+                    if (defaultRank.getLeft().equalsIgnoreCase(args[1])) {
+                        isDefaultRank = true;
+                        break;
                     }
                 }
-                if (rankName != null) {
-                    Pair<String, Integer> rank = sect.getRank(rankName);
+                if (!isDefaultRank) {
+                    Pair<String, Integer> rank = sect.getRank(args[1]);
                     if (rank != null) {
                         int indexOfRank = 0;
                         for (int i = 0; i < sect.getRanks().size(); i++) {
@@ -709,22 +708,26 @@ public class SectCommand extends CommandBase {
                         }
                         for (Pair<UUID, String> member : sect.getMembers()) {
                             if (member.getRight().equalsIgnoreCase(rank.getLeft())) {
-                                member.setValue(sect.getRanks().get(indexOfRank - 1).getLeft());
+                                if (indexOfRank - 1 >= 0) {
+                                    member.setValue(sect.getRanks().get(indexOfRank - 1).getLeft());
+                                } else {
+                                    member.setValue(sect.getRanks().get(0).getLeft());
+                                }
                             }
                         }
                         sect.removeRank(rank.getLeft());
                     } else {
-                        TextComponentString text = new TextComponentString("That sect rank does not exist.");
+                        TextComponentString text = new TextComponentString("That rank does not exist in the sect.");
                         text.getStyle().setColor(TextFormatting.RED);
                         playerMP.sendMessage(text);
                     }
                 } else {
-                    TextComponentString text = new TextComponentString("You cannot delete a default sect rank");
+                    TextComponentString text = new TextComponentString("You cannot delete a default rank of the sect.");
                     text.getStyle().setColor(TextFormatting.RED);
                     playerMP.sendMessage(text);
                 }
             } else {
-                TextComponentString text = new TextComponentString("Only the sect leader can delete ranks of the sect");
+                TextComponentString text = new TextComponentString("Only the sect leader can delete ranks of the sect.");
                 text.getStyle().setColor(TextFormatting.RED);
                 playerMP.sendMessage(text);
             }
