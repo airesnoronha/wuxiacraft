@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.blocks;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.items.ItemSpiritStone;
 import com.airesnor.wuxiacraft.items.WuxiaItems;
 import mcp.MethodsReturnNonnullByDefault;
@@ -14,8 +13,6 @@ import net.minecraft.item.*;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
@@ -47,38 +44,36 @@ public class SpiritVeinOre extends BlockBase {
 
 	@Override
 	public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player) {
-		if(!worldIn.isRemote) {
-			if(!player.isCreative()) {
+		if (!worldIn.isRemote) {
+			if (!player.isCreative()) {
 				ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
-				if (heldItem.getItem() instanceof ItemTool || heldItem.getItem() instanceof ItemPickaxe) {
-					if (!EnchantmentHelper.getEnchantments(heldItem).containsKey(Enchantments.SILK_TOUCH)) {
-						if (heldItem.getItem().getHarvestLevel(heldItem, Objects.requireNonNull(getHarvestTool(state)), player, state) > 2) {
-							if (this.droppedItem != null) {
-								if (this.droppedItem instanceof ItemSpiritStone) {
-									int mainDrop = worldIn.rand.nextInt(64);
-									int sideDrop = worldIn.rand.nextInt(16);
-									int evenLessDrop = worldIn.rand.nextInt(4);
-									Item prev = WuxiaItems.ITEMS.get(WuxiaItems.ITEMS.indexOf(this.droppedItem) - 1);
-									Item nextPrev = WuxiaItems.ITEMS.get(WuxiaItems.ITEMS.indexOf(prev) - 1);
-									ItemStack superDrop = new ItemStack(this.droppedItem, evenLessDrop);
-									EntityItem superDropItem = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, superDrop);
-									superDropItem.setOwner(player.getName());
-									superDropItem.setNoPickupDelay();
-									worldIn.spawnEntity(superDropItem);
-									if (prev instanceof ItemSpiritStone) {
-										ItemStack mediumDrop = new ItemStack(prev, sideDrop);
-										EntityItem mediumDropItem = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, mediumDrop);
-										mediumDropItem.setOwner(player.getName());
-										mediumDropItem.setNoPickupDelay();
-										worldIn.spawnEntity(mediumDropItem);
-									}
-									if (nextPrev instanceof ItemSpiritStone) {
-										ItemStack lowDrop = new ItemStack(nextPrev, mainDrop);
-										EntityItem item = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, lowDrop);
-										item.setOwner(player.getName());
-										item.setNoPickupDelay();
-										worldIn.spawnEntity(item);
-									}
+				if (!EnchantmentHelper.getEnchantments(heldItem).containsKey(Enchantments.SILK_TOUCH)) {
+					if (heldItem.getItem().getHarvestLevel(heldItem, Objects.requireNonNull(getHarvestTool(state)), player, state) > 2) {
+						if (this.droppedItem != null) {
+							if (this.droppedItem instanceof ItemSpiritStone) {
+								int mainDrop = worldIn.rand.nextInt(64);
+								int sideDrop = worldIn.rand.nextInt(16);
+								int evenLessDrop = worldIn.rand.nextInt(4);
+								Item prev = WuxiaItems.ITEMS.get(WuxiaItems.ITEMS.indexOf(this.droppedItem) - 1);
+								Item nextPrev = WuxiaItems.ITEMS.get(WuxiaItems.ITEMS.indexOf(prev) - 1);
+								ItemStack superDrop = new ItemStack(this.droppedItem, evenLessDrop);
+								EntityItem superDropItem = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, superDrop);
+								superDropItem.setOwner(player.getName());
+								superDropItem.setNoPickupDelay();
+								worldIn.spawnEntity(superDropItem);
+								if (prev instanceof ItemSpiritStone) {
+									ItemStack mediumDrop = new ItemStack(prev, sideDrop);
+									EntityItem mediumDropItem = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, mediumDrop);
+									mediumDropItem.setOwner(player.getName());
+									mediumDropItem.setNoPickupDelay();
+									worldIn.spawnEntity(mediumDropItem);
+								}
+								if (nextPrev instanceof ItemSpiritStone) {
+									ItemStack lowDrop = new ItemStack(nextPrev, mainDrop);
+									EntityItem item = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, lowDrop);
+									item.setOwner(player.getName());
+									item.setNoPickupDelay();
+									worldIn.spawnEntity(item);
 								}
 							}
 						}

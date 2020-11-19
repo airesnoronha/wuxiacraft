@@ -25,6 +25,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.DimensionType;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -174,6 +175,7 @@ public class CultivationUtils {
 	public static void cultivatorAddProgress(EntityLivingBase player, Cultivation.System system, double amount, boolean techniques, boolean allowBreakThrough) {
 		ICultivation cultivation = getCultivationFromEntity(player);
 		ICultTech cultTech = getCultTechFromEntity(player);
+		IBarrier barrier = getBarrierFromEntity(player);
 		if (cultTech.getTechniqueBySystem(system) != null && techniques) {
 			amount *= cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system));
 		}
@@ -203,6 +205,9 @@ public class CultivationUtils {
 				}
 			}
 		}
+		if(system == Cultivation.System.ESSENCE) {
+			amount *= MathUtils.clamp(cultivation.getDivineModifier() / cultivation.getEssenceLevel().getModifierBySubLevel(cultivation.getEssenceSubLevel()), 1, 20);
+		}
 		if (!cultivation.getSuppress()) {
 			try {
 				boolean leveled = cultivation.addSystemProgress(amount, system, allowBreakThrough);
@@ -219,6 +224,8 @@ public class CultivationUtils {
 				if (leveled && !player.world.isRemote) {
 					EntityLevelUpHalo halo = new EntityLevelUpHalo(player.world, player.posX, player.posY + 1, player.posZ);
 					WorldUtils.spawnEntity((WorldServer) player.world, halo);
+					barrier.setBarrierMaxAmount((float)Math.max(0, (cultivation.getEssenceModifier()-3.0)*0.5));
+					barrier.setBarrierRegenRate(barrier.getBarrierMaxAmount() * 0.001f);
 				}
 			} catch (Cultivation.RequiresTribulation tribulation) {
 				callTribulation(player, tribulation.tribulationStrength, tribulation.system, tribulation.level, tribulation.subLevel);
@@ -258,13 +265,13 @@ public class CultivationUtils {
 			if (player.world instanceof WorldServer) {
 				WorldServer world = (WorldServer) player.world;
 				ICultivation cultivation = getCultivationFromEntity(player);
-
+				World w = player.getEntityWorld();
 				double resistance = 1;
 				if (this.system != null) {
 					resistance = cultivation.getSystemModifier(this.system) + cultivation.getEssenceModifier() *0.05 + cultivation.getBodyModifier() * 0.05 + cultivation.getDivineModifier()*0.05; //new foundation system is already a way to resist tribulation
 				}
 				double multiplier = world.getGameRules().hasRule("tribulationMultiplier") ? world.getGameRules().getInt("tribulationMultiplier") : 1;
-				double worldMultiplier = WorldVariables.get(world).getTribulationMultiplier();
+				double worldMultiplier = WorldVariables.get(w).getTribulationMultiplier();
 				double strength = this.tribulationStrength * multiplier * worldMultiplier;
 				final int bolts = MathUtils.clamp(1 + (int) (Math.round(resistance * 3 / strength)), 1, 12);
 				float damage = (float) Math.max(2, strength - resistance);

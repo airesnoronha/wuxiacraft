@@ -53,35 +53,33 @@ public class EnergyCommand extends CommandBase {
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
 		boolean wrongUsage = false;
 		if (args.length == 3) {
-			if (sender instanceof EntityPlayerMP) {
-				EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
-				if (targetPlayer != null) {
-					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
-					if (args[0].equalsIgnoreCase("set")) {
-						double amount = 0;
-						if (args[2].equalsIgnoreCase("max")) {
-							//cultivation.setEnergy(cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()));
-							amount = CultivationUtils.getMaxEnergy((EntityLivingBase) sender);
-						} else {
-							try {
-								amount = parseDouble(args[2], 0);
-							} catch (NumberInvalidException e) {
-								WuxiaCraft.logger.error("Couldn't parse number, setting 0 for execution sake ...");
-							}
-						}
-						cultivation.setEnergy(amount);
-						NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
-						TextComponentString text = new TextComponentString("Your energy has been altered ... ");
-						text.getStyle().setColor(TextFormatting.GRAY);
-						sender.sendMessage(text);
+			EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
+			if (targetPlayer != null) {
+				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
+				if (args[0].equalsIgnoreCase("set")) {
+					double amount = 0;
+					if (args[2].equalsIgnoreCase("max")) {
+						//cultivation.setEnergy(cultivation.getCurrentLevel().getMaxEnergyByLevel(cultivation.getCurrentSubLevel()));
+						amount = CultivationUtils.getMaxEnergy(targetPlayer);
 					} else {
-						wrongUsage = true;
+						try {
+							amount = parseDouble(args[2], 0);
+						} catch (NumberInvalidException e) {
+							WuxiaCraft.logger.error("Couldn't parse number, setting 0 for execution sake ...");
+						}
 					}
-				} else {
-					TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
-					text.getStyle().setColor(TextFormatting.RED);
+					cultivation.setEnergy(amount);
+					NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
+					TextComponentString text = new TextComponentString("Your energy has been altered ... ");
+					text.getStyle().setColor(TextFormatting.GRAY);
 					sender.sendMessage(text);
+				} else {
+					wrongUsage = true;
 				}
+			} else {
+				TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
+				text.getStyle().setColor(TextFormatting.RED);
+				sender.sendMessage(text);
 			}
 			if (wrongUsage) {
 				TextComponentString text = new TextComponentString("Invalid arguments, use /energy set <player> <amount>");

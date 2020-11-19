@@ -15,6 +15,7 @@ public class BarrierStorage implements Capability.IStorage<IBarrier> {
     public NBTBase writeNBT(Capability<IBarrier> capability, IBarrier instance, EnumFacing side) {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setFloat("barrier-amount", instance.getBarrierAmount());
+        tag.setFloat("barrier-max-amount", instance.getBarrierMaxAmount());
         tag.setFloat("barrier-regen-rate", instance.getBarrierRegenRate());
         tag.setBoolean("barrier-regen-active", instance.isBarrierRegenActive());
         tag.setInteger("barrier-cooldown", instance.getBarrierCooldown());
@@ -28,13 +29,32 @@ public class BarrierStorage implements Capability.IStorage<IBarrier> {
     @Override
     public void readNBT(Capability<IBarrier> capability, IBarrier instance, EnumFacing side, NBTBase nbt) {
         NBTTagCompound tag = (NBTTagCompound) nbt;
-        instance.setBarrierAmount(tag.getFloat("barrier-amount"));
-        instance.setBarrierRegenRate(tag.getFloat("barrier-regen-rate"));
-        instance.setBarrierRegenActive(tag.getBoolean("barrier-regen-active"));
-        instance.setBarrierCooldown(tag.getInteger("barrier-cooldown"));
-        instance.setBarrierMaxCooldown(tag.getInteger("barrier-max-cooldown"));
-        instance.setBarrierActive(tag.getBoolean("barrier-active"));
-        instance.setBarrierBroken(tag.getBoolean("barrier-broken"));
-        instance.setBarrierHits(tag.getInteger("barrier-hits"));
+        if (tag.hasKey("barrier-amount")) {
+            instance.setBarrierAmount(tag.getFloat("barrier-amount"));
+        }
+        if (tag.hasKey("barrier-max-amount")) {
+            instance.setBarrierMaxAmount(tag.getFloat("barrier-max-amount"));
+        }
+        if (tag.hasKey("barrier-regen-rate")) {
+            instance.setBarrierRegenRate(tag.getFloat("barrier-regen-rate"));
+        }
+        if (tag.hasKey("barrier-regen-active")) {
+            instance.setBarrierRegenActive(tag.getBoolean("barrier-regen-active"));
+        }
+        if (tag.hasKey("barrier-cooldown")) {
+            instance.setBarrierCooldown(tag.getInteger("barrier-cooldown"));
+        }
+        if (tag.hasKey("barrier-max-cooldown")) {
+            instance.setBarrierMaxCooldown(tag.getInteger("barrier-max-cooldown"));
+        }
+        if (tag.hasKey("barrier-active")) {
+            instance.setBarrierActive(tag.getBoolean("barrier-active"));
+        }
+        if (tag.hasKey("barrier-broken")) {
+            instance.setBarrierBroken(tag.getBoolean("barrier-broken"));
+        }
+        if (tag.hasKey("barrier-hits")) {
+            instance.setBarrierHits(tag.getInteger("barrier-hits"));
+        }
     }
 }

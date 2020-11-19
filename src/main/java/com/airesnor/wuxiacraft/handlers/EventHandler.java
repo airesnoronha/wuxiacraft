@@ -11,6 +11,7 @@ import com.airesnor.wuxiacraft.cultivation.ISealing;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
+import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.Techniques;
 import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
@@ -44,7 +45,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -52,6 +52,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.FOVUpdateEvent;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -66,7 +67,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber
 public class EventHandler {
@@ -109,6 +113,27 @@ public class EventHandler {
 		TextComponentString text = new TextComponentString("For a quick tutorial on the mod. \nPlease use the /culthelp command");
 		text.getStyle().setColor(TextFormatting.GOLD);
 		player.sendMessage(text);
+	}
+
+	/**
+	 * Handles what happens when the play chats.
+	 *
+	 * @param event the event when the player chats, server-side
+	 */
+	@SubscribeEvent
+	public void onPlayerChat(ServerChatEvent event) {
+		EntityPlayerMP playerMP = event.getPlayer();
+		if (playerMP != null) {
+			WorldSectData sectData = WorldSectData.get(playerMP.getEntityWorld());
+			Sect sect = Sect.getSectByPlayer(playerMP, sectData);
+			if (sect != null) {
+				String prefix = "[" + sect.getSectTag().toUpperCase() + "]";
+				ITextComponent component = event.getComponent();
+				ITextComponent newComponent = new TextComponentString(sect.getColour() + prefix);
+				newComponent.appendSibling(component);
+				event.setComponent(newComponent);
+			}
+		}
 	}
 
 	/**
@@ -169,26 +194,6 @@ public class EventHandler {
 				cultivation.setEnergy(CultivationUtils.getMaxEnergy(player));
 			}
 
-		}
-		if (event.getEntity() instanceof EntityPlayerMP) {
-			EntityPlayerMP player = (EntityPlayerMP) event.getEntity();
-			if (player.ticksExisted % 200 == 0) {
-				WorldSectData sectData = WorldSectData.get(player.world);
-				Sect sect = Sect.getSectByPlayer(player, sectData);
-				if (sect != null) {
-					LinkedList<ITextComponent> prefixes = (LinkedList<ITextComponent>) player.getPrefixes();
-					List<ITextComponent> toRemove = new ArrayList<>();
-					TextComponentString prefix = new TextComponentString("[" + sect.getSectName() + "]");
-					for (ITextComponent component : prefixes) {
-						if (component.getUnformattedText().equalsIgnoreCase(prefix.getText())) {
-							toRemove.add(component);
-						}
-					}
-					prefixes.removeAll(toRemove);
-					prefix.getStyle().setColor(TextFormatting.AQUA);
-					prefixes.add(0, prefix);
-				}
-			}
 		}
 	}
 
@@ -511,9 +516,8 @@ public class EventHandler {
 	}
 
 	/**
-	 * When the player die, he gets punished and loses all sub levels, and energy
-	 * Except true gods that loses 20 levels
-	 * Loose 10% points of every foundation and their progress
+	 * When the player die, he gets punished
+	 * Loose 20% points of every foundation and their progress
 	 *
 	 * @param event Description of what happened, and what will come to be
 	 */
@@ -538,11 +542,17 @@ public class EventHandler {
 			cultivation.setBodySubLevel(Math.max(3 * (oldCultivation.getBodySubLevel() / 3), 0));
 			cultivation.setDivineSubLevel(Math.max(3 * (oldCultivation.getDivineSubLevel() / 3), 0));
 			cultivation.setEssenceSubLevel(Math.max(3 * (oldCultivation.getEssenceSubLevel() / 3), 0));
-			cultivation.setBodyFoundation(Math.max(oldCultivation.getBodyFoundation() * 0.8,
+			double bodyModifier = cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel())
+					/ oldCultivation.getBodyLevel().getProgressBySubLevel(oldCultivation.getBodySubLevel());
+			double divineModifier = cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel())
+					/ oldCultivation.getDivineLevel().getProgressBySubLevel(oldCultivation.getDivineSubLevel());
+			double essenceModifier = cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel())
+					/ oldCultivation.getEssenceLevel().getProgressBySubLevel(oldCultivation.getEssenceSubLevel());
+			cultivation.setBodyFoundation(bodyModifier * Math.max(oldCultivation.getBodyFoundation() * 0.8,
 					oldCultivation.getBodyFoundation() - 3 * oldCultivation.getBodyLevel().getProgressBySubLevel(oldCultivation.getBodySubLevel())));
-			cultivation.setDivineFoundation(Math.max(oldCultivation.getDivineFoundation() * 0.8,
+			cultivation.setDivineFoundation(divineModifier * Math.max(oldCultivation.getDivineFoundation() * 0.8,
 					oldCultivation.getDivineFoundation() - 3 * oldCultivation.getDivineLevel().getProgressBySubLevel(oldCultivation.getDivineSubLevel())));
-			cultivation.setEssenceFoundation(Math.max(oldCultivation.getEssenceFoundation() * 0.8,
+			cultivation.setEssenceFoundation(essenceModifier * Math.max(oldCultivation.getEssenceFoundation() * 0.8,
 					oldCultivation.getEssenceFoundation() - 3 * oldCultivation.getEssenceLevel().getProgressBySubLevel(oldCultivation.getEssenceSubLevel())));
 		} else {
 			cultivation.copyFrom(oldCultivation);
@@ -553,6 +563,8 @@ public class EventHandler {
 		skillCap.copyFrom(oldSkillCap, true);
 		sealing.copyFrom(oldSealing);
 		barrier.copyFrom(oldBarrier);
+		barrier.setBarrierMaxAmount((float) Math.max(0, (cultivation.getEssenceModifier() - 3.0) * 0.5));
+		barrier.setBarrierRegenRate(barrier.getBarrierMaxAmount() * 0.001f);
 	}
 
 	/**
@@ -798,71 +810,89 @@ public class EventHandler {
 	}
 
 	/**
-	 * Apply new armor and resistance logics
-	 *
-	 * @param event A description of whats happening
+	 * following the logic that it'll send the damage event right after this one
 	 */
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	private static float beforeDamage = 0;
+	private static boolean originalUnblockable = false;
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onPlayerHurt(LivingHurtEvent event) {
 		if (!(event.getEntityLiving() instanceof EntityPlayer)) return;
+		if (event.isCanceled()) return; //compatibility with mods and plugins
 		if (event.getAmount() <= 0) return;
-		EntityPlayer player = (EntityPlayer) event.getEntityLiving();
-		if (!player.isEntityInvulnerable(event.getSource())) {
-			event.setCanceled(true);
-			float damage = event.getAmount();
-			if (!event.getSource().isUnblockable()) {
-				damage = applyArmorCalculations(damage, player.getTotalArmorValue(), (float) player.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue());
-			}
-			if (damage <= 0) return;
-			damage = applyPotionDamageCalculations(player, event.getSource(), damage);
-			if (damage <= 0) return;
-			float beforeAbsorption = damage;
-			damage = Math.max(damage - player.getAbsorptionAmount(), 0.0F);
-			player.setAbsorptionAmount(player.getAbsorptionAmount() - (beforeAbsorption - damage));
-			if (damage <= 0) return;
-			damage = net.minecraftforge.common.ForgeHooks.onLivingDamage(player, event.getSource(), damage);
-
-			if(damage > 0) {
-				player.addExhaustion(event.getSource().getHungerDamage());
-				float health = player.getHealth();
-				player.getCombatTracker().trackDamage(event.getSource(), health, damage);
-				player.setHealth(health - damage);
-
-				if (damage < 3.4028235E37F)
-				{
-					player.addStat(StatList.DAMAGE_TAKEN, Math.round(damage * 10.0F));
-				}
-			}
+ 		beforeDamage = event.getAmount();
+		originalUnblockable = event.getSource().isUnblockable();
+		if(!originalUnblockable &&
+				event.getSource() != DamageSource.CACTUS &&
+				event.getSource() != DamageSource.FIREWORKS &&
+				event.getSource() != DamageSource.IN_FIRE &&
+				event.getSource() != DamageSource.HOT_FLOOR &&
+				event.getSource() != DamageSource.LAVA &&
+				event.getSource() != DamageSource.ANVIL &&
+				event.getSource() != DamageSource.FALLING_BLOCK &&
+				event.getSource() != DamageSource.LIGHTNING_BOLT) {
+			event.getSource().setDamageBypassesArmor();
 		}
 	}
 
 	/**
-	 * Direct copy from {@link EntityLivingBase} because it's protected
+	 * Apply new armor and resistance logics
+	 * Ignores forge armor logics but still applies damage to armor items
+	 * Update: Now it's Sponge compatible
 	 *
-	 * @param player The target player
-	 * @param source The Damage Source
-	 * @param damage The damage value
-	 * @return return the new damage value
+	 * @param event A description of whats happening
 	 */
-	private static float applyPotionDamageCalculations(EntityPlayer player, DamageSource source, float damage) {
-		if (source.isDamageAbsolute()) {
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void onPlayerTakeDamage(LivingDamageEvent event) {
+		if (!(event.getEntityLiving() instanceof EntityPlayer)) return;
+		if (event.isCanceled()) return; //compatibility with mods and plugins
+		if(beforeDamage <= 0) return; //if it was 0 before the event
+		float damage = beforeDamage;
+		float armor = event.getEntityLiving().getTotalArmorValue();
+		float toughness = (float)event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue();
+		if(!originalUnblockable) {
+			damage = applyArmorCalculations(damage, armor, toughness);
+			((EntityPlayer)event.getEntityLiving()).addExhaustion(0.1f); //set unblockable removes the hunger damage, lame
+		}
+		originalUnblockable = false;
+		damage = applyPotionDamageCalculations(event.getEntityLiving(), event.getSource(), damage);
+		event.setAmount(damage);
+		if (event.getAmount() <= 0) {
+			event.setCanceled(true);
+		}
+	}
+
+	/**
+	 * Reduces damage, depending on potions
+	 * direct copy from {@link EntityLivingBase}
+	 */
+	private static float applyPotionDamageCalculations(EntityLivingBase target, DamageSource source, float damage)
+	{
+		if (source.isDamageAbsolute())
+		{
 			return damage;
-		} else {
-			if (player.isPotionActive(MobEffects.RESISTANCE) && source != DamageSource.OUT_OF_WORLD) {
-				//noinspection ConstantConditions
-				int i = (player.getActivePotionEffect(MobEffects.RESISTANCE).getAmplifier() + 1) * 5;
+		}
+		else
+		{
+			if (target.isPotionActive(MobEffects.RESISTANCE) && source != DamageSource.OUT_OF_WORLD)
+			{
+				int i = (Objects.requireNonNull(target.getActivePotionEffect(MobEffects.RESISTANCE)).getAmplifier() + 1) * 5;
 				int j = 25 - i;
-				float f = damage * (float) j;
+				float f = damage * (float)j;
 				damage = f / 25.0F;
 			}
 
-			if (damage <= 0.0F) {
+			if (damage <= 0.0F)
+			{
 				return 0.0F;
-			} else {
-				int k = EnchantmentHelper.getEnchantmentModifierDamage(player.getArmorInventoryList(), source);
+			}
+			else
+			{
+				int k = EnchantmentHelper.getEnchantmentModifierDamage(target.getArmorInventoryList(), source);
 
-				if (k > 0) {
-					damage = CombatRules.getDamageAfterMagicAbsorb(damage, (float) k);
+				if (k > 0)
+				{
+					damage = CombatRules.getDamageAfterMagicAbsorb(damage, (float)k);
 				}
 
 				return damage;
@@ -872,14 +902,15 @@ public class EventHandler {
 
 	/**
 	 * New armor reduction logics, this way armor scales all the way
-	 * @param damage the damage input
-	 * @param armor the armor to resist
+	 *
+	 * @param damage    the damage input
+	 * @param armor     the armor to resist
 	 * @param toughness the armor toughness
 	 * @return the damage taken
 	 */
 	private static float applyArmorCalculations(float damage, float armor, float toughness) {
 		float toughnessMod = (2.0F + toughness) / 4.0F;
-		float finalArmor = armor * (0.5f + toughnessMod);
+		float finalArmor = armor * (0.95f + toughnessMod * 0.1f);
 		return Math.max(0, damage - finalArmor);
 	}
 
@@ -972,7 +1003,8 @@ public class EventHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onDefendingAgainstTheRageSaint(LivingAttackEvent event) {
-		if (event.getSource().getTrueSource() instanceof EntityPlayer) {
+		if (event.isCanceled()) return;
+		if (event.getSource().getTrueSource() instanceof EntityPlayer && !(event.getSource() instanceof Skills.HealingDamageSource)) {
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity((EntityLivingBase) event.getSource().getTrueSource());
 			if (cultTech.getDivineTechnique() != null) {
 				if (cultTech.getDivineTechnique().getTechnique().equals(Techniques.RAGEFUL_ABNEGATION_SAINT_ARTS)) {
@@ -985,6 +1017,7 @@ public class EventHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onPlayerDefense(LivingAttackEvent event) {
+		if (event.isCanceled()) return;
 		if (!(event.getEntityLiving() instanceof EntityPlayer)) return;
 		if (event.getAmount() <= 0.0f) return;
 
@@ -996,9 +1029,7 @@ public class EventHandler {
 				TextComponentString message = new TextComponentString("Barrier Amount: " + barrier.getBarrierAmount());
 				message.getStyle().setColor(TextFormatting.AQUA);
 				player.sendMessage(message);
-			} else {
-				event.setCanceled(false);
-			}
+			}//the way it was before was canceling the other cancels, bring it back to execute
 		}
 	}
 
@@ -1012,26 +1043,49 @@ public class EventHandler {
 	 * @param player  EntityPlayer instance of player
 	 */
 	public void handleBarrier(LivingAttackEvent event, IBarrier barrier, EntityPlayer player) {
-		if (barrier.getBarrierAmount() > 0.0f && event.getAmount() < barrier.getBarrierAmount()) {
-			event.setCanceled(true);
-			barrier.removeBarrierAmount(event.getAmount());
-			NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
-		} else if (barrier.getBarrierAmount() > 0.0f && event.getAmount() > barrier.getBarrierAmount()) {
-			event.setCanceled(true);
-			float remainingDamage = event.getAmount() - barrier.getBarrierAmount();
-			barrier.removeBarrierAmount(barrier.getBarrierAmount());
-			player.setHealth(player.getHealth() - remainingDamage);
-			barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
-			barrier.setBarrierBroken(true);
-			barrier.setBarrierActive(false);
-			NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
-		} else if (barrier.getBarrierAmount() <= 0.0f) {
-			event.setCanceled(false);
-			barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
-			barrier.setBarrierBroken(true);
-			barrier.setBarrierActive(false);
-			NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
+		if (event.isCanceled()) return;
+		if (event.getSource().isDamageAbsolute()) {
+			if (barrier.getBarrierAmount() > 0.0f && event.getAmount() <= barrier.getBarrierAmount()) {
+				event.setCanceled(true);
+				barrier.removeBarrierAmount(event.getAmount());
+			} else if (barrier.getBarrierAmount() > 0.0f && event.getAmount() > barrier.getBarrierAmount()) {
+				float remainingDamage = event.getAmount() - barrier.getBarrierAmount();
+				barrier.removeBarrierAmount(barrier.getBarrierAmount());
+				barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
+				barrier.setBarrierBroken(true);
+				barrier.setBarrierActive(false);
+				event.setCanceled(true);
+				if (remainingDamage > 0) {
+					player.attackEntityFrom(event.getSource(), remainingDamage);
+				}
+			} else if (barrier.getBarrierAmount() <= 0.0f) {
+				barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
+				barrier.setBarrierBroken(true);
+				barrier.setBarrierActive(false);
+			}
+		} else {
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+			float armour = (float) Math.max(1, cultivation.getEssenceModifier() * 0.6);
+			if (barrier.getBarrierAmount() > 0.0f && (event.getAmount() - armour) < barrier.getBarrierAmount()) {
+				event.setCanceled(true);
+				barrier.removeBarrierAmount(event.getAmount() - armour);
+			} else if (barrier.getBarrierAmount() > 0.0f && (event.getAmount() - armour) > barrier.getBarrierAmount()) {
+				float remainingDamage = (event.getAmount() - armour) - barrier.getBarrierAmount();
+				barrier.removeBarrierAmount(barrier.getBarrierAmount());
+				barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
+				barrier.setBarrierBroken(true);
+				barrier.setBarrierActive(false);
+				event.setCanceled(true);
+				if (remainingDamage > 0) {
+					player.attackEntityFrom(event.getSource(), Math.max(0, remainingDamage));
+				}
+			} else if (barrier.getBarrierAmount() <= 0.0f) {
+				barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
+				barrier.setBarrierBroken(true);
+				barrier.setBarrierActive(false);
+			}
 		}
+		NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
 	}
 
 	/**
@@ -1047,16 +1101,19 @@ public class EventHandler {
 				IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				//Aires: I vote to remEnergy only when barrier regen
-				//Energy Drain while the barrier is active
+
+				// Energy Drain while the barrier is active
 				if (barrier.isBarrierActive() && !barrier.isBarrierBroken()) {
 					cultivation.remEnergy(CultivationUtils.getMaxEnergy(player) * 0.00005F);
 				}
-				//Barrier regen when the barrier is not broken
-				if (!barrier.isBarrierBroken() && barrier.isBarrierRegenActive()) {
+				// Barrier regen when the barrier is not broken
+				if (!barrier.isBarrierBroken() && barrier.isBarrierRegenActive() && barrier.getBarrierAmount() + barrier.getBarrierRegenRate() < barrier.getBarrierMaxAmount()) {
 					barrier.addBarrierAmount(barrier.getBarrierRegenRate());
-					barrier.setBarrierAmount(Math.min(barrier.getBarrierAmount(), barrier.getMaxBarrierAmount(cultivation.getEssenceModifier())));
+					cultivation.remEnergy(CultivationUtils.getMaxEnergy(player) * 0.00005F);
+				} else if (barrier.getBarrierAmount() + barrier.getBarrierRegenRate() >= barrier.getBarrierMaxAmount()) {
+					barrier.setBarrierAmount(barrier.getBarrierMaxAmount());
 				}
-				//Cooldown
+				// Cooldown
 				if (barrier.getBarrierCooldown() <= 0) {
 					barrier.setBarrierBroken(false);
 				} else {

@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 
 public class WorldVariables extends WorldSavedData {
 
-	private static final String DATA_NAME = WuxiaCraft.MOD_ID + "_Variables";
+	private static final String DATA_NAME = WuxiaCraft.MOD_ID + "_variables";
 
 	private int tribulationMultiplier;
 

@@ -3,11 +3,15 @@ package com.airesnor.wuxiacraft.networking;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
+import com.airesnor.wuxiacraft.formation.FormationCultivationHelper;
+import com.airesnor.wuxiacraft.formation.FormationTileEntity;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -74,23 +78,50 @@ public class ProgressMessage implements IMessage {
 				final WorldServer world = ctx.getServerHandler().player.getServerWorld();
 				world.addScheduledTask(() -> {
 					EntityPlayer player = world.getPlayerEntityByUUID(message.senderUUID);
-					if(player != null) {
+					if (player != null) {
 						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+						ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 						switch (message.op) {
 							case 0:
-								CultivationUtils.cultivatorAddProgress(player, message.system, message.amount, message.techniques, message.allowBreakTrough);
+								double amount = message.amount;
+								if (!skillCap.hasFormationActivated()) {
+									for (TileEntity te : world.loadedTileEntityList) {
+										if (te instanceof FormationTileEntity) {
+											if (((FormationTileEntity) te).getState() == FormationTileEntity.FormationState.ACTIVE && ((FormationTileEntity) te).getFormation() instanceof FormationCultivationHelper) {
+												if (te.getDistanceSq(player.posX, player.posY, player.posZ) <= Math.pow(((FormationTileEntity) te).getFormation().getRange(), 2)) {
+													if (((FormationTileEntity) te).hasEnergy(((FormationTileEntity) te).getFormation().getOperationCost())) {
+														amount += ((FormationCultivationHelper) ((FormationTileEntity) te).getFormation()).getAmount();
+														((FormationTileEntity) te).remEnergy(((FormationTileEntity) te).getFormation().getOperationCost());
+														skillCap.setFormationActivated(true);
+														break;
+													}
+												}
+											}
+										}
+									}
+								}
+								CultivationUtils.cultivatorAddProgress(player, message.system, amount, message.techniques, message.allowBreakTrough);
 								ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 								cultTech.getTechniqueBySystem(message.system).getTechnique().cultivationEffect.activate(player); //this runs server side
 								break;
 							case 1:
 								try {
-									cultivation.addEssenceProgress(-message.amount, false);
-								} catch (Cultivation.RequiresTribulation trib) {
+									cultivation.addSystemProgress(-message.amount, message.system, false);
+								} catch (Cultivation.RequiresTribulation tribulation) {
 									WuxiaCraft.logger.error("I don't think it'll require tribulation");
 								}
 								break;
 							case 2:
-								cultivation.setEssenceProgress(message.amount);
+								switch (message.system) {
+									case BODY:
+										cultivation.setBodyProgress(message.amount);
+										break;
+									case DIVINE:
+										cultivation.setDivineProgress(message.amount);
+										break;
+									case ESSENCE:
+										cultivation.setEssenceProgress(message.amount);
+								}
 						}
 					}
 				});

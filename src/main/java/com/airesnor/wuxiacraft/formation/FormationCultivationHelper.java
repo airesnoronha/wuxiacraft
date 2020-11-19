@@ -51,6 +51,10 @@ public class FormationCultivationHelper extends Formation {
 		return this;
 	}
 
+	public double getAmount() {
+		return amount;
+	}
+
 	@Override
 	@ParametersAreNonnullByDefault
 	public int doUpdate(World worldIn, BlockPos source, FormationTileEntity parent) {

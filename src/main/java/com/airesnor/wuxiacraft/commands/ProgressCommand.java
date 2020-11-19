@@ -49,97 +49,94 @@ public class ProgressCommand extends CommandBase {
     @Override
     @ParametersAreNonnullByDefault
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (sender instanceof EntityPlayerMP) {
-            EntityPlayerMP playerMP = (EntityPlayerMP) sender;
-            if (!playerMP.world.isRemote) {
-                boolean wrongUsage = true;
-                if (args.length == 4) {
-                    EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
-                    if (targetPlayer != null) {
-                        ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
-                        try {
-                            double amount = Double.parseDouble(args[3]);
-                            TextComponentString text;
-                            switch(args[2]) {
-                                case "body":
-                                    if (args[0].equalsIgnoreCase("set")) {
-                                        cultivation.setBodyProgress(amount);
-                                        wrongUsage = false;
-                                    } else if (args[0].equalsIgnoreCase("add")) {
-                                        cultivation.addBodyProgress(amount, false);
-                                        wrongUsage = false;
-                                    }
-                                    text = new TextComponentString("Your cultivation base has been modified ...");
-                                    text.getStyle().setColor(TextFormatting.GRAY);
-                                    targetPlayer.sendMessage(text);
-                                    NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
-                                    break;
-                                case "divine":
-                                    if (args[0].equalsIgnoreCase("set")) {
-                                        cultivation.setDivineProgress(amount);
-                                        wrongUsage = false;
-                                    } else if (args[0].equalsIgnoreCase("add")) {
-                                        cultivation.addDivineProgress(amount, false);
-                                        wrongUsage = false;
-                                    }
-                                    text = new TextComponentString("Your cultivation base has been modified ...");
-                                    text.getStyle().setColor(TextFormatting.GRAY);
-                                    targetPlayer.sendMessage(text);
-                                    NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
-                                    break;
-                                case "essence":
-                                    if (args[0].equalsIgnoreCase("set")) {
-                                        cultivation.setEssenceProgress(amount);
-                                        wrongUsage = false;
-                                    } else if (args[0].equalsIgnoreCase("add")) {
-                                        cultivation.addEssenceProgress(amount, false);
-                                        wrongUsage = false;
-                                    }
-                                    text = new TextComponentString("Your cultivation base has been modified ...");
-                                    text.getStyle().setColor(TextFormatting.GRAY);
-                                    targetPlayer.sendMessage(text);
-                                    NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
-                                    break;
-                                case "three":
-                                    if (args[0].equalsIgnoreCase("set")) {
-                                        cultivation.setBodyProgress(amount);
-                                        cultivation.setDivineProgress(amount);
-                                        cultivation.setEssenceProgress(amount);
-                                        wrongUsage = false;
-                                    } else if (args[0].equalsIgnoreCase("add")) {
-                                        cultivation.addBodyProgress(amount, false);
-                                        cultivation.addDivineProgress(amount, false);
-                                        cultivation.addEssenceProgress(amount, false);
-                                        wrongUsage = false;
-                                    }
-                                    text = new TextComponentString("Your cultivation base has been modified ...");
-                                    text.getStyle().setColor(TextFormatting.GRAY);
-                                    targetPlayer.sendMessage(text);
-                                    NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
-                                    break;
-                            }
-                        } catch (NumberFormatException e) {
-                            TextComponentString text = new TextComponentString("Couldn't read number: " + args[3]);
-                            text.getStyle().setColor(TextFormatting.RED);
-                            sender.sendMessage(text);
-                        } catch (Cultivation.RequiresTribulation trib) {
-                            double strength = cultivation.getSystemLevel(trib.system).getModifierBySubLevel(trib.subLevel);
-                            CultivationUtils.callTribulation(targetPlayer, strength, trib.system, trib.level, trib.subLevel);
+        if (!sender.getEntityWorld().isRemote) {
+            boolean wrongUsage = true;
+            if (args.length == 4) {
+                EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
+                if (targetPlayer != null) {
+                    ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
+                    try {
+                        double amount = Double.parseDouble(args[3]);
+                        TextComponentString text;
+                        switch(args[2]) {
+                            case "body":
+                                if (args[0].equalsIgnoreCase("set")) {
+                                    cultivation.setBodyProgress(amount);
+                                    wrongUsage = false;
+                                } else if (args[0].equalsIgnoreCase("add")) {
+                                    cultivation.addBodyProgress(amount, false);
+                                    wrongUsage = false;
+                                }
+                                text = new TextComponentString("Your cultivation base has been modified ...");
+                                text.getStyle().setColor(TextFormatting.GRAY);
+                                targetPlayer.sendMessage(text);
+                                NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
+                                break;
+                            case "divine":
+                                if (args[0].equalsIgnoreCase("set")) {
+                                    cultivation.setDivineProgress(amount);
+                                    wrongUsage = false;
+                                } else if (args[0].equalsIgnoreCase("add")) {
+                                    cultivation.addDivineProgress(amount, false);
+                                    wrongUsage = false;
+                                }
+                                text = new TextComponentString("Your cultivation base has been modified ...");
+                                text.getStyle().setColor(TextFormatting.GRAY);
+                                targetPlayer.sendMessage(text);
+                                NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
+                                break;
+                            case "essence":
+                                if (args[0].equalsIgnoreCase("set")) {
+                                    cultivation.setEssenceProgress(amount);
+                                    wrongUsage = false;
+                                } else if (args[0].equalsIgnoreCase("add")) {
+                                    cultivation.addEssenceProgress(amount, false);
+                                    wrongUsage = false;
+                                }
+                                text = new TextComponentString("Your cultivation base has been modified ...");
+                                text.getStyle().setColor(TextFormatting.GRAY);
+                                targetPlayer.sendMessage(text);
+                                NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
+                                break;
+                            case "three":
+                                if (args[0].equalsIgnoreCase("set")) {
+                                    cultivation.setBodyProgress(amount);
+                                    cultivation.setDivineProgress(amount);
+                                    cultivation.setEssenceProgress(amount);
+                                    wrongUsage = false;
+                                } else if (args[0].equalsIgnoreCase("add")) {
+                                    cultivation.addBodyProgress(amount, false);
+                                    cultivation.addDivineProgress(amount, false);
+                                    cultivation.addEssenceProgress(amount, false);
+                                    wrongUsage = false;
+                                }
+                                text = new TextComponentString("Your cultivation base has been modified ...");
+                                text.getStyle().setColor(TextFormatting.GRAY);
+                                targetPlayer.sendMessage(text);
+                                NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), targetPlayer);
+                                break;
                         }
-                    } else {
-                        TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
+                    } catch (NumberFormatException e) {
+                        TextComponentString text = new TextComponentString("Couldn't read number: " + args[3]);
                         text.getStyle().setColor(TextFormatting.RED);
                         sender.sendMessage(text);
-                        wrongUsage = true;
+                    } catch (Cultivation.RequiresTribulation tribulation) {
+                        double strength = cultivation.getSystemLevel(tribulation.system).getModifierBySubLevel(tribulation.subLevel);
+                        CultivationUtils.callTribulation(targetPlayer, strength, tribulation.system, tribulation.level, tribulation.subLevel);
                     }
-                }
-                if (wrongUsage) {
-                    TextComponentString text = new TextComponentString("Invalid arguments, use " + this.getUsage(sender));
+                } else {
+                    TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
                     text.getStyle().setColor(TextFormatting.RED);
                     sender.sendMessage(text);
+                    wrongUsage = true;
                 }
             }
-        } else throw new CommandException("Not used correctly!");
+            if (wrongUsage) {
+                TextComponentString text = new TextComponentString("Invalid arguments, use " + this.getUsage(sender));
+                text.getStyle().setColor(TextFormatting.RED);
+                sender.sendMessage(text);
+            }
+        }
     }
 
     @Override
