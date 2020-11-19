@@ -220,15 +220,43 @@ public abstract class EntityCultivator extends EntityCreature implements IEntity
 	}
 
 	protected void applyCultivationBonuses() {
-
+		for(AttributeModifier mod : this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MAX_HEALTH).getModifiers()) {
+			if(mod.getName().equals(MOB_HEALTH_MOD_NAME)) {
+				this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MAX_HEALTH).removeModifier(mod);
+			}
+		}
 		this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MAX_HEALTH)
 				.applyModifier(new AttributeModifier(MOB_HEALTH_MOD_NAME, this.cultivation.getConstitutionModifier()*1.5f, 0));
+
+		for(AttributeModifier mod : this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ARMOR).getModifiers()) {
+			if(mod.getName().equals(MOB_ARMOR_MOD_NAME)) {
+				this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ARMOR).removeModifier(mod);
+			}
+		}
 		this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ARMOR)
 				.applyModifier(new AttributeModifier(MOB_ARMOR_MOD_NAME, this.cultivation.getResistanceModifier()*1.5f, 0));
+
+		for(AttributeModifier mod : this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MOVEMENT_SPEED).getModifiers()) {
+			if(mod.getName().equals(MOB_M_SPEED_MOD_NAME)) {
+				this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MOVEMENT_SPEED).removeModifier(mod);
+			}
+		}
 		this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MOVEMENT_SPEED)
 				.applyModifier(new AttributeModifier(MOB_M_SPEED_MOD_NAME, Math.min(this.cultivation.getAgilityModifier()*0.15, 1.5), 0));
+
+		for(AttributeModifier mod : this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ATTACK_SPEED).getModifiers()) {
+			if(mod.getName().equals(MOB_A_SPEED_MOD_NAME)) {
+				this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ATTACK_SPEED).removeModifier(mod);
+			}
+		}
 		this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ATTACK_SPEED)
 				.applyModifier(new AttributeModifier(MOB_A_SPEED_MOD_NAME, this.cultivation.getDexterityModifier()*1.5f, 1));
+
+		for(AttributeModifier mod : this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE).getModifiers()) {
+			if(mod.getName().equals(MOB_DAMAGE_MOD_NAME)) {
+				this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE).removeModifier(mod);
+			}
+		}
 		this.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.ATTACK_DAMAGE)
 				.applyModifier(new AttributeModifier(MOB_DAMAGE_MOD_NAME, this.cultivation.getStrengthModifier()*1.5f, 0));
 		this.heal(100000f);

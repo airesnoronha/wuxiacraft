@@ -80,29 +80,31 @@ public class FormationSlaughter extends Formation {
 			}
 			parent.setFormationInfo(info);
 		}
-		List<EntityPlayer> playersWhiteListed = new ArrayList<>();
-		List<String> names = getNamesFromInfo(parent.getFormationInfo());
-		for (String name : names) {
-			if (name.startsWith("range=")) {
-				double range = Double.parseDouble(name.substring("range=".length()));
-				preferredRange = Math.min(this.getRange(), range);
-				continue;
-			}
-			EntityPlayer player = worldIn.getPlayerEntityByName(name);
-			if (player != null) {
-				playersWhiteListed.add(player);
-			}
-		}
-		List<EntityLivingBase> targets = worldIn.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(source).grow(preferredRange), input -> {
-			if (input instanceof EntityPlayer)
-				return !playersWhiteListed.contains(input);
-			else return true;
-		});
 		int activated = 0;
-		for (EntityLivingBase target : targets) {
-			if(parent.hasEnergy(this.getOperationCost() * (activated+1))) {
-				target.attackEntityFrom(DamageSource.GENERIC.setDamageBypassesArmor(), this.strength);
-				activated++;
+		if(timeAlive % 20 == 10) {
+			List<EntityPlayer> playersWhiteListed = new ArrayList<>();
+			List<String> names = getNamesFromInfo(parent.getFormationInfo());
+			for (String name : names) {
+				if (name.startsWith("range=")) {
+					double range = Double.parseDouble(name.substring("range=".length()));
+					preferredRange = Math.min(this.getRange(), range);
+					continue;
+				}
+				EntityPlayer player = worldIn.getPlayerEntityByName(name);
+				if (player != null) {
+					playersWhiteListed.add(player);
+				}
+			}
+			List<EntityLivingBase> targets = worldIn.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(source).grow(preferredRange), input -> {
+				if (input instanceof EntityPlayer)
+					return !playersWhiteListed.contains(input);
+				else return true;
+			});
+			for (EntityLivingBase target : targets) {
+				if (parent.hasEnergy(this.getOperationCost() * (activated + 1))) {
+					target.attackEntityFrom(DamageSource.GENERIC, this.strength * 20);
+					activated++;
+				}
 			}
 		}
 		return activated;
