@@ -92,10 +92,12 @@ public class ClientProxy extends CommonProxy {
 		RenderingRegistry.registerEntityRenderingHandler(EntityLevelUpHalo.class, RenderLevelUpHalo::new);
 		RenderingRegistry.registerEntityRenderingHandler(WindBladeThrowable.class, RenderWindBlade::new);
 		RenderingRegistry.registerEntityRenderingHandler(ThunderBoltThrowable.class, RenderThunderBolt::new);
+		RenderingRegistry.registerEntityRenderingHandler(LightThrowable.class, RenderLight::new);
 
 		WuxiaCraftConfig.clientPreInit();
 
 		MinecraftForge.EVENT_BUS.register(new RendererHandler());
+		MinecraftForge.EVENT_BUS.register(new EntityRenderHandler());
 
 		ClientRegistry.bindTileEntitySpecialRenderer(FormationTileEntity.class, new FormationTESR());
 	}

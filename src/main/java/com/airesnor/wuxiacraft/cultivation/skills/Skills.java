@@ -93,6 +93,10 @@ public class Skills {
 		SKILLS.add(WOODEN_PRISON);
 		SKILLS.add(WEAK_LIGHTNING_BOLT);
 		SKILLS.add(LANDSLIDE);
+		SKILLS.add(THROW_WEAK_LIGHT);
+		SKILLS.add(THROW_MEDIUM_LIGHT);
+		SKILLS.add(THROW_STRONG_LIGHT);
+		SKILLS.add(THROW_MAXIMA_LIGHT);
 	}
 
 	public static final Potion ENLIGHTENMENT = new EnlightenmentPotion("enlightenment");
@@ -710,6 +714,46 @@ public class Skills {
 					}
 				}
 				return activated;
+			});
+
+	public static final Skill THROW_WEAK_LIGHT = new Skill("throw_weak_light", false, false, 28f, 0.9f, 12f, 0)
+			.setAction(actor -> {
+				if(actor.world instanceof WorldServer) {
+					LightThrowable lightThrowable = new LightThrowable(actor.world, actor, 300, 0);
+					lightThrowable.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0, 0.8f, 0);
+					WorldUtils.spawnEntity((WorldServer) actor.world, lightThrowable);
+				}
+				return true;
+			});
+
+	public static final Skill THROW_MEDIUM_LIGHT = new Skill("throw_medium_light", false, false, 28f, 0.9f, 12f, 0)
+			.setAction(actor -> {
+				if(actor.world instanceof WorldServer) {
+					LightThrowable lightThrowable = new LightThrowable(actor.world, actor, 300, 1);
+					lightThrowable.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0, 0.8f, 0);
+					WorldUtils.spawnEntity((WorldServer) actor.world, lightThrowable);
+				}
+				return true;
+			});
+
+	public static final Skill THROW_STRONG_LIGHT = new Skill("throw_strong_light", false, false, 28f, 0.9f, 12f, 0)
+			.setAction(actor -> {
+				if(actor.world instanceof WorldServer) {
+					LightThrowable lightThrowable = new LightThrowable(actor.world, actor, 300, 2);
+					lightThrowable.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0, 0.8f, 0);
+					WorldUtils.spawnEntity((WorldServer) actor.world, lightThrowable);
+				}
+				return true;
+			});
+
+	public static final Skill THROW_MAXIMA_LIGHT = new Skill("throw_maxima_light", false, false, 28f, 0.9f, 12f, 0)
+			.setAction(actor -> {
+				if(actor.world instanceof WorldServer) {
+					LightThrowable lightThrowable = new LightThrowable(actor.world, actor, 300, 3);
+					lightThrowable.shoot(actor, actor.rotationPitch, actor.rotationYaw, 0, 0.8f, 0);
+					WorldUtils.spawnEntity((WorldServer) actor.world, lightThrowable);
+				}
+				return true;
 			});
 
 	public static final Skill MINOR_BODY_REINFORCEMENT = new SkillPotionEffectSelf("minor_body_reinforcement", new PotionEffect(MobEffects.STRENGTH, 1800, 2, false, true), 12f, 1.2f, 18f, 20f, "Aires Adures");

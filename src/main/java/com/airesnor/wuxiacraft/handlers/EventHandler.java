@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.aura.IAuraCap;
 import com.airesnor.wuxiacraft.blocks.SpiritStoneStackBlock;
 import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
@@ -42,11 +43,15 @@ import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.MobEffects;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -100,7 +105,8 @@ public class EventHandler {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-			NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, true), (EntityPlayerMP) player);
+			IAuraCap auraCap = CultivationUtils.getAuraFromEntity(player);
+			NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, auraCap, true), (EntityPlayerMP) player);
 			IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
 			NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
 
@@ -149,13 +155,14 @@ public class EventHandler {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
+			IAuraCap auraCap = CultivationUtils.getAuraFromEntity(player);
 
 			cultivation.advTimer();
 			cultivation.lessenPillCooldown();
 			//each 100 ticks will sync the cultivation
 			if (cultivation.getUpdateTimer() == 100) {
 				if (!player.world.isRemote) {
-					NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, false), (EntityPlayerMP) player);
+					NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, auraCap, false), (EntityPlayerMP) player);
 				}
 				cultivation.resetTimer();
 			}
@@ -535,6 +542,8 @@ public class EventHandler {
 		ISealing oldSealing = CultivationUtils.getSealingFromEntity(original);
 		IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
 		IBarrier oldBarrier = CultivationUtils.getBarrierFromEntity(original);
+		IAuraCap auraCap = CultivationUtils.getAuraFromEntity(player);
+		IAuraCap oldAuraCap = CultivationUtils.getAuraFromEntity(player);
 		if (event.isWasDeath()) {
 			cultivation.setBodyLevel(oldCultivation.getBodyLevel());
 			cultivation.setDivineLevel(oldCultivation.getDivineLevel());
@@ -565,6 +574,7 @@ public class EventHandler {
 		barrier.copyFrom(oldBarrier);
 		barrier.setBarrierMaxAmount((float) Math.max(0, (cultivation.getEssenceModifier() - 3.0) * 0.5));
 		barrier.setBarrierRegenRate(barrier.getBarrierMaxAmount() * 0.001f);
+		auraCap.copyFrom(oldAuraCap);
 	}
 
 	/**
@@ -579,8 +589,9 @@ public class EventHandler {
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 		ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
+		IAuraCap auraCap = CultivationUtils.getAuraFromEntity(player);
 		WuxiaCraft.logger.info("Applying " + player.getDisplayNameString() + " cultivation.");
-		NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, true), (EntityPlayerMP) player);
+		NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, auraCap, true), (EntityPlayerMP) player);
 		applyModifiers(player);
 	}
 
@@ -921,84 +932,86 @@ public class EventHandler {
 	 */
 	public static void applyModifiers(EntityPlayer player) {
 
-		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
+		if (player != null) {
+			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 
-		//Adds the potions effects from cult tech
-		for (PotionEffect effect : cultTech.getTechniquesEffects()) {
-			player.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration() + 19, effect.getAmplifier(), effect.getIsAmbient(), effect.doesShowParticles()));
-		}
-
-		double spd = CultivationUtils.getAgilityFromEntity(player);
-		if (WuxiaCraftConfig.maxServerSpeed >= 0) {
-			spd = Math.min(spd, WuxiaCraftConfig.maxServerSpeed);
-		}
-		spd *= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
-
-		double str = CultivationUtils.getStrengthFromEntity(player);
-		double hp = CultivationUtils.getConstitutionFromEntity(player);
-		double armor = CultivationUtils.getResistanceFromEntity(player);
-		double atk_sp = CultivationUtils.getDexterityFromEntity(player);
-
-		AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, str, 0);
-		AttributeModifier health_mod = new AttributeModifier(health_mod_name, hp, 0);
-		//since armor base is 0, it'll add 2*strength as armor
-		//I'll use for now strength for increase every other stat, since it's almost the same after all
-		AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, armor, 0);
-		AttributeModifier speed_mod = new AttributeModifier(speed_mod_name, spd, 0);
-		AttributeModifier attack_speed_mod = new AttributeModifier(attack_speed_mod_name, atk_sp, 0);
-		AttributeModifier swim_speed_mod = new AttributeModifier(swim_mod_name, spd * (cultTech.hasElement(Element.WATER) ? 1 : 0.05), 0);
-
-		//remove any previous strength modifiers
-		for (AttributeModifier mod : player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getModifiers()) {
-			if (mod.getName().equals(strength_mod_name)) {
-				player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).removeModifier(mod);
+			//Adds the potions effects from cult tech
+			for (PotionEffect effect : cultTech.getTechniquesEffects()) {
+				player.addPotionEffect(new PotionEffect(effect.getPotion(), effect.getDuration() + 19, effect.getAmplifier(), effect.getIsAmbient(), effect.doesShowParticles()));
 			}
-		}
 
-		//remove any previous speed modifiers
-		for (AttributeModifier mod : player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getModifiers()) {
-			if (mod.getName().equals(speed_mod_name)) {
-				player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).removeModifier(mod);
+			double spd = CultivationUtils.getAgilityFromEntity(player);
+			if (WuxiaCraftConfig.maxServerSpeed >= 0) {
+				spd = Math.min(spd, WuxiaCraftConfig.maxServerSpeed);
 			}
-		}
+			spd *= player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
 
-		//remove any previous attack speed modifiers
-		for (AttributeModifier mod : player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getModifiers()) {
-			if (mod.getName().equals(attack_speed_mod_name)) {
-				player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).removeModifier(mod);
+			double str = CultivationUtils.getStrengthFromEntity(player);
+			double hp = CultivationUtils.getConstitutionFromEntity(player);
+			double armor = CultivationUtils.getResistanceFromEntity(player);
+			double atk_sp = CultivationUtils.getDexterityFromEntity(player);
+
+			AttributeModifier strength_mod = new AttributeModifier(strength_mod_name, str, 0);
+			AttributeModifier health_mod = new AttributeModifier(health_mod_name, hp, 0);
+			//since armor base is 0, it'll add 2*strength as armor
+			//I'll use for now strength for increase every other stat, since it's almost the same after all
+			AttributeModifier armor_mod = new AttributeModifier(armor_mod_name, armor, 0);
+			AttributeModifier speed_mod = new AttributeModifier(speed_mod_name, spd, 0);
+			AttributeModifier attack_speed_mod = new AttributeModifier(attack_speed_mod_name, atk_sp, 0);
+			AttributeModifier swim_speed_mod = new AttributeModifier(swim_mod_name, spd * (cultTech.hasElement(Element.WATER) ? 1 : 0.05), 0);
+
+			//remove any previous strength modifiers
+			for (AttributeModifier mod : player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getModifiers()) {
+				if (mod.getName().equals(strength_mod_name)) {
+					player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).removeModifier(mod);
+				}
 			}
-		}
 
-		//remove any previous armor modifiers
-		for (AttributeModifier mod : player.getEntityAttribute(SharedMonsterAttributes.ARMOR).getModifiers()) {
-			if (mod.getName().equals(armor_mod_name)) {
-				player.getEntityAttribute(SharedMonsterAttributes.ARMOR).removeModifier(mod);
+			//remove any previous speed modifiers
+			for (AttributeModifier mod : player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getModifiers()) {
+				if (mod.getName().equals(speed_mod_name)) {
+					player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).removeModifier(mod);
+				}
 			}
-		}
 
-		//remove any previous max health modifiers
-		for (AttributeModifier mod : player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers()) {
-			if (mod.getName().equals(health_mod_name)) {
-				player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(mod);
+			//remove any previous attack speed modifiers
+			for (AttributeModifier mod : player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).getModifiers()) {
+				if (mod.getName().equals(attack_speed_mod_name)) {
+					player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).removeModifier(mod);
+				}
 			}
-		}
 
-		//remove any previous swim speed modifiers
-		for (AttributeModifier mod : player.getEntityAttribute(EntityPlayer.SWIM_SPEED).getModifiers()) {
-			if (mod.getName().equals(swim_mod_name)) {
-				player.getEntityAttribute(EntityPlayer.SWIM_SPEED).removeModifier(mod);
+			//remove any previous armor modifiers
+			for (AttributeModifier mod : player.getEntityAttribute(SharedMonsterAttributes.ARMOR).getModifiers()) {
+				if (mod.getName().equals(armor_mod_name)) {
+					player.getEntityAttribute(SharedMonsterAttributes.ARMOR).removeModifier(mod);
+				}
 			}
+
+			//remove any previous max health modifiers
+			for (AttributeModifier mod : player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getModifiers()) {
+				if (mod.getName().equals(health_mod_name)) {
+					player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(mod);
+				}
+			}
+
+			//remove any previous swim speed modifiers
+			for (AttributeModifier mod : player.getEntityAttribute(EntityPlayer.SWIM_SPEED).getModifiers()) {
+				if (mod.getName().equals(swim_mod_name)) {
+					player.getEntityAttribute(EntityPlayer.SWIM_SPEED).removeModifier(mod);
+				}
+			}
+
+			//apply current modifiers
+			player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).applyModifier(strength_mod);
+			player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(speed_mod);
+			player.getEntityAttribute(SharedMonsterAttributes.ARMOR).applyModifier(armor_mod);
+			player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).applyModifier(attack_speed_mod);
+			player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(health_mod);
+			player.getEntityAttribute(EntityPlayer.SWIM_SPEED).applyModifier(swim_speed_mod);
+
+			//WuxiaCraft.logger.info(String.format("Applying %s modifiers from %s.", player.getDisplayNameString(), cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel())));
 		}
-
-		//apply current modifiers
-		player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).applyModifier(strength_mod);
-		player.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).applyModifier(speed_mod);
-		player.getEntityAttribute(SharedMonsterAttributes.ARMOR).applyModifier(armor_mod);
-		player.getEntityAttribute(SharedMonsterAttributes.ATTACK_SPEED).applyModifier(attack_speed_mod);
-		player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(health_mod);
-		player.getEntityAttribute(EntityPlayer.SWIM_SPEED).applyModifier(swim_speed_mod);
-
-		//WuxiaCraft.logger.info(String.format("Applying %s modifiers from %s.", player.getDisplayNameString(), cultivation.getCurrentLevel().getLevelName(cultivation.getCurrentSubLevel())));
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
