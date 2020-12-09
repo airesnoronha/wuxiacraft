@@ -221,7 +221,7 @@ public class WuxiaCraftConfig {
 	public static void syncCultivationFromConfigToClient() {
 		Minecraft.getMinecraft().addScheduledTask(() -> {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
-			cultivation.setSpeedHandicap(WuxiaCraftConfig.speedHandicap);
+			cultivation.setHandicap(WuxiaCraftConfig.speedHandicap);
 			cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
 			cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
 			cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);

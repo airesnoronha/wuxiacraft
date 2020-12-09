@@ -5,10 +5,7 @@ import com.airesnor.wuxiacraft.aura.IAuraCap;
 import com.airesnor.wuxiacraft.blocks.SpiritStoneStackBlock;
 import com.airesnor.wuxiacraft.blocks.WuxiaBlocks;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
-import com.airesnor.wuxiacraft.cultivation.Cultivation;
-import com.airesnor.wuxiacraft.cultivation.IBarrier;
-import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.cultivation.ISealing;
+import com.airesnor.wuxiacraft.cultivation.*;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
@@ -43,15 +40,11 @@ import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.MobEffects;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
@@ -174,7 +167,7 @@ public class EventHandler {
 				}
 			}
 			if (player.world.isRemote) {
-				boolean canFly = cultivation.getEssenceLevel().getModifierBySubLevel(cultivation.getEssenceSubLevel()) > 1100;
+				boolean canFly = ((BaseSystemLevel.EssenceLevel) cultivation.getEssenceLevel()).flight;
 				if (canFly && player.capabilities.isFlying && cultivation.getEnergy() <= 0) {
 					player.capabilities.isFlying = false;
 				}
@@ -191,7 +184,6 @@ public class EventHandler {
 				}
 				player.sendPlayerAbilities();
 			}
-
 
 			double energy = CultivationUtils.getMaxEnergy(player) * 0.00025;
 			//add a little of soul modifier to help out since soul affects perception
@@ -266,7 +258,7 @@ public class EventHandler {
 						Skill selectedSkill = skillCap.getSelectedSkill(cultTech);
 						if (selectedSkill != null) {
 							if (skillCap.isCasting()) {
-								if (cultivation.hasEnergy(selectedSkill.getCost())) {
+								if (cultivation.hasEnergy(selectedSkill.getCost()) || selectedSkill.getCost() == 0) {
 									if (skillCap.getCastProgress() < selectedSkill.getCastTime() && selectedSkill.castingEffect(player)) {
 										if (selectedSkill.castNotSpeedable) skillCap.stepCastProgress(1);
 										else
@@ -278,7 +270,7 @@ public class EventHandler {
 											if (!player.isCreative())
 												cultivation.remEnergy(selectedSkill.getCost());
 											NetworkWrapper.INSTANCE.sendToServer(new ActivateSkillMessage(skillCap.getActiveSkill(), player.getUniqueID()));
-											CultivationUtils.cultivatorAddProgress(player, Cultivation.System.ESSENCE, selectedSkill.getProgress(), true, false);
+											CultivationUtils.cultivatorAddProgress(player, Cultivation.System.ESSENCE, selectedSkill.getProgress(), true);
 										}
 									}
 								}
@@ -384,8 +376,8 @@ public class EventHandler {
 
 			if (player.capabilities.isFlying) {
 				float totalRem = 0f;
-				float fly_cost = 2500f;
-				float dist_cost = 1320f;
+				float fly_cost = 250f;
+				float dist_cost = 132f;
 				if (cultivation.getEssenceLevel().getModifierBySubLevel(cultivation.getEssenceSubLevel()) < 160000) { // cannot fly freely
 					totalRem += fly_cost;
 				}
@@ -464,7 +456,7 @@ public class EventHandler {
 			EntityPlayer player = (EntityPlayer) event.getSource().getTrueSource();
 			if (!player.world.isRemote) {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-				CultivationUtils.cultivatorAddProgress(player, Cultivation.System.BODY, 0.25f, false, false);
+				CultivationUtils.cultivatorAddProgress(player, Cultivation.System.BODY, 0.25f, false);
 				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(event.getEntityLiving());
 				if (cultTech.getDivineTechnique() != null) {
 					if (event.getEntityLiving().getHealth() <= 0) {
@@ -499,7 +491,7 @@ public class EventHandler {
 		if (player != null && !player.world.isRemote) {
 			IBlockState block = event.getState();
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-			CultivationUtils.cultivatorAddProgress(player, Cultivation.System.BODY, 0.1f * block.getBlockHardness(event.getWorld(), event.getPos()), false, false);
+			CultivationUtils.cultivatorAddProgress(player, Cultivation.System.BODY, 0.1f * block.getBlockHardness(event.getWorld(), event.getPos()), false);
 			NetworkWrapper.INSTANCE.sendTo(new CultivationMessage(cultivation), (EntityPlayerMP) player);
 		}
 	}
@@ -572,8 +564,6 @@ public class EventHandler {
 		skillCap.copyFrom(oldSkillCap, true);
 		sealing.copyFrom(oldSealing);
 		barrier.copyFrom(oldBarrier);
-		barrier.setBarrierMaxAmount((float) Math.max(0, (cultivation.getEssenceModifier() - 3.0) * 0.5));
-		barrier.setBarrierRegenRate(barrier.getBarrierMaxAmount() * 0.001f);
 		auraCap.copyFrom(oldAuraCap);
 	}
 
@@ -786,7 +776,7 @@ public class EventHandler {
 	}
 
 	/**
-	 * When player has a cultivation that allows
+	 * When player has a cultivation that allows to convert energy into food
 	 *
 	 * @param event A description of whats happening
 	 */
@@ -794,19 +784,11 @@ public class EventHandler {
 	public void onPlayerHunger(TickEvent.PlayerTickEvent event) {
 		EntityPlayer player = event.player;
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-		double cost = 9000;
+		double cost = 900;
 		//first of all, only essence can be used as food
 		if (player.ticksExisted % 100 == 0) {
 			if (player.getFoodStats().getFoodLevel() < 20 && cultivation.getEssenceModifier() > 130) {
-				if (cultivation.getEssenceModifier() > 16000) { // free food
-					player.getFoodStats().setFoodLevel(20);
-					try {
-						foodStats.setFloat(player.getFoodStats(), 20f);
-					} catch (Exception e) {
-						WuxiaCraft.logger.error("Couldn't help with food, sorry!");
-						e.printStackTrace();
-					}
-				} else if (cultivation.hasEnergy(cost)) {
+				if (cultivation.hasEnergy(cost)) {
 					player.getFoodStats().setFoodLevel(20);
 					try {
 						foodStats.setFloat(player.getFoodStats(), 20f);
@@ -831,9 +813,9 @@ public class EventHandler {
 		if (!(event.getEntityLiving() instanceof EntityPlayer)) return;
 		if (event.isCanceled()) return; //compatibility with mods and plugins
 		if (event.getAmount() <= 0) return;
- 		beforeDamage = event.getAmount();
+		beforeDamage = event.getAmount();
 		originalUnblockable = event.getSource().isUnblockable();
-		if(!originalUnblockable &&
+		if (!originalUnblockable &&
 				event.getSource() != DamageSource.CACTUS &&
 				event.getSource() != DamageSource.FIREWORKS &&
 				event.getSource() != DamageSource.IN_FIRE &&
@@ -857,13 +839,13 @@ public class EventHandler {
 	public void onPlayerTakeDamage(LivingDamageEvent event) {
 		if (!(event.getEntityLiving() instanceof EntityPlayer)) return;
 		if (event.isCanceled()) return; //compatibility with mods and plugins
-		if(beforeDamage <= 0) return; //if it was 0 before the event
+		if (beforeDamage <= 0) return; //if it was 0 before the event
 		float damage = beforeDamage;
 		float armor = event.getEntityLiving().getTotalArmorValue();
-		float toughness = (float)event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue();
-		if(!originalUnblockable) {
+		float toughness = (float) event.getEntityLiving().getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue();
+		if (!originalUnblockable) {
 			damage = applyArmorCalculations(damage, armor, toughness);
-			((EntityPlayer)event.getEntityLiving()).addExhaustion(0.1f); //set unblockable removes the hunger damage, lame
+			((EntityPlayer) event.getEntityLiving()).addExhaustion(0.1f); //set unblockable removes the hunger damage, lame
 		}
 		originalUnblockable = false;
 		damage = applyPotionDamageCalculations(event.getEntityLiving(), event.getSource(), damage);
@@ -877,33 +859,24 @@ public class EventHandler {
 	 * Reduces damage, depending on potions
 	 * direct copy from {@link EntityLivingBase}
 	 */
-	private static float applyPotionDamageCalculations(EntityLivingBase target, DamageSource source, float damage)
-	{
-		if (source.isDamageAbsolute())
-		{
+	private static float applyPotionDamageCalculations(EntityLivingBase target, DamageSource source, float damage) {
+		if (source.isDamageAbsolute()) {
 			return damage;
-		}
-		else
-		{
-			if (target.isPotionActive(MobEffects.RESISTANCE) && source != DamageSource.OUT_OF_WORLD)
-			{
+		} else {
+			if (target.isPotionActive(MobEffects.RESISTANCE) && source != DamageSource.OUT_OF_WORLD) {
 				int i = (Objects.requireNonNull(target.getActivePotionEffect(MobEffects.RESISTANCE)).getAmplifier() + 1) * 5;
 				int j = 25 - i;
-				float f = damage * (float)j;
+				float f = damage * (float) j;
 				damage = f / 25.0F;
 			}
 
-			if (damage <= 0.0F)
-			{
+			if (damage <= 0.0F) {
 				return 0.0F;
-			}
-			else
-			{
+			} else {
 				int k = EnchantmentHelper.getEnchantmentModifierDamage(target.getArmorInventoryList(), source);
 
-				if (k > 0)
-				{
-					damage = CombatRules.getDamageAfterMagicAbsorb(damage, (float)k);
+				if (k > 0) {
+					damage = CombatRules.getDamageAfterMagicAbsorb(damage, (float) k);
 				}
 
 				return damage;
@@ -1062,7 +1035,7 @@ public class EventHandler {
 				event.setCanceled(true);
 				barrier.removeBarrierAmount(event.getAmount());
 			} else if (barrier.getBarrierAmount() > 0.0f && event.getAmount() > barrier.getBarrierAmount()) {
-				float remainingDamage = event.getAmount() - barrier.getBarrierAmount();
+				float remainingDamage = event.getAmount() - (float) barrier.getBarrierAmount();
 				barrier.removeBarrierAmount(barrier.getBarrierAmount());
 				barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
 				barrier.setBarrierBroken(true);
@@ -1083,7 +1056,7 @@ public class EventHandler {
 				event.setCanceled(true);
 				barrier.removeBarrierAmount(event.getAmount() - armour);
 			} else if (barrier.getBarrierAmount() > 0.0f && (event.getAmount() - armour) > barrier.getBarrierAmount()) {
-				float remainingDamage = (event.getAmount() - armour) - barrier.getBarrierAmount();
+				float remainingDamage = (event.getAmount() - armour) - (float) barrier.getBarrierAmount();
 				barrier.removeBarrierAmount(barrier.getBarrierAmount());
 				barrier.setBarrierCooldown(Math.min(barrier.getBarrierMaxCooldown(), 3000 + (100 * barrier.getBarrierHits())));
 				barrier.setBarrierBroken(true);
@@ -1120,11 +1093,11 @@ public class EventHandler {
 					cultivation.remEnergy(CultivationUtils.getMaxEnergy(player) * 0.00005F);
 				}
 				// Barrier regen when the barrier is not broken
-				if (!barrier.isBarrierBroken() && barrier.isBarrierRegenActive() && barrier.getBarrierAmount() + barrier.getBarrierRegenRate() < barrier.getBarrierMaxAmount()) {
-					barrier.addBarrierAmount(barrier.getBarrierRegenRate());
+				if (!barrier.isBarrierBroken() && barrier.isBarrierRegenActive() && barrier.getBarrierAmount() + barrier.getBarrierRegenRate(cultivation) < barrier.getBarrierMaxAmount(cultivation)) {
+					barrier.addBarrierAmount(barrier.getBarrierRegenRate(cultivation));
 					cultivation.remEnergy(CultivationUtils.getMaxEnergy(player) * 0.00005F);
-				} else if (barrier.getBarrierAmount() + barrier.getBarrierRegenRate() >= barrier.getBarrierMaxAmount()) {
-					barrier.setBarrierAmount(barrier.getBarrierMaxAmount());
+				} else if (barrier.getBarrierAmount() + barrier.getBarrierRegenRate(cultivation) >= barrier.getBarrierMaxAmount(cultivation)) {
+					barrier.setBarrierAmount(barrier.getBarrierMaxAmount(cultivation));
 				}
 				// Cooldown
 				if (barrier.getBarrierCooldown() <= 0) {

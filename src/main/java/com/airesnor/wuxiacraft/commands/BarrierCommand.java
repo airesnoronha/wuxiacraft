@@ -17,28 +17,28 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("SpellCheckingInspection")
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class BarrierCommand extends CommandBase {
 
     @Override
-    @MethodsReturnNonnullByDefault
     public String getName() {
         return "barrier";
     }
 
     @Override
-    @MethodsReturnNonnullByDefault
     public String getUsage(ICommandSender sender) {
         return "/barrier [set <player> <value> : setActive <player> <true : false> : get <player> : resetCD <player> : reset <player>] ";
     }
 
     @Override
-    @MethodsReturnNonnullByDefault
     public List<String> getAliases() {
-        List<String> aliases = new ArrayList<>();
-        return aliases;
+		return new ArrayList<>();
     }
 
     @Override
@@ -50,33 +50,19 @@ public class BarrierCommand extends CommandBase {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (!sender.getEntityWorld().isRemote) {
             boolean wrongUsage = true;
-            if (args.length == 1) {
-                if (args[0].equalsIgnoreCase("fixall")) {
-                    for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
-                        if (player != null) {
-                            IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
-                            ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-                            barrier.setBarrierMaxAmount((float)Math.max(0, (cultivation.getEssenceModifier()-3.0)*0.5));
-                            barrier.setBarrierRegenRate(barrier.getBarrierMaxAmount() * 0.001f);
-                        }
-                    }
-                    TextComponentString text = new TextComponentString( "Everyone who is on the server has their barrier fixed!");
-                    text.getStyle().setColor(TextFormatting.GREEN);
-                    sender.sendMessage(text);
-                    wrongUsage = false;
-                }
-            } else if (args.length == 2) {
+            if (args.length == 2) {
                 if (args[0].equalsIgnoreCase("get")) {
                     EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
+                    ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
                     if (targetPlayer != null) {
                         IBarrier barrier = CultivationUtils.getBarrierFromEntity(targetPlayer);
                         TextComponentString text = new TextComponentString(targetPlayer.getName() + "'s Barrier:");
                         sender.sendMessage(text);
                         text = new TextComponentString("Barrier Amount: " + barrier.getBarrierAmount());
                         sender.sendMessage(text);
-                        text = new TextComponentString("Barrier Max Amount: " + barrier.getBarrierMaxAmount());
+                        text = new TextComponentString("Barrier Max Amount: " + barrier.getBarrierMaxAmount(cultivation));
                         sender.sendMessage(text);
-                        text = new TextComponentString("Barrier Regen Rate: " + barrier.getBarrierRegenRate());
+                        text = new TextComponentString("Barrier Regen Rate: " + barrier.getBarrierRegenRate(cultivation));
                         sender.sendMessage(text);
                         text = new TextComponentString("Barrier Active: " + barrier.isBarrierActive());
                         sender.sendMessage(text);
@@ -98,7 +84,7 @@ public class BarrierCommand extends CommandBase {
                     if (targetPlayer != null) {
                         IBarrier barrier = CultivationUtils.getBarrierFromEntity(targetPlayer);
                         barrier.setBarrierCooldown(0);
-                        NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, targetPlayer.getUniqueID()), (EntityPlayerMP) targetPlayer);
+                        NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, targetPlayer.getUniqueID()), targetPlayer);
                         TextComponentString text = new TextComponentString(targetPlayer.getName() + "'s barrier cooldown has been reset!");
                         text.getStyle().setColor(TextFormatting.GREEN);
                         sender.sendMessage(text);
@@ -115,25 +101,8 @@ public class BarrierCommand extends CommandBase {
                         IBarrier barrier = CultivationUtils.getBarrierFromEntity(targetPlayer);
                         IBarrier newBarier = new Barrier();
                         barrier.copyFrom(newBarier);
-                        NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, targetPlayer.getUniqueID()), (EntityPlayerMP) targetPlayer);
+                        NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, targetPlayer.getUniqueID()), targetPlayer);
                         TextComponentString text = new TextComponentString(targetPlayer.getName() + "'s barrier has been reset!");
-                        text.getStyle().setColor(TextFormatting.GREEN);
-                        sender.sendMessage(text);
-                        wrongUsage = false;
-                    } else {
-                        TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
-                        text.getStyle().setColor(TextFormatting.RED);
-                        sender.sendMessage(text);
-                        wrongUsage = true;
-                    }
-                } else if (args[0].equalsIgnoreCase("fix")) {
-                    EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
-                    if (targetPlayer != null) {
-                        IBarrier barrier = CultivationUtils.getBarrierFromEntity(targetPlayer);
-                        ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
-                        barrier.setBarrierMaxAmount((float)Math.max(0, (cultivation.getEssenceModifier()-3.0)*0.5));
-                        barrier.setBarrierRegenRate(barrier.getBarrierMaxAmount() * 0.001f);
-                        TextComponentString text = new TextComponentString( targetPlayer.getName() + "'s barrier has been fixed.");
                         text.getStyle().setColor(TextFormatting.GREEN);
                         sender.sendMessage(text);
                         wrongUsage = false;
@@ -152,7 +121,7 @@ public class BarrierCommand extends CommandBase {
                         float value = Float.parseFloat(args[2]);
                         if (value >= 0) {
                             barrier.setBarrierAmount(value);
-                            NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, targetPlayer.getUniqueID()), (EntityPlayerMP) targetPlayer);
+                            NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, targetPlayer.getUniqueID()), targetPlayer);
                             TextComponentString text = new TextComponentString("Setting Barrier Amount successful");
                             text.getStyle().setColor(TextFormatting.GREEN);
                             sender.sendMessage(text);
@@ -170,24 +139,8 @@ public class BarrierCommand extends CommandBase {
                         IBarrier barrier = CultivationUtils.getBarrierFromEntity(targetPlayer);
                         boolean active = Boolean.parseBoolean(args[2]);
                         barrier.setBarrierActive(active);
-                        NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, targetPlayer.getUniqueID()), (EntityPlayerMP) targetPlayer);
+                        NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, targetPlayer.getUniqueID()), targetPlayer);
                         wrongUsage = false;
-                    } else {
-                        TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
-                        text.getStyle().setColor(TextFormatting.RED);
-                        sender.sendMessage(text);
-                        wrongUsage = true;
-                    }
-                } else if (args[0].equalsIgnoreCase("setRegenRate")) {
-                    EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
-                    if (targetPlayer != null) {
-                        IBarrier barrier = CultivationUtils.getBarrierFromEntity(targetPlayer);
-                        float value = Float.parseFloat(args[2]);
-                        if (value >= 0) {
-                            barrier.setBarrierRegenRate(value);
-                            NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, targetPlayer.getUniqueID()), (EntityPlayerMP) targetPlayer);
-                            wrongUsage = false;
-                        }
                     } else {
                         TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);
                         text.getStyle().setColor(TextFormatting.RED);

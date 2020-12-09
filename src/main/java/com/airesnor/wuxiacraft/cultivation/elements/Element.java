@@ -63,6 +63,12 @@ public class Element {
 	public static final Element LIGHTNING = new Element("lightning", TextFormatting.LIGHT_PURPLE, EnumParticleTypes.CRIT_MAGIC);
 	public static final Element ICE = new Element("ice", TextFormatting.DARK_AQUA, EnumParticleTypes.DRIP_WATER);
 
+	//Physical damage as is no magic
+	public static final Element PHYSICAL = new Element("physical", TextFormatting.DARK_AQUA, EnumParticleTypes.DRIP_WATER);
+
+	//Neutral damage as is very basic pure magic
+	public static final Element NEUTRAL = new Element("neutral", TextFormatting.DARK_AQUA, EnumParticleTypes.DRIP_WATER);
+
 	public static void init() {
 
 		FIRE.AddCounter(WATER);

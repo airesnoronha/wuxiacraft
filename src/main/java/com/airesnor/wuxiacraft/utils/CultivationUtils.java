@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.utils;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.capabilities.*;
 import com.airesnor.wuxiacraft.cultivation.*;
 import com.airesnor.wuxiacraft.aura.AuraCap;
@@ -11,7 +10,6 @@ import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.cultivation.techniques.CultTech;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
-import com.airesnor.wuxiacraft.entities.effects.EntityLevelUpHalo;
 import com.airesnor.wuxiacraft.entities.mobs.EntityCultivator;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.UnifiedCapabilitySyncMessage;
@@ -119,11 +117,11 @@ public class CultivationUtils {
 	@Nonnull
 	public static IAuraCap getAuraFromEntity(EntityLivingBase entityIn) {
 		IAuraCap auraCap = null;
-		if(entityIn instanceof EntityPlayer) {
+		if (entityIn instanceof EntityPlayer) {
 			//noinspection ConstantConditions
 			auraCap = entityIn.getCapability(AuraCapProvider.AURA_CAPABILITY, null);
 		}
-		if(auraCap == null) {
+		if (auraCap == null) {
 			auraCap = new AuraCap();
 		}
 		return auraCap;
@@ -135,28 +133,34 @@ public class CultivationUtils {
 		return energy;
 	}
 
-	public static double getStrengthFromEntity(EntityLivingBase entityIn) {
-		double strength = getCultivationFromEntity(entityIn).getStrengthModifier();
-		strength *= 1 + getCultTechFromEntity(entityIn).getOverallModifiers().strength;
-		return strength;
-	}
-
-	public static double getDexterityFromEntity(EntityLivingBase entityIn) {
-		double attackSpeed = getCultivationFromEntity(entityIn).getDexterityModifier();
-		attackSpeed *= 1 + getCultTechFromEntity(entityIn).getOverallModifiers().attackSpeed;
-		return attackSpeed;
-	}
-
-	public static double getResistanceFromEntity(EntityLivingBase entityIn) {
-		double armor = getCultivationFromEntity(entityIn).getResistanceModifier();
-		armor *= 1 + getCultTechFromEntity(entityIn).getOverallModifiers().armor;
-		return armor;
-	}
-
 	public static double getConstitutionFromEntity(EntityLivingBase entityIn) {
 		double maxHealth = getCultivationFromEntity(entityIn).getConstitutionModifier();
 		maxHealth *= 1 + getCultTechFromEntity(entityIn).getOverallModifiers().maxHealth;
 		return maxHealth;
+	}
+
+	public static double getStrengthFromEntity(EntityLivingBase entityIn) {
+		ICultivation cultivation = getCultivationFromEntity(entityIn);
+		double strength = cultivation.getStrengthModifier();
+		strength *= 1 + getCultTechFromEntity(entityIn).getOverallModifiers().strength;
+		strength *= cultivation.getHandicap()/100.0;
+		return strength;
+	}
+
+	public static double getDexterityFromEntity(EntityLivingBase entityIn) {
+		ICultivation cultivation = getCultivationFromEntity(entityIn);
+		double attackSpeed = cultivation.getDexterityModifier();
+		attackSpeed *= 1 + getCultTechFromEntity(entityIn).getOverallModifiers().attackSpeed;
+		attackSpeed *= cultivation.getHandicap()/100.0;
+		return attackSpeed;
+	}
+
+	public static double getResistanceFromEntity(EntityLivingBase entityIn) {
+		ICultivation cultivation = getCultivationFromEntity(entityIn);
+		double armor = cultivation.getResistanceModifier();
+		armor *= 1 + getCultTechFromEntity(entityIn).getOverallModifiers().armor;
+		armor *= cultivation.getHandicap()/100.0;
+		return armor;
 	}
 
 	public static double getAgilityFromEntity(EntityLivingBase entityIn) {
@@ -168,17 +172,13 @@ public class CultivationUtils {
 			double max_speed = cultivation.getMaxSpeed();
 			movementSpeed = Math.min(max_speed, movementSpeed);
 		}
-		movementSpeed *= (cultivation.getSpeedHandicap() / 100f);
+		movementSpeed *= cultivation.getHandicap()/100.0;
 		return movementSpeed;
 	}
 
-	public static void cultivatorAddProgress(EntityLivingBase player, Cultivation.System system, double amount, boolean techniques, boolean allowBreakThrough) {
+	public static void cultivatorAddProgress(EntityLivingBase player, Cultivation.System system, double amount, boolean techniques) {
 		ICultivation cultivation = getCultivationFromEntity(player);
 		ICultTech cultTech = getCultTechFromEntity(player);
-		IBarrier barrier = getBarrierFromEntity(player);
-		if (cultTech.getTechniqueBySystem(system) != null && techniques) {
-			amount *= cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system));
-		}
 		double enlightenment = 1;
 		PotionEffect effect = player.getActivePotionEffect(Skills.ENLIGHTENMENT);
 		if (effect != null) {
@@ -205,34 +205,15 @@ public class CultivationUtils {
 				}
 			}
 		}
-		if(system == Cultivation.System.ESSENCE) {
-			amount *= MathUtils.clamp(cultivation.getDivineModifier() / cultivation.getEssenceLevel().getModifierBySubLevel(cultivation.getEssenceSubLevel()), 1, 20);
+		if (system == Cultivation.System.ESSENCE) {
+			amount *= MathUtils.clamp(cultivation.getDivineModifier() / Math.max(cultivation.getEssenceLevel().getModifierBySubLevel(cultivation.getEssenceSubLevel()), 1), 1, 20);
 		}
-		if (!cultivation.getSuppress()) {
-			try {
-				boolean leveled = cultivation.addSystemProgress(amount, system, allowBreakThrough);
-				cultivation.addSystemFoundation(amount * 0.05, system); //5% extra to foundations
-				if (cultivation.getBodyLevel() == BaseSystemLevel.DEFAULT_BODY_LEVEL) {
-					cultivation.addBodyProgress(amount * 0.3, allowBreakThrough);
-				}
-				if (cultivation.getDivineLevel() == BaseSystemLevel.DEFAULT_DIVINE_LEVEL) {
-					cultivation.addDivineProgress(amount * 0.3, allowBreakThrough);
-				}
-				if (cultivation.getEssenceLevel() == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
-					cultivation.addEssenceProgress(amount * 0.3, allowBreakThrough);
-				}
-				if (leveled && !player.world.isRemote) {
-					EntityLevelUpHalo halo = new EntityLevelUpHalo(player.world, player.posX, player.posY + 1, player.posZ);
-					WorldUtils.spawnEntity((WorldServer) player.world, halo);
-					barrier.setBarrierMaxAmount((float)Math.max(0, (cultivation.getEssenceModifier()-3.0)*0.5));
-					barrier.setBarrierRegenRate(barrier.getBarrierMaxAmount() * 0.001f);
-				}
-			} catch (Cultivation.RequiresTribulation tribulation) {
-				callTribulation(player, tribulation.tribulationStrength, tribulation.system, tribulation.level, tribulation.subLevel);
-			}
-		} else {
-			cultivation.addSystemFoundation(amount, system);
+		if (cultivation.getEssenceLevel() == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
+			cultivation.addSystemFoundation(amount, Cultivation.System.ESSENCE);
 		}
+		if(!cultivation.getSuppress())
+			cultivation.addSystemProgress(amount, system); //if reached max automatically will increase the foundation
+		cultivation.addSystemFoundation(amount * 0.05, system); //5% extra to foundations
 	}
 
 	//This will call one lightning bolt at a time, or else all bolts would be called at the same time
@@ -268,7 +249,7 @@ public class CultivationUtils {
 				World w = player.getEntityWorld();
 				double resistance = 1;
 				if (this.system != null) {
-					resistance = cultivation.getSystemModifier(this.system) + cultivation.getEssenceModifier() *0.05 + cultivation.getBodyModifier() * 0.05 + cultivation.getDivineModifier()*0.05; //new foundation system is already a way to resist tribulation
+					resistance = cultivation.getSystemModifier(this.system) + cultivation.getEssenceModifier() * 0.05 + cultivation.getBodyModifier() * 0.05 + cultivation.getDivineModifier() * 0.05; //new foundation system is already a way to resist tribulation
 				}
 				double multiplier = world.getGameRules().hasRule("tribulationMultiplier") ? world.getGameRules().getInt("tribulationMultiplier") : 1;
 				double worldMultiplier = WorldVariables.get(w).getTribulationMultiplier();
@@ -283,7 +264,7 @@ public class CultivationUtils {
 					world.addScheduledTask(() -> {
 						EntityLightningBolt lightningBolt = new EntityLightningBolt(world, player.posX, player.posY + 1.0, player.posZ, true); // effect only won't cause damage
 						world.addWeatherEffect(lightningBolt);
-						player.attackEntityFrom(DamageSource.LIGHTNING_BOLT.setDamageIsAbsolute().setDamageBypassesArmor(), (float)Math.max(damage, strength*0.1) );
+						player.attackEntityFrom(DamageSource.LIGHTNING_BOLT.setDamageIsAbsolute().setDamageBypassesArmor(), (float) Math.max(damage, strength * 0.1));
 					});
 					try {
 						sleep(750);
@@ -296,43 +277,7 @@ public class CultivationUtils {
 				world.addScheduledTask(() -> {
 					boolean survived = player.isEntityAlive();
 					if (survived && !this.customTribulation) {
-						double oldModifier = cultivation.getSystemModifier(system);
-						double modifierDifference;
-						switch (this.system) {
-							case BODY:
-								cultivation.setBodyProgress(0);
-								cultivation.setBodyLevel(this.targetLevel);
-								cultivation.setBodySubLevel(this.targetSubLevel);
-								cultivation.addBodyFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
-								modifierDifference = oldModifier * 1.3 - cultivation.getBodyModifier();
-								if (modifierDifference > 0) {
-									cultivation.setBodyFoundation(cultivation.getBodyFoundation() + cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel()) * modifierDifference /
-											(0.4 * cultivation.getBodyLevel().getModifierBySubLevel(cultivation.getBodySubLevel())));
-								}
-								break;
-							case DIVINE:
-								cultivation.setDivineProgress(0);
-								cultivation.setDivineLevel(this.targetLevel);
-								cultivation.setDivineSubLevel(this.targetSubLevel);
-								cultivation.addDivineFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
-								modifierDifference = oldModifier * 1.3 - cultivation.getDivineModifier();
-								if (modifierDifference > 0) {
-									cultivation.addDivineFoundation(cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()) * modifierDifference /
-											(0.4 * cultivation.getDivineLevel().getModifierBySubLevel(cultivation.getDivineSubLevel())));
-								}
-								break;
-							case ESSENCE:
-								cultivation.setEssenceProgress(0);
-								cultivation.setEssenceLevel(this.targetLevel);
-								cultivation.setEssenceSubLevel(this.targetSubLevel);
-								cultivation.addEssenceFoundation(this.tribulationStrength * (0.03 + 0.7 * this.player.getRNG().nextDouble()));
-								modifierDifference = oldModifier * 1.3 - cultivation.getEssenceModifier();
-								if (modifierDifference > 0) {
-									cultivation.addEssenceFoundation(cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) * modifierDifference /
-											(0.4 * cultivation.getEssenceLevel().getModifierBySubLevel(cultivation.getEssenceSubLevel())));
-								}
-								break;
-						}
+						cultivation.riseSubLevel(system);
 						((EntityPlayer) player).sendStatusMessage(new TextComponentString(TranslateUtils.translateKey("wuxiacraft.level_message.congrats_" + msgN) + " " + targetLevel.getLevelName(targetSubLevel)), false);
 						NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, getCultTechFromEntity(player), getSkillCapFromEntity(player), getAuraFromEntity(player), false), (EntityPlayerMP) player);
 					}
@@ -384,11 +329,7 @@ public class CultivationUtils {
 				world.addScheduledTask(() -> {
 					if (player.isEntityAlive()) {
 						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-						try {
-							cultivation.addBodyProgress(this.reward, false);
-						} catch (Cultivation.RequiresTribulation tribulation) {
-							WuxiaCraft.logger.error("Something is wrong with " + player.getName() + " cultivation technique...");
-						}
+						cultivation.addSystemProgress(this.reward, Cultivation.System.BODY);
 					}
 				});
 			}

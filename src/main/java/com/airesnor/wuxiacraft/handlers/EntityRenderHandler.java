@@ -3,9 +3,12 @@ package com.airesnor.wuxiacraft.handlers;
 import com.airesnor.wuxiacraft.aura.Aura;
 import com.airesnor.wuxiacraft.aura.Auras;
 import com.airesnor.wuxiacraft.aura.IAuraCap;
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
+import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.RequestAuraForOtherPlayerMessage;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
+import com.airesnor.wuxiacraft.utils.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.renderer.GlStateManager;
@@ -28,7 +31,7 @@ public class EntityRenderHandler {
 	public void playerAuraPre(RenderLivingEvent.Pre<EntityPlayer> event) {
 		if (event.getEntity() instanceof EntityPlayer) {
 			IAuraCap auraCap = CultivationUtils.getAuraFromEntity(event.getEntity());
-			for(Aura aura : auraCap.getAuraInstances()) {
+			for (Aura aura : auraCap.getAuraInstances()) {
 				aura.renderPre(event.getX(), event.getY(), event.getZ());
 			}
 		}
@@ -39,7 +42,7 @@ public class EntityRenderHandler {
 	public void playerAuraPost(RenderLivingEvent.Post<EntityPlayer> event) {
 		if (event.getEntity() instanceof EntityPlayer) {
 			IAuraCap auraCap = CultivationUtils.getAuraFromEntity(event.getEntity());
-			for(Aura aura : auraCap.getAuraInstances()) {
+			for (Aura aura : auraCap.getAuraInstances()) {
 				aura.renderPost(event.getX(), event.getY(), event.getZ());
 			}
 		}
@@ -49,7 +52,11 @@ public class EntityRenderHandler {
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void renderPlayerThroughWallsPre(RenderLivingEvent.Pre<EntityOtherPlayerMP> event) {
 		if (event.getEntity() instanceof EntityOtherPlayerMP) {
-			if(Minecraft.getMinecraft().player.isSneaking()) {
+			ICultivation other = CultivationUtils.getCultivationFromEntity(event.getEntity());
+			ICultivation mine = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
+			if (MathUtils.between(mine.getDivineModifier(), other.getDivineModifier(), other.getDivineModifier() * 3) &&
+					event.getEntity().getDistance(Minecraft.getMinecraft().player) <= mine.getDivineModifier() * 0.6 &&
+					Minecraft.getMinecraft().player.isSneaking()) {
 				GlStateManager.disableDepth();
 			}
 		}
@@ -59,7 +66,7 @@ public class EntityRenderHandler {
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void renderPlayerThroughWallsPost(RenderLivingEvent.Post<EntityOtherPlayerMP> event) {
 		if (event.getEntity() instanceof EntityOtherPlayerMP) {
-			if(Minecraft.getMinecraft().player.isSneaking()) {
+			if (Minecraft.getMinecraft().player.isSneaking()) {
 				GlStateManager.enableDepth();
 			}
 		}
@@ -67,8 +74,8 @@ public class EntityRenderHandler {
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void auraDataUpdate(TickEvent.PlayerTickEvent  event) {
-		if(event.phase == TickEvent.Phase.END && event.side == Side.CLIENT) {
+	public void auraDataUpdate(TickEvent.PlayerTickEvent event) {
+		if (event.phase == TickEvent.Phase.END && event.side == Side.CLIENT) {
 			for (Aura aura : Auras.AURAS.values()) {
 				aura.update();
 			}
@@ -80,8 +87,8 @@ public class EntityRenderHandler {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onPlayerRequestAura(TickEvent.PlayerTickEvent event) {
-		if(event.phase == TickEvent.Phase.END && event.side == Side.CLIENT) {
-			if(timer >= 20) {
+		if (event.phase == TickEvent.Phase.END && event.side == Side.CLIENT) {
+			if (timer >= 20) {
 				if (Minecraft.getMinecraft().player != null) {
 					AxisAlignedBB range = new AxisAlignedBB(Minecraft.getMinecraft().player.getPosition()).grow(72);
 					List<EntityOtherPlayerMP> others = event.player.world.getEntitiesWithinAABB(EntityOtherPlayerMP.class, range);

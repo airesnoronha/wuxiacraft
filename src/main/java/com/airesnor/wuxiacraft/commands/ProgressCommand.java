@@ -64,7 +64,7 @@ public class ProgressCommand extends CommandBase {
                                     cultivation.setBodyProgress(amount);
                                     wrongUsage = false;
                                 } else if (args[0].equalsIgnoreCase("add")) {
-                                    cultivation.addBodyProgress(amount, false);
+                                    cultivation.addSystemProgress(amount, Cultivation.System.BODY);
                                     wrongUsage = false;
                                 }
                                 text = new TextComponentString("Your cultivation base has been modified ...");
@@ -77,7 +77,7 @@ public class ProgressCommand extends CommandBase {
                                     cultivation.setDivineProgress(amount);
                                     wrongUsage = false;
                                 } else if (args[0].equalsIgnoreCase("add")) {
-                                    cultivation.addDivineProgress(amount, false);
+									cultivation.addSystemProgress(amount, Cultivation.System.DIVINE);
                                     wrongUsage = false;
                                 }
                                 text = new TextComponentString("Your cultivation base has been modified ...");
@@ -90,7 +90,7 @@ public class ProgressCommand extends CommandBase {
                                     cultivation.setEssenceProgress(amount);
                                     wrongUsage = false;
                                 } else if (args[0].equalsIgnoreCase("add")) {
-                                    cultivation.addEssenceProgress(amount, false);
+									cultivation.addSystemProgress(amount, Cultivation.System.ESSENCE);
                                     wrongUsage = false;
                                 }
                                 text = new TextComponentString("Your cultivation base has been modified ...");
@@ -105,9 +105,9 @@ public class ProgressCommand extends CommandBase {
                                     cultivation.setEssenceProgress(amount);
                                     wrongUsage = false;
                                 } else if (args[0].equalsIgnoreCase("add")) {
-                                    cultivation.addBodyProgress(amount, false);
-                                    cultivation.addDivineProgress(amount, false);
-                                    cultivation.addEssenceProgress(amount, false);
+									cultivation.addSystemProgress(amount, Cultivation.System.BODY);
+									cultivation.addSystemProgress(amount, Cultivation.System.DIVINE);
+									cultivation.addSystemProgress(amount, Cultivation.System.ESSENCE);
                                     wrongUsage = false;
                                 }
                                 text = new TextComponentString("Your cultivation base has been modified ...");
@@ -120,9 +120,6 @@ public class ProgressCommand extends CommandBase {
                         TextComponentString text = new TextComponentString("Couldn't read number: " + args[3]);
                         text.getStyle().setColor(TextFormatting.RED);
                         sender.sendMessage(text);
-                    } catch (Cultivation.RequiresTribulation tribulation) {
-                        double strength = cultivation.getSystemLevel(tribulation.system).getModifierBySubLevel(tribulation.subLevel);
-                        CultivationUtils.callTribulation(targetPlayer, strength, tribulation.system, tribulation.level, tribulation.subLevel);
                     }
                 } else {
                     TextComponentString text = new TextComponentString("Couldn't find player " + args[1]);

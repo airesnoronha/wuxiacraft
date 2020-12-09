@@ -400,7 +400,7 @@ public class Techniques {
 			.addSkill(10000 * 8, Skills.FIRE_BAll);
 
 	//todo - turn it into a weapon technique (sword)
-	//From Anime4You -- former Wuxia4You (sad i liked it better)
+	//from Wuxia4You
 	//immortal 3
 	public static final Technique COLD_SWORD_ART = new Technique("cold_sword_art", Cultivation.System.ESSENCE,
 			new TechniqueModifiers(1.6, 2.7, 1.8, 2.2, 3.0, 4.0), 8.2, 31000000000.0 * 8, 940164.60)

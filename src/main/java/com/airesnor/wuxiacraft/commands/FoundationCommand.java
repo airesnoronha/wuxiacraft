@@ -1,5 +1,6 @@
 package com.airesnor.wuxiacraft.commands;
 
+import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.networking.CultivationMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
@@ -43,6 +44,7 @@ public class FoundationCommand extends CommandBase {
 		aliases.add("foundt");
 		return aliases;
 	}
+
 	@Override
 	@ParametersAreNonnullByDefault
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
@@ -50,22 +52,22 @@ public class FoundationCommand extends CommandBase {
 			EntityPlayerMP playerMP = (EntityPlayerMP) sender;
 			if (!playerMP.world.isRemote) {
 				boolean wrongUsage = true;
-				if(args.length == 2) {
-					if("get".equalsIgnoreCase(args[0])) {
+				if (args.length == 2) {
+					if ("get".equalsIgnoreCase(args[0])) {
 						EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
 						if (targetPlayer != null) {
 							ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
-							double foundationOverMaxBase = cultivation.getBodyFoundation()/cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel());
+							double foundationOverMaxBase = cultivation.getBodyFoundation() / cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel());
 							double foundationInducedModifier = cultivation.getBodyLevel().getModifierBySubLevel(cultivation.getBodySubLevel()) * foundationOverMaxBase * 0.4;
 							TextComponentString text = new TextComponentString(String.format("Body foundation: %.1f %.2fx %.2f",
 									cultivation.getBodyFoundation(), foundationOverMaxBase, foundationInducedModifier));
 							sender.sendMessage(text);
-							foundationOverMaxBase = cultivation.getDivineFoundation()/cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel());
+							foundationOverMaxBase = cultivation.getDivineFoundation() / cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel());
 							foundationInducedModifier = cultivation.getDivineLevel().getModifierBySubLevel(cultivation.getDivineSubLevel()) * foundationOverMaxBase * 0.4;
 							text = new TextComponentString(String.format("Divine foundation: %.1f %.2fx %.2f",
 									cultivation.getDivineFoundation(), foundationOverMaxBase, foundationInducedModifier));
 							sender.sendMessage(text);
-							foundationOverMaxBase = cultivation.getEssenceFoundation()/cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
+							foundationOverMaxBase = cultivation.getEssenceFoundation() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
 							foundationInducedModifier = cultivation.getEssenceLevel().getModifierBySubLevel(cultivation.getEssenceSubLevel()) * foundationOverMaxBase * 0.4;
 							text = new TextComponentString(String.format("Essence foundation: %.1f %.2fx %.2f",
 									cultivation.getEssenceFoundation(), foundationOverMaxBase, foundationInducedModifier));
@@ -77,21 +79,20 @@ public class FoundationCommand extends CommandBase {
 							sender.sendMessage(text);
 						}
 					}
-				}
-				else if (args.length == 4) {
+				} else if (args.length == 4) {
 					EntityPlayerMP targetPlayer = server.getPlayerList().getPlayerByUsername(args[1]);
 					if (targetPlayer != null) {
 						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(targetPlayer);
 						try {
 							double amount = Double.parseDouble(args[3]);
 							TextComponentString text;
-							switch(args[2]) {
+							switch (args[2]) {
 								case "body":
 									if (args[0].equalsIgnoreCase("set")) {
 										cultivation.setBodyFoundation(amount);
 										wrongUsage = false;
 									} else if (args[0].equalsIgnoreCase("add")) {
-										cultivation.addBodyFoundation(amount);
+										cultivation.addSystemFoundation(amount, Cultivation.System.BODY);
 										wrongUsage = false;
 									}
 									text = new TextComponentString("Your cultivation base has been modified ...");
@@ -104,7 +105,7 @@ public class FoundationCommand extends CommandBase {
 										cultivation.setDivineFoundation(amount);
 										wrongUsage = false;
 									} else if (args[0].equalsIgnoreCase("add")) {
-										cultivation.addDivineFoundation(amount);
+										cultivation.addSystemProgress(amount, Cultivation.System.DIVINE);
 										wrongUsage = false;
 									}
 									text = new TextComponentString("Your cultivation base has been modified ...");
@@ -117,7 +118,7 @@ public class FoundationCommand extends CommandBase {
 										cultivation.setEssenceFoundation(amount);
 										wrongUsage = false;
 									} else if (args[0].equalsIgnoreCase("add")) {
-										cultivation.addEssenceFoundation(amount);
+										cultivation.addSystemFoundation(amount, Cultivation.System.ESSENCE);
 										wrongUsage = false;
 									}
 									text = new TextComponentString("Your cultivation base has been modified ...");
@@ -132,9 +133,9 @@ public class FoundationCommand extends CommandBase {
 										cultivation.setEssenceFoundation(amount);
 										wrongUsage = false;
 									} else if (args[0].equalsIgnoreCase("add")) {
-										cultivation.addBodyFoundation(amount);
-										cultivation.addDivineFoundation(amount);
-										cultivation.addEssenceFoundation(amount);
+										cultivation.addSystemFoundation(amount, Cultivation.System.BODY);
+										cultivation.addSystemFoundation(amount, Cultivation.System.DIVINE);
+										cultivation.addSystemFoundation(amount, Cultivation.System.ESSENCE);
 										wrongUsage = false;
 									}
 									text = new TextComponentString("Your cultivation base has been modified ...");
@@ -174,12 +175,12 @@ public class FoundationCommand extends CommandBase {
 			if ("set".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("set");
 			if ("get".toLowerCase().startsWith(args[0].toLowerCase())) completions.add("get");
 		} else if (args.length == 2) {
-			for(String name : server.getOnlinePlayerNames()) {
-				if(name.toLowerCase().startsWith(args[1].toLowerCase())) {
+			for (String name : server.getOnlinePlayerNames()) {
+				if (name.toLowerCase().startsWith(args[1].toLowerCase())) {
 					completions.add(name);
 				}
 			}
-		} else if(args.length == 3) {
+		} else if (args.length == 3) {
 			if ("body".toLowerCase().startsWith(args[2].toLowerCase())) completions.add("body");
 			else if ("divine".toLowerCase().startsWith(args[2].toLowerCase())) completions.add("divine");
 			else if ("essence".toLowerCase().startsWith(args[2].toLowerCase())) completions.add("essence");

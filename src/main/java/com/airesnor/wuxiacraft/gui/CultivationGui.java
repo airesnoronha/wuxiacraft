@@ -2,6 +2,7 @@ package com.airesnor.wuxiacraft.gui;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
+import com.airesnor.wuxiacraft.cultivation.BaseSystemLevel;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
@@ -335,9 +336,9 @@ public class CultivationGui extends GuiScreen {
 		double maxSpeed = cultivation.getAgilityModifier() * (1 + cultTech.getOverallModifiers().movementSpeed);
 
 		GL11.glColor4f(1f, 1f, 1f, 1f);
-		int[] iconPos = new int[]{27, 27, 99, 108, 135};
+		int[] iconPos = new int[]{144, 27, 99, 108, 135};
 		int[] fills = new int[]{
-				Math.min(27, (int) ((27f * cultivation.getSpeedHandicap()) / 100f)),
+				Math.min(27, (int) ((27f * cultivation.getHandicap()) / 100f)),
 				Math.min(27, (int) (27f * cultivation.getMaxSpeed() / maxSpeed)),
 				Math.min(27, (int) (27f * (cultivation.getHasteLimit() / (0.1f * (strengthModifier * 0.7 + dexterityModifier * 0.3))))),
 				Math.min(27, (int) (27f * (cultivation.getJumpLimit()) / (0.08f * (agilityModifier + strengthModifier)))),
@@ -358,162 +359,79 @@ public class CultivationGui extends GuiScreen {
 	}
 
 	private void drawCultivationBackground() {
-		int bodyProgress = (int) Math.min(124, (124.0 * cultivation.getBodyProgress() / cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel())));
-		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 34, 0, 195, bodyProgress, 16); //dragon
-		if (cultTech.getBodyTechnique() != null) {
-			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 51, 45, 164, 9, 9); //rem button bg
-			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 51, 72, 164, 9, 9); //rem button
-			int bodyTech = (int) (138.0 * cultTech.getBodyTechnique().getProficiency()
-					/ cultTech.getBodyTechnique().getTechnique().getMaxProficiency());
-			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 61, 0, 161, bodyTech, 3);
+		if (cultivation.getEssenceLevel() == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
+			double foundationOverMaxBase = cultivation.getEssenceFoundation() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
+			drawFoundationAtPosition(this.guiLeft + 134, this.guiTop + 107, foundationOverMaxBase);
+		} else {
+			//body
+			int bodyProgress = (int) Math.min(124, (124.0 * cultivation.getBodyProgress() / cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel())));
+			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 34, 0, 195, bodyProgress, 16); //dragon
+			if (cultTech.getBodyTechnique() != null) {
+				drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 51, 45, 164, 9, 9); //rem button bg
+				drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 51, 72, 164, 9, 9); //rem button
+				int bodyTech = (int) (138.0 * cultTech.getBodyTechnique().getProficiency()
+						/ cultTech.getBodyTechnique().getTechnique().getMaxProficiency());
+				drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 61, 0, 161, bodyTech, 3);
+			}
+			double foundationOverMaxBase = cultivation.getBodyFoundation() / cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel());
+			drawFoundationAtPosition(this.guiLeft + 134, this.guiTop + 25, foundationOverMaxBase);
+			//divine
+			int divineProgress = (int) Math.min(124, (124.0 * cultivation.getDivineProgress() / cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel())));
+			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 75, 0, 227, divineProgress, 16); //dragon
+			if (cultTech.getDivineTechnique() != null) {
+				drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 92, 45, 164, 9, 9); //rem button bg
+				drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 92, 72, 164, 9, 9); //rem button
+				int divineTech = (int) (138.0 * cultTech.getDivineTechnique().getProficiency()
+						/ cultTech.getDivineTechnique().getTechnique().getMaxProficiency());
+				drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 102, 0, 161, divineTech, 3);
+			}
+			foundationOverMaxBase = cultivation.getDivineFoundation() / cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel());
+			drawFoundationAtPosition(this.guiLeft + 134, this.guiTop + 66, foundationOverMaxBase);
+			//essence
+			int essenceProgress = (int) Math.min(124, (124.0 * cultivation.getEssenceProgress() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel())));
+			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 116, 0, 211, essenceProgress, 16); //dragon
+			if (cultTech.getEssenceTechnique() != null) {
+				drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 133, 45, 164, 9, 9); //rem button bg
+				drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 133, 72, 164, 9, 9); //rem button
+				int essenceTech = (int) (138.0 * cultTech.getEssenceTechnique().getProficiency()
+						/ cultTech.getEssenceTechnique().getTechnique().getMaxProficiency());
+				drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 143, 0, 161, essenceTech, 3);
+			}
+			foundationOverMaxBase = cultivation.getEssenceFoundation() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
+			drawFoundationAtPosition(this.guiLeft + 134, this.guiTop + 107, foundationOverMaxBase);
 		}
-		double foundationOverMaxBase = cultivation.getBodyFoundation() / cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel());
+	}
+
+	private void drawFoundationAtPosition(int x, int y, double foundationOverMaxBase) {
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(x, y, 0);
 		if (foundationOverMaxBase < 1) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 25 + 15, 0);
 			GlStateManager.scale(foundationOverMaxBase, foundationOverMaxBase, 0);
-			drawTexturedModalRect(-15, -15, 125, 187, 30, 30); //red
-			GlStateManager.popMatrix();
+			int fillFactor = (int) (30 * foundationOverMaxBase);
+			drawTexturedModalRect(0, 30 - fillFactor, 125, 187 + 30 - fillFactor, 30, fillFactor); //red
 		} else if (MathUtils.between(foundationOverMaxBase, 1, 3)) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 25 + 15, 0);
-			drawTexturedModalRect(-15, -15, 125, 187, 30, 30); //red
-			GlStateManager.scale((foundationOverMaxBase - 1) / 2, (foundationOverMaxBase - 1) / 2, 0);
-			drawTexturedModalRect(-15, -15, 155, 187, 30, 30); //yellow
-			GlStateManager.popMatrix();
+			int fillFactor = (int) (30 * (foundationOverMaxBase - 1) / 2);
+			drawTexturedModalRect(0, 0, 125, 187, 30, 30); //red
+			drawTexturedModalRect(0, 30 - fillFactor, 155, 187 + 30 - fillFactor, 30, fillFactor); //yellow
 		} else if (MathUtils.between(foundationOverMaxBase, 3, 6)) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 25 + 15, 0);
-			drawTexturedModalRect(-15, -15, 155, 187, 30, 30); //yellow
-			GlStateManager.scale((foundationOverMaxBase - 3) / 3, (foundationOverMaxBase - 3) / 3, 0);
-			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); // green
-			GlStateManager.popMatrix();
+			int fillFactor = (int) (30 * (foundationOverMaxBase - 3) / 3);
+			drawTexturedModalRect(0, 0, 155, 187, 30, 30); //yellow
+			drawTexturedModalRect(0, 30 - fillFactor, 185, 187 + 30 - fillFactor, 30, fillFactor); // green
 		} else if (MathUtils.between(foundationOverMaxBase, 6, 10)) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 25 + 15, 0);
-			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); //green
-			GlStateManager.scale((foundationOverMaxBase - 6) / 4, (foundationOverMaxBase - 6) / 4, 0);
-			drawTexturedModalRect(-15, -15, 215, 187, 30, 30); // blue
-			GlStateManager.popMatrix();
+			int fillFactor = (int) (30 * (foundationOverMaxBase - 6) / 4);
+			drawTexturedModalRect(0, 0, 185, 187, 30, 30); //green
+			drawTexturedModalRect(0, 30 - fillFactor, 215, 187 + 30 - fillFactor, 30, fillFactor); // blue
 		} else if (MathUtils.between(foundationOverMaxBase, 10, 20)) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 25 + 15, 0);
-			drawTexturedModalRect(-15, -15, 215, 187, 30, 30); //blue
-			GlStateManager.scale((foundationOverMaxBase - 10) / 10, (foundationOverMaxBase - 10) / 10, 0);
-			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
-			GlStateManager.popMatrix();
+			int fillFactor = (int) (30 * (foundationOverMaxBase - 10) / 10);
+			drawTexturedModalRect(0, 0, 215, 187, 30, 30); //blue
+			drawTexturedModalRect(0, 30 - fillFactor, 125, 217 + 30 - fillFactor, 30, fillFactor); // purple
 		} else if (foundationOverMaxBase > 20) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 25 + 15, 0);
-			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
-			GlStateManager.scale(Math.min(1, (foundationOverMaxBase - 20) / 80), Math.min(1, (foundationOverMaxBase - 20) / 80), 0); //till 100x
-			drawTexturedModalRect(-15, -15, 155, 217, 30, 30); // white
-			GlStateManager.popMatrix();
+			int fillFactor = (int) (30 * Math.min(1, (foundationOverMaxBase - 20) / 80));
+			drawTexturedModalRect(0, 0, 125, 217, 30, 30); // purple
+			drawTexturedModalRect(0, 30 - fillFactor, 155, 217 + 30 - fillFactor, 30, fillFactor); // white
 		}
-		int divineProgress = (int) Math.min(124, (124.0 * cultivation.getDivineProgress() / cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel())));
-		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 75, 0, 227, divineProgress, 16); //dragon
-		if (cultTech.getDivineTechnique() != null) {
-			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 92, 45, 164, 9, 9); //rem button bg
-			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 92, 72, 164, 9, 9); //rem button
-			int divineTech = (int) (138.0 * cultTech.getDivineTechnique().getProficiency()
-					/ cultTech.getDivineTechnique().getTechnique().getMaxProficiency());
-			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 102, 0, 161, divineTech, 3);
-		}
-		foundationOverMaxBase = cultivation.getDivineFoundation() / cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel());
-		if (foundationOverMaxBase < 1) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 66 + 15, 0);
-			GlStateManager.scale(foundationOverMaxBase, foundationOverMaxBase, 0);
-			drawTexturedModalRect(-15, -15, 125, 187, 30, 30); //red
-			GlStateManager.popMatrix();
-		} else if (MathUtils.between(foundationOverMaxBase, 1, 3)) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 66 + 15, 0);
-			drawTexturedModalRect(-15, -15, 125, 187, 30, 30); //red
-			GlStateManager.scale((foundationOverMaxBase - 1) / 2, (foundationOverMaxBase - 1) / 2, 0);
-			drawTexturedModalRect(-15, -15, 155, 187, 30, 30); //yellow
-			GlStateManager.popMatrix();
-		} else if (MathUtils.between(foundationOverMaxBase, 3, 6)) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 66 + 15, 0);
-			drawTexturedModalRect(-15, -15, 155, 187, 30, 30); //yellow
-			GlStateManager.scale((foundationOverMaxBase - 3) / 3, (foundationOverMaxBase - 3) / 3, 0);
-			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); // green
-			GlStateManager.popMatrix();
-		} else if (MathUtils.between(foundationOverMaxBase, 6, 10)) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 66 + 15, 0);
-			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); //green
-			GlStateManager.scale((foundationOverMaxBase - 6) / 4, (foundationOverMaxBase - 6) / 4, 0);
-			drawTexturedModalRect(-15, -15, 215, 187, 30, 30); // blue
-			GlStateManager.popMatrix();
-		} else if (MathUtils.between(foundationOverMaxBase, 10, 20)) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 66 + 15, 0);
-			drawTexturedModalRect(-15, -15, 215, 187, 30, 30); //blue
-			GlStateManager.scale((foundationOverMaxBase - 10) / 10, (foundationOverMaxBase - 10) / 10, 0);
-			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
-			GlStateManager.popMatrix();
-		} else if (foundationOverMaxBase > 20) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 66 + 15, 0);
-			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
-			GlStateManager.scale(Math.min(1, (foundationOverMaxBase - 20) / 80), Math.min(1, (foundationOverMaxBase - 20) / 80), 0); //till 100x
-			drawTexturedModalRect(-15, -15, 155, 217, 30, 30); // white
-			GlStateManager.popMatrix();
-		}
-		int essenceProgress = (int) Math.min(124, (124.0 * cultivation.getEssenceProgress() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel())));
-		drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 116, 0, 211, essenceProgress, 16); //dragon
-		if (cultTech.getEssenceTechnique() != null) {
-			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 133, 45, 164, 9, 9); //rem button bg
-			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 133, 72, 164, 9, 9); //rem button
-			int essenceTech = (int) (138.0 * cultTech.getEssenceTechnique().getProficiency()
-					/ cultTech.getEssenceTechnique().getTechnique().getMaxProficiency());
-			drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 143, 0, 161, essenceTech, 3);
-		}
-		foundationOverMaxBase = cultivation.getEssenceFoundation() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
-		if (foundationOverMaxBase < 1) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 107 + 15, 0);
-			GlStateManager.scale(foundationOverMaxBase, foundationOverMaxBase, 0);
-			drawTexturedModalRect(-15, -15, 125, 187, 30, 30); //red
-			GlStateManager.popMatrix();
-		} else if (MathUtils.between(foundationOverMaxBase, 1, 3)) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 107 + 15, 0);
-			drawTexturedModalRect(-15, -15, 125, 187, 30, 30); //red
-			GlStateManager.scale((foundationOverMaxBase - 1) / 2, (foundationOverMaxBase - 1) / 2, 0);
-			drawTexturedModalRect(-15, -15, 155, 187, 30, 30); //yellow
-			GlStateManager.popMatrix();
-		} else if (MathUtils.between(foundationOverMaxBase, 3, 6)) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 107 + 15, 0);
-			drawTexturedModalRect(-15, -15, 155, 187, 30, 30); //yellow
-			GlStateManager.scale((foundationOverMaxBase - 3) / 3, (foundationOverMaxBase - 3) / 3, 0);
-			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); // green
-			GlStateManager.popMatrix();
-		} else if (MathUtils.between(foundationOverMaxBase, 6, 10)) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 107 + 15, 0);
-			drawTexturedModalRect(-15, -15, 185, 187, 30, 30); //green
-			GlStateManager.scale((foundationOverMaxBase - 6) / 4, (foundationOverMaxBase - 6) / 4, 0);
-			drawTexturedModalRect(-15, -15, 215, 187, 30, 30); // blue
-			GlStateManager.popMatrix();
-		} else if (MathUtils.between(foundationOverMaxBase, 10, 20)) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 107 + 15, 0);
-			drawTexturedModalRect(-15, -15, 215, 187, 30, 30); //blue
-			GlStateManager.scale((foundationOverMaxBase - 10) / 10, (foundationOverMaxBase - 10) / 10, 0);
-			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
-			GlStateManager.popMatrix();
-		} else if (foundationOverMaxBase > 20) {
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(this.guiLeft + 134 + 15, this.guiTop + 107 + 15, 0);
-			drawTexturedModalRect(-15, -15, 125, 217, 30, 30); // purple
-			GlStateManager.scale(Math.min(1, (foundationOverMaxBase - 20) / 80), Math.min(1, (foundationOverMaxBase - 20) / 80), 0); //till 100x
-			drawTexturedModalRect(-15, -15, 155, 217, 30, 30); // white
-			GlStateManager.popMatrix();
-		}
+		GlStateManager.popMatrix();
+
 	}
 
 	private void drawTechniquesBackground() {
@@ -607,7 +525,7 @@ public class CultivationGui extends GuiScreen {
 		}
 
 		List<String> barDescriptions = new ArrayList<>();
-		barDescriptions.add(cultivation.getSpeedHandicap() + "%");
+		barDescriptions.add(cultivation.getHandicap() + "%");
 		barDescriptions.add(String.format("%.1f", cultivation.getMaxSpeed()));
 		barDescriptions.add(String.format("%.1f", cultivation.getHasteLimit()));
 		barDescriptions.add(String.format("%.1f", cultivation.getJumpLimit()));

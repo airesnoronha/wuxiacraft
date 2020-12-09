@@ -3,44 +3,6 @@ package com.airesnor.wuxiacraft.cultivation;
 public interface ICultivation {
 
 	/**
-	 * Adds progress and also change sub levels and levels
-	 *
-	 * @param amount the amount of progress gained
-	 */
-	boolean addBodyProgress(double amount, boolean allowBreakThrough) throws Cultivation.RequiresTribulation;
-
-	/**
-	 * Adds progress and also change sub levels and levels
-	 *
-	 * @param amount the amount of progress gained
-	 */
-	boolean addDivineProgress(double amount, boolean allowBreakThrough) throws Cultivation.RequiresTribulation;
-
-	/**
-	 * Adds progress and also change sub levels and levels
-	 *
-	 * @param amount the amount of progress gained
-	 */
-	boolean addEssenceProgress(double amount, boolean allowBreakThrough) throws Cultivation.RequiresTribulation;
-
-	/**
-	 * Adds progress to specified system
-	 *
-	 * @param amount            the progress to be added
-	 * @param system            the system to be added progress to
-	 * @param allowBreakThrough if the progress source allows a breakthrough
-	 */
-	boolean addSystemProgress(double amount, Cultivation.System system, boolean allowBreakThrough) throws Cultivation.RequiresTribulation;
-
-	void addBodyFoundation(double amount);
-
-	void addDivineFoundation(double amount);
-
-	void addEssenceFoundation(double amount);
-
-	void addSystemFoundation(double amount, Cultivation.System system);
-
-	/**
 	 * Sets the amount of progress of the body cultivation
 	 *
 	 * @param amount the progress to be set
@@ -60,6 +22,60 @@ public interface ICultivation {
 	 * @param amount the progress to be set
 	 */
 	void setEssenceProgress(double amount);
+
+	/**
+	 * this will set the amount in the selected system, and if there is more that there should be, it'll be added into foundation
+	 *
+	 * @param amount the amount to be added
+	 * @param system the selected system
+	 */
+	void setSystemProgress(double amount, Cultivation.System system);
+
+	/**
+	 * this will add an amount of cultivation base into the selected system
+	 *
+	 * @param amount the amount to be added
+	 * @param system the selected system
+	 */
+	void addSystemProgress(double amount, Cultivation.System system);
+
+	/**
+	 * This will set a set a level in the selected system
+	 *
+	 * @param subLevel the sub level or rank to be set
+	 * @param system   the selected system
+	 */
+	void setSystemSubLevel(int subLevel, Cultivation.System system);
+
+	/**
+	 * This will set a level in the selected system
+	 *
+	 * @param level  the level to be set
+	 * @param system the system of the level
+	 */
+	void setSystemLevel(BaseSystemLevel level, Cultivation.System system);
+
+	/**
+	 * Will advance a sub level in the selected system and will add a level if needed
+	 * This is merely numbers, real action will happen outside here
+	 *
+	 * @param system the system to raise a level
+	 */
+	void riseSubLevel(Cultivation.System system);
+
+	/**
+	 * Sets the foundations and keeps it >= 0 in the selected system
+	 * @param amount the amount to be set
+	 * @param system the selected system
+	 */
+	void setSystemFoundation(double amount, Cultivation.System system);
+
+	/**
+	 * Adds a certain amount of foundation in the selected system
+	 * @param amount the amount to be added
+	 * @param system the selected system
+	 */
+	void addSystemFoundation(double amount, Cultivation.System system);
 
 	/**
 	 * Gets The current major level
@@ -282,12 +298,12 @@ public interface ICultivation {
 	 *
 	 * @param handicap The percentage of the speed
 	 */
-	void setSpeedHandicap(int handicap);
+	void setHandicap(int handicap);
 
 	/**
 	 * @return The relative amount of speed
 	 */
-	int getSpeedHandicap();
+	int getHandicap();
 
 	/**
 	 * @return The timer that goes from 0 to 100 and sends data to client

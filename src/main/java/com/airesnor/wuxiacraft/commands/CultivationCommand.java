@@ -64,16 +64,16 @@ public class CultivationCommand extends CommandBase {
 					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(target);
 					TextComponentString text = new TextComponentString(String.format("Body level: %s\n",
 							cultivation.getBodyLevel().getLevelName(cultivation.getBodySubLevel())));
-					text.appendText(String.format("Progress: %.0f/%.0f\n", cultivation.getBodyProgress(),
-							cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel())));
+					text.appendText(String.format("Progress: %.0f/%.0f Modifier: %.2f\n", cultivation.getBodyProgress(),
+							cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel()), cultivation.getBodyModifier()));
 					text.appendText(String.format("Divine level: %s\n",
 							cultivation.getDivineLevel().getLevelName(cultivation.getDivineSubLevel())));
-					text.appendText(String.format("Progress: %.0f/%.0f\n", cultivation.getDivineProgress(),
-							cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel())));
+					text.appendText(String.format("Progress: %.0f/%.0f Modifier: %.2f\n", cultivation.getDivineProgress(),
+							cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()), cultivation.getDivineModifier()));
 					text.appendText(String.format("Essence level: %s\n",
 							cultivation.getEssenceLevel().getLevelName(cultivation.getEssenceSubLevel())));
-					text.appendText(String.format("Progress: %.0f/%.0f\n", cultivation.getEssenceProgress(),
-							cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel())));
+					text.appendText(String.format("Progress: %.0f/%.0f Modifier: %.2f\n", cultivation.getEssenceProgress(),
+							cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()), cultivation.getEssenceModifier()));
 					text.appendText(String.format("Energy: %.0f/%.0f (%d%%)\n", cultivation.getEnergy(),
 							CultivationUtils.getMaxEnergy(target), (int) (cultivation.getEnergy() * 100 / CultivationUtils.getMaxEnergy(target))));
 					sender.sendMessage(text);

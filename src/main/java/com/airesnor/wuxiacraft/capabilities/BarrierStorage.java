@@ -14,9 +14,7 @@ public class BarrierStorage implements Capability.IStorage<IBarrier> {
     @Override
     public NBTBase writeNBT(Capability<IBarrier> capability, IBarrier instance, EnumFacing side) {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setFloat("barrier-amount", instance.getBarrierAmount());
-        tag.setFloat("barrier-max-amount", instance.getBarrierMaxAmount());
-        tag.setFloat("barrier-regen-rate", instance.getBarrierRegenRate());
+        tag.setDouble("barrier-amount", instance.getBarrierAmount());
         tag.setBoolean("barrier-regen-active", instance.isBarrierRegenActive());
         tag.setInteger("barrier-cooldown", instance.getBarrierCooldown());
         tag.setInteger("barrier-max-cooldown", instance.getBarrierMaxCooldown());
@@ -30,13 +28,7 @@ public class BarrierStorage implements Capability.IStorage<IBarrier> {
     public void readNBT(Capability<IBarrier> capability, IBarrier instance, EnumFacing side, NBTBase nbt) {
         NBTTagCompound tag = (NBTTagCompound) nbt;
         if (tag.hasKey("barrier-amount")) {
-            instance.setBarrierAmount(tag.getFloat("barrier-amount"));
-        }
-        if (tag.hasKey("barrier-max-amount")) {
-            instance.setBarrierMaxAmount(tag.getFloat("barrier-max-amount"));
-        }
-        if (tag.hasKey("barrier-regen-rate")) {
-            instance.setBarrierRegenRate(tag.getFloat("barrier-regen-rate"));
+            instance.setBarrierAmount(tag.getDouble("barrier-amount"));
         }
         if (tag.hasKey("barrier-regen-active")) {
             instance.setBarrierRegenActive(tag.getBoolean("barrier-regen-active"));

@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.networking;
 
-import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
@@ -25,7 +24,6 @@ public class ProgressMessage implements IMessage {
 	public int op;
 	public double amount;
 	public boolean techniques;
-	public boolean allowBreakTrough;
 	public Cultivation.System system;
 	public UUID senderUUID;
 
@@ -34,16 +32,14 @@ public class ProgressMessage implements IMessage {
 		this.op = 0;
 		this.amount = 0;
 		this.techniques = false;
-		this.allowBreakTrough = false;
 		this.system = Cultivation.System.ESSENCE;
 		this.senderUUID = null;
 	}
 
-	public ProgressMessage(int op, Cultivation.System system, double amount, boolean techniques, boolean allowBreakTrough, UUID senderUUID) {
+	public ProgressMessage(int op, Cultivation.System system, double amount, boolean techniques, UUID senderUUID) {
 		this.op = op;
 		this.amount = amount;
 		this.techniques = techniques;
-		this.allowBreakTrough = allowBreakTrough;
 		this.system = system;
 		this.senderUUID = senderUUID;
 	}
@@ -55,7 +51,6 @@ public class ProgressMessage implements IMessage {
 		this.system = Cultivation.System.valueOf(packetBuffer.readString(10));
 		this.amount = buf.readDouble();
 		this.techniques = buf.readBoolean();
-		this.allowBreakTrough = buf.readBoolean();
 		this.senderUUID = packetBuffer.readUniqueId();
 	}
 
@@ -66,7 +61,6 @@ public class ProgressMessage implements IMessage {
 		packetBuffer.writeString(this.system.toString());
 		buf.writeDouble(this.amount);
 		buf.writeBoolean(this.techniques);
-		buf.writeBoolean(this.allowBreakTrough);
 		packetBuffer.writeUniqueId(this.senderUUID);
 	}
 
@@ -82,7 +76,7 @@ public class ProgressMessage implements IMessage {
 						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 						ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 						switch (message.op) {
-							case 0:
+							case 0: //add
 								double amount = message.amount;
 								if (!skillCap.hasFormationActivated()) {
 									for (TileEntity te : world.loadedTileEntityList) {
@@ -100,18 +94,14 @@ public class ProgressMessage implements IMessage {
 										}
 									}
 								}
-								CultivationUtils.cultivatorAddProgress(player, message.system, amount, message.techniques, message.allowBreakTrough);
+								CultivationUtils.cultivatorAddProgress(player, message.system, amount, message.techniques);
 								ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 								cultTech.getTechniqueBySystem(message.system).getTechnique().cultivationEffect.activate(player); //this runs server side
 								break;
-							case 1:
-								try {
-									cultivation.addSystemProgress(-message.amount, message.system, false);
-								} catch (Cultivation.RequiresTribulation tribulation) {
-									WuxiaCraft.logger.error("I don't think it'll require tribulation");
-								}
+							case 1: //remove
+								cultivation.addSystemProgress(-message.amount, message.system);
 								break;
-							case 2:
+							case 2: //set
 								switch (message.system) {
 									case BODY:
 										cultivation.setBodyProgress(message.amount);

@@ -134,55 +134,6 @@ public class FormationCultivationHelper extends Formation {
 	@Override
 	@ParametersAreNonnullByDefault
 	public void doClientUpdate(World worldIn, BlockPos source, FormationTileEntity parent) {
-		if (parent != null) {
-			if (parent.getFormationInfo().hasKey("selected")) {
-				NBTTagCompound info = parent.getFormationInfo();
-				int length = info.getInteger("selected");
-				EntityPlayer player = Minecraft.getMinecraft().player;
-				boolean selected = false;
-				for (int i = 0; i < length; i++) {
-					UUID uuid = info.getUniqueId("s-" + i);
-					if (uuid != null) {
-						if (uuid.equals(player.getUniqueID())) {
-							selected = true;
-							break;
-						}
-					}
-				}
-				if (selected) {
-					ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-					if (skillCap.isCasting()) {
-						Skill skill = skillCap.getSelectedSkill(CultivationUtils.getCultTechFromEntity(player));
-						if (!skillCap.hasFormationActivated()) {
-							if (skill == Skills.CULTIVATE_ESSENCE) {
-								skillCap.setFormationActivated(true);
-								ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-								if (this.amount <= cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel()) * 0.12) {
-									CultivationUtils.cultivatorAddProgress(player, Cultivation.System.ESSENCE, this.amount, true, false);
-									NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, Cultivation.System.ESSENCE, this.amount, true, false, player.getUniqueID()));
-								}
-							}
-							else if (skill == Skills.CULTIVATE_DIVINE) {
-								skillCap.setFormationActivated(true);
-								ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-								if (this.amount <= cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel()) * 0.12) {
-									CultivationUtils.cultivatorAddProgress(player, Cultivation.System.DIVINE, this.amount, true, false);
-									NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, Cultivation.System.DIVINE, this.amount, true, false, player.getUniqueID()));
-								}
-							}
-							else if (skill == Skills.CULTIVATE_BODY) {
-								skillCap.setFormationActivated(true);
-								ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-								if (this.amount <= cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel()) * 0.12) {
-									CultivationUtils.cultivatorAddProgress(player, Cultivation.System.BODY, this.amount, true, false);
-									NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, Cultivation.System.BODY, this.amount, true, false, player.getUniqueID()));
-								}
-							}
-						}
-					}
-				}
-			}
-		}
 	}
 
 	@SideOnly(Side.CLIENT)

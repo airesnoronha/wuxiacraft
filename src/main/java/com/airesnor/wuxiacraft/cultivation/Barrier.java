@@ -2,9 +2,9 @@ package com.airesnor.wuxiacraft.cultivation;
 
 public class Barrier implements IBarrier {
 
-    private float barrierAmount;
-    private float barrierMaxAmount;
-    private float barrierRegenRate;
+    private double barrierAmount;
+    //private float barrierMaxAmount;
+    //private float barrierRegenRate;
     private int barrierCooldown;
     private int barrierMaxCooldown;
     private int barrierHits;
@@ -15,8 +15,8 @@ public class Barrier implements IBarrier {
 
     public Barrier() {
         this.barrierAmount = 0;
-        this.barrierMaxAmount = 0;
-        this.barrierRegenRate = 0;
+        //this.barrierMaxAmount = 0;
+        //this.barrierRegenRate = 0;
         this.barrierCooldown = 0;
         this.barrierMaxCooldown = 3600;
         this.barrierRegenActive = true;
@@ -26,22 +26,22 @@ public class Barrier implements IBarrier {
     }
 
     @Override
-    public void setBarrierAmount(float amount) {
+    public void setBarrierAmount(double amount) {
         this.barrierAmount = Math.max(amount, 0.0f);
     }
 
     @Override
-    public void addBarrierAmount(float amount) {
+    public void addBarrierAmount(double amount) {
         this.barrierAmount += Math.max(0, amount);
     }
 
     @Override
-    public void removeBarrierAmount(float amount) {
+    public void removeBarrierAmount(double amount) {
         this.barrierAmount -= Math.max(0, amount);
     }
 
     @Override
-    public float getBarrierAmount() {
+    public double getBarrierAmount() {
         return this.barrierAmount;
     }
 
@@ -70,24 +70,24 @@ public class Barrier implements IBarrier {
         return this.barrierHits;
     }
 
-    @Override
+    /*@Override
     public void setBarrierMaxAmount(float amount) {
         this.barrierMaxAmount = Math.max(0, amount);
-    }
+    }*/
 
     @Override
-    public float getBarrierMaxAmount() {
-        return this.barrierMaxAmount;
+    public double getBarrierMaxAmount(ICultivation cultivation) {
+        return Math.max((cultivation.getEssenceModifier() - 3.0 )/ 0.5 , 0);
     }
 
-    @Override
+    /*@Override
     public void setBarrierRegenRate(float regenRate) {
         this.barrierRegenRate = regenRate;
-    }
+    }*/
 
     @Override
-    public float getBarrierRegenRate() {
-        return this.barrierRegenRate;
+    public double getBarrierRegenRate(ICultivation cultivation) {
+        return this.getBarrierMaxAmount(cultivation)*0.001f;
     }
 
     @Override
@@ -143,8 +143,6 @@ public class Barrier implements IBarrier {
     @Override
     public void copyFrom(IBarrier barrier) {
         this.barrierAmount = barrier.getBarrierAmount();
-        this.barrierMaxAmount = barrier.getBarrierMaxAmount();
-        this.barrierRegenRate = barrier.getBarrierRegenRate();
         this.barrierCooldown = barrier.getBarrierCooldown();
         this.barrierMaxCooldown = barrier.getBarrierMaxCooldown();
         this.barrierRegenActive = barrier.isBarrierRegenActive();

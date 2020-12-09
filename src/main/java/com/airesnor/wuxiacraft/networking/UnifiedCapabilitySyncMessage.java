@@ -16,7 +16,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -110,7 +109,7 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 				cultTech.copyFrom(message.cultTech);
 				skillCap.copyFrom(message.skillCap, message.shouldSetCdaCP);
 				auraCap.copyFrom(message.auraCap);
-				cultivation.setSpeedHandicap(WuxiaCraftConfig.speedHandicap);
+				cultivation.setHandicap(WuxiaCraftConfig.speedHandicap);
 				cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
 				cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
 				cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);

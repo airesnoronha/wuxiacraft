@@ -1,5 +1,7 @@
 package com.airesnor.wuxiacraft.cultivation;
 
+import com.airesnor.wuxiacraft.utils.MathUtils;
+
 import java.util.Random;
 
 public class Cultivation implements ICultivation {
@@ -62,9 +64,9 @@ public class Cultivation implements ICultivation {
 		this.bodySubLevel = 0;
 		this.divineSubLevel = 0;
 		this.divineSubLevel = 0;
-		this.bodyFoundation = 6000; // this should be an average foundation
-		this.divineFoundation = 6000;
-		this.essenceFoundation = 6000;
+		this.bodyFoundation = 0;
+		this.divineFoundation = 0;
+		this.essenceFoundation = 0;
 		this.energy = 0;
 		this.handicap = 100;
 		this.timer = 0;
@@ -77,224 +79,149 @@ public class Cultivation implements ICultivation {
 		this.selectedSystem = System.ESSENCE;
 	}
 
+	/**
+	 * this will set the amount in the selected system, and if there is more that there should be, it'll be added into foundation
+	 *
+	 * @param amount the amount to be added
+	 * @param system the selected system
+	 */
 	@Override
-	public boolean addBodyProgress(double amount, boolean allowBreakthrough) throws RequiresTribulation {
-		boolean leveled = false;
-		this.bodyProgress += amount;
-		if (this.bodyProgress > this.bodyLevel.getProgressBySubLevel(this.bodySubLevel) + 200.0) { //players are abusing of their cultivation base in earlier levels
-			this.addBodyFoundation(this.bodyProgress - (this.bodyLevel.getProgressBySubLevel(this.bodySubLevel) + 200.0));
-			this.bodyProgress = this.bodyLevel.getProgressBySubLevel(this.bodySubLevel) + 200.0;
-		}
-		if (allowBreakthrough) {
-			if (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel)) {
-				Random rnd = new Random();
-				// if this then all above
-				boolean divineCondition = (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineLevel.subLevels - 1)
-						&& this.divineSubLevel >= this.divineLevel.subLevels - 1) || this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL;
-				boolean essenceCondition = (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceLevel.subLevels - 1)
-						&& this.essenceSubLevel >= this.essenceLevel.subLevels - 1) || this.essenceLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL; // or not in this level
-				if (essenceCondition && divineCondition) { // can breakthrough
-					if (this.bodyLevel.tribulationEachSubLevel && this.bodySubLevel < this.bodyLevel.subLevels - 1) {
-						double strength = this.bodyLevel.getModifierBySubLevel(this.bodySubLevel + 1);
-						throw new RequiresTribulation(strength, System.BODY, this.bodyLevel, this.bodySubLevel + 1);
-					}
-					double oldModifier = this.getBodyModifier();
-					if (this.bodySubLevel + 1 == this.bodyLevel.subLevels) {
-						if (this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS).callsTribulation) {
-							double strength = this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS).getModifierBySubLevel(0);
-							throw new RequiresTribulation(strength, System.BODY, this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS), 0);
-						}
-						if (rnd.nextFloat() > (this.bodyProgress + this.bodyFoundation) / (4 * this.bodyLevel.getProgressBySubLevel(this.bodySubLevel))
-								&& this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL) {
-							applySystemPenalty(System.BODY);
-						} else {
-							this.bodyProgress -= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel);
-							this.bodySubLevel = 0;
-							this.bodyLevel = this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS);
-							leveled = true;
-						}
-					} else {
-						if (rnd.nextFloat() > (this.bodyProgress + this.bodyFoundation) / (4 * this.bodyLevel.getProgressBySubLevel(this.bodySubLevel))
-								&& this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL) {
-							applySystemPenalty(System.BODY);
-						} else {
-							this.bodyProgress -= this.bodyLevel.getProgressBySubLevel(this.bodySubLevel);
-							this.bodySubLevel++;
-							leveled = true;
-						}
-					}
-					if (leveled) { // this will keep the foundation cross levels since it'll grow the same as modifiers but still will get lower since progress grows 1.4 rate
-						double modifierDifference = oldModifier * 1.2 - this.getBodyModifier();
-						if (modifierDifference > 0) {
-							this.bodyFoundation += this.bodyLevel.getProgressBySubLevel(this.bodySubLevel) * modifierDifference / (0.6 * this.bodyLevel.getModifierBySubLevel(this.bodySubLevel));
-						}
-					}
-				}
-			}
-		}
-		return leveled;
-	}
-
-	@Override
-	public boolean addDivineProgress(double amount, boolean allowBreakthrough) throws RequiresTribulation {
-		boolean leveled = false;
-		this.divineProgress += amount;
-		if (this.divineProgress > this.divineLevel.getProgressBySubLevel(this.divineSubLevel) + 200.0) { //players are abusing of their cultivation base in earlier levels
-			this.addDivineFoundation(this.divineProgress - (this.divineLevel.getProgressBySubLevel(this.divineSubLevel) + 200.0));
-			this.divineProgress = this.divineLevel.getProgressBySubLevel(this.divineSubLevel) + 200.0;
-		}
-		if (allowBreakthrough) {
-			if (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineSubLevel)) {
-				Random rnd = new Random();
-				// if this then all above
-				boolean bodyCondition = (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodyLevel.subLevels - 1)
-						&& this.bodySubLevel >= this.bodyLevel.subLevels - 1) || this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL; // or not in this level
-				boolean essenceCondition = (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceLevel.subLevels - 1)
-						&& this.essenceSubLevel >= this.essenceLevel.subLevels - 1) || this.essenceLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL;
-				if (bodyCondition && essenceCondition) { // can breakthrough
-					if (this.divineLevel.tribulationEachSubLevel && this.divineSubLevel < this.divineLevel.subLevels - 1) {
-						double strength = this.divineLevel.getModifierBySubLevel(this.divineSubLevel + 1);
-						throw new RequiresTribulation(strength, System.DIVINE, this.divineLevel, this.divineSubLevel + 1);
-					}
-					double oldModifier = this.getDivineModifier();
-					if (this.divineSubLevel + 1 == this.divineLevel.subLevels) {
-						if (this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS).callsTribulation) {
-							double strength = this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS).getModifierBySubLevel(0);
-							throw new RequiresTribulation(strength, System.DIVINE, this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS), 0);
-						}
-						if (rnd.nextFloat() > (this.divineProgress + this.divineFoundation) / (4 * this.divineLevel.getProgressBySubLevel(this.divineSubLevel))
-								&& this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL) {
-							applySystemPenalty(System.DIVINE);
-						} else {
-							this.divineProgress -= this.divineLevel.getProgressBySubLevel(this.divineSubLevel);
-							this.divineSubLevel = 0;
-							this.divineLevel = this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS);
-							leveled = true;
-						}
-					} else {
-						if (rnd.nextFloat() > (this.divineProgress + this.divineFoundation) / (4 * this.divineLevel.getProgressBySubLevel(this.divineSubLevel))
-								&& this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL) {
-							applySystemPenalty(System.DIVINE);
-						} else {
-							this.divineProgress -= this.divineLevel.getProgressBySubLevel(this.divineSubLevel);
-							this.divineSubLevel++;
-							leveled = true;
-						}
-					}
-					if (leveled) { // this will keep the foundation cross levels since it'll grow the same as modifiers but still will get lower since progress grows 1.4 rate
-						double modifierDifference = oldModifier * 1.2 - this.getDivineModifier();
-						if (modifierDifference > 0) {
-							this.divineFoundation += this.divineLevel.getProgressBySubLevel(this.divineSubLevel) * modifierDifference / (0.6 * this.divineLevel.getModifierBySubLevel(this.divineSubLevel));
-						}
-					}
-				}
-			}
-		}
-		return leveled;
-	}
-
-	@Override
-	public boolean addEssenceProgress(double amount, boolean allowBreakthrough) throws RequiresTribulation {
-		boolean leveled = false;
-		this.essenceProgress += amount;
-		if (this.essenceProgress > this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) * 1.1) { //players are abusing of their cultivation base in earlier levels
-			this.addEssenceFoundation(this.essenceProgress - (this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) * 1.1));
-			this.essenceProgress = this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) * 1.1;
-		}
-		if (allowBreakthrough) {
-			if (this.essenceProgress >= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel)) {
-				Random rnd = new Random();
-				boolean bodyCondition = (this.bodyProgress >= this.bodyLevel.getProgressBySubLevel(this.bodyLevel.subLevels - 1)
-						&& this.bodySubLevel >= this.bodyLevel.subLevels - 1) || this.bodyLevel != BaseSystemLevel.DEFAULT_BODY_LEVEL; // or not in this level
-				boolean divineCondition = (this.divineProgress >= this.divineLevel.getProgressBySubLevel(this.divineLevel.subLevels - 1)
-						&& this.divineSubLevel >= this.divineLevel.subLevels - 1) || this.divineLevel != BaseSystemLevel.DEFAULT_DIVINE_LEVEL;
-				if (bodyCondition && divineCondition) { // can breakthrough
-					if (this.essenceLevel.tribulationEachSubLevel && this.essenceSubLevel < this.essenceLevel.subLevels - 1) {
-						double strength = this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel + 1);
-						throw new RequiresTribulation(strength, System.ESSENCE, this.essenceLevel, this.essenceSubLevel + 1);
-					}
-					double oldModifier = this.getEssenceModifier();
-					if (this.essenceSubLevel + 1 == this.essenceLevel.subLevels) {
-						if (this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS).callsTribulation) {
-							double strength = this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS).getModifierBySubLevel(0);
-							throw new RequiresTribulation(strength, System.ESSENCE, this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS), 0);
-						}
-						if (rnd.nextFloat() > (this.essenceProgress + this.essenceFoundation) / (4 * this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))
-								&& this.essenceLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
-							applySystemPenalty(System.ESSENCE);
-						} else {
-							this.essenceProgress -= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel);
-							this.essenceSubLevel = 0;
-							this.essenceLevel = this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
-							leveled = true;
-						}
-					} else {
-						if (rnd.nextFloat() > (this.essenceProgress + this.essenceFoundation) / (4 * this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))
-								&& this.essenceLevel != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
-							applySystemPenalty(System.ESSENCE);
-						} else {
-							this.essenceProgress -= this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel);
-							this.essenceSubLevel++;
-							leveled = true;
-						}
-					}
-					if (leveled) { // this will keep the foundation cross levels since it'll grow the same as modifiers but still will get lower since progress grows 1.4 rate
-						double modifierDifference = oldModifier * 1.2 - this.getEssenceModifier();
-						if (modifierDifference > 0) {
-							this.essenceFoundation += this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) * modifierDifference / (0.6 * this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel));
-						}
-					}
-				}
-			}
-		}
-		return leveled;
-	}
-
-	@Override
-	public boolean addSystemProgress(double amount, System system, boolean allowBreakThrough) throws RequiresTribulation {
-		boolean leveled = false;
+	public void setSystemProgress(double amount, System system) {
 		switch (system) {
 			case BODY:
-				leveled = addBodyProgress(amount, allowBreakThrough);
+				this.bodyProgress = MathUtils.clamp(amount, 0, this.bodyLevel.getProgressBySubLevel(this.bodySubLevel) + 200.0);
+				if (amount > this.bodyProgress)
+					this.addSystemFoundation((amount - this.bodyProgress) / 20, system);
 				break;
 			case DIVINE:
-				leveled = addDivineProgress(amount, allowBreakThrough);
+				this.divineProgress = MathUtils.clamp(amount, 0, this.bodyLevel.getProgressBySubLevel(this.bodySubLevel) + 200.0);
+				if (amount > this.divineProgress)
+					this.addSystemFoundation((amount - this.divineProgress) / 20, system);
 				break;
 			case ESSENCE:
-				leveled = addEssenceProgress(amount, allowBreakThrough);
+				this.essenceProgress = MathUtils.clamp(amount, 0, this.bodyLevel.getProgressBySubLevel(this.bodySubLevel) + 200.0);
+				if (amount > this.essenceProgress)
+					this.addSystemFoundation((amount - this.essenceProgress) / 20, system);
 				break;
 		}
-		return leveled;
 	}
 
+	/**
+	 * this will add an amount of cultivation base into the selected system
+	 *
+	 * @param amount the amount to be added
+	 * @param system the selected system
+	 */
 	@Override
-	public void addBodyFoundation(double amount) {
-		this.bodyFoundation = Math.max(this.bodyFoundation + amount * 1 / 20, 0);
+	public void addSystemProgress(double amount, System system) {
+		this.setSystemProgress(this.getSystemProgress(system) + amount, system);
 	}
 
+	/**
+	 * This will set a set a level in the selected system
+	 *
+	 * @param subLevel the sub level or rank to be set
+	 * @param system   the selected system
+	 */
 	@Override
-	public void addDivineFoundation(double amount) {
-		this.divineFoundation = Math.max(this.divineFoundation + amount * 1 / 20, 0);
+	public void setSystemSubLevel(int subLevel, System system) {
+		switch (system) {
+			case BODY:
+				this.bodySubLevel = Math.max(0, subLevel);
+				break;
+			case DIVINE:
+				this.divineSubLevel = Math.max(0, subLevel);
+				break;
+			case ESSENCE:
+				this.essenceSubLevel = Math.max(0, subLevel);
+				break;
+		}
 	}
 
+	/**
+	 * This will set a level in the selected system
+	 *
+	 * @param level  the level to be set
+	 * @param system the system of the level
+	 */
 	@Override
-	public void addEssenceFoundation(double amount) {
-		this.essenceFoundation = Math.max(this.essenceFoundation + amount * 1 / 20, 0);
+	public void setSystemLevel(BaseSystemLevel level, System system) {
+		switch (system) {
+			case BODY:
+				if (BaseSystemLevel.BODY_LEVELS.contains(level)) this.bodyLevel = level;
+				break;
+			case DIVINE:
+				if (BaseSystemLevel.DIVINE_LEVELS.contains(level)) this.divineLevel = level;
+				break;
+			case ESSENCE:
+				if (BaseSystemLevel.ESSENCE_LEVELS.contains(level)) this.essenceLevel = level;
+				break;
+		}
 	}
 
+	/**
+	 * Will advance a sub level in the selected system and will add a level if needed
+	 * This is merely numbers, real action will happen outside here
+	 *
+	 * @param system the system to raise a level
+	 */
+	@Override
+	public void riseSubLevel(System system) {
+		if (this.essenceLevel == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) { // got to first level in everything
+			double beforeFoundationOverBase = this.essenceFoundation/this.getEssenceLevel().getProgressBySubLevel(this.essenceSubLevel);
+			this.bodyLevel = this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS);
+			this.divineLevel = this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS);
+			this.essenceLevel = this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
+			this.essenceFoundation = this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel) * beforeFoundationOverBase;
+			this.bodyFoundation = this.essenceFoundation;
+			this.divineFoundation = this.essenceFoundation;
+		} else { // just add a level
+			double oldModifier = this.getSystemModifier(system);
+			this.setSystemProgress(0, system);
+			this.setSystemSubLevel(this.getSystemSubLevel(system) + 1, system);
+			if (this.getSystemSubLevel(system) >= this.getSystemLevel(system).subLevels) {
+				this.setSystemLevel(this.getSystemLevel(system).nextLevel(BaseSystemLevel.getListBySystem(system)), system);
+				this.setSystemSubLevel(0, system);
+			}
+			//level's cultivation modifiers rise at a 1.2 rate, so there will be a little loss on foundation
+			double modifierDifference = oldModifier * 1.19 - this.getSystemModifier(system);
+			if (modifierDifference > 0) {
+				this.setSystemFoundation(this.getSystemFoundation(system) + this.getSystemLevel(system).getProgressBySubLevel(this.getSystemSubLevel(system)) * modifierDifference /
+								(0.6 * this.getSystemLevel(system).getModifierBySubLevel(this.getSystemSubLevel(system))), system);
+			}
+		}
+	}
+
+	/**
+	 * Sets the foundations and keeps it >= 0 in the selected system
+	 *
+	 * @param amount the amount to be set
+	 * @param system the selected system
+	 */
+	@Override
+	public void setSystemFoundation(double amount, System system) {
+		switch (system) {
+			case BODY:
+				this.bodyFoundation = Math.max(amount, 0);
+				break;
+			case DIVINE:
+				this.divineFoundation = Math.max(amount, 0);
+				break;
+			case ESSENCE:
+				this.essenceFoundation = Math.max(amount, 0);
+				break;
+		}
+	}
+
+	/**
+	 * Adds a certain amount of foundation in the selected system
+	 *
+	 * @param amount the amount to be added
+	 * @param system the selected system
+	 */
 	@Override
 	public void addSystemFoundation(double amount, System system) {
-		switch (system) {
-			case BODY:
-				addBodyFoundation(amount);
-				break;
-			case DIVINE:
-				addDivineFoundation(amount);
-				break;
-			case ESSENCE:
-				addEssenceFoundation(amount);
-				break;
-		}
+		this.setSystemFoundation(this.getSystemFoundation(system) + amount, system);
 	}
 
 	@Override
@@ -443,15 +370,8 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public double getSystemModifier(System system) {
-		switch (system) {
-			case BODY:
-				return this.getBodyModifier();
-			case DIVINE:
-				return this.getDivineModifier();
-			case ESSENCE:
-				return this.getEssenceModifier();
-		}
-		return 0;
+		return Math.max(0, this.getSystemLevel(system).getModifierBySubLevel(this.getSystemSubLevel(system)) *
+				(0.4 + Math.min(21, (this.getSystemFoundation(system) / this.getSystemLevel(system).getProgressBySubLevel(this.getSystemSubLevel(system)))) * 0.6));
 	}
 
 	@Override
@@ -494,26 +414,26 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public void setBodyProgress(double amount) {
-		this.bodyProgress = Math.max(amount, 0);
+		this.setSystemProgress(amount, System.BODY);
 	}
 
 	@Override
 	public void setDivineProgress(double amount) {
-		this.divineProgress = Math.max(amount, 0);
+		this.setSystemProgress(amount, System.DIVINE);
 	}
 
 	@Override
 	public void setEssenceProgress(double amount) {
-		this.essenceProgress = Math.max(amount, 0);
+		this.setSystemProgress(amount, System.ESSENCE);
 	}
 
 	@Override
-	public void setSpeedHandicap(int handicap) {
+	public void setHandicap(int handicap) {
 		this.handicap = Math.min(100, Math.max(0, handicap));
 	}
 
 	@Override
-	public int getSpeedHandicap() {
+	public int getHandicap() {
 		return this.handicap;
 	}
 
@@ -594,20 +514,17 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public double getBodyModifier() {
-		return Math.max(1, this.bodyLevel.getModifierBySubLevel(this.bodySubLevel) *
-				(0.4 + Math.min(21, ((this.bodyProgress + this.bodyFoundation) / this.bodyLevel.getProgressBySubLevel(this.bodySubLevel))) * 0.6));
+		return getSystemModifier(System.BODY);
 	}
 
 	@Override
 	public double getDivineModifier() {
-		return Math.max(1, this.divineLevel.getModifierBySubLevel(this.divineSubLevel) *
-				(0.4 + Math.min(21, ((this.divineProgress + this.divineFoundation) / this.divineLevel.getProgressBySubLevel(this.divineSubLevel))) * 0.6));
+		return getSystemModifier(System.DIVINE);
 	}
 
 	@Override
 	public double getEssenceModifier() {
-		return Math.max(1, this.essenceLevel.getModifierBySubLevel(this.essenceSubLevel) *
-				(0.4 + Math.min(21, ((this.essenceProgress + this.essenceFoundation) / this.essenceLevel.getProgressBySubLevel(this.essenceSubLevel))) * 0.6));
+		return getSystemModifier(System.ESSENCE);
 	}
 
 	@Override

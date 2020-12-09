@@ -4,13 +4,13 @@ public interface IBarrier {
 
     //Barrier
 
-    void setBarrierAmount(float amount);
+    void setBarrierAmount(double amount);
 
-    void addBarrierAmount(float amount);
+    void addBarrierAmount(double amount);
 
-    void removeBarrierAmount(float amount);
+    void removeBarrierAmount(double amount);
 
-    float getBarrierAmount();
+    double getBarrierAmount();
 
     void setBarrierBroken(boolean barrierBroken);
 
@@ -22,15 +22,15 @@ public interface IBarrier {
 
     int getBarrierHits();
 
-    void setBarrierMaxAmount(float amount);
+    //void setBarrierMaxAmount(float amount);
 
-    float getBarrierMaxAmount();
+    double getBarrierMaxAmount(ICultivation cultivation);
 
     //Barrier Regen
 
-    void setBarrierRegenRate(float regenRate);
+    //void setBarrierRegenRate(float regenRate);
 
-    float getBarrierRegenRate();
+    double getBarrierRegenRate(ICultivation cultivation);
 
     void setBarrierRegenActive(boolean regenActive);
 

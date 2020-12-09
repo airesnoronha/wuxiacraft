@@ -76,7 +76,7 @@ public class SpeedHandicapMessage implements IMessage {
 					if (player != null) {
 						ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 
-						cultivation.setSpeedHandicap(message.handicap);
+						cultivation.setHandicap(message.handicap);
 						cultivation.setMaxSpeed(message.maxSpeed);
 						cultivation.setHasteLimit(message.hasteLimit);
 						cultivation.setJumpLimit(message.jumpLimit);
@@ -95,7 +95,7 @@ public class SpeedHandicapMessage implements IMessage {
 		public static SpeedHandicapMessage handleClientMessage(SpeedHandicapMessage message, MessageContext ctx) {
 			Minecraft.getMinecraft().addScheduledTask(() -> {
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
-				cultivation.setSpeedHandicap(WuxiaCraftConfig.speedHandicap);
+				cultivation.setHandicap(WuxiaCraftConfig.speedHandicap);
 				cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
 				cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);
 				cultivation.setJumpLimit(WuxiaCraftConfig.jumpLimit);

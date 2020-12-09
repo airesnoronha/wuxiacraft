@@ -1,6 +1,7 @@
 package com.airesnor.wuxiacraft.commands;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
+import com.airesnor.wuxiacraft.cultivation.BaseSystemLevel;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.networking.CultivationMessage;
@@ -205,60 +206,26 @@ public class AdvCultLevel extends CommandBase {
 				switch (system) {
 					case "body":
 						for (int i = 0; i < levelCount; i++) {
-							double amount = cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel());
-							try {
-								cultivation.addBodyProgress(amount, true);
-							} catch (Cultivation.RequiresTribulation trib) {
-								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
-										trib.level, trib.subLevel);
-							}
+								cultivation.riseSubLevel(Cultivation.System.BODY);
 						}
 						break;
 					case "divine":
 						for (int i = 0; i < levelCount; i++) {
-							double amount = cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel());
-							try {
-								cultivation.addDivineProgress(amount, true);
-							} catch (Cultivation.RequiresTribulation trib) {
-								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
-										trib.level, trib.subLevel);
-							}
+							cultivation.riseSubLevel(Cultivation.System.DIVINE);
 						}
 						break;
 					case "essence":
 						for (int i = 0; i < levelCount; i++) {
-							double amount = cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
-							try {
-								cultivation.addEssenceProgress(amount, true);
-							} catch (Cultivation.RequiresTribulation trib) {
-								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
-										trib.level, trib.subLevel);
-							}
+							cultivation.riseSubLevel(Cultivation.System.ESSENCE);
 						}
 						break;
 					case "three":
 						for (int i = 0; i < levelCount; i++) {
-							double amount = cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel());
-							try {
-								cultivation.addBodyProgress(amount, true);
-							} catch (Cultivation.RequiresTribulation trib) {
-								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
-										trib.level, trib.subLevel);
+							if(cultivation.getEssenceLevel() != BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
+								cultivation.riseSubLevel(Cultivation.System.BODY);
+								cultivation.riseSubLevel(Cultivation.System.DIVINE);
 							}
-							amount = cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel());
-							try {
-								cultivation.addDivineProgress(amount, true);
-							} catch (Cultivation.RequiresTribulation trib) {
-								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
-										trib.level, trib.subLevel);
-							}
-							amount = cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel());
-							try {
-								cultivation.addEssenceProgress(amount, true);
-							} catch (Cultivation.RequiresTribulation trib) {
-								CultivationUtils.callTribulation(target, trib.tribulationStrength, trib.system,
-										trib.level, trib.subLevel);
-							}
+							cultivation.riseSubLevel(Cultivation.System.ESSENCE);
 						}
 						break;
 				}
