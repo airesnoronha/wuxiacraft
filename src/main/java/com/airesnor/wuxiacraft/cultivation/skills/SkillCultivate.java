@@ -77,8 +77,8 @@ public class SkillCultivate extends Skill {
 						if (actor.getEntityWorld().getBiome(new BlockPos(actor.getPosition().getX(), actor.getPosition().getY(), actor.getPosition().getZ())) == WuxiaBiomes.EXTREMEQI) {
 							amount *= 1.5;
 						}
-						CultivationUtils.cultivatorAddProgress(actor, system, isMortalRealm ? amount * 0.4 : amount, true);
-						NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, system, isMortalRealm ? amount * 0.4 : amount, true, actor.getUniqueID()));
+						CultivationUtils.cultivatorAddProgress(actor, system, amount, true);
+						NetworkWrapper.INSTANCE.sendToServer(new ProgressMessage(0, system, amount, true, actor.getUniqueID()));
 						cultTech.getTechniqueBySystem(system).getTechnique().cultivationEffect.activate(actor);
 					}
 				LastUseCultivateMillis = System.currentTimeMillis();

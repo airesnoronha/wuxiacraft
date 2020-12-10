@@ -33,7 +33,15 @@ public class Cultivation implements ICultivation {
 	private boolean suppress;
 
 	public enum System {
-		BODY, ESSENCE, DIVINE
+		BODY, ESSENCE, DIVINE;
+
+		public System next() {
+			return values()[(this.ordinal() + 1) % values().length];
+		}
+
+		public System previous() {
+			return values()[this.ordinal() == 0 ? values().length - 1 : (this.ordinal() - 1) % values().length];
+		}
 	}
 
 	private System selectedSystem;
@@ -168,7 +176,7 @@ public class Cultivation implements ICultivation {
 	@Override
 	public void riseSubLevel(System system) {
 		if (this.essenceLevel == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) { // got to first level in everything
-			double beforeFoundationOverBase = this.essenceFoundation/this.getEssenceLevel().getProgressBySubLevel(this.essenceSubLevel);
+			double beforeFoundationOverBase = this.essenceFoundation / this.getEssenceLevel().getProgressBySubLevel(this.essenceSubLevel);
 			this.bodyLevel = this.bodyLevel.nextLevel(BaseSystemLevel.BODY_LEVELS);
 			this.divineLevel = this.divineLevel.nextLevel(BaseSystemLevel.DIVINE_LEVELS);
 			this.essenceLevel = this.essenceLevel.nextLevel(BaseSystemLevel.ESSENCE_LEVELS);
@@ -187,7 +195,7 @@ public class Cultivation implements ICultivation {
 			double modifierDifference = oldModifier * 1.19 - this.getSystemModifier(system);
 			if (modifierDifference > 0) {
 				this.setSystemFoundation(this.getSystemFoundation(system) + this.getSystemLevel(system).getProgressBySubLevel(this.getSystemSubLevel(system)) * modifierDifference /
-								(0.6 * this.getSystemLevel(system).getModifierBySubLevel(this.getSystemSubLevel(system))), system);
+						(0.6 * this.getSystemLevel(system).getModifierBySubLevel(this.getSystemSubLevel(system))), system);
 			}
 		}
 	}

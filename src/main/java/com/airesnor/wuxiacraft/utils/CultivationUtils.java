@@ -209,11 +209,12 @@ public class CultivationUtils {
 			amount *= MathUtils.clamp(cultivation.getDivineModifier() / Math.max(cultivation.getEssenceLevel().getModifierBySubLevel(cultivation.getEssenceSubLevel()), 1), 1, 20);
 		}
 		if (cultivation.getEssenceLevel() == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL) {
-			cultivation.addSystemFoundation(amount, Cultivation.System.ESSENCE);
+			cultivation.addSystemFoundation(amount*0.7, Cultivation.System.ESSENCE);
+		} else {
+			if (!cultivation.getSuppress())
+				cultivation.addSystemProgress(amount, system); //if reached max automatically will increase the foundation
+			cultivation.addSystemFoundation(amount * 0.05, system); //5% extra to foundations
 		}
-		if(!cultivation.getSuppress())
-			cultivation.addSystemProgress(amount, system); //if reached max automatically will increase the foundation
-		cultivation.addSystemFoundation(amount * 0.05, system); //5% extra to foundations
 	}
 
 	//This will call one lightning bolt at a time, or else all bolts would be called at the same time

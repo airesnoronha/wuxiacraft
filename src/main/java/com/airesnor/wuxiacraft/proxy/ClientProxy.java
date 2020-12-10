@@ -48,6 +48,8 @@ public class ClientProxy extends CommonProxy {
 	public static final int KEY_SELECT_1 = 7;
 	public static final int KEY_UNLEASH_SPEED = 17;
 	public static final int KEY_TOGGLE_BARRIER = 18;
+	public static final int KEY_CULTIVATE = 19;
+	public static final int KEY_BREAKTHROUGH = 20;
 
 	public static KeyBinding[] keyBindings;
 
@@ -108,20 +110,22 @@ public class ClientProxy extends CommonProxy {
 
 		SkillsGui.init();
 
-		keyBindings = new KeyBinding[19];
-		keyBindings[KEY_SPEED_UP] = new KeyBinding("key.wuxiacraft.speed_up", Keyboard.KEY_EQUALS, "key.wuxiacraft.category");
-		keyBindings[KEY_SPEED_DOWN] = new KeyBinding("key.wuxiacraft.speed_down", Keyboard.KEY_MINUS, "key.wuxiacraft.category");
-		keyBindings[KEY_CULT_GUI] = new KeyBinding("key.wuxiacraft.cult_gui", Keyboard.KEY_K, "key.wuxiacraft.category");
-		keyBindings[KEY_ACTIVATE_SKILL] = new KeyBinding("key.wuxiacraft.activate_skill", Keyboard.KEY_F, "key.wuxiacraft.category");
-		keyBindings[KEY_SKILLS_GUI] = new KeyBinding("key.wuxiacraft.skills_gui", Keyboard.KEY_L, "key.wuxiacraft.category");
-		keyBindings[KEY_SELECT_UP] = new KeyBinding("key.wuxiacraft.select_up", Keyboard.KEY_V, "key.wuxiacraft.category");
-		keyBindings[KEY_SELECT_DOWN] = new KeyBinding("key.wuxiacraft.select_down", Keyboard.KEY_C, "key.wuxiacraft.category");
+		keyBindings = new KeyBinding[21];
+		keyBindings[KEY_SPEED_UP] = new KeyBinding("key.wuxiacraft.speed_up", KeyConflictContext.IN_GAME, Keyboard.KEY_EQUALS, "key.wuxiacraft.category");
+		keyBindings[KEY_SPEED_DOWN] = new KeyBinding("key.wuxiacraft.speed_down", KeyConflictContext.IN_GAME, Keyboard.KEY_MINUS, "key.wuxiacraft.category");
+		keyBindings[KEY_CULT_GUI] = new KeyBinding("key.wuxiacraft.cult_gui", KeyConflictContext.IN_GAME, Keyboard.KEY_K, "key.wuxiacraft.category");
+		keyBindings[KEY_ACTIVATE_SKILL] = new KeyBinding("key.wuxiacraft.activate_skill", KeyConflictContext.IN_GAME, Keyboard.KEY_F, "key.wuxiacraft.category");
+		keyBindings[KEY_SKILLS_GUI] = new KeyBinding("key.wuxiacraft.skills_gui", KeyConflictContext.IN_GAME, Keyboard.KEY_L, "key.wuxiacraft.category");
+		keyBindings[KEY_SELECT_UP] = new KeyBinding("key.wuxiacraft.select_up", KeyConflictContext.IN_GAME, Keyboard.KEY_V, "key.wuxiacraft.category");
+		keyBindings[KEY_SELECT_DOWN] = new KeyBinding("key.wuxiacraft.select_down", KeyConflictContext.IN_GAME, Keyboard.KEY_C, "key.wuxiacraft.category");
 		for (int i = 0; i < 10; i++) {
 			int j = i == 9 ? 0 : (i + 1);
 			keyBindings[KEY_SELECT_1 + i] = new KeyBinding("key.wuxiacraft.select_" + j, KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Keyboard.KEY_1 + i, "key.wuxiacraft.category");
 		}
 		keyBindings[KEY_UNLEASH_SPEED] = new KeyBinding("key.wuxiacraft.unleash_speed", Keyboard.KEY_U, "key.wuxiacraft.category");
-		keyBindings[KEY_TOGGLE_BARRIER] = new KeyBinding("key.wuxiacraft.toggle_barrier", Keyboard.KEY_SEMICOLON, "key.wuxiacraft.category");
+		keyBindings[KEY_TOGGLE_BARRIER] = new KeyBinding("key.wuxiacraft.toggle_barrier", KeyConflictContext.IN_GAME, Keyboard.KEY_SEMICOLON, "key.wuxiacraft.category");
+		keyBindings[KEY_CULTIVATE] = new KeyBinding("key.wuxiacraft.cultivate", Keyboard.KEY_X, "key.wuxiacraft.category");
+		keyBindings[KEY_BREAKTHROUGH] = new KeyBinding("key.wuxiacraft.breakthrough", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Keyboard.KEY_X, "key.wuxiacraft.category");
 		for (KeyBinding keyBinding : keyBindings) {
 			ClientRegistry.registerKeyBinding(keyBinding);
 		}

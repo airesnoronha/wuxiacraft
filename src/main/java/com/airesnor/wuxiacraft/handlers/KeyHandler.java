@@ -3,7 +3,9 @@ package com.airesnor.wuxiacraft.handlers;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
 import com.airesnor.wuxiacraft.cultivation.IBarrier;
+import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
+import com.airesnor.wuxiacraft.cultivation.skills.Skills;
 import com.airesnor.wuxiacraft.items.ItemHerb;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.proxy.ClientProxy;
@@ -23,6 +25,8 @@ import org.lwjgl.input.Keyboard;
 
 @Mod.EventBusSubscriber
 public class KeyHandler {
+
+	public static boolean isCultivating = false;
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
@@ -60,18 +64,6 @@ public class KeyHandler {
 			BlockPos pos = player.getPosition();
 			player.openGui(WuxiaCraft.instance, GuiHandler.SKILLS_GUI_ID, player.world, pos.getX(), pos.getY(), pos.getZ());
 		}
-		if (keyBindings[5].isPressed()) {
-			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-			int next = skillCap.getActiveSkill() + 1;
-			NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next, player.getUniqueID()));
-			SelectSkillMessage.Handler.selectSkill(skillCap, next);
-		}
-		if (keyBindings[6].isPressed()) {
-			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-			int next = skillCap.getActiveSkill() - 1;
-			NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next, player.getUniqueID()));
-			SelectSkillMessage.Handler.selectSkill(skillCap, next);
-		}
 		if(keyBindings[17].isPressed()) {
 			WuxiaCraftConfig.maxSpeed = WuxiaCraftConfig.maxSpeed * -1;
 			WuxiaCraftConfig.syncFromFields();
@@ -104,6 +96,50 @@ public class KeyHandler {
 					text.getStyle().setColor(TextFormatting.RED);
 					player.sendMessage(text);
 				}
+			}
+		}
+		if(keyBindings[19].isKeyDown() && keyBindings[5].isKeyDown()) {
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
+			cultivation.setSelectedSystem(cultivation.getSelectedSystem().next());
+			RendererHandler.showingSelector = true;
+			RendererHandler.showingCooldown = 60;
+		}
+		else if (keyBindings[5].isKeyDown()) {
+			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
+			int next = skillCap.getActiveSkill() + 1;
+			NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next, player.getUniqueID()));
+			SelectSkillMessage.Handler.selectSkill(skillCap, next);
+		}
+		if(keyBindings[19].isKeyDown() && keyBindings[6].isKeyDown()) {
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
+			cultivation.setSelectedSystem(cultivation.getSelectedSystem().previous());
+			RendererHandler.showingSelector = true;
+			RendererHandler.showingCooldown = 60;
+		}
+		else if (keyBindings[6].isKeyDown()) {
+			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
+			int next = skillCap.getActiveSkill() - 1;
+			NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next, player.getUniqueID()));
+			SelectSkillMessage.Handler.selectSkill(skillCap, next);
+		}
+		if (Keyboard.getEventKey() == keyBindings[19].getKeyCode() && Keyboard.getEventKeyState()) {
+			isCultivating = true;
+		}
+		if (Keyboard.getEventKey() == keyBindings[19].getKeyCode() && !Keyboard.getEventKeyState()) {
+			isCultivating = false;
+		}
+		if(keyBindings[20].isKeyDown()) {
+			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
+			switch (cultivation.getSelectedSystem()) {
+				case BODY:
+					Skills.CULTIVATE_BODY.activate(Minecraft.getMinecraft().player);
+					break;
+				case DIVINE:
+					Skills.CULTIVATE_DIVINE.activate(Minecraft.getMinecraft().player);
+					break;
+				case ESSENCE:
+					Skills.CULTIVATE_ESSENCE.activate(Minecraft.getMinecraft().player);
+					break;
 			}
 		}
 		for (int i = 0; i < 10; i++) {

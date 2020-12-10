@@ -406,7 +406,6 @@ public class CultivationGui extends GuiScreen {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x, y, 0);
 		if (foundationOverMaxBase < 1) {
-			GlStateManager.scale(foundationOverMaxBase, foundationOverMaxBase, 0);
 			int fillFactor = (int) (30 * foundationOverMaxBase);
 			drawTexturedModalRect(0, 30 - fillFactor, 125, 187 + 30 - fillFactor, 30, fillFactor); //red
 		} else if (MathUtils.between(foundationOverMaxBase, 1, 3)) {

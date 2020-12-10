@@ -16,6 +16,7 @@ import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
 import com.airesnor.wuxiacraft.gui.SkillsGui;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import com.airesnor.wuxiacraft.utils.MathUtils;
+import javafx.animation.Interpolator;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -52,6 +53,10 @@ public class RendererHandler {
 	public static final ResourceLocation skills_bg = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/skills_bg.png");
 	public static final ResourceLocation cauldron_info = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/cauldron_info.png");
 	public static final ResourceLocation formation_gui = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/formation_gui.png");
+	public static final ResourceLocation body_cultivate_image = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/skills/icons/cultivate_body.png");
+	public static final ResourceLocation divine_cultivate_image = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/skills/icons/cultivate_divine.png");
+	public static final ResourceLocation essence_cultivate_image = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/skills/icons/cultivate_essence.png");
+	public static final ResourceLocation selected_circle = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/select_circle.png");
 
 	public static class WorldRenderQueue {
 
@@ -125,6 +130,7 @@ public class RendererHandler {
 		drawCastProgressBar(event.getResolution());
 		drawHudElements(event.getResolution());
 		drawSkillsBar(event.getResolution());
+		drawSelectedCultivateSkill(event.getResolution(), event.getPartialTicks());
 
 		drawTileEntitiesInfo(event.getResolution());
 		GlStateManager.popAttrib();
@@ -249,13 +255,13 @@ public class RendererHandler {
 
 		//Show dragons now
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(5, height-16, 0);
-		int bodyProgress = (int)Math.min(124, (124*cultivation.getBodyProgress()/cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel())));
-		int divineProgress = (int)Math.min(124, (124*cultivation.getDivineProgress()/cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel())));
-		int essenceProgress = (int)Math.min(124, (124*cultivation.getEssenceProgress()/cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel())));
-		mc.ingameGUI.drawTexturedModalRect(0,-16, 0,208,bodyProgress,16);
-		mc.ingameGUI.drawTexturedModalRect(0,-8, 0,240,divineProgress, 16);
-		mc.ingameGUI.drawTexturedModalRect(0,0, 0,224,essenceProgress,16);
+		GlStateManager.translate(5, height - 16, 0);
+		int bodyProgress = (int) Math.min(124, (124 * cultivation.getBodyProgress() / cultivation.getBodyLevel().getProgressBySubLevel(cultivation.getBodySubLevel())));
+		int divineProgress = (int) Math.min(124, (124 * cultivation.getDivineProgress() / cultivation.getDivineLevel().getProgressBySubLevel(cultivation.getDivineSubLevel())));
+		int essenceProgress = (int) Math.min(124, (124 * cultivation.getEssenceProgress() / cultivation.getEssenceLevel().getProgressBySubLevel(cultivation.getEssenceSubLevel())));
+		mc.ingameGUI.drawTexturedModalRect(0, -16, 0, 208, bodyProgress, 16);
+		mc.ingameGUI.drawTexturedModalRect(0, -8, 0, 240, divineProgress, 16);
+		mc.ingameGUI.drawTexturedModalRect(0, 0, 0, 224, essenceProgress, 16);
 		GlStateManager.popMatrix();
 
 		/*ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
@@ -299,7 +305,99 @@ public class RendererHandler {
 		message = String.format("Fall Distance: %.2f",player.fallDistance);
 		mc.ingameGUI.drawString(mc.fontRenderer, message, 5, 60, Integer.parseInt("FFAA00",16))
 		*/
-		GlStateManager.color(1,1,1,1);
+		GlStateManager.color(1, 1, 1, 1);
+	}
+
+	public static boolean showingSelector = false;
+	public static float showingCooldown = 60;
+	public Cultivation.System lastSelectedSystem = Cultivation.System.ESSENCE;
+	private static float showingAnimation = 0;
+	private static float selectingAnimation = 0;
+	private static float lastPartialTick = 0;
+
+	private static ResourceLocation getTextureBySystem(Cultivation.System system) {
+		switch (system) {
+			case BODY:
+				return body_cultivate_image;
+			case DIVINE:
+				return divine_cultivate_image;
+			case ESSENCE:
+				return essence_cultivate_image;
+		}
+		return essence_cultivate_image;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void drawSelectedCultivateSkill(ScaledResolution res, float partialTicks) {
+		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
+		float radius = 20f;
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(146, res.getScaledHeight() - 32 - radius, 0);
+		float rotatingAngle = getRotationAngleEaseOut() * (selectingAnimation<0 ? -1 : 1);
+		GlStateManager.rotate(rotatingAngle, 0, 0, 1);
+		float partialTicksDiff = partialTicks - lastPartialTick;
+		if (partialTicks < lastPartialTick) partialTicksDiff = 1 + partialTicks - lastPartialTick;
+		Minecraft.getMinecraft().renderEngine.bindTexture(getTextureBySystem(lastSelectedSystem));
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(0, radius, 0);
+		GlStateManager.rotate(-rotatingAngle, 0, 0, 1);
+		drawTexturedRect(-16, 0, 32, 32, 0, 0, 1, 1);
+		GlStateManager.popMatrix();
+		if (showingSelector) {
+			GlStateManager.pushMatrix();
+			GlStateManager.color(1,1,1, showingAnimation/5f);
+			Minecraft.getMinecraft().renderEngine.bindTexture(selected_circle);
+			GlStateManager.pushMatrix();
+			GlStateManager.rotate(-rotatingAngle, 0, 0, 1);
+			drawTexturedRect(-16, (int)radius, 32, 32, 0, 0, 1, 1);
+			GlStateManager.popMatrix();
+			float angle = 120f;
+			GlStateManager.pushMatrix();
+			GlStateManager.rotate(angle, 0, 0, 1);
+			GlStateManager.translate(0, radius, 0);
+			GlStateManager.rotate(-angle, 0, 0, 1);
+			GlStateManager.rotate(-rotatingAngle, 0, 0, 1);
+			Minecraft.getMinecraft().renderEngine.bindTexture(getTextureBySystem(lastSelectedSystem.previous()));
+			drawTexturedRect(-16, 0, 32, 32, 0, 0, 1, 1);
+			GlStateManager.popMatrix();
+			GlStateManager.pushMatrix();
+			GlStateManager.rotate(-angle, 0, 0, 1);
+			GlStateManager.translate(0, radius, 0);
+			GlStateManager.rotate(angle, 0, 0, 1);
+			GlStateManager.rotate(-rotatingAngle, 0, 0, 1);
+			Minecraft.getMinecraft().renderEngine.bindTexture(getTextureBySystem(lastSelectedSystem.next()));
+			drawTexturedRect(-16, 0, 32, 32, 0, 0, 1, 1);
+			GlStateManager.popMatrix();
+			showingCooldown -= partialTicksDiff;
+			if (showingCooldown <= 0) {
+				showingCooldown = 60; // should be around 3 seconds in ticks
+				showingSelector = false;
+			}
+			if (lastSelectedSystem != cultivation.getSelectedSystem()) {
+				float rotationSide = lastSelectedSystem == cultivation.getSelectedSystem().next() ? -1 : 1;
+				selectingAnimation += partialTicksDiff * 6.7f * rotationSide;
+				if (Math.abs(selectingAnimation) >= 120f) {
+					lastSelectedSystem = cultivation.getSelectedSystem();
+					selectingAnimation = 0;
+				}
+			} else {
+				if(Math.abs(selectingAnimation) >= 0.01) {
+					float rotationSide = selectingAnimation < 0 ? -1 : 1;
+					selectingAnimation -= partialTicksDiff * 6.7f * rotationSide;
+				} else {
+					selectingAnimation = 0;
+				}
+			}
+			showingAnimation = MathUtils.clamp(Math.min(5f, partialTicksDiff + showingAnimation), 0, showingCooldown);
+			GlStateManager.popMatrix();
+			GlStateManager.color(1,1,1,1);
+		}
+		lastPartialTick = partialTicks;
+		GlStateManager.popMatrix();
+	}
+
+	public static float getRotationAngleEaseOut() {
+		return (float) Interpolator.SPLINE(.4, .15, 0.4, 1).interpolate(0d, 120d, Math.abs(selectingAnimation / 120d));
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -420,15 +518,15 @@ public class RendererHandler {
 						y = res.getScaledHeight() / 2 + 55;
 
 						progress = (int) (94 * timeLeft);
-						drawTexturedRect(x, y, 94, 17, 0, 111f / 128f, 93f / 128f, 128f / 128f);
+						drawTexturedRect(x, y, 94, 17, 0, 111f / 128f, 93f / 128f, 1.0f);
 						drawTexturedRect(x, y, progress, 17, 0, 94f / 128f, timeLeft * 93f / 128f, 110f / 128f);
 
 						x = res.getScaledWidth() / 2 + 120 - (18 / 2);
 						y = res.getScaledHeight() / 2 + 128 / 2;
 
 						progress = (int) (128 * temperature);
-						drawTexturedRect(x + 1, y - progress, 16, progress, 94f / 128f, 1f - temperature, 109f / 128f, 128f / 128f);
-						drawTexturedRect(x, y - 128, 18, 128, 110f / 128f, 0, 128f / 128f, 128f / 128f);
+						drawTexturedRect(x + 1, y - progress, 16, progress, 94f / 128f, 1f - temperature, 109f / 128f, 1.0f);
+						drawTexturedRect(x, y - 128, 18, 128, 110f / 128f, 0, 1.0f, 1.0f);
 
 						String temp = String.format("%.2f -", te.getTemperature());
 						int tempWidth = mc.fontRenderer.getStringWidth(temp);
@@ -451,19 +549,18 @@ public class RendererHandler {
 					}
 
 					GlStateManager.popMatrix();
-				}
-				else  if(state.getBlock() instanceof FormationCoreBlock) {
+				} else if (state.getBlock() instanceof FormationCoreBlock) {
 					FormationTileEntity formation = (FormationTileEntity) mc.player.world.getTileEntity(rtr.getBlockPos());
-					if(formation != null) {
+					if (formation != null) {
 						mc.getTextureManager().bindTexture(formation_gui);
 						int y = res.getScaledHeight() - Math.max(GuiIngameForge.left_height, GuiIngameForge.right_height) - 18;
 						int x = res.getScaledWidth() / 2 - 95;
 						mc.ingameGUI.drawTexturedModalRect(x, y, 0, 0, 190, 18);
-						int energyFill = (int)Math.min(181, (formation.getEnergy() * 181/ formation.getMaxEnergy()));
+						int energyFill = (int) Math.min(181, (formation.getEnergy() * 181 / formation.getMaxEnergy()));
 						int animation = stepAnimation / 3;
 						mc.ingameGUI.drawTexturedModalRect(x + 5, y + 4, 0, 22 + animation * 9, energyFill, 9);
 						stepAnimation++;
-						if(stepAnimation >= 24) stepAnimation = 0;
+						if (stepAnimation >= 24) stepAnimation = 0;
 						//mc.fontRenderer.drawStringWithShadow(String.format("Energy: %.2f", formation.getEnergy()), x + 40, y + 5, 0xCF9D15);
 					}
 				}
