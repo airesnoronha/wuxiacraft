@@ -37,4 +37,8 @@ public interface ICultTech {
 
 	boolean hasElement(Element element);
 
+	double getScanFactor(double divineModifier);
+
+	double getResistFactor(double divineModifier);
+
 }

@@ -3,8 +3,8 @@ package com.airesnor.wuxiacraft.handlers;
 import com.airesnor.wuxiacraft.aura.Aura;
 import com.airesnor.wuxiacraft.aura.Auras;
 import com.airesnor.wuxiacraft.aura.IAuraCap;
-import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
+import com.airesnor.wuxiacraft.networking.AskCultivationLevelMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
 import com.airesnor.wuxiacraft.networking.RequestAuraForOtherPlayerMessage;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
@@ -21,10 +21,19 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 
 public class EntityRenderHandler {
+
+	@SideOnly(Side.CLIENT)
+	public static final Map<UUID, ICultivation> knownCultivations = new HashMap<>();
+
+	@SideOnly(Side.CLIENT)
+	public static final Map<UUID, Long> knownCultivationGetTimes = new HashMap<>();
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
@@ -97,6 +106,19 @@ public class EntityRenderHandler {
 					}
 					timer = 0;
 				}
+				//improvisation, using the same method just -- post edit -> i don't remember what this just was about
+				for (UUID player : knownCultivations.keySet()) {
+					if (knownCultivationGetTimes.containsKey(player)) {
+						if (knownCultivationGetTimes.get(player) > System.currentTimeMillis() + 30000) {
+							knownCultivations.remove(player);
+							knownCultivationGetTimes.remove(player);
+						}
+					} else {
+						knownCultivations.remove(player);
+						knownCultivationGetTimes.remove(player);
+					}
+				}
+				NetworkWrapper.INSTANCE.sendToServer(new AskCultivationLevelMessage(event.player.getUniqueID()));
 			}
 			timer++;
 		}

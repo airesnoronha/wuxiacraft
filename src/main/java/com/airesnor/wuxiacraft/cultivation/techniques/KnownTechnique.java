@@ -35,9 +35,9 @@ public class KnownTechnique {
 	public String getCurrentCheckpoint() {
 		String current = "No success";
 		double highestComparedCheckpointProficiency = 0; //in case checkpoints aren't in order
-		for(Triple<Double, Float, String> checkpoint : technique.getCheckpoints()) {
+		for (Triple<Double, Float, String> checkpoint : technique.getCheckpoints()) {
 			if (checkpoint.getLeft() > highestComparedCheckpointProficiency) {
-				if(this.proficiency > checkpoint.getLeft()) {
+				if (this.proficiency > checkpoint.getLeft()) {
 					highestComparedCheckpointProficiency = checkpoint.getLeft();
 					current = checkpoint.getRight();
 				}
@@ -48,8 +48,8 @@ public class KnownTechnique {
 
 	public List<PotionEffect> getTechniqueEffects() {
 		List<PotionEffect> effects = new ArrayList<>();
-		for(Pair<Double, PotionEffect> effect : this.getTechnique().getEffects()) {
-			if(this.proficiency >= effect.getKey()) {
+		for (Pair<Double, PotionEffect> effect : this.getTechnique().getEffects()) {
+			if (this.proficiency >= effect.getKey()) {
 				effects.add(effect.getValue());
 			}
 		}
@@ -57,36 +57,26 @@ public class KnownTechnique {
 	}
 
 	public TechniqueModifiers getModifiers() {
-		double unlocked = 0; //from 0 to 1
-		double highestComparedCheckpointProficiency = 0; //in case checkpoints aren't in order
-		for(Triple<Double, Float, String> checkpoint : technique.getCheckpoints()) {
-			if(checkpoint.getLeft() > highestComparedCheckpointProficiency) {
-				if(this.proficiency > checkpoint.getLeft()) {
-					highestComparedCheckpointProficiency = checkpoint.getLeft();
-					unlocked = checkpoint.getMiddle();
-				}
-			}
-		}
-		return this.getTechnique().getBaseModifiers().multiply(unlocked);
+		return this.getTechnique().getBaseModifiers().multiply(getReleaseFactor());
 	}
 
 	public List<Skill> getKnownSkills() {
 		List<Skill> skills = new ArrayList<>();
-		for(Pair<Double, Skill> skill : this.getTechnique().getSkills()) {
-			if(this.proficiency >= skill.getKey()) {
+		for (Pair<Double, Skill> skill : this.getTechnique().getSkills()) {
+			if (this.proficiency >= skill.getKey()) {
 				skills.add(skill.getValue());
 			}
 		}
-		if(this.technique.getSystem() == Cultivation.System.DIVINE) {
-			if (this.proficiency > 2000*8) {
+		if (this.technique.getSystem() == Cultivation.System.DIVINE) {
+			if (this.proficiency > 2000 * 8) {
 				skills.add(Skills.SPIRIT_PRESSURE);
 			}
-			if(this.proficiency >= 10000*8) {
+			if (this.proficiency >= 10000 * 8) {
 				skills.add(Skills.SPIRIT_ARROW);
 			}
 		}
-		if(this.technique.getSystem() == Cultivation.System.ESSENCE) {
-			if(this.proficiency >= 4000*8) {
+		if (this.technique.getSystem() == Cultivation.System.ESSENCE) {
+			if (this.proficiency >= 4000 * 8) {
 				skills.add(Skills.WEAK_SWORD_FLIGHT);
 			}
 		}
@@ -98,10 +88,24 @@ public class KnownTechnique {
 	}
 
 	public double getCultivationSpeed(double modifier) {
-		double speed = technique.getCultivationSpeed() + (0.5 + 2.5 * this.proficiency / this.technique.getMaxProficiency() );
-		if(modifier > technique.getEfficientTillModifier()) {
-			return speed * (technique.getEfficientTillModifier() / (modifier*2)); //Eventually will amount to almost nothing
+		double speed = technique.getCultivationSpeed() + (0.5 + 2.5 * this.proficiency / this.technique.getMaxProficiency());
+		if (modifier > technique.getEfficientTillModifier()) {
+			return speed * (technique.getEfficientTillModifier() / (modifier * 2)); //Eventually will amount to almost nothing
 		}
 		return speed;
+	}
+
+	public double getReleaseFactor() {
+		double unlocked = 0; //from 0 to 1
+		double highestComparedCheckpointProficiency = 0; //in case checkpoints aren't in order
+		for (Triple<Double, Float, String> checkpoint : technique.getCheckpoints()) {
+			if (checkpoint.getLeft() > highestComparedCheckpointProficiency) {
+				if (this.proficiency > checkpoint.getLeft()) {
+					highestComparedCheckpointProficiency = checkpoint.getLeft();
+					unlocked = checkpoint.getMiddle();
+				}
+			}
+		}
+		return unlocked;
 	}
 }

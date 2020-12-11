@@ -1,37 +1,32 @@
 package com.airesnor.wuxiacraft.handlers;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.airesnor.wuxiacraft.formation.FormationCoreBlock;
-import com.airesnor.wuxiacraft.formation.FormationTileEntity;
-import com.airesnor.wuxiacraft.profession.alchemy.Recipe;
 import com.airesnor.wuxiacraft.blocks.Cauldron;
-import com.airesnor.wuxiacraft.cultivation.BaseSystemLevel;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
 import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
-import com.airesnor.wuxiacraft.entities.mobs.WanderingCultivator;
 import com.airesnor.wuxiacraft.entities.tileentity.CauldronTileEntity;
+import com.airesnor.wuxiacraft.formation.FormationCoreBlock;
+import com.airesnor.wuxiacraft.formation.FormationTileEntity;
 import com.airesnor.wuxiacraft.gui.SkillsGui;
+import com.airesnor.wuxiacraft.profession.alchemy.Recipe;
 import com.airesnor.wuxiacraft.utils.CultivationUtils;
 import com.airesnor.wuxiacraft.utils.MathUtils;
 import javafx.animation.Interpolator;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -39,7 +34,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 @Mod.EventBusSubscriber
@@ -112,9 +108,6 @@ public class RendererHandler {
 	public static final WorldRenderQueue worldRenderQueue = new WorldRenderQueue();
 
 	@SideOnly(Side.CLIENT)
-	public static final Map<UUID, ICultivation> knownCultivations = new HashMap<>();
-
-	@SideOnly(Side.CLIENT)
 	private static int animationStep = 0;
 	private static int selectedSkill = -1;
 
@@ -133,6 +126,7 @@ public class RendererHandler {
 		drawSelectedCultivateSkill(event.getResolution(), event.getPartialTicks());
 
 		drawTileEntitiesInfo(event.getResolution());
+		drawCultivatorInfo(event.getResolution(), event.getPartialTicks());
 		GlStateManager.popAttrib();
 	}
 
@@ -143,48 +137,6 @@ public class RendererHandler {
 				event.setCanceled(true);
 				drawCustomHealthBar(event.getResolution());
 			}
-		}
-	}
-
-	@SuppressWarnings("rawtypes")
-	@SideOnly(Side.CLIENT)
-	@SubscribeEvent
-	public void onDescribeCultivationLevel(RenderLivingEvent.Specials.Post e) {
-		if (e.getEntity() instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) e.getEntity();
-			UUID uuid = player.getUniqueID();
-			if (knownCultivations.containsKey(uuid)) {
-				ICultivation cultivation = knownCultivations.get(uuid);
-				Minecraft mc = Minecraft.getMinecraft();
-				boolean sneaking = player.isSneaking();
-				boolean thirdPerson = mc.getRenderManager().options.thirdPersonView == 2;
-				float x = (float) e.getX();
-				float y = (float) e.getY() + 0.75f + player.height - (sneaking ? 0.25f : 0f);
-				float z = (float) e.getZ();
-				float f = mc.getRenderManager().playerViewY;
-				float f1 = mc.getRenderManager().playerViewX;
-				drawCultivationPlate(cultivation, x, y, z, f, f1, thirdPerson, sneaking);
-			}
-		} else if (e.getEntity() instanceof WanderingCultivator) {
-			WanderingCultivator cultivator = (WanderingCultivator) e.getEntity();
-			ICultivation playerCultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
-			ICultivation cultivation = new Cultivation();
-			if (cultivator.getCultivation().getEssenceLevel().greaterThan(playerCultivation.getEssenceLevel(), BaseSystemLevel.ESSENCE_LEVELS)) {
-				cultivation.setEssenceLevel(playerCultivation.getEssenceLevel().nextLevel(BaseSystemLevel.ESSENCE_LEVELS));
-				cultivation.setEssenceSubLevel(-1);
-			} else {
-				cultivation.setEssenceLevel(cultivator.getCultivation().getEssenceLevel());
-				cultivation.setEssenceSubLevel(cultivator.getCultivation().getEssenceSubLevel());
-			}
-			Minecraft mc = Minecraft.getMinecraft();
-			boolean sneaking = cultivator.isSneaking();
-			boolean thirdPerson = mc.getRenderManager().options.thirdPersonView == 2;
-			float x = (float) e.getX();
-			float y = (float) e.getY() + 0.75f + cultivator.height - (sneaking ? 0.25f : 0f);
-			float z = (float) e.getZ();
-			float f = mc.getRenderManager().playerViewY;
-			float f1 = mc.getRenderManager().playerViewX;
-			drawCultivationPlate(cultivation, x, y, z, f, f1, thirdPerson, sneaking);
 		}
 	}
 
@@ -594,48 +546,23 @@ public class RendererHandler {
 		GL11.glEnd();
 	}
 
-	public static void drawCultivationPlate(ICultivation cultivation, float x, float y, float z, float viewYaw, float viewPitch, boolean thirdPerson, boolean sneaking) {
+	public static void drawCultivatorInfo(ScaledResolution res, float partialTick) {
+		EntityPlayerSP player = Minecraft.getMinecraft().player;
+		RayTraceResult result = player.rayTrace(5, partialTick);
 		Minecraft mc = Minecraft.getMinecraft();
-		String str = cultivation.getEssenceLevel().getLevelName(cultivation.getEssenceSubLevel());
-		FontRenderer fr = mc.getRenderManager().getFontRenderer();
-		GlStateManager.pushMatrix();
-		GlStateManager.translate(x, y, z);
-		GlStateManager.glNormal3f(0.0F, 1.0F, 0.0F);
-		GlStateManager.rotate(-viewYaw, 0.0F, 1.0F, 0.0F);
-		GlStateManager.rotate((float) (thirdPerson ? -1 : 1) * viewPitch, 1.0F, 0.0F, 0.0F);
-		GlStateManager.scale(-0.025F, -0.025F, 0.025F);
-		GlStateManager.disableLighting();
-		GlStateManager.depthMask(false);
-
-		if (!sneaking) {
-			GlStateManager.disableDepth();
+		if (result != null) {
+			if (result.typeOfHit == RayTraceResult.Type.ENTITY) {
+				if (result.entityHit instanceof EntityOtherPlayerMP) {
+					EntityOtherPlayerMP target = (EntityOtherPlayerMP) result.entityHit;
+					if (EntityRenderHandler.knownCultivations.containsKey(target.getUniqueID())) {
+						GlStateManager.pushMatrix();
+						GlStateManager.translate(10, 10, 0);
+						mc.ingameGUI.drawTexturedModalRect(0, 0, 0, 0, 120, 30);
+						GlStateManager.popMatrix();
+					}
+				}
+			}
 		}
-
-		GlStateManager.enableBlend();
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		int i = fr.getStringWidth(str) / 2;
-		GlStateManager.disableTexture2D();
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder bufferbuilder = tessellator.getBuffer();
-		bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
-		bufferbuilder.pos((-i - 1), -1, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-		bufferbuilder.pos((-i - 1), 8, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-		bufferbuilder.pos((i + 1), 8, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-		bufferbuilder.pos((i + 1), -1, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-		tessellator.draw();
-		GlStateManager.enableTexture2D();
-
-		if (!sneaking) {
-			fr.drawString(str, -fr.getStringWidth(str) / 2, 0, 553648127);
-			GlStateManager.enableDepth();
-		}
-
-		GlStateManager.depthMask(true);
-		fr.drawString(str, -fr.getStringWidth(str) / 2, 0, sneaking ? 553648127 : -1);
-		GlStateManager.enableLighting();
-		GlStateManager.disableBlend();
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		GlStateManager.popMatrix();
 	}
 
 	public static String getShortHealthAmount(int amount) {
@@ -661,9 +588,21 @@ public class RendererHandler {
 		} else if (amount < 100000000) {
 			float mills = amount / 1000000f;
 			value += String.format("%.0fM", mills);
-		} else if (amount < 1000000000) {
+		} else if (amount < 10000000000.0) {
 			float mills = amount / 1000000000f;
 			value += String.format("%.2fG", mills);
+		} else if (amount < 100000000000.0) {
+			float mills = amount / 1000000000f;
+			value += String.format("%.1fG", mills);
+		} else if (amount < 1000000000000.0) {
+			float mills = amount / 1000000000f;
+			value += String.format("%.0fG", mills);
+		} else if (amount < 10000000000000.0) {
+			float mills = amount / 1000000000000f;
+			value += String.format("%.2fT", mills);
+		} else if (amount < 100000000000000.0) {
+			float mills = amount / 1000000000000f;
+			value += String.format("%.1fT", mills);
 		}
 		return value;
 	}

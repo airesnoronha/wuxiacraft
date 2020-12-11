@@ -1,6 +1,5 @@
 package com.airesnor.wuxiacraft.aura;
 
-import com.sun.javafx.geom.Vec3f;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -8,6 +7,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
+import javax.vecmath.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,13 +52,13 @@ public class ElectricAura extends Aura {
 
 	private final List<LightningStrand> strands;
 
-	private final Vec3f color;
+	private final Vector3f color;
 
 	private boolean dirty;
 
 	public ElectricAura(String name, float red, float green, float blue) {
 		super(name);
-		this.color = new Vec3f(red, green, blue);
+		this.color = new Vector3f(red, green, blue);
 		this.strands = new ArrayList<>();
 		for (int i = 0; i < 32; i++) {
 			this.strands.add(new LightningStrand());

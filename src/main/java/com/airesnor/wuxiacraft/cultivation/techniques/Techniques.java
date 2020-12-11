@@ -493,8 +493,8 @@ public class Techniques {
 	//Soul ones
 
 	//From Asura
-	public static final Technique IGNITED_SOUL = new Technique("ignited_soul", Cultivation.System.DIVINE,
-			new TechniqueModifiers(0.4, 0.9, 0.7, 1.1, 0.8, 0.3), 4.2, 23000000.0 * 8, 800)
+	public static final Technique IGNITED_SOUL = new DivineTechnique("ignited_soul",
+			new TechniqueModifiers(0.4, 0.9, 0.7, 1.1, 0.8, 0.3), 4.2, 23000000.0 * 8, 800, 2, 3)
 			.addCheckpoint(1000.0 * 8, 0.10f, "Minor Success")
 			.addCheckpoint(10000.0 * 8, 0.30f, "Small Success")
 			.addCheckpoint(90000.0 * 8, 0.45f, "Middle Success")
@@ -508,8 +508,8 @@ public class Techniques {
 
 	//From Anime4You -- former Wuxia4You (liked this one better)
 	//rank immortal 3
-	public static final Technique BURNING_FLAME_SOUL = new Technique("burning_flame_soul", Cultivation.System.DIVINE,
-			new TechniqueModifiers(0.8, 1.8, 1.4, 2.1, 1.7, 0.7), 11.3, 66900000000.0 * 8, 1200000.0)
+	public static final Technique BURNING_FLAME_SOUL = new DivineTechnique("burning_flame_soul",
+			new TechniqueModifiers(0.8, 1.8, 1.4, 2.1, 1.7, 0.7), 11.3, 66900000000.0 * 8, 1200000.0, 1, 3)
 			.addCheckpoint(4000.0 * 8, 0.11f, "Soul Burning")
 			.addCheckpoint(32000.0 * 8, 0.22f, "Flame Absorbing")
 			.addCheckpoint(255734.0 * 8, 0.33f, "Flame Assimilating")
@@ -535,8 +535,8 @@ public class Techniques {
 	//From Anime4You -- former Wuxia4You (liked this one better)
 	//Today ...  was gonna be the day ...
 	//rank immortal 2
-	public static final Technique THUNDER_WALL_SOUL_ARTS = new Technique("thunder_wall_soul_arts", Cultivation.System.DIVINE,
-			new TechniqueModifiers(1.2, 0.5, 0.9, 1.0, 1.2, 0.7), 9.2, 1300000000.0 * 8, 101241.12)
+	public static final Technique THUNDER_WALL_SOUL_ARTS = new DivineTechnique("thunder_wall_soul_arts",
+			new TechniqueModifiers(1.2, 0.5, 0.9, 1.0, 1.2, 0.7), 9.2, 1300000000.0 * 8, 101241.12, 1.2, 2.5)
 			.addCheckpoint(3400.0 * 8, 0.14f, "Soul Thunder")
 			.addCheckpoint(29013.0 * 8, 0.28f, "Wall Forming")
 			.addCheckpoint(247096.0 * 8, 0.42f, "Thunder Reinforcement")
@@ -557,8 +557,8 @@ public class Techniques {
 			});
 
 	//From Dremtas White Tiger
-	public static final Technique AQUATIC_SOUL_MANIPULATION = new Technique("aquatic_soul_manipulation", Cultivation.System.DIVINE,
-			new TechniqueModifiers(0.2, 0.1, 0.3, 0.1, .03, 0.2), 4.5, 23000000.0 * 8, 800)
+	public static final Technique AQUATIC_SOUL_MANIPULATION = new DivineTechnique("aquatic_soul_manipulation",
+			new TechniqueModifiers(0.2, 0.1, 0.3, 0.1, .03, 0.2), 4.5, 23000000.0 * 8, 800, 2.8, 1.4)
 			.addCheckpoint(1000.0 * 8, 0.10f, "Minor Success")
 			.addCheckpoint(10000.0 * 8, 0.30f, "Small Success")
 			.addCheckpoint(90000.0 * 8, 0.45f, "Middle Success")
@@ -570,8 +570,8 @@ public class Techniques {
 			.addSkill(10000 * 8, Skills.WATER_BLADE);
 
 	//From Asura
-	public static final Technique SUN_SOUL_ART = new Technique("sun_soul_art", Cultivation.System.DIVINE,
-			new TechniqueModifiers(0.3, 0.1, 0.3, 0.1, 0.7, 0.8), 2.8, 23000000.0 * 8, 800)
+	public static final Technique SUN_SOUL_ART = new DivineTechnique("sun_soul_art",
+			new TechniqueModifiers(0.3, 0.1, 0.3, 0.1, 0.7, 0.8), 2.8, 23000000.0 * 8, 800, 2.9, 3.1)
 			.addCheckpoint(1000.0 * 8, 0.10f, "Minor Success")
 			.addCheckpoint(10000.0 * 8, 0.30f, "Small Success")
 			.addCheckpoint(90000.0 * 8, 0.45f, "Middle Success")
@@ -586,8 +586,8 @@ public class Techniques {
 			.addSkill(18000 * 8, Skills.SELF_HEALING);
 
 	//From Febian
-	public static final Technique AMORPHOUS_METALLIC_SOUL = new Technique("amorphous_metallic_soul", Cultivation.System.DIVINE,
-			new TechniqueModifiers(0.2, 0.1, 0.3, 0.1, 0.3, 0.7), 6.1, 23000000.0 * 8, 800)
+	public static final Technique AMORPHOUS_METALLIC_SOUL = new DivineTechnique("amorphous_metallic_soul",
+			new TechniqueModifiers(0.2, 0.1, 0.3, 0.1, 0.3, 0.7), 6.1, 23000000.0 * 8, 800, 1.4, 2.8)
 			.addCheckpoint(1000.8 * 8, 0.10f, "Minor Success")
 			.addCheckpoint(10000.0 * 8, 0.30f, "Small Success")
 			.addCheckpoint(90000.0 * 8, 0.45f, "Middle Success")
@@ -600,8 +600,8 @@ public class Techniques {
 
 	//From Febian
 	//Does extra damage against living
-	public static final Technique NINE_SPRINGS_SOUL = new Technique("nine_springs_soul", Cultivation.System.DIVINE,
-			new TechniqueModifiers(0.2, 0.1, 0.3, 0.1, 0.3, 0.4), 6.2, 2300000.0 * 8, 800)
+	public static final Technique NINE_SPRINGS_SOUL = new DivineTechnique("nine_springs_soul",
+			new TechniqueModifiers(0.2, 0.1, 0.3, 0.1, 0.3, 0.4), 6.2, 2300000.0 * 8, 800, 1.5, 2.8)
 			.addCheckpoint(1000.0 * 8, 0.10f, "Minor Success")
 			.addCheckpoint(10000.0 * 8, 0.30f, "Small Success")
 			.addCheckpoint(90000.0 * 8, 0.45f, "Middle Success")
@@ -613,8 +613,8 @@ public class Techniques {
 	//From HuoYuhao
 	//If player kills, he loses something
 	//rank divine 1 -- yeah this one deserves
-	public static final Technique BUDDHA_S_HEAVENLY_WAY = new Technique("buddha_s_heavenly_way", Cultivation.System.DIVINE,
-			new TechniqueModifiers(1.8, 1.1, 1.7, 1.1, 1.4, 2.6), 18.2, 1800000000000.0 * 8, 6991714.27)
+	public static final Technique BUDDHA_S_HEAVENLY_WAY = new DivineTechnique("buddha_s_heavenly_way",
+			new TechniqueModifiers(1.8, 1.1, 1.7, 1.1, 1.4, 2.6), 18.2, 1800000000000.0 * 8, 6991714.27, 2, 3)
 			.addCheckpoint(1350.0 * 8, 0.08f, "Tiny Buddha")
 			.addCheckpoint(9121.0 * 8, 0.16f, "Connate Buddha")
 			.addCheckpoint(61601.0 * 8, 0.24f, "Peaceful Mind")
@@ -630,8 +630,8 @@ public class Techniques {
 
 	//From Anophobia's buggy suggestion
 	//rank divine 1 -- yeah another one
-	public static final Technique RAGEFUL_ABNEGATION_SAINT_ARTS = new Technique("rageful_abnegation_saint_arts", Cultivation.System.DIVINE,
-			new TechniqueModifiers(1.1, 1.8, 1.3, 1.7, 1.5, 1.9), 18.2, 1800000000000.0 * 8, 6991714.27)
+	public static final Technique RAGEFUL_ABNEGATION_SAINT_ARTS = new DivineTechnique("rageful_abnegation_saint_arts",
+			new TechniqueModifiers(1.1, 1.8, 1.3, 1.7, 1.5, 1.9), 18.2, 1800000000000.0 * 8, 6991714.27, 4, 5)
 			.addCheckpoint(1350.0 * 8, 0.08f, "Selfless State")
 			.addCheckpoint(9121.0 * 8, 0.16f, "Connate Rage")
 			.addCheckpoint(61601.0 * 8, 0.24f, "Aggressive Donation")

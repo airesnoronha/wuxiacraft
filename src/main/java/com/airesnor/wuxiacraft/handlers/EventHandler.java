@@ -196,33 +196,6 @@ public class EventHandler {
 		}
 	}
 
-	/**
-	 * A toggle for not spamming messages
-	 */
-	private boolean toggleSneaking = false;
-
-	/**
-	 * Handles whenever a player sneak it will get nearby players cultivation
-	 *
-	 * @param event Description of whats happening
-	 */
-	@SideOnly(Side.CLIENT)
-	@SubscribeEvent(priority = EventPriority.LOW)
-	public void onPlayerRequestLevels(TickEvent.PlayerTickEvent event) {
-		if (event.phase == TickEvent.Phase.END) {
-			if (event.player.isSneaking()) {
-				if (!toggleSneaking) {
-					toggleSneaking = true;
-					EntityPlayer player = event.player;
-					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-					NetworkWrapper.INSTANCE.sendToServer(new AskCultivationLevelMessage(cultivation.getEssenceLevel(), cultivation.getEssenceSubLevel(), player.getUniqueID()));
-				}
-			} else {
-				toggleSneaking = false;
-			}
-		}
-	}
-
 
 	//So that formations doesn't overwork too
 	private static long LastPlayerTickTime = 0;
@@ -415,7 +388,7 @@ public class EventHandler {
 	}
 
 	/**
-	 * Whe a player jump, the get jump bonus base on its cultivation speed bonus
+	 * When a player jump, then get jump bonus base on its cultivation speed bonus
 	 *
 	 * @param event Description of whats happening
 	 */
@@ -474,15 +447,14 @@ public class EventHandler {
 				CultivationUtils.cultivatorAddProgress(player, Cultivation.System.BODY, 0.25f, false);
 				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(event.getEntityLiving());
 				if (cultTech.getDivineTechnique() != null) {
-					if (event.getEntityLiving().getHealth() <= 0) {
+					if (event.getEntityLiving().getHealth() - event.getAmount() <= 0) {
 						if (cultTech.getDivineTechnique().getTechnique().equals(Techniques.BUDDHA_S_HEAVENLY_WAY)) {
 							cultivation.setDivineSubLevel(0);
 							cultivation.setDivineProgress(0);
 							cultivation.setDivineFoundation(cultivation.getDivineFoundation() * 0.3);
 						}
 					} else if (cultTech.getDivineTechnique().getTechnique().equals(Techniques.NINE_SPRINGS_SOUL)) {
-						double modifier = cultivation.getDivineModifier() * (cultTech.getDivineTechnique().getProficiency()
-								/ cultTech.getDivineTechnique().getTechnique().getMaxProficiency()) * 0.5;
+						double modifier = cultivation.getDivineModifier() * cultTech.getDivineTechnique().getReleaseFactor();
 						event.setAmount(event.getAmount() * (1 + (float) modifier));
 					}
 				}

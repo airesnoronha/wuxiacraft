@@ -182,4 +182,20 @@ public class CultTech implements ICultTech {
 		}
 		return contains;
 	}
+
+	@Override
+	public double getScanFactor(double divineModifier) {
+		if (this.divineTechnique.getTechnique() instanceof DivineTechnique) {
+			return divineModifier * ((DivineTechnique) this.divineTechnique.getTechnique()).scanFactor * this.divineTechnique.getReleaseFactor();
+		}
+		return divineModifier;
+	}
+
+	@Override
+	public double getResistFactor(double divineModifier) {
+		if (this.divineTechnique.getTechnique() instanceof DivineTechnique) {
+			return divineModifier * (1 + ((DivineTechnique) this.divineTechnique.getTechnique()).resistFactor * this.divineTechnique.getReleaseFactor());
+		}
+		return divineModifier;
+	}
 }

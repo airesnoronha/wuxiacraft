@@ -1,8 +1,6 @@
 package com.airesnor.wuxiacraft.aura;
 
 import com.airesnor.wuxiacraft.WuxiaCraft;
-import com.sun.javafx.geom.Vec3f;
-import com.sun.javafx.geom.Vec4d;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -11,6 +9,8 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
+import javax.vecmath.Vector3f;
+import javax.vecmath.Vector4d;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,9 +18,9 @@ public class BaseAura extends Aura {
 
 	private static final ResourceLocation AURA_TEX = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/effects/base_aura.png");
 
-	protected List<Vec4d> strands; //pos and height which goes from 0 to 0.5 during render time
+	protected List<Vector4d> strands; //pos and height which goes from 0 to 0.5 during render time
 
-	private final Vec3f color;
+	private final Vector3f color;
 
 
 	/**
@@ -30,10 +30,10 @@ public class BaseAura extends Aura {
 
 	public BaseAura(String name, float red, float green, float blue) {
 		super(name);
-		this.color = new Vec3f(red, green, blue);
+		this.color = new Vector3f(red, green, blue);
 		strands = new ArrayList<>();
 		for (int i = 0; i < 64; i++) {
-			strands.add(new Vec4d(Math.random() * 1.2 - 0.6, Math.random() * 1.2 - 0.2, Math.random() * 1.2 - 0.6, Math.random() * 0.9));
+			strands.add(new Vector4d(Math.random() * 1.2 - 0.6, Math.random() * 1.2 - 0.2, Math.random() * 1.2 - 0.6, Math.random() * 0.9));
 		}
 	}
 
@@ -52,7 +52,7 @@ public class BaseAura extends Aura {
 		double maxW = 1.1;
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder builder = tessellator.getBuffer();
-		for (Vec4d strand : strands) {
+		for (Vector4d strand : strands) {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(strand.x, strand.y, strand.z);
 			float angle = (float) (Math.atan2(strand.x, strand.z) * 180 / Math.PI);
@@ -89,7 +89,7 @@ public class BaseAura extends Aura {
 		double maxW = 1.1;
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder builder = tessellator.getBuffer();
-		for (Vec4d strand : strands) {
+		for (Vector4d strand : strands) {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(strand.x, strand.y, strand.z);
 			float angle = (float) (Math.atan2(strand.x, strand.z) * 180 / Math.PI);
@@ -117,14 +117,14 @@ public class BaseAura extends Aura {
 			double raiseSpeed = 0.08;
 			double maxW = 1.1;
 			List<Integer> toReplace = new ArrayList<>();
-			for (Vec4d strand : strands) {
+			for (Vector4d strand : strands) {
 				strand.w += raiseSpeed;
 				if (strand.w >= maxW) {
 					toReplace.add(strands.indexOf(strand));
 				}
 			}
 			for (int index : toReplace) {
-				strands.set(index, new Vec4d(Math.random() * 1.2 - 0.6, Math.random() * 1.2 - 0.2, Math.random() * 1.2 - 0.6, Math.random() * 0.3));
+				strands.set(index, new Vector4d(Math.random() * 1.2 - 0.6, Math.random() * 1.2 - 0.2, Math.random() * 1.2 - 0.6, Math.random() * 0.3));
 			}
 		}
 	}
