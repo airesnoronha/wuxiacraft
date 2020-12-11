@@ -58,7 +58,7 @@ public class WuxiaAuraCommand extends CommandBase {
 					auraCap.clearAuraLocations();
 					NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(CultivationUtils.getCultivationFromEntity(target),
 							CultivationUtils.getCultTechFromEntity(target), CultivationUtils.getSkillCapFromEntity(target),
-							CultivationUtils.getAuraFromEntity(target), false), target);
+							CultivationUtils.getAuraFromEntity(target), CultivationUtils.getBarrierFromEntity(target), false), target);
 					sender.sendMessage(new TextComponentString(TextFormatting.GREEN + "Cleared all auras for target player!"));
 				} else {
 					wrongUsage = true;
@@ -76,14 +76,14 @@ public class WuxiaAuraCommand extends CommandBase {
 						auraCap.addAuraLocation(location);
 						NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(CultivationUtils.getCultivationFromEntity(target),
 								CultivationUtils.getCultTechFromEntity(target), CultivationUtils.getSkillCapFromEntity(target),
-								CultivationUtils.getAuraFromEntity(target), false), target);
+								CultivationUtils.getAuraFromEntity(target), CultivationUtils.getBarrierFromEntity(target), false), target);
 						sender.sendMessage(new TextComponentString(TextFormatting.GREEN + "Aura added with success!"));
 					} else if ("rem".equalsIgnoreCase(args[1])) {
 						IAuraCap auraCap = CultivationUtils.getAuraFromEntity(target);
 						auraCap.remAuraLocation(location);
 						NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(CultivationUtils.getCultivationFromEntity(target),
 								CultivationUtils.getCultTechFromEntity(target), CultivationUtils.getSkillCapFromEntity(target),
-								CultivationUtils.getAuraFromEntity(target), false), target);
+								CultivationUtils.getAuraFromEntity(target), CultivationUtils.getBarrierFromEntity(target), false), target);
 						sender.sendMessage(new TextComponentString(TextFormatting.GREEN + "Aura removed with success!"));
 					} else {
 						wrongUsage = true;

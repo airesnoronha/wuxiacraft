@@ -1,9 +1,9 @@
 package com.airesnor.wuxiacraft.utils;
 
-import com.airesnor.wuxiacraft.capabilities.*;
-import com.airesnor.wuxiacraft.cultivation.*;
 import com.airesnor.wuxiacraft.aura.AuraCap;
 import com.airesnor.wuxiacraft.aura.IAuraCap;
+import com.airesnor.wuxiacraft.capabilities.*;
+import com.airesnor.wuxiacraft.cultivation.*;
 import com.airesnor.wuxiacraft.cultivation.elements.Element;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
@@ -280,7 +280,7 @@ public class CultivationUtils {
 					if (survived && !this.customTribulation) {
 						cultivation.riseSubLevel(system);
 						((EntityPlayer) player).sendStatusMessage(new TextComponentString(TranslateUtils.translateKey("wuxiacraft.level_message.congrats_" + msgN) + " " + targetLevel.getLevelName(targetSubLevel)), false);
-						NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, getCultTechFromEntity(player), getSkillCapFromEntity(player), getAuraFromEntity(player), false), (EntityPlayerMP) player);
+						NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, getCultTechFromEntity(player), getSkillCapFromEntity(player), getAuraFromEntity(player), getBarrierFromEntity(player), false), (EntityPlayerMP) player);
 					}
 				});
 			}

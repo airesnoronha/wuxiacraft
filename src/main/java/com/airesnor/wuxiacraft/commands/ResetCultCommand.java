@@ -1,9 +1,7 @@
 package com.airesnor.wuxiacraft.commands;
 
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
-import com.airesnor.wuxiacraft.cultivation.Foundation;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
-import com.airesnor.wuxiacraft.cultivation.IFoundation;
 import com.airesnor.wuxiacraft.handlers.EventHandler;
 import com.airesnor.wuxiacraft.networking.CultivationMessage;
 import com.airesnor.wuxiacraft.networking.NetworkWrapper;
@@ -52,7 +50,7 @@ public class ResetCultCommand extends CommandBase {
 				EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				cultivation.copyFrom(new Cultivation());
-				NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, CultivationUtils.getCultTechFromEntity(player), CultivationUtils.getSkillCapFromEntity(player), CultivationUtils.getAuraFromEntity(player), true), player);
+				NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, CultivationUtils.getCultTechFromEntity(player), CultivationUtils.getSkillCapFromEntity(player), CultivationUtils.getAuraFromEntity(player), CultivationUtils.getBarrierFromEntity(player), true), player);
 				EventHandler.applyModifiers(player);
 			}
 			else {

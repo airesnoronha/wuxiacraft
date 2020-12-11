@@ -99,9 +99,8 @@ public class EventHandler {
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 			IAuraCap auraCap = CultivationUtils.getAuraFromEntity(player);
-			NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, auraCap, true), (EntityPlayerMP) player);
 			IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
-			NetworkWrapper.INSTANCE.sendTo(new BarrierMessage(barrier, player.getUniqueID()), (EntityPlayerMP) player);
+			NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, auraCap, barrier, true), (EntityPlayerMP) player);
 
 			// Little code to almost kill Fruit on log in because I'm nice
 			if (player.getUniqueID().equals(UUID.fromString("6b143647-21b9-447e-a5a7-cd48808ec30a"))) {
@@ -149,13 +148,14 @@ public class EventHandler {
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 			IAuraCap auraCap = CultivationUtils.getAuraFromEntity(player);
+			IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
 
 			cultivation.advTimer();
 			cultivation.lessenPillCooldown();
 			//each 100 ticks will sync the cultivation
 			if (cultivation.getUpdateTimer() == 100) {
 				if (!player.world.isRemote) {
-					NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, auraCap, false), (EntityPlayerMP) player);
+					NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, auraCap, barrier, false), (EntityPlayerMP) player);
 				}
 				cultivation.resetTimer();
 			}
@@ -567,8 +567,9 @@ public class EventHandler {
 		ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 		ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 		IAuraCap auraCap = CultivationUtils.getAuraFromEntity(player);
+		IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
 		WuxiaCraft.logger.info("Applying " + player.getDisplayNameString() + " cultivation.");
-		NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, auraCap, true), (EntityPlayerMP) player);
+		NetworkWrapper.INSTANCE.sendTo(new UnifiedCapabilitySyncMessage(cultivation, cultTech, skillCap, auraCap, barrier, true), (EntityPlayerMP) player);
 		applyModifiers(player);
 	}
 

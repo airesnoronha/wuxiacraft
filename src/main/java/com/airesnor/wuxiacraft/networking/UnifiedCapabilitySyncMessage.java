@@ -4,7 +4,9 @@ import com.airesnor.wuxiacraft.aura.AuraCap;
 import com.airesnor.wuxiacraft.aura.IAuraCap;
 import com.airesnor.wuxiacraft.capabilities.*;
 import com.airesnor.wuxiacraft.config.WuxiaCraftConfig;
+import com.airesnor.wuxiacraft.cultivation.Barrier;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
+import com.airesnor.wuxiacraft.cultivation.IBarrier;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.SkillCap;
@@ -29,6 +31,7 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 	public ICultTech cultTech;
 	public ISkillCap skillCap;
 	public IAuraCap auraCap;
+	public IBarrier barrier;
 	public boolean shouldSetCdaCP;
 	public double maxServerSpeed;
 
@@ -38,15 +41,17 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 		cultTech = new CultTech();
 		skillCap = new SkillCap();
 		auraCap = new AuraCap();
+		barrier = new Barrier();
 		this.shouldSetCdaCP = false;
 		this.maxServerSpeed = WuxiaCraftConfig.maxServerSpeed;
 	}
 
-	public UnifiedCapabilitySyncMessage(ICultivation cultivation, ICultTech cultTech, ISkillCap skillCap, IAuraCap auraCap, boolean shouldSetCdaCP) {
+	public UnifiedCapabilitySyncMessage(ICultivation cultivation, ICultTech cultTech, ISkillCap skillCap, IAuraCap auraCap, IBarrier barrier, boolean shouldSetCdaCP) {
 		this.cultivation = cultivation;
 		this.cultTech = cultTech;
 		this.skillCap = skillCap;
 		this.auraCap = auraCap;
+		this.barrier = barrier;
 		this.shouldSetCdaCP = shouldSetCdaCP;
 		this.maxServerSpeed = WuxiaCraftConfig.maxServerSpeed;
 	}
@@ -65,6 +70,9 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 		tag = ByteBufUtils.readTag(buf);
 		//noinspection ConstantConditions
 		AuraCapProvider.AURA_CAPABILITY.getStorage().readNBT(AuraCapProvider.AURA_CAPABILITY, this.auraCap, null, tag);
+		tag = ByteBufUtils.readTag(buf);
+		//noinspection ConstantConditions
+		BarrierProvider.BARRIER_CAPABILITY.getStorage().readNBT(BarrierProvider.BARRIER_CAPABILITY, this.barrier, null, tag);
 		this.shouldSetCdaCP = buf.readBoolean();
 		this.maxServerSpeed = buf.readDouble();
 	}
@@ -83,6 +91,9 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 		//noinspection ConstantConditions
 		tag = (NBTTagCompound) AuraCapProvider.AURA_CAPABILITY.getStorage().writeNBT(AuraCapProvider.AURA_CAPABILITY, this.auraCap, null);
 		ByteBufUtils.writeTag(buf, tag);
+		//noinspection ConstantConditions
+		tag = (NBTTagCompound) BarrierProvider.BARRIER_CAPABILITY.getStorage().writeNBT(BarrierProvider.BARRIER_CAPABILITY, this.barrier, null);
+		ByteBufUtils.writeTag(buf, tag);
 		buf.writeBoolean(shouldSetCdaCP);
 		buf.writeDouble(this.maxServerSpeed);
 	}
@@ -99,16 +110,18 @@ public class UnifiedCapabilitySyncMessage implements IMessage {
 
 		@SideOnly(Side.CLIENT)
 		private IMessage handleClientMessage(UnifiedCapabilitySyncMessage message) {
-			Minecraft.getMinecraft().addScheduledTask(()->{
+			Minecraft.getMinecraft().addScheduledTask(()-> {
 				EntityPlayer player = Minecraft.getMinecraft().player;
 				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
 				ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 				IAuraCap auraCap = CultivationUtils.getAuraFromEntity(player);
+				IBarrier barrier = CultivationUtils.getBarrierFromEntity(player);
 				cultivation.copyFrom(message.cultivation);
 				cultTech.copyFrom(message.cultTech);
 				skillCap.copyFrom(message.skillCap, message.shouldSetCdaCP);
 				auraCap.copyFrom(message.auraCap);
+				barrier.copyFrom(message.barrier);
 				cultivation.setHandicap(WuxiaCraftConfig.speedHandicap);
 				cultivation.setMaxSpeed(WuxiaCraftConfig.maxSpeed);
 				cultivation.setHasteLimit(WuxiaCraftConfig.blockBreakLimit);

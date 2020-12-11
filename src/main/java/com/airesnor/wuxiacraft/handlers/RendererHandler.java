@@ -3,6 +3,7 @@ package com.airesnor.wuxiacraft.handlers;
 import com.airesnor.wuxiacraft.WuxiaCraft;
 import com.airesnor.wuxiacraft.blocks.Cauldron;
 import com.airesnor.wuxiacraft.cultivation.Cultivation;
+import com.airesnor.wuxiacraft.cultivation.IBarrier;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skill;
@@ -73,9 +74,9 @@ public class RendererHandler {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				prevPartialTicks = prevPartialTicks > partialTicks ? 0 : prevPartialTicks;
-				this.duration -= partialTicks - prevPartialTicks;
-				//prevPartialTicks = partialTicks;
+				float partialTicksDiff = prevPartialTicks > partialTicks ? 1 + partialTicks - prevPartialTicks : partialTicks - prevPartialTicks;
+				this.duration -= partialTicksDiff;
+				prevPartialTicks = partialTicks;
 				return this.duration <= 0;
 			}
 		}
@@ -284,8 +285,8 @@ public class RendererHandler {
 		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
 		float radius = 20f;
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(146, res.getScaledHeight() - 32 - radius, 0);
-		float rotatingAngle = getRotationAngleEaseOut() * (selectingAnimation<0 ? -1 : 1);
+		GlStateManager.translate(res.getScaledWidth() - 62, res.getScaledHeight() - 32 - radius, 0);
+		float rotatingAngle = getRotationAngleEaseOut() * (selectingAnimation < 0 ? -1 : 1);
 		GlStateManager.rotate(rotatingAngle, 0, 0, 1);
 		float partialTicksDiff = partialTicks - lastPartialTick;
 		if (partialTicks < lastPartialTick) partialTicksDiff = 1 + partialTicks - lastPartialTick;
@@ -297,11 +298,11 @@ public class RendererHandler {
 		GlStateManager.popMatrix();
 		if (showingSelector) {
 			GlStateManager.pushMatrix();
-			GlStateManager.color(1,1,1, showingAnimation/5f);
+			GlStateManager.color(1, 1, 1, showingAnimation / 5f);
 			Minecraft.getMinecraft().renderEngine.bindTexture(selected_circle);
 			GlStateManager.pushMatrix();
 			GlStateManager.rotate(-rotatingAngle, 0, 0, 1);
-			drawTexturedRect(-16, (int)radius, 32, 32, 0, 0, 1, 1);
+			drawTexturedRect(-16, (int) radius, 32, 32, 0, 0, 1, 1);
 			GlStateManager.popMatrix();
 			float angle = 120f;
 			GlStateManager.pushMatrix();
@@ -333,16 +334,15 @@ public class RendererHandler {
 					selectingAnimation = 0;
 				}
 			} else {
-				if(Math.abs(selectingAnimation) >= 0.01) {
+				if (Math.abs(selectingAnimation) > 0) {
 					float rotationSide = selectingAnimation < 0 ? -1 : 1;
-					selectingAnimation -= partialTicksDiff * 6.7f * rotationSide;
-				} else {
-					selectingAnimation = 0;
+					selectingAnimation = Math.max(0, Math.abs(selectingAnimation) - partialTicksDiff * 6.7f);
+					selectingAnimation *= rotationSide;
 				}
 			}
 			showingAnimation = MathUtils.clamp(Math.min(5f, partialTicksDiff + showingAnimation), 0, showingCooldown);
 			GlStateManager.popMatrix();
-			GlStateManager.color(1,1,1,1);
+			GlStateManager.color(1, 1, 1, 1);
 		}
 		lastPartialTick = partialTicks;
 		GlStateManager.popMatrix();
@@ -424,15 +424,25 @@ public class RendererHandler {
 		Minecraft mc = Minecraft.getMinecraft();
 		int i = res.getScaledWidth() / 2 - 91;
 		int j = res.getScaledHeight() - GuiIngameForge.left_height;
+		//health
 		mc.getTextureManager().bindTexture(life_bar);
 		drawTexturedRect(i, j, 81, 9, 0, 0, 1f, 0.5f);
 		float max_hp = mc.player.getMaxHealth();
 		float hp = mc.player.getHealth();
 		int fill = (int) Math.min(Math.ceil((hp / max_hp) * 81), 81);
 		drawTexturedRect(i, j, fill, 9, 0f, 0.5f, (hp / max_hp), 1f);
+		//barrier
+		IBarrier barrier = CultivationUtils.getBarrierFromEntity(mc.player);
+		float max_barrier = (float) barrier.getBarrierMaxAmount(CultivationUtils.getCultivationFromEntity(mc.player));
+		float barrier_amount = (float) barrier.getBarrierAmount();
+		fill = (int) MathUtils.clamp(Math.ceil(barrier_amount * 81 / max_barrier), 0, 81);
+		mc.getTextureManager().bindTexture(icons);
+		drawTexturedRect(i, j, fill, 9, 0, 21f / 256f, fill / 256f, 30f / 256f);
+		//text
 		String life = getShortHealthAmount((int) hp) + "/" + getShortHealthAmount((int) max_hp);
 		int width = mc.fontRenderer.getStringWidth(life);
 		mc.fontRenderer.drawString(life, (i + (81 - width) / 2), j + 1, 0xFFFFFF);
+		GlStateManager.color(1, 1, 1, 1);
 		mc.getTextureManager().bindTexture(Gui.ICONS);
 		GuiIngameForge.left_height += 11;
 	}
