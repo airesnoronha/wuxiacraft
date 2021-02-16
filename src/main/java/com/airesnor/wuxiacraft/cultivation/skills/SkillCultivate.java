@@ -54,7 +54,6 @@ public class SkillCultivate extends Skill {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
 			double amount = cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system)) * 0.09; //trust me this is necessary
-			boolean isMortalRealm = cultivation.getEssenceLevel() == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL;
 			long timeDiff = System.currentTimeMillis() - LastUseCultivateMillis;
 			//TODO make server calculate the particles everytime it receives a progress message
 			if (timeDiff >= (particleStep ? 500 : 250)) { //4 per second

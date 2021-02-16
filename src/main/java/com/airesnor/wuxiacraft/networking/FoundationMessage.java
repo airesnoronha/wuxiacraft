@@ -19,27 +19,24 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.UUID;
 
-public class ProgressMessage implements IMessage {
+public class FoundationMessage implements IMessage {
 
 	public int op;
 	public double amount;
-	public boolean techniques;
 	public Cultivation.System system;
 	public UUID senderUUID;
 
 	@SuppressWarnings("unused")
-	public ProgressMessage() {
+	public FoundationMessage() {
 		this.op = 0;
 		this.amount = 0;
-		this.techniques = false;
 		this.system = Cultivation.System.ESSENCE;
 		this.senderUUID = null;
 	}
 
-	public ProgressMessage(int op, Cultivation.System system, double amount, boolean techniques, UUID senderUUID) {
+	public FoundationMessage(int op, Cultivation.System system, double amount, UUID senderUUID) {
 		this.op = op;
 		this.amount = amount;
-		this.techniques = techniques;
 		this.system = system;
 		this.senderUUID = senderUUID;
 	}
@@ -50,7 +47,6 @@ public class ProgressMessage implements IMessage {
 		this.op = buf.readInt();
 		this.system = Cultivation.System.valueOf(packetBuffer.readString(10));
 		this.amount = buf.readDouble();
-		this.techniques = buf.readBoolean();
 		this.senderUUID = packetBuffer.readUniqueId();
 	}
 
@@ -60,14 +56,13 @@ public class ProgressMessage implements IMessage {
 		buf.writeInt(this.op);
 		packetBuffer.writeString(this.system.toString());
 		buf.writeDouble(this.amount);
-		buf.writeBoolean(this.techniques);
 		packetBuffer.writeUniqueId(this.senderUUID);
 	}
 
-	public static class Handler implements IMessageHandler<ProgressMessage, IMessage> {
+	public static class Handler implements IMessageHandler<FoundationMessage, IMessage> {
 
 		@Override
-		public IMessage onMessage(ProgressMessage message, MessageContext ctx) {
+		public IMessage onMessage(FoundationMessage message, MessageContext ctx) {
 			if (ctx.side == Side.SERVER) {
 				final WorldServer world = ctx.getServerHandler().player.getServerWorld();
 				world.addScheduledTask(() -> {
@@ -77,33 +72,13 @@ public class ProgressMessage implements IMessage {
 						ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 						switch (message.op) {
 							case 0: //add
-								double amount = message.amount;
-								if (!skillCap.hasFormationActivated()) {
-									for (TileEntity te : world.loadedTileEntityList) {
-										if (te instanceof FormationTileEntity) {
-											if (((FormationTileEntity) te).getState() == FormationTileEntity.FormationState.ACTIVE && ((FormationTileEntity) te).getFormation() instanceof FormationCultivationHelper) {
-												if (te.getDistanceSq(player.posX, player.posY, player.posZ) <= Math.pow(((FormationTileEntity) te).getFormation().getRange(), 2)) {
-													if (((FormationTileEntity) te).hasEnergy(((FormationTileEntity) te).getFormation().getOperationCost())) {
-														amount += ((FormationCultivationHelper) ((FormationTileEntity) te).getFormation()).getAmount();
-														((FormationTileEntity) te).remEnergy(((FormationTileEntity) te).getFormation().getOperationCost());
-														skillCap.setFormationActivated(true);
-														break;
-													}
-												}
-											}
-										}
-									}
-								}
-								CultivationUtils.cultivatorAddProgress(player, message.system, amount, message.techniques);
-								ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
-								cultTech.getTechniqueBySystem(message.system).getTechnique().cultivationEffect.activate(player); //this runs server side
+								cultivation.addSystemFoundation(message.amount, message.system);
 								break;
 							case 1: //remove
-								cultivation.addSystemProgress(-message.amount, message.system);
+								cultivation.addSystemFoundation(-message.amount, message.system);
 								break;
 							case 2: //set
-								cultivation.setSystemProgress(message.amount, message.system);
-								break;
+								cultivation.setSystemFoundation(message.amount, message.system);
 						}
 					}
 				});
