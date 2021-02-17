@@ -3,6 +3,7 @@ package wuxiacraft;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -15,6 +16,11 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import wuxiacraft.capabilities.CultivationFactory;
+import wuxiacraft.capabilities.CultivationStorage;
+import wuxiacraft.cultivation.CultivationLevel;
+import wuxiacraft.cultivation.ICultivation;
+import wuxiacraft.handler.CapabilityHandler;
 
 import java.util.stream.Collectors;
 
@@ -25,6 +31,8 @@ public class WuxiaCraft
 {
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
+
+    public static final String MOD_ID = "wuxiacraft";
 
     public WuxiaCraft() {
         // Register the setup method for modloading
@@ -42,9 +50,13 @@ public class WuxiaCraft
 
     private void setup(final FMLCommonSetupEvent event)
     {
+		CultivationLevel.initializeLevels();
         // some preinit code
-        LOGGER.info("HELLO FROM PREINIT");
-        LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+        LOGGER.info("Wuxiacraft init");
+        LOGGER.info("Register capabilities");
+		CapabilityManager.INSTANCE.register(ICultivation.class, new CultivationStorage(), new CultivationFactory());
+
+		MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
