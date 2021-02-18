@@ -7,6 +7,10 @@ public interface ICultivation {
 
 	void setEnergy(double energy);
 
+	void advanceRank(CultivationLevel.System system);
+
+	void addBaseToSystem(double amount, CultivationLevel.System system);
+
 	@Nonnull
 	Cultivation.SystemStats getStatsBySystem(CultivationLevel.System system);
 
