@@ -1,6 +1,6 @@
 package wuxiacraft.cultivation;
 
-import wuxiacraft.utils.MathUtils;
+import wuxiacraft.util.MathUtils;
 
 import javax.annotation.Nonnull;
 import java.util.LinkedList;

@@ -1,4 +1,4 @@
-package wuxiacraft.utils;
+package wuxiacraft.util;
 
 public class MathUtils {
 

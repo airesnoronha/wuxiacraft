@@ -8,7 +8,13 @@ import javax.annotation.Nullable;
 public interface ICultivation {
 	double getEnergy();
 
+	void addEnergy(double amount);
+
 	void setEnergy(double energy);
+
+	int getTickerTime();
+
+	void advanceTimer();
 
 	void advanceRank(CultivationLevel.System system);
 
@@ -28,7 +34,7 @@ public interface ICultivation {
 
 	double getEssenceModifier();
 
-	double getMaxEnergy(double energy);
+	double getMaxEnergy();
 
 	double getBodyModifier();
 

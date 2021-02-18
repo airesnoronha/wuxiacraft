@@ -1,6 +1,7 @@
 package wuxiacraft.cultivation;
 
 import wuxiacraft.cultivation.technique.Technique;
+import wuxiacraft.util.MathUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,9 +47,13 @@ public class Cultivation implements ICultivation {
 	private KnownTechnique essenceTechnique;
 
 	/**
+	 * A Timer to sync stuff between client and server
+	 */
+	private int TickerTime = 0;
+	/**
 	 * This is the base for the cultivation, here will hold most of the information from cultivation
 	 */
-	public Cultivation () {
+	public Cultivation() {
 		this.bodyStats = new SystemStats(CultivationLevel.System.BODY);
 		this.divineStats = new SystemStats(CultivationLevel.System.DIVINE);
 		this.essenceStats = new SystemStats(CultivationLevel.System.ESSENCE);
@@ -58,18 +63,38 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
+	public int getTickerTime() {
+		return TickerTime;
+	}
+
+	@Override
+	public void advanceTimer() {
+		TickerTime++;
+		if(TickerTime > 100) TickerTime = 0;
+	}
+
+	@Override
 	public double getEnergy() {
 		return energy;
 	}
 
 	@Override
-	public void setEnergy(double energy) {
-		this.energy = energy;
+	public void addEnergy(double amount) {
+		this.setEnergy(this.energy + amount);
 	}
 
 	@Override
-	public double getMaxEnergy(double energy) {
-		return 18 * this.getEssenceModifier() + 8 * this.getBodyModifier() + 12 * this.getDivineModifier();
+	public void setEnergy(double energy) {
+		this.energy = MathUtils.clamp(energy, 0, this.getMaxEnergy());
+	}
+
+	@Override
+	public double getMaxEnergy() {
+		double techniquesMultipliers = 1;
+		if (this.bodyTechnique != null) techniquesMultipliers += bodyTechnique.getModifiers().maxEnergy;
+		if (this.divineTechnique != null) techniquesMultipliers += divineTechnique.getModifiers().maxEnergy;
+		if (this.essenceTechnique != null) techniquesMultipliers += essenceTechnique.getModifiers().maxEnergy;
+		return (18 * this.getEssenceModifier() + 8 * this.getBodyModifier() + 12 * this.getDivineModifier()) * techniquesMultipliers;
 	}
 
 	@Override
@@ -90,25 +115,24 @@ public class Cultivation implements ICultivation {
 	@Override
 	public void advanceRank(CultivationLevel.System system) {
 		SystemStats stats = getStatsBySystem(system);
-		if(this.essenceStats.getLevel() == CultivationLevel.DEFAULT_ESSENCE_LEVEL) { //start cultivation
+		if (this.essenceStats.getLevel() == CultivationLevel.DEFAULT_ESSENCE_LEVEL) { //start cultivation
 			double beforeFoundationOverBase = this.essenceStats.getFoundation() / this.essenceStats.getLevel().getProgressBySubLevel(this.essenceStats.getSubLevel());
 			this.bodyStats.setLevel(this.bodyStats.getLevel().nextLevel(CultivationLevel.BODY_LEVELS));
 			this.divineStats.setLevel(this.bodyStats.getLevel().nextLevel(CultivationLevel.DIVINE_LEVELS));
 			this.essenceStats.setLevel(this.bodyStats.getLevel().nextLevel(CultivationLevel.ESSENCE_LEVELS));
-			this.essenceStats.setFoundation(this.essenceStats.getLevel().getProgressBySubLevel(0)*beforeFoundationOverBase);
+			this.essenceStats.setFoundation(this.essenceStats.getLevel().getProgressBySubLevel(0) * beforeFoundationOverBase);
 			this.bodyStats.setFoundation(this.essenceStats.getFoundation());
 			this.divineStats.setFoundation(this.essenceStats.getFoundation());
-		}
-		else { //rise sub level
+		} else { //rise sub level
 			double beforeModifier = stats.getModifier();
 			stats.setBase(0);
-			stats.setSubLevel(stats.getSubLevel()+1);
-			if(stats.getSubLevel() >= stats.getLevel().subLevels){
+			stats.setSubLevel(stats.getSubLevel() + 1);
+			if (stats.getSubLevel() >= stats.getLevel().subLevels) {
 				stats.setLevel(stats.getLevel().nextLevel(CultivationLevel.getListBySystem(system)));
 				stats.setSubLevel(0);
 				// probably the current modifier growth rate is 1.2, this way there is a little loss on foundation
 				double modifierDifference = beforeModifier * 1.19 - stats.getModifier();
-				if(modifierDifference > 0) { //then correct the foundation there is actually at leas 19% increase in strength i hope
+				if (modifierDifference > 0) { //then correct the foundation there is actually at leas 19% increase in strength i hope
 					stats.setFoundation(stats.getFoundation() + stats.getLevel().getProgressBySubLevel(stats.getSubLevel()) * modifierDifference /
 							(0.6 * stats.getLevel().getModifierBySubLevel(stats.getSubLevel())));
 				}
@@ -124,7 +148,7 @@ public class Cultivation implements ICultivation {
 	@Override
 	@Nonnull
 	public SystemStats getStatsBySystem(CultivationLevel.System system) {
-		switch(system) {
+		switch (system) {
 			case BODY:
 				return this.bodyStats;
 			case DIVINE:
@@ -138,7 +162,7 @@ public class Cultivation implements ICultivation {
 	@Override
 	@Nullable
 	public KnownTechnique getTechniqueBySystem(CultivationLevel.System system) {
-		switch(system) {
+		switch (system) {
 			case BODY:
 				return this.bodyTechnique;
 			case DIVINE:
@@ -151,7 +175,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public void addTechnique(Technique technique) {
-		switch(technique.getSystem()) {
+		switch (technique.getSystem()) {
 			case BODY:
 				this.bodyTechnique = new KnownTechnique(technique, 0);
 			case DIVINE:
@@ -163,7 +187,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public void setKnownTechnique(Technique technique, double proficiency) {
-		switch(technique.getSystem()) {
+		switch (technique.getSystem()) {
 			case BODY:
 				this.bodyTechnique = new KnownTechnique(technique, proficiency);
 			case DIVINE:
