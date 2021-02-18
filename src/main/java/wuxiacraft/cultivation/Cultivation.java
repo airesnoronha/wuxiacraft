@@ -1,95 +1,61 @@
 package wuxiacraft.cultivation;
 
+import wuxiacraft.cultivation.technique.Technique;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class Cultivation implements ICultivation {
 
-	public static class SystemStats {
-
-		private CultivationLevel level; // major realm
-		private int subLevel; //rank
-		private double base; //base -- xp
-		private double foundation;
-
-		public SystemStats () {
-			this.level = CultivationLevel.DEFAULT_BODY_LEVEL;
-			this.subLevel = 0;
-			this.base = 0;
-			this.foundation = 0;
-		}
-
-		public SystemStats (CultivationLevel.System system) {
-			switch (system) {
-				case BODY:
-					this.level = CultivationLevel.DEFAULT_BODY_LEVEL;
-					break;
-				case DIVINE:
-					this.level = CultivationLevel.DEFAULT_DIVINE_LEVEL;
-					break;
-				case ESSENCE:
-					this.level = CultivationLevel.DEFAULT_ESSENCE_LEVEL;
-					break;
-			}
-			this.level = CultivationLevel.DEFAULT_BODY_LEVEL;
-			this.subLevel = 0;
-			this.base = 0;
-			this.foundation = 0;
-		}
-
-		public CultivationLevel getLevel() {
-			return level;
-		}
-
-		public void setLevel(CultivationLevel level) {
-			this.level = level;
-		}
-
-		public int getSubLevel() {
-			return subLevel;
-		}
-
-		public void setSubLevel(int subLevel) {
-			this.subLevel = subLevel;
-		}
-
-		public double getBase() {
-			return base;
-		}
-
-		public void setBase(double base) {
-			this.base = base;
-		}
-
-		public double getFoundation() {
-			return foundation;
-		}
-
-		public void setFoundation(double foundation) {
-			this.foundation = foundation;
-		}
-
-		public void addBase(double amount) {
-			this.base = Math.max(0, amount + this.base);
-		}
-
-		public double getModifier() {
-			return Math.max(0, this.getLevel().getModifierBySubLevel(this.getSubLevel()) *
-			(0.4 + Math.min(21, (this.getFoundation() / this.getLevel().getProgressBySubLevel(this.getSubLevel()))) * 0.6));
-		}
-
-		public void copyFrom(SystemStats stats) {
-			this.level = stats.level;
-			this.foundation = stats.foundation;
-			this.subLevel = stats.subLevel;
-			this.base = stats.base;
-		}
-	}
-
+	/**
+	 * Or qi, is the energy used to make miracles, spells and anything supernatural i guess
+	 */
 	private double energy;
 
-	private SystemStats bodyStats;
-	private SystemStats divineStats;
-	private SystemStats essenceStats;
+	/**
+	 * The stats for the body cultivation system
+	 */
+	private final SystemStats bodyStats;
+
+	/**
+	 * The stats for the divine cultivation system
+	 */
+	private final SystemStats divineStats;
+
+	/**
+	 * The stats for the essence cultivation system
+	 */
+	private final SystemStats essenceStats;
+
+	/**
+	 * The current technique being trained for body
+	 */
+	@Nullable
+	private KnownTechnique bodyTechnique;
+
+	/**
+	 * The current technique being trained for divinity
+	 */
+	@Nullable
+	private KnownTechnique divineTechnique;
+
+	/**
+	 * The current technique being trained for essence
+	 */
+	@Nullable
+	private KnownTechnique essenceTechnique;
+
+	/**
+	 * This is the base for the cultivation, here will hold most of the information from cultivation
+	 */
+	public Cultivation () {
+		this.bodyStats = new SystemStats(CultivationLevel.System.BODY);
+		this.divineStats = new SystemStats(CultivationLevel.System.DIVINE);
+		this.essenceStats = new SystemStats(CultivationLevel.System.ESSENCE);
+		this.bodyTechnique = null;
+		this.divineTechnique = null;
+		this.essenceTechnique = null;
+	}
 
 	@Override
 	public double getEnergy() {
@@ -101,6 +67,7 @@ public class Cultivation implements ICultivation {
 		this.energy = energy;
 	}
 
+	@Override
 	public double getMaxEnergy(double energy) {
 		return 18 * this.getEssenceModifier() + 8 * this.getBodyModifier() + 12 * this.getDivineModifier();
 	}
@@ -125,9 +92,9 @@ public class Cultivation implements ICultivation {
 		SystemStats stats = getStatsBySystem(system);
 		if(this.essenceStats.getLevel() == CultivationLevel.DEFAULT_ESSENCE_LEVEL) { //start cultivation
 			double beforeFoundationOverBase = this.essenceStats.getFoundation() / this.essenceStats.getLevel().getProgressBySubLevel(this.essenceStats.getSubLevel());
-			this.bodyStats.setLevel(this.bodyStats.level.nextLevel(CultivationLevel.BODY_LEVELS));
-			this.divineStats.setLevel(this.bodyStats.level.nextLevel(CultivationLevel.DIVINE_LEVELS));
-			this.essenceStats.setLevel(this.bodyStats.level.nextLevel(CultivationLevel.ESSENCE_LEVELS));
+			this.bodyStats.setLevel(this.bodyStats.getLevel().nextLevel(CultivationLevel.BODY_LEVELS));
+			this.divineStats.setLevel(this.bodyStats.getLevel().nextLevel(CultivationLevel.DIVINE_LEVELS));
+			this.essenceStats.setLevel(this.bodyStats.getLevel().nextLevel(CultivationLevel.ESSENCE_LEVELS));
 			this.essenceStats.setFoundation(this.essenceStats.getLevel().getProgressBySubLevel(0)*beforeFoundationOverBase);
 			this.bodyStats.setFoundation(this.essenceStats.getFoundation());
 			this.divineStats.setFoundation(this.essenceStats.getFoundation());
@@ -169,16 +136,51 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
+	@Nullable
+	public KnownTechnique getTechniqueBySystem(CultivationLevel.System system) {
+		switch(system) {
+			case BODY:
+				return this.bodyTechnique;
+			case DIVINE:
+				return this.divineTechnique;
+			case ESSENCE:
+				return this.essenceTechnique;
+		}
+		return null;
+	}
+
+	@Override
+	public void addTechnique(Technique technique) {
+		switch(technique.getSystem()) {
+			case BODY:
+				this.bodyTechnique = new KnownTechnique(technique, 0);
+			case DIVINE:
+				this.divineTechnique = new KnownTechnique(technique, 0);
+			case ESSENCE:
+				this.essenceTechnique = new KnownTechnique(technique, 0);
+		}
+	}
+
+	@Override
+	public void setKnownTechnique(Technique technique, double proficiency) {
+		switch(technique.getSystem()) {
+			case BODY:
+				this.bodyTechnique = new KnownTechnique(technique, proficiency);
+			case DIVINE:
+				this.divineTechnique = new KnownTechnique(technique, proficiency);
+			case ESSENCE:
+				this.essenceTechnique = new KnownTechnique(technique, proficiency);
+		}
+	}
+
+	@Override
 	public void copyFrom(ICultivation cultivation) {
 		this.bodyStats.copyFrom(cultivation.getStatsBySystem(CultivationLevel.System.BODY));
 		this.divineStats.copyFrom(cultivation.getStatsBySystem(CultivationLevel.System.DIVINE));
 		this.essenceStats.copyFrom(cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE));
+		this.bodyTechnique = cultivation.getTechniqueBySystem(CultivationLevel.System.BODY);
+		this.divineTechnique = cultivation.getTechniqueBySystem(CultivationLevel.System.DIVINE);
+		this.essenceTechnique = cultivation.getTechniqueBySystem(CultivationLevel.System.ESSENCE);
+		this.energy = cultivation.getEnergy();
 	}
-
-	public Cultivation () {
-		this.bodyStats = new SystemStats(CultivationLevel.System.BODY);
-		this.divineStats = new SystemStats(CultivationLevel.System.DIVINE);
-		this.essenceStats = new SystemStats(CultivationLevel.System.ESSENCE);
-	}
-
 }

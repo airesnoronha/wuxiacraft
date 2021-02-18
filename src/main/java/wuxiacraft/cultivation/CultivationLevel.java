@@ -7,7 +7,7 @@ import java.util.LinkedList;
 
 public class CultivationLevel {
 
-	public static enum System { BODY, DIVINE, ESSENCE};
+	public enum System { BODY, DIVINE, ESSENCE};
 
 	public static final LinkedList<CultivationLevel> BODY_LEVELS = new LinkedList<>();
 	public static final LinkedList<CultivationLevel> ESSENCE_LEVELS = new LinkedList<>();
