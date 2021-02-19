@@ -4,8 +4,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import wuxiacraft.WuxiaCraft;
+import wuxiacraft.cultivation.Cultivation;
 import wuxiacraft.cultivation.ICultivation;
-import wuxiacraft.util.CultivationUtils;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -57,7 +57,7 @@ public class EnergyMessage {
 		if (sideReceived.isServer()) {
 			ctx.enqueueWork(() -> {
 				if (ctx.getSender() == null) return;
-				ICultivation cultivation = CultivationUtils.getCultivationFromEntity(ctx.getSender().world.getPlayerByUuid(message.target));
+				ICultivation cultivation = Cultivation.get(ctx.getSender().world.getPlayerByUuid(message.target));
 				switch (message.operation) {
 					case 0: // add
 						cultivation.addEnergy(message.amount);

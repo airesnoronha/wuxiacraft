@@ -58,6 +58,7 @@ public class CultivationStorage implements Capability.IStorage<ICultivation> {
 
 		//energy
 		tag.putDouble("energy", instance.getEnergy());
+		tag.putDouble("health", instance.getHP());
 
 		return tag;
 	}
@@ -99,6 +100,7 @@ public class CultivationStorage implements Capability.IStorage<ICultivation> {
 
 		//energy
 		instance.setEnergy(tag.getDouble("energy"));
+		instance.setHP(tag.getDouble("health"));
 
 	}
 }

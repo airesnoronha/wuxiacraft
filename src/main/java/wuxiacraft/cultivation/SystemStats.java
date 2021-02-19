@@ -44,7 +44,6 @@ public class SystemStats {
 				this.level = CultivationLevel.DEFAULT_ESSENCE_LEVEL;
 				break;
 		}
-		this.level = CultivationLevel.DEFAULT_BODY_LEVEL;
 		this.subLevel = 0;
 		this.base = 0;
 		this.foundation = 0;

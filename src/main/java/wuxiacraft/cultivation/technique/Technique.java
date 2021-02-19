@@ -1,11 +1,13 @@
 package wuxiacraft.cultivation.technique;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.potion.Effect;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import wuxiacraft.cultivation.CultivationLevel;
+import wuxiacraft.cultivation.Element;
 import wuxiacraft.cultivation.skill.Skill;
 
 import java.util.LinkedList;
@@ -20,6 +22,7 @@ public class Technique {
 	private final double maxProficiency;
 	private final double efficientTillModifier; // this technique may work well until the system level modifier
 
+	private final List<Element> elements;
 	private final List<Pair<Double, Skill>> skills;
 	private final List<Pair<Double, Effect>> effects;
 	private final List<Triple<Double, Float, String>> checkpoints;
@@ -32,6 +35,7 @@ public class Technique {
 		this.cultivationSpeed = cultivationSpeed;
 		this.maxProficiency = maxProficiency;
 		this.efficientTillModifier = efficientTillModifier;
+		this.elements = new LinkedList<>();
 		this.skills = new LinkedList<>();
 		this.effects = new LinkedList<>();
 		this.checkpoints = new LinkedList<>();
@@ -62,20 +66,25 @@ public class Technique {
 		return efficientTillModifier;
 	}
 
-	public List<Pair<Double, Skill>> getSkills() {
-		return skills;
+	public ImmutableList<Element> getElements() {
+		return ImmutableList.copyOf(elements);
 	}
 
-	public List<Pair<Double, Effect>> getEffects() {
-		return effects;
+	public ImmutableList<Pair<Double, Skill>> getSkills() {
+		return ImmutableList.copyOf(skills);
 	}
 
-	public List<Triple<Double, Float, String>> getCheckpoints() {
-		return checkpoints;
+	public ImmutableList<Pair<Double, Effect>> getEffects() {
+		return
+				ImmutableList.copyOf(effects);
 	}
 
-	public List<Technique> getCompatibles() {
-		return compatibles;
+	public ImmutableList<Triple<Double, Float, String>> getCheckpoints() {
+		return ImmutableList.copyOf(checkpoints);
+	}
+
+	public ImmutableList<Technique> getCompatibles() {
+		return ImmutableList.copyOf(compatibles);
 	}
 
 }

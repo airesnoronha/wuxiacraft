@@ -6,8 +6,8 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import wuxiacraft.capabilities.CultivationProvider;
+import wuxiacraft.cultivation.Cultivation;
 import wuxiacraft.cultivation.ICultivation;
-import wuxiacraft.util.CultivationUtils;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -26,6 +26,7 @@ public class CultivationSyncMessage {
 	}
 
 	public CultivationSyncMessage() {
+		this.cultivation = new Cultivation();
 		this.isValid = false;
 	}
 
@@ -50,13 +51,11 @@ public class CultivationSyncMessage {
 		ctx.setPacketHandled(true);
 
 		if (sideReceived.isClient()) {
-			assert Minecraft.getInstance().player != null;
-			if (Minecraft.getInstance().player.getUniqueID() == message.target) {
-				ctx.enqueueWork(() -> {
-					ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getInstance().player);
-					cultivation.copyFrom(message.cultivation);
-				});
-			}
+		assert Minecraft.getInstance().player != null;
+			ctx.enqueueWork(() -> {
+				ICultivation cultivation = Cultivation.get(Minecraft.getInstance().player);
+				cultivation.copyFrom(message.cultivation);
+			});
 		}
 	}
 }

@@ -1,9 +1,12 @@
 package wuxiacraft;
 
+import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.command.CommandSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -18,9 +21,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wuxiacraft.capabilities.CultivationFactory;
 import wuxiacraft.capabilities.CultivationStorage;
+import wuxiacraft.client.handler.RenderHudHandler;
+import wuxiacraft.command.CultivationCommand;
 import wuxiacraft.cultivation.CultivationLevel;
 import wuxiacraft.cultivation.ICultivation;
 import wuxiacraft.handler.CapabilityHandler;
+import wuxiacraft.handler.CultivationHandler;
+import wuxiacraft.init.WuxiaElements;
+import wuxiacraft.network.WuxiaPacketHandler;
 
 import java.util.stream.Collectors;
 
@@ -50,9 +58,14 @@ public class WuxiaCraft
 
     private void setup(final FMLCommonSetupEvent event)
     {
+		// some preinit code
+		LOGGER.info("Wuxiacraft init");
 		CultivationLevel.initializeLevels();
-        // some preinit code
-        LOGGER.info("Wuxiacraft init");
+		WuxiaElements.initalize();
+
+        LOGGER.info("Register messages");
+		WuxiaPacketHandler.registerMessages();
+
         LOGGER.info("Register capabilities");
 		CapabilityManager.INSTANCE.register(ICultivation.class, new CultivationStorage(), new CultivationFactory());
 
@@ -62,6 +75,8 @@ public class WuxiaCraft
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
+		MinecraftForge.EVENT_BUS.register(new RenderHudHandler());
+
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event)
@@ -83,6 +98,13 @@ public class WuxiaCraft
         // do something when the server starts
         LOGGER.info("HELLO from server starting");
     }
+
+    @SubscribeEvent
+	public void onRegisterCommandEvent(RegisterCommandsEvent event) {
+		LOGGER.info("HELLO commands registering");
+		CommandDispatcher<CommandSource> commandDispatcher = event.getDispatcher();
+		CultivationCommand.register(commandDispatcher);
+	}
 
     // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
     // Event bus for receiving Registry Events)

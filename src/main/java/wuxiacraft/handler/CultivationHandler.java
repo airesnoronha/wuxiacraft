@@ -3,28 +3,36 @@ package wuxiacraft.handler;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.Util;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
+import wuxiacraft.cultivation.Cultivation;
 import wuxiacraft.cultivation.CultivationLevel;
 import wuxiacraft.cultivation.ICultivation;
 import wuxiacraft.network.CultivationSyncMessage;
 import wuxiacraft.network.EnergyMessage;
 import wuxiacraft.network.WuxiaPacketHandler;
-import wuxiacraft.util.CultivationUtils;
 
 import java.util.UUID;
 
-@Mod.EventBusSubscriber
-public class CultivationEventHandler {
+@Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.FORGE)
+public class CultivationHandler {
 
 	@SubscribeEvent
-	public void onPlayerLogIn(PlayerEvent.PlayerLoggedInEvent event) {
+	public static void onPlayerLogIn(PlayerEvent.PlayerLoggedInEvent event) {
 		PlayerEntity player = event.getPlayer();
+		ICultivation cultivation = Cultivation.get(player);
 
+		if(!player.world.isRemote) {
+			WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new CultivationSyncMessage(cultivation, player.getUniqueID()));
+			ServerPlayerEntity playerEntity = (ServerPlayerEntity) player;
+			playerEntity.sendMessage(new StringTextComponent("Welcome to WuxiaCraft!"), Util.DUMMY_UUID);
+		}
 		// Little code to almost kill Fruit on log in because I'm nice
 		if (player.getUniqueID().equals(UUID.fromString("6b143647-21b9-447e-a5a7-cd48808ec30a"))) {
 			player.setPositionAndUpdate(player.getPosX(), player.getPosY() + 200, player.getPosZ());
@@ -39,26 +47,26 @@ public class CultivationEventHandler {
 	 * @param event A description of what's happening
 	 */
 	@SubscribeEvent
-	public void onCultivatorUpdate(LivingEvent.LivingUpdateEvent event) {
+	public static void onCultivatorUpdate(LivingEvent.LivingUpdateEvent event) {
 		if (!(event.getEntity() instanceof PlayerEntity)) return;
 
 		PlayerEntity player = (PlayerEntity) event.getEntity();
-		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+		ICultivation cultivation = Cultivation.get(player);
 
 		cultivation.advanceTimer();
 
-		if (cultivation.getTickerTime() == 100 && player.world.isRemote) {
+		if (cultivation.getTickerTime() == 100 && !player.world.isRemote) {
 			WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new CultivationSyncMessage(cultivation, player.getUniqueID()));
 		}
 
-		//A little bit from the soul modifier since soul increase perception
+		//A little bit from the soul modifier since soul increases perception
 		cultivation.addEnergy(cultivation.getMaxEnergy() * 0.00025 + cultivation.getDivineModifier() * 0.003);
 	}
 
 	/**
 	 * A method to reduce the amount of energy messages to the server
 	 */
-	private double accumulatedFlyCost = 0;
+	private static double accumulatedFlyCost = 0;
 
 	/**
 	 * Calculates if players should fly and takes away the energy cost
@@ -66,11 +74,13 @@ public class CultivationEventHandler {
 	 * @param event A description of what's happening
 	 */
 	@SubscribeEvent
-	public void onHandleFlightClientSide(TickEvent.PlayerTickEvent event) {
+	public static void onHandleFlightClientSide(TickEvent.PlayerTickEvent event) {
 		if (event.phase != TickEvent.Phase.END) return;
 		PlayerEntity player = event.player;
-		ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
-		boolean canFly = ((CultivationLevel.EssenceLevel) cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getLevel()).flight;
+		ICultivation cultivation = Cultivation.get(player);
+		boolean canFly = false;
+		if(cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getLevel() instanceof CultivationLevel.EssenceLevel)
+			canFly =	((CultivationLevel.EssenceLevel) cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getLevel()).flight;
 		if (canFly && player.abilities.isFlying && cultivation.getEnergy() <= 0) {
 			player.abilities.isFlying = false;
 		}

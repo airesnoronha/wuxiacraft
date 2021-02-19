@@ -24,6 +24,7 @@ public class WuxiaPacketHandler {
 		INSTANCE.registerMessage(serverMessagesID++, EnergyMessage.class, EnergyMessage::encode, EnergyMessage::decode, EnergyMessage::HandleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 
 		int clientMessagesID = 200;
+		INSTANCE.registerMessage(clientMessagesID++, CultivationSyncMessage.class, CultivationSyncMessage::encode, CultivationSyncMessage::decode, CultivationSyncMessage::HandleMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 	}
 
 }
