@@ -29,7 +29,7 @@ public class CultivationHandler {
 		ICultivation cultivation = Cultivation.get(player);
 
 		if(!player.world.isRemote) {
-			WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new CultivationSyncMessage(cultivation, player.getUniqueID()));
+			WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new CultivationSyncMessage(cultivation));
 			ServerPlayerEntity playerEntity = (ServerPlayerEntity) player;
 			playerEntity.sendMessage(new StringTextComponent("Welcome to WuxiaCraft!"), Util.DUMMY_UUID);
 		}
@@ -53,10 +53,11 @@ public class CultivationHandler {
 		PlayerEntity player = (PlayerEntity) event.getEntity();
 		ICultivation cultivation = Cultivation.get(player);
 
+		cultivation.calculateFinalModifiers();
 		cultivation.advanceTimer();
 
 		if (cultivation.getTickerTime() == 100 && !player.world.isRemote) {
-			WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new CultivationSyncMessage(cultivation, player.getUniqueID()));
+			WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new CultivationSyncMessage(cultivation));
 		}
 
 		//A little bit from the soul modifier since soul increases perception

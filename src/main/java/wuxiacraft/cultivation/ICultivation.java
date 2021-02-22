@@ -49,4 +49,6 @@ public interface ICultivation {
 	double getBodyModifier();
 
 	double getDivineModifier();
+
+	void calculateFinalModifiers();
 }

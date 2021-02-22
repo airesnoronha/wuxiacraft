@@ -2,6 +2,7 @@ package wuxiacraft.handler;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -44,9 +45,9 @@ public class CombatHandler {
 	}
 
 	private static ElementalDamageSource getElementalSourceFromVanillaSource(DamageSource source) {
-		if (source.isFireDamage()) return WuxiaElements.getSourceByElement(WuxiaElements.FIRE);
-		if (source == DamageSource.LIGHTNING_BOLT) return WuxiaElements.getSourceByElement(WuxiaElements.LIGHTNING);
-		return WuxiaElements.getSourceByElement(WuxiaElements.PHYSICAL);
+		if (source.isFireDamage()) return new ElementalDamageSource(source.getDamageType(), WuxiaElements.FIRE);
+		if (source == DamageSource.LIGHTNING_BOLT) return new ElementalDamageSource(source.getDamageType(), WuxiaElements.LIGHTNING);
+		return new ElementalDamageSource(source.getDamageType(), WuxiaElements.PHYSICAL);
 	}
 
 	/**
@@ -60,10 +61,16 @@ public class CombatHandler {
 		if (!(event.getEntity() instanceof PlayerEntity)) return;
 		ICultivation cultivation = Cultivation.get(event.getEntityLiving());
 		cultivation.setHP(cultivation.getHP() - event.getAmount());
+
+		// this is for vanilla statistics i guess!
+		event.getEntityLiving().getCombatTracker().trackDamage(event.getSource(), (float)cultivation.getHP()+event.getAmount(), event.getAmount());
+		((PlayerEntity)event.getEntityLiving()).addStat(Stats.DAMAGE_TAKEN);
+		//
 		if(cultivation.getHP() <= 0) {
-			event.getEntityLiving().setHealth(-1);
+			event.getEntityLiving().setHealth(-1); //it really kills a player
 		}
-		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getEntityLiving()), new CultivationSyncMessage(cultivation, event.getEntityLiving().getUniqueID()));
+		//this will make players health bar always keep up with
+		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getEntityLiving()), new CultivationSyncMessage(cultivation));
 		event.setCanceled(true);
 	}
 }

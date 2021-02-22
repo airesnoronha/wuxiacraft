@@ -71,6 +71,11 @@ public class Cultivation implements ICultivation {
 	private int TickerTime = 0;
 
 	/**
+	 * This will record all the modifiers from a player throughout a tick, so that every tick it's only calculated once
+	 */
+	private TechniqueModifiers finalModifiers = new TechniqueModifiers(0,0,20, 0, 0, 0);
+
+	/**
 	 * This is the base for the cultivation, here will hold most of the information from cultivation
 	 */
 	public Cultivation() {
@@ -248,8 +253,8 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public TechniqueModifiers getFinalModifiers() {
-		TechniqueModifiers modifiers = new TechniqueModifiers(
+	public void calculateFinalModifiers() {
+		this.finalModifiers = new TechniqueModifiers(
 				this.getBodyModifier() * 0.7 + this.getDivineModifier() * 0.1 + this.getEssenceModifier() * 0.7,
 				this.getBodyModifier() * 0.4 + this.getDivineModifier() * 0.1 + this.getEssenceModifier() * 0.8,
 				20 + this.getBodyModifier() + this.getDivineModifier() * 0.4 + this.getEssenceModifier() * 0.1,
@@ -257,12 +262,16 @@ public class Cultivation implements ICultivation {
 				this.getBodyModifier() * 0.8 + this.getDivineModifier() * 0.6 + this.getEssenceModifier() * 0.14,
 				this.getBodyModifier() * 8 + this.getDivineModifier() * 12 + this.getEssenceModifier() * 18);
 		if (this.bodyTechnique != null)
-			modifiers = modifiers.add(this.bodyTechnique.getModifiers());
+			this.finalModifiers = this.finalModifiers.add(this.bodyTechnique.getModifiers());
 		if (this.divineTechnique != null)
-			modifiers = modifiers.add(this.divineTechnique.getModifiers());
+			this.finalModifiers = this.finalModifiers.add(this.divineTechnique.getModifiers());
 		if (this.essenceTechnique != null)
-			modifiers = modifiers.add(this.essenceTechnique.getModifiers());
-		return modifiers;
+			this.finalModifiers = this.finalModifiers.add(this.essenceTechnique.getModifiers());
+	}
+
+	@Override
+	public TechniqueModifiers getFinalModifiers() {
+		return this.finalModifiers;
 	}
 
 	@Override

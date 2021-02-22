@@ -14,14 +14,12 @@ import java.util.function.Supplier;
 
 public class CultivationSyncMessage {
 
-	private ICultivation cultivation;
-	private UUID target;
+	private final ICultivation cultivation;
 
 	private boolean isValid;
 
-	public CultivationSyncMessage(ICultivation cultivation, UUID target) {
+	public CultivationSyncMessage(ICultivation cultivation) {
 		this.cultivation = cultivation;
-		this.target = target;
 		this.isValid = true;
 	}
 
@@ -34,13 +32,11 @@ public class CultivationSyncMessage {
 		if (!this.isValid) return;
 		CompoundNBT tag = (CompoundNBT) CultivationProvider.CULTIVATION_PROVIDER.writeNBT(this.cultivation, null);
 		buffer.writeCompoundTag(tag);
-		buffer.writeUniqueId(this.target);
 	}
 
 	public static CultivationSyncMessage decode(PacketBuffer buffer) {
 		CultivationSyncMessage message = new CultivationSyncMessage();
 		CultivationProvider.CULTIVATION_PROVIDER.readNBT(message.cultivation, null, buffer.readCompoundTag());
-		message.target = buffer.readUniqueId();
 		message.isValid = true;
 		return message;
 	}
