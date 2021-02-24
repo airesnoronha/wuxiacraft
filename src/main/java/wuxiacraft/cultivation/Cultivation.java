@@ -1,13 +1,16 @@
 package wuxiacraft.cultivation;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.LivingEntity;
 import wuxiacraft.capabilities.CultivationProvider;
+import wuxiacraft.cultivation.skill.Skill;
 import wuxiacraft.cultivation.technique.Technique;
 import wuxiacraft.cultivation.technique.TechniqueModifiers;
-import wuxiacraft.util.MathUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Cultivation implements ICultivation {
 
@@ -21,11 +24,6 @@ public class Cultivation implements ICultivation {
 	public static ICultivation get(LivingEntity entity) {
 		return entity.getCapability(CultivationProvider.CULTIVATION_PROVIDER, null).orElse(new Cultivation());
 	}
-
-	/**
-	 * Or qi, is the energy used to make miracles, spells and anything supernatural i guess
-	 */
-	private double energy;
 
 	/**
 	 * The stats for the body cultivation system
@@ -65,6 +63,10 @@ public class Cultivation implements ICultivation {
 	 */
 	private double HP;
 
+	private final ArrayList<Skill> knownSkills;
+
+	//Helpers rather than stats
+
 	/**
 	 * A Timer to sync stuff between client and server
 	 */
@@ -73,7 +75,7 @@ public class Cultivation implements ICultivation {
 	/**
 	 * This will record all the modifiers from a player throughout a tick, so that every tick it's only calculated once
 	 */
-	private TechniqueModifiers finalModifiers = new TechniqueModifiers(0,0,20, 0, 0, 0);
+	private TechniqueModifiers finalModifiers = new TechniqueModifiers(0, 0, 20, 0, 0);
 
 	/**
 	 * This is the base for the cultivation, here will hold most of the information from cultivation
@@ -85,6 +87,7 @@ public class Cultivation implements ICultivation {
 		this.bodyTechnique = null;
 		this.divineTechnique = null;
 		this.essenceTechnique = null;
+		this.knownSkills = new ArrayList<>();
 		this.HP = 20;
 	}
 
@@ -97,30 +100,6 @@ public class Cultivation implements ICultivation {
 	public void advanceTimer() {
 		TickerTime++;
 		if (TickerTime > 100) TickerTime = 0;
-	}
-
-	@Override
-	public double getEnergy() {
-		return energy;
-	}
-
-	@Override
-	public void addEnergy(double amount) {
-		this.setEnergy(this.energy + amount);
-	}
-
-	@Override
-	public void setEnergy(double energy) {
-		this.energy = MathUtils.clamp(energy, 0, this.getMaxEnergy());
-	}
-
-	@Override
-	public double getMaxEnergy() {
-		double techniquesMultipliers = 1;
-		if (this.bodyTechnique != null) techniquesMultipliers += bodyTechnique.getModifiers().maxEnergy;
-		if (this.divineTechnique != null) techniquesMultipliers += divineTechnique.getModifiers().maxEnergy;
-		if (this.essenceTechnique != null) techniquesMultipliers += essenceTechnique.getModifiers().maxEnergy;
-		return (18 * this.getEssenceModifier() + 8 * this.getBodyModifier() + 12 * this.getDivineModifier()) * techniquesMultipliers;
 	}
 
 	@Override
@@ -253,14 +232,32 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
+	public List<Skill> getKnownSkills() {
+		return ImmutableList.copyOf(knownSkills);
+	}
+
+	@Override
+	public void addKnownSkill(Skill skill) {
+		this.knownSkills.add(skill);
+	}
+
+	@Override
+	public void resetKnownSkills() {
+		this.knownSkills.clear();
+	}
+
+	public boolean removeKnownSkill(Skill skill) {
+		return this.knownSkills.remove(skill);
+	}
+
+	@Override
 	public void calculateFinalModifiers() {
 		this.finalModifiers = new TechniqueModifiers(
 				this.getBodyModifier() * 0.7 + this.getDivineModifier() * 0.1 + this.getEssenceModifier() * 0.7,
 				this.getBodyModifier() * 0.4 + this.getDivineModifier() * 0.1 + this.getEssenceModifier() * 0.8,
 				20 + this.getBodyModifier() + this.getDivineModifier() * 0.4 + this.getEssenceModifier() * 0.1,
 				this.getBodyModifier() * 0.2 + this.getDivineModifier() * 0.1 + this.getEssenceModifier() * 0.4,
-				this.getBodyModifier() * 0.8 + this.getDivineModifier() * 0.6 + this.getEssenceModifier() * 0.14,
-				this.getBodyModifier() * 8 + this.getDivineModifier() * 12 + this.getEssenceModifier() * 18);
+				this.getBodyModifier() * 0.8 + this.getDivineModifier() * 0.6 + this.getEssenceModifier() * 0.14);
 		if (this.bodyTechnique != null)
 			this.finalModifiers = this.finalModifiers.add(this.bodyTechnique.getModifiers());
 		if (this.divineTechnique != null)
@@ -282,7 +279,6 @@ public class Cultivation implements ICultivation {
 		this.bodyTechnique = cultivation.getTechniqueBySystem(CultivationLevel.System.BODY);
 		this.divineTechnique = cultivation.getTechniqueBySystem(CultivationLevel.System.DIVINE);
 		this.essenceTechnique = cultivation.getTechniqueBySystem(CultivationLevel.System.ESSENCE);
-		this.energy = cultivation.getEnergy();
 		this.HP = cultivation.getHP();
 	}
 }

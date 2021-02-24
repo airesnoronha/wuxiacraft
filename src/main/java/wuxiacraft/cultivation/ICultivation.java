@@ -1,18 +1,15 @@
 package wuxiacraft.cultivation;
 
 import net.minecraft.entity.LivingEntity;
+import wuxiacraft.cultivation.skill.Skill;
 import wuxiacraft.cultivation.technique.Technique;
 import wuxiacraft.cultivation.technique.TechniqueModifiers;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public interface ICultivation {
-	double getEnergy();
-
-	void addEnergy(double amount);
-
-	void setEnergy(double energy);
 
 	int getTickerTime();
 
@@ -44,11 +41,18 @@ public interface ICultivation {
 
 	double getEssenceModifier();
 
-	double getMaxEnergy();
-
 	double getBodyModifier();
 
 	double getDivineModifier();
+
+	List<Skill> getKnownSkills();
+
+	void addKnownSkill(Skill skill);
+
+	boolean removeKnownSkill(Skill skill);
+
+	void resetKnownSkills();
+
 
 	void calculateFinalModifiers();
 }

@@ -194,6 +194,11 @@ public class CultivationLevel {
 		return listToSearch.get(0); // if not find get the first level
 	}
 
+	@Nonnull
+	public static CultivationLevel getLevelBySystem(CultivationLevel.System system, String levelName) {
+		return getLevelInListByName(getListBySystem(system), levelName);
+	}
+
 	public static class EssenceLevel extends CultivationLevel {
 
 		/**

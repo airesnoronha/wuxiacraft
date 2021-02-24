@@ -1,5 +1,7 @@
 package wuxiacraft.cultivation;
 
+import net.minecraft.nbt.CompoundNBT;
+
 public class SystemStats {
 
 	/**
@@ -23,15 +25,13 @@ public class SystemStats {
 	private double foundation;
 
 	/**
+	 * The energy to cast spells and stuff
+	 */
+	private double energy;
+
+	/**
 	 * This class will hold basic information for each system, since it's repeated through system
 	 */
-	public SystemStats() {
-		this.level = CultivationLevel.DEFAULT_BODY_LEVEL;
-		this.subLevel = 0;
-		this.base = 0;
-		this.foundation = 0;
-	}
-
 	public SystemStats(CultivationLevel.System system) {
 		switch (system) {
 			case BODY:
@@ -47,6 +47,7 @@ public class SystemStats {
 		this.subLevel = 0;
 		this.base = 0;
 		this.foundation = 0;
+		this.energy = 0;
 	}
 
 	public CultivationLevel getLevel() {
@@ -81,12 +82,24 @@ public class SystemStats {
 		this.foundation = foundation;
 	}
 
+	public double getEnergy() {
+		return energy;
+	}
+
+	public void setEnergy(double energy) {
+		this.energy = energy;
+	}
+
 	/**
 	 * This adds cultivation base to this system
 	 * @param amount The amount to be added
 	 */
 	public void addBase(double amount) {
 		this.base = Math.max(0, amount + this.base);
+	}
+
+	public void addEnergy(double amount) {
+		this.energy = Math.max(0, this.energy + amount);
 	}
 
 	/**
@@ -106,5 +119,24 @@ public class SystemStats {
 		this.foundation = stats.foundation;
 		this.subLevel = stats.subLevel;
 		this.base = stats.base;
+		this.energy = stats.energy;
+	}
+
+	public CompoundNBT writeToNBT() {
+		CompoundNBT tag = new CompoundNBT();
+		tag.putString("level", this.getLevel().levelName);
+		tag.putInt("subLevel", this.getSubLevel());
+		tag.putDouble("cultBase", this.getBase());
+		tag.putDouble("foundation", this.getFoundation());
+		tag.putDouble("energy", this.getEnergy());
+		return tag;
+	}
+
+	public void readFromNBT(CompoundNBT tag, CultivationLevel.System system) {
+		this.setLevel(CultivationLevel.getLevelBySystem(system, tag.getString("level")));
+		this.setSubLevel(tag.getInt("subLevel"));
+		this.setBase(tag.getDouble("cultBase"));
+		this.setFoundation(tag.getDouble("foundation"));
+		this.setEnergy(tag.getDouble("energy"));
 	}
 }

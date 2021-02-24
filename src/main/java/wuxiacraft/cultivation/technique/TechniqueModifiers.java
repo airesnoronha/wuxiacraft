@@ -7,15 +7,13 @@ public class TechniqueModifiers {
 	public final double movementSpeed;
 	public final double strength;
 	public final double maxHealth;
-	public final double maxEnergy;
 
-	public TechniqueModifiers(double armor, double attackSpeed, double maxHealth, double movementSpeed, double strength, double maxEnergy) {
+	public TechniqueModifiers(double armor, double attackSpeed, double maxHealth, double movementSpeed, double strength) {
 		this.armor = armor;
 		this.attackSpeed = attackSpeed;
 		this.movementSpeed = movementSpeed;
 		this.strength = strength;
 		this.maxHealth = maxHealth;
-		this.maxEnergy = maxEnergy;
 	}
 
 	public TechniqueModifiers multiply(double amount) {
@@ -23,8 +21,7 @@ public class TechniqueModifiers {
 				amount * attackSpeed,
 				amount * maxHealth,
 				amount * movementSpeed,
-				amount * strength,
-				amount * maxEnergy);
+				amount * strength);
 	}
 
 	public TechniqueModifiers add(TechniqueModifiers modifiers) {
@@ -32,8 +29,7 @@ public class TechniqueModifiers {
 				modifiers.attackSpeed + attackSpeed,
 				modifiers.maxHealth + maxHealth,
 				modifiers.movementSpeed + movementSpeed,
-				modifiers.strength + strength,
-				modifiers.maxEnergy + maxEnergy);
+				modifiers.strength + strength);
 	}
 
 }

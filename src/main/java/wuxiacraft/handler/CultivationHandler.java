@@ -60,8 +60,6 @@ public class CultivationHandler {
 			WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new CultivationSyncMessage(cultivation));
 		}
 
-		//A little bit from the soul modifier since soul increases perception
-		cultivation.addEnergy(cultivation.getMaxEnergy() * 0.00025 + cultivation.getDivineModifier() * 0.003);
 	}
 
 	/**
@@ -82,7 +80,7 @@ public class CultivationHandler {
 		boolean canFly = false;
 		if(cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getLevel() instanceof CultivationLevel.EssenceLevel)
 			canFly =	((CultivationLevel.EssenceLevel) cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getLevel()).flight;
-		if (canFly && player.abilities.isFlying && cultivation.getEnergy() <= 0) {
+		if (canFly && player.abilities.isFlying && cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getEnergy() <= 0) {
 			player.abilities.isFlying = false;
 		}
 		if (canFly) {
@@ -99,14 +97,17 @@ public class CultivationHandler {
 			totalRem += fly_cost;
 			totalRem += distance * dist_cost;
 			if (!player.isCreative()) {
-				cultivation.addEnergy(-totalRem);
+				cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).addEnergy(-totalRem);
 				accumulatedFlyCost += totalRem;
 				if (cultivation.getTickerTime() % 10 == 0) {
-					WuxiaPacketHandler.INSTANCE.sendToServer(new EnergyMessage(accumulatedFlyCost, 1, player.getUniqueID()));
+					WuxiaPacketHandler.INSTANCE.sendToServer(new EnergyMessage(accumulatedFlyCost, CultivationLevel.System.ESSENCE, 1));
 					accumulatedFlyCost = 0;
 				}
 			}
 		}
+	}
+
+	public static void onHandleSkills(TickEvent.PlayerTickEvent event) {
 
 	}
 

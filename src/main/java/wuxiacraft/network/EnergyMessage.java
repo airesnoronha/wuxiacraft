@@ -5,6 +5,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import wuxiacraft.WuxiaCraft;
 import wuxiacraft.cultivation.Cultivation;
+import wuxiacraft.cultivation.CultivationLevel;
 import wuxiacraft.cultivation.ICultivation;
 
 import java.util.UUID;
@@ -14,14 +15,14 @@ public class EnergyMessage {
 
 	private double amount;
 	private int operation;
-	private UUID target;
+	private CultivationLevel.System system;
 
 	private boolean isValid;
 
-	public EnergyMessage(double amount, int operation, UUID target) {
+	public EnergyMessage(double amount, CultivationLevel.System system, int operation) {
 		this.amount = amount;
 		this.operation = operation;
-		this.target = target;
+		this.system = system;
 		this.isValid = true;
 	}
 
@@ -33,7 +34,7 @@ public class EnergyMessage {
 		if (!this.isValid) return;
 		buf.writeDouble(this.amount);
 		buf.writeInt(this.operation);
-		buf.writeUniqueId(this.target);
+		buf.writeEnumValue(system);
 	}
 
 	public static EnergyMessage decode(PacketBuffer buf) {
@@ -41,7 +42,7 @@ public class EnergyMessage {
 		try {
 			message.amount = buf.readDouble();
 			message.operation = buf.readInt();
-			message.target = buf.readUniqueId();
+			message.system = buf.readEnumValue(CultivationLevel.System.class);
 			message.isValid = true;
 		} catch (Exception e) {
 			WuxiaCraft.LOGGER.error("Couldn't read energy message due to exception: " + e.getMessage());
@@ -57,19 +58,20 @@ public class EnergyMessage {
 		if (sideReceived.isServer()) {
 			ctx.enqueueWork(() -> {
 				if (ctx.getSender() == null) return;
-				ICultivation cultivation = Cultivation.get(ctx.getSender().world.getPlayerByUuid(message.target));
+				//I hope it ain't screwed as it was on 1.12.2
+				ICultivation cultivation = Cultivation.get(ctx.getSender());
 				switch (message.operation) {
 					case 0: // add
-						cultivation.addEnergy(message.amount);
+						cultivation.getStatsBySystem(message.system).addEnergy(message.amount);
 						break;
 					case 1: // rem
-						cultivation.addEnergy(-message.amount);
+						cultivation.getStatsBySystem(message.system).addEnergy(-message.amount);
 						break;
 					case 2: // set
-						cultivation.setEnergy(message.amount);
+						cultivation.getStatsBySystem(message.system).setEnergy(message.amount);
 						break;
 					default:
-						cultivation.setEnergy(0);
+						cultivation.getStatsBySystem(message.system).setEnergy(0);
 						break;
 				}
 			});

@@ -10,14 +10,16 @@ public class Skill {
 
     public final String name;
     public final double energyCost;
-    public final double castTime; //in ticks
+    public final double castTime; //in
     public final double coolDown; //in ticks
+	public final boolean castInTicks;
 
-    public Skill(String name, double energyCost, double castTime, double coolDown) {
+    public Skill(String name, double energyCost, double castTime, double coolDown, boolean castInTicks) {
         this.name = name;
         this.energyCost = energyCost;
         this.castTime = castTime;
         this.coolDown = coolDown;
+        this.castInTicks = castInTicks;
         WuxiaSkills.SKILLS.add(this);
     }
 
