@@ -6,6 +6,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import wuxiacraft.cultivation.Cultivation;
 import wuxiacraft.cultivation.CultivationLevel;
+import wuxiacraft.cultivation.SystemStats;
 import wuxiacraft.cultivation.skill.Skill;
 import wuxiacraft.init.WuxiaSkills;
 
@@ -25,17 +26,17 @@ public class ActivateSkillMessage {
 	}
 
 	public ActivateSkillMessage() {
-		this.isValid =false;
+		this.isValid = false;
 	}
 
 	public void encode(PacketBuffer buf) {
-		buf.writeString(this.skillName);
+		buf.writeString(this.skillName, 200);
 		buf.writeDouble(this.energyCost);
 	}
 
 	public static ActivateSkillMessage decode(PacketBuffer buf) {
 		ActivateSkillMessage message = new ActivateSkillMessage();
-		message.skillName = buf.readString();
+		message.skillName = buf.readString(200);
 		message.energyCost = buf.readDouble();
 		message.isValid = true;
 		return message;
@@ -44,16 +45,19 @@ public class ActivateSkillMessage {
 	public static void handleMessage(ActivateSkillMessage message, Supplier<NetworkEvent.Context> ctxSupplier) {
 		NetworkEvent.Context ctx = ctxSupplier.get();
 		ctx.setPacketHandled(true);
-		if(!message.isValid) return;
+		if (!message.isValid) return;
 		LogicalSide sideReceived = ctx.getDirection().getReceptionSide();
 
-		if(sideReceived.isServer()) {
+		if (sideReceived.isServer()) {
 			ctx.enqueueWork(() -> {
 				Skill skill = WuxiaSkills.getSkillByName(message.skillName);
 				ServerPlayerEntity actor = ctx.getSender();
-				if(skill != null && actor != null) {
-					skill.activate(actor);
-					Cultivation.get(actor).getStatsBySystem(CultivationLevel.System.ESSENCE).addEnergy(-message.energyCost);
+				if (skill != null && actor != null) {
+					SystemStats essenceStats = Cultivation.get(actor).getStatsBySystem(CultivationLevel.System.ESSENCE);
+					if (essenceStats.getEnergy() >= message.energyCost) {
+						skill.activate(actor);
+						essenceStats.addEnergy(-message.energyCost);
+					}
 				}
 			});
 		}

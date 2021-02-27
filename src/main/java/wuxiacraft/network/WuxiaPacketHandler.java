@@ -22,6 +22,8 @@ public class WuxiaPacketHandler {
 	public static void registerMessages() {
 		int serverMessagesID = 100;
 		INSTANCE.registerMessage(serverMessagesID++, EnergyMessage.class, EnergyMessage::encode, EnergyMessage::decode, EnergyMessage::HandleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+		INSTANCE.registerMessage(serverMessagesID++, ActivateActionMessage.class, ActivateActionMessage::encode, ActivateActionMessage::decode, ActivateActionMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+		INSTANCE.registerMessage(serverMessagesID++, ActivateSkillMessage.class, ActivateSkillMessage::encode, ActivateSkillMessage::decode, ActivateSkillMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 
 		int clientMessagesID = 200;
 		INSTANCE.registerMessage(clientMessagesID++, CultivationSyncMessage.class, CultivationSyncMessage::encode, CultivationSyncMessage::decode, CultivationSyncMessage::HandleMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));

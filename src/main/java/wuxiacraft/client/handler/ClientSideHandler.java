@@ -1,9 +1,10 @@
 package wuxiacraft.client.handler;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import wuxiacraft.client.SkillValues;
@@ -78,17 +79,19 @@ public class ClientSideHandler {
 			Skill active = cultivation.getActiveSkill(SkillValues.activeSkill);
 			if (active != null) {
 				if (cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getEnergy() >= active.energyCost) {
-					SkillValues.castProgress += active.castInTicks ? 1 : cultivation.getCastSpeed();
-					active.casting(event.player); //client side -- if anything should happen on server, send an activate action message to server from casting action
+					; //client side -- if anything should happen on server, send an activate action message to server from casting action
+					if (active.casting(event.player) && SkillValues.castProgress < active.castTime)
+						SkillValues.castProgress += active.castInTicks ? 1 : cultivation.getCastSpeed();
 					if (SkillValues.castProgress >= active.castTime) {
-						active.activate(event.player);//client side
-						WuxiaPacketHandler.INSTANCE.sendToServer(new ActivateSkillMessage(active.name, active.energyCost));//server side
-						cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).addEnergy(active.energyCost); //client energy cost -> eventually it'll sync
+						if (active.activate(event.player)) {//client side
+							WuxiaPacketHandler.INSTANCE.sendToServer(new ActivateSkillMessage(active.name, active.energyCost));//server side
+							cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).addEnergy(-active.energyCost); //client energy cost -> eventually it'll sync
+							SkillValues.castProgress = 0;
+						}
 					}
 				}
 			}
-		}
-		else if(!SkillValues.isCastingSkill) {
+		} else if (!SkillValues.isCastingSkill) {
 			SkillValues.castProgress = 0;
 		}
 	}

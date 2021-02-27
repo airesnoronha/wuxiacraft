@@ -315,9 +315,12 @@ public class Cultivation implements ICultivation {
 	@Override
 	public Skill getActiveSkill(int id) {
 		List<Skill> knownSkills = this.getAllKnownSkills();
-		if (id < knownSkills.size())
-			return knownSkills.get(id);
-		else return null;
+		if (id < this.selectedSkills.size()) {
+			if (this.selectedSkills.get(id) < knownSkills.size()) {
+				return knownSkills.get(this.selectedSkills.get(id));
+			}
+		}
+		return null;
 	}
 
 	@Override

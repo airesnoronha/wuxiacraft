@@ -36,7 +36,7 @@ public class InputHandler {
 		if (keyBindings[KEY_SKILL_SELECT_UP].isPressed()) {
 			if (Minecraft.getInstance().player != null) {
 				ICultivation cultivation = Cultivation.get(Minecraft.getInstance().player);
-				SkillValues.activeSkill = Math.min(cultivation.getAllKnownSkills().size(), SkillValues.activeSkill + 1);
+				SkillValues.activeSkill = Math.min(cultivation.getAllKnownSkills().size()-1, SkillValues.activeSkill + 1);
 			}
 		}
 		if (keyBindings[KEY_SKILL_SELECT_DOWN].isPressed()) {

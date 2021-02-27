@@ -3,6 +3,8 @@ package wuxiacraft.network;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import wuxiacraft.capabilities.CultivationProvider;
@@ -47,11 +49,16 @@ public class CultivationSyncMessage {
 		ctx.setPacketHandled(true);
 
 		if (sideReceived.isClient()) {
-		assert Minecraft.getInstance().player != null;
-			ctx.enqueueWork(() -> {
-				ICultivation cultivation = Cultivation.get(Minecraft.getInstance().player);
-				cultivation.copyFrom(message.cultivation);
-			});
+			handleClientSide(message, ctx);
 		}
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static void handleClientSide(CultivationSyncMessage message, NetworkEvent.Context ctx) {
+		assert Minecraft.getInstance().player != null;
+		ctx.enqueueWork(() -> {
+			ICultivation cultivation = Cultivation.get(Minecraft.getInstance().player);
+			cultivation.copyFrom(message.cultivation);
+		});
 	}
 }

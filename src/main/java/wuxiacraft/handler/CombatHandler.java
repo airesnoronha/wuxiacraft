@@ -94,7 +94,7 @@ public class CombatHandler {
 			return; // Means it was wuxiacraft that came up with this attack, so damage is already calculated
 
 		ICultivation cultivation = Cultivation.get((LivingEntity) event.getSource().getTrueSource());
-		event.setAmount(event.getAmount() + (float) cultivation.getFinalModifiers().strength);
+		event.setAmount(event.getAmount() + (float) cultivation.getFinalModifiers().strength * ((PlayerEntity) event.getSource().getTrueSource()).getCooledAttackStrength(0));
 
 		LivingEntity target = event.getEntityLiving();
 		double maxHP = target.getMaxHealth();

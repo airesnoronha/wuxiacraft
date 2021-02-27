@@ -11,10 +11,13 @@ import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.Util;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.fml.network.PacketDistributor;
 import wuxiacraft.cultivation.Cultivation;
 import wuxiacraft.cultivation.ICultivation;
 import wuxiacraft.cultivation.skill.Skill;
 import wuxiacraft.init.WuxiaSkills;
+import wuxiacraft.network.CultivationSyncMessage;
+import wuxiacraft.network.WuxiaPacketHandler;
 
 import java.util.List;
 
@@ -50,6 +53,7 @@ public class SkillCommand {
 		if (skill != null) {
 			cultivation.addKnownSkill(skill);
 		}
+		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), new CultivationSyncMessage(cultivation));
 		return 1;
 	}
 
@@ -58,6 +62,7 @@ public class SkillCommand {
 		ICultivation cultivation = Cultivation.get(target);
 
 		cultivation.resetKnownSkills();
+		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), new CultivationSyncMessage(cultivation));
 		return 1;
 	}
 
@@ -71,6 +76,7 @@ public class SkillCommand {
 		if (skill != null) {
 			cultivation.removeKnownSkill(skill);
 		}
+		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), new CultivationSyncMessage(cultivation));
 		return 1;
 	}
 
@@ -116,6 +122,7 @@ public class SkillCommand {
 		} else {
 			ctx.getSource().sendErrorMessage(new StringTextComponent("Index was out of bounds!"));
 		}
+		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), new CultivationSyncMessage(cultivation));
 
 		return 1;
 	}

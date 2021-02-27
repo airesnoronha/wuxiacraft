@@ -21,23 +21,25 @@ public class Skill {
         this.coolDown = coolDown;
         this.castInTicks = castInTicks;
         WuxiaSkills.SKILLS.add(this);
+        this.action = actor -> true;
+        this.whenCasting = actor -> true;
     }
 
-    public Skill activate(ISkillAction action) {
+    public Skill setAction(ISkillAction action) {
         this.action = action;
         return this;
     }
 
-    public Skill casting(ISkillAction action) {
+    public Skill setCasting(ISkillAction action) {
         this.whenCasting = action;
         return this;
     }
 
-    public void activate(LivingEntity actor) {
-        this.action.activate(actor);
+    public boolean activate(LivingEntity actor) {
+        return this.action.activate(actor);
     }
 
-    public void casting(LivingEntity actor) {
-        this.whenCasting.activate(actor);
+    public boolean casting(LivingEntity actor) {
+        return this.whenCasting.activate(actor);
     }
 }

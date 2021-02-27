@@ -11,10 +11,13 @@ import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.Util;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.fml.network.PacketDistributor;
 import wuxiacraft.cultivation.Cultivation;
 import wuxiacraft.cultivation.CultivationLevel;
 import wuxiacraft.cultivation.ICultivation;
 import wuxiacraft.cultivation.SystemStats;
+import wuxiacraft.network.CultivationSyncMessage;
+import wuxiacraft.network.WuxiaPacketHandler;
 
 public class CultivationCommand {
 	public static void register(CommandDispatcher<CommandSource> dispatcher) {
@@ -31,8 +34,12 @@ public class CultivationCommand {
 				))
 				.then(Commands.literal("set").then(
 						Commands.argument("target", EntityArgument.player()).then(Commands.argument("system", StringArgumentType.word())
-						.then(Commands.argument("level", StringArgumentType.word()).then(Commands.argument("rank", IntegerArgumentType.integer(0, 8))
-								.executes(CultivationCommand::setCultivationLevel))))
+								.then(Commands.argument("level", StringArgumentType.word()).then(Commands.argument("rank", IntegerArgumentType.integer(0, 8))
+										.executes(CultivationCommand::setCultivationLevel))))
+				))
+				.then(Commands.literal("refill").then(
+						Commands.argument("target", EntityArgument.player())
+								.executes(CultivationCommand::refillEnergies)
 				))
 		);
 	}
@@ -54,7 +61,7 @@ public class CultivationCommand {
 				stats.getLevel().levelName, stats.getSubLevel() + 1, stats.getBase(), stats.getLevel().getProgressBySubLevel(stats.getSubLevel()),
 				(stats.getBase() * 100 / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
 				stats.getFoundation(), (stats.getFoundation() / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
-				stats.getEnergy(), cultivation.getMaxBodyEnergy(), (stats.getEnergy() * 100/ cultivation.getMaxBodyEnergy()))
+				stats.getEnergy(), cultivation.getMaxBodyEnergy(), (stats.getEnergy() * 100 / cultivation.getMaxBodyEnergy()))
 		);
 		//this one was tricky, like y not sendMessage()
 		ctx.getSource().sendFeedback(message, true);
@@ -64,7 +71,7 @@ public class CultivationCommand {
 				stats.getLevel().levelName, stats.getSubLevel() + 1, stats.getBase(), stats.getLevel().getProgressBySubLevel(stats.getSubLevel()),
 				(stats.getBase() * 100 / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
 				stats.getFoundation(), (stats.getFoundation() / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
-				stats.getEnergy(), cultivation.getMaxDivineEnergy(), (stats.getEnergy() * 100/ cultivation.getMaxDivineEnergy()))
+				stats.getEnergy(), cultivation.getMaxDivineEnergy(), (stats.getEnergy() * 100 / cultivation.getMaxDivineEnergy()))
 		);
 		ctx.getSource().sendFeedback(message, true);
 
@@ -73,7 +80,7 @@ public class CultivationCommand {
 				stats.getLevel().levelName, stats.getSubLevel() + 1, stats.getBase(), stats.getLevel().getProgressBySubLevel(stats.getSubLevel()),
 				(stats.getBase() * 100 / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
 				stats.getFoundation(), (stats.getFoundation() / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
-				stats.getEnergy(), cultivation.getMaxEssenceEnergy(), (stats.getEnergy() * 100/ cultivation.getMaxEssenceEnergy()))
+				stats.getEnergy(), cultivation.getMaxEssenceEnergy(), (stats.getEnergy() * 100 / cultivation.getMaxEssenceEnergy()))
 		);
 		ctx.getSource().sendFeedback(message, true);
 
@@ -88,8 +95,8 @@ public class CultivationCommand {
 
 		ICultivation cultivation = Cultivation.get(target);
 		CultivationLevel.System system = CultivationLevel.System.BODY;
-		if(systemName.equalsIgnoreCase("divine")) system = CultivationLevel.System.DIVINE;
-		else if(systemName.equalsIgnoreCase("essence")) system = CultivationLevel.System.ESSENCE;
+		if (systemName.equalsIgnoreCase("divine")) system = CultivationLevel.System.DIVINE;
+		else if (systemName.equalsIgnoreCase("essence")) system = CultivationLevel.System.ESSENCE;
 
 		CultivationLevel level = CultivationLevel.getLevelBySystem(system, levelName);
 
@@ -110,6 +117,16 @@ public class CultivationCommand {
 
 		target.sendMessage(new StringTextComponent("Your cultivation has been reset!"), Util.DUMMY_UUID);
 		ctx.getSource().sendFeedback(new StringTextComponent("Target player cultivation has been reset!"), true);
+		return 1;
+	}
+
+	private static int refillEnergies(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
+		ServerPlayerEntity target = EntityArgument.getPlayer(ctx, "target");
+		ICultivation cultivation = Cultivation.get(target);
+		cultivation.getStatsBySystem(CultivationLevel.System.BODY).setEnergy(cultivation.getMaxBodyEnergy());
+		cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).setEnergy(cultivation.getMaxDivineEnergy());
+		cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).setEnergy(cultivation.getMaxEssenceEnergy());
+		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), new CultivationSyncMessage(cultivation));
 		return 1;
 	}
 

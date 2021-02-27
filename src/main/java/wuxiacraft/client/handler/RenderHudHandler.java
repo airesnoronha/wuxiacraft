@@ -1,25 +1,31 @@
 package wuxiacraft.client.handler;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import wuxiacraft.WuxiaCraft;
+import wuxiacraft.client.SkillValues;
 import wuxiacraft.cultivation.Cultivation;
 import wuxiacraft.cultivation.CultivationLevel;
 import wuxiacraft.cultivation.ICultivation;
 import wuxiacraft.cultivation.SystemStats;
+import wuxiacraft.cultivation.skill.Skill;
+
+import java.util.List;
 
 
 public class RenderHudHandler {
 
 	private final static ResourceLocation HEALTH_BAR = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/health_bar.png");
 	private final static ResourceLocation ENERGY_BARS = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/energy_bars.png");
+	private final static ResourceLocation SKILLS_BG = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/skills_bg.png");
+	private final static ResourceLocation ICONS = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/icons.png");
 
 	@SubscribeEvent
 	public void onPreRenderHud(RenderGameOverlayEvent.Pre event) {
@@ -33,15 +39,32 @@ public class RenderHudHandler {
 	@SubscribeEvent
 	public void onRenderHud(RenderGameOverlayEvent.Post event) {
 		if (event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE) return;
-		drawEnergyBars(event.getMatrixStack(), event.getWindow().getScaledWidth(), event.getWindow().getScaledHeight());
+		int resX = event.getWindow().getScaledWidth();
+		int resY = event.getWindow().getScaledHeight();
+		//drawHudElements(event.getMatrixStack(), resX, resY);
+		drawEnergyBars(event.getMatrixStack(), resX, resY);
+		drawSkillsBar(event.getMatrixStack(), resX, resY);
+		drawCastProgressBar(event.getMatrixStack(), resX, resY);
 	}
 
 	private static void drawHudElements(MatrixStack stack, int resX, int resY) {
 		assert Minecraft.getInstance().player != null;
 		ICultivation cultivation = Cultivation.get(Minecraft.getInstance().player);
 
-		String text = String.format("HP: %d/%d", (int) cultivation.getHP(), (int) cultivation.getFinalModifiers().maxHealth);
-		Minecraft.getInstance().ingameGUI.getFontRenderer().drawString(stack, text, 30, 30, 0xFFAA00);
+		String text = "Known skills:";
+		Minecraft.getInstance().ingameGUI.getFontRenderer().drawString(stack, text, 10, 10, 0xFFAA00);
+		List<Skill> knownSkills = cultivation.getAllKnownSkills();
+		for (Skill skill : knownSkills) {
+			int index = knownSkills.indexOf(skill);
+			Minecraft.getInstance().ingameGUI.getFontRenderer().drawString(stack, index + ": " + skill.name, 10, 19 + index * 9, 0xFFAA00);
+		}
+
+		StringBuilder selectedSkills = new StringBuilder();
+		selectedSkills.append("Selected: (").append(SkillValues.activeSkill).append(") ");
+		for (Integer index : cultivation.getSelectedSkills()) {
+			selectedSkills.append(index).append(" ");
+		}
+		Minecraft.getInstance().ingameGUI.getFontRenderer().drawString(stack, selectedSkills.toString(), 90, 10, 0xFFAA00);
 	}
 
 	private static void drawEnergyBars(MatrixStack stack, int resX, int resY) {
@@ -81,6 +104,58 @@ public class RenderHudHandler {
 		mc.ingameGUI.blit(stack, 118, 4 + 106 - fill, 190, 106 - fill, 66, fill);
 
 		stack.pop();
+	}
+
+	public static int lastKnownActive = 0;
+	public static int animationStep = 0;
+
+	private static void drawSkillsBar(MatrixStack stack, int resX, int resY) {
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.player == null) return;
+		ICultivation cultivation = Cultivation.get(mc.player);
+		GlStateManager.enableBlend();
+		stack.push();
+		stack.translate(resX - 20, resY - 50, 0);
+		List<Skill> knownSkills = cultivation.getAllKnownSkills();
+		int usedUpwards = 0;
+		for (Integer index : cultivation.getSelectedSkills()) {
+			Skill skill = knownSkills.get(index);
+			if (skill != null) {
+				int size = lastKnownActive == SkillValues.activeSkill && lastKnownActive == cultivation.getSelectedSkills().indexOf(index) ? animationStep : 0;
+				mc.getTextureManager().bindTexture(SKILLS_BG);
+				AbstractGui.blit(stack, 0, -20 - usedUpwards - size, 20, 20 + size, 0, 0, 20, 20, 20, 20);
+				mc.getTextureManager().bindTexture(new ResourceLocation(WuxiaCraft.MOD_ID, "textures/skills/icons/" + skill.name + ".png"));
+				AbstractGui.blit(stack, -size, -20 - usedUpwards - size, 20 + size, 20 + size, 0, 0, 32, 32, 32, 32);
+				usedUpwards += 20 + size;
+			}
+		}
+		if (animationStep < 20) {
+			animationStep++;
+		}
+		if (lastKnownActive != SkillValues.activeSkill) {
+			lastKnownActive = SkillValues.activeSkill;
+			animationStep = 0;
+		}
+		GlStateManager.disableBlend();
+		stack.pop();
+	}
+
+	private static void drawCastProgressBar(MatrixStack stack, int resX, int resY) {
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.player == null) return;
+		ICultivation cultivation = Cultivation.get(mc.player);
+
+		if(SkillValues.isCastingSkill) {
+			stack.push();
+			mc.getTextureManager().bindTexture(ICONS);
+			mc.ingameGUI.blit(stack, resX/2 - 91, resY - 29, 0, 0, 182, 5);
+			Skill skill = cultivation.getActiveSkill(SkillValues.activeSkill);
+			if(skill != null) {
+				int castProgress = (int)(182 * SkillValues.castProgress / skill.castTime);
+				mc.ingameGUI.blit(stack, resX/2 - 91, resY - 29, 0, 5, castProgress, 5);
+			}
+			stack.pop();
+		}
 	}
 
 	private static void drawCustomHealthBar(MatrixStack stack, int resX, int resY) {
