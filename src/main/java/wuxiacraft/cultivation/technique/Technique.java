@@ -2,8 +2,6 @@ package wuxiacraft.cultivation.technique;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.potion.Effect;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import wuxiacraft.cultivation.CultivationLevel;
@@ -22,19 +20,29 @@ public class Technique {
 	private final double maxProficiency;
 	private final double efficientTillModifier; // this technique may work well until the system level modifier
 
+	private final double energyRegen;
+	private final double maxEnergy;
+
+	private final double healingCostModifier;
+	private final double healingAmountModifier;
+
 	private final List<Element> elements;
 	private final List<Pair<Double, Skill>> skills;
 	private final List<Pair<Double, Effect>> effects;
 	private final List<Triple<Double, Float, String>> checkpoints;
 	private final List<Technique> compatibles;
 
-	public Technique(CultivationLevel.System system, String name, TechniqueModifiers baseModifiers, double cultivationSpeed, double maxProficiency, double efficientTillModifier) {
+	public Technique(CultivationLevel.System system, String name, TechniqueModifiers baseModifiers, double cultivationSpeed, double maxProficiency, double efficientTillModifier, double energyRegen, double maxEnergy, double healingCostModifier, double healingAmountModifier) {
 		this.system = system;
 		this.name = name;
 		this.baseModifiers = baseModifiers;
 		this.cultivationSpeed = cultivationSpeed;
 		this.maxProficiency = maxProficiency;
 		this.efficientTillModifier = efficientTillModifier;
+		this.energyRegen = energyRegen;
+		this.maxEnergy = maxEnergy;
+		this.healingCostModifier = healingCostModifier;
+		this.healingAmountModifier = healingAmountModifier;
 		this.elements = new LinkedList<>();
 		this.skills = new LinkedList<>();
 		this.effects = new LinkedList<>();
@@ -66,6 +74,22 @@ public class Technique {
 		return efficientTillModifier;
 	}
 
+	public double getEnergyRegen() {
+		return energyRegen;
+	}
+
+	public double getMaxEnergy() {
+		return maxEnergy;
+	}
+
+	public double getHealingCostModifier() {
+		return healingCostModifier;
+	}
+
+	public double getHealingAmountModifier() {
+		return healingAmountModifier;
+	}
+
 	public ImmutableList<Element> getElements() {
 		return ImmutableList.copyOf(elements);
 	}
@@ -75,8 +99,7 @@ public class Technique {
 	}
 
 	public ImmutableList<Pair<Double, Effect>> getEffects() {
-		return
-				ImmutableList.copyOf(effects);
+		return ImmutableList.copyOf(effects);
 	}
 
 	public ImmutableList<Triple<Double, Float, String>> getCheckpoints() {

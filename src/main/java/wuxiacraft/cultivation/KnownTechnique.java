@@ -18,7 +18,8 @@ public class KnownTechnique {
 	/**
 	 * Known technique is a way to store a technique coupled with a proficiency in such technique
 	 * and also get it's modifiers and effects from it
-	 * @param technique The technique that is known
+	 *
+	 * @param technique   The technique that is known
 	 * @param proficiency How much effort was put into this technique
 	 */
 	public KnownTechnique(Technique technique, double proficiency) {
@@ -28,6 +29,7 @@ public class KnownTechnique {
 
 	/**
 	 * This will add proficiency to this known technique
+	 *
 	 * @param amount the amount to be added
 	 */
 	public void progress(double amount) {
@@ -108,6 +110,7 @@ public class KnownTechnique {
 	/**
 	 * This is how much the cultivation speed is gonna be influenced by this technique.
 	 * This is not a boost but rather a break, so that techniques can have a limited strength.
+	 *
 	 * @param modifier The strength of the cultivator in such system.
 	 * @return The speed of cultivation.
 	 */
@@ -121,6 +124,7 @@ public class KnownTechnique {
 
 	/**
 	 * This is how much the modifiers from technique are going to be added to final stats
+	 *
 	 * @return The relative amount from the maximum of the known techniques
 	 */
 	public double getReleaseFactor() {
@@ -135,6 +139,44 @@ public class KnownTechnique {
 			}
 		}
 		return unlocked;
+	}
+
+	/**
+	 * Gets the amount of relative energy regen modifier
+	 *
+	 * @return the amount will be used like final_regen =  base_regen * (1+technique_regen)
+	 */
+	public double getEnergyRegen() {
+		return this.getTechnique().getEnergyRegen() * this.getReleaseFactor();
+	}
+
+	/**
+	 * Gets the amount of relative max energy modifier
+	 *
+	 * @return the amount will be used like final_max =  base_max * (1+technique_max)
+	 */
+	public double getMaxEnergy() {
+		return this.getTechnique().getMaxEnergy() * this.getReleaseFactor();
+	}
+
+	/**
+	 * this will affect how the technique will increase healing to a player
+	 * most techniques won't, or maybe will increase a little
+	 *
+	 * @return the amount will be used like final_cost = base_cost * (1 + technique_cost)
+	 */
+	public double getHealingCostModifier() {
+		return this.getTechnique().getHealingCostModifier() * this.getReleaseFactor();
+	}
+
+	/**
+	 * this will affect how the technique will increase healing to a player
+	 * most techniques won't, or maybe will increase a little
+	 *
+	 * @return the amount will be used like final_amount = base_amount * (1 + technique_amount)
+	 */
+	public double getHealingAmountModifier() {
+		return this.getTechnique().getHealingAmountModifier() * this.getReleaseFactor();
 	}
 
 }

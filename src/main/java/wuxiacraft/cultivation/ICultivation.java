@@ -35,6 +35,16 @@ public interface ICultivation {
 
 	double getResistanceToElement(Element element);
 
+	double getHealingCost();
+
+	double getBodyEnergyRegen();
+
+	double getDivineEnergyRegen();
+
+	double getEssenceEnergyRegen();
+
+	double getHealingAmount();
+
 	TechniqueModifiers getFinalModifiers();
 
 	double getMaxBodyEnergy();

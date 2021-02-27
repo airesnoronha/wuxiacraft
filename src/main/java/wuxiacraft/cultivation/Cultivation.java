@@ -9,7 +9,6 @@ import wuxiacraft.cultivation.technique.TechniqueModifiers;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -97,6 +96,13 @@ public class Cultivation implements ICultivation {
 	private double maxBodyEnergy;
 	private double maxDivineEnergy;
 	private double maxEssenceEnergy;
+
+	private double bodyEnergyRegen;
+	private double divineEnergyRegen;
+	private double essenceEnergyRegen;
+
+	private double healingAmount;
+	private double healingCost;
 
 	/**
 	 * This is the base for the cultivation, here will hold most of the information from cultivation
@@ -332,15 +338,32 @@ public class Cultivation implements ICultivation {
 				20 + this.getBodyModifier() + this.getDivineModifier() * 0.4 + this.getEssenceModifier() * 0.1,
 				this.getBodyModifier() * 0.2 + this.getDivineModifier() * 0.1 + this.getEssenceModifier() * 0.4,
 				this.getBodyModifier() * 0.8 + this.getDivineModifier() * 0.6 + this.getEssenceModifier() * 0.14);
-		this.maxBodyEnergy = this.getBodyModifier() * 10;
-		this.maxDivineEnergy = this.getDivineModifier() * 10;
-		this.maxEssenceEnergy = this.getEssenceModifier() * 10;
-		if (this.bodyTechnique != null)
+		this.maxBodyEnergy = 10 + this.getBodyModifier() * 10;
+		this.maxDivineEnergy = 10 + this.getDivineModifier() * 10;
+		this.maxEssenceEnergy = 10 + this.getEssenceModifier() * 10;
+		this.bodyEnergyRegen = 0.00035; //after all it uses food
+		this.divineEnergyRegen = 0.00007;
+		this.essenceEnergyRegen = 0.000005; //this will gather when doing breathing exercises aka cultivating
+		this.healingAmount = 0.0075;
+		this.healingCost = 1.8;
+		if (this.bodyTechnique != null) {
 			this.finalModifiers = this.finalModifiers.add(this.bodyTechnique.getModifiers());
-		if (this.divineTechnique != null)
+			this.bodyEnergyRegen *= (1 + this.bodyTechnique.getEnergyRegen());
+			this.healingAmount *= (1 + this.bodyTechnique.getHealingAmountModifier());
+			this.healingCost *= (1 + this.bodyTechnique.getHealingCostModifier());
+		}
+		if (this.divineTechnique != null) {
 			this.finalModifiers = this.finalModifiers.add(this.divineTechnique.getModifiers());
-		if (this.essenceTechnique != null)
+			this.divineEnergyRegen *= (1 + this.divineTechnique.getEnergyRegen());
+			this.healingAmount *= (1 + this.divineTechnique.getHealingAmountModifier());
+			this.healingCost *= (1 + this.divineTechnique.getHealingCostModifier());
+		}
+		if (this.essenceTechnique != null) {
 			this.finalModifiers = this.finalModifiers.add(this.essenceTechnique.getModifiers());
+			this.essenceEnergyRegen *= (1 + this.essenceTechnique.getEnergyRegen());
+			this.healingAmount *= (1 + this.essenceTechnique.getHealingAmountModifier());
+			this.healingCost *= (1 + this.essenceTechnique.getHealingCostModifier());
+		}
 	}
 
 	@Override
@@ -361,6 +384,31 @@ public class Cultivation implements ICultivation {
 	@Override
 	public double getMaxEssenceEnergy() {
 		return maxEssenceEnergy;
+	}
+
+	@Override
+	public double getBodyEnergyRegen() {
+		return bodyEnergyRegen;
+	}
+
+	@Override
+	public double getDivineEnergyRegen() {
+		return divineEnergyRegen;
+	}
+
+	@Override
+	public double getEssenceEnergyRegen() {
+		return essenceEnergyRegen;
+	}
+
+	@Override
+	public double getHealingAmount() {
+		return healingAmount;
+	}
+
+	@Override
+	public double getHealingCost() {
+		return healingCost;
 	}
 
 	@Override

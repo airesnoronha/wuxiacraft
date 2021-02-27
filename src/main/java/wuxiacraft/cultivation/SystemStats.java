@@ -47,7 +47,7 @@ public class SystemStats {
 		this.subLevel = 0;
 		this.base = 0;
 		this.foundation = 0;
-		this.energy = 0;
+		this.energy = 10;
 	}
 
 	public CultivationLevel getLevel() {

@@ -1,9 +1,7 @@
 package wuxiacraft.handler;
 
-import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -14,7 +12,6 @@ import wuxiacraft.cultivation.CultivationLevel;
 import wuxiacraft.cultivation.ICultivation;
 import wuxiacraft.cultivation.SystemStats;
 import wuxiacraft.network.CultivationSyncMessage;
-import wuxiacraft.network.EnergyMessage;
 import wuxiacraft.network.WuxiaPacketHandler;
 
 import java.util.UUID;
@@ -61,22 +58,22 @@ public class CultivationHandler {
 		if (cultivation.getSkillCooldown() > 0)
 			cultivation.lowerCoolDown();
 
-		if(player.getFoodStats().getFoodLevel() > 18) {
-			cultivation.getStatsBySystem(CultivationLevel.System.BODY).addEnergy(0.0005 * cultivation.getBodyModifier());
-			cultivation.getStatsBySystem(CultivationLevel.System.BODY).setEnergy(Math.min(10 * cultivation.getBodyModifier(), cultivation.getStatsBySystem(CultivationLevel.System.BODY).getEnergy()));
+		if (player.getFoodStats().getFoodLevel() > 18 && cultivation.getStatsBySystem(CultivationLevel.System.BODY).getEnergy() < cultivation.getMaxBodyEnergy()) {
+			cultivation.getStatsBySystem(CultivationLevel.System.BODY).addEnergy(cultivation.getBodyEnergyRegen() * cultivation.getMaxBodyEnergy());
+			cultivation.getStatsBySystem(CultivationLevel.System.BODY).setEnergy(Math.min(cultivation.getMaxBodyEnergy(), cultivation.getStatsBySystem(CultivationLevel.System.BODY).getEnergy()));
+			player.addExhaustion((float)(cultivation.getEssenceEnergyRegen() * cultivation.getMaxDivineEnergy() * 100));
 		}
-		cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).addEnergy(0.0005 * cultivation.getDivineModifier());
-		cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).setEnergy(Math.min(10 * cultivation.getDivineModifier(), cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).getEnergy()));
-		cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).addEnergy(0.0005 * cultivation.getEssenceModifier());
-		cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).setEnergy(Math.min(10 * cultivation.getEssenceModifier(), cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getEnergy()));
+		cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).addEnergy(cultivation.getDivineEnergyRegen() * cultivation.getMaxDivineEnergy());
+		cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).setEnergy(Math.min(cultivation.getMaxDivineEnergy(), cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).getEnergy()));
+		cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).addEnergy(cultivation.getEssenceEnergyRegen() * cultivation.getMaxEssenceEnergy());
+		cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).setEnergy(Math.min(cultivation.getMaxEssenceEnergy(), cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getEnergy()));
 
 		if (cultivation.getHP() < cultivation.getFinalModifiers().maxHealth) {
-			double healing_cost = 10; //every 1 hp costs 10 body energy // max 0.25% per tick
 			SystemStats bodyStats = cultivation.getStatsBySystem(CultivationLevel.System.BODY);
-			double energy_used = cultivation.getMaxBodyEnergy() * 0.0025;
+			double energy_used = cultivation.getMaxBodyEnergy() * cultivation.getHealingAmount();
 			if (bodyStats.getEnergy() >= energy_used) {
-				double amount_healed = energy_used / healing_cost;
-				cultivation.setHP(Math.min(cultivation.getFinalModifiers().maxHealth, cultivation.getHP()+amount_healed));
+				double amount_healed = energy_used / cultivation.getHealingCost();
+				cultivation.setHP(Math.min(cultivation.getFinalModifiers().maxHealth, cultivation.getHP() + amount_healed));
 				bodyStats.addEnergy(-energy_used);
 			}
 		}
@@ -96,16 +93,17 @@ public class CultivationHandler {
 			oldCultivation.setSkillCooldown(0);
 			oldCultivation.setHP(20);
 			oldCultivation.getStatsBySystem(CultivationLevel.System.BODY).setBase(0);
-			oldCultivation.getStatsBySystem(CultivationLevel.System.BODY).setEnergy(0);
+			oldCultivation.getStatsBySystem(CultivationLevel.System.BODY).setEnergy(10);
 			oldCultivation.getStatsBySystem(CultivationLevel.System.BODY).setSubLevel((oldCultivation.getStatsBySystem(CultivationLevel.System.BODY).getSubLevel() / 3) * 3);
 			oldCultivation.getStatsBySystem(CultivationLevel.System.DIVINE).setBase(0);
-			oldCultivation.getStatsBySystem(CultivationLevel.System.DIVINE).setEnergy(0);
+			oldCultivation.getStatsBySystem(CultivationLevel.System.DIVINE).setEnergy(10);
 			oldCultivation.getStatsBySystem(CultivationLevel.System.DIVINE).setSubLevel((oldCultivation.getStatsBySystem(CultivationLevel.System.DIVINE).getSubLevel() / 3) * 3);
 			oldCultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).setBase(0);
-			oldCultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).setEnergy(0);
+			oldCultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).setEnergy(10);
 			oldCultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).setSubLevel((oldCultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getSubLevel() / 3) * 3);
 		}
 		newCultivation.copyFrom(oldCultivation);
+		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), new CultivationSyncMessage(newCultivation));
 	}
 
 }

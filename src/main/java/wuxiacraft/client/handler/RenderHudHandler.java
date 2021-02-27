@@ -57,12 +57,14 @@ public class RenderHudHandler {
 		stack.push();
 		SystemStats stats = cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE);
 		float energyFill = (float) (stats.getEnergy() / (cultivation.getMaxEssenceEnergy()));
-		if(cultivation.getMaxEssenceEnergy() == 0) energyFill = 0;
+		if (cultivation.getMaxEssenceEnergy() == 0) energyFill = 0;
 		stack.translate(94.5, 56, 0);
 		stack.scale(energyFill, energyFill, 0);
 
-		float rotationSpeed = 1.50f - energyFill*1.45f;//in hertz
-		float rotationAngle = 2 * (float)Math.PI * ((float)(System.currentTimeMillis() % (int)(1000f/rotationSpeed)))/(1000f/rotationSpeed);
+		float rotationSpeed = 0.8f - energyFill * 0.803f;//in hertz
+		if (rotationSpeed == 0) rotationSpeed = 0.000001f;
+		int timeStep = (int) (System.currentTimeMillis() % (int) (1000f / rotationSpeed));
+		float rotationAngle = (float) Math.PI * (float) timeStep / (1000f / (rotationSpeed * 2));
 		stack.rotate(Vector3f.ZP.rotation(-rotationAngle));
 
 		mc.ingameGUI.blit(stack, -53, -53, 75, 0, 103, 103);
@@ -70,13 +72,13 @@ public class RenderHudHandler {
 		//then body
 		stats = cultivation.getStatsBySystem(CultivationLevel.System.BODY);
 		int fill = (int) Math.ceil((stats.getEnergy() * 106.0) / (cultivation.getMaxBodyEnergy()));
-		if(cultivation.getMaxBodyEnergy() == 0) fill = 0;
-		mc.ingameGUI.blit(stack, 4, 4 + 106-fill, 0, 106-fill, 64, fill);
+		if (cultivation.getMaxBodyEnergy() == 0) fill = 0;
+		mc.ingameGUI.blit(stack, 4, 4 + 106 - fill, 0, 106 - fill, 64, fill);
 		//the divine
 		stats = cultivation.getStatsBySystem(CultivationLevel.System.DIVINE);
 		fill = (int) Math.ceil((stats.getEnergy() * 106.0) / (cultivation.getMaxDivineEnergy()));
-		if(cultivation.getMaxDivineEnergy() == 0) fill = 0;
-		mc.ingameGUI.blit(stack, 118, 4 + 106-fill, 190, 106-fill, 66, fill);
+		if (cultivation.getMaxDivineEnergy() == 0) fill = 0;
+		mc.ingameGUI.blit(stack, 118, 4 + 106 - fill, 190, 106 - fill, 66, fill);
 
 		stack.pop();
 	}

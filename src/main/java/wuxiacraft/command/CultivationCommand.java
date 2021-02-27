@@ -54,7 +54,7 @@ public class CultivationCommand {
 				stats.getLevel().levelName, stats.getSubLevel() + 1, stats.getBase(), stats.getLevel().getProgressBySubLevel(stats.getSubLevel()),
 				(stats.getBase() * 100 / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
 				stats.getFoundation(), (stats.getFoundation() / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
-				stats.getEnergy(), cultivation.getBodyModifier()*10, (stats.getEnergy() * 10/ cultivation.getBodyModifier()))
+				stats.getEnergy(), cultivation.getMaxBodyEnergy(), (stats.getEnergy() * 100/ cultivation.getMaxBodyEnergy()))
 		);
 		//this one was tricky, like y not sendMessage()
 		ctx.getSource().sendFeedback(message, true);
@@ -64,7 +64,7 @@ public class CultivationCommand {
 				stats.getLevel().levelName, stats.getSubLevel() + 1, stats.getBase(), stats.getLevel().getProgressBySubLevel(stats.getSubLevel()),
 				(stats.getBase() * 100 / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
 				stats.getFoundation(), (stats.getFoundation() / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
-				stats.getEnergy(), cultivation.getDivineModifier()*10, (stats.getEnergy() * 10/ cultivation.getDivineModifier()))
+				stats.getEnergy(), cultivation.getMaxDivineEnergy(), (stats.getEnergy() * 100/ cultivation.getMaxDivineEnergy()))
 		);
 		ctx.getSource().sendFeedback(message, true);
 
@@ -73,7 +73,7 @@ public class CultivationCommand {
 				stats.getLevel().levelName, stats.getSubLevel() + 1, stats.getBase(), stats.getLevel().getProgressBySubLevel(stats.getSubLevel()),
 				(stats.getBase() * 100 / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
 				stats.getFoundation(), (stats.getFoundation() / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
-				stats.getEnergy(), cultivation.getEssenceModifier()*10, (stats.getEnergy() * 10/ cultivation.getEssenceModifier()))
+				stats.getEnergy(), cultivation.getMaxEssenceEnergy(), (stats.getEnergy() * 100/ cultivation.getMaxEssenceEnergy()))
 		);
 		ctx.getSource().sendFeedback(message, true);
 
