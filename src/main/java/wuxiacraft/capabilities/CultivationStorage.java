@@ -1,5 +1,7 @@
 package wuxiacraft.capabilities;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
@@ -8,11 +10,13 @@ import org.jetbrains.annotations.Nullable;
 import wuxiacraft.cultivation.CultivationLevel;
 import wuxiacraft.cultivation.ICultivation;
 import wuxiacraft.cultivation.KnownTechnique;
-import wuxiacraft.cultivation.SystemStats;
+import wuxiacraft.cultivation.skill.Skill;
 import wuxiacraft.cultivation.technique.Technique;
+import wuxiacraft.init.WuxiaSkills;
 import wuxiacraft.init.WuxiaTechniques;
 
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CultivationStorage implements Capability.IStorage<ICultivation> {
 
@@ -43,6 +47,15 @@ public class CultivationStorage implements Capability.IStorage<ICultivation> {
 			tag.putString("essenceTechName", knownTechnique.getTechnique().getName());
 			tag.putDouble("essenceProficiency", knownTechnique.getProficiency());
 		}
+
+		//skill values
+		List<Skill> skillsList = instance.getKnownSkills();
+		tag.putInt("skillsCount", skillsList.size());
+		for(Skill skill : skillsList) {
+			tag.putString("skill-" + skillsList.indexOf(skill), skill.name);
+		}
+		tag.putIntArray("selectedSkills", instance.getSelectedSkills());
+		tag.putDouble("skillCooldown", instance.getSkillCooldown());
 
 		//character's health
 		tag.putDouble("health", instance.getHP());
@@ -77,6 +90,20 @@ public class CultivationStorage implements Capability.IStorage<ICultivation> {
 			instance.setKnownTechnique(technique, tag.getDouble("essenceProficiency"));
 		}
 
+		int skillsCount = tag.getInt("skillsCount");
+		for(int i = 0; i < skillsCount; i++) {
+			Skill skill = WuxiaSkills.getSkillByName(tag.getString("skill-" + i));
+			if(skill != null) {
+				instance.addKnownSkill(skill);
+			}
+		}
+
+		//skill values
+		instance.getSelectedSkills().clear();
+		instance.getSelectedSkills().addAll(Arrays.stream(tag.getIntArray("selectedSkills")).boxed().collect(Collectors.toList()));
+		instance.setSkillCooldown(tag.getDouble("skillCooldown"));
+
+		//health
 		instance.setHP(tag.getDouble("health"));
 
 	}

@@ -10,15 +10,16 @@ import wuxiacraft.cultivation.technique.TechniqueModifiers;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Cultivation implements ICultivation {
 
 	/**
-	 * Gets the cultivation capability from an enetity
+	 * Gets the cultivation capability from an entity
 	 *
 	 * @param entity the target entity
-	 * @return the entity's cultivaiton
+	 * @return the entity's cultivation
 	 */
 	@Nonnull
 	public static ICultivation get(LivingEntity entity) {
@@ -63,7 +64,20 @@ public class Cultivation implements ICultivation {
 	 */
 	private double HP;
 
-	private final ArrayList<Skill> knownSkills;
+	/**
+	 * A List of the skills that are known
+	 */
+	private final List<Skill> knownSkills;
+
+	/**
+	 * This has to be int because it'll also select from techniques
+	 */
+	private final List<Integer> selectedSkills;
+
+	/**
+	 * the current skill cooldown
+	 */
+	private double skillCooldown;
 
 	//Helpers rather than stats
 
@@ -87,13 +101,20 @@ public class Cultivation implements ICultivation {
 		this.bodyTechnique = null;
 		this.divineTechnique = null;
 		this.essenceTechnique = null;
-		this.knownSkills = new ArrayList<>();
+		this.knownSkills = new LinkedList<>();
+		this.selectedSkills = new LinkedList<>();
+		this.skillCooldown = 0;
 		this.HP = 20;
 	}
 
 	@Override
 	public int getTickerTime() {
 		return TickerTime;
+	}
+
+	@Override
+	public void resetTickerTimer() {
+		this.TickerTime = 0;
 	}
 
 	@Override
@@ -104,17 +125,17 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public double getBodyModifier() {
-		return this.getStatsBySystem(CultivationLevel.System.BODY).getModifier();
+		return this.getStatsBySystem(CultivationLevel.System.BODY).getModifier() + this.getStatsBySystem(CultivationLevel.System.ESSENCE).getModifier() * 0.05;
 	}
 
 	@Override
 	public double getDivineModifier() {
-		return this.getStatsBySystem(CultivationLevel.System.DIVINE).getModifier();
+		return this.getStatsBySystem(CultivationLevel.System.DIVINE).getModifier() + this.getStatsBySystem(CultivationLevel.System.BODY).getModifier() * 0.05;
 	}
 
 	@Override
 	public double getEssenceModifier() {
-		return this.getStatsBySystem(CultivationLevel.System.ESSENCE).getModifier();
+		return this.getStatsBySystem(CultivationLevel.System.ESSENCE).getModifier() + this.getStatsBySystem(CultivationLevel.System.DIVINE).getModifier() * 0.05;
 	}
 
 	@Override
@@ -137,7 +158,7 @@ public class Cultivation implements ICultivation {
 				stats.setSubLevel(0);
 				// probably the current modifier growth rate is 1.2, this way there is a little loss on foundation
 				double modifierDifference = beforeModifier * 1.19 - stats.getModifier();
-				if (modifierDifference > 0) { //then correct the foundation there is actually at leas 19% increase in strength i hope
+				if (modifierDifference < 0) { //then correct the foundation there is actually at leas 19% increase in strength i hope
 					stats.setFoundation(stats.getFoundation() + stats.getLevel().getProgressBySubLevel(stats.getSubLevel()) * modifierDifference /
 							(0.6 * stats.getLevel().getModifierBySubLevel(stats.getSubLevel())));
 				}
@@ -251,6 +272,52 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
+	public List<Integer> getSelectedSkills() {
+		return selectedSkills;
+	}
+
+	@Override
+	public double getSkillCooldown() {
+		return skillCooldown;
+	}
+
+	@Override
+	public void setSkillCooldown(double skillCooldown) {
+		this.skillCooldown = skillCooldown;
+	}
+
+	@Override
+	public List<Skill> getAllKnownSkills() {
+		List<Skill> techniqueSkills = new LinkedList<>();
+		if (this.bodyTechnique != null)
+			techniqueSkills.addAll(this.bodyTechnique.getKnownSkills());
+		if (this.divineTechnique != null)
+			techniqueSkills.addAll(this.divineTechnique.getKnownSkills());
+		if (this.essenceTechnique != null)
+			techniqueSkills.addAll(this.essenceTechnique.getKnownSkills());
+		techniqueSkills.addAll(this.knownSkills);
+		return ImmutableList.copyOf(techniqueSkills);
+	}
+
+	@Override
+	public Skill getActiveSkill(int id) {
+		List<Skill> knownSkills = this.getAllKnownSkills();
+		if (id < knownSkills.size())
+			return knownSkills.get(id);
+		else return null;
+	}
+
+	@Override
+	public double getCastSpeed() {
+		return 1;
+	}
+
+	@Override
+	public void lowerCoolDown() {
+		this.skillCooldown = Math.max(0, this.skillCooldown - 1);
+	}
+
+	@Override
 	public void calculateFinalModifiers() {
 		this.finalModifiers = new TechniqueModifiers(
 				this.getBodyModifier() * 0.7 + this.getDivineModifier() * 0.1 + this.getEssenceModifier() * 0.7,
@@ -279,6 +346,11 @@ public class Cultivation implements ICultivation {
 		this.bodyTechnique = cultivation.getTechniqueBySystem(CultivationLevel.System.BODY);
 		this.divineTechnique = cultivation.getTechniqueBySystem(CultivationLevel.System.DIVINE);
 		this.essenceTechnique = cultivation.getTechniqueBySystem(CultivationLevel.System.ESSENCE);
+		this.knownSkills.clear();
+		this.knownSkills.addAll(cultivation.getAllKnownSkills());
+		this.selectedSkills.clear();
+		this.selectedSkills.addAll(cultivation.getSelectedSkills());
+		this.skillCooldown = cultivation.getSkillCooldown();
 		this.HP = cultivation.getHP();
 	}
 }

@@ -1,6 +1,8 @@
 package wuxiacraft.command;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.CommandSource;
@@ -19,7 +21,7 @@ public class CultivationCommand {
 		dispatcher.register(Commands.literal("cult").requires(commandSource -> commandSource.hasPermissionLevel(2))
 				.then(Commands.literal("get").then(
 						Commands.argument("target", EntityArgument.player())
-						.executes(CultivationCommand::getCultivationFromPlayer))
+								.executes(CultivationCommand::getCultivationFromPlayer))
 				)
 				.then(Commands.literal("reset").then(
 						Commands.argument("target", EntityArgument.player())
@@ -27,11 +29,17 @@ public class CultivationCommand {
 										.executes(CultivationCommand::resetCultivationToPlayer)))
 
 				))
+				.then(Commands.literal("set").then(
+						Commands.argument("target", EntityArgument.player()).then(Commands.argument("system", StringArgumentType.word())
+						.then(Commands.argument("level", StringArgumentType.word()).then(Commands.argument("rank", IntegerArgumentType.integer(0, 8))
+								.executes(CultivationCommand::setCultivationLevel))))
+				))
 		);
 	}
 
 	/**
 	 * Sends a probably detailed information to the requester about a certain person
+	 *
 	 * @param ctx everything about the command
 	 * @return idk yet
 	 * @throws CommandSyntaxException it's better to let it into the signature, since probably commands api may handle it better
@@ -42,35 +50,59 @@ public class CultivationCommand {
 		ICultivation cultivation = Cultivation.get(target);
 
 		SystemStats stats = cultivation.getStatsBySystem(CultivationLevel.System.BODY);
-		StringTextComponent message = new StringTextComponent(String.format("Body Level: %s\nRank: %d\nCultivation Base: %.1f/ %.1f (%.2f%%)\nFoundation: %.1f (%.3f)",
+		StringTextComponent message = new StringTextComponent(String.format("Body Level: %s\nRank: %d\nCultivation Base: %.1f/ %.1f (%.2f%%)\nFoundation: %.1f (%.3f)\nEnergy: %.1f %.1f (%.0f%%)",
 				stats.getLevel().levelName, stats.getSubLevel() + 1, stats.getBase(), stats.getLevel().getProgressBySubLevel(stats.getSubLevel()),
-				(stats.getBase()*100/ stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
-				stats.getFoundation(), (stats.getFoundation()/stats.getLevel().getProgressBySubLevel(stats.getSubLevel())))
-				);
+				(stats.getBase() * 100 / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
+				stats.getFoundation(), (stats.getFoundation() / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
+				stats.getEnergy(), cultivation.getBodyModifier()*10, (stats.getEnergy() * 10/ cultivation.getBodyModifier()))
+		);
 		//this one was tricky, like y not sendMessage()
 		ctx.getSource().sendFeedback(message, true);
 
 		stats = cultivation.getStatsBySystem(CultivationLevel.System.DIVINE);
-		message = new StringTextComponent(String.format("Divine Level: %s\nRank: %d\nCultivation Base: %.1f/ %.1f (%.2f%%)\nFoundation: %.1f (%.3f)",
+		message = new StringTextComponent(String.format("Divine Level: %s\nRank: %d\nCultivation Base: %.1f/ %.1f (%.2f%%)\nFoundation: %.1f (%.3f)\nEnergy: %.1f %.1f (%.0f%%)",
 				stats.getLevel().levelName, stats.getSubLevel() + 1, stats.getBase(), stats.getLevel().getProgressBySubLevel(stats.getSubLevel()),
-				(stats.getBase()*100/ stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
-				stats.getFoundation(), (stats.getFoundation()/stats.getLevel().getProgressBySubLevel(stats.getSubLevel())))
+				(stats.getBase() * 100 / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
+				stats.getFoundation(), (stats.getFoundation() / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
+				stats.getEnergy(), cultivation.getDivineModifier()*10, (stats.getEnergy() * 10/ cultivation.getDivineModifier()))
 		);
 		ctx.getSource().sendFeedback(message, true);
 
 		stats = cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE);
-		message = new StringTextComponent(String.format("Essence Level: %s\nRank: %d\nCultivation Base: %.1f/ %.1f (%.2f%%)\nFoundation: %.1f (%.3f)",
+		message = new StringTextComponent(String.format("Essence Level: %s\nRank: %d\nCultivation Base: %.1f/ %.1f (%.2f%%)\nFoundation: %.1f (%.3f)\nEnergy: %.1f %.1f (%.0f%%)",
 				stats.getLevel().levelName, stats.getSubLevel() + 1, stats.getBase(), stats.getLevel().getProgressBySubLevel(stats.getSubLevel()),
-				(stats.getBase()*100/ stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
-				stats.getFoundation(), (stats.getFoundation()/stats.getLevel().getProgressBySubLevel(stats.getSubLevel())))
+				(stats.getBase() * 100 / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
+				stats.getFoundation(), (stats.getFoundation() / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
+				stats.getEnergy(), cultivation.getEssenceModifier()*10, (stats.getEnergy() * 10/ cultivation.getEssenceModifier()))
 		);
 		ctx.getSource().sendFeedback(message, true);
 
 		return 1;
 	}
 
-	private static int resetCultivationToPlayer(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
+	private static int setCultivationLevel(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
+		ServerPlayerEntity target = EntityArgument.getPlayer(ctx, "target");
+		String systemName = StringArgumentType.getString(ctx, "system");
+		String levelName = StringArgumentType.getString(ctx, "level");
+		int rank = IntegerArgumentType.getInteger(ctx, "rank");
 
+		ICultivation cultivation = Cultivation.get(target);
+		CultivationLevel.System system = CultivationLevel.System.BODY;
+		if(systemName.equalsIgnoreCase("divine")) system = CultivationLevel.System.DIVINE;
+		else if(systemName.equalsIgnoreCase("essence")) system = CultivationLevel.System.ESSENCE;
+
+		CultivationLevel level = CultivationLevel.getLevelBySystem(system, levelName);
+
+		cultivation.getStatsBySystem(system).setLevel(level);
+		cultivation.getStatsBySystem(system).setSubLevel(rank);
+
+		target.sendMessage(new StringTextComponent("Your cultivation level has been set"), Util.DUMMY_UUID);
+		ctx.getSource().sendFeedback(new StringTextComponent("Cultivation level was set successfully!"), true);
+
+		return 1;
+	}
+
+	private static int resetCultivationToPlayer(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
 		ServerPlayerEntity target = EntityArgument.getPlayer(ctx, "target");
 		ICultivation cultivation = Cultivation.get(target);
 

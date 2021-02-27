@@ -64,7 +64,8 @@ public class CombatHandler {
 
 		// this is for vanilla statistics i guess!
 		event.getEntityLiving().getCombatTracker().trackDamage(event.getSource(), (float)cultivation.getHP()+event.getAmount(), event.getAmount());
-		((PlayerEntity)event.getEntityLiving()).addStat(Stats.DAMAGE_TAKEN);
+		((PlayerEntity)event.getEntityLiving()).addStat(Stats.DAMAGE_TAKEN, (int)event.getAmount());
+		((PlayerEntity) event.getEntityLiving()).addExhaustion(event.getAmount());
 		//
 		if(cultivation.getHP() <= 0) {
 			event.getEntityLiving().setHealth(-1); //it really kills a player

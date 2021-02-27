@@ -54,5 +54,21 @@ public interface ICultivation {
 	void resetKnownSkills();
 
 
+	List<Integer> getSelectedSkills();
+
+	double getSkillCooldown();
+
+	void setSkillCooldown(double skillCooldown);
+
+	List<Skill> getAllKnownSkills();
+
+	Skill getActiveSkill(int id);
+
 	void calculateFinalModifiers();
+
+	void resetTickerTimer();
+
+	double getCastSpeed();
+
+	void lowerCoolDown();
 }

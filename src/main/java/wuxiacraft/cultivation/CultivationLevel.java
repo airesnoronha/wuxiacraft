@@ -189,7 +189,7 @@ public class CultivationLevel {
 	@Nonnull
 	public static CultivationLevel getLevelInListByName(LinkedList<CultivationLevel> listToSearch, String levelName) {
 		for (CultivationLevel level : listToSearch) {
-			if (level.levelName.equals(levelName)) return level;
+			if (level.levelName.equalsIgnoreCase(levelName)) return level;
 		}
 		return listToSearch.get(0); // if not find get the first level
 	}

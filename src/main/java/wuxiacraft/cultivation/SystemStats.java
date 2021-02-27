@@ -110,6 +110,10 @@ public class SystemStats {
 				(0.4 + Math.min(21, (this.getFoundation() / this.getLevel().getProgressBySubLevel(this.getSubLevel()))) * 0.6));
 	}
 
+	// foundation/cultivation base = 3
+	//peerless foundation = modifier = 20 * (0.4 + 0.6 * 21) = 260
+	//weak foundation =  modifier = 20 * (0.4 + 0.6 * 1.2) = 22.4
+
 	/**
 	 * This will copy stats from another stats instance
 	 * @param stats the instance to be copied from
