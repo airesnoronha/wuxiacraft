@@ -37,6 +37,12 @@ public interface ICultivation {
 
 	TechniqueModifiers getFinalModifiers();
 
+	double getMaxBodyEnergy();
+
+	double getMaxDivineEnergy();
+
+	double getMaxEssenceEnergy();
+
 	void copyFrom(ICultivation cultivation);
 
 	double getEssenceModifier();

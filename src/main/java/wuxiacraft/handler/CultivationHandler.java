@@ -71,9 +71,9 @@ public class CultivationHandler {
 		cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).setEnergy(Math.min(10 * cultivation.getEssenceModifier(), cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getEnergy()));
 
 		if (cultivation.getHP() < cultivation.getFinalModifiers().maxHealth) {
-			double healing_cost = 10; //every 1 hp costs 10 body energy // max 0.05 max energy per tick
+			double healing_cost = 10; //every 1 hp costs 10 body energy // max 0.25% per tick
 			SystemStats bodyStats = cultivation.getStatsBySystem(CultivationLevel.System.BODY);
-			double energy_used = cultivation.getBodyModifier() * 0.025;
+			double energy_used = cultivation.getMaxBodyEnergy() * 0.0025;
 			if (bodyStats.getEnergy() >= energy_used) {
 				double amount_healed = energy_used / healing_cost;
 				cultivation.setHP(Math.min(cultivation.getFinalModifiers().maxHealth, cultivation.getHP()+amount_healed));

@@ -92,6 +92,13 @@ public class Cultivation implements ICultivation {
 	private TechniqueModifiers finalModifiers = new TechniqueModifiers(0, 0, 20, 0, 0);
 
 	/**
+	 * max energy for each system, calculated every tick
+	 */
+	private double maxBodyEnergy;
+	private double maxDivineEnergy;
+	private double maxEssenceEnergy;
+
+	/**
 	 * This is the base for the cultivation, here will hold most of the information from cultivation
 	 */
 	public Cultivation() {
@@ -325,6 +332,9 @@ public class Cultivation implements ICultivation {
 				20 + this.getBodyModifier() + this.getDivineModifier() * 0.4 + this.getEssenceModifier() * 0.1,
 				this.getBodyModifier() * 0.2 + this.getDivineModifier() * 0.1 + this.getEssenceModifier() * 0.4,
 				this.getBodyModifier() * 0.8 + this.getDivineModifier() * 0.6 + this.getEssenceModifier() * 0.14);
+		this.maxBodyEnergy = this.getBodyModifier() * 10;
+		this.maxDivineEnergy = this.getDivineModifier() * 10;
+		this.maxEssenceEnergy = this.getEssenceModifier() * 10;
 		if (this.bodyTechnique != null)
 			this.finalModifiers = this.finalModifiers.add(this.bodyTechnique.getModifiers());
 		if (this.divineTechnique != null)
@@ -336,6 +346,21 @@ public class Cultivation implements ICultivation {
 	@Override
 	public TechniqueModifiers getFinalModifiers() {
 		return this.finalModifiers;
+	}
+
+	@Override
+	public double getMaxBodyEnergy() {
+		return maxBodyEnergy;
+	}
+
+	@Override
+	public double getMaxDivineEnergy() {
+		return maxDivineEnergy;
+	}
+
+	@Override
+	public double getMaxEssenceEnergy() {
+		return maxEssenceEnergy;
 	}
 
 	@Override
