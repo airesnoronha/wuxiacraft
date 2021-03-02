@@ -7,6 +7,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import wuxiacraft.cultivation.CultivationLevel;
 import wuxiacraft.cultivation.Element;
 import wuxiacraft.cultivation.skill.Skill;
+import wuxiacraft.init.WuxiaTechniques;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -48,6 +49,32 @@ public class Technique {
 		this.effects = new LinkedList<>();
 		this.checkpoints = new LinkedList<>();
 		this.compatibles = new LinkedList<>();
+		WuxiaTechniques.TECHNIQUES.add(this);
+	}
+
+	public Technique addElement(Element element) {
+		this.elements.add(element);
+		return this;
+	}
+
+	public Technique addSkill(double proficiencyRequired, Skill skill) {
+		this.skills.add(Pair.of(proficiencyRequired, skill));
+		return this;
+	}
+
+	public Technique addEffect(double proficiencyRequired, Effect effect) {
+		this.effects.add(Pair.of(proficiencyRequired, effect));
+		return this;
+	}
+
+	public Technique addCheckpoint(double proficiencyRequired, float releaseFactor, String name) {
+		this.checkpoints.add(Triple.of(proficiencyRequired, releaseFactor, name));
+		return this;
+	}
+
+	public Technique addCompatible(Technique compatible) {
+		this.compatibles.add(compatible);
+		return this;
 	}
 
 	public CultivationLevel.System getSystem() {

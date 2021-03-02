@@ -2,9 +2,12 @@ package wuxiacraft;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.command.CommandSource;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -15,15 +18,18 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.NetworkRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wuxiacraft.capabilities.CultivationFactory;
 import wuxiacraft.capabilities.CultivationStorage;
+import wuxiacraft.client.gui.MeditateScreen;
 import wuxiacraft.client.handler.ClientSideHandler;
 import wuxiacraft.client.handler.InputHandler;
 import wuxiacraft.client.handler.RenderHudHandler;
 import wuxiacraft.command.CultivationCommand;
 import wuxiacraft.command.SkillCommand;
+import wuxiacraft.container.MeditationContainer;
 import wuxiacraft.cultivation.CultivationLevel;
 import wuxiacraft.cultivation.ICultivation;
 import wuxiacraft.init.WuxiaElements;
@@ -72,6 +78,9 @@ public class WuxiaCraft {
 		MinecraftForge.EVENT_BUS.register(new ClientSideHandler());
 		MinecraftForge.EVENT_BUS.register(new InputHandler());
 		InputHandler.registerKeyBindings();
+
+		//noinspection unchecked
+		ScreenManager.registerFactory(MeditationContainer.registryType, MeditateScreen::new);
 	}
 
 	private void enqueueIMC(final InterModEnqueueEvent event) {
@@ -107,6 +116,13 @@ public class WuxiaCraft {
 		public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
 			// register a new block here
 			LOGGER.info("HELLO from Register Block");
+		}
+
+		@SubscribeEvent
+		public static void onContainerRegistry(final RegistryEvent.Register<ContainerType<?>> event) {
+			MeditationContainer.registryType = IForgeContainerType.create(MeditationContainer::createContainer);
+			MeditationContainer.registryType.setRegistryName("meditation_container");
+			event.getRegistry().register(MeditationContainer.registryType);
 		}
 	}
 }

@@ -1,7 +1,6 @@
 package wuxiacraft.init;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
@@ -30,7 +29,7 @@ public class WuxiaSkills {
 			.setAction(actor -> {
 				if (actor.world.isRemote) {
 					RayTraceResult result = Minecraft.getInstance().objectMouseOver;
-					if (result.getType() == RayTraceResult.Type.ENTITY) {
+					if (result != null && result.getType() == RayTraceResult.Type.ENTITY) {
 						LivingEntity target = (LivingEntity) ((EntityRayTraceResult) result).getEntity();
 						WuxiaPacketHandler.INSTANCE.sendToServer(new ActivateActionMessage("thunder_fist_crash_server", WuxiaSkills.THUNDER_FIST_CRASH.energyCost, target.getUniqueID()));
 						actor.swingArm(Hand.MAIN_HAND);

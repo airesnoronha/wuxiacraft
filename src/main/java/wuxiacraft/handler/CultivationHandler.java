@@ -58,20 +58,24 @@ public class CultivationHandler {
 		if (cultivation.getSkillCooldown() > 0)
 			cultivation.lowerCoolDown();
 
-		if (player.getFoodStats().getFoodLevel() > 18 && cultivation.getStatsBySystem(CultivationLevel.System.BODY).getEnergy() < cultivation.getMaxBodyEnergy()) {
+		if (player.getFoodStats().getFoodLevel() > 18 && cultivation.getStatsBySystem(CultivationLevel.System.BODY).getEnergy() < cultivation.getMaxBodyEnergy()/2) {
 			cultivation.getStatsBySystem(CultivationLevel.System.BODY).addEnergy(cultivation.getBodyEnergyRegen() * cultivation.getMaxBodyEnergy());
-			cultivation.getStatsBySystem(CultivationLevel.System.BODY).setEnergy(Math.min(cultivation.getMaxBodyEnergy(), cultivation.getStatsBySystem(CultivationLevel.System.BODY).getEnergy()));
+			//it ok because it's just regen, so it won't halve if it's past middle point
+			cultivation.getStatsBySystem(CultivationLevel.System.BODY).setEnergy(Math.min(cultivation.getMaxBodyEnergy()/2, cultivation.getStatsBySystem(CultivationLevel.System.BODY).getEnergy()));
 			player.addExhaustion((float)(cultivation.getEssenceEnergyRegen() * cultivation.getMaxDivineEnergy() * 100));
+		} else { //if above middle point set try to set max to protect from overflow
+			cultivation.getStatsBySystem(CultivationLevel.System.BODY).setEnergy(Math.min(cultivation.getMaxBodyEnergy(), cultivation.getStatsBySystem(CultivationLevel.System.BODY).getEnergy()));
 		}
 		cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).addEnergy(cultivation.getDivineEnergyRegen() * cultivation.getMaxDivineEnergy());
 		cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).setEnergy(Math.min(cultivation.getMaxDivineEnergy(), cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).getEnergy()));
 		cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).addEnergy(cultivation.getEssenceEnergyRegen() * cultivation.getMaxEssenceEnergy());
 		cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).setEnergy(Math.min(cultivation.getMaxEssenceEnergy(), cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getEnergy()));
 
+		//auto healing
 		if (cultivation.getHP() < cultivation.getFinalModifiers().maxHealth) {
 			SystemStats bodyStats = cultivation.getStatsBySystem(CultivationLevel.System.BODY);
 			double energy_used = cultivation.getMaxBodyEnergy() * cultivation.getHealingAmount();
-			if (bodyStats.getEnergy() >= energy_used) {
+			if ( bodyStats.getEnergy() + energy_used >= energy_used + cultivation.getMaxBodyEnergy() * 0.1) { // won't heal when blood energy is less than 10%
 				double amount_healed = energy_used / cultivation.getHealingCost();
 				cultivation.setHP(Math.min(cultivation.getFinalModifiers().maxHealth, cultivation.getHP() + amount_healed));
 				bodyStats.addEnergy(-energy_used);
