@@ -107,7 +107,7 @@ public class SystemStats {
 	 */
 	public double getModifier() {
 		return Math.max(0, this.getLevel().getModifierBySubLevel(this.getSubLevel()) *
-				(0.4 + Math.min(21, (this.getFoundation() / this.getLevel().getProgressBySubLevel(this.getSubLevel()))) * 0.6));
+				(0.4 + Math.min(21, (this.getFoundation() / this.getLevel().getBaseBySubLevel(this.getSubLevel()))) * 0.6));
 	}
 
 	// foundation/cultivation base = 3

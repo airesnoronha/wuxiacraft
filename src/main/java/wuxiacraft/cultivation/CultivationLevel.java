@@ -123,7 +123,7 @@ public class CultivationLevel {
 	 * @param subLevel the sub level currently in
 	 * @return the amount of progress
 	 */
-	public double getProgressBySubLevel(int subLevel) {
+	public double getBaseBySubLevel(int subLevel) {
 		if (MathUtils.between(subLevel, 0, this.subLevels - 1)) {
 			return this.baseProgress * (Math.pow(1.4, subLevel));
 		}

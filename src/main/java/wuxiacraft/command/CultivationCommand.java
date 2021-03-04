@@ -58,9 +58,9 @@ public class CultivationCommand {
 
 		SystemStats stats = cultivation.getStatsBySystem(CultivationLevel.System.BODY);
 		StringTextComponent message = new StringTextComponent(String.format("Body Level: %s\nRank: %d\nCultivation Base: %.1f/ %.1f (%.2f%%)\nFoundation: %.1f (%.3f)\nEnergy: %.1f %.1f (%.0f%%)",
-				stats.getLevel().levelName, stats.getSubLevel() + 1, stats.getBase(), stats.getLevel().getProgressBySubLevel(stats.getSubLevel()),
-				(stats.getBase() * 100 / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
-				stats.getFoundation(), (stats.getFoundation() / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
+				stats.getLevel().levelName, stats.getSubLevel() + 1, stats.getBase(), stats.getLevel().getBaseBySubLevel(stats.getSubLevel()),
+				(stats.getBase() * 100 / stats.getLevel().getBaseBySubLevel(stats.getSubLevel())),
+				stats.getFoundation(), (stats.getFoundation() / stats.getLevel().getBaseBySubLevel(stats.getSubLevel())),
 				stats.getEnergy(), cultivation.getMaxBodyEnergy(), (stats.getEnergy() * 100 / cultivation.getMaxBodyEnergy()))
 		);
 		//this one was tricky, like y not sendMessage()
@@ -68,18 +68,18 @@ public class CultivationCommand {
 
 		stats = cultivation.getStatsBySystem(CultivationLevel.System.DIVINE);
 		message = new StringTextComponent(String.format("Divine Level: %s\nRank: %d\nCultivation Base: %.1f/ %.1f (%.2f%%)\nFoundation: %.1f (%.3f)\nEnergy: %.1f %.1f (%.0f%%)",
-				stats.getLevel().levelName, stats.getSubLevel() + 1, stats.getBase(), stats.getLevel().getProgressBySubLevel(stats.getSubLevel()),
-				(stats.getBase() * 100 / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
-				stats.getFoundation(), (stats.getFoundation() / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
+				stats.getLevel().levelName, stats.getSubLevel() + 1, stats.getBase(), stats.getLevel().getBaseBySubLevel(stats.getSubLevel()),
+				(stats.getBase() * 100 / stats.getLevel().getBaseBySubLevel(stats.getSubLevel())),
+				stats.getFoundation(), (stats.getFoundation() / stats.getLevel().getBaseBySubLevel(stats.getSubLevel())),
 				stats.getEnergy(), cultivation.getMaxDivineEnergy(), (stats.getEnergy() * 100 / cultivation.getMaxDivineEnergy()))
 		);
 		ctx.getSource().sendFeedback(message, true);
 
 		stats = cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE);
 		message = new StringTextComponent(String.format("Essence Level: %s\nRank: %d\nCultivation Base: %.1f/ %.1f (%.2f%%)\nFoundation: %.1f (%.3f)\nEnergy: %.1f %.1f (%.0f%%)",
-				stats.getLevel().levelName, stats.getSubLevel() + 1, stats.getBase(), stats.getLevel().getProgressBySubLevel(stats.getSubLevel()),
-				(stats.getBase() * 100 / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
-				stats.getFoundation(), (stats.getFoundation() / stats.getLevel().getProgressBySubLevel(stats.getSubLevel())),
+				stats.getLevel().levelName, stats.getSubLevel() + 1, stats.getBase(), stats.getLevel().getBaseBySubLevel(stats.getSubLevel()),
+				(stats.getBase() * 100 / stats.getLevel().getBaseBySubLevel(stats.getSubLevel())),
+				stats.getFoundation(), (stats.getFoundation() / stats.getLevel().getBaseBySubLevel(stats.getSubLevel())),
 				stats.getEnergy(), cultivation.getMaxEssenceEnergy(), (stats.getEnergy() * 100 / cultivation.getMaxEssenceEnergy()))
 		);
 		ctx.getSource().sendFeedback(message, true);
@@ -103,6 +103,7 @@ public class CultivationCommand {
 		cultivation.getStatsBySystem(system).setLevel(level);
 		cultivation.getStatsBySystem(system).setSubLevel(rank);
 
+		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), new CultivationSyncMessage(cultivation));
 		target.sendMessage(new StringTextComponent("Your cultivation level has been set"), Util.DUMMY_UUID);
 		ctx.getSource().sendFeedback(new StringTextComponent("Cultivation level was set successfully!"), true);
 
@@ -115,6 +116,7 @@ public class CultivationCommand {
 
 		cultivation.copyFrom(new Cultivation());
 
+		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), new CultivationSyncMessage(cultivation));
 		target.sendMessage(new StringTextComponent("Your cultivation has been reset!"), Util.DUMMY_UUID);
 		ctx.getSource().sendFeedback(new StringTextComponent("Target player cultivation has been reset!"), true);
 		return 1;

@@ -155,11 +155,11 @@ public class Cultivation implements ICultivation {
 	public void advanceRank(CultivationLevel.System system) {
 		SystemStats stats = getStatsBySystem(system);
 		if (this.essenceStats.getLevel() == CultivationLevel.DEFAULT_ESSENCE_LEVEL) { //start cultivation
-			double beforeFoundationOverBase = this.essenceStats.getFoundation() / this.essenceStats.getLevel().getProgressBySubLevel(this.essenceStats.getSubLevel());
+			double beforeFoundationOverBase = this.essenceStats.getFoundation() / this.essenceStats.getLevel().getBaseBySubLevel(this.essenceStats.getSubLevel());
 			this.bodyStats.setLevel(this.bodyStats.getLevel().nextLevel(CultivationLevel.BODY_LEVELS));
 			this.divineStats.setLevel(this.bodyStats.getLevel().nextLevel(CultivationLevel.DIVINE_LEVELS));
 			this.essenceStats.setLevel(this.bodyStats.getLevel().nextLevel(CultivationLevel.ESSENCE_LEVELS));
-			this.essenceStats.setFoundation(this.essenceStats.getLevel().getProgressBySubLevel(0) * beforeFoundationOverBase);
+			this.essenceStats.setFoundation(this.essenceStats.getLevel().getBaseBySubLevel(0) * beforeFoundationOverBase);
 			this.bodyStats.setFoundation(this.essenceStats.getFoundation());
 			this.divineStats.setFoundation(this.essenceStats.getFoundation());
 		} else { //rise sub level
@@ -172,7 +172,7 @@ public class Cultivation implements ICultivation {
 				// probably the current modifier growth rate is 1.2, this way there is a little loss on foundation
 				double modifierDifference = beforeModifier * 1.19 - stats.getModifier();
 				if (modifierDifference < 0) { //then correct the foundation there is actually at leas 19% increase in strength i hope
-					stats.setFoundation(stats.getFoundation() + stats.getLevel().getProgressBySubLevel(stats.getSubLevel()) * modifierDifference /
+					stats.setFoundation(stats.getFoundation() + stats.getLevel().getBaseBySubLevel(stats.getSubLevel()) * modifierDifference /
 							(0.6 * stats.getLevel().getModifierBySubLevel(stats.getSubLevel())));
 				}
 			}
