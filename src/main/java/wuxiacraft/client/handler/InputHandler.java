@@ -1,5 +1,6 @@
 package wuxiacraft.client.handler;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
@@ -7,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -15,9 +17,13 @@ import wuxiacraft.client.SkillValues;
 import wuxiacraft.cultivation.Cultivation;
 import wuxiacraft.cultivation.CultivationLevel;
 import wuxiacraft.cultivation.ICultivation;
+import wuxiacraft.cultivation.KnownTechnique;
+import wuxiacraft.cultivation.technique.BodyTechnique;
 import wuxiacraft.network.ExerciseMessage;
-import wuxiacraft.network.OpenMeditationScreenMessage;
+import wuxiacraft.network.OpenScreenMessage;
 import wuxiacraft.network.WuxiaPacketHandler;
+
+import java.util.List;
 
 public class InputHandler {
 
@@ -30,8 +36,6 @@ public class InputHandler {
 	public static final int KEY_SKILLS = 6;
 
 	public static KeyBinding[] keyBindings;
-
-	public static boolean isExercising = false;
 
 	public static void registerKeyBindings() {
 		keyBindings = new KeyBinding[7];
@@ -49,33 +53,44 @@ public class InputHandler {
 
 	@SubscribeEvent
 	public void onHandleKeyInputs(InputEvent.KeyInputEvent event) {
-		SkillValues.isCastingSkill = keyBindings[KEY_CAST_SKILL].isKeyDown();
-		if (keyBindings[KEY_SKILL_SELECT_UP].isPressed()) {
-			if (Minecraft.getInstance().player != null) {
-				ICultivation cultivation = Cultivation.get(Minecraft.getInstance().player);
+		if (Minecraft.getInstance().player != null) {
+			ICultivation cultivation = Cultivation.get(Minecraft.getInstance().player);
+			if (keyBindings[KEY_SKILL_SELECT_UP].isPressed()) {
 				SkillValues.activeSkill = Math.min(cultivation.getAllKnownSkills().size() - 1, SkillValues.activeSkill + 1);
 			}
-		}
-		if (keyBindings[KEY_SKILL_SELECT_DOWN].isPressed()) {
-			SkillValues.activeSkill = Math.max(0, SkillValues.activeSkill - 1);
-		}
-		if (keyBindings[KEY_MEDITATE].isPressed()) {
-			WuxiaPacketHandler.INSTANCE.sendToServer(new OpenMeditationScreenMessage());
+			if (keyBindings[KEY_SKILL_SELECT_DOWN].isPressed()) {
+				SkillValues.activeSkill = Math.max(0, SkillValues.activeSkill - 1);
+			}
+			boolean shouldMeditate = cultivation.getTechniqueBySystem(CultivationLevel.System.ESSENCE) != null;
+			if (keyBindings[KEY_MEDITATE].isPressed() && shouldMeditate) {
+				WuxiaPacketHandler.INSTANCE.sendToServer(new OpenScreenMessage());
+			}
 		}
 	}
 
 	public static double accumulatedEnergyToSend = 0;
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST) //high priority to roll before skill handling
 	public void onHandlePressedKeys(TickEvent.PlayerTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
+		if (event.phase != TickEvent.Phase.START) return;
 		if (event.side == LogicalSide.SERVER) return;
+		SkillValues.isCastingSkill = keyBindings[KEY_CAST_SKILL].isKeyDown();
 		PlayerEntity player = event.player;
 		ICultivation cultivation = Cultivation.get(player);
-		if (keyBindings[KEY_EXERCISE].isKeyDown()) {
+		KnownTechnique bodyKT = cultivation.getTechniqueBySystem(CultivationLevel.System.BODY);
+		if (keyBindings[KEY_EXERCISE].isKeyDown() && bodyKT != null) {
+			List<InputMappings.Input> movementInputs = ImmutableList.of(
+					InputMappings.getInputByCode(Minecraft.getInstance().gameSettings.keyBindForward.getKey().getKeyCode(), 0),
+					InputMappings.getInputByCode(Minecraft.getInstance().gameSettings.keyBindBack.getKey().getKeyCode(), 0),
+					InputMappings.getInputByCode(Minecraft.getInstance().gameSettings.keyBindLeft.getKey().getKeyCode(), 0),
+					InputMappings.getInputByCode(Minecraft.getInstance().gameSettings.keyBindRight.getKey().getKeyCode(), 0));
+			for (InputMappings.Input input : movementInputs) {
+				KeyBinding.setKeyBindState(input, false);
+			}
 			double energy = cultivation.getMaxBodyEnergy() * 0.002;
 			accumulatedEnergyToSend += energy;
-			double energy_conversion = 1;
+			BodyTechnique bodyTech = (BodyTechnique) bodyKT.getTechnique();
+			double energy_conversion = 1 + (bodyTech.getConversionRate() * bodyKT.getReleaseFactor());
 			cultivation.getStatsBySystem(CultivationLevel.System.BODY).addEnergy(-energy);
 			cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).addEnergy(energy * energy_conversion);
 		}

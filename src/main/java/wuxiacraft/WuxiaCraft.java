@@ -3,8 +3,14 @@ package wuxiacraft;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.command.CommandSource;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.extensions.IForgeContainerType;
@@ -18,21 +24,25 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.network.NetworkRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wuxiacraft.capabilities.CultivationFactory;
 import wuxiacraft.capabilities.CultivationStorage;
+import wuxiacraft.client.gui.IntrospectionScreen;
 import wuxiacraft.client.gui.MeditateScreen;
 import wuxiacraft.client.handler.ClientSideHandler;
 import wuxiacraft.client.handler.InputHandler;
 import wuxiacraft.client.handler.RenderHudHandler;
 import wuxiacraft.command.CultivationCommand;
 import wuxiacraft.command.SkillCommand;
+import wuxiacraft.container.IntrospectionContainer;
 import wuxiacraft.container.MeditationContainer;
 import wuxiacraft.cultivation.CultivationLevel;
 import wuxiacraft.cultivation.ICultivation;
+import wuxiacraft.cultivation.technique.Technique;
 import wuxiacraft.init.WuxiaElements;
+import wuxiacraft.init.WuxiaItems;
+import wuxiacraft.init.WuxiaTechniques;
 import wuxiacraft.network.WuxiaPacketHandler;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -56,10 +66,12 @@ public class WuxiaCraft {
 
 		// Register ourselves for server and other game events we are interested in
 		MinecraftForge.EVENT_BUS.register(this);
+
+		WuxiaItems.register();
 	}
 
 	private void setup(final FMLCommonSetupEvent event) {
-		// some preinit code
+		// some pre init code
 		LOGGER.info("Wuxiacraft init");
 		CultivationLevel.initializeLevels();
 		WuxiaElements.initalize();
@@ -79,8 +91,8 @@ public class WuxiaCraft {
 		MinecraftForge.EVENT_BUS.register(new InputHandler());
 		InputHandler.registerKeyBindings();
 
-		//noinspection unchecked
 		ScreenManager.registerFactory(MeditationContainer.registryType, MeditateScreen::new);
+		ScreenManager.registerFactory(IntrospectionContainer.registryType, IntrospectionScreen::new);
 	}
 
 	private void enqueueIMC(final InterModEnqueueEvent event) {
@@ -122,7 +134,23 @@ public class WuxiaCraft {
 		public static void onContainerRegistry(final RegistryEvent.Register<ContainerType<?>> event) {
 			MeditationContainer.registryType = IForgeContainerType.create(MeditationContainer::createContainer);
 			MeditationContainer.registryType.setRegistryName("meditation_container");
+			IntrospectionContainer.registryType = IForgeContainerType.create(IntrospectionContainer::create);
+			IntrospectionContainer.registryType.setRegistryName("introspection_container");
 			event.getRegistry().register(MeditationContainer.registryType);
+			event.getRegistry().register(IntrospectionContainer.registryType);
+		}
+
+		@SubscribeEvent
+		public static void onRegisterModel(ModelRegistryEvent event) {
+			ModelLoader.addSpecialModel(new ResourceLocation(WuxiaCraft.MOD_ID, "item/scroll"));
+		}
+
+		@SubscribeEvent
+		public static void onBakeModels(ModelBakeEvent event) {
+			IBakedModel model = event.getModelRegistry().get(new ResourceLocation(WuxiaCraft.MOD_ID, "item/scroll"));
+			for (Technique tech : WuxiaTechniques.TECHNIQUES) {
+				event.getModelRegistry().put(new ModelResourceLocation(new ResourceLocation(WuxiaCraft.MOD_ID, tech.getName() + "_item"), "inventory"), model);
+			}
 		}
 	}
 }

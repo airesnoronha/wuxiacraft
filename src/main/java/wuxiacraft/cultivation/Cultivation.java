@@ -88,7 +88,7 @@ public class Cultivation implements ICultivation {
 	/**
 	 * This will record all the modifiers from a player throughout a tick, so that every tick it's only calculated once
 	 */
-	private TechniqueModifiers finalModifiers = new TechniqueModifiers(0, 0, 20, 0, 0);
+	private TechniqueModifiers finalModifiers = new TechniqueModifiers(0, 20, 0, 0);
 
 	/**
 	 * max energy for each system, calculated every tick
@@ -336,7 +336,6 @@ public class Cultivation implements ICultivation {
 	@Override
 	public void calculateFinalModifiers() {
 		this.finalModifiers = new TechniqueModifiers(
-				this.getBodyModifier() * 0.7 + this.getDivineModifier() * 0.1 + this.getEssenceModifier() * 0.7,
 				this.getBodyModifier() * 0.4 + this.getDivineModifier() * 0.1 + this.getEssenceModifier() * 0.8,
 				20 + this.getBodyModifier() + this.getDivineModifier() * 0.4 + this.getEssenceModifier() * 0.1,
 				this.getBodyModifier() * 0.2 + this.getDivineModifier() * 0.1 + this.getEssenceModifier() * 0.4,

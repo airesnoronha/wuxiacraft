@@ -3,10 +3,8 @@ package wuxiacraft.network;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
-import wuxiacraft.cultivation.Cultivation;
-import wuxiacraft.cultivation.CultivationLevel;
-import wuxiacraft.cultivation.ICultivation;
-import wuxiacraft.cultivation.SystemStats;
+import wuxiacraft.cultivation.*;
+import wuxiacraft.cultivation.technique.BodyTechnique;
 
 import java.util.function.Supplier;
 
@@ -40,11 +38,15 @@ public class ExerciseMessage {
 			ctx.enqueueWork(() -> {
 				if (ctx.getSender() == null) return;
 				ICultivation cultivation = Cultivation.get(ctx.getSender());
-				double energy_conversion = 1;
-				SystemStats bodyStats = cultivation.getStatsBySystem(CultivationLevel.System.BODY);
-				SystemStats essenceStats = cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE);
-				bodyStats.addEnergy(-message.energy);
-				essenceStats.addEnergy(message.energy * energy_conversion);
+				KnownTechnique bodyKT = cultivation.getTechniqueBySystem(CultivationLevel.System.BODY);
+				if(bodyKT != null) {
+					BodyTechnique bodyTech = (BodyTechnique) bodyKT.getTechnique();
+					double energy_conversion = 1 + (bodyTech.getConversionRate() * bodyKT.getReleaseFactor());
+					SystemStats bodyStats = cultivation.getStatsBySystem(CultivationLevel.System.BODY);
+					SystemStats essenceStats = cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE);
+					bodyStats.addEnergy(-message.energy);
+					essenceStats.addEnergy(message.energy * energy_conversion);
+				}
 			});
 		}
 	}

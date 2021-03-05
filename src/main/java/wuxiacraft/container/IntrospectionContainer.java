@@ -11,15 +11,15 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class MeditationContainer extends Container {
+public class IntrospectionContainer extends Container {
 
-	public static ContainerType<MeditationContainer> registryType;
+	public static ContainerType<IntrospectionContainer> registryType;
 
-	public static MeditationContainer createContainer(int id, PlayerInventory inv, PacketBuffer buffer) {
-		return new MeditationContainer(id);
+	public static IntrospectionContainer create(int id, PlayerInventory inventory, PacketBuffer buf) {
+		return new IntrospectionContainer(id);
 	}
 
-	public MeditationContainer(int id) {
+	public IntrospectionContainer(int id) {
 		super(registryType, id);
 	}
 
@@ -27,6 +27,4 @@ public class MeditationContainer extends Container {
 	public boolean canInteractWith(PlayerEntity playerIn) {
 		return true;
 	}
-
-
 }

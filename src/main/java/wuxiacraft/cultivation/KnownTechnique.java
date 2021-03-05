@@ -32,7 +32,7 @@ public class KnownTechnique {
 	 *
 	 * @param amount the amount to be added
 	 */
-	public void progress(double amount) {
+	public void proficiency(double amount) {
 		this.proficiency = Math.max(this.proficiency + amount, 0);
 	}
 

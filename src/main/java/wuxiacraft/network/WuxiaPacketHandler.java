@@ -24,7 +24,7 @@ public class WuxiaPacketHandler {
 		INSTANCE.registerMessage(serverMessagesID++, EnergyMessage.class, EnergyMessage::encode, EnergyMessage::decode, EnergyMessage::HandleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 		INSTANCE.registerMessage(serverMessagesID++, ActivateActionMessage.class, ActivateActionMessage::encode, ActivateActionMessage::decode, ActivateActionMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 		INSTANCE.registerMessage(serverMessagesID++, ActivateSkillMessage.class, ActivateSkillMessage::encode, ActivateSkillMessage::decode, ActivateSkillMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
-		INSTANCE.registerMessage(serverMessagesID++, OpenMeditationScreenMessage.class, OpenMeditationScreenMessage::encode, OpenMeditationScreenMessage::decode, OpenMeditationScreenMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+		INSTANCE.registerMessage(serverMessagesID++, OpenScreenMessage.class, OpenScreenMessage::encode, OpenScreenMessage::decode, OpenScreenMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 		INSTANCE.registerMessage(serverMessagesID++, AddCultivationToPlayerMessage.class, AddCultivationToPlayerMessage::encode, AddCultivationToPlayerMessage::decode, AddCultivationToPlayerMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 		INSTANCE.registerMessage(serverMessagesID++, ExerciseMessage.class, ExerciseMessage::encode, ExerciseMessage::decode, ExerciseMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 

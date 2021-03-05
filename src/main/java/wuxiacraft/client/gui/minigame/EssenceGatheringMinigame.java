@@ -14,6 +14,8 @@ import wuxiacraft.network.AddCultivationToPlayerMessage;
 import wuxiacraft.network.WuxiaPacketHandler;
 import wuxiacraft.util.MathUtils;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,6 +35,15 @@ public class EssenceGatheringMinigame implements IMinigame {
 					new Vector2f(95, 46), //then go to mouth
 					new Vector2f(97, 50), //then go to throat
 					new Vector2f(99, 65)}; //then go to heart
+
+	private static final Point[] ballsUV = new Point[]{
+			new Point(56, 0), //red
+			new Point(96, 0), //yellow
+			new Point(136, 0), //green
+			new Point(176, 0), //blue
+			new Point(216, 0), //purple
+			new Point(56, 40), //white
+	};
 
 	private final List<Strand> strands;
 
@@ -70,12 +81,50 @@ public class EssenceGatheringMinigame implements IMinigame {
 		SystemStats essenceStats = cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE);
 		if (!MathUtils.between(essenceStats.getSubLevel(), 0, 9))
 			return; //something is wrong
+		//render cultivation
+		double maxBase = essenceStats.getLevel().getBaseBySubLevel(essenceStats.getSubLevel()) / 3.0;
+		double cultBaseOverMax = essenceStats.getBase() / maxBase;
+		Point bg = ballsUV[0]; //red
+		Point fg = ballsUV[1]; //yellow
+		float scale = (float) cultBaseOverMax;
+		if (MathUtils.between(cultBaseOverMax, 1, 3)) {
+			bg = ballsUV[1]; //yellow
+			fg = ballsUV[2]; //green
+			scale = (float) (cultBaseOverMax - 1) / 2f;
+		}
+		else if (MathUtils.between(cultBaseOverMax, 3, 6)) {
+			bg = ballsUV[2]; //green
+			fg = ballsUV[3]; //blue
+			scale = (float) (cultBaseOverMax - 3) / 3f;
+		}
+		else if (MathUtils.between(cultBaseOverMax, 6, 10)) {
+			bg = ballsUV[3]; //blue
+			fg = ballsUV[4]; //purple
+			scale = (float) (cultBaseOverMax - 6) / 4f;
+		}
+		else if (MathUtils.between(cultBaseOverMax, 10, 20)) {
+			bg = ballsUV[4]; //purple
+			fg = ballsUV[5]; //white
+			scale = (float) (cultBaseOverMax - 10) / 10f;
+		}
+		else if (cultBaseOverMax > 20) {
+			bg = ballsUV[5]; //white
+			fg = ballsUV[5]; //white
+			scale = 1f;
+		}
+		stack.push();
+		stack.translate(27, 56, 0);
+		screen.blit(stack, -20, -20, bg.x, bg.y, 40, 40); //red
+		stack.scale(scale, scale, 1);
+		screen.blit(stack, -20, -20, fg.x, fg.y, 40, 40); //yellow
+		stack.pop();
+		//render minigame
 		Vector2f point = targetPoints[essenceStats.getSubLevel()];
 		if (essenceStats.getSubLevel() == 1) { //the spine moves upwards
 			int upwards = (int) (essenceStats.getBase() * SPINE_LENGTH / essenceStats.getLevel().getBaseBySubLevel(essenceStats.getSubLevel()));
 			point = new Vector2f(point.x, point.y - upwards);
 		}
-		screen.blitColored(stack, (int) point.x - 4, (int) point.y - 4, 48, 5, 8, 8, 0.8f, 0.2f, 0.2f); //draw the target point
+		screen.blitColored(stack, (int) point.x - 4, (int) point.y - 4, 48, 0, 8, 8, 0.8f, 0.2f, 0.2f); //draw the target point
 		for (Strand strand : this.strands) {
 			strand.draw(stack, screen);
 		}
@@ -129,69 +178,4 @@ public class EssenceGatheringMinigame implements IMinigame {
 		}
 	}
 
-	private static class Strand {
-
-		public float x;
-		public float y;
-
-		public float movX;
-		public float movY;
-
-		public int ticker;
-
-		public boolean isGrabbed;
-
-		public float red;
-		public float green;
-		public float blue;
-
-		public Strand() {
-			this.x = 78 + (float) Math.random() * 43f;
-			this.y = 35 + (float) Math.random() * 100f;
-			this.movX = -0.3f + 0.6f * (float) Math.random();
-			this.movY = -0.3f + 0.6f * (float) Math.random();
-			this.ticker = 0;
-			this.isGrabbed = false;
-			this.red = 0.90f;
-			this.green = 0.95f;
-			this.blue = 0.20f;
-		}
-
-		public Strand setColor(float red, float green, float blue) {
-			this.red = red;
-			this.green = green;
-			this.blue = blue;
-			return this;
-		}
-
-		public void tick() {
-			if (this.isGrabbed) {
-				this.x = (float) MeditateScreen.mousePosX;
-				this.y = (float) MeditateScreen.mousePosY;
-			} else {
-				this.x += movX;
-				if (!MathUtils.between(this.x, 68, 78 + 53)) {
-					this.movX *= -1;
-				}
-				this.y += movY;
-				if (!MathUtils.between(this.y, 25, 35 + 110)) {
-					this.movY *= -1;
-				}
-			}
-			ticker++;
-			if (this.ticker >= 30) {
-				this.ticker = 0;
-				this.movX = -0.3f + 0.6f * (float) Math.random();
-				this.movY = -0.3f + 0.6f * (float) Math.random();
-			}
-			this.x = MathUtils.clamp(this.x, 68, 78 + 53);
-			this.y = MathUtils.clamp(this.y, 25, 35 + 110);
-		}
-
-		public void draw(MatrixStack stack, MeditateScreen screen) {
-			screen.blitColored(stack, (int) this.x - 2, (int) this.y - 2, 43, 0, 5, 5, this.red, this.green, this.blue);
-
-		}
-
-	}
 }

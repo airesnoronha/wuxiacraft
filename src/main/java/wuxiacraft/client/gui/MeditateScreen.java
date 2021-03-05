@@ -14,6 +14,7 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import wuxiacraft.WuxiaCraft;
 import wuxiacraft.client.gui.minigame.EssenceGatheringMinigame;
+import wuxiacraft.client.gui.minigame.FoundationRealmMinigame;
 import wuxiacraft.client.gui.minigame.IMinigame;
 import wuxiacraft.container.MeditationContainer;
 import wuxiacraft.cultivation.Cultivation;
@@ -45,7 +46,11 @@ public class MeditateScreen extends ContainerScreen<MeditationContainer> {
 		if (this.minecraft == null) return;
 		if (this.minecraft.player == null) return;
 		ICultivation cultivation = Cultivation.get(this.minecraft.player);
-		this.currentMinigame = new EssenceGatheringMinigame();
+		if (cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getLevel() == CultivationLevel.ESSENCE_LEVELS.get(1)) {
+			this.currentMinigame = new EssenceGatheringMinigame();
+		} else {
+			this.currentMinigame = new FoundationRealmMinigame();
+		}
 	}
 
 	private void drawBackgroundLayer(MatrixStack stack) {
@@ -67,7 +72,7 @@ public class MeditateScreen extends ContainerScreen<MeditationContainer> {
 
 		this.blit(stack, 150, 35, 156, 155, 44, 35);
 		fill = (int) (33 * divineStats.getEnergy() / cultivation.getMaxDivineEnergy());
-		this.blit(stack, 151, 36 + 33 - fill, 116, 155, 40, fill);
+		this.blit(stack, 151, 36 + 33 - fill, 116, 155 + 33 - fill, 40, fill);
 
 		this.blit(stack, 150, 100, 70, 155, 46, 46);
 		float essenceFill = (float) (essenceStats.getEnergy() / cultivation.getMaxEssenceEnergy());

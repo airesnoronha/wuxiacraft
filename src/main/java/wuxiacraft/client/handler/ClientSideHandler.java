@@ -24,6 +24,11 @@ public class ClientSideHandler {
 	private static double accumulatedFlyCost = 0;
 
 	/**
+	 * Accumulated mental energy player got
+	 */
+	private static double accumulatedMentalEnergy = 0;
+
+	/**
 	 * Calculates if players should fly and takes away the energy cost
 	 *
 	 * @param event A description of what's happening
@@ -46,8 +51,9 @@ public class ClientSideHandler {
 		}
 		player.sendPlayerAbilities();
 
+		double distance = Math.sqrt(Math.pow(player.lastTickPosX - player.getPosX(), 2) + Math.pow(player.lastTickPosY - player.getPosY(), 2) + Math.pow(player.lastTickPosZ - player.getPosZ(), 2));
+
 		if (player.abilities.isFlying) {
-			double distance = Math.sqrt(Math.pow(player.lastTickPosX - player.getPosX(), 2) + Math.pow(player.lastTickPosY - player.getPosY(), 2) + Math.pow(player.lastTickPosZ - player.getPosZ(), 2));
 			double totalRem = 0;
 			double fly_cost = 250;
 			double dist_cost = 132;
@@ -56,11 +62,21 @@ public class ClientSideHandler {
 			if (!player.isCreative()) {
 				cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).addEnergy(-totalRem);
 				accumulatedFlyCost += totalRem;
-				if (cultivation.getTickerTime() % 10 == 0) {
-					WuxiaPacketHandler.INSTANCE.sendToServer(new EnergyMessage(accumulatedFlyCost, CultivationLevel.System.ESSENCE, 1));
-					accumulatedFlyCost = 0;
-				}
 			}
+		}
+		//walking around will clear the head
+		if(!player.isSprinting()) {
+			double recoveryPerDistance = 0.005;
+			if(cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).getEnergy() < cultivation.getMaxDivineEnergy()) {
+				cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).addEnergy(distance*recoveryPerDistance);
+				accumulatedMentalEnergy += distance*recoveryPerDistance;
+			}
+		}
+		if (cultivation.getTickerTime() % 10 == 0) {
+			WuxiaPacketHandler.INSTANCE.sendToServer(new EnergyMessage(accumulatedMentalEnergy, CultivationLevel.System.DIVINE, 0));
+			accumulatedMentalEnergy = 0;
+			WuxiaPacketHandler.INSTANCE.sendToServer(new EnergyMessage(accumulatedFlyCost, CultivationLevel.System.ESSENCE, 1));
+			accumulatedFlyCost = 0;
 		}
 	}
 

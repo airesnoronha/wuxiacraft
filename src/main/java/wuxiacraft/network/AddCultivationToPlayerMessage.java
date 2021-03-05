@@ -3,10 +3,7 @@ package wuxiacraft.network;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
-import wuxiacraft.cultivation.Cultivation;
-import wuxiacraft.cultivation.CultivationLevel;
-import wuxiacraft.cultivation.ICultivation;
-import wuxiacraft.cultivation.SystemStats;
+import wuxiacraft.cultivation.*;
 
 import java.util.function.Supplier;
 
@@ -62,15 +59,18 @@ public class AddCultivationToPlayerMessage {
 				if (ctx.getSender() == null) return;
 				ICultivation cultivation = Cultivation.get(ctx.getSender());
 				SystemStats stats = cultivation.getStatsBySystem(message.system);
-				double energy_conversion = 1;
-				if (stats.getEnergy() >= message.energy) {
+				KnownTechnique kt = cultivation.getTechniqueBySystem(message.system);
+				if (stats.getEnergy() >= message.energy && kt != null) {
+					double energy_conversion = 1 + kt.getCultivationSpeed(stats.getModifier());
+					if (stats.getLevel() == CultivationLevel.DEFAULT_ESSENCE_LEVEL) energy_conversion *= 6;
 					double added_base = message.energy * energy_conversion * (message.special ? 1.1 : 1);
 					stats.addBase(added_base);
 					stats.addEnergy(-message.energy);
 					if (message.system == CultivationLevel.System.ESSENCE) {
-						cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).addEnergy(-message.energy * 0.1);
+						cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).addEnergy(-message.energy * 0.2);
 						//i don't care if mental energy is used all over, probably i'll make then sleep
 					}
+					kt.proficiency(added_base * 0.5);
 					//i won't sync because probably in the client math has been done equally
 					//but it'll sync eventually, if there is sync problems i'll investigate
 				}
