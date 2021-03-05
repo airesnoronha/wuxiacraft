@@ -67,6 +67,10 @@ public class AddCultivationToPlayerMessage {
 					double added_base = message.energy * energy_conversion * (message.special ? 1.1 : 1);
 					stats.addBase(added_base);
 					stats.addEnergy(-message.energy);
+					if (message.system == CultivationLevel.System.ESSENCE) {
+						cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).addEnergy(-message.energy * 0.1);
+						//i don't care if mental energy is used all over, probably i'll make then sleep
+					}
 					//i won't sync because probably in the client math has been done equally
 					//but it'll sync eventually, if there is sync problems i'll investigate
 				}

@@ -36,18 +36,20 @@ public class SystemStats {
 		switch (system) {
 			case BODY:
 				this.level = CultivationLevel.DEFAULT_BODY_LEVEL;
+				this.energy = 5;
 				break;
 			case DIVINE:
 				this.level = CultivationLevel.DEFAULT_DIVINE_LEVEL;
+				this.energy = 10;
 				break;
 			case ESSENCE:
 				this.level = CultivationLevel.DEFAULT_ESSENCE_LEVEL;
+				this.energy = 0;
 				break;
 		}
 		this.subLevel = 0;
 		this.base = 0;
 		this.foundation = 0;
-		this.energy = 10;
 	}
 
 	public CultivationLevel getLevel() {
@@ -92,6 +94,7 @@ public class SystemStats {
 
 	/**
 	 * This adds cultivation base to this system
+	 *
 	 * @param amount The amount to be added
 	 */
 	public void addBase(double amount) {
@@ -106,16 +109,15 @@ public class SystemStats {
 	 * @return How much the cultivation in this system will add power to the character
 	 */
 	public double getModifier() {
+		// Since foundation will have some part in cultivation base as well
+		double foundationAmount = this.getFoundation() + this.getBase();
 		return Math.max(0, this.getLevel().getModifierBySubLevel(this.getSubLevel()) *
-				(0.4 + Math.min(21, (this.getFoundation() / this.getLevel().getBaseBySubLevel(this.getSubLevel()))) * 0.6));
+				(0.4 + Math.min(21, (foundationAmount / this.getLevel().getBaseBySubLevel(this.getSubLevel()))) * 0.6));
 	}
-
-	// foundation/cultivation base = 3
-	//peerless foundation = modifier = 20 * (0.4 + 0.6 * 21) = 260
-	//weak foundation =  modifier = 20 * (0.4 + 0.6 * 1.2) = 22.4
 
 	/**
 	 * This will copy stats from another stats instance
+	 *
 	 * @param stats the instance to be copied from
 	 */
 	public void copyFrom(SystemStats stats) {

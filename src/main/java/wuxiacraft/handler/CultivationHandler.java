@@ -2,6 +2,8 @@ package wuxiacraft.handler;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -37,6 +39,7 @@ public class CultivationHandler {
 	/**
 	 * Syncs between client and server every 100 ticks.
 	 * Add energy to players every tick
+	 * Applies low resources penalties
 	 *
 	 * @param event A description of what's happening
 	 */
@@ -50,35 +53,64 @@ public class CultivationHandler {
 		cultivation.calculateFinalModifiers();
 		cultivation.advanceTimer();
 
-		if (cultivation.getTickerTime() == 100 && !player.world.isRemote) {
+		SystemStats bodyStats = cultivation.getStatsBySystem(CultivationLevel.System.BODY);
+		SystemStats divineStats = cultivation.getStatsBySystem(CultivationLevel.System.DIVINE);
+		SystemStats essenceStats = cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE);
+		//sync with client
+		if (cultivation.getTickerTime() >= 100 && !player.world.isRemote) {
 			WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new CultivationSyncMessage(cultivation));
 			cultivation.resetTickerTimer();
 		}
-
+		//lower skill cool down
 		if (cultivation.getSkillCooldown() > 0)
 			cultivation.lowerCoolDown();
-
-		if (player.getFoodStats().getFoodLevel() > 18 && cultivation.getStatsBySystem(CultivationLevel.System.BODY).getEnergy() < cultivation.getMaxBodyEnergy()/2) {
-			cultivation.getStatsBySystem(CultivationLevel.System.BODY).addEnergy(cultivation.getBodyEnergyRegen() * cultivation.getMaxBodyEnergy());
+		//refill energies
+		if (player.getFoodStats().getFoodLevel() > 18 && bodyStats.getEnergy() < cultivation.getMaxBodyEnergy() / 2) {
+			bodyStats.addEnergy(cultivation.getBodyEnergyRegen() * cultivation.getMaxBodyEnergy());
 			//it ok because it's just regen, so it won't halve if it's past middle point
-			cultivation.getStatsBySystem(CultivationLevel.System.BODY).setEnergy(Math.min(cultivation.getMaxBodyEnergy()/2, cultivation.getStatsBySystem(CultivationLevel.System.BODY).getEnergy()));
-			player.addExhaustion((float)(cultivation.getEssenceEnergyRegen() * cultivation.getMaxDivineEnergy() * 100));
+			bodyStats.setEnergy(Math.min(cultivation.getMaxBodyEnergy() / 2, bodyStats.getEnergy()));
+			player.addExhaustion((float) (cultivation.getEssenceEnergyRegen() * cultivation.getMaxDivineEnergy() * 100));
 		} else { //if above middle point set try to set max to protect from overflow
-			cultivation.getStatsBySystem(CultivationLevel.System.BODY).setEnergy(Math.min(cultivation.getMaxBodyEnergy(), cultivation.getStatsBySystem(CultivationLevel.System.BODY).getEnergy()));
+			bodyStats.setEnergy(Math.min(cultivation.getMaxBodyEnergy(), bodyStats.getEnergy()));
 		}
-		cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).addEnergy(cultivation.getDivineEnergyRegen() * cultivation.getMaxDivineEnergy());
-		cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).setEnergy(Math.min(cultivation.getMaxDivineEnergy(), cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).getEnergy()));
-		cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).addEnergy(cultivation.getEssenceEnergyRegen() * cultivation.getMaxEssenceEnergy());
-		cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).setEnergy(Math.min(cultivation.getMaxEssenceEnergy(), cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getEnergy()));
+		divineStats.addEnergy(cultivation.getDivineEnergyRegen() * cultivation.getMaxDivineEnergy());
+		divineStats.setEnergy(Math.min(cultivation.getMaxDivineEnergy(), divineStats.getEnergy()));
+		essenceStats.addEnergy(cultivation.getEssenceEnergyRegen() * cultivation.getMaxEssenceEnergy());
+		essenceStats.setEnergy(Math.min(cultivation.getMaxEssenceEnergy(), essenceStats.getEnergy()));
 
 		//auto healing
 		if (cultivation.getHP() < cultivation.getFinalModifiers().maxHealth) {
-			SystemStats bodyStats = cultivation.getStatsBySystem(CultivationLevel.System.BODY);
 			double energy_used = cultivation.getMaxBodyEnergy() * cultivation.getHealingAmount();
-			if ( bodyStats.getEnergy() + energy_used >= energy_used + cultivation.getMaxBodyEnergy() * 0.1) { // won't heal when blood energy is less than 10%
+			if (bodyStats.getEnergy() + energy_used >= energy_used + cultivation.getMaxBodyEnergy() * 0.1) { // won't heal when blood energy is less than 10%
 				double amount_healed = energy_used / cultivation.getHealingCost();
 				cultivation.setHP(Math.min(cultivation.getFinalModifiers().maxHealth, cultivation.getHP() + amount_healed));
 				bodyStats.addEnergy(-energy_used);
+			}
+		}
+		//apply penalties for low resources aka poor resource management
+		if (cultivation.getTickerTime() % 10 == 0) {
+			if (bodyStats.getEnergy() < cultivation.getMaxBodyEnergy() * 0.1) {
+				double relativeAmount = bodyStats.getEnergy() / cultivation.getMaxBodyEnergy();
+				int amplifier = 0;
+				if (relativeAmount < 0.08) amplifier = 1;
+				if (relativeAmount < 0.06) amplifier = 2;
+				if (relativeAmount < 0.04) amplifier = 3;
+				if (relativeAmount < 0.02) amplifier = 4;
+				player.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 15, amplifier, false, false));
+				player.addPotionEffect(new EffectInstance(Effects.MINING_FATIGUE, 15, amplifier, false, false));
+			}
+			if (divineStats.getEnergy() < cultivation.getMaxDivineEnergy() * 0.01) {
+				double relativeAmount = bodyStats.getEnergy() / cultivation.getMaxBodyEnergy();
+				int amplifier = 0;
+				if (relativeAmount < 0.08) amplifier = 1;
+				if (relativeAmount < 0.06) amplifier = 2;
+				if (relativeAmount < 0.04) amplifier = 3;
+				if (relativeAmount < 0.02) {
+					amplifier = 4;
+					player.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 15, 4, false, false));
+				}
+				player.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 15, amplifier / 2, false, false));
+				player.addPotionEffect(new EffectInstance(Effects.NAUSEA, 15, amplifier, false, false));
 			}
 		}
 
@@ -97,13 +129,13 @@ public class CultivationHandler {
 			oldCultivation.setSkillCooldown(0);
 			oldCultivation.setHP(20);
 			oldCultivation.getStatsBySystem(CultivationLevel.System.BODY).setBase(0);
-			oldCultivation.getStatsBySystem(CultivationLevel.System.BODY).setEnergy(10);
+			oldCultivation.getStatsBySystem(CultivationLevel.System.BODY).setEnergy(5);
 			oldCultivation.getStatsBySystem(CultivationLevel.System.BODY).setSubLevel((oldCultivation.getStatsBySystem(CultivationLevel.System.BODY).getSubLevel() / 3) * 3);
 			oldCultivation.getStatsBySystem(CultivationLevel.System.DIVINE).setBase(0);
 			oldCultivation.getStatsBySystem(CultivationLevel.System.DIVINE).setEnergy(10);
 			oldCultivation.getStatsBySystem(CultivationLevel.System.DIVINE).setSubLevel((oldCultivation.getStatsBySystem(CultivationLevel.System.DIVINE).getSubLevel() / 3) * 3);
 			oldCultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).setBase(0);
-			oldCultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).setEnergy(10);
+			oldCultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).setEnergy(0);
 			oldCultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).setSubLevel((oldCultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getSubLevel() / 3) * 3);
 		}
 		newCultivation.copyFrom(oldCultivation);

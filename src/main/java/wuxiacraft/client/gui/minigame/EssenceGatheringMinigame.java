@@ -66,7 +66,7 @@ public class EssenceGatheringMinigame implements IMinigame {
 		assert Minecraft.getInstance().player != null;
 		ICultivation cultivation = Cultivation.get(Minecraft.getInstance().player);
 		screen.getMinecraft().getTextureManager().bindTexture(ESSENCE_GATHERING);
-		screen.blit(stack, 78, 35, 0, 0, 43, 100); //body figure
+		screen.blitColored(stack, 78, 35, 0, 0, 43, 100, 0.8f, 0.2f, 0.2f); //body figure
 		SystemStats essenceStats = cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE);
 		if (!MathUtils.between(essenceStats.getSubLevel(), 0, 9))
 			return; //something is wrong
