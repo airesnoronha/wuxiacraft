@@ -66,7 +66,7 @@ public class EssenceGatheringMinigame implements IMinigame {
 		assert Minecraft.getInstance().player != null;
 		ICultivation cultivation = Cultivation.get(Minecraft.getInstance().player);
 		screen.getMinecraft().getTextureManager().bindTexture(ESSENCE_GATHERING);
-		screen.blitColored(stack, 78, 35, 0, 0, 43, 100, 0.8f, 0.2f, 0.2f); //body figure
+		screen.blit(stack, 78, 35, 0, 0, 43, 100); //body figure
 		SystemStats essenceStats = cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE);
 		if (!MathUtils.between(essenceStats.getSubLevel(), 0, 9))
 			return; //something is wrong
@@ -75,7 +75,7 @@ public class EssenceGatheringMinigame implements IMinigame {
 			int upwards = (int) (essenceStats.getBase() * SPINE_LENGTH / essenceStats.getLevel().getBaseBySubLevel(essenceStats.getSubLevel()));
 			point = new Vector2f(point.x, point.y - upwards);
 		}
-		screen.blit(stack, (int) point.x - 4, (int) point.y - 4, 48, 5, 8, 8); //draw the target point
+		screen.blitColored(stack, (int) point.x - 4, (int) point.y - 4, 48, 5, 8, 8, 0.8f, 0.2f, 0.2f); //draw the target point
 		for (Strand strand : this.strands) {
 			strand.draw(stack, screen);
 		}

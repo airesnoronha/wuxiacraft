@@ -28,9 +28,7 @@ public class MeditateScreen extends ContainerScreen<MeditationContainer> {
 
 	private static final ResourceLocation MEDITATE_GUI = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/meditation_gui.png");
 
-	private static IMinigame essenceGatheringMinigame = new EssenceGatheringMinigame();
-
-	private IMinigame currentMinigame = essenceGatheringMinigame;
+	private IMinigame currentMinigame;
 
 	public static double mousePosX;
 	public static double mousePosY;
@@ -44,6 +42,10 @@ public class MeditateScreen extends ContainerScreen<MeditationContainer> {
 	@Override
 	protected void init() {
 		super.init();
+		if (this.minecraft == null) return;
+		if (this.minecraft.player == null) return;
+		ICultivation cultivation = Cultivation.get(this.minecraft.player);
+		this.currentMinigame = new EssenceGatheringMinigame();
 	}
 
 	private void drawBackgroundLayer(MatrixStack stack) {
