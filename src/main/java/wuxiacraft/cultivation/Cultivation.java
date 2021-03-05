@@ -239,10 +239,13 @@ public class Cultivation implements ICultivation {
 		switch (technique.getSystem()) {
 			case BODY:
 				this.bodyTechnique = new KnownTechnique(technique, proficiency);
+				break;
 			case DIVINE:
 				this.divineTechnique = new KnownTechnique(technique, proficiency);
+				break;
 			case ESSENCE:
 				this.essenceTechnique = new KnownTechnique(technique, proficiency);
+				break;
 		}
 	}
 

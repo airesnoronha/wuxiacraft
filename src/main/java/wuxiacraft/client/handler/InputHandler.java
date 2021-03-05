@@ -63,12 +63,18 @@ public class InputHandler {
 			}
 			boolean shouldMeditate = cultivation.getTechniqueBySystem(CultivationLevel.System.ESSENCE) != null;
 			if (keyBindings[KEY_MEDITATE].isPressed() && shouldMeditate) {
-				WuxiaPacketHandler.INSTANCE.sendToServer(new OpenScreenMessage());
+				WuxiaPacketHandler.INSTANCE.sendToServer(new OpenScreenMessage(OpenScreenMessage.TargetGui.MEDITATION));
+			}
+			if (keyBindings[KEY_INTROSPECTION].isPressed()) {
+				WuxiaPacketHandler.INSTANCE.sendToServer(new OpenScreenMessage(OpenScreenMessage.TargetGui.INTROSPECTION));
 			}
 		}
 	}
 
 	public static double accumulatedEnergyToSend = 0;
+
+	//this is more of render thing, so stuff that render might know this
+	public static boolean isExercising = false;
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST) //high priority to roll before skill handling
 	public void onHandlePressedKeys(TickEvent.PlayerTickEvent event) {
@@ -78,7 +84,8 @@ public class InputHandler {
 		PlayerEntity player = event.player;
 		ICultivation cultivation = Cultivation.get(player);
 		KnownTechnique bodyKT = cultivation.getTechniqueBySystem(CultivationLevel.System.BODY);
-		if (keyBindings[KEY_EXERCISE].isKeyDown() && bodyKT != null) {
+		isExercising = keyBindings[KEY_EXERCISE].isKeyDown() && bodyKT != null;
+		if (isExercising) {
 			List<InputMappings.Input> movementInputs = ImmutableList.of(
 					InputMappings.getInputByCode(Minecraft.getInstance().gameSettings.keyBindForward.getKey().getKeyCode(), 0),
 					InputMappings.getInputByCode(Minecraft.getInstance().gameSettings.keyBindBack.getKey().getKeyCode(), 0),

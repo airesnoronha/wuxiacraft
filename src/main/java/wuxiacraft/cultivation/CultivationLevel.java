@@ -20,7 +20,7 @@ public class CultivationLevel {
 	public static void initializeLevels() {
 		BODY_LEVELS.add(new CultivationLevel("mortal_body", "body_mortal_1", "Mortal", 1, 1000, 0, false, false));
 		BODY_LEVELS.add(new CultivationLevel("body_mortal_1", "body_mortal_2", "Body Cleansing", 9, 4000, 1.8, false, false));
-		BODY_LEVELS.add(new CultivationLevel("body_mortal_2", "body_mortal_3", "Body Training", 9, 115701.86, 11.15, false, false));
+		BODY_LEVELS.add(new CultivationLevel("body_mortal_2", "body_mortal_3", "Body Forging", 9, 115701.86, 11.15, false, false));
 		BODY_LEVELS.add(new CultivationLevel("body_mortal_3", "body_immortal_1", "Body Transformation", 9, 12856798.80, 82.81, true, false));
 		BODY_LEVELS.add(new CultivationLevel("body_immortal_1", "body_immortal_2", "Earthly Body", 9, 3920211100.91, 738.34, true, false));
 		BODY_LEVELS.add(new CultivationLevel("body_immortal_2", "body_immortal_3", "Heavenly Body", 9, 1673455223020.27, 11375.55, true, false));

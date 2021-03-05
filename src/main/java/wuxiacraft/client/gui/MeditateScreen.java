@@ -34,6 +34,8 @@ public class MeditateScreen extends ContainerScreen<MeditationContainer> {
 	public static double mousePosX;
 	public static double mousePosY;
 
+	private CultivationLevel.System selected = CultivationLevel.System.ESSENCE;
+
 	public MeditateScreen(MeditationContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
 		super(screenContainer, inv, titleIn);
 		this.xSize = 200;
@@ -61,6 +63,7 @@ public class MeditateScreen extends ContainerScreen<MeditationContainer> {
 		stack.translate(this.guiLeft, this.guiTop, 0);
 		this.getMinecraft().getTextureManager().bindTexture(MEDITATE_GUI);
 		this.blit(stack, 0, 0, 0, 0, this.xSize, this.ySize);
+		this.blit(stack, 66, 140, 0, 201, 68, 14);
 		ICultivation cultivation = Cultivation.get(this.minecraft.player);
 		SystemStats bodyStats = cultivation.getStatsBySystem(CultivationLevel.System.BODY);
 		SystemStats divineStats = cultivation.getStatsBySystem(CultivationLevel.System.DIVINE);
@@ -94,7 +97,12 @@ public class MeditateScreen extends ContainerScreen<MeditationContainer> {
 
 	private void drawForegroundLayer(MatrixStack stack) {
 		stack.push();
-		stack.translate(this.guiLeft, this.guiTop, 0);
+		stack.push();
+		float fontScale = 0.9f;
+		stack.translate(69, 143, 0);
+		stack.scale(fontScale, fontScale, 1);
+		this.font.drawString(stack, "Breakthrough", 0, 0, 0xFFAA11);
+		stack.pop();
 		this.currentMinigame.renderForeground(stack, this);
 		stack.pop();
 	}

@@ -96,8 +96,11 @@ public class CultivationHandler {
 				if (relativeAmount < 0.06) amplifier = 2;
 				if (relativeAmount < 0.04) amplifier = 3;
 				if (relativeAmount < 0.02) amplifier = 4;
-				player.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 15, amplifier, false, false));
-				player.addPotionEffect(new EffectInstance(Effects.MINING_FATIGUE, 15, amplifier, false, false));
+				player.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 15, amplifier, true, false));
+				player.addPotionEffect(new EffectInstance(Effects.MINING_FATIGUE, 15, amplifier, true, false));
+				if(relativeAmount < 0.005) {
+					cultivation.setHP(cultivation.getHP() - 1);
+				}
 			}
 			if (divineStats.getEnergy() < cultivation.getMaxDivineEnergy() * 0.01) {
 				double relativeAmount = bodyStats.getEnergy() / cultivation.getMaxBodyEnergy();
@@ -111,6 +114,9 @@ public class CultivationHandler {
 				}
 				player.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 15, amplifier / 2, false, false));
 				player.addPotionEffect(new EffectInstance(Effects.NAUSEA, 15, amplifier, false, false));
+				if(relativeAmount < 0.005) {
+					cultivation.setHP(cultivation.getHP() - 1);
+				}
 			}
 		}
 

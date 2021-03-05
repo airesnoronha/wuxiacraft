@@ -67,6 +67,9 @@ public class RenderHudHandler {
 		Minecraft.getInstance().ingameGUI.getFontRenderer().drawString(stack, selectedSkills.toString(), 90, 10, 0xFFAA00);
 	}
 
+	private static float rotationAngle = 0;
+	private static long lastMillis = 0;
+
 	private static void drawEnergyBars(MatrixStack stack, int resX, int resY) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player == null) return;
@@ -86,10 +89,16 @@ public class RenderHudHandler {
 
 		float rotationSpeed = 0.8f - energyFill * 0.803f;//in hertz
 		if (rotationSpeed == 0) rotationSpeed = 0.000001f;
-		int timeStep = (int) (System.currentTimeMillis() % (int) (1000f / rotationSpeed));
-		float rotationAngle = (float) Math.PI * (float) timeStep / (1000f / (rotationSpeed * 2));
+		long timeDiff = System.currentTimeMillis() - lastMillis;
+		rotationAngle += (InputHandler.isExercising ? 4f: 1f) * 1.0f * (float) Math.PI * timeDiff/1000f;
+		if(rotationAngle > 2 * Math.PI) {
+			rotationAngle -= 2 * Math.PI;
+		}
+		else if(rotationAngle < -2 * Math.PI) {
+			rotationAngle += 2 * Math.PI;
+		}
 		stack.rotate(Vector3f.ZP.rotation(-rotationAngle));
-
+		lastMillis = System.currentTimeMillis();
 		mc.ingameGUI.blit(stack, -53, -53, 75, 0, 103, 103);
 		stack.pop();
 		//then body
