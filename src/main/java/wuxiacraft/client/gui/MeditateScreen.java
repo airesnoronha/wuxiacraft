@@ -16,6 +16,7 @@ import wuxiacraft.WuxiaCraft;
 import wuxiacraft.client.gui.minigame.EssenceGatheringMinigame;
 import wuxiacraft.client.gui.minigame.FoundationRealmMinigame;
 import wuxiacraft.client.gui.minigame.IMinigame;
+import wuxiacraft.client.handler.RenderHudHandler;
 import wuxiacraft.container.MeditationContainer;
 import wuxiacraft.cultivation.Cultivation;
 import wuxiacraft.cultivation.CultivationLevel;
@@ -82,11 +83,7 @@ public class MeditateScreen extends ContainerScreen<MeditationContainer> {
 		stack.push();
 		stack.translate(153 + 20, 103 + 20, 0);
 		stack.scale(essenceFill, essenceFill, 1);
-		float rotationSpeed = 0.8f - essenceFill * 0.803f;//in hertz
-		if (rotationSpeed == 0) rotationSpeed = 0.000001f;
-		int timeStep = (int) (System.currentTimeMillis() % (int) (1000f / rotationSpeed));
-		float rotationAngle = (float) Math.PI * (float) timeStep / (1000f / (rotationSpeed * 2));
-		stack.rotate(Vector3f.ZP.rotation(-rotationAngle));
+		stack.rotate(Vector3f.ZP.rotation(-RenderHudHandler.rotationAngle));
 		this.blit(stack, -20, -20, 30, 155, 40, 40);
 		stack.pop();
 

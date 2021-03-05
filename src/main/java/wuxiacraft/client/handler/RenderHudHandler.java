@@ -16,6 +16,7 @@ import wuxiacraft.cultivation.CultivationLevel;
 import wuxiacraft.cultivation.ICultivation;
 import wuxiacraft.cultivation.SystemStats;
 import wuxiacraft.cultivation.skill.Skill;
+import wuxiacraft.util.MathUtils;
 
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class RenderHudHandler {
 		Minecraft.getInstance().ingameGUI.getFontRenderer().drawString(stack, selectedSkills.toString(), 90, 10, 0xFFAA00);
 	}
 
-	private static float rotationAngle = 0;
+	public static float rotationAngle = 0;
 	private static long lastMillis = 0;
 
 	private static void drawEnergyBars(MatrixStack stack, int resX, int resY) {
@@ -90,13 +91,14 @@ public class RenderHudHandler {
 		float rotationSpeed = 0.8f - energyFill * 0.803f;//in hertz
 		if (rotationSpeed == 0) rotationSpeed = 0.000001f;
 		long timeDiff = System.currentTimeMillis() - lastMillis;
-		rotationAngle += (InputHandler.isExercising ? 4f: 1f) * 1.0f * (float) Math.PI * timeDiff/1000f;
+		rotationAngle += (InputHandler.isExercising? 4f : 1f) * rotationSpeed * 2 * Math.PI * timeDiff/1000f;// timeDiff;
 		if(rotationAngle > 2 * Math.PI) {
 			rotationAngle -= 2 * Math.PI;
 		}
 		else if(rotationAngle < -2 * Math.PI) {
 			rotationAngle += 2 * Math.PI;
 		}
+		rotationAngle = (float)MathUtils.clamp(rotationAngle, -2 * Math.PI, 2*Math.PI);
 		stack.rotate(Vector3f.ZP.rotation(-rotationAngle));
 		lastMillis = System.currentTimeMillis();
 		mc.ingameGUI.blit(stack, -53, -53, 75, 0, 103, 103);
