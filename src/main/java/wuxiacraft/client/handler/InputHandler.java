@@ -97,7 +97,7 @@ public class InputHandler {
 			double energy = cultivation.getMaxBodyEnergy() * 0.002;
 			accumulatedEnergyToSend += energy;
 			BodyTechnique bodyTech = (BodyTechnique) bodyKT.getTechnique();
-			double energy_conversion = 1 + (bodyTech.getConversionRate() * bodyKT.getReleaseFactor());
+			double energy_conversion = 1 + (bodyTech.getConversionRate() * (0.3f + 0.7 * bodyKT.getReleaseFactor()));
 			cultivation.getStatsBySystem(CultivationLevel.System.BODY).addEnergy(-energy);
 			cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).addEnergy(energy * energy_conversion);
 		}

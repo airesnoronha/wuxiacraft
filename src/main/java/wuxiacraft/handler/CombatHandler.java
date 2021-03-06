@@ -13,6 +13,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
+import wuxiacraft.WuxiaCraft;
 import wuxiacraft.combat.ElementalDamageSource;
 import wuxiacraft.cultivation.Cultivation;
 import wuxiacraft.cultivation.ICultivation;
@@ -94,12 +95,12 @@ public class CombatHandler {
 			return; // Means it was wuxiacraft that came up with this attack, so damage is already calculated
 
 		ICultivation cultivation = Cultivation.get((LivingEntity) event.getSource().getTrueSource());
-		event.setAmount(event.getAmount() + (float) cultivation.getFinalModifiers().strength * ((PlayerEntity) event.getSource().getTrueSource()).getCooledAttackStrength(0));
+		event.setAmount(event.getAmount() + (float) cultivation.getFinalModifiers().strength);
 
 		LivingEntity target = event.getEntityLiving();
 		double maxHP = target.getMaxHealth();
 		if(target instanceof PlayerEntity) maxHP = Cultivation.get(target).getFinalModifiers().maxHealth;
-		double knockSpeed = MathUtils.clamp((event.getAmount()*1.5- maxHP)*0.3, 0, 12);
+		double knockSpeed = MathUtils.clamp((event.getAmount()*0.7- maxHP)*0.3, 0, 12);
 		Vector3d diff = Objects.requireNonNull(event.getSource().getDamageLocation()).subtract(event.getEntityLiving().getPositionVec());
 		diff = diff.normalize();
 		target.applyKnockback((float) knockSpeed, diff.x, diff.z);

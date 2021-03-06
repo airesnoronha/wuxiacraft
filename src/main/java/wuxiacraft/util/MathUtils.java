@@ -49,12 +49,16 @@ public class MathUtils {
 
 	public static boolean inGroup(int value, int... group) {
 		boolean found = false;
-		for(int test : group) {
-			if(test == value) {
+		for (int test : group) {
+			if (test == value) {
 				found = true;
 				break;
 			}
 		}
 		return found;
+	}
+
+	public static boolean inBounds(double x, double y, double minX, double minY, double width, double height) {
+		return between(x, minX, minX + width) && between(y, minY, height);
 	}
 }

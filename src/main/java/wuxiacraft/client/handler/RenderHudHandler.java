@@ -42,30 +42,32 @@ public class RenderHudHandler {
 		if (event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE) return;
 		int resX = event.getWindow().getScaledWidth();
 		int resY = event.getWindow().getScaledHeight();
-		//drawHudElements(event.getMatrixStack(), resX, resY);
+		//drawDebugInfo(event.getMatrixStack(), resX, resY);
 		drawEnergyBars(event.getMatrixStack(), resX, resY);
 		drawSkillsBar(event.getMatrixStack(), resX, resY);
 		drawCastProgressBar(event.getMatrixStack(), resX, resY);
 	}
 
-	private static void drawHudElements(MatrixStack stack, int resX, int resY) {
+	private static void drawDebugInfo(MatrixStack stack, int resX, int resY) {
 		assert Minecraft.getInstance().player != null;
 		ICultivation cultivation = Cultivation.get(Minecraft.getInstance().player);
 
-		String text = "Known skills:";
-		Minecraft.getInstance().ingameGUI.getFontRenderer().drawString(stack, text, 10, 10, 0xFFAA00);
-		List<Skill> knownSkills = cultivation.getAllKnownSkills();
-		for (Skill skill : knownSkills) {
-			int index = knownSkills.indexOf(skill);
-			Minecraft.getInstance().ingameGUI.getFontRenderer().drawString(stack, index + ": " + skill.name, 10, 19 + index * 9, 0xFFAA00);
-		}
+		SystemStats stats = cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE);
 
-		StringBuilder selectedSkills = new StringBuilder();
-		selectedSkills.append("Selected: (").append(SkillValues.activeSkill).append(") ");
-		for (Integer index : cultivation.getSelectedSkills()) {
-			selectedSkills.append(index).append(" ");
-		}
-		Minecraft.getInstance().ingameGUI.getFontRenderer().drawString(stack, selectedSkills.toString(), 90, 10, 0xFFAA00);
+		String text = "Essence Level: " + stats.getLevel().levelName;
+		Minecraft.getInstance().ingameGUI.getFontRenderer().drawString(stack, text, 10, 10, 0);
+
+		text = "Essence subLevel: " + stats.getSubLevel();
+		Minecraft.getInstance().ingameGUI.getFontRenderer().drawString(stack, text, 10, 20, 0);
+
+		text = "Essence Modifier: " + stats.getModifier();
+		Minecraft.getInstance().ingameGUI.getFontRenderer().drawString(stack, text, 10, 30, 0);
+
+		text = String.format("Essence Foundation + cBase: %.0f (%.2fx) <-> %.0f/%.0f (%.2f%%)", stats.getFoundation(),
+				stats.getFoundation() / stats.getLevel().getBaseBySubLevel(stats.getSubLevel()),
+				stats.getBase(), stats.getLevel().getBaseBySubLevel(stats.getSubLevel()),
+				stats.getBase() * 100f / stats.getLevel().getBaseBySubLevel(stats.getSubLevel()));
+		Minecraft.getInstance().ingameGUI.getFontRenderer().drawString(stack, text, 10, 40, 0);
 	}
 
 	public static float rotationAngle = 0;
@@ -88,17 +90,16 @@ public class RenderHudHandler {
 		stack.translate(94.5, 56, 0);
 		stack.scale(energyFill, energyFill, 0);
 
-		float rotationSpeed = 0.8f - energyFill * 0.803f;//in hertz
+		float rotationSpeed = 1.8f - energyFill * 1.803f;//in hertz
 		if (rotationSpeed == 0) rotationSpeed = 0.000001f;
 		long timeDiff = System.currentTimeMillis() - lastMillis;
-		rotationAngle += (InputHandler.isExercising? 4f : 1f) * rotationSpeed * 2 * Math.PI * timeDiff/1000f;// timeDiff;
-		if(rotationAngle > 2 * Math.PI) {
+		rotationAngle += (InputHandler.isExercising ? 4f : 1f) * rotationSpeed * 2 * Math.PI * timeDiff / 1000f;// timeDiff;
+		if (rotationAngle > 2 * Math.PI) {
 			rotationAngle -= 2 * Math.PI;
-		}
-		else if(rotationAngle < -2 * Math.PI) {
+		} else if (rotationAngle < -2 * Math.PI) {
 			rotationAngle += 2 * Math.PI;
 		}
-		rotationAngle = (float)MathUtils.clamp(rotationAngle, -2 * Math.PI, 2*Math.PI);
+		rotationAngle = (float) MathUtils.clamp(rotationAngle, -2 * Math.PI, 2 * Math.PI);
 		stack.rotate(Vector3f.ZP.rotation(-rotationAngle));
 		lastMillis = System.currentTimeMillis();
 		mc.ingameGUI.blit(stack, -53, -53, 75, 0, 103, 103);
@@ -156,14 +157,14 @@ public class RenderHudHandler {
 		if (mc.player == null) return;
 		ICultivation cultivation = Cultivation.get(mc.player);
 
-		if(SkillValues.isCastingSkill) {
+		if (SkillValues.isCastingSkill) {
 			stack.push();
 			mc.getTextureManager().bindTexture(ICONS);
-			mc.ingameGUI.blit(stack, resX/2 - 91, resY - 29, 0, 0, 182, 5);
+			mc.ingameGUI.blit(stack, resX / 2 - 91, resY - 29, 0, 0, 182, 5);
 			Skill skill = cultivation.getActiveSkill(SkillValues.activeSkill);
-			if(skill != null) {
-				int castProgress = (int)(182 * SkillValues.castProgress / skill.castTime);
-				mc.ingameGUI.blit(stack, resX/2 - 91, resY - 29, 0, 5, castProgress, 5);
+			if (skill != null) {
+				int castProgress = (int) (182 * SkillValues.castProgress / skill.castTime);
+				mc.ingameGUI.blit(stack, resX / 2 - 91, resY - 29, 0, 5, castProgress, 5);
 			}
 			stack.pop();
 		}

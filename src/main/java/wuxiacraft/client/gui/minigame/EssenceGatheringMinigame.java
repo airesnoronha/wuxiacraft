@@ -91,23 +91,19 @@ public class EssenceGatheringMinigame implements IMinigame {
 			bg = ballsUV[1]; //yellow
 			fg = ballsUV[2]; //green
 			scale = (float) (cultBaseOverMax - 1) / 2f;
-		}
-		else if (MathUtils.between(cultBaseOverMax, 3, 6)) {
+		} else if (MathUtils.between(cultBaseOverMax, 3, 6)) {
 			bg = ballsUV[2]; //green
 			fg = ballsUV[3]; //blue
 			scale = (float) (cultBaseOverMax - 3) / 3f;
-		}
-		else if (MathUtils.between(cultBaseOverMax, 6, 10)) {
+		} else if (MathUtils.between(cultBaseOverMax, 6, 10)) {
 			bg = ballsUV[3]; //blue
 			fg = ballsUV[4]; //purple
 			scale = (float) (cultBaseOverMax - 6) / 4f;
-		}
-		else if (MathUtils.between(cultBaseOverMax, 10, 20)) {
+		} else if (MathUtils.between(cultBaseOverMax, 10, 20)) {
 			bg = ballsUV[4]; //purple
 			fg = ballsUV[5]; //white
 			scale = (float) (cultBaseOverMax - 10) / 10f;
-		}
-		else if (cultBaseOverMax > 20) {
+		} else if (cultBaseOverMax > 20) {
 			bg = ballsUV[5]; //white
 			fg = ballsUV[5]; //white
 			scale = 1f;
@@ -145,6 +141,7 @@ public class EssenceGatheringMinigame implements IMinigame {
 		assert Minecraft.getInstance().player != null;
 		ICultivation cultivation = Cultivation.get(Minecraft.getInstance().player);
 		SystemStats essenceStats = cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE);
+		SystemStats divineStats = cultivation.getStatsBySystem(CultivationLevel.System.DIVINE);
 		double energy = essenceStats.getEnergy();
 		double strand_cost = 14f;
 		int total_Strands = (int) (energy / strand_cost);
@@ -169,6 +166,7 @@ public class EssenceGatheringMinigame implements IMinigame {
 					markedForRemoval.add(strand);
 					essenceStats.addBase(strand_cost);
 					essenceStats.addEnergy(-strand_cost);
+					divineStats.addEnergy(-strand_cost * 0.2);
 					WuxiaPacketHandler.INSTANCE.sendToServer(new AddCultivationToPlayerMessage(CultivationLevel.System.ESSENCE, strand_cost, false));
 				}
 			}

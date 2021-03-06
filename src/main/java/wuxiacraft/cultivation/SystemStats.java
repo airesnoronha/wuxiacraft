@@ -110,7 +110,7 @@ public class SystemStats {
 	 */
 	public double getModifier() {
 		// Since foundation will have some part in cultivation base as well
-		double foundationAmount = this.getFoundation() + this.getBase();
+		double foundationAmount = this.getFoundation() + 0.3 * Math.max(0, this.getBase() - this.getLevel().getBaseBySubLevel(this.getSubLevel()));
 		return Math.max(0, this.getLevel().getModifierBySubLevel(this.getSubLevel()) *
 				(0.4 + Math.min(21, (foundationAmount / this.getLevel().getBaseBySubLevel(this.getSubLevel()))) * 0.6));
 	}

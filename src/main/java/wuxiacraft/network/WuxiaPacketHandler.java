@@ -27,6 +27,7 @@ public class WuxiaPacketHandler {
 		INSTANCE.registerMessage(serverMessagesID++, OpenScreenMessage.class, OpenScreenMessage::encode, OpenScreenMessage::decode, OpenScreenMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 		INSTANCE.registerMessage(serverMessagesID++, AddCultivationToPlayerMessage.class, AddCultivationToPlayerMessage::encode, AddCultivationToPlayerMessage::decode, AddCultivationToPlayerMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 		INSTANCE.registerMessage(serverMessagesID++, ExerciseMessage.class, ExerciseMessage::encode, ExerciseMessage::decode, ExerciseMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+		INSTANCE.registerMessage(serverMessagesID++, AttemptBreakthroughMessage.class, AttemptBreakthroughMessage::encode, AttemptBreakthroughMessage::decode, AttemptBreakthroughMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 
 		int clientMessagesID = 200;
 		INSTANCE.registerMessage(clientMessagesID++, CultivationSyncMessage.class, CultivationSyncMessage::encode, CultivationSyncMessage::decode, CultivationSyncMessage::HandleMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));

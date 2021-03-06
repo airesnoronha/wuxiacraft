@@ -6,6 +6,7 @@ import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -65,11 +66,14 @@ public class CultivationHandler {
 		if (cultivation.getSkillCooldown() > 0)
 			cultivation.lowerCoolDown();
 		//refill energies
-		if (player.getFoodStats().getFoodLevel() > 18 && bodyStats.getEnergy() < cultivation.getMaxBodyEnergy() / 2) {
-			bodyStats.addEnergy(cultivation.getBodyEnergyRegen() * cultivation.getMaxBodyEnergy());
+		if (player.getFoodStats().getFoodLevel() > 15 && bodyStats.getEnergy() < cultivation.getMaxBodyEnergy() * 0.7) {
+			double hunger_mod = 1;
+			if (player.getFoodStats().getFoodLevel() >= 18) hunger_mod += 0.3;
+			if (player.getFoodStats().getFoodLevel() >= 20) hunger_mod += 0.3;
+			bodyStats.addEnergy(hunger_mod * cultivation.getBodyEnergyRegen() * cultivation.getMaxBodyEnergy());
 			//it ok because it's just regen, so it won't halve if it's past middle point
-			bodyStats.setEnergy(Math.min(cultivation.getMaxBodyEnergy() / 2, bodyStats.getEnergy()));
-			player.addExhaustion((float) (cultivation.getEssenceEnergyRegen() * cultivation.getMaxDivineEnergy() * 100));
+			bodyStats.setEnergy(Math.min(cultivation.getMaxBodyEnergy() * 0.7, bodyStats.getEnergy()));
+			player.addExhaustion((float) (hunger_mod * cultivation.getBodyEnergyRegen() * cultivation.getMaxBodyEnergy() * 0.4));
 		} else { //if above middle point set try to set max to protect from overflow
 			bodyStats.setEnergy(Math.min(cultivation.getMaxBodyEnergy(), bodyStats.getEnergy()));
 		}
@@ -98,7 +102,7 @@ public class CultivationHandler {
 				if (relativeAmount < 0.02) amplifier = 4;
 				player.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 15, amplifier, true, false));
 				player.addPotionEffect(new EffectInstance(Effects.MINING_FATIGUE, 15, amplifier, true, false));
-				if(relativeAmount < 0.005) {
+				if (relativeAmount < 0.005) {
 					cultivation.setHP(cultivation.getHP() - 1);
 				}
 			}
@@ -114,12 +118,24 @@ public class CultivationHandler {
 				}
 				player.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 15, amplifier / 2, false, false));
 				player.addPotionEffect(new EffectInstance(Effects.NAUSEA, 15, amplifier, false, false));
-				if(relativeAmount < 0.005) {
+				if (relativeAmount < 0.005) {
 					cultivation.setHP(cultivation.getHP() - 1);
 				}
 			}
 		}
 
+	}
+
+	/**
+	 * When players wake up they'll recover blood energy and mental energy, because player rested
+	 *
+	 * @param event a description of what is happening
+	 */
+	@SubscribeEvent
+	public static void onPlayerWakeUp(PlayerWakeUpEvent event) {
+		ICultivation cultivation = Cultivation.get(event.getPlayer());
+		cultivation.getStatsBySystem(CultivationLevel.System.BODY).setEnergy(cultivation.getMaxBodyEnergy());
+		cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).setEnergy(cultivation.getMaxDivineEnergy());
 	}
 
 	/**

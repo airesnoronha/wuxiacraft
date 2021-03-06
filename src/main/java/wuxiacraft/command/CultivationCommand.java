@@ -1,6 +1,7 @@
 package wuxiacraft.command;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -40,6 +41,10 @@ public class CultivationCommand {
 				.then(Commands.literal("refill").then(
 						Commands.argument("target", EntityArgument.player())
 								.executes(CultivationCommand::refillEnergies)
+				))
+				.then(Commands.literal("addbase").then(
+						Commands.argument("target", EntityArgument.player()).then(Commands.argument("system", StringArgumentType.word())
+						.then(Commands.argument("amount", DoubleArgumentType.doubleArg()).executes(CultivationCommand::addBase)))
 				))
 		);
 	}
@@ -128,6 +133,19 @@ public class CultivationCommand {
 		cultivation.getStatsBySystem(CultivationLevel.System.BODY).setEnergy(cultivation.getMaxBodyEnergy());
 		cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).setEnergy(cultivation.getMaxDivineEnergy());
 		cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).setEnergy(cultivation.getMaxEssenceEnergy());
+		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), new CultivationSyncMessage(cultivation));
+		return 1;
+	}
+
+	private static int addBase(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
+		ServerPlayerEntity target = EntityArgument.getPlayer(ctx, "target");
+		String systemName = StringArgumentType.getString(ctx, "system");
+		double amount = DoubleArgumentType.getDouble(ctx, "amount");
+		ICultivation cultivation = Cultivation.get(target);
+		CultivationLevel.System system = CultivationLevel.System.BODY;
+		if (systemName.equalsIgnoreCase("divine")) system = CultivationLevel.System.DIVINE;
+		else if (systemName.equalsIgnoreCase("essence")) system = CultivationLevel.System.ESSENCE;
+		cultivation.getStatsBySystem(system).addBase(amount);
 		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), new CultivationSyncMessage(cultivation));
 		return 1;
 	}

@@ -155,13 +155,14 @@ public class Cultivation implements ICultivation {
 	public void advanceRank(CultivationLevel.System system) {
 		SystemStats stats = getStatsBySystem(system);
 		if (this.essenceStats.getLevel() == CultivationLevel.DEFAULT_ESSENCE_LEVEL) { //start cultivation
-			double beforeFoundationOverBase = this.essenceStats.getFoundation() / this.essenceStats.getLevel().getBaseBySubLevel(this.essenceStats.getSubLevel());
+			double beforeFoundationOverBase = this.essenceStats.getBase() / this.essenceStats.getLevel().getBaseBySubLevel(this.essenceStats.getSubLevel());
 			this.bodyStats.setLevel(this.bodyStats.getLevel().nextLevel(CultivationLevel.BODY_LEVELS));
-			this.divineStats.setLevel(this.bodyStats.getLevel().nextLevel(CultivationLevel.DIVINE_LEVELS));
-			this.essenceStats.setLevel(this.bodyStats.getLevel().nextLevel(CultivationLevel.ESSENCE_LEVELS));
+			this.divineStats.setLevel(this.divineStats.getLevel().nextLevel(CultivationLevel.DIVINE_LEVELS));
+			this.essenceStats.setLevel(this.essenceStats.getLevel().nextLevel(CultivationLevel.ESSENCE_LEVELS));
 			this.essenceStats.setFoundation(this.essenceStats.getLevel().getBaseBySubLevel(0) * beforeFoundationOverBase);
 			this.bodyStats.setFoundation(this.essenceStats.getFoundation());
 			this.divineStats.setFoundation(this.essenceStats.getFoundation());
+			this.essenceStats.setBase(0);
 		} else { //rise sub level
 			double beforeModifier = stats.getModifier();
 			stats.setBase(0);
@@ -170,11 +171,11 @@ public class Cultivation implements ICultivation {
 				stats.setLevel(stats.getLevel().nextLevel(CultivationLevel.getListBySystem(system)));
 				stats.setSubLevel(0);
 				// probably the current modifier growth rate is 1.2, this way there is a little loss on foundation
-				double modifierDifference = beforeModifier * 1.19 - stats.getModifier();
-				if (modifierDifference < 0) { //then correct the foundation there is actually at leas 19% increase in strength i hope
-					stats.setFoundation(stats.getFoundation() + stats.getLevel().getBaseBySubLevel(stats.getSubLevel()) * modifierDifference /
-							(0.6 * stats.getLevel().getModifierBySubLevel(stats.getSubLevel())));
-				}
+			}
+			double modifierDifference = beforeModifier * 1.19 - stats.getModifier();
+			if (modifierDifference > 0) { //then correct the foundation there is actually at leas 19% increase in strength i hope
+				stats.setFoundation(stats.getFoundation() + stats.getLevel().getBaseBySubLevel(stats.getSubLevel()) * modifierDifference /
+						(0.6 * stats.getLevel().getModifierBySubLevel(stats.getSubLevel())));
 			}
 		}
 	}
@@ -342,7 +343,7 @@ public class Cultivation implements ICultivation {
 				this.getBodyModifier() * 0.4 + this.getDivineModifier() * 0.1 + this.getEssenceModifier() * 0.8,
 				20 + this.getBodyModifier() + this.getDivineModifier() * 0.4 + this.getEssenceModifier() * 0.1,
 				this.getBodyModifier() * 0.2 + this.getDivineModifier() * 0.1 + this.getEssenceModifier() * 0.4,
-				this.getBodyModifier() * 0.8 + this.getDivineModifier() * 0.6 + this.getEssenceModifier() * 0.14);
+				this.getBodyModifier() * 0.6 + this.getDivineModifier() * 0.14 + this.getEssenceModifier() * 0.9);
 		this.maxBodyEnergy = 10 + this.getBodyModifier() * 10;
 		this.maxDivineEnergy = 10 + this.getDivineModifier() * 10;
 		this.maxEssenceEnergy = 10 + this.getEssenceModifier() * 10;
