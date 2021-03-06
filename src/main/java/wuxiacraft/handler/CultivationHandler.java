@@ -114,10 +114,10 @@ public class CultivationHandler {
 				if (relativeAmount < 0.04) amplifier = 3;
 				if (relativeAmount < 0.02) {
 					amplifier = 4;
-					player.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 15, 4, false, false));
+					player.addPotionEffect(new EffectInstance(Effects.NAUSEA, 15, 4, false, false));
 				}
 				player.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 15, amplifier / 2, false, false));
-				player.addPotionEffect(new EffectInstance(Effects.NAUSEA, 15, amplifier, false, false));
+				player.addPotionEffect(new EffectInstance(Effects.BLINDNESS, 15, amplifier, false, false));
 				if (relativeAmount < 0.005) {
 					cultivation.setHP(cultivation.getHP() - 1);
 				}

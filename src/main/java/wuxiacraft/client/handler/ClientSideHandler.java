@@ -66,7 +66,7 @@ public class ClientSideHandler {
 		}
 		//walking around will clear the head
 		if(!player.isSprinting()) {
-			double recoveryPerDistance = 0.005;
+			double recoveryPerDistance = 0.015;
 			if(cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).getEnergy() < cultivation.getMaxDivineEnergy()) {
 				cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).addEnergy(distance*recoveryPerDistance);
 				accumulatedMentalEnergy += distance*recoveryPerDistance;

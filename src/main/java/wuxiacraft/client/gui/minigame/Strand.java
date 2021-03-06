@@ -74,12 +74,16 @@ public class Strand {
 			this.movX = -0.3f + 0.6f * (float) Math.random();
 			this.movY = -0.3f + 0.6f * (float) Math.random();
 		}
-		this.x = MathUtils.clamp(this.x, 68, 78 + 53);
-		this.y = MathUtils.clamp(this.y, 25, 35 + 110);
+		this.x = MathUtils.clamp(this.x, minX, maxX);
+		this.y = MathUtils.clamp(this.y, minY, maxY);
 	}
 
 	public void draw(MatrixStack stack, MeditateScreen screen) {
-		screen.blitColored(stack, (int) this.x - 2, (int) this.y - 2, 43, 0, 5, 5, this.red, this.green, this.blue);
+		this.draw(stack, screen, 43, 0);
+	}
+
+	public void draw(MatrixStack stack, MeditateScreen screen, int u, int v) {
+		screen.blitColored(stack, (int) this.x - 2, (int) this.y - 2, u, v, 5, 5, this.red, this.green, this.blue);
 	}
 
 }

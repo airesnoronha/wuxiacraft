@@ -6,10 +6,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector2f;
 import wuxiacraft.WuxiaCraft;
 import wuxiacraft.client.gui.MeditateScreen;
-import wuxiacraft.cultivation.Cultivation;
-import wuxiacraft.cultivation.CultivationLevel;
-import wuxiacraft.cultivation.ICultivation;
-import wuxiacraft.cultivation.SystemStats;
+import wuxiacraft.cultivation.*;
 import wuxiacraft.network.AddCultivationToPlayerMessage;
 import wuxiacraft.network.WuxiaPacketHandler;
 import wuxiacraft.util.MathUtils;
@@ -164,7 +161,9 @@ public class EssenceGatheringMinigame implements IMinigame {
 				//lets add cultivation here
 				if (essenceStats.getEnergy() >= strand_cost) {
 					markedForRemoval.add(strand);
-					essenceStats.addBase(strand_cost);
+					KnownTechnique essenceTechnique = cultivation.getTechniqueBySystem(CultivationLevel.System.ESSENCE);
+					double energy_conversion = essenceTechnique != null ? 1 + essenceTechnique.getCultivationSpeed(essenceStats.getModifier()) : 1f;
+					essenceStats.addBase(strand_cost * energy_conversion);
 					essenceStats.addEnergy(-strand_cost);
 					divineStats.addEnergy(-strand_cost * 0.2);
 					WuxiaPacketHandler.INSTANCE.sendToServer(new AddCultivationToPlayerMessage(CultivationLevel.System.ESSENCE, strand_cost, false));

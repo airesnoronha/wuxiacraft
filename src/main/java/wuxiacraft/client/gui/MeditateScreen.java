@@ -150,7 +150,7 @@ public class MeditateScreen extends ContainerScreen<MeditationContainer> {
 				stack.translate(tabLocations[i].x + 3, tabLocations[i].y + 3, 0);
 				stack.scale(fontScale, fontScale, 1);
 				int width = this.font.getStringWidth(texts[i]);
-				this.font.drawString(stack, texts[i], (72-width)/2f, 0, 0xFFAA11);
+				this.font.drawString(stack, texts[i], (72 - width) / 2f, 0, 0xFFAA11);
 				stack.pop();
 			}
 		}
@@ -169,7 +169,7 @@ public class MeditateScreen extends ContainerScreen<MeditationContainer> {
 		if (btButtonGrabbed) {
 			btButtonPos = new Point(MathUtils.clamp((int) (mousePosX - btMouseOffset.x), 0, 132), btButtonPos.y);
 			if (btButtonPos.x > 128) { //attempt Breakthrough
-				WuxiaPacketHandler.INSTANCE.sendToServer(new AttemptBreakthroughMessage(CultivationLevel.System.ESSENCE));
+				WuxiaPacketHandler.INSTANCE.sendToServer(new AttemptBreakthroughMessage(this.selected));
 				btButtonGrabbed = false;
 				btButtonPos = new Point(0, 155);
 				this.closeScreen();

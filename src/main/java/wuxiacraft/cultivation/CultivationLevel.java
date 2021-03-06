@@ -42,8 +42,8 @@ public class CultivationLevel {
 		ESSENCE_LEVELS.add(new EssenceLevel("essence_mortal_1", "essence_mortal_2", "Essence Gathering", 9, maxBases[1], modifiers[1], false, false, false));
 		ESSENCE_LEVELS.add(new EssenceLevel("essence_mortal_2", "essence_mortal_3", "Essence Consolidation", 9, maxBases[2], modifiers[2], false, false, false));
 		ESSENCE_LEVELS.add(new EssenceLevel("essence_mortal_3", "essence_immortal_1", "Revolving Core", 9, maxBases[3], modifiers[3], true, false, true));
-		ESSENCE_LEVELS.add(new EssenceLevel("essence_immortal_1", "essence_immortal_2", "Immortal Sea", 9, maxBases[4], modifiers[4], true, false, true));
-		ESSENCE_LEVELS.add(new EssenceLevel("essence_immortal_2", "essence_immortal_3", "Immortal Transformation", 9, maxBases[5], modifiers[5], true, false, true));
+		ESSENCE_LEVELS.add(new EssenceLevel("essence_immortal_1", "essence_immortal_2", "Immortal Transformation", 9, maxBases[4], modifiers[4], true, false, true));
+		ESSENCE_LEVELS.add(new EssenceLevel("essence_immortal_2", "essence_immortal_3", "Immortal Sea", 9, maxBases[5], modifiers[5], true, false, true));
 		ESSENCE_LEVELS.add(new EssenceLevel("essence_immortal_3", "essence_godhood_1", "True Immortal", 9, maxBases[6], modifiers[6], true, false, true));
 		ESSENCE_LEVELS.add(new EssenceLevel("essence_godhood_1", "essence_godhood_2", "True God", 9, maxBases[7], modifiers[7], true, true, true));
 		ESSENCE_LEVELS.add(new EssenceLevel("essence_godhood_2", "essence_godhood_3", "God King", 9, maxBases[8], modifiers[8], true, true, true));

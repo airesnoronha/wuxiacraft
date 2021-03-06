@@ -59,6 +59,6 @@ public class MathUtils {
 	}
 
 	public static boolean inBounds(double x, double y, double minX, double minY, double width, double height) {
-		return between(x, minX, minX + width) && between(y, minY, height);
+		return between(x, minX, minX + width) && between(y, minY, minY + height);
 	}
 }

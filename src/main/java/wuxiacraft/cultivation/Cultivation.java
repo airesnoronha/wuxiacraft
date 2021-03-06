@@ -6,6 +6,7 @@ import wuxiacraft.capabilities.CultivationProvider;
 import wuxiacraft.cultivation.skill.Skill;
 import wuxiacraft.cultivation.technique.Technique;
 import wuxiacraft.cultivation.technique.TechniqueModifiers;
+import wuxiacraft.util.MathUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -160,8 +161,8 @@ public class Cultivation implements ICultivation {
 			this.divineStats.setLevel(this.divineStats.getLevel().nextLevel(CultivationLevel.DIVINE_LEVELS));
 			this.essenceStats.setLevel(this.essenceStats.getLevel().nextLevel(CultivationLevel.ESSENCE_LEVELS));
 			this.essenceStats.setFoundation(this.essenceStats.getLevel().getBaseBySubLevel(0) * beforeFoundationOverBase);
-			this.bodyStats.setFoundation(this.essenceStats.getFoundation());
-			this.divineStats.setFoundation(this.essenceStats.getFoundation());
+			this.bodyStats.setFoundation(MathUtils.clamp(this.essenceStats.getFoundation() * 0.6, 0, 12000));
+			this.divineStats.setFoundation(MathUtils.clamp(this.essenceStats.getFoundation() * 0.6, 0, 12000));
 			this.essenceStats.setBase(0);
 		} else { //rise sub level
 			double beforeModifier = stats.getModifier();
