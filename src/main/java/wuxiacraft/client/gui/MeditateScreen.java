@@ -65,13 +65,13 @@ public class MeditateScreen extends ContainerScreen<MeditationContainer> {
 			} else if (cultivation.getStatsBySystem(CultivationLevel.System.BODY).getLevel() == CultivationLevel.BODY_LEVELS.get(2)) {
 				this.currentMinigame = new BodyForgingMinigame();
 			} else if (cultivation.getStatsBySystem(CultivationLevel.System.BODY).getLevel() == CultivationLevel.BODY_LEVELS.get(3)) {
-				this.currentMinigame = new BodyCleansingMinigame();
+				this.currentMinigame = new BodyTransformationMinigame();
 			}
 		} else if (this.selected == CultivationLevel.System.DIVINE) {
 			if (cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).getLevel() == CultivationLevel.DIVINE_LEVELS.get(1)) {
 				this.currentMinigame = new SoulCondensingMinigame();
 			} else if (cultivation.getStatsBySystem(CultivationLevel.System.DIVINE).getLevel() == CultivationLevel.DIVINE_LEVELS.get(2)) {
-				this.currentMinigame = new SoulCondensingMinigame();
+				this.currentMinigame = new SoulForgingMinigame();
 			}
 
 		} else if (this.selected == CultivationLevel.System.ESSENCE) {
@@ -82,9 +82,9 @@ public class MeditateScreen extends ContainerScreen<MeditationContainer> {
 			} else if (cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getLevel() == CultivationLevel.ESSENCE_LEVELS.get(3)) {
 				this.currentMinigame = new RevolvingCoreMinigame();
 			} else if (cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getLevel() == CultivationLevel.ESSENCE_LEVELS.get(4)) {
-				this.currentMinigame = new EssenceConsolidationMinigame();
+				this.currentMinigame = new ImmortalTransformationMinigame();
 			} else if (cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getLevel() == CultivationLevel.ESSENCE_LEVELS.get(5)) {
-				this.currentMinigame = new EssenceConsolidationMinigame();
+				this.currentMinigame = new ImmortalSeaMinigame();
 			} else if (cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getLevel() == CultivationLevel.ESSENCE_LEVELS.get(6)) {
 				this.currentMinigame = new EssenceConsolidationMinigame();
 			} else if (cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getLevel() == CultivationLevel.ESSENCE_LEVELS.get(7)) {

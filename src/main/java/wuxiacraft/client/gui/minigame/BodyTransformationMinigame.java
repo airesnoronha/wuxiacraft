@@ -3,7 +3,7 @@ package wuxiacraft.client.gui.minigame;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import wuxiacraft.client.gui.MeditateScreen;
 
-public class BodyTrainingMinigame implements IMinigame{
+public class BodyTransformationMinigame implements IMinigame{
 
 	@Override
 	public void handleClick(int mouseX, int mouseY, MeditateScreen screen) {
