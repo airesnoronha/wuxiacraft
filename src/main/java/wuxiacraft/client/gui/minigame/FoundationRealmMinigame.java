@@ -2,7 +2,9 @@ package wuxiacraft.client.gui.minigame;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import wuxiacraft.WuxiaCraft;
 import wuxiacraft.client.gui.MeditateScreen;
 import wuxiacraft.cultivation.*;
@@ -96,7 +98,13 @@ public class FoundationRealmMinigame implements IMinigame {
 
 	@Override
 	public void renderForeground(MatrixStack stack, MeditateScreen screen) {
-
+		assert Minecraft.getInstance().player != null;
+		ICultivation cultivation = Cultivation.get(Minecraft.getInstance().player);
+		screen.getFont().drawString(stack, "Foundation Establishment", 10, 23, 0xFFAA00);
+		KnownTechnique kt = cultivation.getTechniqueBySystem(CultivationLevel.System.ESSENCE);
+		if (kt != null) {
+			screen.getFont().drawString(stack, I18n.format("technique." + kt.getTechnique().getName()), 26, 140, 0xFFAA00);
+		}
 	}
 
 	@Override

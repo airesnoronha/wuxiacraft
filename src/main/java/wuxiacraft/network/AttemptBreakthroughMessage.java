@@ -44,7 +44,7 @@ public class AttemptBreakthroughMessage {
 					cultivation.advanceRank(message.system);
 				} else {
 					SystemStats stats = cultivation.getStatsBySystem(message.system);
-					double random = stats.getLevel().getModifierBySubLevel(stats.getSubLevel()) * (0.6f + ctx.getSender().getRNG().nextDouble() * 0.5f);
+					double random = stats.getLevel().getBaseBySubLevel(stats.getSubLevel()) * (0.6f + ctx.getSender().getRNG().nextDouble() * 0.5f);
 					if (stats.getBase() > random) {
 						cultivation.advanceRank(message.system);
 					}

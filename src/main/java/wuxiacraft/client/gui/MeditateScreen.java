@@ -2,6 +2,7 @@ package wuxiacraft.client.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
@@ -247,5 +248,9 @@ public class MeditateScreen extends ContainerScreen<MeditationContainer> {
 		bufferbuilder.pos(matrix, (float) x1, (float) y1, (float) blitOffset).color(red, green, blue, alpha).tex(minU, minV).endVertex();
 		bufferbuilder.finishDrawing();
 		WorldVertexBufferUploader.draw(bufferbuilder);
+	}
+
+	public FontRenderer getFont() {
+		return this.font;
 	}
 }

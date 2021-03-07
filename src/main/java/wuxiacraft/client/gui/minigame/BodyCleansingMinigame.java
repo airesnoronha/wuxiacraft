@@ -2,6 +2,7 @@ package wuxiacraft.client.gui.minigame;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import wuxiacraft.WuxiaCraft;
 import wuxiacraft.client.gui.MeditateScreen;
@@ -17,6 +18,8 @@ import java.util.List;
 public class BodyCleansingMinigame implements IMinigame {
 
 	private static final ResourceLocation BODY_CLEANSING = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/minigame/body_cleansing_minigame.png");
+
+	private static final double strand_cost = 14;
 
 	private final List<Impurity> impurityList;
 	private Strand drawnStrand; //by the moment it isn't grabbed then nullify again
@@ -44,7 +47,11 @@ public class BodyCleansingMinigame implements IMinigame {
 
 	@Override
 	public void handleMouseDown(double mouseX, double mouseY, MeditateScreen screen) {
-		if (MathUtils.inBounds(MeditateScreen.mousePosX, MeditateScreen.mousePosY, sourceLocation.x - 4, sourceLocation.y - 4, 8, 8)) {
+		assert Minecraft.getInstance().player != null;
+		ICultivation cultivation = Cultivation.get(Minecraft.getInstance().player);
+		SystemStats essenceStats = cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE);
+		if (MathUtils.inBounds(MeditateScreen.mousePosX, MeditateScreen.mousePosY, sourceLocation.x - 4, sourceLocation.y - 4, 8, 8)
+				&& essenceStats.getEnergy() > strand_cost) {
 			drawnStrand = new Strand();
 			drawnStrand.isGrabbed = true;
 		}
@@ -99,7 +106,13 @@ public class BodyCleansingMinigame implements IMinigame {
 
 	@Override
 	public void renderForeground(MatrixStack stack, MeditateScreen screen) {
-
+		assert Minecraft.getInstance().player != null;
+		ICultivation cultivation = Cultivation.get(Minecraft.getInstance().player);
+		screen.getFont().drawString(stack, "Body Cleansing", 10, 23, 0xFFAA00);
+		KnownTechnique kt = cultivation.getTechniqueBySystem(CultivationLevel.System.BODY);
+		if (kt != null) {
+			screen.getFont().drawString(stack, I18n.format("technique." + kt.getTechnique().getName()), 26, 140, 0xFFAA00);
+		}
 	}
 
 	@Override
@@ -128,9 +141,8 @@ public class BodyCleansingMinigame implements IMinigame {
 			drawnStrand.tick();
 			for (Impurity impurity : this.impurityList) {
 				if (MathUtils.inBounds(drawnStrand.x, drawnStrand.y, impurity.x - 6, impurity.y - 6, 12, 12)) {
-					double strand_cost = 14f;
-					KnownTechnique essenceTechnique = cultivation.getTechniqueBySystem(CultivationLevel.System.BODY);
-					double energy_conversion = essenceTechnique != null ? 1 + essenceTechnique.getCultivationSpeed(essenceStats.getModifier()) : 1f;
+					KnownTechnique bodyTechnique = cultivation.getTechniqueBySystem(CultivationLevel.System.BODY);
+					double energy_conversion = bodyTechnique != null ? 1 + bodyTechnique.getCultivationSpeed(essenceStats.getModifier()) : 1f;
 					if (essenceStats.getEnergy() > strand_cost) {
 						bodyStats.addBase(strand_cost * energy_conversion);
 						essenceStats.addEnergy(-strand_cost);
