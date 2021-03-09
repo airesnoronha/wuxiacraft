@@ -24,7 +24,7 @@ public class WuxiaItems {
 		WUXIA_ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
 		for (Technique tech : WuxiaTechniques.TECHNIQUES) {
 			TECHNIQUE_SCROLLS.add(WUXIA_ITEMS.register(tech.getName() + "_item",
-					() -> new TechniqueScrollItem(new Item.Properties().group(ItemGroup.MISC), tech)));
+					() -> new TechniqueScrollItem(new Item.Properties().maxStackSize(1).group(ItemGroup.MISC), tech)));
 		}
 	}
 }

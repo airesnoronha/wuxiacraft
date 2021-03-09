@@ -5,12 +5,16 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import org.lwjgl.glfw.GLFW;
 import wuxiacraft.WuxiaCraft;
 import wuxiacraft.container.IntrospectionContainer;
 import wuxiacraft.cultivation.*;
+import wuxiacraft.network.SetConfigParametersMessage;
+import wuxiacraft.network.WuxiaPacketHandler;
 import wuxiacraft.util.MathUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -46,6 +50,49 @@ public class IntrospectionScreen extends ContainerScreen<IntrospectionContainer>
 	}
 
 	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+
+		//regulator bars
+		for (int i = 0; i < 4; i++) {
+			boolean shiftModifier = InputMappings.isKeyDown(this.getMinecraft().getMainWindow().getHandle(), GLFW.GLFW_KEY_LEFT_SHIFT)
+					|| InputMappings.isKeyDown(this.getMinecraft().getMainWindow().getHandle(), GLFW.GLFW_KEY_RIGHT_SHIFT);
+			if (MathUtils.inBounds(mouseX, mouseY, this.guiLeft - 61 + 13, this.guiTop + i * 15 + 3, 9, 9)) {
+				handleBarButtonClick(i, 0, shiftModifier);
+			} else if (MathUtils.inBounds(mouseX, mouseY, this.guiLeft - 61 + 51, this.guiTop + i * 15 + 3, 9, 9)) {
+				handleBarButtonClick(i, 1, shiftModifier);
+			}
+		}
+		return super.mouseClicked(mouseX, mouseY, button);
+	}
+
+	private void handleBarButtonClick(int prop, int op, boolean shiftModifier) {
+		if (this.minecraft == null) return;
+		if (this.minecraft.player == null) return;
+		ICultivation cultivation = Cultivation.get(this.minecraft.player);
+		float step = shiftModifier ? 1.0f : 0.1f;
+		switch (prop) {
+			case 0:
+				if (op == 0) cultivation.setMovementSpeed(Math.max(0, cultivation.getMovementSpeed() - step));
+				if (op == 1) cultivation.setMovementSpeed(Math.max(0, cultivation.getMovementSpeed() + step));
+				break;
+			case 1:
+				if (op == 0) cultivation.setBreakSpeed(Math.max(0, cultivation.getBreakSpeed() - step));
+				if (op == 1) cultivation.setBreakSpeed(Math.max(0, cultivation.getBreakSpeed() + step));
+				break;
+			case 2:
+				if (op == 0) cultivation.setJumpSpeed(Math.max(0, cultivation.getJumpSpeed() - step));
+				if (op == 1) cultivation.setJumpSpeed(Math.max(0, cultivation.getJumpSpeed() + step));
+				break;
+			case 3:
+				if (op == 0) cultivation.setStepHeight(Math.max(0, cultivation.getStepHeight() - step));
+				if (op == 1) cultivation.setStepHeight(Math.max(0, cultivation.getStepHeight() + step));
+				break;
+		}
+		WuxiaPacketHandler.INSTANCE.sendToServer(new SetConfigParametersMessage(cultivation.getMovementSpeed(),
+				cultivation.getBreakSpeed(), cultivation.getJumpSpeed(), cultivation.getStepHeight()));
+	}
+
+	@Override
 	protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int x, int y) {
 		if (this.minecraft == null) return;
 		if (this.minecraft.player == null) return;
@@ -64,6 +111,30 @@ public class IntrospectionScreen extends ContainerScreen<IntrospectionContainer>
 		drawFoundationAtPosition(stack, 154, 66, foundationOverMaxBase);
 		foundationOverMaxBase = essenceStats.getFoundation() / essenceStats.getLevel().getBaseBySubLevel(essenceStats.getSubLevel());
 		drawFoundationAtPosition(stack, 154, 107, foundationOverMaxBase);
+
+		double extraHaste = cultivation.getBodyModifier() * 0.05 + cultivation.getEssenceModifier() * 0.05;
+		double extraJump = cultivation.getBodyModifier() * 0.09 + cultivation.getEssenceModifier() * 0.04;
+		double extraStepHeight = cultivation.getBodyModifier() * 0.1 + cultivation.getEssenceModifier() * 0.05;
+
+		int[] iconPos = new int[]{27, 99, 108, 135};
+		int[] fills = new int[]{
+				Math.min(27, (int) (27f * cultivation.getMovementSpeed() / Math.min(8.5f, cultivation.getFinalModifiers().movementSpeed))),
+				Math.min(27, (int) (27f * cultivation.getBreakSpeed() / extraHaste)),
+				Math.min(27, (int) (27f * cultivation.getJumpSpeed() / extraJump)),
+				Math.min(27, (int) (27f * cultivation.getStepHeight() / extraStepHeight))
+		};
+		//Regulator bars
+		for (int i = 0; i < 4; i++) {
+			blit(stack, -61, +i * 15, 0, 173, 61, 15); //bg
+			blit(stack, -61 + 23, +i * 15 + 4, 0, 188, 27, 7); //bar bg
+			blit(stack, -61 + 23, +i * 15 + 4, 27, 188, fills[i], 7); //bar fill
+			blit(stack, -61 + 13, +i * 15 + 3, 45, 164, 9, 9); //button bg
+			blit(stack, -61 + 51, +i * 15 + 3, 45, 164, 9, 9); //button bg
+			blit(stack, -61 + 13, +i * 15 + 3, 72, 164, 9, 9); //button icon -
+			blit(stack, -61 + 51, +i * 15 + 3, 90, 164, 9, 9); //button icon +
+			blit(stack, -61 + 3, +i * 15 + 3, iconPos[i], 164, 9, 9); // icon
+		}
+
 		stack.pop();
 	}
 
@@ -141,6 +212,16 @@ public class IntrospectionScreen extends ContainerScreen<IntrospectionContainer>
 				this.font.drawString(stack, kt.getTechnique().getName(), 0, 0, 0xFFFFFF);
 				stack.pop();
 			}
+		}
+
+		List<String> barDescriptions = new ArrayList<>();
+		barDescriptions.add(String.format("%.1f", cultivation.getMovementSpeed()));
+		barDescriptions.add(String.format("%.1f", cultivation.getBreakSpeed()));
+		barDescriptions.add(String.format("%.1f", cultivation.getJumpSpeed()));
+		barDescriptions.add(String.format("%.1f", cultivation.getStepHeight()));
+
+		for (int i = 0; i < 4; i++) {
+			this.font.drawString(stack, barDescriptions.get(i), - 61 + 27, + 4 + i * 15, 0xEFEF00);
 		}
 		stack.pop();
 	}

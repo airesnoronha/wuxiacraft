@@ -53,7 +53,40 @@ public interface ICultivation {
 
 	double getMaxEssenceEnergy();
 
-	void copyFrom(ICultivation cultivation);
+	double getMovementSpeed();
+
+	void setMovementSpeed(double movementSpeed);
+
+	double getBreakSpeed();
+
+	void setBreakSpeed(double breakSpeed);
+
+	double getJumpSpeed();
+
+	void setJumpSpeed(double jumpSpeed);
+
+	/**
+	 * @return the increment in stepHeight
+	 */
+	double getStepHeight();
+
+	/**
+	 * sets the stepHeight for a player
+	 * @param stepHeight the increment in stepHeight
+	 */
+	void setStepHeight(double stepHeight);
+
+	/**
+	 * @return the walking speed added in blocks per second capped at 3.5
+	 */
+	double getWalkingSpeed();
+
+	/**
+	 * @return the running speed added in blocks per second capped at 8.5
+	 */
+	double getRunningSpeed();
+
+	abstract void copyFrom(ICultivation cultivation);
 
 	double getEssenceModifier();
 

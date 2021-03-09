@@ -4,12 +4,15 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.PacketDistributor;
+import wuxiacraft.WuxiaCraft;
 import wuxiacraft.cultivation.Cultivation;
 import wuxiacraft.cultivation.CultivationLevel;
 import wuxiacraft.cultivation.ICultivation;
@@ -50,6 +53,10 @@ public class CultivationHandler {
 
 		PlayerEntity player = (PlayerEntity) event.getEntity();
 		ICultivation cultivation = Cultivation.get(player);
+
+		if (player.abilities.isFlying) {
+			player.fallDistance = 0;
+		}
 
 		cultivation.calculateFinalModifiers();
 		cultivation.advanceTimer();
@@ -162,6 +169,22 @@ public class CultivationHandler {
 		}
 		newCultivation.copyFrom(oldCultivation);
 		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), new CultivationSyncMessage(newCultivation));
+	}
+
+	@SubscribeEvent
+	public static void onPlayerCanFy(TickEvent.PlayerTickEvent event) {
+		if (event.phase != TickEvent.Phase.END) return;
+		PlayerEntity player = event.player;
+		ICultivation cultivation = Cultivation.get(player);
+		boolean canFly = false;
+		if (cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getLevel() instanceof CultivationLevel.EssenceLevel)
+			canFly = ((CultivationLevel.EssenceLevel) cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getLevel()).flight;
+		if (canFly && player.abilities.isFlying && cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).getEnergy() <= 1) {
+			player.abilities.isFlying = false;
+		}
+		if (canFly) {
+			player.abilities.allowFlying = true;
+		}
 	}
 
 }

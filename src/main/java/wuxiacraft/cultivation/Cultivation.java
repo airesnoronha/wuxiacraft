@@ -79,6 +79,13 @@ public class Cultivation implements ICultivation {
 	 */
 	private double skillCooldown;
 
+	//Config but without config files
+	private double movementSpeed;
+	private double breakSpeed;
+	private double jumpSpeed;
+	private double stepHeight;
+
+
 	//Helpers rather than stats
 
 	/**
@@ -416,6 +423,70 @@ public class Cultivation implements ICultivation {
 	@Override
 	public double getHealingCost() {
 		return healingCost;
+	}
+
+	@Override
+	public double getMovementSpeed() {
+		return movementSpeed;
+	}
+
+	@Override
+	public void setMovementSpeed(double movementSpeed) {
+		this.movementSpeed = movementSpeed;
+	}
+
+	@Override
+	public double getBreakSpeed() {
+		return breakSpeed;
+	}
+
+	@Override
+	public void setBreakSpeed(double breakSpeed) {
+		this.breakSpeed = breakSpeed;
+	}
+
+	@Override
+	public double getJumpSpeed() {
+		return jumpSpeed;
+	}
+
+	@Override
+	public void setJumpSpeed(double jumpSpeed) {
+		this.jumpSpeed = jumpSpeed;
+	}
+
+	/**
+	 * @return the increment in stepHeight
+	 */
+	@Override
+	public double getStepHeight() {
+		return stepHeight;
+	}
+
+	/**
+	 * sets the stepHeight for a player
+	 *
+	 * @param stepHeight the increment in stepHeight
+	 */
+	@Override
+	public void setStepHeight(double stepHeight) {
+		this.stepHeight = stepHeight;
+	}
+
+	/**
+	 * @return the walking speed added in blocks per second capped at 3.5
+	 */
+	@Override
+	public double getWalkingSpeed() {
+		return MathUtils.clamp(this.finalModifiers.movementSpeed * 0.4f, 0, Math.min(3.5, this.movementSpeed));
+	}
+
+	/**
+	 * @return the running speed added in blocks per second capped at 8.5
+	 */
+	@Override
+	public double getRunningSpeed() {
+		return MathUtils.clamp(this.finalModifiers.movementSpeed, 0, Math.min(8.5, this.movementSpeed));
 	}
 
 	@Override

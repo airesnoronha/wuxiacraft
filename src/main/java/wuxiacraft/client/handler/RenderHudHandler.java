@@ -102,7 +102,7 @@ public class RenderHudHandler {
 		rotationAngle = (float) MathUtils.clamp(rotationAngle, -2 * Math.PI, 2 * Math.PI);
 		stack.rotate(Vector3f.ZP.rotation(-rotationAngle));
 		lastMillis = System.currentTimeMillis();
-		mc.ingameGUI.blit(stack, -53, -53, 75, 0, 103, 103);
+		mc.ingameGUI.blit(stack, -53, -53, 75, 0, 106, 106);
 		stack.pop();
 		//then body
 		stats = cultivation.getStatsBySystem(CultivationLevel.System.BODY);
