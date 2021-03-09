@@ -87,7 +87,7 @@ public class RenderHudHandler {
 		SystemStats stats = cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE);
 		float energyFill = (float) (stats.getEnergy() / (cultivation.getMaxEssenceEnergy()));
 		if (cultivation.getMaxEssenceEnergy() == 0) energyFill = 0;
-		stack.translate(94.5, 56, 0);
+		stack.translate(94.5, 57.5, 0);
 		stack.scale(energyFill, energyFill, 0);
 
 		float rotationSpeed = 1.8f - energyFill * 1.803f;//in hertz

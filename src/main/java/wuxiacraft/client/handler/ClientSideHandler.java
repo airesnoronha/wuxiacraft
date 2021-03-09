@@ -7,9 +7,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import wuxiacraft.client.SkillValues;
-import wuxiacraft.cultivation.Cultivation;
-import wuxiacraft.cultivation.CultivationLevel;
-import wuxiacraft.cultivation.ICultivation;
+import wuxiacraft.cultivation.*;
 import wuxiacraft.cultivation.skill.Skill;
 import wuxiacraft.network.ActivateSkillMessage;
 import wuxiacraft.network.EnergyMessage;
@@ -20,12 +18,17 @@ public class ClientSideHandler {
 	/**
 	 * A method to reduce the amount of energy messages to the server
 	 */
-	private static double accumulatedFlyCost = 0;
+	private static double accumulatedEssenceEnergy = 0;
 
 	/**
 	 * Accumulated mental energy player got
 	 */
 	private static double accumulatedMentalEnergy = 0;
+
+	/**
+	 * Accumulated body energy
+	 */
+	private static double accumulatedBodyEnergy = 0;
 
 	/**
 	 * Calculates if players should fly and takes away the energy cost
@@ -49,7 +52,7 @@ public class ClientSideHandler {
 			totalRem += distance * dist_cost;
 			if (!player.isCreative()) {
 				cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).addEnergy(-totalRem);
-				accumulatedFlyCost += totalRem;
+				accumulatedEssenceEnergy -= totalRem;
 			}
 		}
 
@@ -61,11 +64,17 @@ public class ClientSideHandler {
 				accumulatedMentalEnergy += distance * recoveryPerDistance;
 			}
 		}
-		if (cultivation.getTickerTime() % 10 == 0) {
+		if (cultivation.getTickerTime() % 20 == 5 && accumulatedMentalEnergy != 0) {
 			WuxiaPacketHandler.INSTANCE.sendToServer(new EnergyMessage(accumulatedMentalEnergy, CultivationLevel.System.DIVINE, 0));
 			accumulatedMentalEnergy = 0;
-			WuxiaPacketHandler.INSTANCE.sendToServer(new EnergyMessage(accumulatedFlyCost, CultivationLevel.System.ESSENCE, 1));
-			accumulatedFlyCost = 0;
+		}
+		if (cultivation.getTickerTime() % 20 == 10 && accumulatedEssenceEnergy != 0) {
+			WuxiaPacketHandler.INSTANCE.sendToServer(new EnergyMessage(accumulatedEssenceEnergy, CultivationLevel.System.ESSENCE, 0));
+			accumulatedEssenceEnergy = 0;
+		}
+		if (cultivation.getTickerTime() % 20 == 15 && accumulatedBodyEnergy != 0) {
+			WuxiaPacketHandler.INSTANCE.sendToServer(new EnergyMessage(accumulatedBodyEnergy, CultivationLevel.System.BODY, 0));
+			accumulatedBodyEnergy = 0;
 		}
 	}
 
@@ -82,11 +91,25 @@ public class ClientSideHandler {
 		ClientPlayerEntity player = (ClientPlayerEntity) event.player;
 		ICultivation cultivation = Cultivation.get(player);
 		player.stepHeight = 0.6f + (float) cultivation.getStepHeight();
-		if (player.movementInput.isMovingForward()) {
-			if (player.isSprinting()) {
-				player.moveRelative((float) cultivation.getRunningSpeed() / 20, new Vector3d(0, 0, 1));
+		if (cultivation.isPowerWalk() && player.movementInput.isMovingForward()) {
+			SystemStats bodyStats = cultivation.getStatsBySystem(CultivationLevel.System.BODY);
+			SystemStats essenceStats = cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE);
+			double bodyEnergyFactor = cultivation.getBodyModifier() * 0.2 / cultivation.getFinalModifiers().movementSpeed;
+			double divineEnergyFactor = cultivation.getDivineModifier() * 0.1 / cultivation.getFinalModifiers().movementSpeed;
+			double essenceEnergyFactor = cultivation.getEssenceModifier() * 0.4 / cultivation.getFinalModifiers().movementSpeed;
+			double speed = player.isSprinting() ? cultivation.getRunningSpeed() : cultivation.getWalkingSpeed();
+			double dist_cost = 0.7;
+			if (bodyStats.getEnergy() > speed * bodyEnergyFactor) {
+				player.moveRelative((float) (speed * bodyEnergyFactor) / 20f, new Vector3d(0, 0, 1));
+				bodyStats.addEnergy(-speed * bodyEnergyFactor * dist_cost);
+				accumulatedBodyEnergy -= speed * bodyEnergyFactor * dist_cost;
 			}
-			player.moveRelative((float) cultivation.getWalkingSpeed() / 20, new Vector3d(0, 0, 1));
+			if (essenceStats.getEnergy() > speed * (essenceEnergyFactor + divineEnergyFactor)) {
+				player.moveRelative((float) (speed * (essenceEnergyFactor + divineEnergyFactor)) / 20f, new Vector3d(0, 0, 1));
+				essenceStats.addEnergy(-speed * (essenceEnergyFactor + divineEnergyFactor) * dist_cost);
+				accumulatedEssenceEnergy -= speed * (essenceEnergyFactor + divineEnergyFactor) * dist_cost;
+			}
+
 		}
 	}
 

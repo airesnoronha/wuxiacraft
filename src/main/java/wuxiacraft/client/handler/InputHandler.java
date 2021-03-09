@@ -34,6 +34,7 @@ public class InputHandler {
 	public static final int KEY_MEDITATE = 4;
 	public static final int KEY_INTROSPECTION = 5;
 	public static final int KEY_SKILLS = 6;
+	public static final int KEY_POWER_RUN = 6;
 
 	public static KeyBinding[] keyBindings;
 
@@ -46,6 +47,7 @@ public class InputHandler {
 		keyBindings[KEY_MEDITATE] = new KeyBinding("wuxiacraft.key.meditate", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_Z, "wuxiacraft.category.main");
 		keyBindings[KEY_INTROSPECTION] = new KeyBinding("wuxiacraft.key.introspection", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_K, "wuxiacraft.category.main");
 		keyBindings[KEY_SKILLS] = new KeyBinding("wuxiacraft.key.skills", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_L, "wuxiacraft.category.main");
+		keyBindings[KEY_POWER_RUN] = new KeyBinding("wuxiacraft.key.power_run", KeyConflictContext.IN_GAME, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_R, "wuxiacraft.category.main");
 		for (KeyBinding key : keyBindings) {
 			ClientRegistry.registerKeyBinding(key);
 		}
@@ -67,6 +69,9 @@ public class InputHandler {
 			}
 			if (keyBindings[KEY_INTROSPECTION].isPressed()) {
 				WuxiaPacketHandler.INSTANCE.sendToServer(new OpenScreenMessage(OpenScreenMessage.TargetGui.INTROSPECTION));
+			}
+			if (keyBindings[KEY_POWER_RUN].isPressed()) {
+				cultivation.setPowerWalk(!cultivation.isPowerWalk());
 			}
 		}
 	}

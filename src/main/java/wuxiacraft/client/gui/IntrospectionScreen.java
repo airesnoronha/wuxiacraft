@@ -5,6 +5,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -202,14 +203,14 @@ public class IntrospectionScreen extends ContainerScreen<IntrospectionContainer>
 			stack.push();
 			stack.translate(nameLocations[i].x, nameLocations[i].y, 0);
 			stack.scale(fontScale, fontScale, 1);
-			this.font.drawString(stack, statsList[i].getLevel().displayName, 0, 0, 0xFFFFFF);
+			this.font.drawString(stack, statsList[i].getLevel().displayName, 0, 0, 0xFFAA00);
 			stack.pop();
 			KnownTechnique kt = knownTechniques[i]; //to avoid warnings
 			if (kt != null) {
 				stack.push();
 				stack.translate(techniqueNameLocation[i].x, techniqueNameLocation[i].y, 0);
 				stack.scale(fontScale, fontScale, 1);
-				this.font.drawString(stack, kt.getTechnique().getName(), 0, 0, 0xFFFFFF);
+				this.font.drawString(stack, I18n.format("technique."+kt.getTechnique().getName()), 0, 0, 0xFFAA00);
 				stack.pop();
 			}
 		}

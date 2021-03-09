@@ -84,6 +84,7 @@ public class Cultivation implements ICultivation {
 	private double breakSpeed;
 	private double jumpSpeed;
 	private double stepHeight;
+	private boolean powerWalk;
 
 
 	//Helpers rather than stats
@@ -357,7 +358,9 @@ public class Cultivation implements ICultivation {
 		this.maxEssenceEnergy = 10 + this.getEssenceModifier() * 10;
 		this.bodyEnergyRegen = 0.00035; //after all it uses food
 		this.divineEnergyRegen = 0.00007;
-		this.essenceEnergyRegen = 0.000005; //this will gather when doing breathing exercises aka cultivating
+		if (CultivationLevel.ESSENCE_LEVELS.indexOf(essenceStats.getLevel()) > 2)
+			this.essenceEnergyRegen = 0.00015;
+		else this.essenceEnergyRegen = 0.000005; //this will gather when doing breathing exercises aka cultivating
 		this.healingAmount = 0.0075;
 		this.healingCost = 1.8;
 		if (this.bodyTechnique != null) {
@@ -487,6 +490,16 @@ public class Cultivation implements ICultivation {
 	@Override
 	public double getRunningSpeed() {
 		return MathUtils.clamp(this.finalModifiers.movementSpeed, 0, Math.min(8.5, this.movementSpeed));
+	}
+
+	@Override
+	public boolean isPowerWalk() {
+		return powerWalk;
+	}
+
+	@Override
+	public void setPowerWalk(boolean powerWalk) {
+		this.powerWalk = powerWalk;
 	}
 
 	@Override

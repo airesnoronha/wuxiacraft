@@ -51,7 +51,7 @@ public class CultivationStorage implements Capability.IStorage<ICultivation> {
 		//skill values
 		List<Skill> skillsList = instance.getKnownSkills();
 		tag.putInt("skillsCount", skillsList.size());
-		for(Skill skill : skillsList) {
+		for (Skill skill : skillsList) {
 			tag.putString("skill-" + skillsList.indexOf(skill), skill.name);
 		}
 		tag.putIntArray("selectedSkills", instance.getSelectedSkills());
@@ -59,6 +59,12 @@ public class CultivationStorage implements Capability.IStorage<ICultivation> {
 
 		//character's health
 		tag.putDouble("health", instance.getHP());
+
+		//character config params
+		tag.putDouble("movementSpeed", instance.getMovementSpeed());
+		tag.putDouble("breakSpeed", instance.getBreakSpeed());
+		tag.putDouble("jumpSpeed", instance.getJumpSpeed());
+		tag.putDouble("stepHeight", instance.getStepHeight());
 
 		return tag;
 	}
@@ -91,9 +97,9 @@ public class CultivationStorage implements Capability.IStorage<ICultivation> {
 		}
 
 		int skillsCount = tag.getInt("skillsCount");
-		for(int i = 0; i < skillsCount; i++) {
+		for (int i = 0; i < skillsCount; i++) {
 			Skill skill = WuxiaSkills.getSkillByName(tag.getString("skill-" + i));
-			if(skill != null) {
+			if (skill != null) {
 				instance.addKnownSkill(skill);
 			}
 		}
@@ -105,6 +111,12 @@ public class CultivationStorage implements Capability.IStorage<ICultivation> {
 
 		//health
 		instance.setHP(tag.getDouble("health"));
+
+		//character config params
+		instance.setMovementSpeed(tag.getDouble("movementSpeed"));
+		instance.setBreakSpeed(tag.getDouble("breakSpeed"));
+		instance.setJumpSpeed(tag.getDouble("jumpSpeed"));
+		instance.setStepHeight(tag.getDouble("stepHeight"));
 
 	}
 }

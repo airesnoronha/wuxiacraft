@@ -86,6 +86,10 @@ public interface ICultivation {
 	 */
 	double getRunningSpeed();
 
+	boolean isPowerWalk();
+
+	void setPowerWalk(boolean powerWalk);
+
 	abstract void copyFrom(ICultivation cultivation);
 
 	double getEssenceModifier();
