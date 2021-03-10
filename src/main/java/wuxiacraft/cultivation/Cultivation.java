@@ -181,7 +181,7 @@ public class Cultivation implements ICultivation {
 				stats.setSubLevel(0);
 				// probably the current modifier growth rate is 1.2, this way there is a little loss on foundation
 			}
-			double modifierDifference = beforeModifier * 1.19 - stats.getModifier();
+			double modifierDifference = beforeModifier * 1.25 - stats.getModifier();
 			if (modifierDifference > 0) { //then correct the foundation there is actually at leas 19% increase in strength i hope
 				stats.setFoundation(stats.getFoundation() + stats.getLevel().getBaseBySubLevel(stats.getSubLevel()) * modifierDifference /
 						(0.6 * stats.getLevel().getModifierBySubLevel(stats.getSubLevel())));

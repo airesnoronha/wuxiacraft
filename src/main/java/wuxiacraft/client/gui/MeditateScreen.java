@@ -14,6 +14,7 @@ import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector2f;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
+import org.apache.commons.lang3.tuple.Pair;
 import wuxiacraft.WuxiaCraft;
 import wuxiacraft.client.gui.minigame.*;
 import wuxiacraft.client.handler.RenderHudHandler;
@@ -51,6 +52,28 @@ public class MeditateScreen extends ContainerScreen<MeditationContainer> {
 		super(screenContainer, inv, titleIn);
 		this.xSize = 200;
 		this.ySize = 155;
+	}
+
+	public static Pair<Integer, Float> getIdAndFillFromMaxCultBase(double maxOverBase) {
+		int id = 1;
+		float fill = (float) maxOverBase;
+		if (MathUtils.between(maxOverBase, 1, 3)) {
+			id = 2;
+			fill = (fill - 1f) / 2f;
+		} else if (MathUtils.between(maxOverBase, 3, 6)) {
+			id = 3;
+			fill = (fill - 3f) / 3f;
+		} else if (MathUtils.between(maxOverBase, 6, 10)) {
+			id = 4;
+			fill = (fill - 6f) / 4f;
+		} else if (MathUtils.between(maxOverBase, 10, 20)) {
+			id = 5;
+			fill = (fill - 10f) / 10f;
+		} else if (maxOverBase > 20) {
+			id = 5;
+			fill = 1f;
+		}
+		return Pair.of(id, fill);
 	}
 
 	private void setAppropriateMinigame() {

@@ -1,6 +1,7 @@
 package wuxiacraft.cultivation;
 
 import net.minecraft.nbt.CompoundNBT;
+import wuxiacraft.util.MathUtils;
 
 public class SystemStats {
 
@@ -110,7 +111,8 @@ public class SystemStats {
 	 */
 	public double getModifier() {
 		// Since foundation will have some part in cultivation base as well
-		double foundationAmount = this.getFoundation() + 0.3 * Math.max(0, this.getBase() - this.getLevel().getBaseBySubLevel(this.getSubLevel()));
+		// also, base showing as foundation is / 3 -> since foundation can only go up to 21, i divided by three here as well = 7
+		double foundationAmount = this.getFoundation() + 0.3 * MathUtils.clamp(this.getBase() - this.getLevel().getBaseBySubLevel(this.getSubLevel()), 0, 7);
 		return Math.max(0, this.getLevel().getModifierBySubLevel(this.getSubLevel()) *
 				(0.4 + Math.min(21, (foundationAmount / this.getLevel().getBaseBySubLevel(this.getSubLevel()))) * 0.6));
 	}

@@ -6,8 +6,8 @@ import wuxiacraft.util.MathUtils;
 
 public class Strand {
 
-	public float x;
-	public float y;
+	public float x = -1;
+	public float y = -1;
 
 	public float movX;
 	public float movY;
@@ -24,8 +24,6 @@ public class Strand {
 	public float blue;
 
 	public Strand() {
-		this.x = 78 + (float) Math.random() * 43f;
-		this.y = 35 + (float) Math.random() * 100f;
 		this.movX = -0.3f + 0.6f * (float) Math.random();
 		this.movY = -0.3f + 0.6f * (float) Math.random();
 		this.ticker = 0;
@@ -34,9 +32,9 @@ public class Strand {
 		this.green = 0.95f;
 		this.blue = 0.20f;
 		this.minX = 68;
-		this.maxX = 78+53;
+		this.maxX = 78 + 53;
 		this.minY = 25;
-		this.maxY = 35+110;
+		this.maxY = 35 + 110;
 	}
 
 	public Strand setColor(float red, float green, float blue) {
@@ -55,6 +53,10 @@ public class Strand {
 	}
 
 	public void tick() {
+		if (this.x == -1 && this.y == -1) {
+			this.x = minX + (float) Math.random() * (maxX - minX);
+			this.y = minY + (float) Math.random() * (maxY - minY);
+		}
 		if (this.isGrabbed) {
 			this.x = (float) MeditateScreen.mousePosX;
 			this.y = (float) MeditateScreen.mousePosY;
