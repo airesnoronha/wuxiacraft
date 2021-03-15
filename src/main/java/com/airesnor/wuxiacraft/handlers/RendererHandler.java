@@ -26,6 +26,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec2f;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -289,7 +290,7 @@ public class RendererHandler {
 		float radius = 20f;
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(res.getScaledWidth() - 62, res.getScaledHeight() - 32 - radius, 0);
-		float rotatingAngle = getRotationAngleEaseOut() * (selectingAnimation < 0 ? -1 : 1);
+		float rotatingAngle = selectingAnimation == 0 ? 0 : getRotationAngleEaseOut() * (selectingAnimation < 0 ? -1 : 1);
 		GlStateManager.rotate(rotatingAngle, 0, 0, 1);
 		float partialTicksDiff = partialTicks - lastPartialTick;
 		if (partialTicks < lastPartialTick) partialTicksDiff = 1 + partialTicks - lastPartialTick;
@@ -351,8 +352,32 @@ public class RendererHandler {
 		GlStateManager.popMatrix();
 	}
 
+	private final static Vec2f[] cubicBezierPoints = new Vec2f[]{
+			new Vec2f(0, 0),
+			new Vec2f(0.4f, 0.15f),
+			new Vec2f(0.4f, 1.0f),
+			new Vec2f(1, 1)
+	};
+
+	private static float pointInLine(float t, float a, float b) {
+		return a + (b - a) * t;
+	}
+
 	public static float getRotationAngleEaseOut() {
-		return (float) Interpolator.SPLINE(.4, .15, 0.4, 1).interpolate(0d, 120d, Math.abs(selectingAnimation / 120d));
+		float t = (float) Math.abs(selectingAnimation / 120d);
+		//find x
+		float ax = pointInLine(t, cubicBezierPoints[0].x, cubicBezierPoints[1].x);
+		float bx = pointInLine(t, cubicBezierPoints[1].x, cubicBezierPoints[2].x);
+		float cx = pointInLine(t, cubicBezierPoints[2].x, cubicBezierPoints[3].x);
+		float dx = pointInLine(t, ax, bx);
+		float ex = pointInLine(t, bx, cx);
+		float x = pointInLine(t, dx, ex);
+		float ay = pointInLine(x, cubicBezierPoints[0].y, cubicBezierPoints[1].y);
+		float by = pointInLine(x, cubicBezierPoints[1].y, cubicBezierPoints[2].y);
+		float cy = pointInLine(x, cubicBezierPoints[2].y, cubicBezierPoints[3].y);
+		float dy = pointInLine(x, ay, by);
+		float ey = pointInLine(x, by, cy);
+		return pointInLine(x, dy, ey) * 120f;
 	}
 
 	@SideOnly(Side.CLIENT)
