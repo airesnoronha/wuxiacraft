@@ -53,6 +53,23 @@ public class SkillCultivate extends Skill {
 		setWhenCasting(actor -> {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(actor);
 			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(actor);
+			if (!actor.world.isRemote) {
+				int bound = 10000;
+				int amplifier = 0;
+				PotionEffect effect = actor.getActivePotionEffect(ENLIGHTENMENT);
+				if (effect != null) {
+					bound = 300;
+					amplifier = 1;
+					if (effect.getAmplifier() == 1) {
+						bound = 800;
+						amplifier = 2;
+					}
+				}
+				if (actor.getRNG().nextInt(bound) == 0) {
+					effect = new PotionEffect(ENLIGHTENMENT, 20 * 60 * (3 - amplifier), amplifier, true, true);
+					actor.addPotionEffect(effect);
+				}
+			}
 			double amount = cultTech.getTechniqueBySystem(system).getCultivationSpeed(cultivation.getSystemModifier(system)) * 0.09; //trust me this is necessary
 			boolean isMortalRealm = cultivation.getEssenceLevel() == BaseSystemLevel.DEFAULT_ESSENCE_LEVEL;
 			long timeDiff = System.currentTimeMillis() - LastUseCultivateMillis;

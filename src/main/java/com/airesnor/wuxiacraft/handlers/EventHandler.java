@@ -333,18 +333,22 @@ public class EventHandler {
 			EntityPlayer player = event.player;
 			if (!player.world.isRemote) return;
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(player);
+			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(player);
 
 			//if is set to cultivate
-			if(KeyHandler.isCultivating) {
+			if (KeyHandler.isCultivating) {
 				switch (cultivation.getSelectedSystem()) {
 					case BODY:
-						Skills.CULTIVATE_BODY.castingEffect(Minecraft.getMinecraft().player);
+						if (cultTech.getBodyTechnique() != null)
+							Skills.CULTIVATE_BODY.castingEffect(Minecraft.getMinecraft().player);
 						break;
 					case DIVINE:
-						Skills.CULTIVATE_DIVINE.castingEffect(Minecraft.getMinecraft().player);
+						if (cultTech.getDivineTechnique() != null)
+							Skills.CULTIVATE_DIVINE.castingEffect(Minecraft.getMinecraft().player);
 						break;
 					case ESSENCE:
-						Skills.CULTIVATE_ESSENCE.castingEffect(Minecraft.getMinecraft().player);
+						if (cultTech.getEssenceTechnique() != null)
+							Skills.CULTIVATE_ESSENCE.castingEffect(Minecraft.getMinecraft().player);
 						break;
 				}
 			}

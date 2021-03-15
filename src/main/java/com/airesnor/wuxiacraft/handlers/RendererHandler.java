@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(value = Side.CLIENT)
 public class RendererHandler {
 
 	//public static final ResourceLocation bar_bg = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/bar_bg.png");
@@ -55,6 +55,7 @@ public class RendererHandler {
 	public static final ResourceLocation essence_cultivate_image = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/skills/icons/cultivate_essence.png");
 	public static final ResourceLocation selected_circle = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/select_circle.png");
 
+	@SideOnly(Side.CLIENT)
 	public static class WorldRenderQueue {
 
 		public static class RenderElement {
@@ -112,6 +113,7 @@ public class RendererHandler {
 	private static int animationStep = 0;
 	private static int selectedSkill = -1;
 
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onRenderHud(RenderGameOverlayEvent.Post event) {
 		if (event.isCancelable() || event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE) {
@@ -131,6 +133,7 @@ public class RendererHandler {
 		GlStateManager.popAttrib();
 	}
 
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onRenderHealthBar(RenderGameOverlayEvent.Pre event) {
 		if (event.isCancelable() && event.getType() == RenderGameOverlayEvent.ElementType.HEALTH) {

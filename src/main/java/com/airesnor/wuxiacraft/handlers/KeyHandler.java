@@ -6,6 +6,7 @@ import com.airesnor.wuxiacraft.cultivation.IBarrier;
 import com.airesnor.wuxiacraft.cultivation.ICultivation;
 import com.airesnor.wuxiacraft.cultivation.skills.ISkillCap;
 import com.airesnor.wuxiacraft.cultivation.skills.Skills;
+import com.airesnor.wuxiacraft.cultivation.techniques.ICultTech;
 import com.airesnor.wuxiacraft.items.ItemHerb;
 import com.airesnor.wuxiacraft.networking.*;
 import com.airesnor.wuxiacraft.proxy.ClientProxy;
@@ -52,19 +53,19 @@ public class KeyHandler {
 			//NetworkWrapper.INSTANCE.sendToServer(new RequestCultGuiMessage(true));
 		}
 		if (Keyboard.getEventKey() == keyBindings[3].getKeyCode() && Keyboard.getEventKeyState()) {
-				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-				skillCap.setCasting(true);
+			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
+			skillCap.setCasting(true);
 		}
 		if (Keyboard.getEventKey() == keyBindings[3].getKeyCode() && !Keyboard.getEventKeyState()) {
-				ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
-				skillCap.setCasting(false);
-				skillCap.setDoneCasting(true);
+			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
+			skillCap.setCasting(false);
+			skillCap.setDoneCasting(true);
 		}
 		if (keyBindings[4].isPressed()) {
 			BlockPos pos = player.getPosition();
 			player.openGui(WuxiaCraft.instance, GuiHandler.SKILLS_GUI_ID, player.world, pos.getX(), pos.getY(), pos.getZ());
 		}
-		if(keyBindings[17].isPressed()) {
+		if (keyBindings[17].isPressed()) {
 			WuxiaCraftConfig.maxSpeed = WuxiaCraftConfig.maxSpeed * -1;
 			WuxiaCraftConfig.syncFromFields();
 			WuxiaCraftConfig.syncCultivationFromConfigToClient();
@@ -98,25 +99,23 @@ public class KeyHandler {
 				}
 			}
 		}
-		if(keyBindings[19].isKeyDown() && keyBindings[5].isKeyDown()) {
+		if (keyBindings[19].isKeyDown() && keyBindings[5].isKeyDown()) {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
 			cultivation.setSelectedSystem(cultivation.getSelectedSystem().next());
 			RendererHandler.showingSelector = true;
 			RendererHandler.showingCooldown = 60;
-		}
-		else if (keyBindings[5].isKeyDown()) {
+		} else if (keyBindings[5].isKeyDown()) {
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 			int next = skillCap.getActiveSkill() + 1;
 			NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next, player.getUniqueID()));
 			SelectSkillMessage.Handler.selectSkill(skillCap, next);
 		}
-		if(keyBindings[19].isKeyDown() && keyBindings[6].isKeyDown()) {
+		if (keyBindings[19].isKeyDown() && keyBindings[6].isKeyDown()) {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
 			cultivation.setSelectedSystem(cultivation.getSelectedSystem().previous());
 			RendererHandler.showingSelector = true;
 			RendererHandler.showingCooldown = 60;
-		}
-		else if (keyBindings[6].isKeyDown()) {
+		} else if (keyBindings[6].isKeyDown()) {
 			ISkillCap skillCap = CultivationUtils.getSkillCapFromEntity(player);
 			int next = skillCap.getActiveSkill() - 1;
 			NetworkWrapper.INSTANCE.sendToServer(new SelectSkillMessage(next, player.getUniqueID()));
@@ -128,17 +127,21 @@ public class KeyHandler {
 		if (Keyboard.getEventKey() == keyBindings[19].getKeyCode() && !Keyboard.getEventKeyState()) {
 			isCultivating = false;
 		}
-		if(keyBindings[20].isKeyDown()) {
+		if (keyBindings[20].isKeyDown()) {
 			ICultivation cultivation = CultivationUtils.getCultivationFromEntity(Minecraft.getMinecraft().player);
+			ICultTech cultTech = CultivationUtils.getCultTechFromEntity(Minecraft.getMinecraft().player);
 			switch (cultivation.getSelectedSystem()) {
 				case BODY:
-					Skills.CULTIVATE_BODY.activate(Minecraft.getMinecraft().player);
+					if (cultTech.getBodyTechnique() != null)
+						Skills.CULTIVATE_BODY.activate(Minecraft.getMinecraft().player);
 					break;
 				case DIVINE:
-					Skills.CULTIVATE_DIVINE.activate(Minecraft.getMinecraft().player);
+					if (cultTech.getDivineTechnique() != null)
+						Skills.CULTIVATE_DIVINE.activate(Minecraft.getMinecraft().player);
 					break;
 				case ESSENCE:
-					Skills.CULTIVATE_ESSENCE.activate(Minecraft.getMinecraft().player);
+					if (cultTech.getEssenceTechnique() != null)
+						Skills.CULTIVATE_ESSENCE.activate(Minecraft.getMinecraft().player);
 					break;
 			}
 		}

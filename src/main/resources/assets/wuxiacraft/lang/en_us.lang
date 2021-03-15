@@ -184,6 +184,8 @@ key.wuxiacraft.select_9=Select skill in 9
 key.wuxiacraft.select_0=Select skill in 10
 key.wuxiacraft.unleash_speed=Toggle Speed Limit
 key.wuxiacraft.toggle_barrier=Toggle Barrier
+key.wuxiacraft.cultivate=Cultivate
+key.wuxiacraft.breakthrough=Breakthrough
 
 #tiers
 wuxiacraft.tier.mortal=Mortal
