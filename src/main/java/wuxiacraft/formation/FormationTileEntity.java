@@ -12,6 +12,6 @@ public class FormationTileEntity extends TileEntity implements ITickableTileEnti
 
 	@Override
 	public void tick() {
-
+		
 	}
 }

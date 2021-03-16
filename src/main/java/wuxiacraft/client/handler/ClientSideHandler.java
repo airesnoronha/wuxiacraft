@@ -6,10 +6,12 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
+import wuxiacraft.WuxiaCraft;
 import wuxiacraft.client.SkillValues;
 import wuxiacraft.cultivation.*;
 import wuxiacraft.cultivation.skill.Skill;
 import wuxiacraft.network.ActivateSkillMessage;
+import wuxiacraft.network.AskCultivationLevelsMessage;
 import wuxiacraft.network.EnergyMessage;
 import wuxiacraft.network.WuxiaPacketHandler;
 
@@ -39,6 +41,7 @@ public class ClientSideHandler {
 	public void onHandlePlayerFlight(TickEvent.PlayerTickEvent event) {
 		if (event.phase != TickEvent.Phase.END) return;
 		if (event.side == LogicalSide.SERVER) return;
+		if (!(event.player instanceof ClientPlayerEntity)) return;
 		PlayerEntity player = event.player;
 		ICultivation cultivation = Cultivation.get(player);
 
@@ -87,7 +90,7 @@ public class ClientSideHandler {
 	public void onHandlePlayerWalking(TickEvent.PlayerTickEvent event) {
 		if (event.phase != TickEvent.Phase.START) return;
 		if (event.side == LogicalSide.SERVER) return;
-		if (event.player == null) return;
+		if (!(event.player instanceof ClientPlayerEntity)) return;
 		ClientPlayerEntity player = (ClientPlayerEntity) event.player;
 		ICultivation cultivation = Cultivation.get(player);
 		player.stepHeight = 0.6f + (float) cultivation.getStepHeight();
@@ -122,7 +125,7 @@ public class ClientSideHandler {
 	public void onHandleSkillCasting(TickEvent.PlayerTickEvent event) {
 		if (event.phase != TickEvent.Phase.END) return;
 		if (event.side == LogicalSide.SERVER) return;
-		if (event.player == null) return;
+		if (!(event.player instanceof ClientPlayerEntity)) return;
 		ICultivation cultivation = Cultivation.get(event.player);
 		if (SkillValues.isCastingSkill && cultivation.getSkillCooldown() <= 0) {
 			Skill active = cultivation.getActiveSkill(SkillValues.activeSkill);
@@ -143,5 +146,19 @@ public class ClientSideHandler {
 		} else if (!SkillValues.isCastingSkill) {
 			SkillValues.castProgress = 0;
 		}
+	}
+
+	/**
+	 * Although short, this method ensures players have other players cultivation client side
+	 * If it's accurate though it's another matter
+	 *
+	 * @param event a description of what is happening
+	 */
+	@SubscribeEvent
+	public void onPlayerRequestAnotherPlayersCultLevel(TickEvent.WorldTickEvent event) {
+		if (event.phase != TickEvent.Phase.END) return;
+		if (event.side == LogicalSide.SERVER) return;
+		if (event.world == null) return;
+		WuxiaPacketHandler.INSTANCE.sendToServer(new AskCultivationLevelsMessage());
 	}
 }

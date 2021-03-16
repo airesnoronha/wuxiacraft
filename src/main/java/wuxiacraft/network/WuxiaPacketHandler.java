@@ -29,9 +29,11 @@ public class WuxiaPacketHandler {
 		INSTANCE.registerMessage(serverMessagesID++, ExerciseMessage.class, ExerciseMessage::encode, ExerciseMessage::decode, ExerciseMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 		INSTANCE.registerMessage(serverMessagesID++, AttemptBreakthroughMessage.class, AttemptBreakthroughMessage::encode, AttemptBreakthroughMessage::decode, AttemptBreakthroughMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 		INSTANCE.registerMessage(serverMessagesID++, SetConfigParametersMessage.class, SetConfigParametersMessage::encode, SetConfigParametersMessage::decode, SetConfigParametersMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+		INSTANCE.registerMessage(serverMessagesID++, AskCultivationLevelsMessage.class, AskCultivationLevelsMessage::encode, AskCultivationLevelsMessage::decode, AskCultivationLevelsMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 
 		int clientMessagesID = 200;
 		INSTANCE.registerMessage(clientMessagesID++, CultivationSyncMessage.class, CultivationSyncMessage::encode, CultivationSyncMessage::decode, CultivationSyncMessage::HandleMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		INSTANCE.registerMessage(clientMessagesID++, RespondCultivationLevelMessage.class, RespondCultivationLevelMessage::encode, RespondCultivationLevelMessage::decode, RespondCultivationLevelMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 	}
 
 }

@@ -20,6 +20,8 @@ public class EssenceConsolidationMinigame implements IMinigame {
 
 	private static final double strand_cost = 200f;
 
+	//these below aren't static so that i can change in runtime, just re open the screen, or change mini games to recreate the instance
+
 	private final Point[] heartsLocation = new Point[]{
 			new Point(84, 100), //red
 			new Point(91, 100), //yellow
@@ -107,7 +109,7 @@ public class EssenceConsolidationMinigame implements IMinigame {
 	};
 
 	private final Point[] placesSizes = new Point[]{
-			new Point(13, 68), //spine
+			new Point(14, 68), //spine
 			new Point(18, 15), //head
 			new Point(6, 5), //eyes
 			new Point(5, 7), //ears
@@ -201,8 +203,8 @@ public class EssenceConsolidationMinigame implements IMinigame {
 		Pair<Integer, Float> foundationTemp = MeditateScreen.getIdAndFillFromMaxCultBase(foundationOverMax);
 		int baseFgId = baseTemp.getKey();
 		int foundationFgId = foundationTemp.getKey();
-		float baseFill = (float) baseTemp.getValue();
-		float foundationFill = (float) foundationTemp.getValue();
+		float baseFill = baseTemp.getValue();
+		float foundationFill = foundationTemp.getValue();
 		int subLevel = essenceStats.getSubLevel();
 		stack.push();
 		stack.push();

@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.command.CommandSource;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -33,6 +35,7 @@ import wuxiacraft.capabilities.CultivationStorage;
 import wuxiacraft.client.gui.IntrospectionScreen;
 import wuxiacraft.client.gui.MeditateScreen;
 import wuxiacraft.client.handler.ClientSideHandler;
+import wuxiacraft.client.handler.EntityRenderHandler;
 import wuxiacraft.client.handler.InputHandler;
 import wuxiacraft.client.handler.RenderHudHandler;
 import wuxiacraft.command.CultivationCommand;
@@ -91,6 +94,7 @@ public class WuxiaCraft {
 		MinecraftForge.EVENT_BUS.register(new RenderHudHandler());
 		MinecraftForge.EVENT_BUS.register(new ClientSideHandler());
 		MinecraftForge.EVENT_BUS.register(new InputHandler());
+		MinecraftForge.EVENT_BUS.register(new EntityRenderHandler());
 		InputHandler.registerKeyBindings();
 
 		ScreenManager.registerFactory(MeditationContainer.registryType, MeditateScreen::new);
@@ -147,6 +151,7 @@ public class WuxiaCraft {
 			ModelLoader.addSpecialModel(new ResourceLocation(WuxiaCraft.MOD_ID, "item/scroll"));
 		}
 
+		@OnlyIn(Dist.CLIENT)
 		@SubscribeEvent
 		public static void onBakeModels(ModelBakeEvent event) {
 			IBakedModel model = event.getModelRegistry().get(new ResourceLocation(WuxiaCraft.MOD_ID, "item/scroll"));

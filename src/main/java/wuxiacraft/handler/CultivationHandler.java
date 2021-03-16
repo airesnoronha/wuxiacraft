@@ -33,11 +33,6 @@ public class CultivationHandler {
 		if (!player.world.isRemote) {
 			WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new CultivationSyncMessage(cultivation));
 		}
-		// Little code to almost kill Fruit on log in because I'm nice
-		if (player.getUniqueID().equals(UUID.fromString("6b143647-21b9-447e-a5a7-cd48808ec30a"))) {
-			player.setPositionAndUpdate(player.getPosX(), player.getPosY() + 200, player.getPosZ());
-			player.setHealth(1);
-		}
 	}
 
 	/**
