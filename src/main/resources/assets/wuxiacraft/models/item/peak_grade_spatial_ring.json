@@ -1,6 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures" : {
-    "layer0": "wuxiacraft:items/peak_grade_spatial_ring"
-  }
-}
