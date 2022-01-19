@@ -124,4 +124,16 @@ public interface ICultivation {
 	double getCastSpeed();
 
 	void lowerCoolDown();
+
+	boolean isMeditating();
+
+	void setMeditating(boolean meditating);
+
+	boolean isExercising();
+
+	void setExercising(boolean exercising);
+
+	float getExerciseAnimation();
+
+	void setExerciseAnimation(float exerciseAnimation);
 }

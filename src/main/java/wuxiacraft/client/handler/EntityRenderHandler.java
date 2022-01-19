@@ -35,6 +35,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.apache.commons.lang3.tuple.Pair;
 import wuxiacraft.WuxiaCraft;
 import wuxiacraft.client.render.model.GhostModel;
 import wuxiacraft.client.render.model.WuxiaRenderTypes;
@@ -48,20 +49,19 @@ import java.util.List;
 
 public class EntityRenderHandler {
 
-	@SuppressWarnings({"rawtypes", "unchecked"})
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void renderPlayerThroughWallsPre(RenderLivingEvent.Pre<RemoteClientPlayerEntity, ? extends Model> event) {
-		if (event.getEntity() instanceof RemoteClientPlayerEntity && Minecraft.getInstance().player != null) {
+	public void renderPlayerThroughWallsPre(RenderLivingEvent.Pre<AbstractClientPlayerEntity, ? extends Model> event) {
+		if (event.getEntity() instanceof RemoteClientPlayerEntity && Minecraft.getInstance().player != null && Minecraft.getInstance().player.isSneaking()) {
 			ICultivation other = Cultivation.get(event.getEntity());
 			ICultivation mine = Cultivation.get(Minecraft.getInstance().player);
 			if (MathUtils.between(other.getDivineModifier(), 0, mine.getDivineModifier()) &&
 					event.getEntity().getDistance(Minecraft.getInstance().player) <= mine.getDivineModifier() * 1.2) {
 				float partialTicks = event.getPartialRenderTick();
-				RemoteClientPlayerEntity target = (RemoteClientPlayerEntity) event.getEntity();
+				AbstractClientPlayerEntity target = (AbstractClientPlayerEntity) event.getEntity();
 				event.setCanceled(true);
 				MatrixStack matrixStack = event.getMatrixStack();
 				matrixStack.push();
-				EntityModel<RemoteClientPlayerEntity> baseModel = event.getRenderer().getEntityModel();
+				EntityModel<AbstractClientPlayerEntity> baseModel = event.getRenderer().getEntityModel();
 				GhostModel ghostModel = new GhostModel();
 				baseModel.swingProgress = target.getSwingProgress(partialTicks);
 				ghostModel.swingProgress = target.getSwingProgress(partialTicks);
@@ -71,31 +71,15 @@ public class EntityRenderHandler {
 				baseModel.isChild = target.isChild();
 				ghostModel.isSitting = shouldSit;
 				ghostModel.isChild = target.isChild();
-				float f = MathHelper.interpolateAngle(partialTicks, target.prevRenderYawOffset, target.renderYawOffset);
-				float f1 = MathHelper.interpolateAngle(partialTicks, target.prevRotationYawHead, target.rotationYawHead);
-				float f2 = f1 - f;
-				if (shouldSit && target.getRidingEntity() instanceof LivingEntity) {
-					LivingEntity livingentity = (LivingEntity) target.getRidingEntity();
-					f = MathHelper.interpolateAngle(partialTicks, livingentity.prevRenderYawOffset, livingentity.renderYawOffset);
-					f2 = f1 - f;
-					float f3 = MathHelper.wrapDegrees(f2);
-					if (f3 < -85.0F) {
-						f3 = -85.0F;
-					}
 
-					if (f3 >= 85.0F) {
-						f3 = 85.0F;
-					}
+				float rotationYaw = MathHelper.interpolateAngle(partialTicks, target.prevRenderYawOffset, target.renderYawOffset);
+				float interpolatedHeadYaw = MathHelper.interpolateAngle(partialTicks, target.prevRotationYawHead, target.rotationYawHead);
+				float netHeadYaw = interpolatedHeadYaw - rotationYaw;
+				Pair<Float, Float> rotationYawPair = handleIfRidingEntity(shouldSit, target, rotationYaw, netHeadYaw, interpolatedHeadYaw, partialTicks);
+				rotationYaw = rotationYawPair.getLeft();
+				netHeadYaw = rotationYawPair.getRight();
 
-					f = f1 - f3;
-					if (f3 * f3 > 2500.0F) {
-						f += f3 * 0.2F;
-					}
-
-					f2 = f1 - f;
-				}
-
-				float f6 = MathHelper.lerp(partialTicks, target.prevRotationPitch, target.rotationPitch);
+				float headPitch = MathHelper.lerp(partialTicks, target.prevRotationPitch, target.rotationPitch);
 				if (target.getPose() == Pose.SLEEPING) {
 					Direction direction = target.getBedDirection();
 					if (direction != null) {
@@ -104,29 +88,28 @@ public class EntityRenderHandler {
 					}
 				}
 
-				float f7 = (float) target.ticksExisted + partialTicks;
-				applyRotations(target, matrixStack, f, partialTicks);
+				float ageInTicks = (float) target.ticksExisted + partialTicks;
+				applyRotations(target, matrixStack, rotationYaw, partialTicks);
 				matrixStack.scale(-1.0F, -1.0F, 1.0F);
 				preRenderCallback(matrixStack);
 				matrixStack.translate(0.0D, -1.501F, 0.0D);
-				float f8 = 0.0F;
-				float f5 = 0.0F;
+				float limbSwingAmount = 0.0F;
+				float limbSwing = 0.0F;
 				if (!shouldSit && target.isAlive()) {
-					f8 = MathHelper.lerp(partialTicks, target.prevLimbSwingAmount, target.limbSwingAmount);
-					f5 = target.limbSwing - target.limbSwingAmount * (1.0F - partialTicks);
+					limbSwingAmount = MathHelper.lerp(partialTicks, target.prevLimbSwingAmount, target.limbSwingAmount);
+					limbSwing = target.limbSwing - target.limbSwingAmount * (1.0F - partialTicks);
 					if (target.isChild()) {
-						f5 *= 3.0F;
+						limbSwing *= 3.0F;
 					}
-
-					if (f8 > 1.0F) {
-						f8 = 1.0F;
+					if (limbSwingAmount > 1.0F) {
+						limbSwingAmount = 1.0F;
 					}
 				}
 
-				baseModel.setLivingAnimations(target, f5, f8, partialTicks);
-				baseModel.setRotationAngles(target, f5, f8, f7, f2, f6);
-				ghostModel.setLivingAnimations(target, f5, f8, partialTicks);
-				ghostModel.setRotationAngles(target, f5, f8, f7, f2, f6);
+				baseModel.setLivingAnimations(target, limbSwing, limbSwingAmount, partialTicks);
+				baseModel.setRotationAngles(target, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+				ghostModel.setLivingAnimations(target, limbSwing, limbSwingAmount, partialTicks);
+				ghostModel.setRotationAngles(target, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
 
 				ghostModel.rightArmPose = getArmPose(target, Hand.MAIN_HAND);
 				ghostModel.leftArmPose = getArmPose(target, Hand.OFF_HAND);
@@ -155,20 +138,7 @@ public class EntityRenderHandler {
 					baseModel.render(matrixStack, ivertexbuilder, packedLightIn, i, 1.0F, 1.0F, 1.0F, flag1 ? 0.15F : 1.0F);
 				}
 
-				if (!target.isSpectator()) {
-					List<LayerRenderer<RemoteClientPlayerEntity, PlayerModel<RemoteClientPlayerEntity>>> layerList = new LinkedList<>();
-					layerList.add(new BipedArmorLayer(event.getRenderer(), new BipedModel(0.5F), new BipedModel(1.0F)));
-					layerList.add(new HeldItemLayer(event.getRenderer()));
-					layerList.add(new ArrowLayer(event.getRenderer()));
-					layerList.add(new HeadLayer(event.getRenderer()));
-					layerList.add(new ElytraLayer(event.getRenderer()));
-					layerList.add(new ParrotVariantLayer(event.getRenderer()));
-					layerList.add(new SpinAttackEffectLayer(event.getRenderer()));
-					layerList.add(new BeeStingerLayer(event.getRenderer()));
-					for (LayerRenderer<RemoteClientPlayerEntity, ?> layerRenderer : layerList) {
-						layerRenderer.render(matrixStack, bufferIn, packedLightIn, target, f5, f8, partialTicks, f7, f2, f6);
-					}
-				}
+				renderBipedModelLayers(event, partialTicks, target, matrixStack, netHeadYaw, headPitch, ageInTicks, limbSwingAmount, limbSwing, bufferIn, packedLightIn);
 
 				IVertexBuilder ivertexbuilder = bufferIn.getBuffer(renderTypeGhost);
 				int i = LivingRenderer.getPackedOverlay(target, 0);
@@ -184,6 +154,134 @@ public class EntityRenderHandler {
 				}
 				//throw again a post event for compatibility
 				net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<>(target, event.getRenderer(), partialTicks, matrixStack, bufferIn, packedLightIn));
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void renderPlayerCultivationAnimation(RenderLivingEvent.Pre<AbstractClientPlayerEntity, ? extends Model> event) {
+		if (!(event.getEntity() instanceof AbstractClientPlayerEntity)) return;
+		ICultivation cultivation = Cultivation.get(event.getEntity());
+		if (cultivation.isExercising()) {
+			float partialTicks = event.getPartialRenderTick();
+			AbstractClientPlayerEntity target = (AbstractClientPlayerEntity) event.getEntity();
+			event.setCanceled(true);
+			MatrixStack matrixStack = event.getMatrixStack();
+			matrixStack.push();
+			EntityModel<AbstractClientPlayerEntity> baseModel = event.getRenderer().getEntityModel();
+			baseModel.swingProgress = target.getSwingProgress(partialTicks);
+
+			boolean shouldSit = target.isPassenger() && (target.getRidingEntity() != null && target.getRidingEntity().shouldRiderSit());
+			baseModel.isSitting = shouldSit;
+			baseModel.isChild = target.isChild();
+
+			float rotationYaw = MathHelper.interpolateAngle(partialTicks, target.prevRenderYawOffset, target.renderYawOffset);
+			float interpolatedHeadYaw = MathHelper.interpolateAngle(partialTicks, target.prevRotationYawHead, target.rotationYawHead);
+			float netHeadYaw = interpolatedHeadYaw - rotationYaw;
+			Pair<Float, Float> rotationYawPair = handleIfRidingEntity(shouldSit, target, rotationYaw, netHeadYaw, interpolatedHeadYaw, partialTicks);
+			rotationYaw = rotationYawPair.getLeft();
+			netHeadYaw = rotationYawPair.getRight();
+
+			float headPitch = MathHelper.lerp(partialTicks, target.prevRotationPitch, target.rotationPitch);
+			if (target.getPose() == Pose.SLEEPING) {
+				Direction direction = target.getBedDirection();
+				if (direction != null) {
+					float f4 = target.getEyeHeight(Pose.STANDING) - 0.1F;
+					matrixStack.translate((float) (-direction.getXOffset()) * f4, 0.0D, (float) (-direction.getZOffset()) * f4);
+				}
+			}
+
+			float ageInTicks = (float) target.ticksExisted + partialTicks;
+			applyRotations(target, matrixStack, rotationYaw, partialTicks);
+			matrixStack.scale(-1.0F, -1.0F, 1.0F);
+			preRenderCallback(matrixStack);
+			matrixStack.translate(0.0D, -1.501F, 0.0D);
+			float limbSwingAmount = 0.0F;
+			float limbSwing = 0.0F;
+			if (!shouldSit && target.isAlive()) {
+				limbSwingAmount = MathHelper.lerp(partialTicks, target.prevLimbSwingAmount, target.limbSwingAmount);
+				limbSwing = target.limbSwing - target.limbSwingAmount * (1.0F - partialTicks);
+				if (target.isChild()) {
+					limbSwing *= 3.0F;
+				}
+
+				if (limbSwingAmount > 1.0F) {
+					limbSwingAmount = 1.0F;
+				}
+			}
+
+			//baseModel.setLivingAnimations(target, f5, f8, partialTicks);
+			//baseModel.setRotationAngles(target, f5, f8, f7, f2, f6);
+			animatePlayerModelExercising((BipedModel<AbstractClientPlayerEntity>) baseModel, target, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+
+			Minecraft minecraft = Minecraft.getInstance();
+			IRenderTypeBuffer.Impl bufferIn = minecraft.getRenderTypeBuffers().getBufferSource();
+			int packedLightIn = event.getRenderer().getPackedLight(target, event.getPartialRenderTick());
+
+			boolean flag = !target.isInvisible();
+			//noinspection ConstantConditions
+			boolean flag1 = !flag && !target.isInvisibleToPlayer(minecraft.player);
+			boolean flag2 = minecraft.isEntityGlowing(target);
+			RenderType renderTypeBase = this.getRenderTypeForEntity(baseModel, target, flag, flag1, flag2);
+			if (renderTypeBase != null) {
+				IVertexBuilder ivertexbuilder = bufferIn.getBuffer(renderTypeBase);
+				int i = LivingRenderer.getPackedOverlay(target, 0);
+				baseModel.render(matrixStack, ivertexbuilder, packedLightIn, i, 1.0F, 1.0F, 1.0F, flag1 ? 0.15F : 1.0F);
+			}
+
+
+			renderBipedModelLayers(event, partialTicks, target, matrixStack, netHeadYaw, headPitch, ageInTicks, limbSwingAmount, limbSwing, bufferIn, packedLightIn);
+
+			matrixStack.pop();
+			//draw name plate
+			net.minecraftforge.client.event.RenderNameplateEvent renderNameplateEvent = new net.minecraftforge.client.event.RenderNameplateEvent(target, target.getDisplayName(), event.getRenderer(), matrixStack, bufferIn, packedLightIn, partialTicks);
+			net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(renderNameplateEvent);
+			if (renderNameplateEvent.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && (renderNameplateEvent.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || canRenderName())) {
+				renderName(target, renderNameplateEvent.getContent(), matrixStack, bufferIn, packedLightIn, event.getRenderer().getRenderManager());
+			}
+			//throw again a post event for compatibility
+			net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<>(target, event.getRenderer(), partialTicks, matrixStack, bufferIn, packedLightIn));
+		}
+	}
+
+	private Pair<Float, Float> handleIfRidingEntity(boolean shouldSit, AbstractClientPlayerEntity target, float rotationYaw, float netHeadYaw, float interpolatedHeadYaw, float partialTicks) {
+		if (shouldSit && target.getRidingEntity() instanceof LivingEntity) {
+			LivingEntity livingentity = (LivingEntity) target.getRidingEntity();
+			rotationYaw = MathHelper.interpolateAngle(partialTicks, livingentity.prevRenderYawOffset, livingentity.renderYawOffset);
+			netHeadYaw = interpolatedHeadYaw - rotationYaw;
+			float f3 = MathHelper.wrapDegrees(netHeadYaw);
+			if (f3 < -85.0F) {
+				f3 = -85.0F;
+			}
+
+			if (f3 >= 85.0F) {
+				f3 = 85.0F;
+			}
+
+			rotationYaw = interpolatedHeadYaw - f3;
+			if (f3 * f3 > 2500.0F) {
+				rotationYaw += f3 * 0.2F;
+			}
+
+			netHeadYaw = interpolatedHeadYaw - rotationYaw;
+		}
+		return Pair.of(rotationYaw, netHeadYaw);
+	}
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	private void renderBipedModelLayers(RenderLivingEvent.Pre<AbstractClientPlayerEntity, ? extends Model> event, float partialTicks, AbstractClientPlayerEntity target, MatrixStack matrixStack, float netHeadYaw, float headPitch, float ageInTicks, float limbSwingAmount, float limbSwing, IRenderTypeBuffer.Impl bufferIn, int packedLightIn) {
+		if (!target.isSpectator()) {
+			List<LayerRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>>> layerList = new LinkedList<>();
+			layerList.add(new BipedArmorLayer(event.getRenderer(), new BipedModel(0.5F), new BipedModel(1.0F)));
+			layerList.add(new HeldItemLayer(event.getRenderer()));
+			layerList.add(new ArrowLayer(event.getRenderer()));
+			layerList.add(new HeadLayer(event.getRenderer()));
+			layerList.add(new ElytraLayer(event.getRenderer()));
+			layerList.add(new ParrotVariantLayer(event.getRenderer()));
+			layerList.add(new SpinAttackEffectLayer(event.getRenderer()));
+			layerList.add(new BeeStingerLayer(event.getRenderer()));
+			for (LayerRenderer<AbstractClientPlayerEntity, ?> layerRenderer : layerList) {
+				layerRenderer.render(matrixStack, bufferIn, packedLightIn, target, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch);
 			}
 		}
 	}
@@ -312,5 +410,79 @@ public class EntityRenderHandler {
 
 	protected static void preRenderCallback(MatrixStack matrixStackIn) {
 		matrixStackIn.scale(0.9375F, 0.9375F, 0.9375F);
+	}
+
+	private static float[] leftArmX = {0, -45, -90, -90, -90, 0, 0, 0, -90, -135, -180, -90, 0};;
+	private static float[] leftArmY = {0, 0, 0, 0, -45, -90, -45, 0, 0, 0, 0, 0, 0};
+	private static float[] leftArmZ = {0, 0, 0, 0, 0, 0, 0, 45, 90, 60, 45, 0, 0};
+
+	private static float[] rightArmX = {0, -45, -90, -90, -90, 0, 0, 0, -90, -135, -180, -90, 0};
+	private static float[] rightArmY = {0, 0, 0, 45, 90, 90, 45, 0, 0, 0, 0, 0, 0};
+	private static float[] rightArmZ = {0, 0, 0, 0, 0, 0, 0, -45, -90, -60, -45, 0, 0};
+
+	private static float[] lefLegArmX = {0, 0, 0, 0, 0, -5, -10, -10, -10, 0, 0, 0, 0};
+	private static float[] lefLegArmY = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	private static float[] lefLegArmZ = {0, 0, 0, -10, -10, -10, -10, -7.5f, -5, -7.5f, -10, -5, 0};
+
+	private static float[] rightLegArmX = {0, 0, 0, 0, 0, 5, 10, 15, 20, 10, 0, 0, 0};
+	private static float[] rightLegArmY = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	private static float[] rightLegArmZ = {0, 0, 0, 5, 10, 10, 10, 10, 10, 10, 10, 5, 0};
+
+	private static float getFrameRotation(float[] framesPositions, float animationPosition) {
+		int position = (int) animationPosition;
+		float partial = animationPosition - position;
+		float angleInitial = framesPositions[position];
+		float angleEnd = framesPositions[position + 1];
+		return angleInitial + (angleEnd - angleInitial) * partial;
+	}
+
+	private static void animatePlayerModelExercising(BipedModel<AbstractClientPlayerEntity> model, AbstractClientPlayerEntity target, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+		ICultivation cultivation = Cultivation.get(target);
+
+		leftArmX = new float[]{0, -45, -90, -90, -90, 0, 0, 0, -90, -135, -180, -90, 0};
+		leftArmY = new float[]{0, 0, 0, 0, -45, -90, -45, 0, 0, 0, 0, 0, 0};
+		leftArmZ = new float[]{0, 0, 0, 0, 0, 0, 0, 45, 90, 60, 45, 0, 0};
+
+		rightArmX = new float[]{0, -45, -90, -90, -90, 0, 0, 0, -90, -135, -180, -90, 0};
+		rightArmY = new float[]{0, 0, 0, 45, 90, 90, 45, 0, 0, 0, 0, 0, 0};
+		rightArmZ = new float[]{0, 0, 0, 0, 0, 0, 0, -45, -90, -60, -45, 0, 0};
+
+		lefLegArmX = new float[]{0, 0, 0, 0, 0, -5, -10, -10, -10, 0, 0, 0, 0};
+		lefLegArmY = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		lefLegArmZ = new float[]{0, 0, 0, -10, -10, -10, -10, -7.5f, -5, -7.5f, -10, -5, 0};
+
+		rightLegArmX = new float[]{0, 0, 0, 0, 0, 5, 10, 15, 20, 10, 0, 0, 0};
+		rightLegArmY = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		rightLegArmZ = new float[]{0, 0, 0, 5, 10, 10, 10, 10, 10, 10, 10, 5, 0};
+
+		float radianConversion = ((float) Math.PI / 180F);
+
+		model.bipedLeftArm.rotateAngleX = getFrameRotation(leftArmX, cultivation.getExerciseAnimation()) * radianConversion;
+		model.bipedLeftArm.rotateAngleY = getFrameRotation(leftArmY, cultivation.getExerciseAnimation()) * radianConversion;
+		model.bipedLeftArm.rotateAngleZ = getFrameRotation(leftArmZ, cultivation.getExerciseAnimation()) * radianConversion;
+
+		model.bipedRightArm.rotateAngleX = getFrameRotation(rightArmX, cultivation.getExerciseAnimation()) * radianConversion;
+		model.bipedRightArm.rotateAngleY = getFrameRotation(rightArmY, cultivation.getExerciseAnimation()) * radianConversion;
+		model.bipedRightArm.rotateAngleZ = getFrameRotation(rightArmZ, cultivation.getExerciseAnimation()) * radianConversion;
+
+		model.bipedLeftLeg.rotateAngleX = getFrameRotation(lefLegArmX, cultivation.getExerciseAnimation()) * radianConversion;
+		model.bipedLeftLeg.rotateAngleY = getFrameRotation(lefLegArmY, cultivation.getExerciseAnimation()) * radianConversion;
+		model.bipedLeftLeg.rotateAngleZ = getFrameRotation(lefLegArmZ, cultivation.getExerciseAnimation()) * radianConversion;
+
+		model.bipedRightLeg.rotateAngleX = getFrameRotation(rightLegArmX, cultivation.getExerciseAnimation()) * radianConversion;
+		model.bipedRightLeg.rotateAngleY = getFrameRotation(rightLegArmY, cultivation.getExerciseAnimation()) * radianConversion;
+		model.bipedRightLeg.rotateAngleZ = getFrameRotation(rightLegArmZ, cultivation.getExerciseAnimation()) * radianConversion;
+
+		model.bipedBody.rotateAngleX = 0;
+		model.bipedBody.rotateAngleY = 0;
+		model.bipedBody.rotateAngleZ = 0;
+
+		model.bipedHead.rotateAngleX = headPitch * radianConversion;
+		model.bipedHead.rotateAngleY = netHeadYaw * radianConversion;
+		model.bipedHead.rotateAngleZ = 0;
+
+		model.bipedHeadwear.rotateAngleX = 0;
+		model.bipedHeadwear.rotateAngleY = 0;
+		model.bipedHeadwear.rotateAngleZ = 0;
 	}
 }

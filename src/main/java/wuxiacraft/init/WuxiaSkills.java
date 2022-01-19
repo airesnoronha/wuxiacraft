@@ -52,6 +52,8 @@ public class WuxiaSkills {
 		}));
 	}
 
+	public static final Skill MURDEROUS_FIRE_DOMAIN = new Skill("murderous_fire_domain", 135.0f, 30f, 0f, false);
+
 	@Nullable
 	public static Skill getSkillByName(String name) {
 		for (Skill skill : SKILLS) {

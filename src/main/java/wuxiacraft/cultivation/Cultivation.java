@@ -86,6 +86,11 @@ public class Cultivation implements ICultivation {
 	private double stepHeight;
 	private boolean powerWalk;
 
+	//client side thingies
+	private boolean isMeditating = false;
+	private boolean isExercising = false;
+	private float exerciseAnimation = 0;
+
 
 	//Helpers rather than stats
 
@@ -112,6 +117,12 @@ public class Cultivation implements ICultivation {
 
 	private double healingAmount;
 	private double healingCost;
+
+	/**
+	 *
+	 */
+	private double attack;
+	private double defense;
 
 	/**
 	 * This is the base for the cultivation, here will hold most of the information from cultivation
@@ -516,5 +527,41 @@ public class Cultivation implements ICultivation {
 		this.selectedSkills.addAll(cultivation.getSelectedSkills());
 		this.skillCooldown = cultivation.getSkillCooldown();
 		this.HP = cultivation.getHP();
+	}
+
+	@Override
+	public boolean isMeditating() {
+		return isMeditating;
+	}
+
+	@Override
+	public void setMeditating(boolean meditating) {
+		isMeditating = meditating;
+	}
+
+	@Override
+	public boolean isExercising() {
+		return isExercising;
+	}
+
+	@Override
+	public void setExercising(boolean exercising) {
+		isExercising = exercising;
+	}
+
+	@Override
+	public float getExerciseAnimation() {
+		return exerciseAnimation;
+	}
+
+	@Override
+	public void setExerciseAnimation(float exerciseAnimation) {
+		this.exerciseAnimation = exerciseAnimation;
+		if(this.exerciseAnimation >= 12.0f) {
+			this.exerciseAnimation -= 12.0f;
+		}
+		if(this.exerciseAnimation < 0) {
+			this.exerciseAnimation = 0;
+		}
 	}
 }

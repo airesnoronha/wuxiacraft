@@ -91,6 +91,7 @@ public class InputHandler {
 		KnownTechnique bodyKT = cultivation.getTechniqueBySystem(CultivationLevel.System.BODY);
 		isExercising = keyBindings[KEY_EXERCISE].isKeyDown() && bodyKT != null;
 		if (isExercising) {
+			cultivation.setExerciseAnimation(cultivation.getExerciseAnimation() + 0.1f);
 			List<InputMappings.Input> movementInputs = ImmutableList.of(
 					InputMappings.getInputByCode(Minecraft.getInstance().gameSettings.keyBindForward.getKey().getKeyCode(), 0),
 					InputMappings.getInputByCode(Minecraft.getInstance().gameSettings.keyBindBack.getKey().getKeyCode(), 0),
@@ -106,6 +107,10 @@ public class InputHandler {
 			cultivation.getStatsBySystem(CultivationLevel.System.BODY).addEnergy(-energy);
 			cultivation.getStatsBySystem(CultivationLevel.System.ESSENCE).addEnergy(energy * energy_conversion);
 		}
+		else {
+			cultivation.setExerciseAnimation(0);
+		}
+		cultivation.setExercising(isExercising);
 		if (cultivation.getTickerTime() % 20 == 0 && accumulatedEnergyToSend > 0) {
 			WuxiaPacketHandler.INSTANCE.sendToServer(new ExerciseMessage(accumulatedEnergyToSend));
 			accumulatedEnergyToSend = 0;
