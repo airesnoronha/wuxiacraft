@@ -2,13 +2,12 @@ package wuxiacraft.capabilities;
 
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import wuxiacraft.cultivation.ICultivation;
 
-@Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class CapabilityRegistryHandler {
 
 	@SubscribeEvent
-	public void RegisterCapabilities(RegisterCapabilitiesEvent event) {
+	public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
+		event.register(ICultivation.class);
 	}
-
 }
