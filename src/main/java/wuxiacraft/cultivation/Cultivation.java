@@ -2,7 +2,9 @@ package wuxiacraft.cultivation;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import wuxiacraft.WuxiaCraft;
+import wuxiacraft.capabilities.cultivation.CultivationProvider;
 import wuxiacraft.init.WuxiaRegistries;
 
 import java.util.HashMap;
@@ -24,6 +26,10 @@ public class Cultivation implements ICultivation {
 		this.systemCultivation.put(System.BODY, new SystemContainer(System.BODY));
 		this.systemCultivation.put(System.DIVINE, new SystemContainer(System.DIVINE));
 		this.systemCultivation.put(System.ESSENCE, new SystemContainer(System.ESSENCE));
+	}
+
+	public static ICultivation get(Player target) {
+		return target.getCapability(CultivationProvider.CULTIVATION_PROVIDER).orElse(new Cultivation());
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -23,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import wuxiacraft.capabilities.CapabilityAttachingHandler;
 import wuxiacraft.capabilities.CapabilityRegistryHandler;
 import wuxiacraft.capabilities.cultivation.CultivationProvider;
+import wuxiacraft.command.CultivationCommand;
 import wuxiacraft.init.WuxiaRealms;
 
 import java.util.stream.Collectors;
@@ -79,5 +81,11 @@ public class WuxiaCraft {
 	public void onServerStarting(ServerStartingEvent event) {
 		// do something when the server starts
 		LOGGER.info("HELLO from server starting");
+	}
+
+	@SubscribeEvent
+	public void onRegisterCommands(RegisterCommandsEvent event) {
+		var dispatcher = event.getDispatcher();
+		CultivationCommand.register(dispatcher);
 	}
 }
