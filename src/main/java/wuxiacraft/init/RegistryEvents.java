@@ -10,6 +10,7 @@ import net.minecraftforge.registries.RegistryBuilder;
 import wuxiacraft.WuxiaCraft;
 import wuxiacraft.cultivation.CultivationRealm;
 import wuxiacraft.cultivation.CultivationStage;
+import wuxiacraft.cultivation.Element;
 import wuxiacraft.cultivation.Technique;
 
 // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
@@ -43,6 +44,11 @@ public class RegistryEvents {
 		WuxiaRegistries.TECHNIQUES = new RegistryBuilder<Technique>()
 						.setName(new ResourceLocation(WuxiaCraft.MOD_ID, "techniques"))
 						.setType(Technique.class)
+						.create();
+
+		WuxiaRegistries.ELEMENTS = new RegistryBuilder<Element>()
+						.setName(new ResourceLocation(WuxiaCraft.MOD_ID, "elements"))
+						.setType(Element.class)
 						.create();
 	}
 }

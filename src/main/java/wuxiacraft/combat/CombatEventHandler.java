@@ -1,6 +1,5 @@
 package wuxiacraft.combat;
 
-import com.mojang.math.Vector3d;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.damagesource.DamageSource;
@@ -50,7 +49,7 @@ public class CombatEventHandler {
 	}
 
 	/**
-	 * Converts a vanilla damage source of any type to an elemental damage source
+	 * Converts a vanilla damage source of any type to elemental damage source
 	 * @param source the vanilla source to be converted from
 	 * @return the wuxia damage source with an element
 	 */

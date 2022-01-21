@@ -2,7 +2,6 @@ package wuxiacraft.cultivation;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import wuxiacraft.WuxiaCraft;
 import wuxiacraft.capabilities.cultivation.CultivationProvider;
@@ -56,7 +55,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public double getMaxHealth() {
-		double maxHealth = 10;
+		double maxHealth = 20;
 		for(var system : System.values()) {
 			maxHealth += getSystemData(system).getMaxHealth();
 		}

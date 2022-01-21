@@ -25,7 +25,9 @@ import wuxiacraft.capabilities.CapabilityAttachingHandler;
 import wuxiacraft.capabilities.CapabilityRegistryHandler;
 import wuxiacraft.capabilities.cultivation.CultivationProvider;
 import wuxiacraft.command.CultivationCommand;
+import wuxiacraft.init.WuxiaElements;
 import wuxiacraft.init.WuxiaRealms;
+import wuxiacraft.init.WuxiaTechniques;
 import wuxiacraft.networking.WuxiaPacketHandler;
 
 import java.util.stream.Collectors;
@@ -56,6 +58,8 @@ public class WuxiaCraft {
 
 		WuxiaRealms.REALM_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 		WuxiaRealms.STAGE_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+		WuxiaTechniques.TECHNIQUES_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+		WuxiaElements.ELEMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
 
 
