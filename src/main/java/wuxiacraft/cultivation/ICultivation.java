@@ -1,5 +1,7 @@
 package wuxiacraft.cultivation;
 
+import net.minecraft.nbt.CompoundTag;
+
 public interface ICultivation {
 
 
@@ -7,5 +9,15 @@ public interface ICultivation {
 
 	void setHealth(double health);
 
-	Cultivation.SystemContainer getSystemData(Cultivation.System system);
+	SystemContainer getSystemData(Cultivation.System system);
+
+	double getMaxHealth();
+
+	double getStrength();
+
+	double getAgility();
+
+	CompoundTag serialize();
+
+	void deserialize(CompoundTag tag);
 }

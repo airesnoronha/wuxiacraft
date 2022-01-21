@@ -17,7 +17,7 @@ public class WuxiaRealms {
 					.register("body_mortal_realm",
 									() -> new CultivationRealm("body_mortal_realm",
 													Cultivation.System.BODY,
-													new ResourceLocation(WuxiaCraft.MOD_ID),
+													new ResourceLocation(WuxiaCraft.MOD_ID, "body_mortal_stage"),
 													new ResourceLocation(WuxiaCraft.MOD_ID)
 									));
 
@@ -25,7 +25,7 @@ public class WuxiaRealms {
 					.register("divine_mortal_realm",
 									() -> new CultivationRealm("divine_mortal_realm",
 													Cultivation.System.BODY,
-													new ResourceLocation(WuxiaCraft.MOD_ID),
+													new ResourceLocation(WuxiaCraft.MOD_ID, "divine_mortal_stage"),
 													new ResourceLocation(WuxiaCraft.MOD_ID)
 									));
 
@@ -33,9 +33,21 @@ public class WuxiaRealms {
 					.register("essence_mortal_realm",
 									() -> new CultivationRealm("essence_mortal_realm",
 													Cultivation.System.BODY,
-													new ResourceLocation(WuxiaCraft.MOD_ID),
+													new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_stage"),
 													new ResourceLocation(WuxiaCraft.MOD_ID)
 									));
+
+	public static RegistryObject<CultivationRealm> ESSENCE_QI_ASSIMILATION_REALM = REALM_REGISTER
+					.register("essence_qi_assimilation_realm",
+									() -> new CultivationRealm("essence_qi_assimilation_realm",
+													Cultivation.System.BODY,
+													new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_stage"),
+													new ResourceLocation(WuxiaCraft.MOD_ID)
+									));
+
+	//*********************************
+	// body stages
+	//*********************************
 
 	public static RegistryObject<CultivationStage> BODY_MORTAL_STAGE = STAGE_REGISTER
 					.register("body_mortal_stage",
@@ -49,6 +61,10 @@ public class WuxiaRealms {
 													0
 									));
 
+	//*********************************
+	// divine stages
+	//*********************************
+
 	public static RegistryObject<CultivationStage> DIVINE_MORTAL_STAGE = STAGE_REGISTER
 					.register("divine_mortal_stage",
 									() -> new CultivationStage("divine_mortal_stage",
@@ -61,9 +77,61 @@ public class WuxiaRealms {
 													0
 									));
 
+	//*********************************
+	// essence stages
+	//*********************************
+
 	public static RegistryObject<CultivationStage> ESSENCE_MORTAL_STAGE = STAGE_REGISTER
 					.register("essence_mortal_stage",
 									() -> new CultivationStage("essence_mortal_stage",
+													Cultivation.System.BODY,
+													1000d,
+													10d,
+													0d,
+													0.01d,
+													0,
+													0
+									));
+
+	public static RegistryObject<CultivationStage> ESSENCE_QI_GATHERING_STAGE = STAGE_REGISTER
+					.register("essence_qi_gathering_stage",
+									() -> new CultivationStage("essence_qi_gathering_stage",
+													Cultivation.System.BODY,
+													1000d,
+													10d,
+													0d,
+													0.01d,
+													0,
+													0
+									));
+
+	public static RegistryObject<CultivationStage> ESSENCE_QI_PATHWAYS_STAGE = STAGE_REGISTER
+					.register("essence_qi_gathering_stage",
+									() -> new CultivationStage("essence_qi_gathering_stage",
+													Cultivation.System.BODY,
+													1000d,
+													10d,
+													0d,
+													0.01d,
+													0,
+													0
+									));
+
+	public static RegistryObject<CultivationStage> ESSENCE_QI_CONDENSATION_STAGE = STAGE_REGISTER
+					.register("essence_qi_gathering_stage",
+									() -> new CultivationStage("essence_qi_gathering_stage",
+													Cultivation.System.BODY,
+													1000d,
+													10d,
+													0d,
+													0.01d,
+													0,
+													0
+									));
+
+	public static RegistryObject<CultivationStage> ESSENCE_QI_PHENOMENON_STAGE = STAGE_REGISTER
+					.register("essence_qi_gathering_stage",
+									() -> new CultivationStage("essence_qi_gathering_stage",
 													Cultivation.System.BODY,
 													1000d,
 													10d,

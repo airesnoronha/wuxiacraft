@@ -32,19 +32,11 @@ public class CultivationProvider implements ICapabilitySerializable<CompoundTag>
 
 	@Override
 	public CompoundTag serializeNBT() {
-		CompoundTag data = new CompoundTag();
-		data.putDouble("health", cultivation_instance.getHealth());
-		data.put("body-data", cultivation_instance.getSystemData(Cultivation.System.BODY).serialize());
-		data.put("divine-data", cultivation_instance.getSystemData(Cultivation.System.DIVINE).serialize());
-		data.put("essence-data", cultivation_instance.getSystemData(Cultivation.System.ESSENCE).serialize());
-		return data;
+		return cultivation_instance.serialize();
 	}
 
 	@Override
 	public void deserializeNBT(CompoundTag tag) {
-		cultivation_instance.setHealth(tag.getDouble("health"));
-		cultivation_instance.getSystemData(Cultivation.System.BODY).deserialize(tag.getCompound("body-data"));
-		cultivation_instance.getSystemData(Cultivation.System.DIVINE).deserialize(tag.getCompound("divine-data"));
-		cultivation_instance.getSystemData(Cultivation.System.ESSENCE).deserialize(tag.getCompound("essence-data"));
+		cultivation_instance.deserialize(tag);
 	}
 }
