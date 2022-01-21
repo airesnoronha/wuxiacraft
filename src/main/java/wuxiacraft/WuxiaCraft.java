@@ -26,6 +26,7 @@ import wuxiacraft.capabilities.CapabilityRegistryHandler;
 import wuxiacraft.capabilities.cultivation.CultivationProvider;
 import wuxiacraft.command.CultivationCommand;
 import wuxiacraft.init.WuxiaRealms;
+import wuxiacraft.networking.WuxiaPacketHandler;
 
 import java.util.stream.Collectors;
 
@@ -61,7 +62,9 @@ public class WuxiaCraft {
 	private void setup(final FMLCommonSetupEvent event) {
 		// some preinit code
 		LOGGER.info("HELLO FROM PREINIT");
-		LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+
+		LOGGER.info("Registering messages. Check your transmission talisman!");
+		WuxiaPacketHandler.registerMessages();
 	}
 
 	private void enqueueIMC(final InterModEnqueueEvent event) {
