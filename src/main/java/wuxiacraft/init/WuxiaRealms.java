@@ -130,7 +130,7 @@ public class WuxiaRealms {
 									));
 
 	public static RegistryObject<CultivationStage> ESSENCE_QI_PHENOMENON_STAGE = STAGE_REGISTER
-					.register("essence_qi_gathering_stage",
+					.register("essence_qi_phenomenon_stage",
 									() -> new CultivationStage("essence_qi_phenomenon_stage",
 													Cultivation.System.BODY,
 													1000d,
