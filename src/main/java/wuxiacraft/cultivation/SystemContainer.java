@@ -118,19 +118,19 @@ public class SystemContainer {
 	/**
 	 * Set's the current technique proficiency
 	 * Also updates synchronously the technique modifier as well, so we don't keep interpolating on each query of the modifier
+	 *
 	 * @param proficiency the new proficiency to be set
 	 */
 	public void setProficiency(double proficiency) {
 		this.proficiency = Math.max(0, proficiency);
 		var technique = this.getTechnique();
-		if(technique != null) {
+		if (technique != null) {
 			var checkpoint = technique.getCheckpoint(this.proficiency);
-			if(checkpoint.nextCheckpoint() != null) {
+			if (checkpoint.nextCheckpoint() != null) {
 				var nextCheckpoint = technique.checkpoints.get(checkpoint.nextCheckpoint());
 				var factor = (proficiency - checkpoint.proficiency()) / (nextCheckpoint.proficiency() - checkpoint.proficiency());
 				this.techniqueModifier = checkpoint.modifier() + (nextCheckpoint.modifier() - checkpoint.modifier()) * factor;
-			}
-			else {
+			} else {
 				this.techniqueModifier = checkpoint.modifier();
 			}
 		}
@@ -138,6 +138,49 @@ public class SystemContainer {
 
 	public double getTechniqueModifier() {
 		return techniqueModifier;
+	}
+
+	public double getStrength() {
+		var strength = this.getStage().strength;
+		if(this.getTechnique() != null) {
+			strength *= 1+ this.getTechnique().strengthModifier * this.getTechniqueModifier();
+		}
+		return strength;
+	}
+
+	public double getAgility() {
+		var agility = this.getStage().agility;
+		if (this.getTechnique() != null) {
+			agility *= 1 + this.getTechnique().agilityModifier * this.getTechniqueModifier();
+		}
+		return agility;
+	}
+
+	public double getMaxHealth() {
+		var maxHealth = this.getStage().maxHealth;
+		if(this.getTechnique() != null) {
+			maxHealth *= 1+this.getTechnique().healthModifier * this.getTechniqueModifier();
+		}
+		return maxHealth;
+	}
+
+	public double getEnergyRegen() {
+		var energyRegen = this.getStage().energyRegenRate;
+		if(this.getTechnique() != null) {
+			energyRegen *= 1+this.getTechnique().energyRegenModifier * this.getTechniqueModifier();
+		}
+		return energyRegen;
+	}
+
+	/**
+	 * @return the maximum energy this system has. Depends on technique.
+	 */
+	public double getMaxEnergy() {
+		var maxEnergy = this.getStage().maxEnergy;
+		if(this.getTechnique() != null) {
+			maxEnergy *= 1+this.getTechnique().energyModifier * this.getTechniqueModifier();
+		}
+		return maxEnergy;
 	}
 
 	/**
@@ -171,12 +214,10 @@ public class SystemContainer {
 		return false;
 	}
 
-	/**
-	 * @return the maximum energy this system has. Depends on technique.
-	 */
-	public double getMaxEnergy() {
-		return this.getStage().maxEnergy;
+	public void addEnergy(double amount) {
+		this.energy = Math.max(0, this.energy+amount);
 	}
+
 
 
 	public CompoundTag serialize() {

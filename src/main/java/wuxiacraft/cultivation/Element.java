@@ -1,8 +1,10 @@
 package wuxiacraft.cultivation;
 
+import net.minecraftforge.registries.ForgeRegistryEntry;
+
 import java.util.HashSet;
 
-public class Element {
+public class Element extends ForgeRegistryEntry<Element> {
 
 	/**
 	 * The ID of this element
