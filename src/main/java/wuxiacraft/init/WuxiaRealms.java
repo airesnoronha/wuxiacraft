@@ -106,8 +106,8 @@ public class WuxiaRealms {
 									));
 
 	public static RegistryObject<CultivationStage> ESSENCE_QI_PATHWAYS_STAGE = STAGE_REGISTER
-					.register("essence_qi_gathering_stage",
-									() -> new CultivationStage("essence_qi_gathering_stage",
+					.register("essence_qi_pathways_stage",
+									() -> new CultivationStage("essence_qi_pathways_stage",
 													Cultivation.System.BODY,
 													1000d,
 													10d,
@@ -118,8 +118,8 @@ public class WuxiaRealms {
 									));
 
 	public static RegistryObject<CultivationStage> ESSENCE_QI_CONDENSATION_STAGE = STAGE_REGISTER
-					.register("essence_qi_gathering_stage",
-									() -> new CultivationStage("essence_qi_gathering_stage",
+					.register("essence_qi_condensation_stage",
+									() -> new CultivationStage("essence_qi_condensation_stage",
 													Cultivation.System.BODY,
 													1000d,
 													10d,
@@ -131,7 +131,7 @@ public class WuxiaRealms {
 
 	public static RegistryObject<CultivationStage> ESSENCE_QI_PHENOMENON_STAGE = STAGE_REGISTER
 					.register("essence_qi_gathering_stage",
-									() -> new CultivationStage("essence_qi_gathering_stage",
+									() -> new CultivationStage("essence_qi_phenomenon_stage",
 													Cultivation.System.BODY,
 													1000d,
 													10d,
