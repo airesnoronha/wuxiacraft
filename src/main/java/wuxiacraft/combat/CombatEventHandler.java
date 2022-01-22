@@ -58,7 +58,7 @@ public class CombatEventHandler {
 		if (source == DamageSource.LIGHTNING_BOLT)
 			return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.LIGHTNING.get());
 		if (source == DamageSource.FREEZE)
-			return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.ICE.get());
+			return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.WATER.get());
 		return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.PHYSICAL.get(), source.getEntity());
 	}
 

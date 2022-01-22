@@ -9,7 +9,6 @@ import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.client.gui.IIngameOverlay;
 import wuxiacraft.WuxiaCraft;
 import wuxiacraft.cultivation.Cultivation;
-import wuxiacraft.cultivation.ICultivation;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class EnergiesOverlay implements IIngameOverlay {

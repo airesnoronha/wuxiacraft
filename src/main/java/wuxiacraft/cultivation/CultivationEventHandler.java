@@ -2,7 +2,6 @@ package wuxiacraft.cultivation;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
@@ -12,7 +11,6 @@ import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
-import wuxiacraft.WuxiaCraft;
 import wuxiacraft.networking.CultivationSyncMessage;
 import wuxiacraft.networking.WuxiaPacketHandler;
 

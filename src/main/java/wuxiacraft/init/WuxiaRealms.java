@@ -24,23 +24,59 @@ public class WuxiaRealms {
 	public static RegistryObject<CultivationRealm> DIVINE_MORTAL_REALM = REALM_REGISTER
 					.register("divine_mortal_realm",
 									() -> new CultivationRealm("divine_mortal_realm",
-													Cultivation.System.BODY,
+													Cultivation.System.DIVINE,
 													new ResourceLocation(WuxiaCraft.MOD_ID, "divine_mortal_stage"),
 													new ResourceLocation(WuxiaCraft.MOD_ID)
 									));
 
+	//************************************
+	// essence realms
+	//************************************
+
 	public static RegistryObject<CultivationRealm> ESSENCE_MORTAL_REALM = REALM_REGISTER
 					.register("essence_mortal_realm",
 									() -> new CultivationRealm("essence_mortal_realm",
-													Cultivation.System.BODY,
+													Cultivation.System.ESSENCE,
 													new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_stage"),
 													new ResourceLocation(WuxiaCraft.MOD_ID)
 									));
 
-	public static RegistryObject<CultivationRealm> ESSENCE_QI_ASSIMILATION_REALM = REALM_REGISTER
-					.register("essence_qi_assimilation_realm",
-									() -> new CultivationRealm("essence_qi_assimilation_realm",
-													Cultivation.System.BODY,
+	public static RegistryObject<CultivationRealm> ESSENCE_GATHERING_REALM = REALM_REGISTER
+					.register("essence_gathering_realm",
+									() -> new CultivationRealm("essence_gathering_realm",
+													Cultivation.System.ESSENCE,
+													new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_stage"),
+													new ResourceLocation(WuxiaCraft.MOD_ID)
+									));
+
+	public static RegistryObject<CultivationRealm> ESSENCE_CONSOLIDATION_REALM = REALM_REGISTER
+					.register("essence_consolidation_realm",
+									() -> new CultivationRealm("essence_consolidation_realm",
+													Cultivation.System.ESSENCE,
+													new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_stage"),
+													new ResourceLocation(WuxiaCraft.MOD_ID)
+									));
+
+	public static RegistryObject<CultivationRealm> ESSENCE_REVOLVING_CORE_REALM = REALM_REGISTER
+					.register("ESSENCE_REVOLVING_CORE_REALM",
+									() -> new CultivationRealm("ESSENCE_REVOLVING_CORE_REALM",
+													Cultivation.System.ESSENCE,
+													new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_stage"),
+													new ResourceLocation(WuxiaCraft.MOD_ID)
+									));
+
+	public static RegistryObject<CultivationRealm> ESSENCE_IMMORTAL_SEA_REALM = REALM_REGISTER
+					.register("essence_immortal_sea_realm",
+									() -> new CultivationRealm("essence_immortal_sea_realm",
+													Cultivation.System.ESSENCE,
+													new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_stage"),
+													new ResourceLocation(WuxiaCraft.MOD_ID)
+									));
+
+	public static RegistryObject<CultivationRealm> ESSENCE_IMMORTAL_TRANSFORMATION_REALM = REALM_REGISTER
+					.register("essence_immortal_sea_realm",
+									() -> new CultivationRealm("essence_immortal_sea_realm",
+													Cultivation.System.ESSENCE,
 													new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_stage"),
 													new ResourceLocation(WuxiaCraft.MOD_ID)
 									));

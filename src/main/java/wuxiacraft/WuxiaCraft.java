@@ -64,7 +64,7 @@ public class WuxiaCraft {
 
 		OverlayRegistry.registerOverlayTop("wuxiacraft_debug", new DebugOverlay());
 		OverlayRegistry.registerOverlayAbove(ForgeIngameGui.PLAYER_HEALTH_ELEMENT, "wuxiacraft_health_bar", new HealthOverlay());
-		OverlayRegistry.registerOverlayTop("wuxiacraft_energies", new EnergiesOverlay());
+		OverlayRegistry.registerOverlayBelow(ForgeIngameGui.CHAT_PANEL_ELEMENT, "wuxiacraft_energies", new EnergiesOverlay());
 
 	}
 
