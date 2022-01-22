@@ -46,13 +46,7 @@ public class EnergiesOverlay implements IIngameOverlay {
 		mStack.pushPose();
 		mStack.translate(5, height - 75, 0);
 		mStack.scale(70f/512f, 70f/512f, 1);
-		RenderSystem.setShaderTexture(0, ENERGY_BAR);
-		GuiComponent.blit(mStack,
-						barInScreenX, barInScreenY, // bar in screen position
-						barWidth, barHeight, // bar in screen fill
-						barX, barY, // bar tex position
-						barWidth, barHeight, // bar fill
-						512, 512); // tex image size
+
 		for (var system : Cultivation.System.values()) {
 			var systemData = cultivation.getSystemData(system);
 			int index = system.ordinal();
@@ -89,6 +83,15 @@ public class EnergiesOverlay implements IIngameOverlay {
 							bWidth, bHeight, // bar fill
 							barFillsWidth[index], barFillsHeight[index]); // tex image size
 		}
+
+		RenderSystem.setShaderTexture(0, ENERGY_BAR);
+		GuiComponent.blit(mStack,
+						barInScreenX, barInScreenY, // bar in screen position
+						barWidth, barHeight, // bar in screen fill
+						barX, barY, // bar tex position
+						barWidth, barHeight, // bar fill
+						512, 512); // tex image size
+						
 		mStack.popPose();
 
 	}
