@@ -13,5 +13,6 @@ public class WuxiaElements {
 
 	public static RegistryObject<Element> FIRE = ELEMENTS.register("fire", () -> new Element("fire"));
 	public static RegistryObject<Element> LIGHTNING = ELEMENTS.register("lightning", () -> new Element("lightning"));
+	public static RegistryObject<Element> ICE = ELEMENTS.register("icd", () -> new Element("lightning"));
 
 }

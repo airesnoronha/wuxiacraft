@@ -28,6 +28,7 @@ public class Cultivation implements ICultivation {
 	private int tickTimer;
 
 	public Cultivation() {
+		this.health = 20;
 		this.systemCultivation = new HashMap<>();
 		this.systemCultivation.put(System.BODY, new SystemContainer(System.BODY));
 		this.systemCultivation.put(System.DIVINE, new SystemContainer(System.DIVINE));
@@ -79,6 +80,16 @@ public class Cultivation implements ICultivation {
 			agility += systemData.getAgility();
 		}
 		return agility;
+	}
+
+	@Override
+	public double getHealthRegen() {
+		return getMaxHealth() * 0.008;
+	}
+
+	@Override
+	public double getHealthRegenCost() {
+		return getMaxHealth() * 0.01;
 	}
 
 	@Override

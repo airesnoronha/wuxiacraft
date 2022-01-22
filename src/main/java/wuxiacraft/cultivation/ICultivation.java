@@ -17,6 +17,10 @@ public interface ICultivation {
 
 	double getAgility();
 
+	double getHealthRegen();
+
+	double getHealthRegenCost();
+
 	CompoundTag serialize();
 
 	void deserialize(CompoundTag tag);

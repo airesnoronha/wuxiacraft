@@ -197,7 +197,7 @@ public class SystemContainer {
 	 * @return true if this has energy
 	 */
 	public boolean hasEnergy(double amount) {
-		return amount >= this.energy;
+		return amount <= this.energy;
 	}
 
 	/**

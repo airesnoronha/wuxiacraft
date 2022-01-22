@@ -56,7 +56,7 @@ public class WuxiaRealms {
 													1000d,
 													10d,
 													0d,
-													0.01d,
+													0.007d,
 													0,
 													0
 									));
@@ -72,7 +72,7 @@ public class WuxiaRealms {
 													1000d,
 													10d,
 													0d,
-													0.01d,
+													0.007d,
 													0,
 													0
 									));
@@ -88,7 +88,7 @@ public class WuxiaRealms {
 													1000d,
 													10d,
 													0d,
-													0.01d,
+													0.007d,
 													0,
 													0
 									));
