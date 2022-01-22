@@ -58,4 +58,6 @@ public class WuxiaTechniques {
 									1 //cultivation speed
 					));
 
+
+
 }

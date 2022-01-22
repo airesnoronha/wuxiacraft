@@ -3,6 +3,7 @@ package wuxiacraft.cultivation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 
 public class CultivationRealm extends ForgeRegistryEntry<CultivationRealm> {
@@ -24,9 +25,10 @@ public class CultivationRealm extends ForgeRegistryEntry<CultivationRealm> {
 
 	public final ResourceLocation firstStage;
 
+	@Nullable
 	public final ResourceLocation nextRealm;
 
-	public CultivationRealm(String name, Cultivation.System system, ResourceLocation firstStage, ResourceLocation nextRealm) {
+	public CultivationRealm(String name, Cultivation.System system, ResourceLocation firstStage, @Nullable ResourceLocation nextRealm) {
 		this.name = name;
 		this.system = system;
 		this.firstStage = firstStage;

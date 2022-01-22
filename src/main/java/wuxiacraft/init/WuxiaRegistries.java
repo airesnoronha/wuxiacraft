@@ -5,6 +5,7 @@ import wuxiacraft.cultivation.CultivationRealm;
 import wuxiacraft.cultivation.CultivationStage;
 import wuxiacraft.cultivation.Element;
 import wuxiacraft.cultivation.Technique;
+import wuxiacraft.cultivation.technique.TechniqueAspect;
 
 public class WuxiaRegistries {
 
@@ -15,5 +16,7 @@ public class WuxiaRegistries {
 	public static IForgeRegistry<Technique> TECHNIQUES;
 
 	public static IForgeRegistry<Element> ELEMENTS;
+
+	public static IForgeRegistry<TechniqueAspect> TECHNIQUE_ASPECT;
 
 }

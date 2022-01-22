@@ -24,6 +24,7 @@ import wuxiacraft.client.overlays.HealthOverlay;
 import wuxiacraft.command.CultivationCommand;
 import wuxiacraft.init.WuxiaElements;
 import wuxiacraft.init.WuxiaRealms;
+import wuxiacraft.init.WuxiaTechniqueAspects;
 import wuxiacraft.init.WuxiaTechniques;
 import wuxiacraft.networking.WuxiaPacketHandler;
 
@@ -57,6 +58,7 @@ public class WuxiaCraft {
 		WuxiaRealms.STAGE_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 		WuxiaTechniques.TECHNIQUES_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 		WuxiaElements.ELEMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
+		WuxiaTechniqueAspects.ASPECTS.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
@@ -75,6 +77,8 @@ public class WuxiaCraft {
 
 		LOGGER.info("Registering messages. Check your transmission talisman!");
 		WuxiaPacketHandler.registerMessages();
+
+		TestRun.testStuff();
 
 	}
 

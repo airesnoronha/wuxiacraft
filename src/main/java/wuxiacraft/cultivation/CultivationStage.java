@@ -1,6 +1,9 @@
 package wuxiacraft.cultivation;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
+
+import javax.annotation.Nullable;
 
 public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 
@@ -51,6 +54,13 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 	public final double agility;
 
 	/**
+	 * The next stage to this stage
+	 * Null if last stage in realm
+	 */
+	@Nullable
+	public final ResourceLocation nextStage;
+
+	/**
 	 * Constructor for this cultivation stage
 	 * @param name The stage name
 	 * @param system the Stage Cultivation System
@@ -60,15 +70,17 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 	 * @param energyRegenRate the passive energy regen at this stage
 	 * @param strength the expected punch strength for this level
 	 * @param agility the expected running speed of this level
+	 * @param nextStage then next stage to this stage, null if last in realm
 	 */
-	public CultivationStage(String name, Cultivation.System system, double cultivationBase, double maxEnergy, double maxHealth, double energyRegenRate, double strength, double agility) {
+	public CultivationStage(String name, Cultivation.System system, double cultivationBase, double maxEnergy, double maxHealth, double energyRegenRate, double strength, double agility, @Nullable ResourceLocation nextStage) {
 		this.name = name;
 		this.system = system;
 		this.cultivationBase = cultivationBase;
 		this.maxEnergy = maxEnergy;
-		this.maxHealth = maxHealth;
 		this.energyRegenRate = energyRegenRate;
+		this.maxHealth = maxHealth;
 		this.strength = strength;
 		this.agility = agility;
+		this.nextStage = nextStage;
 	}
 }
