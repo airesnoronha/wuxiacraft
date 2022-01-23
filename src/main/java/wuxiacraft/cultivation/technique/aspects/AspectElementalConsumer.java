@@ -33,4 +33,11 @@ public abstract class AspectElementalConsumer extends TechniqueAspect {
 	public abstract void consumed(HashMap<String, Object> metaData);
 	public abstract void notConsumed(HashMap<String, Object> metaData);
 
+	@Override
+	public boolean canConnect(TechniqueAspect aspect) {
+		if(aspect instanceof AspectElementalConsumer) return true;
+		if(aspect instanceof AspectElementalConverter) return true;
+		if(aspect instanceof AspectElementalGenerator) return true;
+		return false;
+	}
 }

@@ -82,7 +82,7 @@ public class TechniqueGrid {
 
 		var junkNotExpected = new HashSet<Point>();
 
-		while(!toVisit.isEmpty()){ // layer wide iteration
+		while(!toVisit.isEmpty()){ // layer wide iteration aka Breadth first
 			var visiting = toVisit.removeFirst();
 			if(visited.contains(visiting)) continue;
 			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.getOrDefault(visiting, emptyId));
@@ -119,7 +119,6 @@ public class TechniqueGrid {
 				junkAspect.disconnect(metaData);
 			}
 		}
-
 		return getModifiersFromMetaData(metaData);
 	}
 

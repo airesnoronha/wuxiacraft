@@ -29,11 +29,19 @@ public abstract class AspectElementalConverter extends TechniqueAspect {
 		if(metaData.containsKey(elementBase)) {
 			double elementBaseAmount = (double)metaData.get(elementBase);
 			var converted = Math.min(elementBaseAmount, this.amount);
-			elementBaseAmount-= this.amount;
+			elementBaseAmount-= converted;
 			metaData.put(elementBase, elementBaseAmount);
 			convert(converted, metaData);
 		}
 	}
 
 	public abstract void convert(double converted, HashMap<String, Object> metaData);
+
+	@Override
+	public boolean canConnect(TechniqueAspect aspect) {
+		if(aspect instanceof AspectElementalConsumer) return true;
+		if(aspect instanceof AspectElementalConverter) return true;
+		if(aspect instanceof AspectElementalGenerator) return true;
+		return false;
+	}
 }

@@ -7,31 +7,22 @@ import wuxiacraft.cultivation.technique.TechniqueModifier;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect> {
+public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect> {
 
 	//Class itself
 	public String name;
 
 	public HashSet<ResourceLocation> expectedAspects;
 
-	public TechniqueModifier modifier;
-
 	public TechniqueAspect(String name) {
 		this.name = name;
 		expectedAspects = new HashSet<>();
-		modifier = new TechniqueModifier();
 	}
 
 	public TechniqueAspect addExpected(ResourceLocation aspect) {
 		expectedAspects.add(aspect);
 		return this;
 	}
-
-	public TechniqueAspect setModifiers(TechniqueModifier modifiers) {
-		this.modifier = modifiers;
-		return this;
-	}
-
 	/**
 	 * Logic if aspect was expected
 	 * @param metaData the current modifiers when accepting this

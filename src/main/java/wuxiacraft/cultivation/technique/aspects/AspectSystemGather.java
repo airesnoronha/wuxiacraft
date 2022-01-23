@@ -15,8 +15,8 @@ public class AspectSystemGather extends TechniqueAspect {
 
 	@Override
 	public void accept(HashMap<String, Object> metaData) {
-		String systemRawBase = system.name()+"-raw-cultivation-base";
-		if (metaData.containsValue(systemRawBase)) {
+		String systemRawBase = system.name().toLowerCase()+"-raw-cultivation-base";
+		if (metaData.containsKey(systemRawBase)) {
 			double rawBase = (double) metaData.remove(systemRawBase);
 			metaData.put("cultivation_speed",
 					(double) metaData.getOrDefault("cultivation_speed", 0d) + rawBase / 10d);
@@ -32,5 +32,10 @@ public class AspectSystemGather extends TechniqueAspect {
 	@Override
 	public void disconnect(HashMap<String, Object> metaData) {
 		super.disconnect(metaData);
+	}
+
+	@Override
+	public boolean canConnect(TechniqueAspect aspect) {
+		return false;
 	}
 }
