@@ -42,10 +42,12 @@ public class SystemContainer {
 		this.systemStats = new HashMap<>();
 		for (var stat : PlayerSystemStat.values()) {
 			this.systemStats.put(stat, stat.defaultValue);
-			if (this.system == System.DIVINE) {
-				this.systemStats.put(stat, new BigDecimal("10"));
-			} else if (this.system == System.BODY) {
-				this.systemStats.put(stat, new BigDecimal("7"));
+			if(stat == PlayerSystemStat.ENERGY) {
+				if (this.system == System.DIVINE) {
+					this.systemStats.put(stat, new BigDecimal("10"));
+				} else if (this.system == System.BODY) {
+					this.systemStats.put(stat, new BigDecimal("7"));
+				}
 			}
 		}
 	}
@@ -81,6 +83,7 @@ public class SystemContainer {
 	public boolean consumeEnergy(BigDecimal amount) {
 		if (hasEnergy(amount)) {
 			this.systemStats.put(PlayerSystemStat.ENERGY, this.getStat(PlayerSystemStat.ENERGY).subtract(amount));
+			return true;
 		}
 		return false;
 	}
