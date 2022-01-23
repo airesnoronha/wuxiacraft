@@ -9,6 +9,10 @@ import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.client.gui.IIngameOverlay;
 import wuxiacraft.WuxiaCraft;
 import wuxiacraft.cultivation.Cultivation;
+import wuxiacraft.cultivation.System;
+import wuxiacraft.cultivation.stats.PlayerSystemStat;
+
+import java.math.RoundingMode;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class EnergiesOverlay implements IIngameOverlay {
@@ -47,11 +51,11 @@ public class EnergiesOverlay implements IIngameOverlay {
 		mStack.translate(5, height - 75, 0);
 		mStack.scale(70f/512f, 70f/512f, 1);
 
-		for (var system : Cultivation.System.values()) {
+		for (var system : System.values()) {
 			var systemData = cultivation.getSystemData(system);
 			int index = system.ordinal();
-			int maxFillAmount = system == Cultivation.System.BODY ? barFillsHeight[index] : barFillsWidth[index];
-			int fillAmount = (int) ((float) maxFillAmount * systemData.energy / systemData.getMaxEnergy());
+			int maxFillAmount = system == System.BODY ? barFillsHeight[index] : barFillsWidth[index];
+			int fillAmount = (int) ((float) maxFillAmount * systemData.getStat(PlayerSystemStat.ENERGY).divide(systemData.getStat(PlayerSystemStat.MAX_ENERGY), RoundingMode.HALF_UP).floatValue());
 			RenderSystem.setShaderTexture(0, ENERGY_BAR);
 			int x, y, bWidth, bHeight;
 			int texX, texY;
@@ -59,11 +63,11 @@ public class EnergiesOverlay implements IIngameOverlay {
 			y = barFillInScreenY[index];
 			texX = 0;
 			texY = 0;
-			if (system == Cultivation.System.ESSENCE) {
+			if (system == System.ESSENCE) {
 				bWidth = fillAmount;
 				bHeight = barFillsHeight[index];
 				RenderSystem.setShaderTexture(0, ENERGY_ESSENCE_BAR_FILL);
-			} else if (system == Cultivation.System.DIVINE) {
+			} else if (system == System.DIVINE) {
 				bWidth = fillAmount;
 				bHeight = barFillsHeight[index];
 				x += barFillsWidth[index] - fillAmount;

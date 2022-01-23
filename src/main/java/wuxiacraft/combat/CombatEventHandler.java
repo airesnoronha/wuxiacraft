@@ -15,11 +15,13 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 import wuxiacraft.cultivation.Cultivation;
 import wuxiacraft.cultivation.ICultivation;
+import wuxiacraft.cultivation.stats.PlayerStat;
 import wuxiacraft.init.WuxiaElements;
 import wuxiacraft.networking.CultivationSyncMessage;
 import wuxiacraft.networking.WuxiaPacketHandler;
 import wuxiacraft.util.MathUtil;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 @Mod.EventBusSubscriber(bus= Mod.EventBusSubscriber.Bus.FORGE)
@@ -72,14 +74,16 @@ public class CombatEventHandler {
 	public static void onPlayerDamage(LivingDamageEvent event) {
 		if(!(event.getEntity() instanceof Player player)) return;
 		var cultivation = Cultivation.get(player);
-		cultivation.setHealth(cultivation.getHealth() - event.getAmount());
+		cultivation.setPlayerStat(PlayerStat.HEALTH, cultivation.getPlayerStat(PlayerStat.HEALTH).subtract(BigDecimal.valueOf(event.getAmount())));
 
-		event.getEntityLiving().getCombatTracker().recordDamage(event.getSource(), (float) cultivation.getHealth() + event.getAmount(), event.getAmount());
+		event.getEntityLiving().getCombatTracker().recordDamage(event.getSource(),
+				cultivation.getPlayerStat(PlayerStat.HEALTH).floatValue() + event.getAmount(), event.getAmount());
 		player.awardStat(Stats.DAMAGE_TAKEN, (int) event.getAmount());
 		//decided that food exhaustion has nothing to do with damage.
 		//and it'll be used anyways to heal the character.
 
-		if(cultivation.getHealth() <= 0) {
+		if(cultivation.getPlayerStat(PlayerStat.HEALTH).compareTo(BigDecimal.ZERO) <= 0) {
+			//this is vanilla health
 			player.setHealth(-1);
 		}
 
@@ -104,11 +108,11 @@ public class CombatEventHandler {
 			return; // Means it was wuxiacraft that came up with this attack, so damage is already calculated
 
 		ICultivation cultivation = Cultivation.get(player);
-		event.setAmount(event.getAmount() + (float) cultivation.getStrength());
+		event.setAmount(event.getAmount() + cultivation.getPlayerStat(PlayerStat.STRENGTH).floatValue());
 
 		LivingEntity target = event.getEntityLiving();
 		double maxHP = target.getMaxHealth();
-		if(target instanceof Player targetPlayer) maxHP = Cultivation.get(targetPlayer).getMaxHealth();
+		if(target instanceof Player targetPlayer) maxHP = Cultivation.get(targetPlayer).getPlayerStat(PlayerStat.MAX_HEALTH).doubleValue();
 		double knockSpeed = MathUtil.clamp((event.getAmount()*0.7- maxHP)*0.3, 0, 12);
 		Vec3 diff = Objects.requireNonNull(event.getSource().getSourcePosition()).subtract(event.getEntityLiving().getPosition(0.5f));
 		diff = diff.normalize();

@@ -1,8 +1,10 @@
-package wuxiacraft.cultivation.technique;
+package wuxiacraft.cultivation.technique.aspects;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
+import wuxiacraft.cultivation.technique.TechniqueModifier;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect> {
@@ -32,27 +34,34 @@ public class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect> {
 
 	/**
 	 * Logic if aspect was expected
-	 * @param tMod the current modifiers when accepting this
+	 * @param metaData the current modifiers when accepting this
 	 */
-	public void accept(TechniqueModifier tMod) {
-		tMod.add(this.modifier);
+	public void accept(HashMap<String, Object> metaData) {
 	}
 
 	/**
 	 * Logic if aspect is junk, or not expected
-	 * @param tMod the current modifiers when rejecting this
+	 * @param metaData the current modifiers when rejecting this
 	 */
-	public void reject(TechniqueModifier tMod) {
-		tMod.subtract(this.modifier);
-		tMod.subtract(this.modifier);
+	public void reject(HashMap<String, Object> metaData) {
 	}
 
 	/**
 	 * Logic if aspect is disconnected from start node
-	 * @param tMod the current modifiers when this is disconnected
+	 * @param metaData the current modifiers when this is disconnected
 	 */
-	public void disconnect(TechniqueModifier tMod) {
-		tMod.subtract(this.modifier);
+	public void disconnect(HashMap<String, Object> metaData) {
+	}
+
+	/**
+	 * this is meant to be overridden
+	 * Whether the can connect to neighbour aspect
+	 *
+	 * @param aspect aspect to be connected to
+	 * @return true if it can be connected
+	 */
+	public boolean canConnect(TechniqueAspect aspect) {
+		return true;
 	}
 
 }

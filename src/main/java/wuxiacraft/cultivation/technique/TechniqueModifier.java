@@ -28,10 +28,37 @@ public class TechniqueModifier {
 	}
 
 	public void add(TechniqueModifier tMod) {
-
+		this.strength += tMod.strength;
+		this.agility += tMod.agility;
+		this.health += tMod.health;
+		this.energy += tMod.energy;
+		this.energyRegen += tMod.energyRegen;
+		this.cultivation_speed += tMod.cultivation_speed;
+		for(var key : tMod.elements.keySet()) {
+			if(this.elements.containsKey(key)) {
+				this.elements.put(key, this.elements.get(key) + tMod.elements.get(key));
+			}
+			else {
+				this.elements.put(key, tMod.elements.get(key));
+			}
+		}
 	}
 
 	public void subtract(TechniqueModifier tMod) {
+		this.strength -= tMod.strength;
+		this.agility -= tMod.agility;
+		this.health -= tMod.health;
+		this.energy -= tMod.energy;
+		this.energyRegen -= tMod.energyRegen;
+		this.cultivation_speed -= tMod.cultivation_speed;
+		for(var key : tMod.elements.keySet()) {
+			if(this.elements.containsKey(key)) {
+				this.elements.put(key, this.elements.get(key) - tMod.elements.get(key));
+			}
+			else {
+				this.elements.put(key, -tMod.elements.get(key));
+			}
+		}
 	}
 
 	//TODO serialize this

@@ -16,7 +16,7 @@ public class CultivationRealm extends ForgeRegistryEntry<CultivationRealm> {
 	/**
 	 * The cultivation system this realm belongs to
 	 */
-	public final Cultivation.System system;
+	public final System system;
 
 	/**
 	 * A reference to the stages this realm has
@@ -28,7 +28,7 @@ public class CultivationRealm extends ForgeRegistryEntry<CultivationRealm> {
 	@Nullable
 	public final ResourceLocation nextRealm;
 
-	public CultivationRealm(String name, Cultivation.System system, ResourceLocation firstStage, @Nullable ResourceLocation nextRealm) {
+	public CultivationRealm(String name, System system, ResourceLocation firstStage, @Nullable ResourceLocation nextRealm) {
 		this.name = name;
 		this.system = system;
 		this.firstStage = firstStage;

@@ -1,11 +1,11 @@
 package wuxiacraft.cultivation;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import wuxiacraft.WuxiaCraft;
 import wuxiacraft.capabilities.cultivation.CultivationProvider;
+import wuxiacraft.cultivation.stats.PlayerStat;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class Cultivation implements ICultivation {
@@ -16,9 +16,9 @@ public class Cultivation implements ICultivation {
 	public HashMap<System, SystemContainer> systemCultivation;
 
 	/**
-	 * the current health of this character
+	 * Player specific stats
 	 */
-	public double health;
+	private final HashMap<PlayerStat, BigDecimal> playerStats;
 
 	/**
 	 * this is for sync with the client and probably vice versa
@@ -28,8 +28,11 @@ public class Cultivation implements ICultivation {
 	private int tickTimer;
 
 	public Cultivation() {
-		this.health = 20;
 		this.systemCultivation = new HashMap<>();
+		this.playerStats = new HashMap<>();
+		for (var stat : PlayerStat.values()) {
+			this.playerStats.put(stat, stat.defaultValue);
+		}
 		this.systemCultivation.put(System.BODY, new SystemContainer(System.BODY));
 		this.systemCultivation.put(System.DIVINE, new SystemContainer(System.DIVINE));
 		this.systemCultivation.put(System.ESSENCE, new SystemContainer(System.ESSENCE));
@@ -40,13 +43,15 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public double getHealth() {
-		return health;
+	public BigDecimal getPlayerStat(PlayerStat stat) {
+		return this.playerStats.getOrDefault(stat, stat.defaultValue);
 	}
 
 	@Override
-	public void setHealth(double health) {
-		this.health = health;
+	public void setPlayerStat(PlayerStat stat, BigDecimal value) {
+		if(stat.isModifiable) {
+			this.playerStats.put(stat, value.max(BigDecimal.ZERO));
+		}
 	}
 
 	@Override
@@ -55,56 +60,26 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public double getMaxHealth() {
-		double maxHealth = 20;
-		for(var system : System.values()) {
-			maxHealth += getSystemData(system).getMaxHealth();
-		}
-		return maxHealth;
-	}
-
-	@Override
-	public double getStrength() {
-		double strength = 0; //punches already have 1 we only add to it
-		for(var system : System.values()) {
-			strength += getSystemData(system).getStrength();
-		}
-		return strength;
-	}
-
-	@Override
-	public double getAgility() {
-		double agility = 1;
-		for(var system : System.values()) {
-			var systemData = getSystemData(system);
-			agility += systemData.getAgility();
-		}
-		return agility;
-	}
-
-	@Override
-	public double getHealthRegen() {
-		return getMaxHealth() * 0.008;
-	}
-
-	@Override
-	public double getHealthRegenCost() {
-		return getMaxHealth() * 0.01;
-	}
-
-	@Override
 	public CompoundTag serialize() {
 		CompoundTag tag = new CompoundTag();
-		tag.putDouble("health", this.health);
-		tag.put("body-data", getSystemData(System.BODY).serialize());;
+		for (var stat : this.playerStats.keySet()) {
+			tag.putString("stat-" + stat.name().toLowerCase(), this.playerStats.get(stat).toPlainString());
+		}
+		tag.put("body-data", getSystemData(System.BODY).serialize());
 		tag.put("divine-data", getSystemData(System.DIVINE).serialize());
-		tag.put("essence-data", getSystemData(System.ESSENCE).serialize());;
+		tag.put("essence-data", getSystemData(System.ESSENCE).serialize());
 		return tag;
 	}
 
 	@Override
 	public void deserialize(CompoundTag tag) {
-		this.health = tag.getDouble("health");
+		for (var stat : this.playerStats.keySet()) {
+			if (tag.contains("stat-" + stat.name().toLowerCase())) {
+				this.playerStats.put(stat, new BigDecimal(tag.getString("stat-" + stat.name().toLowerCase())));
+			} else {
+				this.playerStats.put(stat, new BigDecimal("0"));
+			}
+		}
 		getSystemData(System.BODY).deserialize(tag.getCompound("body-data"));
 		getSystemData(System.DIVINE).deserialize(tag.getCompound("divine-data"));
 		getSystemData(System.ESSENCE).deserialize(tag.getCompound("essence-data"));
@@ -133,20 +108,6 @@ public class Cultivation implements ICultivation {
 	@Override
 	public int getTimer() {
 		return this.tickTimer;
-	}
-
-	public enum System {
-		BODY(new ResourceLocation(WuxiaCraft.MOD_ID, "body_mortal_realm"), new ResourceLocation(WuxiaCraft.MOD_ID, "body_mortal_stage")),
-		DIVINE(new ResourceLocation(WuxiaCraft.MOD_ID, "divine_mortal_realm"), new ResourceLocation(WuxiaCraft.MOD_ID, "divine_mortal_stage")),
-		ESSENCE(new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_realm"), new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_stage"));
-
-		public final ResourceLocation defaultRealm;
-		public final ResourceLocation defaultStage;
-
-		System(ResourceLocation defaultRealm, ResourceLocation defaultStage) {
-			this.defaultRealm = defaultRealm;
-			this.defaultStage = defaultStage;
-		}
 	}
 
 }

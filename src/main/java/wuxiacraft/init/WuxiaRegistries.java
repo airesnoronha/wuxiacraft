@@ -5,7 +5,7 @@ import wuxiacraft.cultivation.CultivationRealm;
 import wuxiacraft.cultivation.CultivationStage;
 import wuxiacraft.cultivation.Element;
 import wuxiacraft.cultivation.Technique;
-import wuxiacraft.cultivation.technique.TechniqueAspect;
+import wuxiacraft.cultivation.technique.aspects.TechniqueAspect;
 
 public class WuxiaRegistries {
 

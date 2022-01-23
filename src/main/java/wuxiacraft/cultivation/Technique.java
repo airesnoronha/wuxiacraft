@@ -9,7 +9,7 @@ public class Technique extends ForgeRegistryEntry<Technique> {
 
 	public final String name;
 
-	public final Cultivation.System system;
+	public final System system;
 
 	public final double healthModifier;
 
@@ -26,7 +26,7 @@ public class Technique extends ForgeRegistryEntry<Technique> {
 	public final HashMap<String, Checkpoint> checkpoints = new HashMap<>();
 	private String firstCheckpoint = null;
 
-	public Technique(String name, Cultivation.System system, double healthModifier, double strengthModifier, double agilityModifier, double energyModifier, double energyRegenModifier, double cultivationSpeed) {
+	public Technique(String name, System system, double healthModifier, double strengthModifier, double agilityModifier, double energyModifier, double energyRegenModifier, double cultivationSpeed) {
 		this.name = name;
 		this.system = system;
 		this.healthModifier = healthModifier;

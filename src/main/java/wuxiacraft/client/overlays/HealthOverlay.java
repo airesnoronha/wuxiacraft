@@ -10,6 +10,7 @@ import net.minecraftforge.client.gui.IIngameOverlay;
 import wuxiacraft.WuxiaCraft;
 import wuxiacraft.cultivation.Cultivation;
 import wuxiacraft.cultivation.ICultivation;
+import wuxiacraft.cultivation.stats.PlayerStat;
 
 public class HealthOverlay implements IIngameOverlay {
 
@@ -25,8 +26,9 @@ public class HealthOverlay implements IIngameOverlay {
 		//health
 		RenderSystem.setShaderTexture(0, HEALTH_BAR);
 		GuiComponent.blit(mStack, i, j, 81, 9, 0, 0, 81, 9, 81, 18);
-		double max_hp = Cultivation.get(mc.player).getMaxHealth();
-		double hp = Cultivation.get(mc.player).getHealth();
+		//TODO Provide BigDecimal math logic to values
+		double max_hp = cultivation.getPlayerStat(PlayerStat.MAX_HEALTH).doubleValue();
+		double hp = cultivation.getPlayerStat(PlayerStat.HEALTH).doubleValue();
 		int fill = (int) Math.min(Math.ceil((hp / max_hp) * 81), 81);
 		GuiComponent.blit(mStack, i, j, fill, 9, 0, 9, fill, 9, 81, 18);
 		//text
@@ -36,6 +38,7 @@ public class HealthOverlay implements IIngameOverlay {
 		gui.left_height += 11;
 	}
 
+	// TODO provide BigDecimal as argument here
 	public static String getShortHealthAmount(int amount) {
 		String value = "";
 		if (amount < 0) {

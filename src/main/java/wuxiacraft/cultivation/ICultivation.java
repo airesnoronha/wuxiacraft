@@ -1,25 +1,17 @@
 package wuxiacraft.cultivation;
 
 import net.minecraft.nbt.CompoundTag;
+import wuxiacraft.cultivation.stats.PlayerStat;
+
+import java.math.BigDecimal;
 
 public interface ICultivation {
 
+	BigDecimal getPlayerStat(PlayerStat stat);
 
-	double getHealth();
+	void setPlayerStat(PlayerStat stat, BigDecimal value);
 
-	void setHealth(double health);
-
-	SystemContainer getSystemData(Cultivation.System system);
-
-	double getMaxHealth();
-
-	double getStrength();
-
-	double getAgility();
-
-	double getHealthRegen();
-
-	double getHealthRegenCost();
+	SystemContainer getSystemData(System system);
 
 	CompoundTag serialize();
 

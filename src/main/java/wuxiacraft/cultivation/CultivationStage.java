@@ -15,7 +15,7 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 	/**
 	 * The cultivation system this belongs to
 	 */
-	public final Cultivation.System system;
+	public final System system;
 
 	/**
 	 * The amount opf cultivation base required for this stage to advance
@@ -72,7 +72,7 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 	 * @param agility the expected running speed of this level
 	 * @param nextStage then next stage to this stage, null if last in realm
 	 */
-	public CultivationStage(String name, Cultivation.System system, double cultivationBase, double maxEnergy, double maxHealth, double energyRegenRate, double strength, double agility, @Nullable ResourceLocation nextStage) {
+	public CultivationStage(String name, System system, double cultivationBase, double maxEnergy, double maxHealth, double energyRegenRate, double strength, double agility, @Nullable ResourceLocation nextStage) {
 		this.name = name;
 		this.system = system;
 		this.cultivationBase = cultivationBase;

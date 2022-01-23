@@ -11,14 +11,20 @@ import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
+import wuxiacraft.cultivation.stats.PlayerStat;
+import wuxiacraft.cultivation.stats.PlayerSystemStat;
 import wuxiacraft.networking.CultivationSyncMessage;
 import wuxiacraft.networking.WuxiaPacketHandler;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CultivationEventHandler {
 
 	/**
 	 * A helper procedure to simplify the line actually because this might get repeated a lot in this file
+	 *
 	 * @param player the player to be synchronized
 	 */
 	public static void syncClientCultivation(ServerPlayer player) {
@@ -33,53 +39,54 @@ public class CultivationEventHandler {
 
 	@SubscribeEvent
 	public static void onCultivatorUpdate(LivingEvent.LivingUpdateEvent event) {
-		if(!(event.getEntity() instanceof Player player)) return;
+		if (!(event.getEntity() instanceof Player player)) return;
 		player.level.getProfiler().push("playerCultivationUpdate");
 		//defining variables I'm sure I'm gonna use a lot inside here
 		ICultivation cultivation = Cultivation.get(player);
-		var bodyData = cultivation.getSystemData(Cultivation.System.BODY);
-		var divineData = cultivation.getSystemData(Cultivation.System.DIVINE);
-		var essenceData = cultivation.getSystemData(Cultivation.System.ESSENCE);
+		var bodyData = cultivation.getSystemData(System.BODY);
+		var divineData = cultivation.getSystemData(System.DIVINE);
+		var essenceData = cultivation.getSystemData(System.ESSENCE);
 
 		//Sync the cultivation with the client every so often
 		cultivation.advanceTimer();
-		if(cultivation.getTimer() >= 100) {
+		if (cultivation.getTimer() >= 100) {
 			cultivation.resetTimer();
-			if(!player.level.isClientSide()) {
+			if (!player.level.isClientSide()) {
 				syncClientCultivation((ServerPlayer) player);
 			}
 		}
 
 		//Body energy regen depends on food
-		if(player.getFoodData().getFoodLevel() > 15 && bodyData.energy < bodyData.getMaxEnergy() * 0.7 ) {
-			double hunger_modifier = 1;
-			if(player.getFoodData().getFoodLevel() >= 18) hunger_modifier += 0.3;
-			if(player.getFoodData().getFoodLevel() >= 20) hunger_modifier += 0.3;
-			bodyData.addEnergy(hunger_modifier * bodyData.getEnergyRegen());
-			player.causeFoodExhaustion((float) (hunger_modifier * bodyData.getEnergyRegen()));
+		if (player.getFoodData().getFoodLevel() > 15 &&
+				bodyData.getStat(PlayerSystemStat.ENERGY).compareTo(bodyData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("0.7"))) < 0) {
+			BigDecimal hunger_modifier = new BigDecimal("1");
+			if (player.getFoodData().getFoodLevel() >= 18) hunger_modifier = hunger_modifier.add(new BigDecimal("0.3"));
+			if (player.getFoodData().getFoodLevel() >= 20) hunger_modifier = hunger_modifier.add(new BigDecimal("0.3"));
+			bodyData.addEnergy(bodyData.getStat(PlayerSystemStat.ENERGY_REGEN).multiply(hunger_modifier));
+			player.causeFoodExhaustion(bodyData.getStat(PlayerSystemStat.ENERGY_REGEN).multiply(hunger_modifier).floatValue());
 		}
 		//others don't
-		for(var system : Cultivation.System.values()) {
+		for (var system : System.values()) {
 			var systemData = cultivation.getSystemData(system);
-			if(system != Cultivation.System.BODY) {
-				systemData.energy += systemData.getEnergyRegen();
+			if (system != System.BODY) {
+				systemData.addEnergy(systemData.getStat(PlayerSystemStat.ENERGY_REGEN));
 			}
-			systemData.energy = Math.min(systemData.energy, systemData.getMaxEnergy());
+			systemData.setStat(PlayerSystemStat.ENERGY, systemData.getStat(PlayerSystemStat.ENERGY).min(systemData.getStat(PlayerSystemStat.MAX_ENERGY)));
 		}
 		//Healing part yaay
-		if(cultivation.getHealth() < cultivation.getMaxHealth()) {
-			double energy_used = cultivation.getHealthRegenCost();
+		if (cultivation.getPlayerStat(PlayerStat.HEALTH).compareTo(cultivation.getPlayerStat(PlayerStat.MAX_HEALTH)) < 0) {
+			BigDecimal energy_used = cultivation.getPlayerStat(PlayerStat.HEALTH_REGEN_COST);
 			//Won't heal when energy is below 10%
-			if(bodyData.energy - energy_used >= bodyData.getMaxEnergy() * 0.1) {
-				double amount_healed = cultivation.getHealthRegen();
-				if(bodyData.consumeEnergy(energy_used)) { // this is the correct way to use consume energy ever
-					cultivation.setHealth(Math.min(cultivation.getMaxHealth(), cultivation.getHealth() + amount_healed));
+			if (bodyData.getStat(PlayerSystemStat.ENERGY).subtract(energy_used).compareTo(bodyData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("0.1"))) >= 0) {
+				BigDecimal amount_healed = cultivation.getPlayerStat(PlayerStat.HEALTH_REGEN);
+				if (bodyData.consumeEnergy(energy_used)) { // this is the correct way to use consume energy ever
+					cultivation.setPlayerStat(PlayerStat.HEALTH, cultivation.getPlayerStat(PlayerStat.MAX_HEALTH).min(cultivation.getPlayerStat(PlayerStat.HEALTH).add(amount_healed)));
 				}
 			}
 		}
 		// punishment for low energy >>> poor resource management
-		if(!bodyData.hasEnergy(bodyData.getMaxEnergy() * 0.1)) {
-			double relativeAmount = bodyData.energy / bodyData.getMaxEnergy();
+		if (!bodyData.hasEnergy(bodyData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("0.1")))) {
+			double relativeAmount = bodyData.getStat(PlayerSystemStat.ENERGY).divide(bodyData.getStat(PlayerSystemStat.MAX_ENERGY), RoundingMode.HALF_UP).doubleValue();
 			int amplifier = 0;
 			if (relativeAmount < 0.08) amplifier = 1;
 			if (relativeAmount < 0.06) amplifier = 2;
@@ -88,8 +95,8 @@ public class CultivationEventHandler {
 			player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 15, amplifier, true, false));
 			player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 15, amplifier, true, false));
 		}
-		if(!divineData.hasEnergy(divineData.getMaxEnergy() * 0.1)) {
-			double relativeAmount = divineData.energy / divineData.getMaxEnergy();
+		if (!divineData.hasEnergy(divineData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("0.1")))) {
+			double relativeAmount = divineData.getStat(PlayerSystemStat.ENERGY).divide(divineData.getStat(PlayerSystemStat.MAX_ENERGY), RoundingMode.HALF_UP).doubleValue();
 			int amplifier = 0;
 			if (relativeAmount < 0.08) amplifier = 1;
 			if (relativeAmount < 0.06) amplifier = 2;
@@ -97,7 +104,7 @@ public class CultivationEventHandler {
 			if (relativeAmount < 0.02) amplifier = 4;
 			player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 15, amplifier, true, false));
 			player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 15, amplifier, true, false));
-			if(relativeAmount < 0.005) {
+			if (relativeAmount < 0.005) {
 				player.hurt(DamageSource.WITHER, 2);
 			}
 		}
@@ -128,16 +135,12 @@ public class CultivationEventHandler {
 		ICultivation oldCultivation = Cultivation.get(event.getOriginal());
 		if (event.isWasDeath()) {
 			//oldCultivation.setSkillCooldown(0);
-			oldCultivation.setHealth(20);
-			var bodyData = oldCultivation.getSystemData(Cultivation.System.BODY);
-			var divineData = oldCultivation.getSystemData(Cultivation.System.DIVINE);
-			var essenceData = oldCultivation.getSystemData(Cultivation.System.ESSENCE);
-			bodyData.cultivationBase = 0;
-			bodyData.energy = 5;
-			divineData.cultivationBase = 0;
-			divineData.energy = 10;
-			essenceData.cultivationBase = 0;
-			essenceData.energy = 0;
+			oldCultivation.setPlayerStat(PlayerStat.HEALTH, PlayerStat.HEALTH.defaultValue);
+			var bodyData = oldCultivation.getSystemData(System.BODY);
+			var divineData = oldCultivation.getSystemData(System.DIVINE);
+			var essenceData = oldCultivation.getSystemData(System.ESSENCE);
+			bodyData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("5"));
+			divineData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("10"));
 		}
 		newCultivation.deserialize(oldCultivation.serialize());
 	}
@@ -150,11 +153,11 @@ public class CultivationEventHandler {
 	@SubscribeEvent
 	public static void onPlayerWakeUp(PlayerWakeUpEvent event) {
 		ICultivation cultivation = Cultivation.get(event.getPlayer());
-		var bodyData = cultivation.getSystemData(Cultivation.System.BODY);
-		var divineData = cultivation.getSystemData(Cultivation.System.DIVINE);
-		bodyData.energy = bodyData.getMaxEnergy();
-		divineData.energy = divineData.getMaxEnergy();
-		if(!event.getPlayer().level.isClientSide()) {
+		var bodyData = cultivation.getSystemData(System.BODY);
+		var divineData = cultivation.getSystemData(System.DIVINE);
+		bodyData.setStat(PlayerSystemStat.ENERGY, bodyData.getStat(PlayerSystemStat.MAX_ENERGY));
+		divineData.setStat(PlayerSystemStat.ENERGY, divineData.getStat(PlayerSystemStat.MAX_ENERGY));
+		if (!event.getPlayer().level.isClientSide()) {
 			syncClientCultivation((ServerPlayer) event.getPlayer());
 		}
 	}

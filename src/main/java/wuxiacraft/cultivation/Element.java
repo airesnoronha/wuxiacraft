@@ -1,5 +1,6 @@
 package wuxiacraft.cultivation;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import java.util.HashSet;
@@ -14,12 +15,12 @@ public class Element extends ForgeRegistryEntry<Element> {
 	/**
 	 * All elements that benefits from this one
 	 */
-	private final HashSet<String> begets;
+	private final HashSet<ResourceLocation> begets;
 
 	/**
 	 * All elements that is obstructed by this one
 	 */
-	private final HashSet<String> obstructs;
+	private final HashSet<ResourceLocation> suppresses;
 
 	/**
 	 * Default constructor of element
@@ -28,7 +29,7 @@ public class Element extends ForgeRegistryEntry<Element> {
 	public Element(String name) {
 		this.name = name;
 		begets = new HashSet<>();
-		obstructs = new HashSet<>();
+		suppresses = new HashSet<>();
 	}
 
 	/**
@@ -43,7 +44,7 @@ public class Element extends ForgeRegistryEntry<Element> {
 	 * @param element The element to be added
 	 * @return This element
 	 */
-	public Element addBeget(String element) {
+	public Element begets(ResourceLocation element) {
 		begets.add(element);
 		return this;
 	}
@@ -53,8 +54,8 @@ public class Element extends ForgeRegistryEntry<Element> {
 	 * @param element The element to be added
 	 * @return This element
 	 */
-	public Element addObstruct(String element) {
-		obstructs.add(element);
+	public Element suppresses(ResourceLocation element) {
+		suppresses.add(element);
 		return this;
 	}
 
@@ -73,7 +74,7 @@ public class Element extends ForgeRegistryEntry<Element> {
 	 * @return true if element is obstructed by this one
 	 */
 	public boolean obstructsElement(String element) {
-		return obstructs.contains(element);
+		return suppresses.contains(element);
 	}
 
 

@@ -12,7 +12,7 @@ import wuxiacraft.cultivation.CultivationRealm;
 import wuxiacraft.cultivation.CultivationStage;
 import wuxiacraft.cultivation.Element;
 import wuxiacraft.cultivation.Technique;
-import wuxiacraft.cultivation.technique.TechniqueAspect;
+import wuxiacraft.cultivation.technique.aspects.TechniqueAspect;
 
 // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
 // Event bus for receiving Registry Events)

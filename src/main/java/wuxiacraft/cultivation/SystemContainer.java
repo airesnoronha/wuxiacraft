@@ -2,32 +2,18 @@ package wuxiacraft.cultivation;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import wuxiacraft.cultivation.stats.PlayerSystemStat;
 import wuxiacraft.init.WuxiaRegistries;
 
-import javax.annotation.Nullable;
+import java.math.BigDecimal;
+import java.util.HashMap;
 
 public class SystemContainer {
 
 	/**
 	 * The Cultivation system this data belongs to
 	 */
-	public final Cultivation.System system;
-
-	/**
-	 * The amount of qi this player has accumulated
-	 */
-
-	public double cultivationBase;
-
-	/**
-	 * The foundation built by this character
-	 */
-	public double foundation;
-
-	/**
-	 * The energy available to make magical stuff
-	 */
-	public double energy;
+	public final System system;
 
 	/**
 	 * The current realm id for this cultivation
@@ -40,37 +26,38 @@ public class SystemContainer {
 	public ResourceLocation currentStage;
 
 	/**
-	 * Proficiency in the technique
+	 * Holds all specific stats of a system
 	 */
-	@Nullable
-	public ResourceLocation technique;
-
-	/**
-	 * Proficiency in the technique
-	 * private because each time we change it we will calculate the proficiency modifier
-	 */
-	private double proficiency;
-
-	/**
-	 * this is also private, this is here for fast access basically,
-	 * not just querying it everytime and calculate it again
-	 */
-	private double techniqueModifier;
+	private final HashMap<PlayerSystemStat, BigDecimal> systemStats;
 
 	/**
 	 * The constructor for this system cultivation stats
 	 *
 	 * @param system the system this belongs to
 	 */
-	public SystemContainer(Cultivation.System system) {
+	public SystemContainer(System system) {
 		this.system = system;
-		this.cultivationBase = 0;
-		this.foundation = 0;
-		this.energy = 0;
 		this.currentRealm = system.defaultRealm;
 		this.currentStage = system.defaultStage;
-		this.technique = null;
-		this.proficiency = 0;
+		this.systemStats = new HashMap<>();
+		for (var stat : PlayerSystemStat.values()) {
+			this.systemStats.put(stat, stat.defaultValue);
+			if (this.system == System.DIVINE) {
+				this.systemStats.put(stat, new BigDecimal("10"));
+			} else if (this.system == System.BODY) {
+				this.systemStats.put(stat, new BigDecimal("7"));
+			}
+		}
+	}
+
+	public BigDecimal getStat(PlayerSystemStat stat) {
+		return this.systemStats.getOrDefault(stat, new BigDecimal("0"));
+	}
+
+	public void setStat(PlayerSystemStat stat, BigDecimal value) {
+		if(stat.isModifiable) {
+			this.systemStats.put(stat, value.max(BigDecimal.ZERO));
+		}
 	}
 
 	/**
@@ -87,163 +74,39 @@ public class SystemContainer {
 		return WuxiaRegistries.CULTIVATION_STAGES.getValue(this.currentStage);
 	}
 
-	/**
-	 * @return the current cultivated technique for this system. Null if none
-	 */
-	@Nullable
-	public Technique getTechnique() {
-		if (this.technique == null) return null;
-		return WuxiaRegistries.TECHNIQUES.getValue(this.technique);
+	public boolean hasEnergy(BigDecimal amount) {
+		return this.getStat(PlayerSystemStat.ENERGY).compareTo(amount) >= 0;
 	}
 
-	/**
-	 * adds cultivation base to a character
-	 *
-	 * @param amount the amount to be added
-	 */
-	public void addCultivationBase(double amount) {
-		if (amount > 0) {
-			this.cultivationBase += amount;
-			this.foundation += amount * 0.001;
-		}
-	}
-
-	/**
-	 * @return the current proficiency at this technique
-	 */
-	public double getProficiency() {
-		return proficiency;
-	}
-
-	/**
-	 * Set's the current technique proficiency
-	 * Also updates synchronously the technique modifier as well, so we don't keep interpolating on each query of the modifier
-	 *
-	 * @param proficiency the new proficiency to be set
-	 */
-	public void setProficiency(double proficiency) {
-		this.proficiency = Math.max(0, proficiency);
-		var technique = this.getTechnique();
-		if (technique != null) {
-			var checkpoint = technique.getCheckpoint(this.proficiency);
-			if (checkpoint.nextCheckpoint() != null) {
-				var nextCheckpoint = technique.checkpoints.get(checkpoint.nextCheckpoint());
-				var factor = (proficiency - checkpoint.proficiency()) / (nextCheckpoint.proficiency() - checkpoint.proficiency());
-				this.techniqueModifier = checkpoint.modifier() + (nextCheckpoint.modifier() - checkpoint.modifier()) * factor;
-			} else {
-				this.techniqueModifier = checkpoint.modifier();
-			}
-		}
-	}
-
-	public double getTechniqueModifier() {
-		return techniqueModifier;
-	}
-
-	public double getStrength() {
-		var strength = this.getStage().strength;
-		if(this.getTechnique() != null) {
-			strength *= 1+ this.getTechnique().strengthModifier * this.getTechniqueModifier();
-		}
-		return strength;
-	}
-
-	public double getAgility() {
-		var agility = this.getStage().agility;
-		if (this.getTechnique() != null) {
-			agility *= 1 + this.getTechnique().agilityModifier * this.getTechniqueModifier();
-		}
-		return agility;
-	}
-
-	public double getMaxHealth() {
-		var maxHealth = this.getStage().maxHealth;
-		if(this.getTechnique() != null) {
-			maxHealth *= 1+this.getTechnique().healthModifier * this.getTechniqueModifier();
-		}
-		return maxHealth;
-	}
-
-	public double getEnergyRegen() {
-		var energyRegen = this.getStage().energyRegenRate;
-		if(this.getTechnique() != null) {
-			energyRegen *= 1+this.getTechnique().energyRegenModifier * this.getTechniqueModifier();
-		}
-		return energyRegen;
-	}
-
-	/**
-	 * @return the maximum energy this system has. Depends on technique.
-	 */
-	public double getMaxEnergy() {
-		var maxEnergy = this.getStage().maxEnergy;
-		if(this.getTechnique() != null) {
-			maxEnergy *= 1+this.getTechnique().energyModifier * this.getTechniqueModifier();
-		}
-		return maxEnergy;
-	}
-
-	/**
-	 * Attempts a breakthrough at this system
-	 */
-	public void attemptBreakthrough() {
-		//TODO define chances of failure
-	}
-
-	/**
-	 * Checks whether this system has enough energy for perhaps a certain action
-	 *
-	 * @param amount the amount of energy expected to be found
-	 * @return true if this has energy
-	 */
-	public boolean hasEnergy(double amount) {
-		return amount <= this.energy;
-	}
-
-	/**
-	 * Consumes energy if it has energy
-	 *
-	 * @param amount the amount of energy it must consume
-	 * @return true if the energy has been consumed
-	 */
-	public boolean consumeEnergy(double amount) {
+	public boolean consumeEnergy(BigDecimal amount) {
 		if (hasEnergy(amount)) {
-			this.energy -= amount;
-			return true;
+			this.systemStats.put(PlayerSystemStat.ENERGY, this.getStat(PlayerSystemStat.ENERGY).subtract(amount));
 		}
 		return false;
 	}
 
-	public void addEnergy(double amount) {
-		this.energy = Math.max(0, this.energy+amount);
+	public void addEnergy(BigDecimal amount) {
+		if(amount.compareTo(new BigDecimal("0")) > 0) {
+			this.systemStats.put(PlayerSystemStat.ENERGY, this.getStat(PlayerSystemStat.ENERGY).add(amount));
+		}
 	}
-
-
 
 	public CompoundTag serialize() {
 		CompoundTag tag = new CompoundTag();
 		tag.putString("current_realm", this.currentRealm.toString());
 		tag.putString("current_stage", this.currentStage.toString());
-		tag.putDouble("cultivation_base", this.cultivationBase);
-		tag.putDouble("foundation", this.foundation);
-		tag.putDouble("energy", this.energy);
-		tag.putString("technique", this.technique != null ? this.technique.toString() : "null");
-		tag.putDouble("proficiency", this.proficiency);
+		for (var stat : PlayerSystemStat.values()) {
+			tag.putString("stat-" + stat.name().toLowerCase(), this.getStat(stat).toPlainString());
+		}
 		return tag;
 	}
 
 	public void deserialize(CompoundTag tag) {
 		this.currentRealm = new ResourceLocation(tag.getString("current_realm"));
 		this.currentStage = new ResourceLocation(tag.getString("current_stage"));
-		this.cultivationBase = tag.getDouble("cultivation_base");
-		this.foundation = tag.getDouble("foundation");
-		this.energy = tag.getDouble("energy");
-		String tagTechnique = tag.getString("technique");
-		if (!tagTechnique.equals("null")) {
-			this.technique = new ResourceLocation(tagTechnique);
+		for (var stat : PlayerSystemStat.values()) {
+			this.systemStats.put(stat, new BigDecimal(tag.getString("stat-" + stat.name().toLowerCase())));
 		}
-		//mainly because of calculating the technique modifier
-		this.setProficiency(tag.getDouble("proficiency"));
 	}
 
 }
