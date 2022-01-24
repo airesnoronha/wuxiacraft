@@ -1,5 +1,6 @@
 package wuxiacraft.init;
 
+import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.registries.IForgeRegistry;
 import wuxiacraft.cultivation.CultivationRealm;
 import wuxiacraft.cultivation.CultivationStage;
@@ -18,5 +19,4 @@ public class WuxiaRegistries {
 	public static IForgeRegistry<Element> ELEMENTS;
 
 	public static IForgeRegistry<TechniqueAspect> TECHNIQUE_ASPECT;
-
 }

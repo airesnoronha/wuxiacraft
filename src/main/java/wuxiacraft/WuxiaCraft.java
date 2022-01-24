@@ -1,5 +1,7 @@
 package wuxiacraft;
 
+import com.mojang.blaze3d.platform.ScreenManager;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.client.gui.OverlayRegistry;
@@ -17,11 +19,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import wuxiacraft.capabilities.CapabilityAttachingHandler;
 import wuxiacraft.capabilities.CapabilityRegistryHandler;
+import wuxiacraft.client.InputHandler;
 import wuxiacraft.client.RenderHUDEventHandler;
+import wuxiacraft.client.gui.IntrospectionScreen;
 import wuxiacraft.client.overlays.DebugOverlay;
 import wuxiacraft.client.overlays.EnergiesOverlay;
 import wuxiacraft.client.overlays.HealthOverlay;
 import wuxiacraft.command.CultivationCommand;
+import wuxiacraft.container.IntrospectionMenu;
 import wuxiacraft.init.WuxiaElements;
 import wuxiacraft.init.WuxiaRealms;
 import wuxiacraft.init.WuxiaTechniqueAspects;
@@ -62,11 +67,16 @@ public class WuxiaCraft {
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
+		InputHandler.registerKeyBindings();
+
 		MinecraftForge.EVENT_BUS.register(RenderHUDEventHandler.class);
+		MinecraftForge.EVENT_BUS.register(InputHandler.class);
 
 		OverlayRegistry.registerOverlayTop("wuxiacraft_debug", new DebugOverlay());
 		OverlayRegistry.registerOverlayAbove(ForgeIngameGui.PLAYER_HEALTH_ELEMENT, "wuxiacraft_health_bar", new HealthOverlay());
 		OverlayRegistry.registerOverlayBelow(ForgeIngameGui.CHAT_PANEL_ELEMENT, "wuxiacraft_energies", new EnergiesOverlay());
+
+		MenuScreens.register(IntrospectionMenu.registryType, IntrospectionScreen::new);
 
 	}
 

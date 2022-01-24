@@ -2,12 +2,16 @@ package wuxiacraft.init;
 
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.RegistryBuilder;
+import net.minecraftforge.registries.RegistryObject;
 import wuxiacraft.WuxiaCraft;
+import wuxiacraft.container.IntrospectionMenu;
 import wuxiacraft.cultivation.CultivationRealm;
 import wuxiacraft.cultivation.CultivationStage;
 import wuxiacraft.cultivation.Element;
@@ -56,5 +60,12 @@ public class RegistryEvents {
 				.setName(new ResourceLocation(WuxiaCraft.MOD_ID, "technique_aspects"))
 				.setType(TechniqueAspect.class)
 				.create();
+	}
+
+	@SubscribeEvent
+	public static void onMenuTypeRegister(final RegistryEvent.Register<MenuType<?>> event) {
+		IntrospectionMenu.registryType = IForgeMenuType.create(IntrospectionMenu::create);
+		IntrospectionMenu.registryType.setRegistryName(new ResourceLocation(WuxiaCraft.MOD_ID, "introspection_menu"));
+		event.getRegistry().register(IntrospectionMenu.registryType);
 	}
 }
