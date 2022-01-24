@@ -15,7 +15,7 @@ import java.math.RoundingMode;
 public class DebugOverlay implements IIngameOverlay {
 	@Override
 	public void render(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int width, int height) {
-		Minecraft mc = Minecraft.getInstance();
+		/*Minecraft mc = Minecraft.getInstance();
 		if(mc.player == null) return;
 		ICultivation cultivation = Cultivation.get(mc.player);
 		int yPos = 30;
@@ -25,6 +25,6 @@ public class DebugOverlay implements IIngameOverlay {
 							(systemData.getStat(PlayerSystemStat.ENERGY).multiply(new BigDecimal("100.0")).divide(systemData.getStat(PlayerSystemStat.MAX_ENERGY), RoundingMode.HALF_UP)));
 			gui.getFont().draw(mStack, text, 10, yPos, 0xFFAA00);
 			yPos+= 10;
-		}
+		}*/
 	}
 }

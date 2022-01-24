@@ -19,7 +19,8 @@ public class HealthOverlay implements IIngameOverlay {
 	@Override
 	public void render(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int width, int height) {
 		Minecraft mc = Minecraft.getInstance();
-		if(mc.player == null) return;
+		if (mc.player == null) return;
+		if (mc.player.isCreative()) return;
 		int i = width / 2 - 91;
 		int j = height - gui.left_height;
 		ICultivation cultivation = Cultivation.get(mc.player);

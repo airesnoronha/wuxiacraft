@@ -40,6 +40,7 @@ public class EnergiesOverlay implements IIngameOverlay {
 	public void render(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int width, int height) {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.player == null) return;
+		if(mc.player.isCreative()) return;
 		var cultivation = Cultivation.get(mc.player);
 
 		barInScreenX = 6;
