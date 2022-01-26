@@ -409,15 +409,13 @@ public class WuxiaScrollPanel extends AbstractWidget {
 		int innerWidth = isShowingHorizontalScroll() ? this.width - scrollBarWidth : this.width;
 		int innerHeight = isShowingVerticalScroll() ? this.height - scrollBarHeight : this.height;
 		boolean somethingClicked = false;
-		if (MathUtil.inBounds(mouseX, mouseY, this.x, this.y, innerWidth, innerHeight)) {
-			for (var widget : this.children) {
-				if (MathUtil.inBounds(mouseX, mouseY, this.x - this.currentScrollX + widget.x, this.y - this.currentScrollY + widget.y, widget.getWidth(), widget.getHeight())) {
-					somethingClicked = somethingClicked || widget.mouseScrolled(mouseX + this.currentScrollX - this.x, mouseY + this.currentScrollY - this.y, scrollCount);
-				}
+		for (var widget : this.children) {
+			if (MathUtil.inBounds(mouseX, mouseY, this.x - this.currentScrollX + widget.x, this.y - this.currentScrollY + widget.y, widget.getWidth(), widget.getHeight())) {
+				somethingClicked = somethingClicked || widget.mouseScrolled(mouseX + this.currentScrollX - this.x, mouseY + this.currentScrollY - this.y, scrollCount);
 			}
-			if (!somethingClicked) {
-				this.currentScrollY = (int) MathUtil.clamp(this.currentScrollY + this.totalScrollHeight * scrollCount * (-0.07), 0, this.totalScrollHeight);
-			}
+		}
+		if (!somethingClicked) {
+			this.currentScrollY = (int) MathUtil.clamp(this.currentScrollY + this.totalScrollHeight * scrollCount * (-0.07), 0, this.totalScrollHeight);
 		}
 		//horizontal scroll bar
 		if (MathUtil.inBounds(mouseX, mouseY, this.x, this.y + innerHeight, innerWidth, scrollBarHeight)) {
@@ -438,16 +436,12 @@ public class WuxiaScrollPanel extends AbstractWidget {
 		int innerWidth = isShowingHorizontalScroll() ? this.width - scrollBarWidth : this.width;
 		int innerHeight = isShowingVerticalScroll() ? this.height - scrollBarHeight : this.height;
 		boolean somethingClicked = false;
-		if (MathUtil.inBounds(mouseX, mouseY, this.x, this.y, innerWidth, innerHeight)) {
-			for (var widget : this.children) {
-				if (MathUtil.inBounds(mouseX, mouseY, this.x - this.currentScrollX + widget.x, this.y - this.currentScrollY + widget.y, widget.getWidth(), widget.getHeight())) {
-					somethingClicked = somethingClicked || widget.mouseClicked(mouseX + this.currentScrollX - this.x, mouseY + this.currentScrollY - this.y, button);
-				}
-			}
-			if (!somethingClicked && this.isValidClickButton(button)) {
-				isInnerPartGrabbed = true;
-				innerPartGrabbed = new double[]{mouseX, mouseY, this.currentScrollX, this.currentScrollY};
-			}
+		for (var widget : this.children) {
+			somethingClicked = somethingClicked || widget.mouseClicked(mouseX + this.currentScrollX - this.x, mouseY + this.currentScrollY - this.y, button);
+		}
+		if (!somethingClicked && this.isValidClickButton(button)) {
+			isInnerPartGrabbed = true;
+			innerPartGrabbed = new double[]{mouseX, mouseY, this.currentScrollX, this.currentScrollY};
 		} else {
 			if (this.active && this.visible) {
 				if (this.isValidClickButton(button)) {
@@ -516,6 +510,10 @@ public class WuxiaScrollPanel extends AbstractWidget {
 		return false;
 	}
 
+	@Override
+	public boolean changeFocus(boolean p_93691_) {
+		return super.changeFocus(p_93691_);
+	}
 
 	public static Vector3f getWindowCoordinates(int x, int y) {
 		Vector4f pos = new Vector4f(x, y, 0f, 1f);
