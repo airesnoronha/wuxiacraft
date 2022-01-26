@@ -26,10 +26,8 @@ public class InputHandler {
 
 	@SubscribeEvent
 	public static void onKeyPressed(InputEvent.KeyInputEvent event) {
-		if(event.getAction() == 0) {
-			if (event.getKey() == GLFW.GLFW_KEY_K) {
-				WuxiaPacketHandler.INSTANCE.sendToServer(new OpenScreenMessage(OpenScreenMessage.ScreenType.INTROSPECTION));
-			}
+		if (mappings.get(OPEN_INTROSPECTION).consumeClick()) {
+			WuxiaPacketHandler.INSTANCE.sendToServer(new OpenScreenMessage(OpenScreenMessage.ScreenType.INTROSPECTION));
 		}
 	}
 
