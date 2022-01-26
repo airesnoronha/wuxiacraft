@@ -12,8 +12,8 @@ public class AspectElementSystemConverter extends AspectElementalConverter {
 	 */
 	public System system;
 
-	public AspectElementSystemConverter(String name, double amount, ResourceLocation element, System system) {
-		super(name, amount, element);
+	public AspectElementSystemConverter(String name, ResourceLocation textureLocation, double amount, ResourceLocation element, System system) {
+		super(name, textureLocation, amount, element);
 		this.system = system;
 	}
 

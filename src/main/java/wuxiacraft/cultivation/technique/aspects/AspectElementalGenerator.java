@@ -10,8 +10,8 @@ public class AspectElementalGenerator extends TechniqueAspect {
 
 	public ResourceLocation element;
 
-	public AspectElementalGenerator(String name, double generated, ResourceLocation element) {
-		super(name);
+	public AspectElementalGenerator(String name, ResourceLocation textureLocation, double generated, ResourceLocation element) {
+		super(name, textureLocation);
 		this.generated = generated;
 		this.element = element;
 	}

@@ -33,7 +33,6 @@ public class CharacterStatsTab extends IntrospectionTab {
 		if (player == null) return;
 		var cultivation = Cultivation.get(player);
 		statsPanel = new WuxiaScrollPanel(0, 0, 100, 100, new TextComponent(""));
-		//statsPanel.setOverflow(WuxiaScrollPanel.OverflowType.SCROLL_Y);
 		systemStats = new HashMap<>();
 		screen.addRenderableWidget(statsPanel);
 		for (var stat : PlayerStat.values()) {
@@ -45,7 +44,6 @@ public class CharacterStatsTab extends IntrospectionTab {
 		for (var system : System.values()) {
 			displaySystemLabels.put(system, new HashMap<>());
 			WuxiaScrollPanel systemStatPanel = new WuxiaScrollPanel(0, 0, 100, 100, new TextComponent(""));
-			//systemStatPanel.setOverflow(WuxiaScrollPanel.OverflowType.SCROLL_Y);
 			systemStats.put(system, systemStatPanel);
 			for (var stat : PlayerSystemStat.values()) {
 				var statValue = cultivation.getSystemData(system).getStat(stat).toEngineeringString();

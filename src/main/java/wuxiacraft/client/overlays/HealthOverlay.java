@@ -14,7 +14,7 @@ import wuxiacraft.cultivation.stats.PlayerStat;
 
 public class HealthOverlay implements IIngameOverlay {
 
-	private static final ResourceLocation HEALTH_BAR = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/health_bar.png");
+	public static final ResourceLocation HEALTH_BAR = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/health_bar.png");
 
 	@Override
 	public void render(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int width, int height) {

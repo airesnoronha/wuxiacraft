@@ -1,7 +1,6 @@
 package wuxiacraft.cultivation.technique.aspects;
 
 import net.minecraft.resources.ResourceLocation;
-import wuxiacraft.cultivation.Cultivation;
 
 import java.util.HashMap;
 
@@ -17,8 +16,8 @@ public abstract class AspectElementalConverter extends TechniqueAspect {
 	 */
 	public ResourceLocation element;
 
-	public AspectElementalConverter(String name, double amount, ResourceLocation element) {
-		super(name);
+	public AspectElementalConverter(String name, ResourceLocation textureLocation, double amount, ResourceLocation element) {
+		super(name, textureLocation);
 		this.amount = amount;
 		this.element = element;
 	}

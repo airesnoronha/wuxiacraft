@@ -18,10 +18,10 @@ import java.math.RoundingMode;
 @SuppressWarnings("FieldCanBeLocal")
 public class EnergiesOverlay implements IIngameOverlay {
 
-	private static final ResourceLocation ENERGY_BAR = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/energy_bar.png");
-	private static final ResourceLocation ENERGY_BODY_BAR_FILL = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/energy_body_fill.png");
-	private static final ResourceLocation ENERGY_DIVINE_BAR_FILL = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/energy_divine_fill.png");
-	private static final ResourceLocation ENERGY_ESSENCE_BAR_FILL = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/energy_essence_fill.png");
+	public static final ResourceLocation ENERGY_BAR = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/energy_bar.png");
+	public static final ResourceLocation ENERGY_BODY_BAR_FILL = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/energy_body_fill.png");
+	public static final ResourceLocation ENERGY_DIVINE_BAR_FILL = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/energy_divine_fill.png");
+	public static final ResourceLocation ENERGY_ESSENCE_BAR_FILL = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/overlay/energy_essence_fill.png");
 
 	private static int barInScreenX = 6 - 256;
 	private static int barInScreenY = 5 - 256;

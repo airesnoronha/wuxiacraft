@@ -7,7 +7,6 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import wuxiacraft.util.MathUtil;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -44,7 +43,7 @@ public class WuxiaTextField extends AbstractWidget {
 			texPosX = 45;
 		}
 		RenderSystem.enableBlend();
-		RenderSystem.setShaderTexture(0, WuxiaButton.ui_controls);
+		RenderSystem.setShaderTexture(0, WuxiaButton.UI_CONTROLS);
 		//corners first
 		//top left
 		GuiComponent.blit(poseStack,

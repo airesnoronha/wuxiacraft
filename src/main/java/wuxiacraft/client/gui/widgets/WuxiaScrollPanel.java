@@ -9,11 +9,9 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.phys.Vec2;
 import wuxiacraft.util.MathUtil;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.awt.*;
 import java.util.LinkedList;
 
 //TODO probably add compatibility to negative space widgets
@@ -127,7 +125,7 @@ public class WuxiaScrollPanel extends AbstractWidget {
 		poseStack.popPose();
 		RenderSystem.disableScissor();
 		RenderSystem.enableBlend();
-		RenderSystem.setShaderTexture(0, WuxiaButton.ui_controls);
+		RenderSystem.setShaderTexture(0, WuxiaButton.UI_CONTROLS);
 		if (isShowingHorizontalScroll()) {
 			//bg bar
 			int horizontalBarRenderSteps = innerWidth / scrollBarWidth;
@@ -305,8 +303,8 @@ public class WuxiaScrollPanel extends AbstractWidget {
 	}
 
 	@Override
-	public void setWidth(int p_93675_) {
-		super.setWidth(p_93675_);
+	public void setWidth(int width) {
+		super.setWidth(width);
 		this.totalScrollWidth = Math.max(0, this.contentWidth - this.width + scrollBarWidth);
 		this.currentScrollX = (int)MathUtil.clamp(this.currentScrollX, 0, this.totalScrollWidth);
 	}

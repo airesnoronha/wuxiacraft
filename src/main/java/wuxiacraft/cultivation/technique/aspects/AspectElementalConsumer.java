@@ -9,8 +9,8 @@ public abstract class AspectElementalConsumer extends TechniqueAspect {
 	public ResourceLocation element;
 	public double cost;
 
-	public AspectElementalConsumer(String name, ResourceLocation element, double cost) {
-		super(name);
+	public AspectElementalConsumer(String name, ResourceLocation textureLocation, ResourceLocation element, double cost) {
+		super(name, textureLocation);
 		this.element = element;
 		this.cost = cost;
 	}

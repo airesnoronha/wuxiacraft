@@ -1,5 +1,6 @@
 package wuxiacraft.cultivation.technique.aspects;
 
+import net.minecraft.resources.ResourceLocation;
 import wuxiacraft.cultivation.System;
 
 import java.util.HashMap;
@@ -8,8 +9,8 @@ public class AspectSystemGather extends TechniqueAspect {
 
 	public System system;
 
-	public AspectSystemGather(String name, System system) {
-		super(name);
+	public AspectSystemGather(String name, ResourceLocation textureLocation, System system) {
+		super(name, textureLocation);
 		this.system = system;
 	}
 

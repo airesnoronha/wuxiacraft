@@ -1,10 +1,10 @@
 package wuxiacraft.cultivation.technique.aspects;
 
-import java.util.HashMap;
+import net.minecraft.resources.ResourceLocation;
 
 public class AspectStart extends TechniqueAspect {
-	public AspectStart(String name) {
-		super(name);
+	public AspectStart(String name, ResourceLocation textureLocation) {
+		super(name, textureLocation);
 	}
 
 	@Override

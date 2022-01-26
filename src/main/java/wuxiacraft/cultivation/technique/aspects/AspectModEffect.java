@@ -15,8 +15,8 @@ public abstract class AspectModEffect extends AspectElementalConsumer {
 	public boolean ambient;
 	public boolean particles;
 
-	public AspectModEffect(String name, ResourceLocation element, double cost, MobEffect effect, int amplifier, int duration, boolean ambient, boolean particles) {
-		super(name, element, cost);
+	public AspectModEffect(String name, ResourceLocation textureLocation, ResourceLocation element, double cost, MobEffect effect, int amplifier, int duration, boolean ambient, boolean particles) {
+		super(name, textureLocation, element, cost);
 		this.effect = effect;
 		this.amplifier = amplifier;
 		this.duration = duration;
@@ -24,8 +24,8 @@ public abstract class AspectModEffect extends AspectElementalConsumer {
 		this.particles = particles;
 	}
 
-	public AspectModEffect(String name, ResourceLocation element, double cost, MobEffectInstance mobEffect) {
-		super(name, element, cost);
+	public AspectModEffect(String name, ResourceLocation textureLocation, ResourceLocation element, double cost, MobEffectInstance mobEffect) {
+		super(name, textureLocation, element, cost);
 		this.effect = mobEffect.getEffect();
 		this.amplifier = mobEffect.getAmplifier();
 		this.duration = mobEffect.getDuration();
@@ -35,7 +35,7 @@ public abstract class AspectModEffect extends AspectElementalConsumer {
 
 	@Override
 	public void consumed(HashMap<String, Object> metaData) {
-		if(!metaData.containsKey("mob-effects")) {
+		if (!metaData.containsKey("mob-effects")) {
 			metaData.put("mob-effects", new LinkedList<>());
 		}
 		//noinspection unchecked

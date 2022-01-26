@@ -30,7 +30,7 @@ import java.util.HashMap;
 @ParametersAreNonnullByDefault
 public class IntrospectionScreen extends AbstractContainerScreen<IntrospectionMenu> {
 
-	public static final ResourceLocation introspection_gui = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/introspection_gui.png");
+	public static final ResourceLocation INTROSPECTION_GUI = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/introspection_gui.png");
 
 	public OrderedHashMap<String, IntrospectionTab> tabs = new OrderedHashMap<>();
 	public String selectedTab;
@@ -100,7 +100,7 @@ public class IntrospectionScreen extends AbstractContainerScreen<IntrospectionMe
 		var player = Minecraft.getInstance().player;
 		if (player == null) return;
 		var cultivation = Cultivation.get(player);
-		RenderSystem.setShaderTexture(0, introspection_gui);
+		RenderSystem.setShaderTexture(0, INTROSPECTION_GUI);
 		RenderSystem.enableBlend();
 		int i = 0;
 		for (var tab : this.tabs.keySet()) {

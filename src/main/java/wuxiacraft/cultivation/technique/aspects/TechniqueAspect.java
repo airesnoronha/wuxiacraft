@@ -2,27 +2,21 @@ package wuxiacraft.cultivation.technique.aspects;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
-import wuxiacraft.cultivation.technique.TechniqueModifier;
 
 import java.util.HashMap;
-import java.util.HashSet;
 
 public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect> {
 
 	//Class itself
-	public String name;
+	public final String name;
 
-	public HashSet<ResourceLocation> expectedAspects;
+	public final ResourceLocation textureLocation;
 
-	public TechniqueAspect(String name) {
+	public TechniqueAspect(String name, ResourceLocation textureLocation) {
 		this.name = name;
-		expectedAspects = new HashSet<>();
+		this.textureLocation = textureLocation;
 	}
 
-	public TechniqueAspect addExpected(ResourceLocation aspect) {
-		expectedAspects.add(aspect);
-		return this;
-	}
 	/**
 	 * Logic if aspect was expected
 	 * @param metaData the current modifiers when accepting this

@@ -16,7 +16,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class WuxiaButton extends AbstractButton {
 
-	public static final ResourceLocation ui_controls = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/ui_controls.png");
+	public static final ResourceLocation UI_CONTROLS = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/ui_controls.png");
 	public Runnable onClicked;
 
 	public WuxiaButton(int x, int y, int width, int height, Component title, Runnable onClicked) {
@@ -33,7 +33,7 @@ public class WuxiaButton extends AbstractButton {
 		if(MathUtil.inBounds(mouseX, mouseY, this.x, this.y, this.width, this.height)) {
 			texPosX = 15;
 		}
-		RenderSystem.setShaderTexture(0, ui_controls);
+		RenderSystem.setShaderTexture(0, UI_CONTROLS);
 		//corners first
 		//top left
 		GuiComponent.blit(poseStack,
