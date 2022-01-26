@@ -111,8 +111,8 @@ public class WuxiaScrollPanel extends AbstractWidget {
 	 */
 	@Override
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-		int innerWidth = isShowingHorizontalScroll() ? this.width - scrollBarWidth : this.width;
-		int innerHeight = isShowingVerticalScroll() ? this.height - scrollBarHeight : this.height;
+		int innerWidth = isShowingVerticalScroll() ? this.width - scrollBarWidth : this.width;
+		int innerHeight = isShowingHorizontalScroll() ? this.height - scrollBarHeight : this.height;
 
 		Vector3f windowCoordinatesInit = getWindowCoordinates(this.x, this.y);
 		Vector3f windowCoordinatesEnd = getWindowCoordinates(this.x + innerWidth, this.y + innerHeight);
@@ -297,13 +297,27 @@ public class WuxiaScrollPanel extends AbstractWidget {
 		}
 	}
 
+	@Override
+	public void setHeight(int value) {
+		super.setHeight(value);
+		this.totalScrollHeight = Math.max(0, this.contentHeight - this.height + scrollBarHeight);
+		this.currentScrollY = (int)MathUtil.clamp(this.currentScrollY, 0, this.totalScrollHeight);
+	}
+
+	@Override
+	public void setWidth(int p_93675_) {
+		super.setWidth(p_93675_);
+		this.totalScrollWidth = Math.max(0, this.contentWidth - this.width + scrollBarWidth);
+		this.currentScrollX = (int)MathUtil.clamp(this.currentScrollX, 0, this.totalScrollWidth);
+	}
+
 	public int getHorizontalScrollIndicatorPosition() {
-		int innerWidth = isShowingHorizontalScroll() ? this.width - scrollBarWidth : this.width;
+		int innerWidth = isShowingVerticalScroll() ? this.width - scrollBarWidth : this.width;
 		return (int) (((float) innerWidth - (float) scrollBarWidth * 3) * ((float) currentScrollX / (float) totalScrollWidth));
 	}
 
 	public int getVerticalScrollIndicatorPosition() {
-		int innerHeight = isShowingVerticalScroll() ? this.height - scrollBarHeight : this.height;
+		int innerHeight = isShowingHorizontalScroll() ? this.height - scrollBarHeight : this.height;
 		return (int) (((float) innerHeight - (float) scrollBarHeight * 3) * ((float) currentScrollY / (float) totalScrollHeight));
 	}
 
@@ -338,8 +352,8 @@ public class WuxiaScrollPanel extends AbstractWidget {
 
 	@Override
 	public void onClick(double mouseX, double mouseY) {
-		int innerWidth = isShowingHorizontalScroll() ? this.width - scrollBarWidth : this.width;
-		int innerHeight = isShowingVerticalScroll() ? this.height - scrollBarHeight : this.height;
+		int innerWidth = isShowingVerticalScroll() ? this.width - scrollBarWidth : this.width;
+		int innerHeight = isShowingHorizontalScroll() ? this.height - scrollBarHeight : this.height;
 		if (isShowingHorizontalScroll()) {
 			//button left
 			if (MathUtil.inBounds(mouseX, mouseY, this.x, this.y + innerHeight, scrollBarWidth, scrollBarHeight)) {
@@ -380,8 +394,8 @@ public class WuxiaScrollPanel extends AbstractWidget {
 
 	@Override
 	protected void onDrag(double mouseX, double mouseY, double mouseDeltaX, double mouseDeltaY) {
-		int innerWidth = isShowingHorizontalScroll() ? this.width - scrollBarWidth : this.width;
-		int innerHeight = isShowingVerticalScroll() ? this.height - scrollBarHeight : this.height;
+		int innerWidth = isShowingVerticalScroll() ? this.width - scrollBarWidth : this.width;
+		int innerHeight = isShowingHorizontalScroll() ? this.height - scrollBarHeight : this.height;
 		if (isShowingHorizontalScroll()) {
 			if (isHorizontalScrollIndicatorGrabbed) {
 				double spaceToDislocate = (innerWidth - scrollBarWidth * 3);
@@ -406,8 +420,8 @@ public class WuxiaScrollPanel extends AbstractWidget {
 
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double scrollCount) {
-		int innerWidth = isShowingHorizontalScroll() ? this.width - scrollBarWidth : this.width;
-		int innerHeight = isShowingVerticalScroll() ? this.height - scrollBarHeight : this.height;
+		int innerWidth = isShowingVerticalScroll() ? this.width - scrollBarWidth : this.width;
+		int innerHeight = isShowingHorizontalScroll() ? this.height - scrollBarHeight : this.height;
 		boolean somethingClicked = false;
 		for (var widget : this.children) {
 			if (MathUtil.inBounds(mouseX, mouseY, this.x - this.currentScrollX + widget.x, this.y - this.currentScrollY + widget.y, widget.getWidth(), widget.getHeight())) {
@@ -428,13 +442,11 @@ public class WuxiaScrollPanel extends AbstractWidget {
 		return somethingClicked || super.mouseScrolled(mouseX, mouseY, scrollCount);
 	}
 
-	public double[] innerPartGrabbed = new double[]{0, 0};
+	public double[] innerPartGrabbed = new double[]{0, 0, 0, 0};
 	public boolean isInnerPartGrabbed = false;
 
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		int innerWidth = isShowingHorizontalScroll() ? this.width - scrollBarWidth : this.width;
-		int innerHeight = isShowingVerticalScroll() ? this.height - scrollBarHeight : this.height;
 		boolean somethingClicked = false;
 		for (var widget : this.children) {
 			somethingClicked = somethingClicked || widget.mouseClicked(mouseX + this.currentScrollX - this.x, mouseY + this.currentScrollY - this.y, button);
@@ -459,8 +471,8 @@ public class WuxiaScrollPanel extends AbstractWidget {
 
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double mouseDeltaX, double mouseDeltaY) {
-		int innerWidth = isShowingHorizontalScroll() ? this.width - scrollBarWidth : this.width;
-		int innerHeight = isShowingVerticalScroll() ? this.height - scrollBarHeight : this.height;
+		int innerWidth = isShowingVerticalScroll() ? this.width - scrollBarWidth : this.width;
+		int innerHeight = isShowingHorizontalScroll() ? this.height - scrollBarHeight : this.height;
 		boolean somethingClicked = false;
 		if (MathUtil.inBounds(mouseX, mouseY, this.x, this.y, innerWidth, innerHeight)) {
 			for (var widget : this.children) {
@@ -492,8 +504,8 @@ public class WuxiaScrollPanel extends AbstractWidget {
 		isInnerPartGrabbed = false;
 		int scrollBarWidth = 10; //the number of pixels the scroll bar is going to have horizontally
 		int scrollBarHeight = 10; // the number of pixels the scroll bar is going to have vertically
-		int innerWidth = isShowingHorizontalScroll() ? this.width - scrollBarWidth : this.width;
-		int innerHeight = isShowingVerticalScroll() ? this.height - scrollBarHeight : this.height;
+		int innerWidth = isShowingVerticalScroll() ? this.width - scrollBarWidth : this.width;
+		int innerHeight = isShowingHorizontalScroll() ? this.height - scrollBarHeight : this.height;
 		boolean somethingClicked = false;
 		if (MathUtil.inBounds(mouseX, mouseY, this.x, this.y, innerWidth, innerHeight)) {
 			for (var widget : this.children) {

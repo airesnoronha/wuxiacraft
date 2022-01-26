@@ -9,13 +9,11 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.RegistryBuilder;
-import net.minecraftforge.registries.RegistryObject;
 import wuxiacraft.WuxiaCraft;
 import wuxiacraft.container.IntrospectionMenu;
 import wuxiacraft.cultivation.CultivationRealm;
 import wuxiacraft.cultivation.CultivationStage;
 import wuxiacraft.cultivation.Element;
-import wuxiacraft.cultivation.Technique;
 import wuxiacraft.cultivation.technique.aspects.TechniqueAspect;
 
 // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
@@ -45,17 +43,13 @@ public class RegistryEvents {
 				.setType(CultivationStage.class)
 				.create();
 
-		WuxiaCraft.LOGGER.debug("Creating the registry for the Techniques");
-		WuxiaRegistries.TECHNIQUES = new RegistryBuilder<Technique>()
-				.setName(new ResourceLocation(WuxiaCraft.MOD_ID, "techniques"))
-				.setType(Technique.class)
-				.create();
-
+		WuxiaCraft.LOGGER.debug("Creating the registry for the Elements");
 		WuxiaRegistries.ELEMENTS = new RegistryBuilder<Element>()
 				.setName(new ResourceLocation(WuxiaCraft.MOD_ID, "elements"))
 				.setType(Element.class)
 				.create();
 
+		WuxiaCraft.LOGGER.debug("Creating the registry for the Technique Aspects");
 		WuxiaRegistries.TECHNIQUE_ASPECT = new RegistryBuilder<TechniqueAspect>()
 				.setName(new ResourceLocation(WuxiaCraft.MOD_ID, "technique_aspects"))
 				.setType(TechniqueAspect.class)

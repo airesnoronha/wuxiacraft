@@ -4,10 +4,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import wuxiacraft.cultivation.stats.PlayerStat;
 import wuxiacraft.init.WuxiaRegistries;
 import wuxiacraft.init.WuxiaTechniqueAspects;
 
 import java.awt.*;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -32,7 +34,8 @@ public class TechniqueGrid {
 
 	/**
 	 * Adds a new aspect to the grid
-	 * @param p the aspect position in the grid
+	 *
+	 * @param p      the aspect position in the grid
 	 * @param aspect the aspect to be added
 	 * @return true if added
 	 */
@@ -51,15 +54,16 @@ public class TechniqueGrid {
 
 	/**
 	 * This is a depth first priority processing in the grid for accepted aspects
-	 * @param visiting the current location in the grid we are accepting
+	 *
+	 * @param visiting         the current location in the grid we are accepting
 	 * @param processHierarchy the order in which we are accepting aspects
-	 * @param metaData the data passed between nodes
+	 * @param metaData         the data passed between nodes
 	 */
 	public void processAspects(Point visiting, HashMap<Point, HashSet<Point>> processHierarchy, HashMap<String, Object> metaData) {
 		var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.get(visiting));
-		if(aspect == null) return;
+		if (aspect == null) return;
 		aspect.accept(metaData);
-		for(var nextPoint : processHierarchy.get(visiting)) {
+		for (var nextPoint : processHierarchy.get(visiting)) {
 			processAspects(nextPoint, processHierarchy, metaData);
 		}
 	}
@@ -82,9 +86,9 @@ public class TechniqueGrid {
 
 		var junkNotExpected = new HashSet<Point>();
 
-		while(!toVisit.isEmpty()){ // layer wide iteration aka Breadth first
+		while (!toVisit.isEmpty()) { // layer wide iteration aka Breadth first
 			var visiting = toVisit.removeFirst();
-			if(visited.contains(visiting)) continue;
+			if (visited.contains(visiting)) continue;
 			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.getOrDefault(visiting, emptyId));
 			if (aspect == null) continue;
 			this.grid.get(visiting);
@@ -112,8 +116,8 @@ public class TechniqueGrid {
 			junkAspect.reject(metaData);
 			visited.add(point);
 		}
-		for(var key : this.grid.keySet()) {
-			if(!visited.contains(key)) {
+		for (var key : this.grid.keySet()) {
+			if (!visited.contains(key)) {
 				var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.getOrDefault(key, emptyId));
 				if (junkAspect == null) continue;
 				junkAspect.disconnect(metaData);
@@ -124,32 +128,20 @@ public class TechniqueGrid {
 
 	/**
 	 * Turns the technique metadata into a technique modifier
+	 *
 	 * @param metaData the metadata to be interpreted
 	 * @return the modifier for this technique
 	 */
 	private static TechniqueModifier getModifiersFromMetaData(HashMap<String, Object> metaData) {
 		TechniqueModifier tMod = new TechniqueModifier();
-		if(metaData.containsKey("cultivation_speed")) {
-			tMod.cultivation_speed = (double) metaData.get("cultivation_speed");
+		for (var stat : PlayerStat.values()) {
+			if (metaData.containsKey("stat-" + stat.name().toLowerCase())) {
+				tMod.stats.put(stat, (BigDecimal) metaData.get("stat-" + stat.name().toLowerCase()));
+			}
 		}
-		if(metaData.containsKey("strength")) {
-			tMod.strength = (double) metaData.get("strength");
-		}
-		if(metaData.containsKey("agility")) {
-			tMod.agility = (double) metaData.get("agility");
-		}
-		if(metaData.containsKey("health")) {
-			tMod.health = (double) metaData.get("health");
-		}
-		if(metaData.containsKey("energy")) {
-			tMod.energy = (double) metaData.get("energy");
-		}
-		if(metaData.containsKey("energyRegen")) {
-			tMod.energyRegen = (double) metaData.get("energyRegen");
-		}
-		for(var element : WuxiaRegistries.ELEMENTS.getValues()) {
-			if(metaData.containsKey("element-"+element.getName())) {
-				tMod.elements.put(element.getRegistryName(), (Double) metaData.get("element-"+element.getName()));
+		for (var element : WuxiaRegistries.ELEMENTS.getValues()) {
+			if (metaData.containsKey("element-" + element.getName())) {
+				tMod.elements.put(element.getRegistryName(), (Double) metaData.get("element-" + element.getName()));
 			}
 		}
 		return tMod;
@@ -160,9 +152,9 @@ public class TechniqueGrid {
 	}
 
 	public CompoundTag serialize() {
-		var tag =  new CompoundTag();
+		var tag = new CompoundTag();
 		var listTag = new ListTag();
-		for(var key : this.grid.keySet()) {
+		for (var key : this.grid.keySet()) {
 			var keyValueTag = new CompoundTag();
 			keyValueTag.putInt("keyX", key.x);
 			keyValueTag.putInt("keyY", key.y);
@@ -175,14 +167,14 @@ public class TechniqueGrid {
 
 	public void deserialize(CompoundTag tag) {
 		startNodePoint = null;
-		var listTag = (ListTag)tag.get("grid");
-		if(listTag == null) return;
-		for(var keyValueTag : listTag) {
-			if(!(keyValueTag instanceof CompoundTag cTag)) continue;
+		var listTag = (ListTag) tag.get("grid");
+		if (listTag == null) return;
+		for (var keyValueTag : listTag) {
+			if (!(keyValueTag instanceof CompoundTag cTag)) continue;
 			var x = cTag.getInt("keyX");
 			var y = cTag.getInt("keyY");
 			var value = cTag.getString("value");
-			this.addGridNode(new Point(x,y), new ResourceLocation(value));
+			this.addGridNode(new Point(x, y), new ResourceLocation(value));
 		}
 	}
 

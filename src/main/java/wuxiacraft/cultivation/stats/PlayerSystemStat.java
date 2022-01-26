@@ -1,13 +1,16 @@
 package wuxiacraft.cultivation.stats;
 
+import java.awt.*;
 import java.math.BigDecimal;
 
 public enum PlayerSystemStat {
-	CULTIVATION_BASE(new BigDecimal("0"), false),
-	FOUNDATION(new BigDecimal("0"), false),
-	ENERGY(new BigDecimal("0"), true),
-	ENERGY_REGEN(new BigDecimal("1"), false),
-	MAX_ENERGY(new BigDecimal("10"), false);
+	//TODO add translation notation to the display formats
+	CULTIVATION_BASE(new BigDecimal("0"), false, new Point(10, 10), "Cultivation Base: %s"),
+	FOUNDATION(new BigDecimal("0"), false, new Point(10, 20), "Foundation: %s"),
+	ENERGY(new BigDecimal("0"), true, new Point(10, 30), "Energy: %s"),
+	ENERGY_REGEN(new BigDecimal("1"), false, new Point(10, 40), "Energy Regeneration: %s"),
+	MAX_ENERGY(new BigDecimal("10"), false, new Point(10, 50), "Max Energy: %s"),
+	CULTIVATION_SPEED(new BigDecimal("0"), false, new Point(10, 60), "Cultivation Speed: %s");
 
 	public final BigDecimal defaultValue;
 
@@ -17,8 +20,14 @@ public enum PlayerSystemStat {
 	 */
 	public final boolean isModifiable;
 
-	PlayerSystemStat(BigDecimal defaultValue, boolean isModifiable) {
+	public final Point locationInStatsSheet;
+
+	public final String displayFormat;
+
+	PlayerSystemStat(BigDecimal defaultValue, boolean isModifiable, Point locationInStatsSheet, String displayFormat) {
 		this.defaultValue = defaultValue;
 		this.isModifiable = isModifiable;
+		this.locationInStatsSheet = locationInStatsSheet;
+		this.displayFormat = displayFormat;
 	}
 }

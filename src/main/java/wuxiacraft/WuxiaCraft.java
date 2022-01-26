@@ -1,8 +1,6 @@
 package wuxiacraft;
 
-import com.mojang.blaze3d.platform.ScreenManager;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.client.gui.OverlayRegistry;
 import net.minecraftforge.common.MinecraftForge;
@@ -30,7 +28,6 @@ import wuxiacraft.container.IntrospectionMenu;
 import wuxiacraft.init.WuxiaElements;
 import wuxiacraft.init.WuxiaRealms;
 import wuxiacraft.init.WuxiaTechniqueAspects;
-import wuxiacraft.init.WuxiaTechniques;
 import wuxiacraft.networking.WuxiaPacketHandler;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -61,7 +58,6 @@ public class WuxiaCraft {
 
 		WuxiaRealms.REALM_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 		WuxiaRealms.STAGE_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-		WuxiaTechniques.TECHNIQUES_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 		WuxiaElements.ELEMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
 		WuxiaTechniqueAspects.ASPECTS.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}

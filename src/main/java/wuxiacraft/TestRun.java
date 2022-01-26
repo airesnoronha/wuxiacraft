@@ -8,6 +8,7 @@ import java.awt.*;
 public class TestRun {
 
 	public static void testStuff() {
+		/*
 		TechniqueGrid grid = new TechniqueGrid();
 		grid.addGridNode(new Point(0,0), new ResourceLocation(WuxiaCraft.MOD_ID, "aspect_start"));
 		grid.addGridNode(new Point(1,-1), new ResourceLocation(WuxiaCraft.MOD_ID, "fire_aspect_1"));
@@ -16,5 +17,6 @@ public class TestRun {
 
 		var speed = grid.compile();
 		WuxiaCraft.LOGGER.info("Speed: " + speed.cultivation_speed);
+		*/
 	}
 }

@@ -46,6 +46,16 @@ public class IntrospectionScreen extends AbstractContainerScreen<IntrospectionMe
 	}
 
 	@Override
+	public void clearWidgets() {
+		super.clearWidgets();
+	}
+
+	@Override
+	public void removeWidget(GuiEventListener p_169412_) {
+		super.removeWidget(p_169412_);
+	}
+
+	@Override
 	protected void init() {
 		super.init();
 		tabs.put("stats", new CharacterStatsTab("stats"));

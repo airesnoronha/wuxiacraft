@@ -1,8 +1,10 @@
 package wuxiacraft.cultivation;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import wuxiacraft.cultivation.stats.PlayerSystemStat;
+import wuxiacraft.cultivation.technique.TechniqueContainer;
 import wuxiacraft.init.WuxiaRegistries;
 
 import java.math.BigDecimal;
@@ -31,6 +33,11 @@ public class SystemContainer {
 	private final HashMap<PlayerSystemStat, BigDecimal> systemStats;
 
 	/**
+	 * Holds all the technique data
+	 */
+	public final TechniqueContainer techniqueData;
+
+	/**
 	 * The constructor for this system cultivation stats
 	 *
 	 * @param system the system this belongs to
@@ -40,9 +47,10 @@ public class SystemContainer {
 		this.currentRealm = system.defaultRealm;
 		this.currentStage = system.defaultStage;
 		this.systemStats = new HashMap<>();
+		techniqueData = new TechniqueContainer(this.system);
 		for (var stat : PlayerSystemStat.values()) {
 			this.systemStats.put(stat, stat.defaultValue);
-			if(stat == PlayerSystemStat.ENERGY) {
+			if (stat == PlayerSystemStat.ENERGY) {
 				if (this.system == System.DIVINE) {
 					this.systemStats.put(stat, new BigDecimal("10"));
 				} else if (this.system == System.BODY) {
@@ -57,7 +65,7 @@ public class SystemContainer {
 	}
 
 	public void setStat(PlayerSystemStat stat, BigDecimal value) {
-		if(stat.isModifiable) {
+		if (stat.isModifiable) {
 			this.systemStats.put(stat, value.max(BigDecimal.ZERO));
 		}
 	}
@@ -89,7 +97,7 @@ public class SystemContainer {
 	}
 
 	public void addEnergy(BigDecimal amount) {
-		if(amount.compareTo(new BigDecimal("0")) > 0) {
+		if (amount.compareTo(new BigDecimal("0")) > 0) {
 			this.systemStats.put(PlayerSystemStat.ENERGY, this.getStat(PlayerSystemStat.ENERGY).add(amount));
 		}
 	}
@@ -101,6 +109,7 @@ public class SystemContainer {
 		for (var stat : PlayerSystemStat.values()) {
 			tag.putString("stat-" + stat.name().toLowerCase(), this.getStat(stat).toPlainString());
 		}
+		tag.put("technique-data", this.techniqueData.serialize());
 		return tag;
 	}
 
@@ -109,6 +118,10 @@ public class SystemContainer {
 		this.currentStage = new ResourceLocation(tag.getString("current_stage"));
 		for (var stat : PlayerSystemStat.values()) {
 			this.systemStats.put(stat, new BigDecimal(tag.getString("stat-" + stat.name().toLowerCase())));
+		}
+		CompoundTag techDataTag = (CompoundTag) tag.get("technique-data");
+		if (techDataTag != null) {
+			this.techniqueData.deserialize(techDataTag);
 		}
 	}
 

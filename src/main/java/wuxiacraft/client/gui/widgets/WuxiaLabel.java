@@ -30,6 +30,11 @@ public class WuxiaLabel extends AbstractWidget {
 	}
 
 	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		return false;
+	}
+
+	@Override
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
 		GuiComponent.drawString(poseStack, Minecraft.getInstance().font, this.getMessage(), this.x, this.y, this.color);
 	}
