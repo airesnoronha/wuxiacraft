@@ -19,6 +19,7 @@ public class WuxiaElements {
 	/**
 	 * elementEntry=elements.fire
 	 * desc="fire manipulation"
+	 * image="textures/elements/fire.png"
 	 */
 	public static RegistryObject<Element> FIRE = ELEMENTS.register("fire", () -> new Element("fire")
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "earth"))
@@ -46,6 +47,7 @@ public class WuxiaElements {
 	/**
 	 * elementEntry=elements.fire
 	 * desc="water manipulation"
+	 * image="textures/elements/water.png"
 	 */
 	public static RegistryObject<Element> WATER = ELEMENTS.register("water", () -> new Element("water")
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "wood"))
@@ -55,6 +57,7 @@ public class WuxiaElements {
 	/**
 	 * elementEntry=elements.fire
 	 * desc="wood manipulation"
+	 * image="textures/elements/wood.png"
 	 */
 	public static RegistryObject<Element> WOOD = ELEMENTS.register("wood", () -> new Element("wood")
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "fire"))
