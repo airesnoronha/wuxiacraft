@@ -2,10 +2,9 @@ package wuxiacraft.client.gui.widgets;
 
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.Component;
-import wuxiacraft.util.MathUtil;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 public class WuxiaFlowPanel extends WuxiaScrollPanel {
 
@@ -28,7 +27,7 @@ public class WuxiaFlowPanel extends WuxiaScrollPanel {
 	}
 
 	@Override
-	public void addChild(AbstractWidget child) {
+	public void addChild(@Nonnull AbstractWidget child) {
 		this.children.add(child);
 		this.rearrangeItems();
 	}

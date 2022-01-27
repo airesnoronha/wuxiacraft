@@ -11,6 +11,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import wuxiacraft.util.MathUtil;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.LinkedList;
 
@@ -293,6 +294,14 @@ public class WuxiaScrollPanel extends AbstractWidget {
 			this.contentHeight = child.y + child.getHeight();
 			this.totalScrollHeight = Math.max(0, this.contentHeight - this.height + scrollBarHeight);
 		}
+	}
+
+	public int getChildrenCount() {
+		return this.children.size();
+	}
+
+	public void clearChildren() {
+		this.children.clear();
 	}
 
 	@Override

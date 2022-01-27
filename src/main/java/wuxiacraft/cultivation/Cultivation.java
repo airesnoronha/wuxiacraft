@@ -4,6 +4,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import wuxiacraft.capabilities.cultivation.CultivationProvider;
 import wuxiacraft.cultivation.stats.PlayerStat;
+import wuxiacraft.cultivation.technique.AspectContainer;
+import wuxiacraft.init.WuxiaTechniqueAspects;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -27,6 +29,11 @@ public class Cultivation implements ICultivation {
 	 */
 	private int tickTimer;
 
+	/**
+	 * Known Aspects and proficiency
+	 */
+	public AspectContainer aspects;
+
 	public Cultivation() {
 		this.systemCultivation = new HashMap<>();
 		this.playerStats = new HashMap<>();
@@ -36,6 +43,8 @@ public class Cultivation implements ICultivation {
 		this.systemCultivation.put(System.BODY, new SystemContainer(System.BODY));
 		this.systemCultivation.put(System.DIVINE, new SystemContainer(System.DIVINE));
 		this.systemCultivation.put(System.ESSENCE, new SystemContainer(System.ESSENCE));
+		this.aspects = new AspectContainer();
+		this.aspects.addAspectProficiency(this, WuxiaTechniqueAspects.START.getId(), BigDecimal.TEN);
 	}
 
 	public static ICultivation get(Player target) {
@@ -49,7 +58,7 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public void setPlayerStat(PlayerStat stat, BigDecimal value) {
-		if(stat.isModifiable) {
+		if (stat.isModifiable) {
 			this.playerStats.put(stat, value.max(BigDecimal.ZERO));
 		}
 	}
@@ -68,6 +77,7 @@ public class Cultivation implements ICultivation {
 		tag.put("body-data", getSystemData(System.BODY).serialize());
 		tag.put("divine-data", getSystemData(System.DIVINE).serialize());
 		tag.put("essence-data", getSystemData(System.ESSENCE).serialize());
+		tag.put("aspect-data", this.aspects.serialize());
 		return tag;
 	}
 
@@ -83,6 +93,14 @@ public class Cultivation implements ICultivation {
 		getSystemData(System.BODY).deserialize(tag.getCompound("body-data"));
 		getSystemData(System.DIVINE).deserialize(tag.getCompound("divine-data"));
 		getSystemData(System.ESSENCE).deserialize(tag.getCompound("essence-data"));
+		if (tag.contains("aspect-data")) {
+			this.aspects.deserialize(tag.getCompound("aspect-data"));
+		}
+	}
+
+	@Override
+	public AspectContainer getAspects() {
+		return aspects;
 	}
 
 	/**

@@ -36,6 +36,20 @@ public class WuxiaTechniqueAspects {
 	);
 
 	/**
+	 * Basically means Getting the energy and inserting that to the body
+	 */
+	public static RegistryObject<TechniqueAspect> DIVINE_GATHERING = ASPECTS.register("divine_gathering",
+			() -> new AspectSystemGather("body_gathering", new ResourceLocation(WuxiaCraft.MOD_ID, "textures/aspects/ember.png"), System.BODY)
+	);
+
+	/**
+	 * Basically means Getting the energy and inserting that to the body
+	 */
+	public static RegistryObject<TechniqueAspect> ESSENCE_GATHERING = ASPECTS.register("essence_gathering",
+			() -> new AspectSystemGather("body_gathering", new ResourceLocation(WuxiaCraft.MOD_ID, "textures/aspects/ember.png"), System.BODY)
+	);
+
+	/**
 	 * Basically means Getting a bit of the energy from the body to use elsewhere
 	 */
 	//TODO create a AspectSystemRelease class and instantiate that here

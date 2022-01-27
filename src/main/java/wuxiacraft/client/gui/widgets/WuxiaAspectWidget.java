@@ -13,19 +13,27 @@ import wuxiacraft.init.WuxiaRegistries;
 import wuxiacraft.init.WuxiaTechniqueAspects;
 
 import javax.annotation.Nonnull;
+import java.util.function.BiConsumer;
 
 public class WuxiaAspectWidget extends AbstractWidget {
 
 	public ResourceLocation aspect;
 
+	private BiConsumer<Double, Double> onClicked;
+
+	private BiConsumer<Double, Double> onDragged;
+
 	public WuxiaAspectWidget(int x, int y, ResourceLocation aspect) {
 		super(x, y, 32, 32, Component.nullToEmpty(aspect.getPath()));
 		this.aspect = aspect;
+		onClicked = (mx, my) -> {};
+		onDragged = (mx, my) -> {};
 	}
 
 	@Override
 	public void render(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
 		RenderSystem.setShaderTexture(0, getAspect().textureLocation);
+		RenderSystem.enableBlend();
 		GuiComponent.blit(poseStack,
 				this.x, this.y,
 				32, 32,
@@ -33,6 +41,7 @@ public class WuxiaAspectWidget extends AbstractWidget {
 				32, 32,
 				32, 32
 		);
+		RenderSystem.disableBlend();
 	}
 
 	public TechniqueAspect getAspect() {
@@ -42,5 +51,23 @@ public class WuxiaAspectWidget extends AbstractWidget {
 	@Override
 	public void updateNarration(@Nonnull NarrationElementOutput p_169152_) {
 
+	}
+
+	public void setOnClicked(BiConsumer<Double, Double> onClicked) {
+		this.onClicked = onClicked;
+	}
+
+	public void setOnDragged(BiConsumer<Double, Double> onDragged) {
+		this.onDragged = onDragged;
+	}
+
+	@Override
+	public void onClick(double mouseX, double mouseY) {
+		this.onClicked.accept(mouseX, mouseY);
+	}
+
+	@Override
+	protected void onDrag(double mouseX, double mouseY, double mouseDeltaX, double mouseDeltaY) {
+		this.onDragged.accept(mouseX, mouseY);
 	}
 }

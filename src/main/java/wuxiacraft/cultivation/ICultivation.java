@@ -2,6 +2,7 @@ package wuxiacraft.cultivation;
 
 import net.minecraft.nbt.CompoundTag;
 import wuxiacraft.cultivation.stats.PlayerStat;
+import wuxiacraft.cultivation.technique.AspectContainer;
 
 import java.math.BigDecimal;
 
@@ -16,6 +17,8 @@ public interface ICultivation {
 	CompoundTag serialize();
 
 	void deserialize(CompoundTag tag);
+
+	AspectContainer getAspects();
 
 	/**
 	 * Utility to increment to the tick timer
