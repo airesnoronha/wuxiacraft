@@ -81,7 +81,7 @@ public class WuxiaElements {
 	);
 
 	/**
-	 * elementEntry=elements.fire
+	 * elementEntry=elements.light
 	 * desc="light manipulation"
 	 */
 	public static RegistryObject<Element> LIGHT = ELEMENTS.register("light", () -> new Element("light")
