@@ -11,7 +11,7 @@ public class WuxiaElements {
 	public static DeferredRegister<Element> ELEMENTS = DeferredRegister.create(Element.class, WuxiaCraft.MOD_ID);
 
 	/**
-	 * elementEntry=elements.fire
+	 * elementEntry=elements.physical
 	 * desc="physical manipulation"
 	 */
 	public static RegistryObject<Element> PHYSICAL = ELEMENTS.register("physical", () -> new Element("physical"));
@@ -27,7 +27,7 @@ public class WuxiaElements {
 	);
 
 	/**
-	 * elementEntry=elements.fire
+	 * elementEntry=elements.earth
 	 * desc="earth manipulation"
 	 */
 	public static RegistryObject<Element> EARTH = ELEMENTS.register("earth", () -> new Element("earth")
@@ -36,7 +36,7 @@ public class WuxiaElements {
 	);
 
 	/**
-	 * elementEntry=elements.fire
+	 * elementEntry=elements.metal
 	 * desc="metal manipulation"
 	 */
 	public static RegistryObject<Element> METAL = ELEMENTS.register("metal", () -> new Element("metal")
@@ -45,7 +45,7 @@ public class WuxiaElements {
 	);
 
 	/**
-	 * elementEntry=elements.fire
+	 * elementEntry=elements.water
 	 * desc="water manipulation"
 	 * image="textures/elements/water.png"
 	 */
@@ -55,7 +55,7 @@ public class WuxiaElements {
 	);
 
 	/**
-	 * elementEntry=elements.fire
+	 * elementEntry=elements.wood
 	 * desc="wood manipulation"
 	 * image="textures/elements/wood.png"
 	 */
@@ -65,7 +65,7 @@ public class WuxiaElements {
 	);
 
 	/**
-	 * elementEntry=elements.fire
+	 * elementEntry=elements.lightning
 	 * desc="lightning manipulation"
 	 */
 	public static RegistryObject<Element> LIGHTNING = ELEMENTS.register("lightning", () -> new Element("lightning")
@@ -73,7 +73,7 @@ public class WuxiaElements {
 	);
 
 	/**
-	 * elementEntry=elements.fire
+	 * elementEntry=elements.wind
 	 * desc="air/wind manipulation"
 	 */
 	public static RegistryObject<Element> WIND = ELEMENTS.register("wind", () -> new Element("wind")
@@ -89,7 +89,7 @@ public class WuxiaElements {
 	);
 
 	/**
-	 * elementEntry=elements.fire
+	 * elementEntry=elements.darkness
 	 * desc="darkness manipulation"
 	 */
 	public static RegistryObject<Element> DARKNESS = ELEMENTS.register("darkness", () -> new Element("darkness")
@@ -97,7 +97,7 @@ public class WuxiaElements {
 	);
 
 	/**
-	 * elementEntry=elements.fire
+	 * elementEntry=elements.space
 	 * desc="space manipulation"
 	 */
 	public static RegistryObject<Element> SPACE = ELEMENTS.register("space", () -> new Element("space")
@@ -105,7 +105,7 @@ public class WuxiaElements {
 	);
 
 	/**
-	 * elementEntry=elements.fire
+	 * elementEntry=elements.time
 	 * desc="time manipulation"
 	 */
 	public static RegistryObject<Element> TIME = ELEMENTS.register("time", () -> new Element("time")
