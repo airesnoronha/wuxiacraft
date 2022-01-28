@@ -31,8 +31,8 @@ public class WuxiaElements {
 	 * desc="earth manipulation"
 	 */
 	public static RegistryObject<Element> EARTH = ELEMENTS.register("earth", () -> new Element("earth")
-			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "water"))
-			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "metal"))
+			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "metal"))
+			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "water"))
 	);
 
 	/**
