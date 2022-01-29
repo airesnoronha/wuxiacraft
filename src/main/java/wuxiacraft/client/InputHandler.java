@@ -3,7 +3,6 @@ package wuxiacraft.client;
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 import wuxiacraft.networking.OpenScreenMessage;

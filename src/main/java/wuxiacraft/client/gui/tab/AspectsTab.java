@@ -2,12 +2,13 @@ package wuxiacraft.client.gui.tab;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import wuxiacraft.client.gui.IntrospectionScreen;
-import wuxiacraft.client.gui.widgets.WuxiaAspectWidget;
-import wuxiacraft.client.gui.widgets.WuxiaFlowPanel;
+import wuxiacraft.client.gui.widgets.*;
 import wuxiacraft.cultivation.Cultivation;
+import wuxiacraft.init.WuxiaRegistries;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 public class AspectsTab extends IntrospectionTab {
 
 	private WuxiaFlowPanel aspectsPanel;
-	private WuxiaFlowPanel aspectsStatsPanel;
+	private WuxiaScrollPanel aspectsStatsPanel;
 
 	@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 	private HashMap<ResourceLocation, WuxiaAspectWidget> aspectWidgets;
@@ -30,8 +31,9 @@ public class AspectsTab extends IntrospectionTab {
 	public void init(IntrospectionScreen screen) {
 		aspectWidgets = new HashMap<>();
 		aspectsPanel = new WuxiaFlowPanel(36, 36, 120, 30, new TextComponent(""));
-		aspectsStatsPanel = new WuxiaFlowPanel(36, 36, 300, 30, new TextComponent(""));
+		aspectsStatsPanel = new WuxiaScrollPanel(36, 36, 200, 30, new TextComponent(""));
 		screen.addRenderableWidget(aspectsPanel);
+		screen.addRenderableWidget(aspectsStatsPanel);
 	}
 
 	@Override
@@ -56,9 +58,9 @@ public class AspectsTab extends IntrospectionTab {
 				this.aspectWidgets.put(aspect, aspectWidget);
 			}
 		}
-		var freeXSpace = Minecraft.getInstance().getWindow().getScreenWidth() - 36;
-		var freeYSpace = Minecraft.getInstance().getWindow().getScreenHeight() - 36;
-		var stretchedSpace = freeXSpace - 300;
+		var freeXSpace = Minecraft.getInstance().getWindow().getGuiScaledWidth() - 36;
+		var freeYSpace = Minecraft.getInstance().getWindow().getGuiScaledHeight() - 36;
+		var stretchedSpace = freeXSpace - 200;
 		this.aspectsPanel.setWidth(stretchedSpace);
 		this.aspectsPanel.setHeight(freeYSpace);
 		this.aspectsStatsPanel.x = 36+stretchedSpace;
@@ -72,8 +74,13 @@ public class AspectsTab extends IntrospectionTab {
 		}
 	}
 
-	//TODO make this change the stats sheet when we do have one;
 	private void changeSelectedAspectStats() {
+		var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.selectedAspectWidget);
+		if(aspect == null) return;
+		this.aspectsStatsPanel.clearChildren();
+		for(var widget : aspect.getStatsSheetDescriptor(this.selectedAspectWidget)) {
+			this.aspectsStatsPanel.addChild(widget);
+		}
 	}
 
 	@Override

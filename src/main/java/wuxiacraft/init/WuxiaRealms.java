@@ -14,6 +14,10 @@ public class WuxiaRealms {
 	public static DeferredRegister<CultivationRealm> REALM_REGISTER = DeferredRegister.create(CultivationRealm.class, WuxiaCraft.MOD_ID);
 	public static DeferredRegister<CultivationStage> STAGE_REGISTER = DeferredRegister.create(CultivationStage.class, WuxiaCraft.MOD_ID);
 
+	//************************************
+	// body realms
+	//************************************
+
 	public static RegistryObject<CultivationRealm> BODY_MORTAL_REALM = REALM_REGISTER
 			.register("body_mortal_realm",
 					() -> new CultivationRealm("body_mortal_realm",
@@ -21,6 +25,10 @@ public class WuxiaRealms {
 							new ResourceLocation(WuxiaCraft.MOD_ID, "body_mortal_stage"),
 							null
 					));
+
+	//************************************
+	// divine realms
+	//************************************
 
 	public static RegistryObject<CultivationRealm> DIVINE_MORTAL_REALM = REALM_REGISTER
 			.register("divine_mortal_realm",

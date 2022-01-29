@@ -83,18 +83,21 @@ public class AspectContainer {
 
 	public CompoundTag serialize() {
 		var tag = new CompoundTag();
-		ListTag listTag = (ListTag) tag.put("aspect-list", new ListTag());
+		ListTag listTag = new ListTag();
 		for (var aspect : this.aspectAndProficiency.keySet()) {
 			var aspectTag = new CompoundTag();
 			aspectTag.putString("aspect-name", aspect.toString());
 			aspectTag.putString("aspect-proficiency", aspectAndProficiency.get(aspect).toPlainString());
+			listTag.add(aspectTag);
 		}
+		tag.put("aspect-list", listTag);
 		return tag;
 	}
 
 	public void deserialize(CompoundTag tag) {
 		var listTag = (ListTag) tag.get("aspect-list");
 		if (listTag == null) return;
+		this.aspectAndProficiency.clear();
 		for (var itemTag : listTag) {
 			if (!(itemTag instanceof CompoundTag aspectTag)) continue;
 			var location = aspectTag.getString("aspect-name");

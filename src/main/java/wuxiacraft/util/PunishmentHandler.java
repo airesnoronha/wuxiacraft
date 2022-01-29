@@ -5,8 +5,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.checkerframework.checker.units.qual.C;
-import wuxiacraft.capabilities.cultivation.CultivationProvider;
+import wuxiacraft.capabilities.CultivationProvider;
 import wuxiacraft.cultivation.Cultivation;
 import wuxiacraft.cultivation.stats.PlayerStat;
 

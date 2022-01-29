@@ -1,4 +1,4 @@
-package wuxiacraft.capabilities.cultivation;
+package wuxiacraft.capabilities;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

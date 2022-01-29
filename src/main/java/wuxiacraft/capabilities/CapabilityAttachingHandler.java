@@ -6,7 +6,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import wuxiacraft.WuxiaCraft;
-import wuxiacraft.capabilities.cultivation.CultivationProvider;
 
 public class CapabilityAttachingHandler {
 

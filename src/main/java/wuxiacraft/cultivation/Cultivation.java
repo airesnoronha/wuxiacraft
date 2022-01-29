@@ -2,7 +2,7 @@ package wuxiacraft.cultivation;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
-import wuxiacraft.capabilities.cultivation.CultivationProvider;
+import wuxiacraft.capabilities.CultivationProvider;
 import wuxiacraft.cultivation.stats.PlayerStat;
 import wuxiacraft.cultivation.technique.AspectContainer;
 import wuxiacraft.init.WuxiaTechniqueAspects;
@@ -48,7 +48,8 @@ public class Cultivation implements ICultivation {
 	}
 
 	public static ICultivation get(Player target) {
-		return target.getCapability(CultivationProvider.CULTIVATION_PROVIDER).orElse(new Cultivation());
+		var cultOpt =  target.getCapability(CultivationProvider.CULTIVATION_PROVIDER).resolve();
+		return cultOpt.orElseGet(Cultivation::new);
 	}
 
 	@Override
