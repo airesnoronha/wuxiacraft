@@ -8,7 +8,7 @@ We are planning to make add-on mods to make the experience better. Something lik
 
 ### Cultivation system
 
-The idea is that as the player cultivates, he/she will progress through many levels, being each time harder to breakthrough and sometimes breaking though. I made a system based on what is most read on wuxia novels, but it still needs tweaking.
+The idea is that as the player cultivates, he/she will progress through many levels, being each time harder to breakthrough and sometimes breaking though. The system based on what is most read on wuxia novels, but it still needs tweaking.
 
 ### Technique System
 
