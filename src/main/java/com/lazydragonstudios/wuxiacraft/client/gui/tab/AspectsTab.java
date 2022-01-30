@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import com.lazydragonstudios.wuxiacraft.client.gui.IntrospectionScreen;
-import wuxiacraft.client.gui.widgets.*;
+import com.lazydragonstudios.wuxiacraft.client.gui.widgets.*;
 
 import java.awt.*;
 import java.util.HashMap;

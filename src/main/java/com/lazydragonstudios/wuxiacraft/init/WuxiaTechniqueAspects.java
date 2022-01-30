@@ -6,7 +6,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
-import wuxiacraft.cultivation.technique.aspects.*;
 
 import java.math.BigDecimal;
 

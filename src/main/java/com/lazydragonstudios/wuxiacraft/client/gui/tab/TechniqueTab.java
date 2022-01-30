@@ -7,7 +7,6 @@ import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TextComponent;
-import wuxiacraft.client.gui.widgets.*;
 
 import java.awt.*;
 import java.util.HashMap;

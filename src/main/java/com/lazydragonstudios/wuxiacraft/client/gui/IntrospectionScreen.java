@@ -20,7 +20,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.antlr.v4.misc.OrderedHashMap;
 import org.jetbrains.annotations.NotNull;
-import wuxiacraft.client.gui.tab.*;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.awt.*;
