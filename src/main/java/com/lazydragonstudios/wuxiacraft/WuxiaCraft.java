@@ -31,13 +31,13 @@ import com.lazydragonstudios.wuxiacraft.client.overlays.EnergiesOverlay;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRealms;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod("com/lazydragonstudios/wuxiacraft")
+@Mod("wuxiacraft")
 public class WuxiaCraft {
 	// Directly reference a log4j logger.
 	public static final Logger LOGGER = LogManager.getLogger();
 
 	//the mod id for reference in resource locations
-	public static final String MOD_ID = "com/lazydragonstudios/wuxiacraft";
+	public static final String MOD_ID = "wuxiacraft";
 
 	public WuxiaCraft() {
 		// Register the setup method for modloading
