@@ -18,9 +18,9 @@ public abstract class AspectElementalConsumer extends TechniqueAspect {
 	@Override
 	public void accept(HashMap<String, Object> metaData) {
 		String elementBase = "element-base-" + element.getPath();
-		if(metaData.containsKey(elementBase)) {
+		if (metaData.containsKey(elementBase)) {
 			double elementalCultivationBase = (double) metaData.get(elementBase);
-			if(elementalCultivationBase >= cost) {
+			if (elementalCultivationBase >= cost) {
 				elementalCultivationBase -= cost;
 				metaData.put(elementBase, elementalCultivationBase);
 				consumed(metaData);
@@ -31,13 +31,17 @@ public abstract class AspectElementalConsumer extends TechniqueAspect {
 	}
 
 	public abstract void consumed(HashMap<String, Object> metaData);
+
 	public abstract void notConsumed(HashMap<String, Object> metaData);
 
 	@Override
 	public boolean canConnect(TechniqueAspect aspect) {
-		if(aspect instanceof AspectElementalConsumer) return true;
-		if(aspect instanceof AspectElementalConverter) return true;
-		if(aspect instanceof AspectElementalGenerator) return true;
+		if (aspect instanceof AspectElementalConsumer con) {
+			return con.element.equals(this.element);
+		}
+		if (aspect instanceof AspectElementalConverter con) {
+			return con.element.equals(this.element);
+		}
 		return false;
 	}
 }

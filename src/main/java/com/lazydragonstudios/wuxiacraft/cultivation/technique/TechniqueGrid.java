@@ -82,6 +82,7 @@ public class TechniqueGrid {
 	 * Turn the grid with aspects and deserialize this
 	 */
 	public TechniqueModifier compile() {
+		if(this.startNodePoint == null) return null;
 		if (!grid.get(startNodePoint).equals(WuxiaTechniqueAspects.START.getId())) return null;
 		final ResourceLocation emptyId = WuxiaTechniqueAspects.EMPTY.getId();
 
@@ -111,7 +112,6 @@ public class TechniqueGrid {
 	 * So we know that rendering and compiling are doing the same thing
 	 * And possibly elsewhere as well
 	 */
-	//TODO fix bug here
 	public static void traverseGridFromStart(TechniqueGrid grid, Consumer<Point> visit, BiConsumer<Point, Point> onConnect, BiConsumer<Point, Point> onJunked, Consumer<Point> onDisconnected) {
 		if (grid.startNodePoint == null) return;
 		if (!grid.grid.get(grid.startNodePoint).equals(WuxiaTechniqueAspects.START.getId())) return;
@@ -123,7 +123,6 @@ public class TechniqueGrid {
 		HashMap<Point, HashSet<Point>> connectedTo = new HashMap<>();
 		toVisit.add(grid.startNodePoint);
 		var junkNotExpected = new HashMap<Point, Point>();
-		layerWide:
 		while (!toVisit.isEmpty()) { // layer wide iteration aka Breadth first
 			var visiting = toVisit.removeFirst();
 			if (visited.contains(visiting)) continue;
@@ -133,30 +132,43 @@ public class TechniqueGrid {
 			visited.add(visiting);
 			junkNotExpected.remove(visiting);
 			visit.accept(visiting);
+			var connectCandidates = new LinkedList<Point>();
 			connectedTo.put(visiting, new HashSet<>());
 			for (var neighbour : hexagonalNeighbours) {
 				Point visitingNeighbour = new Point(visiting.x + neighbour.x, visiting.y + neighbour.y);
 				var neighbourAspect = grid.grid.getOrDefault(visitingNeighbour, emptyId);
 				if (visited.contains(visitingNeighbour)) continue;
-				connectedFrom.put(visitingNeighbour, new HashSet<>());
+				connectedFrom.putIfAbsent(visitingNeighbour, new HashSet<>());
 				TechniqueAspect neighbourTechAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(neighbourAspect);
 				if(neighbourTechAspect == null) continue ;
 				if (aspect.canConnect(neighbourTechAspect)) {
-					int cFrom = connectedFrom.get(visitingNeighbour).size();
-					int cTo = connectedFrom.get(visiting).size();
-					int allowedFrom = neighbourTechAspect.canConnectFromCount();
-					int allowedTo = aspect.canConnectToCount();
-					if((allowedFrom == -1 || allowedFrom < cFrom) && (allowedTo == -1 || allowedTo < cTo)) {
-						connectedFrom.get(visitingNeighbour).add(visiting);
-						connectedTo.get(visiting).add(visitingNeighbour);
-						toVisit.add(visitingNeighbour);
-						onConnect.accept(visiting, visitingNeighbour);
-						continue layerWide;
-					}
+					connectCandidates.add(visitingNeighbour);
 				} else if (neighbourAspect == emptyId) {
 					visited.add(visitingNeighbour);
 				} else {
 					junkNotExpected.put(visitingNeighbour, visiting);
+				}
+			}
+			connectCandidates.sort((p1, p2) -> {
+				TechniqueAspect aspect1 = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(grid.grid.getOrDefault(p1, emptyId));
+				TechniqueAspect aspect2 = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(grid.grid.getOrDefault(p2, emptyId));
+				return aspect.connectPrioritySorter(aspect1, aspect2);
+			});
+			for(var candidate : connectCandidates) {
+				var candidateLocation = grid.grid.getOrDefault(candidate, emptyId);
+				TechniqueAspect candidateTechAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(candidateLocation);
+				if(candidateTechAspect == null) continue;
+				int cFrom = connectedFrom.get(candidate).size();
+				int cTo = connectedTo.get(visiting).size();
+				int allowedFrom = candidateTechAspect.canConnectFromCount();
+				int allowedTo = aspect.canConnectToCount();
+				if((allowedFrom == -1 || cFrom < allowedFrom) && (allowedTo == -1 || cTo < allowedTo)) {
+					connectedFrom.get(candidate).add(visiting);
+					connectedTo.get(visiting).add(candidate);
+					toVisit.add(candidate);
+					onConnect.accept(visiting, candidate);
+				} else if(cTo >= allowedTo && allowedTo != -1) {
+					break;
 				}
 			}
 		}

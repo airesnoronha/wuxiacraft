@@ -25,6 +25,16 @@ public class AspectSystemGather extends TechniqueAspect {
 	}
 
 	@Override
+	public int canConnectToCount() {
+		return 0;
+	}
+
+	@Override
+	public int canConnectFromCount() {
+		return -1;
+	}
+
+	@Override
 	public void reject(HashMap<String, Object> metaData) {
 		metaData.put("cultivation_speed",
 				(double) metaData.getOrDefault("cultivation_speed", 0d) - 1d);

@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.client.gui.tab;
 
+import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.client.gui.IntrospectionScreen;
 import com.lazydragonstudios.wuxiacraft.client.gui.widgets.*;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
@@ -27,6 +28,11 @@ public class TechniqueTab extends IntrospectionTab {
 	private WuxiaButton saveBtn;
 	private WuxiaTechniqueComposeGrid gridComposer;
 	private WuxiaTextField searchField;
+
+	private boolean isCompiled = false;
+
+	private ResourceLocation draggingAspect = null;
+	private double[] dragPosition = new double[]{0d, 0d, 0d, 0d};
 
 	public TechniqueTab(String name, Point icon, System system) {
 		super(name, icon);
@@ -62,6 +68,13 @@ public class TechniqueTab extends IntrospectionTab {
 		composerPanel.setOverflow(WuxiaScrollPanel.OverflowType.HIDDEN);
 
 		compileBtn = new WuxiaButton(scaledWidth - 190, scaledHeight - 50, 180, 20, new TextComponent("Compile"), () -> {
+			try {
+				var modifiers = this.gridComposer.gridCompile();
+				this.isCompiled = true;
+			} catch (Exception e) {
+				WuxiaCraft.LOGGER.error(e.getMessage());
+				e.printStackTrace();
+			}
 		});
 		saveBtn = new WuxiaButton(scaledWidth - 190, scaledHeight - 25, 180, 20, new TextComponent("Save"), () -> {
 		});
@@ -78,9 +91,6 @@ public class TechniqueTab extends IntrospectionTab {
 		screen.addRenderableWidget(compileBtn);
 		screen.addRenderableWidget(saveBtn);
 	}
-
-	private ResourceLocation draggingAspect = null;
-	private double[] dragPosition = new double[]{0d, 0d, 0d, 0d};
 
 	private final WuxiaTechniqueComposeGrid.MouseInputPredicate onGridComposerRelease = (mouseX, mouseY, button) -> {
 		if (this.draggingAspect != null) {

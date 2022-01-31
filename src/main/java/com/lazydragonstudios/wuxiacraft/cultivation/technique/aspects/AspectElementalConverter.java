@@ -23,12 +23,17 @@ public abstract class AspectElementalConverter extends TechniqueAspect {
 	}
 
 	@Override
+	public int canConnectToCount() {
+		return -1;
+	}
+
+	@Override
 	public void accept(HashMap<String, Object> metaData) {
 		String elementBase = "element-base-" + element.getPath();
-		if(metaData.containsKey(elementBase)) {
-			double elementBaseAmount = (double)metaData.get(elementBase);
+		if (metaData.containsKey(elementBase)) {
+			double elementBaseAmount = (double) metaData.get(elementBase);
 			var converted = Math.min(elementBaseAmount, this.amount);
-			elementBaseAmount-= converted;
+			elementBaseAmount -= converted;
 			metaData.put(elementBase, elementBaseAmount);
 			convert(converted, metaData);
 		}
@@ -38,9 +43,12 @@ public abstract class AspectElementalConverter extends TechniqueAspect {
 
 	@Override
 	public boolean canConnect(TechniqueAspect aspect) {
-		if(aspect instanceof AspectElementalConsumer) return true;
-		if(aspect instanceof AspectElementalConverter) return true;
-		if(aspect instanceof AspectElementalGenerator) return true;
+		if (aspect instanceof AspectElementalConsumer con) {
+			return con.element.equals(this.element);
+		}
+		if (aspect instanceof AspectElementalConverter con) {
+			return con.element.equals(this.element);
+		}
 		return false;
 	}
 }

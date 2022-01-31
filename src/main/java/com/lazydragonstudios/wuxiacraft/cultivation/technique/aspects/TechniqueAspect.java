@@ -58,6 +58,19 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	}
 
 	/**
+	 * This is meant to sort the priority of connected aspects to be connected to
+	 * Pay attention that this is a forward connection
+	 * Probably sometimes you might want more of the same connected before transforming
+	 *
+	 * @param aspect1 the first aspect
+	 * @param aspect2 the second aspect
+	 * @return -1, 0, 1 like a comparator
+	 */
+	public int connectPrioritySorter(TechniqueAspect aspect1, TechniqueAspect aspect2) {
+		return 0;
+	}
+
+	/**
 	 * Sets the description of this technique aspect to display in game
 	 * Probably the bot is going to use this desc as well
 	 *

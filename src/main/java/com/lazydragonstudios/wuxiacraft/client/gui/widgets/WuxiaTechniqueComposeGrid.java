@@ -1,6 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.client.gui.widgets;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.TechniqueGrid;
+import com.lazydragonstudios.wuxiacraft.cultivation.technique.TechniqueModifier;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -180,10 +181,10 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 		TechniqueGrid.traverseGridFromStart(this.grid, (node) -> {
 				},
 				(node, neighbour) -> {
-					this.connectionLines.add(new ColoredLineSegment(node, neighbour, 0xAC2020FF));
+					this.connectionLines.add(new ColoredLineSegment(node, neighbour, 0xAC3090FF));
 				},
 				(junk, neighbour) -> {
-					this.connectionLines.add(new ColoredLineSegment(junk, neighbour, 0xACFF2020));
+					this.connectionLines.add(new ColoredLineSegment(junk, neighbour, 0xACFF6040));
 				}, (disconnected) -> {
 
 				}
@@ -203,6 +204,10 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 			}
 		}
 		return null;
+	}
+
+	public TechniqueModifier gridCompile() {
+		return this.grid.compile();
 	}
 
 	@Override
