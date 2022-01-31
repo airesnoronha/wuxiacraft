@@ -48,28 +48,28 @@ public class WuxiaTechniqueAspects {
 	 * aspectEntry
 	 */
 	public static RegistryObject<TechniqueAspect> FIRE_CONNECT_TO_BODY_1 = ASPECTS.register("fire_connect_to_body_1",
-			() -> new AspectElementSystemConverter("fire_connect_to_body_1", new ResourceLocation(WuxiaCraft.MOD_ID, "/textures/aspects/ember.png"), 3d, new ResourceLocation(WuxiaCraft.MOD_ID, "fire"), System.BODY)
+			() -> new AspectElementSystemConverter("fire_connect_to_body_1", new ResourceLocation(WuxiaCraft.MOD_ID, "/textures/aspects/fire_connect_to_body_1.png"), 3d, new ResourceLocation(WuxiaCraft.MOD_ID, "fire"), System.BODY)
 	);
 
 	/**
 	 * Basically means Getting the energy and inserting that to the body
 	 */
 	public static RegistryObject<TechniqueAspect> BODY_GATHERING = ASPECTS.register("body_gathering",
-			() -> new AspectSystemGather("body_gathering", new ResourceLocation(WuxiaCraft.MOD_ID, "/textures/aspects/ember.png"), System.BODY)
+			() -> new AspectSystemGather("body_gathering", new ResourceLocation(WuxiaCraft.MOD_ID, "/textures/aspects/body_gathering.png"), System.BODY)
 	);
 
 	/**
 	 * Basically means Getting the energy and inserting that to the body
 	 */
 	public static RegistryObject<TechniqueAspect> DIVINE_GATHERING = ASPECTS.register("divine_gathering",
-			() -> new AspectSystemGather("body_gathering", new ResourceLocation(WuxiaCraft.MOD_ID, "/textures/aspects/ember.png"), System.BODY)
+			() -> new AspectSystemGather("body_gathering", new ResourceLocation(WuxiaCraft.MOD_ID, "/textures/aspects/divine_gathering.png"), System.BODY)
 	);
 
 	/**
 	 * Basically means Getting the energy and inserting that to the body
 	 */
 	public static RegistryObject<TechniqueAspect> ESSENCE_GATHERING = ASPECTS.register("essence_gathering",
-			() -> new AspectSystemGather("body_gathering", new ResourceLocation(WuxiaCraft.MOD_ID, "/textures/aspects/ember.png"), System.BODY)
+			() -> new AspectSystemGather("body_gathering", new ResourceLocation(WuxiaCraft.MOD_ID, "/textures/aspects/essence_gathering.png"), System.BODY)
 	);
 
 	/**

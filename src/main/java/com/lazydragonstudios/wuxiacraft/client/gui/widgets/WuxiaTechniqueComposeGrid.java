@@ -1,7 +1,8 @@
 package com.lazydragonstudios.wuxiacraft.client.gui.widgets;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.TechniqueGrid;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
@@ -9,9 +10,10 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.awt.*;
 import java.util.HashMap;
@@ -21,7 +23,7 @@ import java.util.LinkedList;
 @ParametersAreNonnullByDefault
 public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 
-	public final TechniqueGrid grid;
+	private final TechniqueGrid grid;
 
 	private int gridRadius;
 
@@ -29,12 +31,24 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 
 	private final HashMap<Point, Point> hexagonToCartesianQuickAssess;
 
+	private final LinkedList<ColoredLineSegment> connectionLines;
+
+	public MouseInputPredicate onClicked;
+
+	public MouseInputPredicate onDrag;
+
+	public MouseInputPredicate onRelease;
+
 	public WuxiaTechniqueComposeGrid(int x, int y, TechniqueGrid grid) {
 		super(x, y, 0, 0, new TextComponent(""));
 		this.grid = grid;
 		this.hexagonCoordinates = new LinkedList<>();
 		this.hexagonToCartesianQuickAssess = new HashMap<>();
+		this.connectionLines = new LinkedList<>();
 		this.setGridRadius(1);
+		onClicked = (mx, my, mb) -> false;
+		onDrag = (mx, my, mb) -> false;
+		onRelease = (mx, my, mb) -> false;
 	}
 
 	public void setGridRadius(int gridRadius) {
@@ -60,9 +74,9 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 		var mc = Minecraft.getInstance();
 		var player = mc.player;
 		if (player == null) return;
+		final ResourceLocation emptyId = WuxiaTechniqueAspects.EMPTY.getId();
 
 		RenderSystem.enableBlend();
-		RenderSystem.setShaderTexture(0, WuxiaButton.UI_CONTROLS);
 		poseStack.pushPose();
 		poseStack.translate(this.x + this.width / 2f, this.y + this.height / 2f, 0);
 		HashSet<Point> visited = new HashSet<>();
@@ -85,8 +99,8 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 			RenderSystem.setShader(GameRenderer::getRendertypeLinesShader);
 			RenderSystem.disableCull();
 			RenderSystem.disableTexture();
-			int guiScale = (int)(mc.getWindow().getGuiScale());
-			RenderSystem.lineWidth(guiScale*2.5f);
+			int guiScale = (int) (mc.getWindow().getGuiScale());
+			RenderSystem.lineWidth(guiScale * 2.5f);
 			buffer.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
 			for (var neighbour : TechniqueGrid.hexagonalNeighbours) {
 				Point neighbourC = new Point(hexC.x + neighbour.x, hexC.y + neighbour.y);
@@ -99,6 +113,7 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 			tesselator.end();
 			RenderSystem.enableCull();
 			RenderSystem.enableTexture();
+			RenderSystem.setShaderTexture(0, WuxiaButton.UI_CONTROLS);
 			GuiComponent.blit(poseStack,
 					-19, -19,
 					38, 38,
@@ -106,30 +121,103 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 					38, 38,
 					256, 256
 			);
+			var aspectInPlace = this.grid.getAspectAtGrid(hexC);
+			if (aspectInPlace != emptyId) {
+				var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspectInPlace);
+				if (techAspect != null) {
+					RenderSystem.setShaderTexture(0, techAspect.textureLocation);
+					GuiComponent.blit(poseStack,
+							-16, -16,
+							32, 32,
+							0, 0,
+							32, 32,
+							32, 32
+					);
+				}
+			}
 			poseStack.popPose();
+		}
+		if (!this.connectionLines.isEmpty()) {
+			var tesselator = Tesselator.getInstance();
+			var buffer = tesselator.getBuilder();
+			RenderSystem.setShader(GameRenderer::getRendertypeLinesShader);
+			RenderSystem.disableCull();
+			RenderSystem.disableTexture();
+			int guiScale = (int) (mc.getWindow().getGuiScale());
+			RenderSystem.lineWidth(guiScale * 2.5f);
+			buffer.begin(VertexFormat.Mode.LINES, DefaultVertexFormat.POSITION_COLOR_NORMAL);
+			for (var line : this.connectionLines) {
+				Point start = hexagonToCartesianQuickAssess.get(line.start);
+				Point end = hexagonToCartesianQuickAssess.get(line.finish);
+				int color = line.color;
+				buffer.vertex(poseStack.last().pose(), start.x, start.y, 0).color(color).normal(1f, 0f, 0f).endVertex();
+				buffer.vertex(poseStack.last().pose(), end.x, end.y, 0).color(color).normal(1f, 0f, 0f).endVertex();
+			}
+			tesselator.end();
+			RenderSystem.enableCull();
+			RenderSystem.enableTexture();
+			RenderSystem.lineWidth(1f);
 		}
 		poseStack.popPose();
 		RenderSystem.disableBlend();
 	}
 
+	public void addAspectToGrid(Point p, ResourceLocation aspectLocation) {
+		if (!this.hexagonToCartesianQuickAssess.containsKey(p)) return;
+		this.grid.addGridNode(p, aspectLocation);
+		this.recalculateLines();
+	}
+
+	public void removeAspectToGrid(Point p) {
+		if (!this.hexagonToCartesianQuickAssess.containsKey(p)) return;
+		this.grid.removeGridNode(p);
+		this.recalculateLines();
+	}
+
+	private void recalculateLines() {
+		this.connectionLines.clear();
+		if (grid.getStartNodePoint() == null) return;
+		TechniqueGrid.traverseGridFromStart(this.grid, (node) -> {
+				},
+				(node, neighbour) -> {
+					this.connectionLines.add(new ColoredLineSegment(node, neighbour, 0xAC2020FF));
+				},
+				(junk, neighbour) -> {
+					this.connectionLines.add(new ColoredLineSegment(junk, neighbour, 0xACFF2020));
+				}, (disconnected) -> {
+
+				}
+		);
+	}
+
+	@Nullable
+	public Point getHexCoordinateFromMousePosition(int mouseX, int mouseY) {
+		int translatedMouseX = mouseX - this.x - this.width / 2;
+		int translatedMouseY = mouseY - this.y - this.height / 2;
+
+		var hexC = getHexPointFromCartesian(new Point(translatedMouseX, translatedMouseY));
+		if (this.hexagonToCartesianQuickAssess.containsKey(hexC)) {
+			var cartC = hexagonToCartesianQuickAssess.get(hexC);
+			if (distance(cartC, new Point(translatedMouseX, translatedMouseY)) <= 17) {
+				return hexC;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		int transformedX = (int) (mouseX - this.x - this.width / 2);
-		int transformedY = (int) (mouseY - this.y - this.height / 2);
-		Point p = getHexPointFromCartesian(new Point(transformedX, transformedY));
-		System.out.printf("MouseX: %d  MouseY: %d\n", transformedX, transformedY);
-		System.out.printf("PointX: %d  PointY: %d\n", p.x, p.y);
-		return false;
+		return this.onClicked.apply(mouseX, mouseY, button);
 	}
 
 	@Override
-	public boolean mouseReleased(double p_93684_, double p_93685_, int p_93686_) {
-		return false;
+	public boolean mouseReleased(double mouseX, double mouseY, int button) {
+		return this.onRelease.apply(mouseX, mouseY, button);
 	}
 
 	@Override
-	public boolean mouseDragged(double p_93645_, double p_93646_, int p_93647_, double p_93648_, double p_93649_) {
-		return false;
+	public boolean mouseDragged(double mouseX, double mouseY, int button, double mouseDeltaX, double mouseDeltaY) {
+		return this.onDrag.apply(mouseX, mouseY, button);
 	}
 
 	@Override
@@ -174,5 +262,13 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 		int dx = b.x - a.x;
 		int dy = b.y - a.y;
 		return Math.sqrt(dx * dx + dy * dy);
+	}
+
+	public interface MouseInputPredicate {
+		boolean apply(double mouseX, double mouseY, int button);
+	}
+
+	public record ColoredLineSegment(Point start, Point finish, int color) {
+
 	}
 }

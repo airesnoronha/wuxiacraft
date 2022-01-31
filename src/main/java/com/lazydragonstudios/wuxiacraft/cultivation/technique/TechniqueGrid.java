@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.technique;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects.TechniqueAspect;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -7,11 +8,15 @@ import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class TechniqueGrid {
 
@@ -22,8 +27,7 @@ public class TechniqueGrid {
 	 */
 	private Point startNodePoint = null;
 
-	public static Point[] hexagonalNeighbours = new Point[]{
-			new Point(1, 0), //right
+	public static Point[] hexagonalNeighbours = new Point[]{new Point(1, 0), //right
 			new Point(0, 1), //bottom right
 			new Point(-1, 1), //bottom left
 			new Point(-1, 0), //left
@@ -42,13 +46,20 @@ public class TechniqueGrid {
 	public boolean addGridNode(Point p, ResourceLocation aspect) {
 		ResourceLocation id = WuxiaTechniqueAspects.START.getId();
 		if (aspect.equals(id)) {
-			if (startNodePoint == null)
-				startNodePoint = p;
-			else
-				return false;
+			if (startNodePoint == null) startNodePoint = p;
+			else return false;
 		}
 		grid.put(p, aspect);
 		return true;
+	}
+
+	public void removeGridNode(Point p) {
+		ResourceLocation id = WuxiaTechniqueAspects.START.getId();
+		var aspect = this.grid.get(p);
+		if (aspect.equals(id)) {
+			this.startNodePoint = null;
+		}
+		this.grid.remove(p);
 	}
 
 	/**
@@ -58,7 +69,7 @@ public class TechniqueGrid {
 	 * @param processHierarchy the order in which we are accepting aspects
 	 * @param metaData         the data passed between nodes
 	 */
-	public void processAspects(Point visiting, HashMap<Point, HashSet<Point>> processHierarchy, HashMap<String, Object> metaData) {
+	private void processAspects(Point visiting, HashMap<Point, HashSet<Point>> processHierarchy, HashMap<String, Object> metaData) {
 		var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.get(visiting));
 		if (aspect == null) return;
 		aspect.accept(metaData);
@@ -72,10 +83,6 @@ public class TechniqueGrid {
 	 */
 	public TechniqueModifier compile() {
 		if (!grid.get(startNodePoint).equals(WuxiaTechniqueAspects.START.getId())) return null;
-		HashSet<Point> visited = new HashSet<>();
-		//breadth first search
-		LinkedList<Point> toVisit = new LinkedList<>();
-		toVisit.add(startNodePoint);
 		final ResourceLocation emptyId = WuxiaTechniqueAspects.EMPTY.getId();
 
 		var processHierarchy = new HashMap<Point, HashSet<Point>>();
@@ -83,46 +90,89 @@ public class TechniqueGrid {
 		// data to be passed between nodes
 		HashMap<String, Object> metaData = new HashMap<>();
 
-		var junkNotExpected = new HashSet<Point>();
+		traverseGridFromStart(this,
+				(node) -> processHierarchy.put(node, new HashSet<>()),
+				(node, neighbour) -> processHierarchy.get(node).add(neighbour), (junk, neighbour) -> {
+					var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.getOrDefault(junk, emptyId));
+					if (junkAspect == null) return;
+					junkAspect.reject(metaData);
+				}, (disconnected) -> {
+					var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.getOrDefault(disconnected, emptyId));
+					if (junkAspect == null) return;
+					junkAspect.disconnect(metaData);
+				});
+		processAspects(startNodePoint, processHierarchy, metaData);
+		return getModifiersFromMetaData(metaData);
+	}
 
+	/**
+	 * this method will traverse the grid
+	 * this is a way to make all traversals the same
+	 * So we know that rendering and compiling are doing the same thing
+	 * And possibly elsewhere as well
+	 */
+	//TODO fix bug here
+	public static void traverseGridFromStart(TechniqueGrid grid, Consumer<Point> visit, BiConsumer<Point, Point> onConnect, BiConsumer<Point, Point> onJunked, Consumer<Point> onDisconnected) {
+		if (grid.startNodePoint == null) return;
+		if (!grid.grid.get(grid.startNodePoint).equals(WuxiaTechniqueAspects.START.getId())) return;
+		final ResourceLocation emptyId = WuxiaTechniqueAspects.EMPTY.getId();
+		//breadth first search
+		LinkedList<Point> toVisit = new LinkedList<>();
+		HashSet<Point> visited = new HashSet<>();
+		HashMap<Point, HashSet<Point>> connectedFrom = new HashMap<>();
+		HashMap<Point, HashSet<Point>> connectedTo = new HashMap<>();
+		toVisit.add(grid.startNodePoint);
+		var junkNotExpected = new HashMap<Point, Point>();
+		layerWide:
 		while (!toVisit.isEmpty()) { // layer wide iteration aka Breadth first
 			var visiting = toVisit.removeFirst();
 			if (visited.contains(visiting)) continue;
-			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.getOrDefault(visiting, emptyId));
+			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(grid.grid.getOrDefault(visiting, emptyId));
 			if (aspect == null) continue;
-			this.grid.get(visiting);
-			processHierarchy.put(visiting, new HashSet<>());
+			grid.grid.get(visiting);
 			visited.add(visiting);
+			junkNotExpected.remove(visiting);
+			visit.accept(visiting);
+			connectedTo.put(visiting, new HashSet<>());
 			for (var neighbour : hexagonalNeighbours) {
 				Point visitingNeighbour = new Point(visiting.x + neighbour.x, visiting.y + neighbour.y);
-				var neighbourAspect = this.grid.getOrDefault(visitingNeighbour, emptyId);
+				var neighbourAspect = grid.grid.getOrDefault(visitingNeighbour, emptyId);
 				if (visited.contains(visitingNeighbour)) continue;
-				if (aspect.canConnect(WuxiaRegistries.TECHNIQUE_ASPECT.getValue(neighbourAspect))) {
-					toVisit.add(visitingNeighbour);
-					processHierarchy.get(visiting).add(visitingNeighbour);
-					junkNotExpected.remove(visitingNeighbour);
+				connectedFrom.put(visitingNeighbour, new HashSet<>());
+				TechniqueAspect neighbourTechAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(neighbourAspect);
+				if(neighbourTechAspect == null) continue ;
+				if (aspect.canConnect(neighbourTechAspect)) {
+					int cFrom = connectedFrom.get(visitingNeighbour).size();
+					int cTo = connectedFrom.get(visiting).size();
+					int allowedFrom = neighbourTechAspect.canConnectFromCount();
+					int allowedTo = aspect.canConnectToCount();
+					if((allowedFrom == -1 || allowedFrom < cFrom) && (allowedTo == -1 || allowedTo < cTo)) {
+						connectedFrom.get(visitingNeighbour).add(visiting);
+						connectedTo.get(visiting).add(visitingNeighbour);
+						toVisit.add(visitingNeighbour);
+						onConnect.accept(visiting, visitingNeighbour);
+						continue layerWide;
+					}
 				} else if (neighbourAspect == emptyId) {
 					visited.add(visitingNeighbour);
 				} else {
-					junkNotExpected.add(visitingNeighbour);
+					junkNotExpected.put(visitingNeighbour, visiting);
 				}
 			}
 		}
-		processAspects(startNodePoint, processHierarchy, metaData);
-		for (var point : junkNotExpected) {
-			var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.getOrDefault(point, emptyId));
+		for (var point : junkNotExpected.keySet()) {
+			var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(grid.grid.getOrDefault(point, emptyId));
 			if (junkAspect == null) continue;
-			junkAspect.reject(metaData);
+			onJunked.accept(junkNotExpected.get(point), point);
 			visited.add(point);
 		}
-		for (var key : this.grid.keySet()) {
+		for (var key : grid.grid.keySet()) {
 			if (!visited.contains(key)) {
-				var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.getOrDefault(key, emptyId));
+				var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(grid.grid.getOrDefault(key, emptyId));
 				if (junkAspect == null) continue;
-				junkAspect.disconnect(metaData);
+				onDisconnected.accept(key);
 			}
 		}
-		return getModifiersFromMetaData(metaData);
 	}
 
 	/**
@@ -144,6 +194,16 @@ public class TechniqueGrid {
 			}
 		}
 		return tMod;
+	}
+
+	@Nonnull
+	public ResourceLocation getAspectAtGrid(Point p) {
+		final ResourceLocation emptyId = WuxiaTechniqueAspects.EMPTY.getId();
+		return this.grid.getOrDefault(p, emptyId);
+	}
+
+	public Point getStartNodePoint() {
+		return startNodePoint;
 	}
 
 	public TechniqueGrid() {

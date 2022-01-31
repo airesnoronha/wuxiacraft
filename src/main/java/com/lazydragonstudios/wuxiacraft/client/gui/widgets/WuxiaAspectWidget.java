@@ -21,6 +21,8 @@ public class WuxiaAspectWidget extends AbstractWidget {
 
 	private BiConsumer<Double, Double> onDragged;
 
+	private BiConsumer<Double, Double> onRelease;
+
 	public WuxiaAspectWidget(int x, int y, ResourceLocation aspect) {
 		super(x, y, 32, 32, Component.nullToEmpty(aspect.getPath()));
 		this.aspect = aspect;
@@ -59,6 +61,10 @@ public class WuxiaAspectWidget extends AbstractWidget {
 		this.onDragged = onDragged;
 	}
 
+	public void setOnRelease(BiConsumer<Double, Double> onRelease) {
+		this.onRelease = onRelease;
+	}
+
 	@Override
 	public void onClick(double mouseX, double mouseY) {
 		this.onClicked.accept(mouseX, mouseY);
@@ -67,5 +73,10 @@ public class WuxiaAspectWidget extends AbstractWidget {
 	@Override
 	protected void onDrag(double mouseX, double mouseY, double mouseDeltaX, double mouseDeltaY) {
 		this.onDragged.accept(mouseX, mouseY);
+	}
+
+	@Override
+	public void onRelease(double mouseX, double mouseY) {
+		this.onRelease.accept(mouseX, mouseY);
 	}
 }

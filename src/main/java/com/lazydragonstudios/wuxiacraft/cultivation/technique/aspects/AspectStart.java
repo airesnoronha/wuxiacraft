@@ -20,6 +20,16 @@ public class AspectStart extends TechniqueAspect {
 		return false;
 	}
 
+	@Override
+	public int canConnectFromCount() {
+		return 0;
+	}
+
+	@Override
+	public int canConnectToCount() {
+		return -1;
+	}
+
 	@Nonnull
 	@Override
 	public LinkedList<AbstractWidget> getStatsSheetDescriptor(ResourceLocation aspectRegistryName) {

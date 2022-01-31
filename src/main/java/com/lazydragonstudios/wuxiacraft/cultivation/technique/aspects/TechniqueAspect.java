@@ -42,6 +42,22 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	}
 
 	/**
+	 *
+	 * @return How many connections forward can make, -1 for infinite
+	 */
+	public int canConnectToCount() {
+		return 1;
+	}
+
+	/**
+	 *
+	 * @return How many connections backwards can make, -1 for infinite
+	 */
+	public int canConnectFromCount() {
+		return 1;
+	}
+
+	/**
 	 * Sets the description of this technique aspect to display in game
 	 * Probably the bot is going to use this desc as well
 	 *
