@@ -44,7 +44,6 @@ public class Cultivation implements ICultivation {
 		this.systemCultivation.put(System.DIVINE, new SystemContainer(System.DIVINE));
 		this.systemCultivation.put(System.ESSENCE, new SystemContainer(System.ESSENCE));
 		this.aspects = new AspectContainer();
-		this.aspects.addAspectProficiency(this, WuxiaTechniqueAspects.START.getId(), BigDecimal.TEN);
 	}
 
 	public static ICultivation get(Player target) {

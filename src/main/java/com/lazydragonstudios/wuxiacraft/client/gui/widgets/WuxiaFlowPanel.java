@@ -51,7 +51,7 @@ public class WuxiaFlowPanel extends WuxiaScrollPanel {
 		int currentLineHeight = 0;
 		this.contentWidth = 0;
 		for (var widget : this.children) {
-			if (currentLeftPos + widget.getWidth() + margin > this.width - this.scrollBarWidth) {
+			if (currentLeftPos + widget.getWidth() > this.width - this.scrollBarWidth) {
 				currentLeftPos = 0;
 				currentTopPos += currentLineHeight + margin;
 			}

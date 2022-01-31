@@ -36,13 +36,15 @@ public class TechniqueTab extends IntrospectionTab {
 		var renderGrid = cultivation.getSystemData(this.system).techniqueData.grid.copy();
 		int scaledWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();
 		int scaledHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight();
-		int stretchedSpace = scaledWidth - 316;
+		int stretchedSpace = scaledWidth-36 - 316;
 		aspectWidgets = new HashMap<>();
 
-		searchField = new WuxiaTextField(36, 36, 116, 20, new TextComponent(""));
+		searchField = new WuxiaTextField(36+3, 36, 110, 20, new TextComponent(""));
 
-		aspectsPanel = new WuxiaFlowPanel(36+20+3, 36, 116, scaledHeight - 16, new TextComponent(""));
+		aspectsPanel = new WuxiaFlowPanel(36, 36+20+3, 116, scaledHeight - 16, new TextComponent(""));
+		aspectsPanel.margin = 5;
 		techniqueStatsPanel = new WuxiaScrollPanel(scaledWidth - 200, 36, 200, scaledHeight - 55 - 36, new TextComponent(""));
+
 
 		composerPanel = new WuxiaScrollPanel(36 + 116, 36, stretchedSpace, scaledHeight - 36, new TextComponent(""));
 		composerPanel.setOverflow(WuxiaScrollPanel.OverflowType.HIDDEN);
@@ -52,11 +54,13 @@ public class TechniqueTab extends IntrospectionTab {
 		saveBtn = new WuxiaButton(scaledWidth - 190, scaledHeight - 25, 180, 20, new TextComponent("Save"), () -> {
 		});
 
-		gridComposer = new WuxiaTechniqueComposeGrid(composerPanel.getWidth()/2, composerPanel.getHeight()/2, renderGrid);
+		gridComposer = new WuxiaTechniqueComposeGrid(5, 5, renderGrid);
 		composerPanel.addChild(gridComposer);
 
 		screen.addRenderableWidget(aspectsPanel);
+		screen.addRenderableWidget(composerPanel);
 		screen.addRenderableWidget(techniqueStatsPanel);
+		screen.addRenderableWidget(searchField);
 		screen.addRenderableWidget(compileBtn);
 		screen.addRenderableWidget(saveBtn);
 	}

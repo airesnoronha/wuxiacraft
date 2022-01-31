@@ -1,11 +1,14 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.technique;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects.TechniqueAspect;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
+import org.checkerframework.checker.units.qual.C;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -16,6 +19,11 @@ public class AspectContainer {
 	private final HashMap<ResourceLocation, BigDecimal> aspectAndProficiency = new HashMap<>();
 
 	private int knownAspectCount = 0;
+
+	public AspectContainer() {
+		aspectAndProficiency.put(WuxiaTechniqueAspects.START.getId(), BigDecimal.TEN);
+		countKnownAspects();
+	}
 
 	public BigDecimal getAspectProficiency(ResourceLocation aspect) {
 		return aspectAndProficiency.getOrDefault(aspect, BigDecimal.ZERO);

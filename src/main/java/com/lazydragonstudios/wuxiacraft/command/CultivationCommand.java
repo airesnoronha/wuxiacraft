@@ -3,6 +3,7 @@ package com.lazydragonstudios.wuxiacraft.command;
 import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
 import com.lazydragonstudios.wuxiacraft.networking.CultivationSyncMessage;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import com.mojang.brigadier.CommandDispatcher;
@@ -145,8 +146,8 @@ public class CultivationCommand {
 
 		ICultivation cultivation = Cultivation.get(target);
 		TextComponent message = new TextComponent("");
-
-		cultivation.getAspects().deserialize(new AspectContainer().serialize());
+		var aspects = new AspectContainer();
+		cultivation.getAspects().deserialize(aspects.serialize());
 		message.append("Successfully cleared all technique aspects from target player");
 		ctx.getSource().sendSuccess(message, true);
 		syncClientCultivation(target);
