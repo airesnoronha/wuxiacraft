@@ -14,6 +14,7 @@ public class AspectElementSystemConverter extends AspectElementalConverter {
 
 	@SuppressWarnings("rawtypes")
 	private final static HashMap<Class, Integer> priority = new HashMap<>();
+
 	static {
 		priority.put(AspectElementSystemConverter.class, -2);
 		priority.put(AspectSystemGather.class, -1);
@@ -45,7 +46,7 @@ public class AspectElementSystemConverter extends AspectElementalConverter {
 	public int connectPrioritySorter(TechniqueAspect aspect1, TechniqueAspect aspect2) {
 		int priority1 = priority.getOrDefault(aspect1.getClass(), 0);
 		int priority2 = priority.getOrDefault(aspect2.getClass(), 0);
-		int finalPriority = priority1-priority2;
-		return finalPriority/Math.abs(finalPriority);
+		int finalPriority = priority1 - priority2;
+		return finalPriority != 0 ? finalPriority / Math.abs(finalPriority) : 0;
 	}
 }
