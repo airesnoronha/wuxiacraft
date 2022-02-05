@@ -1,6 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.cultivation;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
@@ -40,20 +41,26 @@ public class Cultivation implements ICultivation {
 		for (var stat : PlayerStat.values()) {
 			this.playerStats.put(stat, stat.defaultValue);
 		}
-		this.systemCultivation.put(System.BODY, new SystemContainer(System.BODY));
-		this.systemCultivation.put(System.DIVINE, new SystemContainer(System.DIVINE));
-		this.systemCultivation.put(System.ESSENCE, new SystemContainer(System.ESSENCE));
+		for (var system : System.values()) {
+			SystemContainer systemData = new SystemContainer(system);
+			this.systemCultivation.put(system, systemData);
+		}
 		this.aspects = new AspectContainer();
 	}
 
 	public static ICultivation get(Player target) {
-		var cultOpt =  target.getCapability(CultivationProvider.CULTIVATION_PROVIDER).resolve();
+		var cultOpt = target.getCapability(CultivationProvider.CULTIVATION_PROVIDER).resolve();
 		return cultOpt.orElseGet(Cultivation::new);
 	}
 
 	@Override
 	public BigDecimal getPlayerStat(PlayerStat stat) {
-		return this.playerStats.getOrDefault(stat, stat.defaultValue);
+		BigDecimal statValue = this.playerStats.getOrDefault(stat, stat.defaultValue);
+		for (var system : System.values()) {
+			var data = getSystemData(system);
+			statValue = statValue.add(data.getPlayerStat(stat));
+		}
+		return statValue;
 	}
 
 	@Override
@@ -68,10 +75,21 @@ public class Cultivation implements ICultivation {
 		return systemCultivation.get(system);
 	}
 
+	public void calculateStats() {
+		for (var stat : PlayerStat.values()) {
+			if (stat.isModifiable) continue;
+			var statValue = stat.defaultValue;
+			for (var system : System.values()) {
+				statValue = statValue.add(this.getSystemData(system).getPlayerStat(stat));
+			}
+		}
+	}
+
 	@Override
 	public CompoundTag serialize() {
 		CompoundTag tag = new CompoundTag();
 		for (var stat : this.playerStats.keySet()) {
+			if (!stat.isModifiable) continue;
 			tag.putString("stat-" + stat.name().toLowerCase(), this.playerStats.get(stat).toPlainString());
 		}
 		tag.put("body-data", getSystemData(System.BODY).serialize());
@@ -84,15 +102,23 @@ public class Cultivation implements ICultivation {
 	@Override
 	public void deserialize(CompoundTag tag) {
 		for (var stat : this.playerStats.keySet()) {
+			if (!stat.isModifiable) continue;
 			if (tag.contains("stat-" + stat.name().toLowerCase())) {
 				this.playerStats.put(stat, new BigDecimal(tag.getString("stat-" + stat.name().toLowerCase())));
 			} else {
 				this.playerStats.put(stat, new BigDecimal("0"));
 			}
 		}
-		getSystemData(System.BODY).deserialize(tag.getCompound("body-data"));
-		getSystemData(System.DIVINE).deserialize(tag.getCompound("divine-data"));
-		getSystemData(System.ESSENCE).deserialize(tag.getCompound("essence-data"));
+		calculateStats();
+		if (tag.contains("body-data")) {
+			getSystemData(System.BODY).deserialize(tag.getCompound("body-data"), this);
+		}
+		if (tag.contains("divine-data")) {
+			getSystemData(System.DIVINE).deserialize(tag.getCompound("divine-data"), this);
+		}
+		if (tag.contains("essence-data")) {
+			getSystemData(System.ESSENCE).deserialize(tag.getCompound("essence-data"), this);
+		}
 		if (tag.contains("aspect-data")) {
 			this.aspects.deserialize(tag.getCompound("aspect-data"));
 		}

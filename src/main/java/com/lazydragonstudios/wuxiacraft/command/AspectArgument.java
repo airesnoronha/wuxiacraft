@@ -35,7 +35,7 @@ public class AspectArgument extends ResourceLocationArgument {
 
 	@Override
 	public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-		return SharedSuggestionProvider.suggest(WuxiaRegistries.TECHNIQUE_ASPECT.getEntries(), builder, Object::toString, (aspect) -> aspect::toString);
+		return SharedSuggestionProvider.suggest(WuxiaRegistries.TECHNIQUE_ASPECT.getKeys(), builder, Object::toString, (aspect) -> aspect::toString);
 	}
 
 	public static AspectArgument id() {

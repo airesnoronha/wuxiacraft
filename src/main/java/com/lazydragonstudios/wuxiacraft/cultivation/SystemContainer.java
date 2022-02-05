@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.cultivation;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -60,7 +61,14 @@ public class SystemContainer {
 	}
 
 	public BigDecimal getStat(PlayerSystemStat stat) {
-		return this.systemStats.getOrDefault(stat, new BigDecimal("0"));
+		return this.systemStats.getOrDefault(stat, BigDecimal.ZERO);
+	}
+
+	public BigDecimal getPlayerStat(PlayerStat stat) {
+		BigDecimal statValue = this.getStage().getPlayerStat(stat);
+		//this looks like statsValue = statsValue * (1 + techniqueModifier)
+		statValue = statValue.multiply(BigDecimal.ONE.add(this.techniqueData.modifier.stats.getOrDefault(stat, BigDecimal.ZERO)));
+		return statValue;
 	}
 
 	public void setStat(PlayerSystemStat stat, BigDecimal value) {
@@ -101,27 +109,58 @@ public class SystemContainer {
 		}
 	}
 
+	public void calculateStats(ICultivation cultivation) {
+		for (var stat : PlayerSystemStat.values()) {
+			if (stat.isModifiable) continue;
+			var value = stat.defaultValue;
+			if (this.system == System.ESSENCE && stat == PlayerSystemStat.ENERGY_REGEN) {
+				value = BigDecimal.ZERO;
+			}
+			var stageValue = BigDecimal.ZERO;
+			for (var system : System.values()) {
+				var systemData = cultivation.getSystemData(system);
+				stageValue = stageValue.add(systemData.getStage().getSystemStat(this.system, stat));
+			}
+			var techniqueModifier = this.techniqueData.modifier.systemStats.get(this.system).getOrDefault(stat, BigDecimal.ZERO);
+			//value = value + stageValue * (1 + techModifier)
+			value = value.add(stageValue).multiply(BigDecimal.ONE.add(techniqueModifier));
+			this.systemStats.put(stat, value);
+		}
+	}
+
 	public CompoundTag serialize() {
 		CompoundTag tag = new CompoundTag();
 		tag.putString("current_realm", this.currentRealm.toString());
 		tag.putString("current_stage", this.currentStage.toString());
 		for (var stat : PlayerSystemStat.values()) {
+			if (!stat.isModifiable) continue;
 			tag.putString("stat-" + stat.name().toLowerCase(), this.getStat(stat).toPlainString());
 		}
 		tag.put("technique-data", this.techniqueData.serialize());
 		return tag;
 	}
 
-	public void deserialize(CompoundTag tag) {
-		this.currentRealm = new ResourceLocation(tag.getString("current_realm"));
-		this.currentStage = new ResourceLocation(tag.getString("current_stage"));
+	public void deserialize(CompoundTag tag, ICultivation cultivation) {
+		if (tag.contains("current_realm")) {
+			this.currentRealm = new ResourceLocation(tag.getString("current_realm"));
+		}
+		if (tag.contains("current_realm")) {
+			this.currentStage = new ResourceLocation(tag.getString("current_stage"));
+		}
 		for (var stat : PlayerSystemStat.values()) {
-			this.systemStats.put(stat, new BigDecimal(tag.getString("stat-" + stat.name().toLowerCase())));
+			if (!stat.isModifiable) continue;
+			String statName = "stat-" + stat.name().toLowerCase();
+			if (tag.contains(statName)) {
+				this.systemStats.put(stat, new BigDecimal(tag.getString(statName)));
+			} else {
+				this.systemStats.put(stat, stat.defaultValue);
+			}
 		}
 		CompoundTag techDataTag = (CompoundTag) tag.get("technique-data");
 		if (techDataTag != null) {
 			this.techniqueData.deserialize(techDataTag);
 		}
+		calculateStats(cultivation);
 	}
 
 }

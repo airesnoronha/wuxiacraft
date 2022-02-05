@@ -18,18 +18,14 @@ public class TechniqueContainer {
 	public CompoundTag serialize() {
 		var tag = new CompoundTag();
 		tag.put("grid", this.grid.serialize());
-		tag.put("modifier", this.modifier.serialize());
 		return tag;
 	}
 
 	public void deserialize(CompoundTag tag) {
 		CompoundTag grid = (CompoundTag) tag.get("grid");
-		if(grid != null) {
-			this.grid.deserialize( grid);
+		if (grid != null) {
+			this.grid.deserialize(grid);
 		}
-		CompoundTag modifier =(CompoundTag) tag.get("modifier");
-		if(modifier != null) {
-			this.modifier.deserialize( modifier);
-		}
+		this.modifier = this.grid.compile();
 	}
 }

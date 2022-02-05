@@ -3,11 +3,14 @@ package com.lazydragonstudios.wuxiacraft.command;
 import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaRealms;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
 import com.lazydragonstudios.wuxiacraft.networking.CultivationSyncMessage;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
@@ -33,6 +36,23 @@ public class CultivationCommand {
 				.then(Commands.argument("target", EntityArgument.player())
 						.then(Commands.literal("get")
 								.executes(CultivationCommand::getCultivation)
+						)
+						.then(Commands.literal("reset")
+								.then(Commands.literal("confirm")
+										.then(Commands.literal("yes")
+												.executes(CultivationCommand::resetCultivation)
+										)
+										.then(Commands.literal("no")
+												.executes(ctx -> 1)
+										)
+								)
+						)
+						.then(Commands.literal("set")
+								.then(Commands.argument("system", StringArgumentType.string())
+										.then(Commands.argument("stage", StringArgumentType.string())
+												.executes(CultivationCommand::setCultivation)
+										)
+								)
 						)
 						.then(Commands.literal("tech")
 								.then(Commands.literal("add")
@@ -94,6 +114,44 @@ public class CultivationCommand {
 			message.append("Energy: ").append(String.format("%.1f", systemData.getStat(PlayerSystemStat.ENERGY))).append("\n\n");
 		}
 		ctx.getSource().sendSuccess(message, true);
+		return 1;
+	}
+
+	public static int resetCultivation(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		ServerPlayer target = EntityArgument.getPlayer(ctx, "target");
+		ICultivation cultivation = Cultivation.get(target);
+		cultivation.deserialize(new Cultivation().serialize());
+		TextComponent message = new TextComponent("Cultivation successfully reset, I feel sorry about that dude!");
+		ctx.getSource().sendSuccess(message, true);
+		syncClientCultivation(target);
+		return 1;
+	}
+
+	public static int setCultivation(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		ServerPlayer target = EntityArgument.getPlayer(ctx, "target");
+		String systemName = StringArgumentType.getString(ctx, "system").toUpperCase();
+		String stageName = StringArgumentType.getString(ctx, "stage").toLowerCase();
+		System system;
+		ResourceLocation stageLocation = new ResourceLocation(stageName);
+		if(!stageName.contains(":")) {
+			stageLocation = new ResourceLocation("wuxiacraft", stageName);
+		}
+		var stage = WuxiaRegistries.CULTIVATION_STAGES.getValue(stageLocation);
+		try {
+			system = System.valueOf(systemName);
+		} catch (IllegalArgumentException e) {
+			throw new CommandSyntaxException(CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument(), () -> ("Unknown specified system" + systemName));
+		}
+		if (stage == null) {
+			throw new CommandSyntaxException(CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument(), () -> ("Unknown specified stage " + stageName));
+		}
+		ICultivation cultivation = Cultivation.get(target);
+		var systemData = cultivation.getSystemData(system);
+		systemData.currentStage = stageLocation;
+		systemData.calculateStats(cultivation);
+		TextComponent message = new TextComponent("Successfully changed the stage of the target to " + stageLocation);
+		ctx.getSource().sendSuccess(message, true);
+		syncClientCultivation(target);
 		return 1;
 	}
 

@@ -22,13 +22,16 @@ public class PlayerEntityRenderEventHandler {
 	 */
 	@SubscribeEvent
 	public static void onSinglePlayerRender(RenderLivingEvent.Pre<AbstractClientPlayer, ? extends Model> event) {
-		if (!(event.getEntity() instanceof RemotePlayer)) return; //we don't want local players so far
-		var player = Minecraft.getInstance().player;
-		if (player == event.getEntity()) return; //means in some weird way that the entity is the local player
+		if (!(event.getEntity() instanceof Player)) return; //we don't want local players so far
 		var animationState = ClientAnimationState.get((Player) event.getEntity());
 		if(animationState.isMeditating()) {
 			event.setCanceled(true);
 		}
+		if(!event.isCanceled()) return;
+		//this is when we canceled the rendering to render it ourselves to add animations
+		var renderer = (AnimatedPlayerRenderer)Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(AnimatedPlayerRenderer.animatedEntityType);
+		if(renderer == null) return;
+		renderer.render((AbstractClientPlayer) event.getEntity(), event.hashCode(), event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
 	}
 
 }

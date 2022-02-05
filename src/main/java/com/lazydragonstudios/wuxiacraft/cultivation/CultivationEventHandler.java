@@ -60,13 +60,18 @@ public class CultivationEventHandler {
 		}
 
 		//Body energy regen depends on food
-		if (player.getFoodData().getFoodLevel() > 15 &&
-				bodyData.getStat(PlayerSystemStat.ENERGY).compareTo(bodyData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("0.7"))) < 0) {
+		if (player.getFoodData().getFoodLevel() > 15) {
 			BigDecimal hunger_modifier = new BigDecimal("1");
 			if (player.getFoodData().getFoodLevel() >= 18) hunger_modifier = hunger_modifier.add(new BigDecimal("0.3"));
 			if (player.getFoodData().getFoodLevel() >= 20) hunger_modifier = hunger_modifier.add(new BigDecimal("0.3"));
-			bodyData.addEnergy(bodyData.getStat(PlayerSystemStat.ENERGY_REGEN).multiply(hunger_modifier));
-			player.causeFoodExhaustion(bodyData.getStat(PlayerSystemStat.ENERGY_REGEN).multiply(hunger_modifier).floatValue());
+			BigDecimal finalEnergyRegen = bodyData.getStat(PlayerSystemStat.ENERGY_REGEN).multiply(hunger_modifier);
+			//bodyEnergy <= bodyMaxEnergy * 0.7 (70%)
+			boolean canRegenBodyEnergy = bodyData.getStat(PlayerSystemStat.ENERGY).compareTo(bodyData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("0.7"))) <= 0;
+			if(canRegenBodyEnergy) {
+				bodyData.addEnergy(finalEnergyRegen);
+				bodyData.setStat(PlayerSystemStat.ENERGY, bodyData.getStat(PlayerSystemStat.ENERGY).min(bodyData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("0.7"))));
+				player.causeFoodExhaustion(finalEnergyRegen.floatValue());
+			}
 		}
 		//others don't
 		for (var system : System.values()) {

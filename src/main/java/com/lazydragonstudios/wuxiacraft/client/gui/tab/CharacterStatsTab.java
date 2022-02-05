@@ -45,12 +45,16 @@ public class CharacterStatsTab extends IntrospectionTab {
 			displaySystemLabels.put(system, new HashMap<>());
 			WuxiaScrollPanel systemStatPanel = new WuxiaScrollPanel(0, 0, 100, 100, new TextComponent(""));
 			systemStats.put(system, systemStatPanel);
+			var realmNameLabel = new WuxiaLabel(5, 5, new TextComponent(cultivation.getSystemData(system).currentRealm.getPath()), color);
+			var stageNameLabel = new WuxiaLabel(5, 15, new TextComponent(cultivation.getSystemData(system).currentStage.getPath()), color);
 			for (var stat : PlayerSystemStat.values()) {
 				var statValue = cultivation.getSystemData(system).getStat(stat).toEngineeringString();
 				var label = new WuxiaLabel(stat.locationInStatsSheet.x, stat.locationInStatsSheet.y, new TextComponent(String.format(stat.displayFormat, statValue)), color);
 				displaySystemLabels.get(system).put(stat, label);
 				systemStats.get(system).addChild(label);
 			}
+			systemStatPanel.addChild(realmNameLabel);
+			systemStatPanel.addChild(stageNameLabel);
 			screen.addRenderableWidget(systemStats.get(system));
 		}
 	}
@@ -79,8 +83,8 @@ public class CharacterStatsTab extends IntrospectionTab {
 		statsPanel.setWidth(availableXSpace);
 		statsPanel.setHeight(availableYSpace / 2);
 		for (var system : System.values()) {
-			this.systemStats.get(system).x = 36 + (int)((double)system.ordinal() * (double) availableXSpace / 3.0d);
-			this.systemStats.get(system).y = 36+availableYSpace / 2;
+			this.systemStats.get(system).x = 36 + (int) ((double) system.ordinal() * (double) availableXSpace / 3.0d);
+			this.systemStats.get(system).y = 36 + availableYSpace / 2;
 			this.systemStats.get(system).setWidth(availableXSpace / 3);
 			this.systemStats.get(system).setHeight(availableYSpace / 2);
 		}

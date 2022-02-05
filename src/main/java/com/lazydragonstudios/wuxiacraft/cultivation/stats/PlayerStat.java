@@ -11,8 +11,8 @@ public enum PlayerStat {
 	AGILITY(new BigDecimal("0.0"), false, new Point(10, 60), "Agility: %s"),
 	HEALTH(new BigDecimal("20.0"), true, new Point(10, 10), "Current Health: %s"),
 	MAX_HEALTH(new BigDecimal("20.0"), false, new Point(10, 20), "Maximum Health: %s"),
-	HEALTH_REGEN(new BigDecimal("1.0"), false, new Point(10, 30), "Health Regeneration: %s"),
-	HEALTH_REGEN_COST(new BigDecimal("1.0"), false, new Point(10, 40), "Health Regeneration Cost: %s");
+	HEALTH_REGEN(new BigDecimal("0.01"), false, new Point(10, 30), "Health Regeneration: %s"),
+	HEALTH_REGEN_COST(new BigDecimal("0.03"), false, new Point(10, 40), "Health Regeneration Cost: %s");
 
 	/**
 	 * the default value of the stat

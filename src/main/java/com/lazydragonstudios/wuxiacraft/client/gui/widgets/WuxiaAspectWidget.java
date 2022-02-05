@@ -28,6 +28,7 @@ public class WuxiaAspectWidget extends AbstractWidget {
 		this.aspect = aspect;
 		onClicked = (mx, my) -> {};
 		onDragged = (mx, my) -> {};
+		onRelease = (mx, my) -> {};
 	}
 
 	@Override

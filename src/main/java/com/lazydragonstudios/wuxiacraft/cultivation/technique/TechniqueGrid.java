@@ -81,9 +81,10 @@ public class TechniqueGrid {
 	/**
 	 * Turn the grid with aspects and deserialize this
 	 */
+	@Nonnull
 	public TechniqueModifier compile() {
-		if(this.startNodePoint == null) return null;
-		if (!grid.get(startNodePoint).equals(WuxiaTechniqueAspects.START.getId())) return null;
+		if(this.startNodePoint == null) return new TechniqueModifier();
+		if (!grid.get(startNodePoint).equals(WuxiaTechniqueAspects.START.getId())) return new TechniqueModifier();
 		final ResourceLocation emptyId = WuxiaTechniqueAspects.EMPTY.getId();
 
 		var processHierarchy = new HashMap<Point, HashSet<Point>>();

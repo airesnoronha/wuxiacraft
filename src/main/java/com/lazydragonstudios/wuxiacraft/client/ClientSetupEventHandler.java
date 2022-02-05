@@ -1,5 +1,9 @@
 package com.lazydragonstudios.wuxiacraft.client;
 
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -17,6 +21,12 @@ public class ClientSetupEventHandler {
 
 	@SubscribeEvent
 	public static void onClientSetup(FMLClientSetupEvent event) {
+	}
+
+	@SubscribeEvent
+	public static void onRenderingRegistry(EntityRenderersEvent.RegisterRenderers event) {
+		AnimatedPlayerRenderer.animatedEntityType = EntityType.Builder.<AbstractClientPlayer>createNothing(MobCategory.MISC).build("animated_player_entity");
+		event.registerEntityRenderer(AnimatedPlayerRenderer.animatedEntityType, ctx -> new AnimatedPlayerRenderer(ctx, false));
 	}
 
 }
