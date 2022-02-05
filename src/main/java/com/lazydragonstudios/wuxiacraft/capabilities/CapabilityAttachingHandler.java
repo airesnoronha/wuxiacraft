@@ -13,6 +13,7 @@ public class CapabilityAttachingHandler {
 	public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
 		if(event.getObject().getType() != EntityType.PLAYER) return;
 		event.addCapability(new ResourceLocation(WuxiaCraft.MOD_ID, "cultivation_capability"), new CultivationProvider());
+		event.addCapability(new ResourceLocation(WuxiaCraft.MOD_ID, "animation_state_capability"), new ClientAnimationStateProvider());
 	}
 
 }

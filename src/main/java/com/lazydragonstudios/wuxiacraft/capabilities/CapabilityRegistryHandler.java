@@ -9,5 +9,6 @@ public class CapabilityRegistryHandler {
 	@SubscribeEvent
 	public static void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
 		event.register(ICultivation.class);
+		event.register(IClientAnimationState.class);
 	}
 }
