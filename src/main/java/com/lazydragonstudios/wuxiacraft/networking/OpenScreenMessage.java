@@ -38,6 +38,7 @@ public class OpenScreenMessage {
 	public static void handleMessage(OpenScreenMessage message, Supplier<NetworkEvent.Context> ctxSupplier) {
 		var ctx = ctxSupplier.get();
 		var side = ctx.getDirection().getReceptionSide();
+		ctx.setPacketHandled(true);
 		if (side.isServer()) {
 			ctx.enqueueWork(() -> {
 				if (ctx.getSender() != null) {

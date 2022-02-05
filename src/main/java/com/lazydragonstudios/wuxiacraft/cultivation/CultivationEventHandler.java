@@ -5,6 +5,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -38,8 +39,10 @@ public class CultivationEventHandler {
 	}
 
 	@SubscribeEvent
-	public static void onCultivatorUpdate(LivingEvent.LivingUpdateEvent event) {
-		if (!(event.getEntity() instanceof Player player)) return;
+	public static void onCultivatorUpdate(TickEvent.PlayerTickEvent event) {
+		if(event.phase != TickEvent.Phase.END) return;
+		var player = event.player;
+		if (player == null) return;
 		player.level.getProfiler().push("playerCultivationUpdate");
 		//defining variables I'm sure I'm gonna use a lot inside here
 		ICultivation cultivation = Cultivation.get(player);

@@ -44,6 +44,7 @@ public class AnimationChangeUpdateMessage {
 
 	public static void handleMessageCommon(AnimationChangeUpdateMessage msg, Supplier<NetworkEvent.Context> ctxSupplier) {
 		var ctx = ctxSupplier.get();
+		ctx.setPacketHandled(true);
 		var side = ctx.getDirection().getReceptionSide();
 		if (side.isClient()) {
 			handleMessageClient(msg, ctx);

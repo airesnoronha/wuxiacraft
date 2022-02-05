@@ -79,8 +79,6 @@ public class WuxiaCraft {
 
 	private void setup(final FMLCommonSetupEvent event) {
 		// some preinit code
-		LOGGER.info("HELLO FROM PREINIT");
-
 		LOGGER.info("Registering messages. Check your transmission talisman!");
 		WuxiaPacketHandler.registerMessages();
 

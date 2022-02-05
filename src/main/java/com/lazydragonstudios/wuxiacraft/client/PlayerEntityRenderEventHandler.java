@@ -16,6 +16,7 @@ public class PlayerEntityRenderEventHandler {
 
 	/**
 	 * This event will cancel the basic render when the remote player is meditating
+	 * And replace it with an animation
 	 *
 	 * @param event a description what is happening
 	 */

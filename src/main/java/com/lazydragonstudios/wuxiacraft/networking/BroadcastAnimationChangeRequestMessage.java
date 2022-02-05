@@ -41,6 +41,7 @@ public class BroadcastAnimationChangeRequestMessage {
 	public static void handleMessage(BroadcastAnimationChangeRequestMessage msg, Supplier<NetworkEvent.Context> ctxSupplier) {
 		var ctx = ctxSupplier.get();
 		var side = ctx.getDirection().getReceptionSide();
+		ctx.setPacketHandled(true);
 		if (side.isServer()) {
 			ctx.enqueueWork(() -> {
 				var player = ctx.getSender();
