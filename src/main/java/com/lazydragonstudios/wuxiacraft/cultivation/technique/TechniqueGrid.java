@@ -241,6 +241,7 @@ public class TechniqueGrid {
 		startNodePoint = null;
 		var listTag = (ListTag) tag.get("grid");
 		if (listTag == null) return;
+		this.grid.clear();
 		for (var keyValueTag : listTag) {
 			if (!(keyValueTag instanceof CompoundTag cTag)) continue;
 			var x = cTag.getInt("keyX");

@@ -5,7 +5,11 @@ import com.lazydragonstudios.wuxiacraft.client.gui.IntrospectionScreen;
 import com.lazydragonstudios.wuxiacraft.client.gui.widgets.*;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
+import com.lazydragonstudios.wuxiacraft.cultivation.technique.TechniqueContainer;
+import com.lazydragonstudios.wuxiacraft.cultivation.technique.TechniqueGrid;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
+import com.lazydragonstudios.wuxiacraft.networking.RequestTechniqueDataChange;
+import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -77,6 +81,12 @@ public class TechniqueTab extends IntrospectionTab {
 			}
 		});
 		saveBtn = new WuxiaButton(scaledWidth - 190, scaledHeight - 25, 180, 20, new TextComponent("Save"), () -> {
+			if (this.isCompiled) {
+				TechniqueContainer techniqueData = cultivation.getSystemData(this.system).techniqueData;
+				techniqueData.grid.deserialize(gridComposer.getGrid().serialize());
+				WuxiaPacketHandler.INSTANCE.sendToServer(new RequestTechniqueDataChange(this.system, techniqueData.serialize()));
+			}
+			this.isCompiled = false;
 		});
 
 		gridComposer = new WuxiaTechniqueComposeGrid(5, 5, renderGrid);
@@ -126,7 +136,6 @@ public class TechniqueTab extends IntrospectionTab {
 			this.dragPosition = new double[]{0d, 0d, 0d, 0d};
 		};
 	}
-
 
 	@Override
 	public void renderBG(PoseStack poseStack, int mouseX, int mouseY) {

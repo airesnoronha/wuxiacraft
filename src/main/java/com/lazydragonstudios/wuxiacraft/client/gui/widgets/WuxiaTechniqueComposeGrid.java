@@ -50,6 +50,7 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 		onClicked = (mx, my, mb) -> false;
 		onDrag = (mx, my, mb) -> false;
 		onRelease = (mx, my, mb) -> false;
+		recalculateLines();
 	}
 
 	public void setGridRadius(int gridRadius) {
@@ -68,6 +69,10 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 		this.setWidth((2 * this.gridRadius + 1 + 1) * distance);
 		int verticalDistance = (int) (distance * Math.sin(60d * Math.PI / 180d));
 		this.setHeight((2 * this.gridRadius + 1) * verticalDistance + distance);
+	}
+
+	public TechniqueGrid getGrid() {
+		return this.grid.copy();
 	}
 
 	@Override
