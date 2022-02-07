@@ -31,12 +31,28 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 
 	public static EntityType<AbstractClientPlayer> animatedEntityType;
 
+	private static float[] leftArmX = {0, -45, -90, -90, -90, 0, 0, 0, -90, -135, -180, -90, 0};
+	;
+	private static float[] leftArmY = {0, 0, 0, 0, -45, -90, -45, 0, 0, 0, 0, 0, 0};
+	private static float[] leftArmZ = {0, 0, 0, 0, 0, 0, 0, 45, 90, 60, 45, 0, 0};
+
+	private static float[] rightArmX = {0, -45, -90, -90, -90, 0, 0, 0, -90, -135, -180, -90, 0};
+	private static float[] rightArmY = {0, 0, 0, 45, 90, 90, 45, 0, 0, 0, 0, 0, 0};
+	private static float[] rightArmZ = {0, 0, 0, 0, 0, 0, 0, -45, -90, -60, -45, 0, 0};
+
+	private static float[] lefLegX = {0, 0, 0, 0, 0, -5, -10, -10, -10, 0, 0, 0, 0};
+	private static float[] lefLegY = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	private static float[] lefLegZ = {0, 0, 0, -10, -10, -10, -10, -7.5f, -5, -7.5f, -10, -5, 0};
+
+	private static float[] rightLegX = {0, 0, 0, 0, 0, 5, 10, 15, 20, 10, 0, 0, 0};
+	private static float[] rightLegY = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	private static float[] rightLegZ = {0, 0, 0, 5, 10, 10, 10, 10, 10, 10, 10, 5, 0};
+
 	private Vector3f position = Vector3f.ZERO;
 
 	public AnimatedPlayerRenderer(EntityRendererProvider.Context ctx, boolean slim) {
 		super(ctx, slim);
 	}
-
 
 
 	@Override
@@ -114,18 +130,18 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 		this.setAnimations(player, this.model, partialTicks);
 
 		var mc = Minecraft.getInstance();
-		if(mc.player == null) return;
+		if (mc.player == null) return;
 		boolean flag = this.isBodyVisible(player);
 		boolean flag1 = !flag && !player.isInvisibleTo(mc.player);
 		boolean flag2 = mc.shouldEntityAppearGlowing(player);
-		var renderType= this.getRenderType(player, flag, flag1, flag2);
-		if(renderType != null) {
+		var renderType = this.getRenderType(player, flag, flag1, flag2);
+		if (renderType != null) {
 			VertexConsumer vertexconsumer = multiBufferSource.getBuffer(renderType);
 			int i = getOverlayCoords(player, this.getWhiteOverlayProgress(player, partialTicks));
 			this.model.renderToBuffer(poseStack, vertexconsumer, packedLightIn, i, 1.0F, 1.0F, 1.0F, flag1 ? 0.15F : 1.0F);
 		}
-		if(!player.isSpectator()) {
-			for(var renderLayer : this.layers) {
+		if (!player.isSpectator()) {
+			for (var renderLayer : this.layers) {
 				renderLayer.render(poseStack, multiBufferSource, packedLightIn, player, limbSwing, limbSwingAmount, partialTicks, headBob, netHeadYaw, headPitch);
 			}
 		}
@@ -139,18 +155,45 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 		}
 	}
 
+	private static float getFrameRotation(float[] keyFrames, float animationFrame, int keyFrameTicks) {
+		float animationStep = animationFrame / (float) keyFrameTicks;
+		int keyFrame = (int) (animationStep);
+		float interpolationFactor = animationStep - keyFrame;
+		float initRotation = keyFrames[keyFrame];
+		float endRotation = keyFrames[keyFrame + 1];
+		return initRotation + (endRotation - initRotation) * interpolationFactor;
+	}
+
 	private void setAnimations(AbstractClientPlayer player, PlayerModel<AbstractClientPlayer> model, float partialTicks) {
+
+
+		leftArmX = new float[]{0, -45, -90, -90, -90, 0, 0, 0, -90, -135, -180, -90, 0};
+		leftArmY = new float[]{0, 0, 0, 0, -45, -90, -45, 0, 0, 0, 0, 0, 0};
+		leftArmZ = new float[]{0, 0, 0, 0, 0, 0, 0, 45, 90, 60, 45, 0, 0};
+
+		rightArmX = new float[]{0, -45, -90, -90, -90, 0, 0, 0, -90, -135, -180, -90, 0};
+		rightArmY = new float[]{0, 0, 0, 45, 90, 90, 45, 0, 0, 0, 0, 0, 0};
+		rightArmZ = new float[]{0, 0, 0, 0, 0, 0, 0, -45, -90, -60, -45, 0, 0};
+
+		lefLegX = new float[]{0, 0, 0, 0, 0, -5, -10, -10, -10, 0, 0, 0, 0};
+		lefLegY = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		lefLegZ = new float[]{0, 0, 0, -10, -10, -10, -10, -7.5f, -5, -7.5f, -10, -5, 0};
+
+		rightLegX = new float[]{0, 0, 0, 0, 0, 5, 10, 15, 20, 10, 0, 0, 0};
+		rightLegY = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		rightLegZ = new float[]{0, 0, 0, 5, 10, 10, 10, 10, 10, 10, 10, 5, 0};
+
 		var animationState = ClientAnimationState.get(player);
-		if(animationState.isMeditating()) {
+		if (animationState.isMeditating()) {
 			this.position.setY(-0.55f);
-			model.leftLeg.x = 1.9f+2f;
-			model.leftLeg.y = 12f+1f;
+			model.leftLeg.x = 1.9f + 2f;
+			model.leftLeg.y = 12f + 1f;
 			model.leftLeg.z = 0;
 			model.leftLeg.xRot = (float) Math.toRadians(-52.5);
 			model.leftLeg.yRot = 0f;
 			model.leftLeg.zRot = (float) Math.toRadians(100);
-			model.rightLeg.x = -1.9f-2f;
-			model.rightLeg.y = 12f+1f;
+			model.rightLeg.x = -1.9f - 2f;
+			model.rightLeg.y = 12f + 1f;
 			model.rightLeg.z = 0;
 			model.rightLeg.xRot = (float) Math.toRadians(-40);
 			model.rightLeg.yRot = 0f;//100f;
@@ -162,6 +205,22 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 			model.rightArm.yRot = 0f;
 			model.rightArm.zRot = (float) Math.toRadians(-45);
 			model.head.xRot = (float) Math.toRadians(0f);
+		} else if (animationState.isExercising()) {
+			float animationFrame = animationState.getAnimationFrame() + partialTicks;
+			int frameTicks = 10;
+			model.leftLeg.xRot = (float) Math.toRadians(getFrameRotation(lefLegX, animationFrame, frameTicks));
+			model.leftLeg.yRot = (float) Math.toRadians(getFrameRotation(lefLegY, animationFrame, frameTicks));
+			model.leftLeg.zRot = (float) Math.toRadians(getFrameRotation(lefLegZ, animationFrame, frameTicks));
+			model.rightLeg.xRot = (float) Math.toRadians(getFrameRotation(rightLegX, animationFrame, frameTicks));
+			model.rightLeg.yRot = (float) Math.toRadians(getFrameRotation(rightLegY, animationFrame, frameTicks));
+			model.rightLeg.zRot = (float) Math.toRadians(getFrameRotation(rightLegZ, animationFrame, frameTicks));
+			model.leftArm.xRot = (float) Math.toRadians(getFrameRotation(leftArmX, animationFrame, frameTicks));
+			model.leftArm.yRot = (float) Math.toRadians(getFrameRotation(leftArmY, animationFrame, frameTicks));
+			model.leftArm.zRot = (float) Math.toRadians(getFrameRotation(leftArmZ, animationFrame, frameTicks));
+			model.rightArm.xRot = (float) Math.toRadians(getFrameRotation(rightArmX, animationFrame, frameTicks));
+			model.rightArm.yRot = (float) Math.toRadians(getFrameRotation(rightArmY, animationFrame, frameTicks));
+			model.rightArm.zRot = (float) Math.toRadians(getFrameRotation(rightArmZ, animationFrame, frameTicks));
+			model.head.xRot = 0;
 		}
 	}
 
@@ -195,7 +254,6 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 				playerModel.leftArmPose = humanoidModel$armPose;
 			}
 		}
-
 	}
 
 	private static HumanoidModel.ArmPose getArmPose(AbstractClientPlayer p_117795_, InteractionHand p_117796_) {

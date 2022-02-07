@@ -8,7 +8,10 @@ import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
@@ -20,11 +23,11 @@ public class PlayerEntityRenderEventHandler {
 	 *
 	 * @param event a description what is happening
 	 */
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void onSinglePlayerRender(RenderLivingEvent.Pre<AbstractClientPlayer, ? extends Model> event) {
 		if (!(event.getEntity() instanceof Player)) return; //we don't want local players so far
 		var animationState = ClientAnimationState.get((Player) event.getEntity());
-		if(animationState.isMeditating()) {
+		if(animationState.isMeditating() || animationState.isExercising()) {
 			event.setCanceled(true);
 		}
 		if(!event.isCanceled()) return;
@@ -32,6 +35,16 @@ public class PlayerEntityRenderEventHandler {
 		var renderer = (AnimatedPlayerRenderer)Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(AnimatedPlayerRenderer.animatedEntityType);
 		if(renderer == null) return;
 		renderer.render((AbstractClientPlayer) event.getEntity(), event.hashCode(), event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
+	}
+
+	@SubscribeEvent
+	public static void onPlayerTickAddAnimation(TickEvent.PlayerTickEvent event) {
+		if(event.side != LogicalSide.CLIENT) return;
+		if(event.phase != TickEvent.Phase.END) return;
+		var player = event.player;
+		if(player == null) return;
+		var animationState = ClientAnimationState.get(player);
+		animationState.advanceAnimationFrame();
 	}
 
 }

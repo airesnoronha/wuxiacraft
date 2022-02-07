@@ -51,6 +51,18 @@ public class InputHandler {
 				WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState));
 			}
 		}
+		if (event.getKey() == mappings.get(EXERCISE).getKey().getValue()) {
+			if (event.getAction() == GLFW.GLFW_PRESS) {
+				IClientAnimationState animationState = ClientAnimationState.get(player);
+				animationState.setExercising(true);
+				WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState));
+			}
+			if (event.getAction() == GLFW.GLFW_RELEASE) {
+				IClientAnimationState animationState = ClientAnimationState.get(player);
+				animationState.setExercising(false);
+				WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState));
+			}
+		}
 	}
 
 }

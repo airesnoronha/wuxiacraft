@@ -48,7 +48,16 @@ public class ClientAnimationState implements IClientAnimationState {
 
 	@Override
 	public void advanceAnimationFrame() {
-		this.animationFrame++;
+		if (this.meditating || this.exercising) {
+			this.animationFrame++;
+		} else {
+			this.animationFrame = 0;
+		}
+		if (this.meditating) {
+			this.animationFrame = this.animationFrame > 49 ? 0 : this.animationFrame;
+		} else if (this.exercising) {
+			this.animationFrame = this.animationFrame > 119 ? 0 : this.animationFrame;
+		}
 	}
 
 	@Override
