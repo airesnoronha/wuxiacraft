@@ -1,7 +1,5 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.stats;
 
-import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
-
 import java.awt.*;
 import java.math.BigDecimal;
 
@@ -18,7 +16,7 @@ public enum PlayerStat {
 	STRENGTH(new BigDecimal("0.0"), false, new Point(5, 45), "Strength: %s"),
 	AGILITY(new BigDecimal("0.0"), false, new Point(5, 55), "Agility: %s"),
 	EXERCISE_COST(new BigDecimal("0.02"), false, new Point(-1,45 ), "Exercise Cost: %s"),
-	EXERCISE_CONVERSION(new BigDecimal("0.5"), false, new Point(-1, 55), "Exercise Conversion: %s"),
+	EXERCISE_CONVERSION(new BigDecimal("0.01"), false, new Point(-1, 55), "Exercise Conversion: %s"),
 	DETECTION_RANGE(new BigDecimal("0.00"), false, new Point(5, 65), "Detection Range: %s"),
 	DETECTION_STRENGTH(new BigDecimal("0.00"), false, new Point(5, 75), "Detection Strength: %s"),
 	DETECTION_RESISTANCE(new BigDecimal("0.00"), false, new Point(5, 85), "Detection Resistance: %s"),

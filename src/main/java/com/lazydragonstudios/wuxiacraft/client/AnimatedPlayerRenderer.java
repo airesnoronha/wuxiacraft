@@ -31,22 +31,21 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 
 	public static EntityType<AbstractClientPlayer> animatedEntityType;
 
-	private static float[] leftArmX = {0, -45, -90, -90, -90, 0, 0, 0, -90, -135, -180, -90, 0};
-	;
-	private static float[] leftArmY = {0, 0, 0, 0, -45, -90, -45, 0, 0, 0, 0, 0, 0};
-	private static float[] leftArmZ = {0, 0, 0, 0, 0, 0, 0, 45, 90, 60, 45, 0, 0};
+	private static float[] leftArmX = new float[]{0, -45, -90, -90, -90, 0, 0, 0, -90, -135, -180, -90, 0};
+	private static float[] leftArmY = new float[]{0, 0, 0, 0, -45, -90, -45, 0, 0, 0, 0, 0, 0};
+	private static float[] leftArmZ = new float[]{0, 0, 0, 0, 0, 0, 0, 45, 90, 60, 45, 0, 0};
 
-	private static float[] rightArmX = {0, -45, -90, -90, -90, 0, 0, 0, -90, -135, -180, -90, 0};
-	private static float[] rightArmY = {0, 0, 0, 45, 90, 90, 45, 0, 0, 0, 0, 0, 0};
-	private static float[] rightArmZ = {0, 0, 0, 0, 0, 0, 0, -45, -90, -60, -45, 0, 0};
+	private static float[] rightArmX = new float[]{0, -45, -90, -90, -90, 0, 0, 0, -90, -135, -180, -90, 0};
+	private static float[] rightArmY = new float[]{0, 0, 0, 45, 90, 90, 45, 0, 0, 0, 0, 0, 0};
+	private static float[] rightArmZ = new float[]{0, 0, 0, 0, 0, 0, 0, -45, -90, -60, -45, 0, 0};
 
-	private static float[] lefLegX = {0, 0, 0, 0, 0, -5, -10, -10, -10, 0, 0, 0, 0};
-	private static float[] lefLegY = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	private static float[] lefLegZ = {0, 0, 0, -10, -10, -10, -10, -7.5f, -5, -7.5f, -10, -5, 0};
+	private static float[] lefLegX = new float[]{0, 0, 0, 0, 0, -5, -10, -10, -10, 0, 0, 0, 0};
+	private static float[] lefLegY = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	private static float[] lefLegZ = new float[]{0, 0, 0, -10, -10, -10, -10, -7.5f, -5, -7.5f, -10, -5, 0};
 
-	private static float[] rightLegX = {0, 0, 0, 0, 0, 5, 10, 15, 20, 10, 0, 0, 0};
-	private static float[] rightLegY = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	private static float[] rightLegZ = {0, 0, 0, 5, 10, 10, 10, 10, 10, 10, 10, 5, 0};
+	private static float[] rightLegX = new float[]{0, 0, 0, 0, 0, 5, 10, 15, 20, 10, 0, 0, 0};
+	private static float[] rightLegY = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	private static float[] rightLegZ = new float[]{0, 0, 0, 5, 10, 10, 10, 10, 10, 10, 10, 5, 0};
 
 	private Vector3f position = Vector3f.ZERO;
 
@@ -165,7 +164,6 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 	}
 
 	private void setAnimations(AbstractClientPlayer player, PlayerModel<AbstractClientPlayer> model, float partialTicks) {
-
 
 		leftArmX = new float[]{0, -45, -90, -90, -90, 0, 0, 0, -90, -135, -180, -90, 0};
 		leftArmY = new float[]{0, 0, 0, 0, -45, -90, -45, 0, 0, 0, 0, 0, 0};

@@ -24,12 +24,6 @@ public class ClientAnimationStateProvider implements ICapabilitySerializable<Com
 		return ANIMATION_PROVIDER.orEmpty(cap, LazyOptional.of(() -> instance));
 	}
 
-	@Nonnull
-	@Override
-	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
-		return ANIMATION_PROVIDER.orEmpty(cap, LazyOptional.of(() -> instance));
-	}
-
 	@Override
 	public CompoundTag serializeNBT() {
 		return instance.serialize();

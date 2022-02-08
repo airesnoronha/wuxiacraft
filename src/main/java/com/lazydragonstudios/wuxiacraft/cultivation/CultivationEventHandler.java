@@ -8,7 +8,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -168,8 +167,9 @@ public class CultivationEventHandler {
 	 */
 	@SubscribeEvent
 	public static void onPlayerDeath(PlayerEvent.Clone event) {
-		ICultivation newCultivation = Cultivation.get(event.getPlayer());
+		event.getOriginal().reviveCaps();
 		ICultivation oldCultivation = Cultivation.get(event.getOriginal());
+		ICultivation newCultivation = Cultivation.get(event.getPlayer());
 		if (event.isWasDeath()) {
 			//oldCultivation.setSkillCooldown(0);
 			oldCultivation.setPlayerStat(PlayerStat.HEALTH, PlayerStat.HEALTH.defaultValue);
@@ -179,6 +179,7 @@ public class CultivationEventHandler {
 			bodyData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("7"));
 			divineData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("10"));
 			essenceData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("0"));
+			event.getOriginal().invalidateCaps();
 		}
 		newCultivation.deserialize(oldCultivation.serialize());
 	}

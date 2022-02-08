@@ -9,8 +9,8 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
 
 public class CultivationProvider implements ICapabilitySerializable<CompoundTag> {
 
@@ -18,15 +18,9 @@ public class CultivationProvider implements ICapabilitySerializable<CompoundTag>
 
 	public ICultivation cultivation_instance = new Cultivation();
 
-	@NotNull
+	@Nonnull
 	@Override
-	public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-		return CULTIVATION_PROVIDER.orEmpty(cap, LazyOptional.of(() -> cultivation_instance));
-	}
-
-	@NotNull
-	@Override
-	public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap) {
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
 		return CULTIVATION_PROVIDER.orEmpty(cap, LazyOptional.of(() -> cultivation_instance));
 	}
 
