@@ -18,6 +18,10 @@ public interface ICultivation {
 
 	void deserialize(CompoundTag tag);
 
+	boolean isExercising();
+
+	void setExercising(boolean exercising);
+
 	AspectContainer getAspects();
 
 	/**

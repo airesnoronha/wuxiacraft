@@ -1,8 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.cultivation;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
-import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
-import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import com.lazydragonstudios.wuxiacraft.capabilities.CultivationProvider;
@@ -31,6 +29,11 @@ public class Cultivation implements ICultivation {
 	private int tickTimer;
 
 	/**
+	 * this is for the server and client to convert body energy into essence energy
+	 */
+	private boolean exercising;
+
+	/**
 	 * Known Aspects and proficiency
 	 */
 	public AspectContainer aspects;
@@ -46,6 +49,7 @@ public class Cultivation implements ICultivation {
 			this.systemCultivation.put(system, systemData);
 		}
 		this.aspects = new AspectContainer();
+		this.exercising = false;
 	}
 
 	public static ICultivation get(Player target) {
@@ -122,6 +126,16 @@ public class Cultivation implements ICultivation {
 		if (tag.contains("aspect-data")) {
 			this.aspects.deserialize(tag.getCompound("aspect-data"));
 		}
+	}
+
+	@Override
+	public boolean isExercising() {
+		return exercising;
+	}
+
+	@Override
+	public void setExercising(boolean exercising) {
+		this.exercising = exercising;
 	}
 
 	@Override

@@ -112,6 +112,7 @@ public class AspectContainer {
 			var proficiency = aspectTag.getString("aspect-proficiency");
 			this.aspectAndProficiency.put(new ResourceLocation(location), new BigDecimal(proficiency));
 		}
+		countKnownAspects();
 	}
 
 }

@@ -1,6 +1,8 @@
 package com.lazydragonstudios.wuxiacraft.networking;
 
 import com.lazydragonstudios.wuxiacraft.capabilities.ClientAnimationState;
+import com.lazydragonstudios.wuxiacraft.capabilities.IClientAnimationState;
+import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -20,7 +22,7 @@ public class AnimationChangeUpdateMessage {
 	private boolean isValid;
 
 	public AnimationChangeUpdateMessage() {
-		this.isValid =false;
+		this.isValid = false;
 		this.playerId = null;
 		this.animationState = null;
 	}
@@ -58,8 +60,10 @@ public class AnimationChangeUpdateMessage {
 			if (player == null) return;
 			var level = player.level;
 			var target = level.getPlayerByUUID(msg.playerId);
-			if(target == null) return;
-			ClientAnimationState.get(target).deserialize(msg.animationState);
+			if (target == null) return;
+			IClientAnimationState animationState = ClientAnimationState.get(target);
+			animationState.deserialize(msg.animationState);
+			Cultivation.get(player).setExercising(animationState.isExercising());
 		});
 	}
 }

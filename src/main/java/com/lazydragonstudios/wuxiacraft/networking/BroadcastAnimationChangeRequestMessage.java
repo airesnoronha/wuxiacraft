@@ -1,6 +1,8 @@
 package com.lazydragonstudios.wuxiacraft.networking;
 
+import com.lazydragonstudios.wuxiacraft.capabilities.ClientAnimationState;
 import com.lazydragonstudios.wuxiacraft.capabilities.IClientAnimationState;
+import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -48,6 +50,9 @@ public class BroadcastAnimationChangeRequestMessage {
 				if (player == null) return;
 				var animationState = msg.animationState;
 				var level = player.level;
+				var animationStateInstance = new ClientAnimationState();
+				animationStateInstance.deserialize(animationState);
+				Cultivation.get(player).setExercising(animationStateInstance.isExercising());
 				for (var target : level.players()) {
 					WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) target), new AnimationChangeUpdateMessage(player.getUUID(), animationState));
 				}

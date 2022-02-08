@@ -1,5 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.cultivation;
 
+import com.lazydragonstudios.wuxiacraft.combat.WuxiaDamageSource;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaElements;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -40,7 +42,7 @@ public class CultivationEventHandler {
 
 	@SubscribeEvent
 	public static void onCultivatorUpdate(TickEvent.PlayerTickEvent event) {
-		if(event.phase != TickEvent.Phase.END) return;
+		if (event.phase != TickEvent.Phase.END) return;
 		var player = event.player;
 		if (player == null) return;
 		player.level.getProfiler().push("playerCultivationUpdate");
@@ -67,7 +69,7 @@ public class CultivationEventHandler {
 			BigDecimal finalEnergyRegen = bodyData.getStat(PlayerSystemStat.ENERGY_REGEN).multiply(hunger_modifier);
 			//bodyEnergy <= bodyMaxEnergy * 0.7 (70%)
 			boolean canRegenBodyEnergy = bodyData.getStat(PlayerSystemStat.ENERGY).compareTo(bodyData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("0.7"))) <= 0;
-			if(canRegenBodyEnergy) {
+			if (canRegenBodyEnergy) {
 				bodyData.addEnergy(finalEnergyRegen);
 				bodyData.setStat(PlayerSystemStat.ENERGY, bodyData.getStat(PlayerSystemStat.ENERGY).min(bodyData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("0.7"))));
 				player.causeFoodExhaustion(finalEnergyRegen.floatValue());
@@ -76,10 +78,19 @@ public class CultivationEventHandler {
 		//others don't
 		for (var system : System.values()) {
 			var systemData = cultivation.getSystemData(system);
-			if (system != System.BODY) {
+			if (system != System.BODY) { //body already regenerated at that point
 				systemData.addEnergy(systemData.getStat(PlayerSystemStat.ENERGY_REGEN));
 			}
-			systemData.setStat(PlayerSystemStat.ENERGY, systemData.getStat(PlayerSystemStat.ENERGY).min(systemData.getStat(PlayerSystemStat.MAX_ENERGY)));
+			//kill if above 150%
+			if (systemData.getStat(PlayerSystemStat.ENERGY).compareTo(systemData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("1.5"))) > 0) {
+				killPlayerWithExplosion(player,
+						"wuxiacraft.deathmessage.energyexceess." + system.name().toLowerCase(),
+						//energy * 3 * max_health -> just to guarantee death
+						systemData.getStat(PlayerSystemStat.ENERGY).multiply(new BigDecimal("3")).multiply(cultivation.getPlayerStat(PlayerStat.MAX_HEALTH)));
+				//or regulate it slowly to 100%
+			} else if (systemData.getStat(PlayerSystemStat.ENERGY).compareTo(systemData.getStat(PlayerSystemStat.MAX_ENERGY)) > 0) {
+				systemData.consumeEnergy(systemData.getStat(PlayerSystemStat.ENERGY_REGEN));
+			}
 		}
 		//Healing part yaay
 		if (cultivation.getPlayerStat(PlayerStat.HEALTH).compareTo(cultivation.getPlayerStat(PlayerStat.MAX_HEALTH)) < 0) {
@@ -92,6 +103,17 @@ public class CultivationEventHandler {
 				}
 			}
 		}
+
+		//if player is exercising, add a little of essence to him
+		if (cultivation.isExercising() && (
+				bodyData.techniqueData.modifier.isValidTechnique() ||
+						essenceData.techniqueData.modifier.isValidTechnique()
+		)) {
+			if (bodyData.consumeEnergy(cultivation.getPlayerStat(PlayerStat.EXERCISE_COST))) {
+				essenceData.addEnergy(cultivation.getPlayerStat(PlayerStat.EXERCISE_CONVERSION));
+			}
+		}
+
 		// punishment for low energy >>> poor resource management
 		if (!bodyData.hasEnergy(bodyData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("0.1")))) {
 			double relativeAmount = bodyData.getStat(PlayerSystemStat.ENERGY).divide(bodyData.getStat(PlayerSystemStat.MAX_ENERGY), RoundingMode.HALF_UP).doubleValue();
@@ -102,6 +124,9 @@ public class CultivationEventHandler {
 			if (relativeAmount < 0.02) amplifier = 4;
 			player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 15, amplifier, true, false));
 			player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 15, amplifier, true, false));
+			if (relativeAmount < 0.005) {
+				player.hurt(DamageSource.WITHER, 2);
+			}
 		}
 		if (!divineData.hasEnergy(divineData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("0.1")))) {
 			double relativeAmount = divineData.getStat(PlayerSystemStat.ENERGY).divide(divineData.getStat(PlayerSystemStat.MAX_ENERGY), RoundingMode.HALF_UP).doubleValue();
@@ -117,6 +142,10 @@ public class CultivationEventHandler {
 			}
 		}
 		player.level.getProfiler().pop();
+	}
+
+	private static void killPlayerWithExplosion(Player player, String deathMessage, BigDecimal amount) {
+		player.hurt(new WuxiaDamageSource(deathMessage, WuxiaElements.PHYSICAL.get(), player), amount.floatValue());
 	}
 
 	/**
@@ -147,8 +176,9 @@ public class CultivationEventHandler {
 			var bodyData = oldCultivation.getSystemData(System.BODY);
 			var divineData = oldCultivation.getSystemData(System.DIVINE);
 			var essenceData = oldCultivation.getSystemData(System.ESSENCE);
-			bodyData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("5"));
+			bodyData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("7"));
 			divineData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("10"));
+			essenceData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("0"));
 		}
 		newCultivation.deserialize(oldCultivation.serialize());
 	}

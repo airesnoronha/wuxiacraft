@@ -295,12 +295,30 @@ public class WuxiaScrollPanel extends AbstractWidget {
 		}
 	}
 
+	public void recalculateContentSpace() {
+		this.contentWidth = 0;
+		this.contentHeight = 0;
+		this.totalScrollHeight = 0;
+		this.totalScrollWidth = 0;
+		for(var child : children) {
+			if (child.x + child.getWidth() > this.contentWidth) {
+				this.contentWidth = child.x + child.getWidth();
+				this.totalScrollWidth = Math.max(0, this.contentWidth - this.width + scrollBarWidth);
+			}
+			if (child.y + child.getWidth() > this.contentHeight) {
+				this.contentHeight = child.y + child.getHeight();
+				this.totalScrollHeight = Math.max(0, this.contentHeight - this.height + scrollBarHeight);
+			}
+		}
+	}
+
 	public int getChildrenCount() {
 		return this.children.size();
 	}
 
 	public void clearChildren() {
 		this.children.clear();
+		recalculateContentSpace();
 	}
 
 	@Override

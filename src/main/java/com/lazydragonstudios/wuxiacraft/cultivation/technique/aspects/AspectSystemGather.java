@@ -1,8 +1,10 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import net.minecraft.resources.ResourceLocation;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class AspectSystemGather extends TechniqueAspect {
@@ -16,11 +18,13 @@ public class AspectSystemGather extends TechniqueAspect {
 
 	@Override
 	public void accept(HashMap<String, Object> metaData) {
-		String systemRawBase = system.name().toLowerCase()+"-raw-cultivation-base";
+		String statName = this.system.name().toLowerCase() + "-stat-" + PlayerSystemStat.CULTIVATION_SPEED.name().toLowerCase();
+		String systemRawBase = system.name().toLowerCase() + "-raw-cultivation-base";
 		if (metaData.containsKey(systemRawBase)) {
 			double rawBase = (double) metaData.remove(systemRawBase);
-			metaData.put("cultivation_speed",
-					(double) metaData.getOrDefault("cultivation_speed", 0d) + rawBase / 10d);
+			metaData.put(statName,
+					//(value or 0) + (rawBase / 10)
+					((BigDecimal) metaData.getOrDefault(statName, BigDecimal.ZERO)).add(new BigDecimal(rawBase).multiply(new BigDecimal("0.1"))));
 		}
 	}
 
@@ -36,8 +40,9 @@ public class AspectSystemGather extends TechniqueAspect {
 
 	@Override
 	public void reject(HashMap<String, Object> metaData) {
-		metaData.put("cultivation_speed",
-				(double) metaData.getOrDefault("cultivation_speed", 0d) - 1d);
+		String statName = this.system.name().toLowerCase() + "-stat-" + PlayerSystemStat.CULTIVATION_SPEED.name().toLowerCase();
+		metaData.put(statName,
+				(double) metaData.getOrDefault(statName, 0d) - 1d);
 	}
 
 	@Override

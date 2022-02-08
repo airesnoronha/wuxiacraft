@@ -1,5 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.technique;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.System;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects.TechniqueAspect;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -83,7 +85,7 @@ public class TechniqueGrid {
 	 */
 	@Nonnull
 	public TechniqueModifier compile() {
-		if(this.startNodePoint == null) return new TechniqueModifier();
+		if (this.startNodePoint == null) return new TechniqueModifier();
 		if (!grid.get(startNodePoint).equals(WuxiaTechniqueAspects.START.getId())) return new TechniqueModifier();
 		final ResourceLocation emptyId = WuxiaTechniqueAspects.EMPTY.getId();
 
@@ -141,7 +143,7 @@ public class TechniqueGrid {
 				if (visited.contains(visitingNeighbour)) continue;
 				connectedFrom.putIfAbsent(visitingNeighbour, new HashSet<>());
 				TechniqueAspect neighbourTechAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(neighbourAspect);
-				if(neighbourTechAspect == null) continue ;
+				if (neighbourTechAspect == null) continue;
 				if (aspect.canConnect(neighbourTechAspect)) {
 					connectCandidates.add(visitingNeighbour);
 				} else if (neighbourAspect == emptyId) {
@@ -155,20 +157,20 @@ public class TechniqueGrid {
 				TechniqueAspect aspect2 = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(grid.grid.getOrDefault(p2, emptyId));
 				return aspect.connectPrioritySorter(aspect1, aspect2);
 			});
-			for(var candidate : connectCandidates) {
+			for (var candidate : connectCandidates) {
 				var candidateLocation = grid.grid.getOrDefault(candidate, emptyId);
 				TechniqueAspect candidateTechAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(candidateLocation);
-				if(candidateTechAspect == null) continue;
+				if (candidateTechAspect == null) continue;
 				int cFrom = connectedFrom.get(candidate).size();
 				int cTo = connectedTo.get(visiting).size();
 				int allowedFrom = candidateTechAspect.canConnectFromCount();
 				int allowedTo = aspect.canConnectToCount();
-				if((allowedFrom == -1 || cFrom < allowedFrom) && (allowedTo == -1 || cTo < allowedTo)) {
+				if ((allowedFrom == -1 || cFrom < allowedFrom) && (allowedTo == -1 || cTo < allowedTo)) {
 					connectedFrom.get(candidate).add(visiting);
 					connectedTo.get(visiting).add(candidate);
 					toVisit.add(candidate);
 					onConnect.accept(visiting, candidate);
-				} else if(cTo >= allowedTo && allowedTo != -1) {
+				} else if (cTo >= allowedTo && allowedTo != -1) {
 					break;
 				}
 			}
@@ -199,6 +201,17 @@ public class TechniqueGrid {
 		for (var stat : PlayerStat.values()) {
 			if (metaData.containsKey("stat-" + stat.name().toLowerCase())) {
 				tMod.stats.put(stat, (BigDecimal) metaData.get("stat-" + stat.name().toLowerCase()));
+			}
+		}
+		for (var system : System.values()) {
+			for (var stat : PlayerSystemStat.values()) {
+				String statName = system.name().toLowerCase() + "-stat-" + stat.name().toLowerCase();
+				if (metaData.containsKey(statName)) {
+					tMod.systemStats.get(system).put(stat, (BigDecimal) metaData.get(statName));
+					if (stat == PlayerSystemStat.CULTIVATION_SPEED) {
+						tMod.setValidTechnique(true);
+					}
+				}
 			}
 		}
 		for (var element : WuxiaRegistries.ELEMENTS.getValues()) {

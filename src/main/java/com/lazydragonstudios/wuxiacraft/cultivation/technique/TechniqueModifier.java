@@ -18,11 +18,14 @@ public class TechniqueModifier {
 
 	public HashMap<ResourceLocation, Double> elements = new HashMap<>();
 
+	public boolean validTechnique;
+
 	public TechniqueModifier() {
 
 		for (var system : System.values()) {
 			systemStats.put(system, new HashMap<>());
 		}
+		validTechnique = false;
 	}
 
 	public void add(TechniqueModifier tMod) {
@@ -126,4 +129,11 @@ public class TechniqueModifier {
 		}
 	}
 
+	public boolean isValidTechnique() {
+		return validTechnique;
+	}
+
+	public void setValidTechnique(boolean validTechnique) {
+		this.validTechnique = validTechnique;
+	}
 }

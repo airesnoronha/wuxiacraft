@@ -7,13 +7,22 @@ import java.math.BigDecimal;
 
 public enum PlayerStat {
 	//TODO add these to the translate json file when we add one
-	STRENGTH(new BigDecimal("0.0"), false, new Point(10, 50), "Strength: %s"),
-	AGILITY(new BigDecimal("0.0"), false, new Point(10, 60), "Agility: %s"),
-	HEALTH(new BigDecimal("20.0"), true, new Point(10, 10), "Current Health: %s"),
-	MAX_HEALTH(new BigDecimal("20.0"), false, new Point(10, 20), "Maximum Health: %s"),
-	HEALTH_REGEN(new BigDecimal("0.01"), false, new Point(10, 30), "Health Regeneration: %s"),
-	HEALTH_REGEN_COST(new BigDecimal("0.03"), false, new Point(10, 40), "Health Regeneration Cost: %s");
-
+	HEALTH(new BigDecimal("20.0"), true, new Point(5, 5), "Current Health: %s"),
+	MAX_HEALTH(new BigDecimal("20.0"), false, new Point(5, 15), "Maximum Health: %s"),
+	HEALTH_REGEN(new BigDecimal("0.01"), false, new Point(5, 25), "Health Regeneration: %s"),
+	HEALTH_REGEN_COST(new BigDecimal("0.03"), false, new Point(5, 35), "Health Regeneration Cost: %s"),
+	BARRIER(new BigDecimal("0.0"), true, new Point(-1, 5), "Barrier : %s"),
+	MAX_BARRIER(new BigDecimal("0.0"), false, new Point(-1, 15), "Max Barrier: %s"),
+	BARRIER_REGEN(new BigDecimal("0.0"), false, new Point(-1, 25), "Barrier Regeneration: %s"),
+	BARRIER_REGEN_COST(new BigDecimal("0.0"), false, new Point(-1, 35), "Barrier Regeneration Cost: %s"),
+	STRENGTH(new BigDecimal("0.0"), false, new Point(5, 45), "Strength: %s"),
+	AGILITY(new BigDecimal("0.0"), false, new Point(5, 55), "Agility: %s"),
+	EXERCISE_COST(new BigDecimal("0.02"), false, new Point(-1,45 ), "Exercise Cost: %s"),
+	EXERCISE_CONVERSION(new BigDecimal("0.5"), false, new Point(-1, 55), "Exercise Conversion: %s"),
+	DETECTION_RANGE(new BigDecimal("0.00"), false, new Point(5, 65), "Detection Range: %s"),
+	DETECTION_STRENGTH(new BigDecimal("0.00"), false, new Point(5, 75), "Detection Strength: %s"),
+	DETECTION_RESISTANCE(new BigDecimal("0.00"), false, new Point(5, 85), "Detection Resistance: %s"),
+	;
 	/**
 	 * the default value of the stat
 	 */
@@ -21,7 +30,7 @@ public enum PlayerStat {
 
 	/**
 	 * this means that the value of this stat can be modified from outside Cultivation class
-	 * using {@link Cultivation#setPlayerStat}
+	 * Also means this value is stored, but not calculated in every alteration
 	 */
 	public final boolean isModifiable;
 

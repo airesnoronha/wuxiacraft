@@ -13,6 +13,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class CharacterStatsTab extends IntrospectionTab {
 
@@ -37,7 +38,8 @@ public class CharacterStatsTab extends IntrospectionTab {
 		screen.addRenderableWidget(statsPanel);
 		for (var stat : PlayerStat.values()) {
 			var statValue = cultivation.getPlayerStat(stat).toEngineeringString();
-			var label = new WuxiaLabel(stat.locationInStatsSheet.x, stat.locationInStatsSheet.y, new TextComponent(String.format(stat.displayFormat, statValue)), color);
+			int labelX = stat.locationInStatsSheet.x == -1 ? 150 : stat.locationInStatsSheet.x;
+			var label = new WuxiaLabel(labelX, stat.locationInStatsSheet.y, new TextComponent(String.format(stat.displayFormat, statValue)), color);
 			displayLabels.put(stat, label);
 			statsPanel.addChild(label);
 		}
@@ -53,6 +55,7 @@ public class CharacterStatsTab extends IntrospectionTab {
 				displaySystemLabels.get(system).put(stat, label);
 				systemStats.get(system).addChild(label);
 			}
+			statsPanel.recalculateContentSpace();
 			systemStatPanel.addChild(realmNameLabel);
 			systemStatPanel.addChild(stageNameLabel);
 			screen.addRenderableWidget(systemStats.get(system));
@@ -64,10 +67,21 @@ public class CharacterStatsTab extends IntrospectionTab {
 		var player = Minecraft.getInstance().player;
 		if (player == null) return;
 		var cultivation = Cultivation.get(player);
+		var leftPostX = 0;
+		var secondColumn = new LinkedList<WuxiaLabel>();
 		for (var stat : PlayerStat.values()) {
 			var statValue = cultivation.getPlayerStat(stat).toEngineeringString();
 			displayLabels.get(stat).setMessage(new TextComponent(String.format(stat.displayFormat, statValue)));
+			if(stat.locationInStatsSheet.x == -1) {
+				secondColumn.add(displayLabels.get(stat));
+			} else {
+				leftPostX = Math.max(leftPostX, stat.locationInStatsSheet.x*2 + displayLabels.get(stat).getWidth());
+			}
 		}
+		for(var label : secondColumn) {
+			label.x = leftPostX;
+		}
+		statsPanel.recalculateContentSpace();
 		for (var system : System.values()) {
 			for (var stat : PlayerSystemStat.values()) {
 				var statValue = cultivation.getSystemData(system).getStat(stat).toEngineeringString();

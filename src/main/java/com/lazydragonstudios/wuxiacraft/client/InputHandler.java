@@ -2,6 +2,7 @@ package com.lazydragonstudios.wuxiacraft.client;
 
 import com.lazydragonstudios.wuxiacraft.capabilities.ClientAnimationState;
 import com.lazydragonstudios.wuxiacraft.capabilities.IClientAnimationState;
+import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.networking.BroadcastAnimationChangeRequestMessage;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import net.minecraft.client.KeyMapping;
@@ -40,26 +41,27 @@ public class InputHandler {
 			WuxiaPacketHandler.INSTANCE.sendToServer(new OpenScreenMessage(OpenScreenMessage.ScreenType.INTROSPECTION));
 		}
 		if (event.getKey() == mappings.get(MEDITATE).getKey().getValue()) {
+			var animationState = ClientAnimationState.get(player);
 			if (event.getAction() == GLFW.GLFW_PRESS) {
-				IClientAnimationState animationState = ClientAnimationState.get(player);
 				animationState.setMeditating(true);
 				WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState));
 			}
 			if (event.getAction() == GLFW.GLFW_RELEASE) {
-				IClientAnimationState animationState = ClientAnimationState.get(player);
 				animationState.setMeditating(false);
 				WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState));
 			}
 		}
 		if (event.getKey() == mappings.get(EXERCISE).getKey().getValue()) {
+			var animationState = ClientAnimationState.get(player);
+			var cultivation = Cultivation.get(player);
 			if (event.getAction() == GLFW.GLFW_PRESS) {
-				IClientAnimationState animationState = ClientAnimationState.get(player);
 				animationState.setExercising(true);
+				cultivation.setExercising(true);
 				WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState));
 			}
 			if (event.getAction() == GLFW.GLFW_RELEASE) {
-				IClientAnimationState animationState = ClientAnimationState.get(player);
 				animationState.setExercising(false);
+				cultivation.setExercising(false);
 				WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState));
 			}
 		}
