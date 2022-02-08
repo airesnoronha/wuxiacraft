@@ -163,7 +163,7 @@ public class CultivationCommand {
 		ICultivation cultivation = Cultivation.get(target);
 		TextComponent message = new TextComponent("");
 
-		cultivation.getAspects().addAspectProficiency(cultivation, aspectLocation, new BigDecimal(amount));
+		cultivation.getAspects().addAspectProficiency(aspectLocation, new BigDecimal(amount));
 		message.append("Successfully added aspect proficiency to target player");
 		ctx.getSource().sendSuccess(message, true);
 		syncClientCultivation(target);

@@ -83,7 +83,7 @@ public class CultivationEventHandler {
 			//kill if above 150%
 			if (systemData.getStat(PlayerSystemStat.ENERGY).compareTo(systemData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("1.5"))) > 0) {
 				killPlayerWithExplosion(player,
-						"wuxiacraft.deathmessage.energyexceess." + system.name().toLowerCase(),
+						"wuxiacraft.energy_excess." + system.name().toLowerCase(),
 						//energy * 3 * max_health -> just to guarantee death
 						systemData.getStat(PlayerSystemStat.ENERGY).multiply(new BigDecimal("3")).multiply(cultivation.getPlayerStat(PlayerStat.MAX_HEALTH)));
 				//or regulate it slowly to 100%

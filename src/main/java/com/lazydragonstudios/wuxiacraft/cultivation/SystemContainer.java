@@ -18,11 +18,6 @@ public class SystemContainer {
 	public final System system;
 
 	/**
-	 * The current realm id for this cultivation
-	 */
-	public ResourceLocation currentRealm;
-
-	/**
 	 * The current stage id for this cultivation
 	 */
 	public ResourceLocation currentStage;
@@ -44,7 +39,6 @@ public class SystemContainer {
 	 */
 	public SystemContainer(System system) {
 		this.system = system;
-		this.currentRealm = system.defaultRealm;
 		this.currentStage = system.defaultStage;
 		this.systemStats = new HashMap<>();
 		techniqueData = new TechniqueContainer(this.system);
@@ -81,7 +75,7 @@ public class SystemContainer {
 	 * @return the current cultivation realm this cultivation is at
 	 */
 	public CultivationRealm getRealm() {
-		return WuxiaRegistries.CULTIVATION_REALMS.getValue(this.currentRealm);
+		return WuxiaRegistries.CULTIVATION_REALMS.getValue(this.getStage().realm);
 	}
 
 	/**
@@ -122,15 +116,19 @@ public class SystemContainer {
 				stageValue = stageValue.add(systemData.getStage().getSystemStat(this.system, stat));
 			}
 			var techniqueModifier = this.techniqueData.modifier.systemStats.get(this.system).getOrDefault(stat, BigDecimal.ZERO);
-			//value = value + stageValue * (1 + techModifier)
-			value = value.add(stageValue).multiply(BigDecimal.ONE.add(techniqueModifier));
+			if (stat == PlayerSystemStat.CULTIVATION_SPEED) {
+				//value = value + stageValue + techModifier
+				value = value.add(stageValue).add(techniqueModifier);
+			} else {
+				//value = value + stageValue * (1 + techModifier)
+				value = value.add(stageValue).multiply(BigDecimal.ONE.add(techniqueModifier));
+			}
 			this.systemStats.put(stat, value);
 		}
 	}
 
 	public CompoundTag serialize() {
 		CompoundTag tag = new CompoundTag();
-		tag.putString("current_realm", this.currentRealm.toString());
 		tag.putString("current_stage", this.currentStage.toString());
 		for (var stat : PlayerSystemStat.values()) {
 			if (!stat.isModifiable) continue;
@@ -141,10 +139,7 @@ public class SystemContainer {
 	}
 
 	public void deserialize(CompoundTag tag, ICultivation cultivation) {
-		if (tag.contains("current_realm")) {
-			this.currentRealm = new ResourceLocation(tag.getString("current_realm"));
-		}
-		if (tag.contains("current_realm")) {
+		if (tag.contains("current_stage")) {
 			this.currentStage = new ResourceLocation(tag.getString("current_stage"));
 		}
 		for (var stat : PlayerSystemStat.values()) {

@@ -3,6 +3,7 @@ package com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects;
 import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaCheckpointsWidget;
 import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabelBox;
 import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
+import com.lazydragonstudios.wuxiacraft.cultivation.technique.AspectContainer;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.TextComponent;
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 @MethodsReturnNonnullByDefault
 public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect> {
@@ -22,7 +24,8 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	/**
 	 * an empty checkpoint for being the default one
 	 */
-	public static Checkpoint NO_CHECKPOINT = new Checkpoint("none", BigDecimal.ZERO, (c) -> {});
+	public final static Checkpoint NO_CHECKPOINT = new Checkpoint("none", BigDecimal.ZERO, (c) -> {
+	});
 
 	//Class itself
 	public final String name;
@@ -33,16 +36,18 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 
 	public String description;
 
+	public Predicate<AspectContainer> canLearn;
+
 	public TechniqueAspect(String name, ResourceLocation textureLocation) {
 		this.name = name;
 		this.textureLocation = textureLocation;
 		this.checkpoints = new LinkedList<>();
 		this.checkpoints.add(NO_CHECKPOINT);
 		this.description = "";
+		this.canLearn = c -> true;
 	}
 
 	/**
-	 *
 	 * @return How many connections forward can make, -1 for infinite
 	 */
 	public int canConnectToCount() {
@@ -50,7 +55,6 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	}
 
 	/**
-	 *
 	 * @return How many connections backwards can make, -1 for infinite
 	 */
 	public int canConnectFromCount() {
@@ -88,8 +92,19 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	 * @param checkpoint the checkpoint to be added
 	 * @return this
 	 */
-	public TechniqueAspect addCheckpoint(Checkpoint checkpoint) {
+	public TechniqueAspect addCheckpoint(@Nonnull Checkpoint checkpoint) {
 		this.checkpoints.add(checkpoint);
+		return this;
+	}
+
+	/**
+	 * Changes the behavior to seek whether this aspect can be learned by a player
+	 *
+	 * @param canLearn the new behavior
+	 * @return this
+	 */
+	public TechniqueAspect setCanLearn(@Nonnull Predicate<AspectContainer> canLearn) {
+		this.canLearn = canLearn;
 		return this;
 	}
 
@@ -144,6 +159,12 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 		return true;
 	}
 
+	/**
+	 * Prepares a bunch of widgets to be used in the descriptor page
+	 *
+	 * @param aspectRegistryName The key of this aspect in the registry
+	 * @return widgets describing this aspect
+	 */
 	@Nonnull
 	public LinkedList<AbstractWidget> getStatsSheetDescriptor(ResourceLocation aspectRegistryName) {
 		WuxiaLabel nameLabel = new WuxiaLabel(5, 2, new TextComponent(this.name), 0xFFAA00);
@@ -156,7 +177,11 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 		return widgets;
 	}
 
-	public record Checkpoint(String name, BigDecimal proficiencyRequired, Consumer<ICultivation> onReached) {
+	/**
+	 * This is the checkpoints for this technique. Take care that when using onReached, make sure you don't add repeated entries
+	 * On reached is going to be called a lot, use {@link AspectContainer#learnAspect(ResourceLocation)} that it's safe
+	 */
+	public record Checkpoint(String name, BigDecimal proficiencyRequired, Consumer<AspectContainer> onReached) {
 	}
 
 }

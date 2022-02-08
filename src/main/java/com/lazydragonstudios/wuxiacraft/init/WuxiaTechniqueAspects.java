@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.init;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects.*;
 import net.minecraft.resources.ResourceLocation;
@@ -39,16 +40,19 @@ public class WuxiaTechniqueAspects {
 	 */
 	public static RegistryObject<TechniqueAspect> EMBER_ASPECT = ASPECTS.register("ember",
 			() -> new AspectElementalGenerator("ember", new ResourceLocation(WuxiaCraft.MOD_ID, "/textures/aspects/ember.png"), 1d, new ResourceLocation(WuxiaCraft.MOD_ID, "fire"))
-					.addCheckpoint(new TechniqueAspect.Checkpoint("sparkle", new BigDecimal("5000"), c -> {}))
-					.addCheckpoint(new TechniqueAspect.Checkpoint("fire_intent", new BigDecimal("15000"), c -> {}))
-					.addCheckpoint(new TechniqueAspect.Checkpoint("remaining_fire", new BigDecimal("35000"), c -> {}))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("sparkle", new BigDecimal("5000"), c -> {
+					}))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("fire_intent", new BigDecimal("15000"), c -> {
+					}))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("remaining_fire", new BigDecimal("35000"), c -> {
+					}))
 	);
 
 	/**
 	 * aspectEntry
 	 */
-	public static RegistryObject<TechniqueAspect> FIRE_CONNECT_TO_BODY_1 = ASPECTS.register("fire_connect_to_body_1",
-			() -> new AspectElementSystemConverter("fire_connect_to_body_1", new ResourceLocation(WuxiaCraft.MOD_ID, "/textures/aspects/fire_connect_to_body_1.png"), 3d, new ResourceLocation(WuxiaCraft.MOD_ID, "fire"), System.BODY)
+	public static RegistryObject<TechniqueAspect> SCORCH = ASPECTS.register("scorch",
+			() -> new AspectElementSystemConverter("scorch", new ResourceLocation(WuxiaCraft.MOD_ID, "/textures/aspects/scorch.png"), 3d, new ResourceLocation(WuxiaCraft.MOD_ID, "fire"), System.BODY)
 	);
 
 	/**
@@ -79,5 +83,4 @@ public class WuxiaTechniqueAspects {
 	public static RegistryObject<TechniqueAspect> BODY_RELEASING = ASPECTS.register("body_releasing",
 			() -> new TechniqueAspect("body_releasing", new ResourceLocation(WuxiaCraft.MOD_ID, "/textures/aspects/ember.png")) {
 			});
-
 }

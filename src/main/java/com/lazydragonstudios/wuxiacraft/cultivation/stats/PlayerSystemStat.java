@@ -67,15 +67,9 @@ public enum PlayerSystemStat {
 	 */
 	public final Point locationInStatsSheet;
 
-	/**
-	 * The string to be formatted when displaying the value
-	 */
-	public final String displayFormat;
-
 	PlayerSystemStat(BigDecimal defaultValue, boolean isModifiable, Point locationInStatsSheet, String displayFormat) {
 		this.defaultValue = defaultValue;
 		this.isModifiable = isModifiable;
 		this.locationInStatsSheet = locationInStatsSheet;
-		this.displayFormat = displayFormat;
 	}
 }

@@ -23,7 +23,15 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 
 	private final HashMap<PlayerStat, BigDecimal> playerStats = new HashMap<>();
 
+	/**
+	 *
+	 */
 	private final HashMap<System, HashMap<PlayerSystemStat, BigDecimal>> systemStats;
+
+	/**
+	 * This is the realm this stage belongs to
+	 */
+	public final ResourceLocation realm;
 
 	/**
 	 * The next stage to this stage
@@ -34,14 +42,15 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 
 	/**
 	 * Constructor for this cultivation stage
-	 *
-	 * @param name      The stage name
+	 *  @param name      The stage name
 	 * @param system    the Stage Cultivation System
+	 * @param realm
 	 * @param nextStage then next stage to this stage, null if last in realm
 	 */
-	public CultivationStage(String name, System system, @Nullable ResourceLocation nextStage) {
+	public CultivationStage(String name, System system, ResourceLocation realm, @Nullable ResourceLocation nextStage) {
 		this.name = name;
 		this.system = system;
+		this.realm = realm;
 		this.nextStage = nextStage;
 		systemStats = new HashMap<>();
 		//TODO find a better name

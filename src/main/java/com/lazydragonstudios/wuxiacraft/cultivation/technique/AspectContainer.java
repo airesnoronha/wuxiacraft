@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.technique;
 
+import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects.TechniqueAspect;
@@ -59,19 +60,19 @@ public class AspectContainer {
 		return this.aspectAndProficiency.getOrDefault(aspect, BigDecimal.ZERO).compareTo(BigDecimal.TEN) >= 0;
 	}
 
-	public void addAspectProficiency(ICultivation cultivation, ResourceLocation aspect, BigDecimal amount) {
+	public void addAspectProficiency(ResourceLocation aspect, BigDecimal amount) {
 		if (this.aspectAndProficiency.containsKey(aspect)) {
 			TechniqueAspect aspectInstance = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspect);
 			if (aspectInstance == null) return;
-			TechniqueAspect.Checkpoint before = aspectInstance.getCurrentCheckpoint(this.aspectAndProficiency.get(aspect));
 			this.aspectAndProficiency.put(aspect, this.aspectAndProficiency.get(aspect).add(amount).max(BigDecimal.ZERO));
-			TechniqueAspect.Checkpoint after = aspectInstance.getCurrentCheckpoint(this.aspectAndProficiency.get(aspect));
-			if (!before.equals(after)) {
-				after.onReached().accept(cultivation);
-			}
 		} else {
-			this.aspectAndProficiency.put(aspect, amount);
+			if (amount.compareTo(BigDecimal.TEN) >= 0) {
+				if (this.learnAspect(aspect)) {
+					this.aspectAndProficiency.put(aspect, amount);
+				}
+			}
 		}
+		calculateAspects();
 		countKnownAspects();
 	}
 
@@ -87,6 +88,31 @@ public class AspectContainer {
 			this.aspectAndProficiency.put(aspect, amount.multiply(new BigDecimal("-1")).max(BigDecimal.ZERO));
 		}
 		countKnownAspects();
+	}
+
+	public boolean learnAspect(ResourceLocation location) {
+		if (!this.knowsAspect(location)) {
+			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(location);
+			if (aspect == null) return false;
+			if (aspect.canLearn.test(this)) {
+				this.aspectAndProficiency.put(location, BigDecimal.TEN);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void calculateAspects() {
+		for (var aspectLocation : aspectAndProficiency.keySet()) {
+			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspectLocation);
+			if (aspect == null) continue;
+			for (var checkpoint : aspect.checkpoints) {
+				var proficiency = this.aspectAndProficiency.get(aspectLocation);
+				if (proficiency.compareTo(checkpoint.proficiencyRequired()) > 0) {
+					checkpoint.onReached().accept(this);
+				}
+			}
+		}
 	}
 
 	public CompoundTag serialize() {
@@ -112,6 +138,7 @@ public class AspectContainer {
 			var proficiency = aspectTag.getString("aspect-proficiency");
 			this.aspectAndProficiency.put(new ResourceLocation(location), new BigDecimal(proficiency));
 		}
+		calculateAspects();
 		countKnownAspects();
 	}
 
