@@ -11,22 +11,26 @@ import org.jetbrains.annotations.Nullable;
 import com.lazydragonstudios.wuxiacraft.cultivation.Element;
 
 import javax.annotation.Nonnull;
+import java.math.BigDecimal;
 
 public class WuxiaDamageSource extends DamageSource {
 
 	private final Element element;
 	private final Entity trueSource;
+	private final BigDecimal damage;
 
-	public WuxiaDamageSource(String damageTypeIn, Element element) {
+	public WuxiaDamageSource(String damageTypeIn, Element element, BigDecimal damage) {
 		super(damageTypeIn);
 		this.element = element;
+		this.damage = damage;
 		this.trueSource = null;
 	}
 
-	public WuxiaDamageSource(String damageTypeIn, Element element, Entity trueSource) {
+	public WuxiaDamageSource(String damageTypeIn, Element element, Entity trueSource, BigDecimal damage) {
 		super(damageTypeIn);
 		this.element = element;
 		this.trueSource = trueSource;
+		this.damage = damage;
 	}
 
 	public Element getElement() {
@@ -37,6 +41,10 @@ public class WuxiaDamageSource extends DamageSource {
 	@Override
 	public Entity getEntity() {
 		return this.trueSource;
+	}
+
+	public BigDecimal getDamage() {
+		return this.damage;
 	}
 
 	@Nonnull

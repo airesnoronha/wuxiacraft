@@ -144,7 +144,7 @@ public class CultivationEventHandler {
 	}
 
 	private static void killPlayerWithExplosion(Player player, String deathMessage, BigDecimal amount) {
-		player.hurt(new WuxiaDamageSource(deathMessage, WuxiaElements.PHYSICAL.get(), player), amount.floatValue());
+		player.hurt(new WuxiaDamageSource(deathMessage, WuxiaElements.PHYSICAL.get(), player, amount), amount.floatValue());
 	}
 
 	/**

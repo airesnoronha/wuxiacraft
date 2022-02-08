@@ -24,25 +24,25 @@ import com.lazydragonstudios.wuxiacraft.util.MathUtil;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-@Mod.EventBusSubscriber(bus= Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CombatEventHandler {
 
 	/**
 	 * All damage done to players will be intersected and be applied through here!
 	 * This will post a LivingDamageEvent for compatibility
+	 *
 	 * @param event a description of what is happening
 	 */
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void onPlayerHurt(LivingHurtEvent event) {
-		if(!(event.getEntity() instanceof Player player)) return;
+		if (!(event.getEntity() instanceof Player player)) return;
 		var cultivation = Cultivation.get(player);
 		WuxiaDamageSource source;
 		//if not one of our damage sources
-		if(!(event.getSource() instanceof WuxiaDamageSource)) {
+		if (!(event.getSource() instanceof WuxiaDamageSource)) {
 			//then we convert it
-			source = getElementalSourceFromVanillaSource(event.getSource());
-		}
-		else {
+			source = getElementalSourceFromVanillaSource(event.getSource(), event.getAmount());
+		} else {
 			source = (WuxiaDamageSource) event.getSource();
 		}
 		// TODO add elemental resistance
@@ -52,16 +52,18 @@ public class CombatEventHandler {
 
 	/**
 	 * Converts a vanilla damage source of any type to elemental damage source
+	 *
 	 * @param source the vanilla source to be converted from
 	 * @return the wuxia damage source with an element
 	 */
-	private static WuxiaDamageSource getElementalSourceFromVanillaSource(DamageSource source) {
-		if (source.isFire()) return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.FIRE.get());
+	private static WuxiaDamageSource getElementalSourceFromVanillaSource(DamageSource source, float amount) {
+		if (source.isFire())
+			return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.FIRE.get(), new BigDecimal(amount));
 		if (source == DamageSource.LIGHTNING_BOLT)
-			return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.LIGHTNING.get());
+			return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.LIGHTNING.get(), new BigDecimal(amount));
 		if (source == DamageSource.FREEZE)
-			return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.WATER.get());
-		return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.PHYSICAL.get(), source.getEntity());
+			return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.WATER.get(), new BigDecimal(amount));
+		return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.PHYSICAL.get(), source.getEntity(), new BigDecimal(amount));
 	}
 
 	/**
@@ -72,9 +74,10 @@ public class CombatEventHandler {
 	 */
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public static void onPlayerDamage(LivingDamageEvent event) {
-		if(!(event.getEntity() instanceof Player player)) return;
+		if (!(event.getEntity() instanceof Player player)) return;
+		if (!(event.getSource() instanceof WuxiaDamageSource source)) return;
 		var cultivation = Cultivation.get(player);
-		cultivation.setPlayerStat(PlayerStat.HEALTH, cultivation.getPlayerStat(PlayerStat.HEALTH).subtract(BigDecimal.valueOf(event.getAmount())));
+		cultivation.setPlayerStat(PlayerStat.HEALTH, cultivation.getPlayerStat(PlayerStat.HEALTH).subtract(source.getDamage()));
 
 		event.getEntityLiving().getCombatTracker().recordDamage(event.getSource(),
 				cultivation.getPlayerStat(PlayerStat.HEALTH).floatValue() + event.getAmount(), event.getAmount());
@@ -82,7 +85,7 @@ public class CombatEventHandler {
 		//decided that food exhaustion has nothing to do with damage.
 		//and it'll be used anyways to heal the character.
 
-		if(cultivation.getPlayerStat(PlayerStat.HEALTH).compareTo(BigDecimal.ZERO) <= 0) {
+		if (cultivation.getPlayerStat(PlayerStat.HEALTH).compareTo(BigDecimal.ZERO) <= 0) {
 			//this is vanilla health
 			player.setHealth(-1);
 		}
@@ -91,7 +94,6 @@ public class CombatEventHandler {
 		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) event.getEntityLiving()), new CultivationSyncMessage(cultivation));
 		event.setCanceled(true);
 	}
-
 
 
 	/**
@@ -112,8 +114,9 @@ public class CombatEventHandler {
 
 		LivingEntity target = event.getEntityLiving();
 		double maxHP = target.getMaxHealth();
-		if(target instanceof Player targetPlayer) maxHP = Cultivation.get(targetPlayer).getPlayerStat(PlayerStat.MAX_HEALTH).doubleValue();
-		double knockSpeed = MathUtil.clamp((event.getAmount()*0.7- maxHP)*0.3, 0, 12);
+		if (target instanceof Player targetPlayer)
+			maxHP = Cultivation.get(targetPlayer).getPlayerStat(PlayerStat.MAX_HEALTH).doubleValue();
+		double knockSpeed = MathUtil.clamp((event.getAmount() * 0.7 - maxHP) * 0.3, 0, 12);
 		Vec3 diff = Objects.requireNonNull(event.getSource().getSourcePosition()).subtract(event.getEntityLiving().getPosition(0.5f));
 		diff = diff.normalize();
 		target.knockback((float) knockSpeed, diff.x, diff.z);
