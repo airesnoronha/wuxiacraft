@@ -1,15 +1,19 @@
 package com.lazydragonstudios.wuxiacraft.client.render.models;
 
+import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.client.render.WuxiaRenderTypes;
 import com.mojang.blaze3d.MethodsReturnNonnullByDefault;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.*;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
@@ -19,7 +23,10 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class GhostModel extends EntityModel<Player> implements ArmedModel, HeadedModel {
+public class GhostModel extends EntityModel<AbstractClientPlayer> implements ArmedModel, HeadedModel {
+
+	public static final ModelLayerLocation LOCATION = new ModelLayerLocation(new ResourceLocation(WuxiaCraft.MOD_ID, "ghost_model"), "ghost_layer");
+
 	private final ModelPart body;
 	private final ModelPart head;
 	private final ModelPart rightArm;
@@ -59,7 +66,7 @@ public class GhostModel extends EntityModel<Player> implements ArmedModel, Heade
 
 
 	@Override
-	public void setupAnim(Player player, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+	public void setupAnim(AbstractClientPlayer player, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		//previously the render function, render code was moved to a method below
 		boolean flag = player.getFallFlyingTicks() > 4;
 		boolean flag1 = player.isVisuallySwimming();
@@ -170,7 +177,7 @@ public class GhostModel extends EntityModel<Player> implements ArmedModel, Heade
 	}
 
 	@Override
-	public void prepareMobModel(Player player, float limbSwing, float limbSwingAmount, float partialTick) {
+	public void prepareMobModel(AbstractClientPlayer player, float limbSwing, float limbSwingAmount, float partialTick) {
 		this.swimAmount = player.getSwimAmount(partialTick);
 		super.prepareMobModel(player, limbSwing, limbSwingAmount, partialTick);
 	}

@@ -27,22 +27,33 @@ public class PlayerEntityRenderEventHandler {
 	public static void onSinglePlayerRender(RenderLivingEvent.Pre<AbstractClientPlayer, ? extends Model> event) {
 		if (!(event.getEntity() instanceof Player)) return; //we don't want local players so far
 		var animationState = ClientAnimationState.get((Player) event.getEntity());
-		if(animationState.isMeditating() || animationState.isExercising()) {
+		if (animationState.isMeditating() || animationState.isExercising()) {
 			event.setCanceled(true);
 		}
-		if(!event.isCanceled()) return;
+		if (!event.isCanceled()) return;
 		//this is when we canceled the rendering to render it ourselves to add animations
-		var renderer = (AnimatedPlayerRenderer)Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(AnimatedPlayerRenderer.animatedEntityType);
-		if(renderer == null) return;
+		var renderer = (AnimatedPlayerRenderer) Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(AnimatedPlayerRenderer.animatedEntityType);
+		if (renderer == null) return;
 		renderer.render((AbstractClientPlayer) event.getEntity(), event.hashCode(), event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void onRenderGhost(RenderLivingEvent.Post<AbstractClientPlayer, ? extends Model> event) {
+		if (!(event.getEntity() instanceof AbstractClientPlayer target)) return;
+		var player = Minecraft.getInstance().player;
+		if (player == null) return;
+		if (!player.isCrouching()) return;
+		var renderer = (GhostRenderer) Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(GhostRenderer.ghostEntityType);
+		if (renderer == null) return;
+		renderer.render(target, event.hashCode(), event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
 	}
 
 	@SubscribeEvent
 	public static void onPlayerTickAddAnimation(TickEvent.PlayerTickEvent event) {
-		if(event.side != LogicalSide.CLIENT) return;
-		if(event.phase != TickEvent.Phase.END) return;
+		if (event.side != LogicalSide.CLIENT) return;
+		if (event.phase != TickEvent.Phase.END) return;
 		var player = event.player;
-		if(player == null) return;
+		if (player == null) return;
 		var animationState = ClientAnimationState.get(player);
 		animationState.advanceAnimationFrame();
 	}
