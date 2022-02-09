@@ -199,8 +199,8 @@ public class CultivationEventHandler {
 				int newY = chunk.getMaxBuildHeight();
 				for (int i = chunk.getMaxBuildHeight(); i >= 0; i--) {
 					var state = chunk.getBlockState(new BlockPos(newPosition.x, i, newPosition.y));
+					newY = i;
 					if (!state.getBlock().equals(Blocks.AIR)) {
-						newY = i + 1;
 						break;
 					}
 				}
