@@ -19,6 +19,7 @@ public enum PlayerStat {
 	DETECTION_RANGE(new BigDecimal("0.00"), false, new Point(5, 65)),
 	DETECTION_STRENGTH(new BigDecimal("0.00"), false, new Point(5, 75)),
 	DETECTION_RESISTANCE(new BigDecimal("0.00"), false, new Point(5, 85)),
+	LIVES(new BigDecimal("3"), true, new Point(-1, 65)),
 	;
 	/**
 	 * the default value of the stat

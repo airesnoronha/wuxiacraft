@@ -87,8 +87,8 @@ public class WuxiaRealms {
 					() -> new CultivationStage("body_mortal_stage",
 							System.BODY,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "body_mortal_realm"),
-							null
-					)
+							null,
+							null)
 							.addSystemStat(System.BODY, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("100"))
 			);
 
@@ -101,8 +101,8 @@ public class WuxiaRealms {
 					() -> new CultivationStage("divine_mortal_stage",
 							System.DIVINE,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "body_mortal_realm"),
-							null
-					)
+							null,
+							null)
 							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("100"))
 			);
 
@@ -115,8 +115,8 @@ public class WuxiaRealms {
 					() -> new CultivationStage("essence_mortal_stage",
 							System.ESSENCE,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_realm"),
-							null
-					)
+							null,
+							null)
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("1000")) //1k
 			);
 
@@ -125,8 +125,8 @@ public class WuxiaRealms {
 					() -> new CultivationStage("essence_qi_gathering_stage",
 							System.ESSENCE,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_gathering_realm"),
-							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_pathways_stage")
-					)
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_pathways_stage"),
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_realm"))
 							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("3"))
 							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("1.5"))
 							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.1"))
@@ -144,8 +144,8 @@ public class WuxiaRealms {
 					() -> new CultivationStage("essence_qi_pathways_stage",
 							System.ESSENCE,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_gathering_realm"),
-							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_condensation_stage")
-					)
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_condensation_stage"),
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_gathering_stage"))
 							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("7"))
 							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("3.5"))
 							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.2"))
@@ -162,8 +162,8 @@ public class WuxiaRealms {
 					() -> new CultivationStage("essence_qi_condensation_stage",
 							System.ESSENCE,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_gathering_realm"),
-							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_phenomenon_stage")
-					)
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_phenomenon_stage"),
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_pathways_stage"))
 							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("12"))
 							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("6"))
 							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.4"))
@@ -180,8 +180,8 @@ public class WuxiaRealms {
 					() -> new CultivationStage("essence_qi_phenomenon_stage",
 							System.ESSENCE,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_gathering_realm"),
-							null
-					)
+							null,
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_condensation_stage"))
 							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("20"))
 							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("10"))
 							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.8"))

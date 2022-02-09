@@ -21,10 +21,13 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 	 */
 	public final System system;
 
+	/**
+	 * Add stats to the player in this stage
+	 */
 	private final HashMap<PlayerStat, BigDecimal> playerStats = new HashMap<>();
 
 	/**
-	 *
+	 * Add stats to the player to specific system
 	 */
 	private final HashMap<System, HashMap<PlayerSystemStat, BigDecimal>> systemStats;
 
@@ -35,23 +38,33 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 
 	/**
 	 * The next stage to this stage
-	 * Null if last stage in realm
+	 * Null if not next stage
 	 */
 	@Nullable
 	public final ResourceLocation nextStage;
 
 	/**
+	 * The previous stage to this stage
+	 * This is used to when dropping back a stage when cultivation base is not stabilized
+	 * Null if not previous stage
+	 */
+	@Nullable
+	public final ResourceLocation previousStage;
+
+	/**
 	 * Constructor for this cultivation stage
-	 *  @param name      The stage name
+	 * @param name      The stage name
 	 * @param system    the Stage Cultivation System
 	 * @param realm
 	 * @param nextStage then next stage to this stage, null if last in realm
+	 * @param previousStage
 	 */
-	public CultivationStage(String name, System system, ResourceLocation realm, @Nullable ResourceLocation nextStage) {
+	public CultivationStage(String name, System system, ResourceLocation realm, @Nullable ResourceLocation nextStage, @Nullable ResourceLocation previousStage) {
 		this.name = name;
 		this.system = system;
 		this.realm = realm;
 		this.nextStage = nextStage;
+		this.previousStage = previousStage;
 		systemStats = new HashMap<>();
 		//TODO find a better name
 		for (var s : System.values()) {

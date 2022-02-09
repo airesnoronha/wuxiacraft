@@ -9,6 +9,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.technique.AspectContainer;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
+//TODO add a lives counter
 public class Cultivation implements ICultivation {
 
 	/**

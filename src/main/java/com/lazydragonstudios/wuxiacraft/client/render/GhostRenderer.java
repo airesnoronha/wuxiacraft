@@ -131,4 +131,10 @@ public class GhostRenderer extends LivingEntityRenderer<AbstractClientPlayer, Gh
 
 		return false;
 	}
+
+	@Override
+	protected void scale(AbstractClientPlayer player, PoseStack poseStack, float partialTicks) {
+		float f = 0.9375F;
+		poseStack.scale(f, f, f);
+	}
 }

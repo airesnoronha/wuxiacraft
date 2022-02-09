@@ -2,11 +2,14 @@ package com.lazydragonstudios.wuxiacraft.cultivation;
 
 import com.lazydragonstudios.wuxiacraft.combat.WuxiaDamageSource;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaElements;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -18,8 +21,10 @@ import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.networking.CultivationSyncMessage;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 
+import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashSet;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class CultivationEventHandler {
@@ -39,6 +44,7 @@ public class CultivationEventHandler {
 		syncClientCultivation((ServerPlayer) player);
 	}
 
+	//TODO add drop back realm when not have stabilized realm
 	@SubscribeEvent
 	public static void onCultivatorUpdate(TickEvent.PlayerTickEvent event) {
 		if (event.phase != TickEvent.Phase.END) return;
@@ -156,6 +162,52 @@ public class CultivationEventHandler {
 	@SubscribeEvent
 	public static void onPlayerResurrect(PlayerEvent.PlayerRespawnEvent event) {
 		syncClientCultivation((ServerPlayer) event.getPlayer());
+		if (event.getPlayer().getTags().contains("PLEASE_RTP_ME")) {
+			var level = event.getPlayer().level;
+			var playerPositions = new HashSet<Point>();
+			Point playerDeathPosition = new Point(event.getPlayer().getBlockX(), event.getPlayer().getBlockZ());
+			for (var p : level.players()) {
+				playerPositions.add(new Point(p.getBlockX(), p.getBlockZ()));
+			}
+			int attempts = 30;
+			int spawnX = event.getPlayer().level.getLevelData().getXSpawn();
+			int spawnZ = event.getPlayer().level.getLevelData().getZSpawn();
+			Point newPosition = null;
+			for (int i = 0; i < attempts; i++) {
+				boolean isNearSomeone = false;
+				int newX = spawnX + event.getPlayer().getRandom().nextInt(20000) - 10000;
+				int newZ = spawnZ + event.getPlayer().getRandom().nextInt(20000) - 10000;
+				var point = new Point(newX, newZ);
+				//I'm using the y variable from point as the z coordinate
+				if (point.distance(playerDeathPosition.x, playerDeathPosition.y) >= 1000) {
+					for (var p : playerPositions) {
+						if (p.distance(point.x, point.y) < 400) {
+							isNearSomeone = true;
+							break;
+						}
+					}
+				} else {
+					isNearSomeone = true;
+				}
+				if (!isNearSomeone) {
+					newPosition = point;
+					break;
+				}
+			}
+			if (newPosition != null) {
+				var chunk = event.getPlayer().level.getChunkAt(new BlockPos(newPosition.x, 64, newPosition.y));
+				int newY = chunk.getMaxBuildHeight();
+				for (int i = chunk.getMaxBuildHeight(); i >= 0; i--) {
+					var state = chunk.getBlockState(new BlockPos(newPosition.x, i, newPosition.y));
+					if (!state.getBlock().equals(Blocks.AIR)) {
+						newY = i + 1;
+						break;
+					}
+				}
+				event.getPlayer().teleportTo(newPosition.x, newY, newPosition.y);
+			}
+			event.getPlayer().removeTag("PLEASE_RTP_ME");
+		}
 	}
 
 	/**
@@ -172,13 +224,21 @@ public class CultivationEventHandler {
 		ICultivation newCultivation = Cultivation.get(event.getPlayer());
 		if (event.isWasDeath()) {
 			//oldCultivation.setSkillCooldown(0);
-			oldCultivation.setPlayerStat(PlayerStat.HEALTH, PlayerStat.HEALTH.defaultValue);
-			var bodyData = oldCultivation.getSystemData(System.BODY);
-			var divineData = oldCultivation.getSystemData(System.DIVINE);
-			var essenceData = oldCultivation.getSystemData(System.ESSENCE);
-			bodyData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("7"));
-			divineData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("10"));
-			essenceData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("0"));
+			if (event.getOriginal().getTags().contains("PLEASE_RTP_ME")) {
+				event.getPlayer().addTag("PLEASE_RTP_ME");
+			}
+			oldCultivation.setPlayerStat(PlayerStat.LIVES, oldCultivation.getPlayerStat(PlayerStat.LIVES).subtract(BigDecimal.ONE));
+			if (oldCultivation.getPlayerStat(PlayerStat.LIVES).compareTo(BigDecimal.ZERO) == 0) {
+				oldCultivation.deserialize(new Cultivation().serialize());
+			} else {
+				oldCultivation.setPlayerStat(PlayerStat.HEALTH, PlayerStat.HEALTH.defaultValue);
+				var bodyData = oldCultivation.getSystemData(System.BODY);
+				var divineData = oldCultivation.getSystemData(System.DIVINE);
+				var essenceData = oldCultivation.getSystemData(System.ESSENCE);
+				bodyData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("7"));
+				divineData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("10"));
+				essenceData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("0"));
+			}
 			event.getOriginal().invalidateCaps();
 		}
 		newCultivation.deserialize(oldCultivation.serialize());
