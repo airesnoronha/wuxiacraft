@@ -1,4 +1,4 @@
-package com.lazydragonstudios.wuxiacraft.client;
+package com.lazydragonstudios.wuxiacraft.client.render;
 
 import com.lazydragonstudios.wuxiacraft.capabilities.ClientAnimationState;
 import com.mojang.blaze3d.vertex.PoseStack;

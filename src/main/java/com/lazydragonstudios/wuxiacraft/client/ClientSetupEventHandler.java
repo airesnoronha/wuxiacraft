@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.client;
 
+import com.lazydragonstudios.wuxiacraft.client.render.AnimatedPlayerRenderer;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
