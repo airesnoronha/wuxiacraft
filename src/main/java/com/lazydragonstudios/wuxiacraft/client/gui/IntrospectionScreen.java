@@ -18,7 +18,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import org.antlr.v4.misc.OrderedHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -26,13 +25,15 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 @ParametersAreNonnullByDefault
 public class IntrospectionScreen extends AbstractContainerScreen<IntrospectionMenu> {
 
 	public static final ResourceLocation INTROSPECTION_GUI = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/introspection_gui.png");
 
-	public OrderedHashMap<String, IntrospectionTab> tabs = new OrderedHashMap<>();
+	public HashMap<String, IntrospectionTab> tabs = new HashMap<>();
+	public LinkedList<String> tabsOrder = new LinkedList<>();
 	public String selectedTab;
 
 
@@ -59,12 +60,19 @@ public class IntrospectionScreen extends AbstractContainerScreen<IntrospectionMe
 	protected void init() {
 		super.init();
 		tabs.put("stats", new CharacterStatsTab("stats"));
+		tabsOrder.add("stats");
 		tabs.put("aspects", new AspectsTab("aspects"));
+		tabsOrder.add("aspects");
 		tabs.put("body_technique", new TechniqueTab("body_technique", new Point(64, 36), System.BODY));
+		tabsOrder.add("body_technique");
 		tabs.put("divine_technique", new TechniqueTab("divine_technique", new Point(0, 68), System.DIVINE));
+		tabsOrder.add("divine_technique");
 		tabs.put("essence_technique", new TechniqueTab("essence_technique", new Point(32, 68), System.ESSENCE));
+		tabsOrder.add("essence_technique");
 		tabs.put("skills", new SkillsTab("skills"));
+		tabsOrder.add("skills");
 		tabs.put("professions", new ProfessionsTab("professions"));
+		tabsOrder.add("professions");
 		selectedTab = "stats";
 		tabs.get(selectedTab).init(this);
 	}
@@ -73,7 +81,7 @@ public class IntrospectionScreen extends AbstractContainerScreen<IntrospectionMe
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		boolean didSomething = false;
 		int i = 0;
-		for (var tab : this.tabs.keySet()) {
+		for (var tab : this.tabsOrder) {
 			if (MathUtil.inBounds(mouseX, mouseY, 0, i * 36, 36, 36)) {
 				tabs.get(selectedTab).close(this);
 				this.selectedTab = tab;
@@ -103,7 +111,7 @@ public class IntrospectionScreen extends AbstractContainerScreen<IntrospectionMe
 		RenderSystem.setShaderTexture(0, INTROSPECTION_GUI);
 		RenderSystem.enableBlend();
 		int i = 0;
-		for (var tab : this.tabs.keySet()) {
+		for (var tab : this.tabsOrder) {
 			int texX = tab.equals(selectedTab) ? 36 : 0;
 			GuiComponent.blit(poseStack,
 					0, i * 36, //position in screen

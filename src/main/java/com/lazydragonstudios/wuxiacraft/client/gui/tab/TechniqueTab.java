@@ -164,7 +164,8 @@ public class TechniqueTab extends IntrospectionTab {
 						-16, -16,
 						32, 32,
 						0, 0,
-						32, 32, 32, 32);
+						32, 32,
+						32, 32);
 				poseStack.popPose();
 			}
 		}
