@@ -13,10 +13,6 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.18.1-0.0.10.0'
-group = 'com.lazydragonstudios.wuxiacraft' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'wuxiacraft'
-
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -122,6 +118,27 @@ repositories {
     // flatDir {
     //     dir 'libs'
     // }
+    maven {
+        // location of the maven that hosts JEI files
+        name = "Progwml6 maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        // location of a maven mirror for JEI files, as a fallback
+        name = "ModMaven"
+        url = "https://modmaven.dev"
+    }
+    maven {
+        url "https://maven.architectury.dev/"
+    }
+    maven {
+        name="FTB repos"
+        url "https://maven.saps.dev/minecraft"
+        content {
+            includeGroup "dev.latvian.mods"
+            includeGroup "dev.ftb.mods"
+        }
+    }
 }
 
 dependencies {
@@ -131,9 +148,11 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.18.1-39.0.44'
 
     // Real mod deobf dependency examples - these get remapped to your current mappings
-    // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
     // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}") // Adds the full JEI mod as a runtime dependency
     // implementation fg.deobf("com.tterrag.registrate:Registrate:MC${mc_version}-${registrate_version}") // Adds registrate as a dependency
+
+    compileOnly "dev.ftb.mods:ftb-quests-forge:${ftb_quests_version}"
 
     // Examples using mod jars from ./libs
     // implementation fg.deobf("blank:coolmod-${mc_version}:${coolmod_version}")
@@ -147,12 +166,12 @@ dependencies {
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "wuxiacraft",
-                "Specification-Vendor"    : "wuxiacraftsareus",
+                "Specification-Title"     : project.mod_id,
+                "Specification-Vendor"    : project.author,
                 "Specification-Version"   : "1", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
-                "Implementation-Version"  : project.jar.archiveVersion,
-                "Implementation-Vendor"   : "wuxiacraftsareus",
+                "Implementation-Version"  : project.version,
+                "Implementation-Vendor"   : project.author,
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
