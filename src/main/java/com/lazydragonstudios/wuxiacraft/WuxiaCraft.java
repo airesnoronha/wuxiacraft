@@ -30,6 +30,8 @@ import com.lazydragonstudios.wuxiacraft.client.gui.IntrospectionScreen;
 import com.lazydragonstudios.wuxiacraft.client.overlays.EnergiesOverlay;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRealms;
 
+import java.util.stream.Collectors;
+
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("wuxiacraft")
 public class WuxiaCraft {
@@ -73,7 +75,6 @@ public class WuxiaCraft {
 		OverlayRegistry.registerOverlayBelow(ForgeIngameGui.CHAT_PANEL_ELEMENT, "wuxiacraft_energies", new EnergiesOverlay());
 
 		MenuScreens.register(IntrospectionMenu.registryType, IntrospectionScreen::new);
-
 	}
 
 
@@ -81,21 +82,23 @@ public class WuxiaCraft {
 		// some preinit code
 		LOGGER.info("Registering messages. Check your transmission talisman!");
 		WuxiaPacketHandler.registerMessages();
-
 		TestRun.testStuff();
-
 	}
 
 	private void enqueueIMC(final InterModEnqueueEvent event) {
 		// some example code to dispatch IMC to another mod
-		//InterModComms.sendTo("examplemod", "helloworld", () -> { LOGGER.info("Hello world from the MDK"); return "Hello world";});
+//		InterModComms.sendTo("ftbquests", "init", () -> {
+//			LOGGER.info("Initializing the things from WuxiaCraft in FTBQuests");
+//			FTBQuestsIntegration.init();
+//			return "Hello world";
+//		});
 	}
 
 	private void processIMC(final InterModProcessEvent event) {
 		// some example code to receive and process InterModComms from other mods
-		//LOGGER.info("Got IMC {}", event.getIMCStream().
-		//       map(m->m.messageSupplier().get()).
-		//      collect(Collectors.toList()));
+		LOGGER.info("Got IMC {}", event.getIMCStream().
+				map(m -> m.messageSupplier().get()).
+				collect(Collectors.toList()));
 	}
 
 	// You can use SubscribeEvent and let the Event Bus discover methods to call

@@ -37,17 +37,17 @@ description='''
 This is a mod that aims to make you into a main character of a wuxia novel, adding cultivation and auxiliary systems to make you feel like you're inside a complete magic wuxia like world.
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
-#[[dependencies.wuxiacraft]] #optional
-#    # the modid of the dependency
-#    modId="forge" #mandatory
-#    # Does this dependency have to exist - if not, ordering below must be specified
-#    mandatory=true #mandatory
-#    # The version range of the dependency
-#    versionRange="[39,)" #mandatory
-#    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
-#    ordering="NONE"
-#    # Side this dependency is applied on - BOTH, CLIENT or SERVER
-#    side="BOTH"
+[[dependencies.ftbquests]] #optional
+    # the modid of the dependency
+    modId="ftbquests" #mandatory
+    # Does this dependency have to exist - if not, ordering below must be specified
+    mandatory=false #mandatory
+    # The version range of the dependency
+    versionRange="[1801.3.7-build.93)" #mandatory
+    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+    ordering="BEFORE"
+    # Side this dependency is applied on - BOTH, CLIENT or SERVER
+    side="BOTH"
 # Here's another dependency
 #[[dependencies.examplemod]]
 #    modId="minecraft"
