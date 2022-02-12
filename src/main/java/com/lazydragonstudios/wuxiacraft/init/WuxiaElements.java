@@ -6,6 +6,7 @@ import net.minecraftforge.registries.RegistryObject;
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.cultivation.Element;
 
+@SuppressWarnings("unused")
 public class WuxiaElements {
 
 	public static DeferredRegister<Element> ELEMENTS = DeferredRegister.create(Element.class, WuxiaCraft.MOD_ID);

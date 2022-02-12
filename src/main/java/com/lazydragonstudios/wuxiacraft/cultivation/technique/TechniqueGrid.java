@@ -11,7 +11,6 @@ import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.util.HashMap;

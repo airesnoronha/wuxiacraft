@@ -1,6 +1,5 @@
 package com.lazydragonstudios.wuxiacraft.init;
 
-import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects.*;
 import net.minecraft.resources.ResourceLocation;
@@ -10,6 +9,7 @@ import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 
 import java.math.BigDecimal;
 
+@SuppressWarnings("unused")
 public class WuxiaTechniqueAspects {
 
 	public static DeferredRegister<TechniqueAspect> ASPECTS = DeferredRegister.create(TechniqueAspect.class, WuxiaCraft.MOD_ID);

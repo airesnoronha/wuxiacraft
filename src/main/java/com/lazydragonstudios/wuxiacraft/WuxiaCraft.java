@@ -6,6 +6,7 @@ import com.lazydragonstudios.wuxiacraft.client.overlays.HealthOverlay;
 import com.lazydragonstudios.wuxiacraft.command.CultivationCommand;
 import com.lazydragonstudios.wuxiacraft.container.IntrospectionMenu;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaElements;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaSkillAspects;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -62,6 +63,7 @@ public class WuxiaCraft {
 		WuxiaRealms.STAGE_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 		WuxiaElements.ELEMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
 		WuxiaTechniqueAspects.ASPECTS.register(FMLJavaModLoadingContext.get().getModEventBus());
+		WuxiaSkillAspects.ASPECTS.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
