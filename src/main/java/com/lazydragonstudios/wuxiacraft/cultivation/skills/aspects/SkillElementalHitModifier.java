@@ -2,10 +2,9 @@ package com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects;
 
 import java.util.LinkedList;
 
-public class SkillHitModifierAspect extends SkillAspect {
+public class SkillElementalHitModifier extends SkillAspect {
 
-
-	public SkillHitModifierAspect(String name) {
+	public SkillElementalHitModifier(String name) {
 		super();
 	}
 

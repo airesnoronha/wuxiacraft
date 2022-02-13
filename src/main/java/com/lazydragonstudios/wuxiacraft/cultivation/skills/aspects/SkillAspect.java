@@ -2,16 +2,19 @@ package com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects;
 
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 
 
 public abstract class SkillAspect extends ForgeRegistryEntry<SkillAspect> {
 
-	public final String name;
+	public BigDecimal costModifier = BigDecimal.ZERO;
 
-	public SkillAspect(String name) {
-		this.name = name;
-	}
+	public BigDecimal castModifier = BigDecimal.ZERO;
+
+	public BigDecimal cooldownModifier = BigDecimal.ZERO;
+
+	public SkillAspect() {}
 
 	/**
 	 * Will determine whether it can connect to next node

@@ -6,9 +6,11 @@ import com.lazydragonstudios.wuxiacraft.networking.CultivationSyncMessage;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -111,7 +113,8 @@ public class CombatEventHandler {
 
 		ICultivation cultivation = Cultivation.get(player);
 		event.setAmount(event.getAmount() + cultivation.getPlayerStat(PlayerStat.STRENGTH).floatValue());
-
+		//if it was a punch, then we apply a little of knock back
+		if(player.getItemInHand(InteractionHand.MAIN_HAND) == ItemStack.EMPTY ) return;
 		LivingEntity target = event.getEntityLiving();
 		double maxHP = target.getMaxHealth();
 		if (target instanceof Player targetPlayer)

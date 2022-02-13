@@ -100,7 +100,7 @@ public class WuxiaRealms {
 			.register("divine_mortal_stage",
 					() -> new CultivationStage("divine_mortal_stage",
 							System.DIVINE,
-							new ResourceLocation(WuxiaCraft.MOD_ID, "body_mortal_realm"),
+							new ResourceLocation(WuxiaCraft.MOD_ID, "divine_mortal_realm"),
 							null,
 							null)
 							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("100"))

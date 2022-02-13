@@ -1,0 +1,38 @@
+package com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator;
+
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillActivationModifierAspect;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspect;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillHitAspect;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+
+import java.util.LinkedList;
+import java.util.function.BiPredicate;
+
+public class SkillActivatorAspect extends SkillAspect {
+
+	private BiPredicate<Player, LinkedList<SkillAspect>> activate;
+
+	public SkillActivatorAspect() {
+		super();
+		activate = (p, c) ->  {
+			return false;
+		};
+	}
+
+	public SkillActivatorAspect setActivate(BiPredicate<Player, LinkedList<SkillAspect>> activate) {
+		this.activate = activate;
+		return this;
+	}
+
+	@Override
+	public boolean canConnect(SkillAspect aspect) {
+		return aspect instanceof SkillActivationModifierAspect || aspect instanceof SkillHitAspect;
+	}
+
+	@Override
+	public boolean canCompile(LinkedList<SkillAspect> aspectChain) {
+		return false;
+	}
+
+}

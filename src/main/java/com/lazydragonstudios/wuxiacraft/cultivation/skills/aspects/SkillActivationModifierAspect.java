@@ -1,12 +1,13 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects;
 
-import javax.swing.*;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillHitAspect;
+
 import java.util.LinkedList;
 
 public class SkillActivationModifierAspect extends SkillAspect {
 
-	public SkillActivationModifierAspect(String name) {
-		super(name);
+	public SkillActivationModifierAspect() {
+		super();
 	}
 
 	@Override

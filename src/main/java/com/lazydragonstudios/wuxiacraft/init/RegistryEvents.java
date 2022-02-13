@@ -5,6 +5,7 @@ import com.lazydragonstudios.wuxiacraft.container.IntrospectionMenu;
 import com.lazydragonstudios.wuxiacraft.cultivation.CultivationRealm;
 import com.lazydragonstudios.wuxiacraft.cultivation.CultivationStage;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspect;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspectType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.Block;
@@ -57,9 +58,9 @@ public class RegistryEvents {
 				.create();
 
 		WuxiaCraft.LOGGER.debug("Creating the registry for the Skills Aspects");
-		WuxiaRegistries.SKILL_ASPECT = new RegistryBuilder<SkillAspect>()
+		WuxiaRegistries.SKILL_ASPECT = new RegistryBuilder<SkillAspectType>()
 				.setName(new ResourceLocation(WuxiaCraft.MOD_ID, "skill_aspects"))
-				.setType(SkillAspect.class)
+				.setType(SkillAspectType.class)
 				.create();
 	}
 
