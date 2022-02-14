@@ -17,10 +17,26 @@ public class WuxiaRenderTypes extends RenderType {
 			false, false,
 			CompositeState.builder()
 					.setCullState(CULL)
-					.setDepthTestState(NO_DEPTH_TEST)
+					.setDepthTestState(RenderStateShard.NO_DEPTH_TEST)
 					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
 					.setLightmapState(LIGHTMAP)
+					.setWriteMaskState(RenderStateShard.COLOR_WRITE)
 					.setShaderState(RenderStateShard.NEW_ENTITY_SHADER)
+					.setTextureState(new TextureStateShard(location, false, false))
+					.createCompositeState(false));
+
+	public static final Function<ResourceLocation, RenderType> getAuraRenderer = (ResourceLocation location) -> create("aura_renderer",
+			DefaultVertexFormat.NEW_ENTITY,
+			VertexFormat.Mode.QUADS,
+			DefaultVertexFormat.NEW_ENTITY.getVertexSize(),
+			false, false,
+			CompositeState.builder()
+					.setCullState(NO_CULL)
+					.setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
+					.setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+					.setLightmapState(LIGHTMAP)
+					.setShaderState(RenderStateShard.NEW_ENTITY_SHADER)
+					.setWriteMaskState(RenderStateShard.COLOR_WRITE)
 					.setTextureState(new TextureStateShard(location, false, false))
 					.createCompositeState(false));
 

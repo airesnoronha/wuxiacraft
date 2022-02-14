@@ -1,4 +1,4 @@
-package com.lazydragonstudios.wuxiacraft.client.render;
+package com.lazydragonstudios.wuxiacraft.client.render.renderer;
 
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.client.render.models.GhostModel;

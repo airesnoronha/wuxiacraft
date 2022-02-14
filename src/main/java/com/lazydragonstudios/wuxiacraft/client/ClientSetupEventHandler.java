@@ -1,7 +1,8 @@
 package com.lazydragonstudios.wuxiacraft.client;
 
-import com.lazydragonstudios.wuxiacraft.client.render.AnimatedPlayerRenderer;
-import com.lazydragonstudios.wuxiacraft.client.render.GhostRenderer;
+import com.lazydragonstudios.wuxiacraft.client.render.renderer.AnimatedPlayerRenderer;
+import com.lazydragonstudios.wuxiacraft.client.render.renderer.AuraRenderer;
+import com.lazydragonstudios.wuxiacraft.client.render.renderer.GhostRenderer;
 import com.lazydragonstudios.wuxiacraft.client.render.models.GhostModel;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
@@ -33,8 +34,10 @@ public class ClientSetupEventHandler {
 	public static void onRenderingRegistry(EntityRenderersEvent.RegisterRenderers event) {
 		AnimatedPlayerRenderer.animatedEntityType = EntityType.Builder.<AbstractClientPlayer>createNothing(MobCategory.MISC).build("animated_player_entity");
 		GhostRenderer.ghostEntityType = EntityType.Builder.<AbstractClientPlayer>createNothing(MobCategory.MISC).build("ghost_entity");
+		AuraRenderer.auraEntityType = EntityType.Builder.<AbstractClientPlayer>createNothing(MobCategory.MISC).build("aura_entity");
 		event.registerEntityRenderer(AnimatedPlayerRenderer.animatedEntityType, ctx -> new AnimatedPlayerRenderer(ctx, false));
 		event.registerEntityRenderer(GhostRenderer.ghostEntityType, GhostRenderer::new);
+		event.registerEntityRenderer(AuraRenderer.auraEntityType, AuraRenderer::new);
 	}
 
 	@SubscribeEvent

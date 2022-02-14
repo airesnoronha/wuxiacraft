@@ -1,7 +1,11 @@
 package com.lazydragonstudios.wuxiacraft.client.render;
 
 import com.lazydragonstudios.wuxiacraft.capabilities.ClientAnimationState;
-import com.lazydragonstudios.wuxiacraft.client.render.AnimatedPlayerRenderer;
+import com.lazydragonstudios.wuxiacraft.client.render.aura.BaseAura;
+import com.lazydragonstudios.wuxiacraft.client.render.aura.ElectricAura;
+import com.lazydragonstudios.wuxiacraft.client.render.renderer.AnimatedPlayerRenderer;
+import com.lazydragonstudios.wuxiacraft.client.render.renderer.AuraRenderer;
+import com.lazydragonstudios.wuxiacraft.client.render.renderer.GhostRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -45,6 +49,16 @@ public class PlayerEntityRenderEventHandler {
 		if (!player.isCrouching()) return;
 		var renderer = (GhostRenderer) Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(GhostRenderer.ghostEntityType);
 		if (renderer == null) return;
+		renderer.render(target, event.hashCode(), event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
+	}
+
+	@SubscribeEvent
+	public static void onRenderAura(RenderLivingEvent.Post<AbstractClientPlayer, ? extends Model> event) {
+		if (!(event.getEntity() instanceof AbstractClientPlayer target)) return;
+		var player = Minecraft.getInstance().player;
+		if (player == null) return;
+		var renderer = (AuraRenderer) Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(AuraRenderer.auraEntityType);
+		if(renderer == null) return;
 		renderer.render(target, event.hashCode(), event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
 	}
 

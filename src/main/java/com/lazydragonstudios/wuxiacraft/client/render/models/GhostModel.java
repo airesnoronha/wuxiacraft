@@ -43,9 +43,9 @@ public class GhostModel extends EntityModel<AbstractClientPlayer> implements Arm
 	public GhostModel(ModelPart definition) {
 		super(WuxiaRenderTypes.getEntitySeeTrough);
 		this.body = definition.getChild("body");
-		this.head = this.body.getChild("head");
-		this.rightArm = this.body.getChild("right_arm");
-		this.leftArm = this.body.getChild("left_arm");
+		this.head = definition.getChild("head");
+		this.rightArm = definition.getChild("right_arm");
+		this.leftArm = definition.getChild("left_arm");
 		this.leg = this.body.getChild("leg");
 		this.foot = this.leg.getChild("foot");
 	}
@@ -54,10 +54,10 @@ public class GhostModel extends EntityModel<AbstractClientPlayer> implements Arm
 		var meshDefinition = new MeshDefinition();
 		var parts = meshDefinition.getRoot();
 		parts.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 16).addBox(-4f, 0f, -2f, 8f, 12f, 4f, deformation), PartPose.offset(0f, 24f + yOffset, 0f));
+		parts.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4f, -8f, -4f, 8f, 8f, 8f, deformation), PartPose.offset(0f, 0f + yOffset, 0f));
+		parts.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(48, 12).addBox(-3f, -2f, -2f, 4f, 8f, 4f, deformation), PartPose.offset(-5f, 2f + yOffset, 0f));
+		parts.addOrReplaceChild("left_arm", CubeListBuilder.create().mirror().texOffs(48, 0).addBox(-1f, -2f, -2f, 4f, 8f, 4f, deformation), PartPose.offset(5f, 2f + yOffset, 0f));
 		var body = parts.getChild("body");
-		body.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0, 0).addBox(-4f, -8f, -4f, 8f, 8f, 8f, deformation), PartPose.offset(0f, 0f + yOffset, 0f));
-		body.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(48, 12).addBox(-3f, -2f, -2f, 4f, 8f, 4f, deformation), PartPose.offset(-5f, 2f + yOffset, 0f));
-		body.addOrReplaceChild("left_arm", CubeListBuilder.create().mirror().texOffs(48, 0).addBox(-1f, -2f, -2f, 4f, 8f, 4f, deformation), PartPose.offset(5f, 2f + yOffset, 0f));
 		body.addOrReplaceChild("leg", CubeListBuilder.create().texOffs(0, 56).addBox(-2f, 24f, -0f, 4f, 4f, 4f, deformation), PartPose.offset(0f, -12f + yOffset, -1f));
 		var leg = body.getChild("leg");
 		leg.addOrReplaceChild("foot", CubeListBuilder.create().texOffs(24, 57).addBox(-1f, 24f, -0f, 2f, 2f, 5f, deformation), PartPose.offset(0f, 4f + yOffset, 1f));
@@ -68,13 +68,13 @@ public class GhostModel extends EntityModel<AbstractClientPlayer> implements Arm
 	@Override
 	public void setupAnim(AbstractClientPlayer player, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		//previously the render function, render code was moved to a method below
-		boolean flag = player.getFallFlyingTicks() > 4;
-		boolean flag1 = player.isVisuallySwimming();
+		boolean isFalling = player.getFallFlyingTicks() > 4;
+		boolean isSwimming = player.isVisuallySwimming();
 		this.head.yRot = netHeadYaw * ((float) Math.PI / 180F);
-		if (flag) {
+		if (isFalling) {
 			this.head.xRot = (-(float) Math.PI / 4F);
 		} else if (this.swimAmount > 0.0F) {
-			if (flag1) {
+			if (isSwimming) {
 				this.head.xRot = this.rotLerpRad(this.swimAmount, this.head.xRot, (-(float) Math.PI / 4F));
 			} else {
 				this.head.xRot = this.rotLerpRad(this.swimAmount, this.head.xRot, headPitch * ((float) Math.PI / 180F));
@@ -89,7 +89,7 @@ public class GhostModel extends EntityModel<AbstractClientPlayer> implements Arm
 		this.leftArm.z = 0.0F;
 		this.leftArm.x = 5.0F;
 		float f = 1.0F;
-		if (flag) {
+		if (isFalling) {
 			f = (float) player.getDeltaMovement().lengthSqr();
 			f /= 0.2F;
 			f *= f * f;
@@ -132,10 +132,18 @@ public class GhostModel extends EntityModel<AbstractClientPlayer> implements Arm
 		this.setupAttackAnimation(player);
 		if (this.crouching) {
 			this.body.xRot = 0.5F;
+			this.rightArm.xRot += 0.4F;
+			this.leftArm.xRot += 0.4F;
+			this.head.y = 4.2F;
 			this.body.y = 3.2F;
+			this.leftArm.y = 5.2F;
+			this.rightArm.y = 5.2F;
 		} else {
 			this.body.xRot = 0.0F;
+			this.head.y = 0.0F;
 			this.body.y = 0.0F;
+			this.leftArm.y = 2.0F;
+			this.rightArm.y = 2.0F;
 		}
 
 		if (this.swimAmount > 0.0F) {
@@ -302,6 +310,9 @@ public class GhostModel extends EntityModel<AbstractClientPlayer> implements Arm
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		this.body.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+		this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+		this.leftArm.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+		this.rightArm.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
 	public void translateToHand(HumanoidArm arm, PoseStack poseStack) {
