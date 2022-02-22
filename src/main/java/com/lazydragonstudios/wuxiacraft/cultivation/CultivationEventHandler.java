@@ -1,6 +1,8 @@
 package com.lazydragonstudios.wuxiacraft.cultivation;
 
 import com.lazydragonstudios.wuxiacraft.combat.WuxiaDamageSource;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillStat;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillActivatorAspect;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaElements;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -9,6 +11,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -63,8 +66,14 @@ public class CultivationEventHandler {
 			cultivation.resetTimer();
 			if (!player.level.isClientSide()) {
 				syncClientCultivation((ServerPlayer) player);
+				for (var system : System.values()) {
+					var systemData = cultivation.getSystemData(system);
+					systemData.techniqueData.grid.fixProficiencies(cultivation.getAspects());
+				}
 			}
 		}
+
+		handleSkillCasting(player, cultivation);
 
 		//Body energy regen depends on food
 		if (player.getFoodData().getFoodLevel() > 15) {
@@ -149,6 +158,32 @@ public class CultivationEventHandler {
 		player.level.getProfiler().pop();
 	}
 
+	private static void handleSkillCasting(Player player, ICultivation cultivation) {
+		var skillData = cultivation.getSkills();
+		var selectedSkill = skillData.getSkillAt(skillData.selectedSkill);
+		if (skillData.casting) {
+			if (selectedSkill.getSkillChain().size() > 0) {
+				if (selectedSkill.getSkillChain().getFirst() instanceof SkillActivatorAspect activator) {
+					selectedSkill.addStat(SkillStat.CURRENT_CASTING, BigDecimal.ONE);
+					//casting >= cast_time
+					if (selectedSkill.getStatValue(SkillStat.CURRENT_CASTING)
+							.compareTo(selectedSkill.getStatValue(SkillStat.CAST_TIME)) >= 0) {
+						selectedSkill.setStat(SkillStat.CURRENT_CASTING, BigDecimal.ZERO);
+						selectedSkill.setStat(SkillStat.CURRENT_COOLDOWN, selectedSkill.getStatValue(SkillStat.COOLDOWN));
+						activator.activate.test(player, selectedSkill.getSkillChain());
+					}
+				}
+			}
+		} else {
+			if (selectedSkill.getStatValue(SkillStat.CURRENT_CASTING).compareTo(BigDecimal.ZERO) > 0) {
+				selectedSkill.addStat(SkillStat.CURRENT_CASTING, new BigDecimal("-1"));
+			}
+		}
+		if (selectedSkill.getStatValue(SkillStat.CURRENT_COOLDOWN).compareTo(BigDecimal.ZERO) > 0) {
+			selectedSkill.addStat(SkillStat.CURRENT_COOLDOWN, new BigDecimal("-1"));
+		}
+	}
+
 	private static void killPlayerWithExplosion(Player player, String deathMessage, BigDecimal amount) {
 		player.hurt(new WuxiaDamageSource(deathMessage, WuxiaElements.PHYSICAL.get(), player, amount), amount.floatValue());
 	}
@@ -163,51 +198,63 @@ public class CultivationEventHandler {
 	public static void onPlayerResurrect(PlayerEvent.PlayerRespawnEvent event) {
 		syncClientCultivation((ServerPlayer) event.getPlayer());
 		if (event.getPlayer().getTags().contains("PLEASE_RTP_ME")) {
-			var level = event.getPlayer().level;
-			var playerPositions = new HashSet<Point>();
-			Point playerDeathPosition = new Point(event.getPlayer().getBlockX(), event.getPlayer().getBlockZ());
-			for (var p : level.players()) {
-				playerPositions.add(new Point(p.getBlockX(), p.getBlockZ()));
-			}
-			int attempts = 30;
-			int spawnX = event.getPlayer().level.getLevelData().getXSpawn();
-			int spawnZ = event.getPlayer().level.getLevelData().getZSpawn();
-			Point newPosition = null;
-			for (int i = 0; i < attempts; i++) {
-				boolean isNearSomeone = false;
-				int newX = spawnX + event.getPlayer().getRandom().nextInt(20000) - 10000;
-				int newZ = spawnZ + event.getPlayer().getRandom().nextInt(20000) - 10000;
-				var point = new Point(newX, newZ);
-				//I'm using the y variable from point as the z coordinate
-				if (point.distance(playerDeathPosition.x, playerDeathPosition.y) >= 1000) {
-					for (var p : playerPositions) {
-						if (p.distance(point.x, point.y) < 400) {
-							isNearSomeone = true;
-							break;
-						}
-					}
-				} else {
-					isNearSomeone = true;
-				}
-				if (!isNearSomeone) {
-					newPosition = point;
-					break;
-				}
-			}
-			if (newPosition != null) {
-				var chunk = event.getPlayer().level.getChunkAt(new BlockPos(newPosition.x, 64, newPosition.y));
-				int newY = chunk.getMaxBuildHeight();
-				for (int i = chunk.getMaxBuildHeight(); i >= 0; i--) {
-					var state = chunk.getBlockState(new BlockPos(newPosition.x, i, newPosition.y));
-					newY = i;
-					if (!state.getBlock().equals(Blocks.AIR)) {
+			event.getPlayer().removeTag("PLEASE_RTP_ME");
+			var rtpX = event.getPlayer().getPersistentData().getDouble("rtp_to_x");
+			var rtpY = event.getPlayer().getPersistentData().getDouble("rtp_to_y");
+			var rtpZ = event.getPlayer().getPersistentData().getDouble("rtp_to_z");
+			event.getPlayer().teleportTo(rtpX, rtpY, rtpZ);
+			event.getPlayer().getPersistentData().remove("rtp_to_x");
+			event.getPlayer().getPersistentData().remove("rtp_to_y");
+			event.getPlayer().getPersistentData().remove("rtp_to_z");
+		}
+	}
+
+	private static Vec3 findSafeRTP(Player player) {
+		Vec3 result = new Vec3(0, 0, 0);
+		var level = player.level;
+		var playerPositions = new HashSet<Point>();
+		Point playerDeathPosition = new Point(player.getBlockX(), player.getBlockZ());
+		for (var p : level.players()) {
+			playerPositions.add(new Point(p.getBlockX(), p.getBlockZ()));
+		}
+		int attempts = 30;
+		int spawnX = player.level.getLevelData().getXSpawn();
+		int spawnZ = player.level.getLevelData().getZSpawn();
+		Point newPosition = null;
+		for (int i = 0; i < attempts; i++) {
+			boolean isNearSomeone = false;
+			int newX = spawnX + player.getRandom().nextInt(20000) - 10000;
+			int newZ = spawnZ + player.getRandom().nextInt(20000) - 10000;
+			var point = new Point(newX, newZ);
+			//I'm using the y variable from point as the z coordinate
+			if (point.distance(playerDeathPosition.x, playerDeathPosition.y) >= 1000) {
+				for (var p : playerPositions) {
+					if (p.distance(point.x, point.y) < 400) {
+						isNearSomeone = true;
 						break;
 					}
 				}
-				event.getPlayer().teleportTo(newPosition.x, newY, newPosition.y);
+			} else {
+				isNearSomeone = true;
 			}
-			event.getPlayer().removeTag("PLEASE_RTP_ME");
+			if (!isNearSomeone) {
+				newPosition = point;
+				break;
+			}
 		}
+		if (newPosition != null) {
+			var chunk = player.level.getChunkAt(new BlockPos(newPosition.x, 64, newPosition.y));
+			int newY = chunk.getMaxBuildHeight();
+			for (int i = chunk.getMaxBuildHeight(); i >= 0; i--) {
+				var state = chunk.getBlockState(new BlockPos(newPosition.x, i, newPosition.y));
+				newY = i;
+				if (!state.getBlock().equals(Blocks.AIR)) {
+					break;
+				}
+			}
+			result = new Vec3(newPosition.x, newY, newPosition.y);
+		}
+		return result;
 	}
 
 	/**
@@ -226,6 +273,10 @@ public class CultivationEventHandler {
 			//oldCultivation.setSkillCooldown(0);
 			if (event.getOriginal().getTags().contains("PLEASE_RTP_ME")) {
 				event.getPlayer().addTag("PLEASE_RTP_ME");
+				var rtpPos = findSafeRTP(event.getOriginal());
+				event.getPlayer().getPersistentData().putDouble("rtp_to_x", rtpPos.x);
+				event.getPlayer().getPersistentData().putDouble("rtp_to_y", rtpPos.y);
+				event.getPlayer().getPersistentData().putDouble("rtp_to_z", rtpPos.z);
 			}
 			oldCultivation.setPlayerStat(PlayerStat.LIVES, oldCultivation.getPlayerStat(PlayerStat.LIVES).subtract(BigDecimal.ONE));
 			if (oldCultivation.getPlayerStat(PlayerStat.LIVES).compareTo(BigDecimal.ZERO) == 0) {

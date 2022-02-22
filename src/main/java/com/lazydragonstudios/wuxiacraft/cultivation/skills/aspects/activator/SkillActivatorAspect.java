@@ -2,7 +2,9 @@ package com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillActivationModifierAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspect;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspectType;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillHitAspect;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaSkillAspects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 
@@ -11,13 +13,18 @@ import java.util.function.BiPredicate;
 
 public class SkillActivatorAspect extends SkillAspect {
 
-	private BiPredicate<Player, LinkedList<SkillAspect>> activate;
+	public BiPredicate<Player, LinkedList<SkillAspect>> activate;
 
 	public SkillActivatorAspect() {
 		super();
 		activate = (p, c) ->  {
 			return false;
 		};
+	}
+
+	@Override
+	public SkillAspectType getType() {
+		return WuxiaSkillAspects.HIT_ASPECT.get();
 	}
 
 	public SkillActivatorAspect setActivate(BiPredicate<Player, LinkedList<SkillAspect>> activate) {

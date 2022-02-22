@@ -4,6 +4,7 @@ import com.lazydragonstudios.wuxiacraft.capabilities.ClientAnimationState;
 import com.lazydragonstudios.wuxiacraft.capabilities.IClientAnimationState;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.networking.BroadcastAnimationChangeRequestMessage;
+import com.lazydragonstudios.wuxiacraft.networking.SkillCastingMessage;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -20,6 +21,7 @@ public class InputHandler {
 	public static final int OPEN_INTROSPECTION = 0;
 	public static final int MEDITATE = 1;
 	public static final int EXERCISE = 2;
+	public static final int CAST_SKILL = 3;
 
 	public static HashMap<Integer, KeyMapping> mappings;
 
@@ -28,6 +30,7 @@ public class InputHandler {
 		mappings.put(OPEN_INTROSPECTION, new KeyMapping("wuxiacraft.key.introspection", GLFW.GLFW_KEY_K, "wuxiacraft.category.main"));
 		mappings.put(MEDITATE, new KeyMapping("wuxiacraft.key.meditate", GLFW.GLFW_KEY_Z, "wuxiacraft.category.main"));
 		mappings.put(EXERCISE, new KeyMapping("wuxiacraft.key.exercise", GLFW.GLFW_KEY_X, "wuxiacraft.category.main"));
+		mappings.put(CAST_SKILL, new KeyMapping("wuxiacraft.key.cast_skill", GLFW.GLFW_KEY_X, "wuxiacraft.category.main"));
 		for (var mapping : mappings.values()) {
 			ClientRegistry.registerKeyBinding(mapping);
 		}
@@ -63,6 +66,17 @@ public class InputHandler {
 				animationState.setExercising(false);
 				cultivation.setExercising(false);
 				WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState));
+			}
+		}
+		if (event.getKey() == mappings.get(CAST_SKILL).getKey().getValue()) {
+			var skillData = Cultivation.get(player).getSkills();
+			if (event.getAction() == GLFW.GLFW_PRESS) {
+				skillData.casting = true;
+				WuxiaPacketHandler.INSTANCE.sendToServer(new SkillCastingMessage(skillData.selectedSkill, true));
+			}
+			if (event.getAction() == GLFW.GLFW_RELEASE) {
+				skillData.casting = false;
+				WuxiaPacketHandler.INSTANCE.sendToServer(new SkillCastingMessage(skillData.selectedSkill, false));
 			}
 		}
 	}

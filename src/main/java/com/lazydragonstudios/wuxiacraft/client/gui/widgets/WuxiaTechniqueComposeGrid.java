@@ -17,6 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.awt.*;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -168,9 +169,9 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 		RenderSystem.disableBlend();
 	}
 
-	public void addAspectToGrid(Point p, ResourceLocation aspectLocation) {
+	public void addAspectToGrid(Point p, ResourceLocation aspectLocation, BigDecimal proficiency) {
 		if (!this.hexagonToCartesianQuickAssess.containsKey(p)) return;
-		this.grid.addGridNode(p, aspectLocation);
+		this.grid.addGridNode(p, aspectLocation, proficiency);
 		this.recalculateLines();
 	}
 
@@ -272,10 +273,6 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 		int dx = b.x - a.x;
 		int dy = b.y - a.y;
 		return Math.sqrt(dx * dx + dy * dy);
-	}
-
-	public interface MouseInputPredicate {
-		boolean apply(double mouseX, double mouseY, int button);
 	}
 
 	public record ColoredLineSegment(Point start, Point finish, int color) {

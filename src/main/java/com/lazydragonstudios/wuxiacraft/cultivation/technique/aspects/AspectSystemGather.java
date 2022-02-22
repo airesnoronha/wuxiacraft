@@ -17,7 +17,8 @@ public class AspectSystemGather extends TechniqueAspect {
 	}
 
 	@Override
-	public void accept(HashMap<String, Object> metaData) {
+	public void accept(HashMap<String, Object> metaData, BigDecimal proficiency) {
+		super.accept(metaData, proficiency);
 		String statName = this.system.name().toLowerCase() + "-stat-" + PlayerSystemStat.CULTIVATION_SPEED.name().toLowerCase();
 		String systemRawBase = system.name().toLowerCase() + "-raw-cultivation-base";
 		if (metaData.containsKey(systemRawBase)) {

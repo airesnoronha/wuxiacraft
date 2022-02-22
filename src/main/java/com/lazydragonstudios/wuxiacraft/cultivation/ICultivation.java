@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.cultivation;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillContainer;
 import net.minecraft.nbt.CompoundTag;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.AspectContainer;
@@ -14,6 +15,8 @@ public interface ICultivation {
 
 	SystemContainer getSystemData(System system);
 
+	void calculateStats();
+
 	CompoundTag serialize();
 
 	void deserialize(CompoundTag tag);
@@ -23,6 +26,8 @@ public interface ICultivation {
 	void setExercising(boolean exercising);
 
 	AspectContainer getAspects();
+
+	SkillContainer getSkills();
 
 	/**
 	 * Utility to increment to the tick timer

@@ -1,6 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.util;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -19,43 +20,21 @@ public class SkillUtil {
 		Vec3 startPosition = source.getEyePosition();
 		// end = start + |lookVec|*range
 		Vec3 endPosition = startPosition.add(
-				source.getLookAngle().normalize().multiply(range, range, range));
+				source.getLookAngle().normalize().scale(range));
 		HitResult hitresult = level.clip(new ClipContext(startPosition, endPosition, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, source));
 		if (hitresult.getType() != HitResult.Type.MISS) {
 			endPosition = hitresult.getLocation();
 		}
 
-		HitResult entityHitResult = getEntityHitResult(level, source, startPosition, endPosition, source.getBoundingBox().expandTowards(source.getDeltaMovement()).inflate(1.0D), entityPredicate, range);
+		var sourceViewVector = source.getViewVector(1f);
+		AABB aabb = source.getBoundingBox().expandTowards(sourceViewVector.scale(range)).inflate(1.0D, 1.0D, 1.0D);
+		HitResult entityHitResult = ProjectileUtil.getEntityHitResult(source, startPosition, endPosition, aabb,
+				e -> e.isPickable() && !e.isSpectator(), range*range);
 		if (entityHitResult != null) {
 			hitresult = entityHitResult;
 		}
 
 		return hitresult;
-	}
-
-	@Nullable
-	public static EntityHitResult getEntityHitResult(Level level, Entity source, Vec3 startPosition, Vec3 endPosition, AABB rangeAABB, Predicate<Entity> entityPredicate) {
-		return getEntityHitResult(level, source, startPosition, endPosition, rangeAABB, entityPredicate, 0.3F);
-	}
-
-	@Nullable
-	public static EntityHitResult getEntityHitResult(Level level, Entity source, Vec3 startPosition, Vec3 endPosition, AABB rangeAABB, Predicate<Entity> entityPredicate, double expandRange) {
-		double d0 = Double.MAX_VALUE;
-		Entity entity = null;
-
-		for (Entity entity1 : level.getEntities(source, rangeAABB, entityPredicate)) {
-			AABB aabb = entity1.getBoundingBox().inflate(expandRange);
-			Optional<Vec3> optional = aabb.clip(startPosition, endPosition);
-			if (optional.isPresent()) {
-				double d1 = startPosition.distanceToSqr(optional.get());
-				if (d1 < d0) {
-					entity = entity1;
-					d0 = d1;
-				}
-			}
-		}
-
-		return entity == null ? null : new EntityHitResult(entity);
 	}
 
 }

@@ -2,6 +2,7 @@ package com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects;
 
 import net.minecraft.resources.ResourceLocation;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class AspectElementalGenerator extends TechniqueAspect {
@@ -25,7 +26,8 @@ public class AspectElementalGenerator extends TechniqueAspect {
 	}
 
 	@Override
-	public void accept(HashMap<String, Object> metaData) {
+	public void accept(HashMap<String, Object> metaData, BigDecimal proficiency) {
+		super.accept(metaData, proficiency);
 		String elementBase = "element-base-" + element.getPath();
 		metaData.put(elementBase, (double) metaData.getOrDefault(elementBase, 0d) + this.generated);
 	}

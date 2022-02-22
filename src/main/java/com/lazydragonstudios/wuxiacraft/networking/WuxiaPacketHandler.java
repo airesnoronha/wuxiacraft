@@ -26,6 +26,8 @@ public class WuxiaPacketHandler {
 		INSTANCE.registerMessage(serverMessagesID++, BroadcastAnimationChangeRequestMessage.class, BroadcastAnimationChangeRequestMessage::encode, BroadcastAnimationChangeRequestMessage::decode, BroadcastAnimationChangeRequestMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 		INSTANCE.registerMessage(serverMessagesID++, RequestTechniqueDataChange.class, RequestTechniqueDataChange::encode, RequestTechniqueDataChange::decode, RequestTechniqueDataChange::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 		INSTANCE.registerMessage(serverMessagesID++, RequestRandomTeleportMessage.class, RequestRandomTeleportMessage::encode, RequestRandomTeleportMessage::decode, RequestRandomTeleportMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+		INSTANCE.registerMessage(serverMessagesID++, RequestSkillSaveMessage.class, RequestSkillSaveMessage::encode, RequestSkillSaveMessage::decode, RequestSkillSaveMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+		INSTANCE.registerMessage(serverMessagesID++, SkillCastingMessage.class, SkillCastingMessage::encode, SkillCastingMessage::decode, SkillCastingMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 
 		int clientMessagesID = 200;
 		INSTANCE.registerMessage(clientMessagesID++, CultivationSyncMessage.class, CultivationSyncMessage::encode, CultivationSyncMessage::decode, CultivationSyncMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));

@@ -41,6 +41,9 @@ public class RequestTechniqueDataChange {
 				var cultivation = Cultivation.get(player);
 				var systemData = cultivation.getSystemData(msg.system);
 				systemData.techniqueData.deserialize(msg.techniqueData);
+				var aspectData = cultivation.getAspects();
+				systemData.techniqueData.grid.fixProficiencies(aspectData);
+				cultivation.calculateStats();
 			});
 		}
 	}

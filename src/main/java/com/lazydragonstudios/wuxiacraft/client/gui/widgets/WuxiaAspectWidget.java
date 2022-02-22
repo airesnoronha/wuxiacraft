@@ -1,5 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.client.gui.widgets;
 
+import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspectType;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects.TechniqueAspect;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -33,7 +35,7 @@ public class WuxiaAspectWidget extends AbstractWidget {
 
 	@Override
 	public void render(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-		RenderSystem.setShaderTexture(0, getAspect().textureLocation);
+		RenderSystem.setShaderTexture(0, this.getTextureLocation());
 		RenderSystem.enableBlend();
 		GuiComponent.blit(poseStack,
 				this.x, this.y,
@@ -45,8 +47,24 @@ public class WuxiaAspectWidget extends AbstractWidget {
 		RenderSystem.disableBlend();
 	}
 
-	public TechniqueAspect getAspect() {
+	public TechniqueAspect getTechniqueAspect() {
 		return WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.aspect);
+	}
+
+	public SkillAspectType getSkillAspectType() {
+		return WuxiaRegistries.SKILL_ASPECT.getValue(this.aspect);
+	}
+
+	public ResourceLocation getTextureLocation() {
+		var techAspect = this.getTechniqueAspect();
+		if(techAspect != null) {
+			return techAspect.textureLocation;
+		}
+		var skillAspect = this.getSkillAspectType();
+		if(skillAspect != null) {
+			return new ResourceLocation(this.aspect.getNamespace(), "textures/skills/" + this.aspect.getPath() + ".png");
+		}
+		return new ResourceLocation(WuxiaCraft.MOD_ID, "textures/aspects/empty.png");
 	}
 
 	@Override

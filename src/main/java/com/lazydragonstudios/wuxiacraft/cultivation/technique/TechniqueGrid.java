@@ -9,6 +9,8 @@ import net.minecraft.resources.ResourceLocation;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -22,6 +24,7 @@ import java.util.function.Consumer;
 public class TechniqueGrid {
 
 	private final HashMap<Point, ResourceLocation> grid;
+	private final HashMap<Point, BigDecimal> proficiencies;
 
 	/**
 	 * super important, if you don't have this just kill yourself
@@ -44,13 +47,14 @@ public class TechniqueGrid {
 	 * @return true if added
 	 */
 	@SuppressWarnings("UnusedReturnValue")
-	public boolean addGridNode(Point p, ResourceLocation aspect) {
+	public boolean addGridNode(Point p, ResourceLocation aspect, BigDecimal proficiency) {
 		ResourceLocation id = WuxiaTechniqueAspects.START.getId();
 		if (aspect.equals(id)) {
 			if (startNodePoint == null) startNodePoint = p;
 			else return false;
 		}
 		grid.put(p, aspect);
+		proficiencies.put(p, proficiency);
 		return true;
 	}
 
@@ -72,8 +76,9 @@ public class TechniqueGrid {
 	 */
 	private void processAspects(Point visiting, HashMap<Point, HashSet<Point>> processHierarchy, HashMap<String, Object> metaData) {
 		var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.get(visiting));
+		var proficiency = this.proficiencies.getOrDefault(visiting, BigDecimal.ZERO);
 		if (aspect == null) return;
-		aspect.accept(metaData);
+		aspect.accept(metaData, proficiency);
 		for (var nextPoint : processHierarchy.get(visiting)) {
 			processAspects(nextPoint, processHierarchy, metaData);
 		}
@@ -218,6 +223,12 @@ public class TechniqueGrid {
 				tMod.elements.put(element.getRegistryName(), (Double) metaData.get("element-" + element.getName()));
 			}
 		}
+		if (metaData.containsKey("skills")) {
+			tMod.skills.clear();
+			//noinspection unchecked
+			var skillSet = (HashSet<ResourceLocation>) metaData.get("skills");
+			tMod.skills.addAll(skillSet);
+		}
 		return tMod;
 	}
 
@@ -233,6 +244,7 @@ public class TechniqueGrid {
 
 	public TechniqueGrid() {
 		grid = new HashMap<>();
+		proficiencies = new HashMap<>();
 	}
 
 	public CompoundTag serialize() {
@@ -243,6 +255,7 @@ public class TechniqueGrid {
 			keyValueTag.putInt("keyX", key.x);
 			keyValueTag.putInt("keyY", key.y);
 			keyValueTag.putString("value", this.grid.get(key).toString());
+			keyValueTag.putString("proficiency", this.proficiencies.getOrDefault(key, BigDecimal.ZERO).toPlainString());
 			listTag.add(keyValueTag);
 		}
 		tag.put("grid", listTag);
@@ -259,7 +272,8 @@ public class TechniqueGrid {
 			var x = cTag.getInt("keyX");
 			var y = cTag.getInt("keyY");
 			var value = cTag.getString("value");
-			this.addGridNode(new Point(x, y), new ResourceLocation(value));
+			var proficiency = new BigDecimal(cTag.getString("proficiency"));
+			this.addGridNode(new Point(x, y), new ResourceLocation(value), proficiency);
 		}
 	}
 
@@ -269,4 +283,10 @@ public class TechniqueGrid {
 		return techniqueGrid;
 	}
 
+	public void fixProficiencies(AspectContainer container) {
+		for (var p : this.grid.keySet()) {
+			var proficiency = container.getAspectProficiency(this.grid.get(p));
+			this.proficiencies.put(p, proficiency);
+		}
+	}
 }

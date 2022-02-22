@@ -34,8 +34,7 @@ public class IntrospectionScreen extends AbstractContainerScreen<IntrospectionMe
 
 	public HashMap<String, IntrospectionTab> tabs = new HashMap<>();
 	public LinkedList<String> tabsOrder = new LinkedList<>();
-	public String selectedTab;
-
+	public String selectedTab = null;
 
 	public IntrospectionScreen(IntrospectionMenu menu, Inventory inventory, Component title) {
 		super(menu, inventory, title);
@@ -59,6 +58,8 @@ public class IntrospectionScreen extends AbstractContainerScreen<IntrospectionMe
 	@Override
 	protected void init() {
 		super.init();
+		this.tabs.clear();
+		this.tabsOrder.clear();
 		tabs.put("stats", new CharacterStatsTab("stats"));
 		tabsOrder.add("stats");
 		tabs.put("aspects", new AspectsTab("aspects"));
@@ -73,7 +74,9 @@ public class IntrospectionScreen extends AbstractContainerScreen<IntrospectionMe
 		tabsOrder.add("skills");
 		tabs.put("professions", new ProfessionsTab("professions"));
 		tabsOrder.add("professions");
-		selectedTab = "stats";
+		if(this.selectedTab == null) {
+			selectedTab = "stats";
+		}
 		tabs.get(selectedTab).init(this);
 	}
 

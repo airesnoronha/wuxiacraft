@@ -3,6 +3,9 @@ package com.lazydragonstudios.wuxiacraft.init;
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.*;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillActivatorAspect;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillTouchAspect;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillAttackAspect;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillExplosionAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillHitAspect;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -15,7 +18,7 @@ public class WuxiaSkillAspects {
 	/**
 	 * Directly hit ahead the caster, where the caster is looking at
 	 */
-	public static RegistryObject<SkillAspectType> HIT_ASPECT = ASPECTS.register("hit_aspect", () -> SkillAspectType.build(SkillActivatorAspect::new));
+	public static RegistryObject<SkillAspectType> HIT_ASPECT = ASPECTS.register("hit_aspect", () -> SkillAspectType.build(SkillTouchAspect::new));
 
 	/**
 	 * Throw in the direction caster is looking at
@@ -67,6 +70,11 @@ public class WuxiaSkillAspects {
 	 */
 	public static RegistryObject<SkillAspectType> SELF_CHANNEL_ASPECT = ASPECTS.register("self_channel_aspect", () -> SkillAspectType.build(SkillActivatorAspect::new));
 
+	/**
+	 * hits an barrier around the caster constantly
+	 */
+	public static RegistryObject<SkillAspectType> BARRIER_CHANNELING_ASPECT = ASPECTS.register("barrier_channeling_aspect", () -> SkillAspectType.build(SkillActivatorAspect::new));
+
 	//TODO key of kings'law activator from botania
 
 	//TODO add professions based activator and modifiers
@@ -103,12 +111,12 @@ public class WuxiaSkillAspects {
 	/**
 	 * Creates an explosion on hit
 	 */
-	public static RegistryObject<SkillAspectType> EXPLOSION_ASPECT = ASPECTS.register("explosion_aspect", () -> SkillAspectType.build(SkillHitAspect::new));
+	public static RegistryObject<SkillAspectType> EXPLOSION_ASPECT = ASPECTS.register("explosion_aspect", () -> SkillAspectType.build(SkillExplosionAspect::new));
 
 	/**
 	 * Directly dealing damage
 	 */
-	public static RegistryObject<SkillAspectType> ATTACK_ASPECT = ASPECTS.register("attack_aspect", () -> SkillAspectType.build(SkillHitAspect::new));
+	public static RegistryObject<SkillAspectType> ATTACK_ASPECT = ASPECTS.register("attack_aspect", () -> SkillAspectType.build(SkillAttackAspect::new));
 
 	/**
 	 * Fertilize plants

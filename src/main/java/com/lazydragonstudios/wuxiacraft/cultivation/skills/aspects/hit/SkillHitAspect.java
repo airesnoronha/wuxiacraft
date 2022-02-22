@@ -1,6 +1,8 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspect;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspectType;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaSkillAspects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
 
@@ -19,6 +21,11 @@ public class SkillHitAspect extends SkillAspect {
 	public SkillAspect setActivation(ISkillHitAction activation) {
 		this.activation = activation;
 		return this;
+	}
+
+	@Override
+	public SkillAspectType getType() {
+		return WuxiaSkillAspects.HIT_ASPECT.get();
 	}
 
 	public boolean activate(Player player, LinkedList<SkillAspect> aspectsChain, HitResult result) {

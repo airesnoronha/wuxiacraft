@@ -10,6 +10,11 @@ public class SkillHitModifierAspect extends SkillAspect {
 	}
 
 	@Override
+	public SkillAspectType getType() {
+		return null;
+	}
+
+	@Override
 	public boolean canConnect(SkillAspect aspect) {
 		return false;
 	}

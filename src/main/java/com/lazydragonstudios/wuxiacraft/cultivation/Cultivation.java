@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.cultivation;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillContainer;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
@@ -39,6 +40,11 @@ public class Cultivation implements ICultivation {
 	 */
 	public AspectContainer aspects;
 
+	/**
+	 * the skill data for this character
+	 */
+	public SkillContainer skills;
+
 	public Cultivation() {
 		this.systemCultivation = new HashMap<>();
 		this.playerStats = new HashMap<>();
@@ -50,6 +56,7 @@ public class Cultivation implements ICultivation {
 			this.systemCultivation.put(system, systemData);
 		}
 		this.aspects = new AspectContainer();
+		this.skills = new SkillContainer();
 		this.exercising = false;
 	}
 
@@ -80,6 +87,7 @@ public class Cultivation implements ICultivation {
 		return systemCultivation.get(system);
 	}
 
+	@Override
 	public void calculateStats() {
 		for (var stat : PlayerStat.values()) {
 			if (stat.isModifiable) continue;
@@ -87,6 +95,11 @@ public class Cultivation implements ICultivation {
 			for (var system : System.values()) {
 				statValue = statValue.add(this.getSystemData(system).getPlayerStat(stat));
 			}
+		}
+		this.skills.knownSkills.clear();
+		for (var system : System.values()) {
+			var systemData = this.getSystemData(system);
+			this.skills.knownSkills.addAll(systemData.techniqueData.modifier.skills);
 		}
 	}
 
@@ -101,6 +114,7 @@ public class Cultivation implements ICultivation {
 		tag.put("divine-data", getSystemData(System.DIVINE).serialize());
 		tag.put("essence-data", getSystemData(System.ESSENCE).serialize());
 		tag.put("aspect-data", this.aspects.serialize());
+		tag.put("skills-data", this.skills.serialize());
 		return tag;
 	}
 
@@ -127,6 +141,9 @@ public class Cultivation implements ICultivation {
 		if (tag.contains("aspect-data")) {
 			this.aspects.deserialize(tag.getCompound("aspect-data"));
 		}
+		if (tag.contains("skills-data")) {
+			this.skills.deserialize(tag.getCompound("skills-data"));
+		}
 	}
 
 	@Override
@@ -142,6 +159,11 @@ public class Cultivation implements ICultivation {
 	@Override
 	public AspectContainer getAspects() {
 		return aspects;
+	}
+
+	@Override
+	public SkillContainer getSkills() {
+		return skills;
 	}
 
 	/**

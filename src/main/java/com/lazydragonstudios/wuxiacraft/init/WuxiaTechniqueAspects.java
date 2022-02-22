@@ -41,7 +41,11 @@ public class WuxiaTechniqueAspects {
 	public static RegistryObject<TechniqueAspect> EMBER_ASPECT = ASPECTS.register("ember",
 			() -> new AspectElementalGenerator("ember", new ResourceLocation(WuxiaCraft.MOD_ID, "/textures/aspects/ember.png"), 1d, new ResourceLocation(WuxiaCraft.MOD_ID, "fire"))
 					.addCheckpoint(new TechniqueAspect.Checkpoint("sparkle", new BigDecimal("5000"), c -> {
-					}))
+					})
+							.addSkill(new ResourceLocation(WuxiaCraft.MOD_ID, "hit_aspect"))
+							.addSkill(new ResourceLocation(WuxiaCraft.MOD_ID, "explosion_aspect"))
+							.addSkill(new ResourceLocation(WuxiaCraft.MOD_ID, "attack_aspect"))
+					)
 					.addCheckpoint(new TechniqueAspect.Checkpoint("fire_intent", new BigDecimal("15000"), c -> {
 					}))
 					.addCheckpoint(new TechniqueAspect.Checkpoint("remaining_fire", new BigDecimal("35000"), c -> {

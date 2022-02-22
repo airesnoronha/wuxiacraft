@@ -102,11 +102,15 @@ public class TechniqueTab extends IntrospectionTab {
 		screen.addRenderableWidget(saveBtn);
 	}
 
-	private final WuxiaTechniqueComposeGrid.MouseInputPredicate onGridComposerRelease = (mouseX, mouseY, button) -> {
+	private final MouseInputPredicate onGridComposerRelease = (mouseX, mouseY, button) -> {
+		var player = Minecraft.getInstance().player;
+		if (player == null) return false;
+		var cultivation = Cultivation.get(player);
 		if (this.draggingAspect != null) {
 			var hexC = this.gridComposer.getHexCoordinateFromMousePosition((int) mouseX, (int) mouseY);
 			if (hexC != null) {
-				this.gridComposer.addAspectToGrid(hexC, this.draggingAspect);
+				this.gridComposer.addAspectToGrid(hexC, this.draggingAspect,
+						cultivation.getAspects().getAspectProficiency(this.draggingAspect));
 			}
 		}
 		this.draggingAspect = null;
@@ -115,7 +119,7 @@ public class TechniqueTab extends IntrospectionTab {
 	};
 
 
-	private final WuxiaTechniqueComposeGrid.MouseInputPredicate onGridComposerClick = (mouseX, mouseY, button) -> {
+	private final MouseInputPredicate onGridComposerClick = (mouseX, mouseY, button) -> {
 		var hexC = this.gridComposer.getHexCoordinateFromMousePosition((int) mouseX, (int) mouseY);
 		if (hexC != null && button == 1) {
 			this.gridComposer.removeAspectToGrid(hexC);

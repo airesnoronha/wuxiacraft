@@ -9,6 +9,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class TechniqueModifier {
 
@@ -18,10 +19,11 @@ public class TechniqueModifier {
 
 	public HashMap<ResourceLocation, Double> elements = new HashMap<>();
 
+	public HashSet<ResourceLocation> skills = new HashSet<>();
+
 	public boolean validTechnique;
 
 	public TechniqueModifier() {
-
 		for (var system : System.values()) {
 			systemStats.put(system, new HashMap<>());
 		}

@@ -14,6 +14,7 @@ import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabel;
 import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -117,9 +118,8 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	public Checkpoint getCurrentCheckpoint(BigDecimal proficiency) {
 		Checkpoint currentSelected = NO_CHECKPOINT;
 		for (var checkpoint : this.checkpoints) {
-			if (proficiency.compareTo(checkpoint.proficiencyRequired) > 0) {
-				currentSelected = checkpoint;
-			}
+			if (proficiency.compareTo(checkpoint.proficiencyRequired) < 0) break;
+			currentSelected = checkpoint;
 		}
 		return currentSelected;
 	}
@@ -129,7 +129,14 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	 *
 	 * @param metaData the current modifiers when accepting this
 	 */
-	public void accept(HashMap<String, Object> metaData) {
+	public void accept(HashMap<String, Object> metaData, BigDecimal proficiency) {
+		var skills = this.getSkills(proficiency);
+		if(skills.size() > 0) {
+			if(!metaData.containsKey("skills")) metaData.put("skills", new HashSet<ResourceLocation>());
+			//noinspection unchecked
+			var skillSet = (HashSet<ResourceLocation>) metaData.get("skills");
+			skillSet.addAll(skills);
+		}
 	}
 
 	/**
@@ -159,6 +166,15 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 		return true;
 	}
 
+	public HashSet<ResourceLocation> getSkills(BigDecimal proficiency) {
+		var skills = new HashSet<ResourceLocation>();
+		for (var checkpoint : this.checkpoints) {
+			if (proficiency.compareTo(checkpoint.proficiencyRequired) < 0) break;
+			skills.addAll(checkpoint.skills);
+		}
+		return skills;
+	}
+
 	/**
 	 * Prepares a bunch of widgets to be used in the descriptor page
 	 *
@@ -181,7 +197,16 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	 * This is the checkpoints for this technique. Take care that when using onReached, make sure you don't add repeated entries
 	 * On reached is going to be called a lot, use {@link AspectContainer#learnAspect(ResourceLocation)} that it's safe
 	 */
-	public record Checkpoint(String name, BigDecimal proficiencyRequired, Consumer<AspectContainer> onReached) {
+	public record Checkpoint(String name, BigDecimal proficiencyRequired, Consumer<AspectContainer> onReached,
+													 HashSet<ResourceLocation> skills) {
+		public Checkpoint(String name, BigDecimal proficiencyRequired, Consumer<AspectContainer> onReached) {
+			this(name, proficiencyRequired, onReached, new HashSet<>());
+		}
+
+		public Checkpoint addSkill(ResourceLocation skill) {
+			this.skills.add(skill);
+			return this;
+		}
 	}
 
 }
