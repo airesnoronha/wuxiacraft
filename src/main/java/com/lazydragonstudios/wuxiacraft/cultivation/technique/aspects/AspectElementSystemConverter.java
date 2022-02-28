@@ -20,8 +20,8 @@ public class AspectElementSystemConverter extends AspectElementalConverter {
 		priority.put(AspectSystemGather.class, -1);
 	}
 
-	public AspectElementSystemConverter(String name, ResourceLocation textureLocation, double amount, ResourceLocation element, System system) {
-		super(name, textureLocation, amount, element);
+	public AspectElementSystemConverter(double amount, ResourceLocation element, System system) {
+		super(amount, element);
 		this.system = system;
 	}
 

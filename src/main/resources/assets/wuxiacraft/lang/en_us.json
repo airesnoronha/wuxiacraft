@@ -47,12 +47,12 @@
   "wuxiacraft.gui.additional_grid_radius": "Additional Grid Radius: %1$s",
   "wuxiacraft.gui.cultivation_speed": "Cultivation Speed: %1$s",
   "wuxiacraft.gui.system_suppression": "System Suppression: %1$s",
-  "wuxiacraft.aspect.aspect_start": "Start",
-  "wuxiacraft.aspect.ember": "Ember",
-  "wuxiacraft.aspect.scorch": "Scorch",
-  "wuxiacraft.aspect.body_gathering": "Body Gathering",
-  "wuxiacraft.aspect.essence_gathering": "Essence Gathering",
-  "wuxiacraft.aspect.divine_gathering": "Divinity Gathering",
-  "wuxiacraft.aspect.body_releasing": "Body Releasing",
-  "wuxiacraft.gui.death.random_teleport": "Random Teleport"
+  "wuxiacraft.aspect.aspect_start.name": "Start",
+  "wuxiacraft.aspect.ember.name": "Ember",
+  "wuxiacraft.aspect.scorch.name": "Scorch",
+  "wuxiacraft.aspect.body_gathering.name": "Body Gathering",
+  "wuxiacraft.aspect.essence_gathering.name": "Essence Gathering",
+  "wuxiacraft.aspect.divine_gathering.name": "Divinity Gathering",
+  "wuxiacraft.aspect.body_releasing.name": "Body Releasing",
+  "wuxiacraft.gui.death.random_teleport.name": "Random Teleport"
 }

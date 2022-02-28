@@ -17,8 +17,7 @@ public abstract class AspectElementalConverter extends TechniqueAspect {
 	 */
 	public ResourceLocation element;
 
-	public AspectElementalConverter(String name, ResourceLocation textureLocation, double amount, ResourceLocation element) {
-		super(name, textureLocation);
+	public AspectElementalConverter(double amount, ResourceLocation element) {
 		this.amount = amount;
 		this.element = element;
 	}
@@ -32,13 +31,13 @@ public abstract class AspectElementalConverter extends TechniqueAspect {
 	public void accept(HashMap<String, Object> metaData, BigDecimal proficiency) {
 		super.accept(metaData, proficiency);
 		String elementBase = "element-base-" + element.getPath();
-		if (metaData.containsKey(elementBase)) {
-			double elementBaseAmount = (double) metaData.get(elementBase);
-			var converted = Math.min(elementBaseAmount, this.amount);
-			elementBaseAmount -= converted;
-			metaData.put(elementBase, elementBaseAmount);
-			convert(converted, metaData);
-		}
+		if (!metaData.containsKey(elementBase)) return;
+		double elementBaseAmount = (double) metaData.get(elementBase);
+		var converted = Math.min(elementBaseAmount, this.amount);
+		elementBaseAmount -= converted;
+		if(elementBaseAmount == 0) metaData.remove(elementBase);
+		else metaData.put(elementBase, elementBaseAmount);
+		convert(converted, metaData);
 	}
 
 	public abstract void convert(double converted, HashMap<String, Object> metaData);

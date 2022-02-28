@@ -5,9 +5,7 @@ import com.lazydragonstudios.wuxiacraft.client.overlays.DebugOverlay;
 import com.lazydragonstudios.wuxiacraft.client.overlays.HealthOverlay;
 import com.lazydragonstudios.wuxiacraft.command.CultivationCommand;
 import com.lazydragonstudios.wuxiacraft.container.IntrospectionMenu;
-import com.lazydragonstudios.wuxiacraft.init.WuxiaElements;
-import com.lazydragonstudios.wuxiacraft.init.WuxiaSkillAspects;
-import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
+import com.lazydragonstudios.wuxiacraft.init.*;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.client.gui.ForgeIngameGui;
@@ -29,7 +27,6 @@ import com.lazydragonstudios.wuxiacraft.capabilities.CapabilityRegistryHandler;
 import com.lazydragonstudios.wuxiacraft.client.InputHandler;
 import com.lazydragonstudios.wuxiacraft.client.gui.IntrospectionScreen;
 import com.lazydragonstudios.wuxiacraft.client.overlays.EnergiesOverlay;
-import com.lazydragonstudios.wuxiacraft.init.WuxiaRealms;
 
 import java.util.stream.Collectors;
 
@@ -49,8 +46,6 @@ public class WuxiaCraft {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
 		// Register the processIMC method for modloading
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
-		// Register the clientSetup method for modloading
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
 
 		FMLJavaModLoadingContext.get().getModEventBus().register(CapabilityRegistryHandler.class);
 
@@ -59,24 +54,12 @@ public class WuxiaCraft {
 		// Register ourselves for server and other game events we are interested in
 		MinecraftForge.EVENT_BUS.register(this);
 
+		WuxiaEntities.ENTITY_TYPE_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 		WuxiaRealms.REALM_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 		WuxiaRealms.STAGE_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
 		WuxiaElements.ELEMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
 		WuxiaTechniqueAspects.ASPECTS.register(FMLJavaModLoadingContext.get().getModEventBus());
 		WuxiaSkillAspects.ASPECTS.register(FMLJavaModLoadingContext.get().getModEventBus());
-	}
-
-	private void clientSetup(final FMLClientSetupEvent event) {
-		InputHandler.registerKeyBindings();
-
-		MinecraftForge.EVENT_BUS.register(RenderHUDEventHandler.class);
-		MinecraftForge.EVENT_BUS.register(InputHandler.class);
-
-		OverlayRegistry.registerOverlayTop("wuxiacraft_debug", new DebugOverlay());
-		OverlayRegistry.registerOverlayAbove(ForgeIngameGui.PLAYER_HEALTH_ELEMENT, "wuxiacraft_health_bar", new HealthOverlay());
-		OverlayRegistry.registerOverlayBelow(ForgeIngameGui.CHAT_PANEL_ELEMENT, "wuxiacraft_energies", new EnergiesOverlay());
-
-		MenuScreens.register(IntrospectionMenu.registryType, IntrospectionScreen::new);
 	}
 
 

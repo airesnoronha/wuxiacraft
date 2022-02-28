@@ -11,8 +11,7 @@ public class AspectSystemGather extends TechniqueAspect {
 
 	public System system;
 
-	public AspectSystemGather(String name, ResourceLocation textureLocation, System system) {
-		super(name, textureLocation);
+	public AspectSystemGather(System system) {
 		this.system = system;
 	}
 

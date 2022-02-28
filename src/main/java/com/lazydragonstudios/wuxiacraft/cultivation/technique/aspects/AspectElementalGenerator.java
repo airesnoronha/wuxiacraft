@@ -13,14 +13,15 @@ public class AspectElementalGenerator extends TechniqueAspect {
 
 	@SuppressWarnings("rawtypes")
 	private final static HashMap<Class, Integer> priority = new HashMap<>();
+
 	static {
 		priority.put(AspectElementalGenerator.class, -3);
 		priority.put(AspectElementalConverter.class, -2);
 		priority.put(AspectElementalConsumer.class, -1);
 	}
 
-	public AspectElementalGenerator(String name, ResourceLocation textureLocation, double generated, ResourceLocation element) {
-		super(name, textureLocation);
+	public AspectElementalGenerator(double generated, ResourceLocation element) {
+		super();
 		this.generated = generated;
 		this.element = element;
 	}
@@ -50,7 +51,7 @@ public class AspectElementalGenerator extends TechniqueAspect {
 	public int connectPrioritySorter(TechniqueAspect aspect1, TechniqueAspect aspect2) {
 		int priority1 = priority.getOrDefault(aspect1.getClass(), 0);
 		int priority2 = priority.getOrDefault(aspect2.getClass(), 0);
-		int finalPriority = priority1-priority2;
-		return finalPriority != 0 ? finalPriority/Math.abs(finalPriority) : 0;
+		int finalPriority = priority1 - priority2;
+		return finalPriority != 0 ? finalPriority / Math.abs(finalPriority) : 0;
 	}
 }

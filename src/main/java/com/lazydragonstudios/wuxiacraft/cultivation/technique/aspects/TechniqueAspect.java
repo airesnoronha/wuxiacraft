@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects;
 
+import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaCheckpointsWidget;
 import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabelBox;
 import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
@@ -7,6 +8,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.technique.AspectContainer;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabel;
@@ -29,23 +31,30 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	});
 
 	//Class itself
-	public final String name;
 
-	public final ResourceLocation textureLocation;
-
+	/**
+	 * The checkpoints of this aspect, checkpoints are points in the technique aspect that unlocks new functionalities
+	 */
 	public final LinkedList<Checkpoint> checkpoints;
 
-	public String description;
-
+	/**
+	 * A function to test whether the practitioner have what is required to learn this aspect
+	 */
 	public Predicate<AspectContainer> canLearn;
 
-	public TechniqueAspect(String name, ResourceLocation textureLocation) {
-		this.name = name;
-		this.textureLocation = textureLocation;
+	public TechniqueAspect() {
 		this.checkpoints = new LinkedList<>();
 		this.checkpoints.add(NO_CHECKPOINT);
-		this.description = "";
 		this.canLearn = c -> true;
+	}
+
+	/**
+	 * A method that will use the name in the registry to get the texture location
+	 */
+	public final ResourceLocation getTextureLocation() {
+		var nameLocation = this.getRegistryName();
+		if (nameLocation == null) return new ResourceLocation(WuxiaCraft.MOD_ID, "textures/aspects/empty.png");
+		return new ResourceLocation(nameLocation.getNamespace(), "textures/aspects/" + nameLocation.getPath() + ".png");
 	}
 
 	/**
@@ -73,18 +82,6 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	 */
 	public int connectPrioritySorter(TechniqueAspect aspect1, TechniqueAspect aspect2) {
 		return 0;
-	}
-
-	/**
-	 * Sets the description of this technique aspect to display in game
-	 * Probably the bot is going to use this desc as well
-	 *
-	 * @param desc the new description to be set
-	 * @return this
-	 */
-	public TechniqueAspect setDescription(String desc) {
-		this.description = desc;
-		return this;
 	}
 
 	/**
@@ -131,8 +128,8 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	 */
 	public void accept(HashMap<String, Object> metaData, BigDecimal proficiency) {
 		var skills = this.getSkills(proficiency);
-		if(skills.size() > 0) {
-			if(!metaData.containsKey("skills")) metaData.put("skills", new HashSet<ResourceLocation>());
+		if (skills.size() > 0) {
+			if (!metaData.containsKey("skills")) metaData.put("skills", new HashSet<ResourceLocation>());
 			//noinspection unchecked
 			var skillSet = (HashSet<ResourceLocation>) metaData.get("skills");
 			skillSet.addAll(skills);
@@ -178,14 +175,15 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	/**
 	 * Prepares a bunch of widgets to be used in the descriptor page
 	 *
-	 * @param aspectRegistryName The key of this aspect in the registry
 	 * @return widgets describing this aspect
 	 */
 	@Nonnull
-	public LinkedList<AbstractWidget> getStatsSheetDescriptor(ResourceLocation aspectRegistryName) {
-		WuxiaLabel nameLabel = new WuxiaLabel(5, 2, new TextComponent(this.name), 0xFFAA00);
-		WuxiaCheckpointsWidget checkpointsWidget = new WuxiaCheckpointsWidget(5, 12, 190, aspectRegistryName);
-		WuxiaLabelBox descriptionLabel = new WuxiaLabelBox(5, 25, 190, new TextComponent("Description: " + this.description));
+	public LinkedList<AbstractWidget> getStatsSheetDescriptor() {
+		var nameLocation = this.getRegistryName();
+		if (nameLocation == null) return new LinkedList<>();
+		WuxiaLabel nameLabel = new WuxiaLabel(5, 2, new TranslatableComponent("wuxiacraft.aspects." + nameLocation.getPath() + ".name"), 0xFFAA00);
+		WuxiaCheckpointsWidget checkpointsWidget = new WuxiaCheckpointsWidget(5, 12, 190, nameLocation);
+		WuxiaLabelBox descriptionLabel = new WuxiaLabelBox(5, 25, 190, new TranslatableComponent("Description: wuxiacraft.aspects." + nameLocation.getPath() + ".description"));
 		LinkedList<AbstractWidget> widgets = new LinkedList<>();
 		widgets.add(nameLabel);
 		widgets.add(checkpointsWidget);
@@ -201,6 +199,11 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 													 HashSet<ResourceLocation> skills) {
 		public Checkpoint(String name, BigDecimal proficiencyRequired, Consumer<AspectContainer> onReached) {
 			this(name, proficiencyRequired, onReached, new HashSet<>());
+		}
+
+		public Checkpoint(String name, BigDecimal proficiencyRequired) {
+			this(name, proficiencyRequired, c -> {
+			});
 		}
 
 		public Checkpoint addSkill(ResourceLocation skill) {

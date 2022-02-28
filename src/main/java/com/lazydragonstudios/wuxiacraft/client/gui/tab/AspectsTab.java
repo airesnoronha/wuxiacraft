@@ -76,7 +76,7 @@ public class AspectsTab extends IntrospectionTab {
 		var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.selectedAspectWidget);
 		if(aspect == null) return;
 		this.aspectsStatsPanel.clearChildren();
-		for(var widget : aspect.getStatsSheetDescriptor(this.selectedAspectWidget)) {
+		for(var widget : aspect.getStatsSheetDescriptor()) {
 			this.aspectsStatsPanel.addChild(widget);
 		}
 	}
