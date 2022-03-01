@@ -279,7 +279,7 @@ public class WuxiaTechniqueAspects {
 						// modifier = modifier + starryBathCount * 0.2
 						modifier = modifier.add(new BigDecimal(starryBathCount).multiply(new BigDecimal("0.2")));
 					}
-					event.setAmount(amount);
+					event.setAmount(amount.multiply(modifier));
 				}
 			});
 
