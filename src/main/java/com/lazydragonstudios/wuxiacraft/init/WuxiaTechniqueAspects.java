@@ -51,11 +51,40 @@ public class WuxiaTechniqueAspects {
 	//           Fire Generation ones       //
 	//////////////////////////////////////////
 
-	public static RegistryObject<TechniqueAspect> EMBER_ASPECT = ASPECTS.register("ember",
+	public static RegistryObject<TechniqueAspect> CINDER = ASPECTS.register("cinder",
 			() -> new ElementalGenerator(1d, WuxiaElements.FIRE.getId())
-					.addCheckpoint(new TechniqueAspect.Checkpoint("sparkle", new BigDecimal("5000")))
-					.addCheckpoint(new TechniqueAspect.Checkpoint("fire_intent", new BigDecimal("15000")))
-					.addCheckpoint(new TechniqueAspect.Checkpoint("remaining_fire", new BigDecimal("35000")))
+	);
+
+	public static RegistryObject<TechniqueAspect> EMBER = ASPECTS.register("ember",
+			() -> new ElementalGenerator(3d, WuxiaElements.FIRE.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> BLAZING = ASPECTS.register("blazing",
+			() -> new ElementalGenerator(9d, WuxiaElements.FIRE.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> EARTH_SCORCHING = ASPECTS.register("earth_scorching",
+			() -> new ElementalGenerator(27d, WuxiaElements.FIRE.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> HEAVEN_BURNING_FIRE = ASPECTS.register("heaven_burning_fire",
+			() -> new ElementalGenerator(81d, WuxiaElements.FIRE.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> EVERLASTING_FLAME = ASPECTS.register("everlasting_flame",
+			() -> new ElementalGenerator(243d, WuxiaElements.FIRE.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> SOLAR_FLAME = ASPECTS.register("solar_flame",
+			() -> new ElementalGenerator(729d, WuxiaElements.FIRE.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> IMMORTAL_FLAME = ASPECTS.register("immortal_flame",
+			() -> new ElementalGenerator(2187d, WuxiaElements.FIRE.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> FLAME_EMPEROR = ASPECTS.register("flame_emperor",
+			() -> new ElementalGenerator(6561d, WuxiaElements.FIRE.getId())
 	);
 
 	//////////////////////////////////////////
@@ -67,7 +96,46 @@ public class WuxiaTechniqueAspects {
 	);
 
 	//////////////////////////////////////////
-	//       Wooden Generation ones         //
+	//           Water Generation ones      //
+	//////////////////////////////////////////
+	public static RegistryObject<TechniqueAspect> DROP = ASPECTS.register("drop",
+			() -> new ElementalGenerator(1d, WuxiaElements.WATER.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> FLOW = ASPECTS.register("flow",
+			() -> new ElementalGenerator(3d, WuxiaElements.WATER.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> WATERFALL = ASPECTS.register("waterfall",
+			() -> new ElementalGenerator(9d, WuxiaElements.WATER.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> OCEAN_HEART = ASPECTS.register("ocean_heart",
+			() -> new ElementalGenerator(27d, WuxiaElements.WATER.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> HEAVENLY_WATER = ASPECTS.register("heavenly_water",
+			() -> new ElementalGenerator(81d, WuxiaElements.WATER.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> OCEAN_TIDE = ASPECTS.register("ocean_tide",
+			() -> new ElementalGenerator(243d, WuxiaElements.WATER.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> LUNAR_WATER = ASPECTS.register("lunar_water",
+			() -> new ElementalGenerator(729d, WuxiaElements.WATER.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> IMMORTAL_WATER = ASPECTS.register("immortal_water",
+			() -> new ElementalGenerator(2187d, WuxiaElements.WATER.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> GOD_OF_WATER = ASPECTS.register("god_of_water",
+			() -> new ElementalGenerator(6561d, WuxiaElements.WATER.getId())
+	);
+
+	//////////////////////////////////////////
+	//       Wood Generation ones           //
 	//////////////////////////////////////////
 
 	public static RegistryObject<TechniqueAspect> SEED = ASPECTS.register("seed",
