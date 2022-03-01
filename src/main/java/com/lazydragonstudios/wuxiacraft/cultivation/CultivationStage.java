@@ -1,7 +1,10 @@
 package com.lazydragonstudios.wuxiacraft.cultivation;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
@@ -10,11 +13,6 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
-
-	/**
-	 * The name of this stage
-	 */
-	public final String name;
 
 	/**
 	 * The cultivation system this belongs to
@@ -30,6 +28,16 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 	 * Add stats to the player to specific system
 	 */
 	private final HashMap<System, HashMap<PlayerSystemStat, BigDecimal>> systemStats;
+
+	/**
+	 * Add elemental stats to this stage
+	 */
+	private final HashMap<ResourceLocation, HashMap<PlayerElementalStat, BigDecimal>> elementalStats;
+
+	/**
+	 * Adds system elemental stats to this stage
+	 */
+	private final HashMap<System, HashMap<ResourceLocation, HashMap<PlayerSystemElementalStat, BigDecimal>>> systemElementalStats;
 
 	/**
 	 * This is the realm this stage belongs to
@@ -53,40 +61,115 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 
 	/**
 	 * Constructor for this cultivation stage
-	 * @param name      The stage name
-	 * @param system    the Stage Cultivation System
-	 * @param realm
-	 * @param nextStage then next stage to this stage, null if last in realm
-	 * @param previousStage
+	 *  @param system        the Stage Cultivation System
+	 * @param realm the realm this stage is in
+	 * @param previousStage a reference to the previous stage, null if this is the first
+	 * @param nextStage     a reference to the next stage, null if this is the last
 	 */
-	public CultivationStage(String name, System system, ResourceLocation realm, @Nullable ResourceLocation nextStage, @Nullable ResourceLocation previousStage) {
-		this.name = name;
+	public CultivationStage(System system, ResourceLocation realm, @Nullable ResourceLocation previousStage, @Nullable ResourceLocation nextStage) {
 		this.system = system;
 		this.realm = realm;
 		this.nextStage = nextStage;
 		this.previousStage = previousStage;
-		systemStats = new HashMap<>();
-		//TODO find a better name
+		this.systemStats = new HashMap<>();
+		this.elementalStats = new HashMap<>();
+		this.systemElementalStats = new HashMap<>();
 		for (var s : System.values()) {
 			systemStats.put(s, new HashMap<>());
 		}
 	}
 
 	public CultivationStage addSystemStat(System system, PlayerSystemStat stat, BigDecimal value) {
+		if (stat.isModifiable) return this;
 		this.systemStats.get(system).put(stat, value);
 		return this;
 	}
 
 	public CultivationStage addPlayerStat(PlayerStat stat, BigDecimal value) {
+		if (stat.isModifiable) return this;
 		this.playerStats.put(stat, value);
 		return this;
 	}
 
-	public BigDecimal getSystemStat(System system, PlayerSystemStat stat) {
-		return this.systemStats.get(system).getOrDefault(stat, BigDecimal.ZERO);
+	public CultivationStage addElementalStat(ResourceLocation element, PlayerElementalStat stat, BigDecimal value) {
+		if (stat.isModifiable) return this;
+		this.elementalStats.putIfAbsent(element, new HashMap<>());
+		this.elementalStats.get(element).put(stat, value);
+		return this;
 	}
 
+	public CultivationStage addSystemElementalStat(System system, ResourceLocation element, PlayerSystemElementalStat stat, BigDecimal value) {
+		if (stat.isModifiable) return this;
+		this.systemElementalStats.putIfAbsent(system, new HashMap<>());
+		this.systemElementalStats.get(system).putIfAbsent(element, new HashMap<>());
+		this.systemElementalStats.get(system).get(element).put(stat, value);
+		return this;
+	}
+
+	/**
+	 * Recursively adds stats from previous stages
+	 *
+	 * @param stat The stat to be queried
+	 * @return the stat value or zero if not found
+	 */
 	public BigDecimal getPlayerStat(PlayerStat stat) {
-		return this.playerStats.getOrDefault(stat, BigDecimal.ZERO);
+		BigDecimal stageValue = this.playerStats.getOrDefault(stat, BigDecimal.ZERO);
+		if (this.previousStage == null) return stageValue;
+		var aux = WuxiaRegistries.CULTIVATION_STAGES.getValue(this.previousStage);
+		if (aux == null) return stageValue;
+		stageValue = stageValue.add(aux.getPlayerStat(stat));
+		return stageValue;
+	}
+
+	/**
+	 * Recursively adds stats from previous stages
+	 *
+	 * @param system the system to query the stat
+	 * @param stat   the stat to be queried
+	 * @return the stat value or zero if not found
+	 */
+	public BigDecimal getSystemStat(System system, PlayerSystemStat stat) {
+		var stageValue = this.systemStats.get(system).getOrDefault(stat, BigDecimal.ZERO);
+		if (this.previousStage == null) return stageValue;
+		var aux = WuxiaRegistries.CULTIVATION_STAGES.getValue(this.previousStage);
+		if (aux == null) return stageValue;
+		stageValue = stageValue.add(aux.getSystemStat(system, stat));
+		return stageValue;
+	}
+
+	/**
+	 * Recursively adds stats from previous stages
+	 *
+	 * @param element the element of the stat
+	 * @param stat    the stat to be queried
+	 * @return the stat value or zero if not found
+	 */
+	public BigDecimal getElementalStat(ResourceLocation element, PlayerElementalStat stat) {
+		var stageValue = this.elementalStats
+				.getOrDefault(element, new HashMap<>()).getOrDefault(stat, BigDecimal.ZERO);
+		if (this.previousStage == null) return stageValue;
+		var aux = WuxiaRegistries.CULTIVATION_STAGES.getValue(this.previousStage);
+		if (aux == null) return stageValue;
+		stageValue = stageValue.add(aux.getElementalStat(element, stat));
+		return stageValue;
+	}
+
+
+	/**
+	 * Recursively adds stats from previous stages
+	 *
+	 * @param system  the system of the stat
+	 * @param element the element of the stat
+	 * @param stat    the stat to be queried
+	 * @return the stat value or zero if not found
+	 */
+	public BigDecimal getSystemElementalStat(System system, ResourceLocation element, PlayerSystemElementalStat stat) {
+		var stageValue = this.systemElementalStats
+				.getOrDefault(system, new HashMap<>()).getOrDefault(element, new HashMap<>()).getOrDefault(stat, BigDecimal.ZERO);
+		if (this.previousStage == null) return stageValue;
+		var aux = WuxiaRegistries.CULTIVATION_STAGES.getValue(this.previousStage);
+		if (aux == null) return stageValue;
+		stageValue = stageValue.add(aux.getSystemElementalStat(system, element, stat));
+		return stageValue;
 	}
 }

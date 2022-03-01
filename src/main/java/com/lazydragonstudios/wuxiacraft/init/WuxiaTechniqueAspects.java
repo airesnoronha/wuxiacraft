@@ -15,7 +15,7 @@ public class WuxiaTechniqueAspects {
 
 	public static DeferredRegister<TechniqueAspect> ASPECTS = DeferredRegister.create(TechniqueAspect.class, WuxiaCraft.MOD_ID);
 
-	public static RegistryObject<TechniqueAspect> START = ASPECTS.register("aspect_start", StartAspect::new);
+	public static RegistryObject<TechniqueAspect> START = ASPECTS.register("start", StartAspect::new);
 
 	/**
 	 * this is an empty aspect should, should not even be mentioned

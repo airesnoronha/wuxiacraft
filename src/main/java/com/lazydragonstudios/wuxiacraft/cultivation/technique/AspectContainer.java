@@ -1,7 +1,5 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.technique;
 
-import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
-import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects.TechniqueAspect;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
@@ -9,7 +7,6 @@ import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
-import org.checkerframework.checker.units.qual.C;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -60,14 +57,14 @@ public class AspectContainer {
 		return this.aspectAndProficiency.getOrDefault(aspect, BigDecimal.ZERO).compareTo(BigDecimal.TEN) >= 0;
 	}
 
-	public void addAspectProficiency(ResourceLocation aspect, BigDecimal amount) {
+	public void addAspectProficiency(ResourceLocation aspect, BigDecimal amount, ICultivation cultivation) {
 		if (this.aspectAndProficiency.containsKey(aspect)) {
 			TechniqueAspect aspectInstance = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspect);
 			if (aspectInstance == null) return;
 			this.aspectAndProficiency.put(aspect, this.aspectAndProficiency.get(aspect).add(amount).max(BigDecimal.ZERO));
 		} else {
 			if (amount.compareTo(BigDecimal.TEN) >= 0) {
-				if (this.learnAspect(aspect)) {
+				if (this.learnAspect(aspect, cultivation)) {
 					this.aspectAndProficiency.put(aspect, amount);
 				}
 			}
@@ -90,11 +87,11 @@ public class AspectContainer {
 		countKnownAspects();
 	}
 
-	public boolean learnAspect(ResourceLocation location) {
+	public boolean learnAspect(ResourceLocation location, ICultivation cultivation) {
 		if (!this.knowsAspect(location)) {
 			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(location);
 			if (aspect == null) return false;
-			if (aspect.canLearn.test(this)) {
+			if (aspect.canLearn.test(cultivation)) {
 				this.aspectAndProficiency.put(location, BigDecimal.TEN);
 				return true;
 			}

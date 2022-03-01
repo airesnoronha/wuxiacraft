@@ -84,11 +84,11 @@ public class WuxiaRealms {
 
 	public static RegistryObject<CultivationStage> BODY_MORTAL_STAGE = STAGE_REGISTER
 			.register("body_mortal_stage",
-					() -> new CultivationStage("body_mortal_stage",
+					() -> new CultivationStage(
 							System.BODY,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "body_mortal_realm"),
-							null,
-							null)
+							null, null
+					)
 							.addSystemStat(System.BODY, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("100"))
 			);
 
@@ -98,11 +98,11 @@ public class WuxiaRealms {
 
 	public static RegistryObject<CultivationStage> DIVINE_MORTAL_STAGE = STAGE_REGISTER
 			.register("divine_mortal_stage",
-					() -> new CultivationStage("divine_mortal_stage",
+					() -> new CultivationStage(
 							System.DIVINE,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "divine_mortal_realm"),
-							null,
-							null)
+							null, null
+					)
 							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("100"))
 			);
 
@@ -112,21 +112,23 @@ public class WuxiaRealms {
 
 	public static RegistryObject<CultivationStage> ESSENCE_MORTAL_STAGE = STAGE_REGISTER
 			.register("essence_mortal_stage",
-					() -> new CultivationStage("essence_mortal_stage",
+					() -> new CultivationStage(
 							System.ESSENCE,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_realm"),
 							null,
-							null)
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_gathering_stage")
+					)
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("1000")) //1k
 			);
 
 	public static RegistryObject<CultivationStage> ESSENCE_QI_GATHERING_STAGE = STAGE_REGISTER
 			.register("essence_qi_gathering_stage",
-					() -> new CultivationStage("essence_qi_gathering_stage",
+					() -> new CultivationStage(
 							System.ESSENCE,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_gathering_realm"),
-							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_pathways_stage"),
-							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_realm"))
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_realm"),
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_pathways_stage")
+					)
 							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("3"))
 							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("1.5"))
 							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.1"))
@@ -141,56 +143,59 @@ public class WuxiaRealms {
 
 	public static RegistryObject<CultivationStage> ESSENCE_QI_PATHWAYS_STAGE = STAGE_REGISTER
 			.register("essence_qi_pathways_stage",
-					() -> new CultivationStage("essence_qi_pathways_stage",
+					() -> new CultivationStage(
 							System.ESSENCE,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_gathering_realm"),
-							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_condensation_stage"),
-							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_gathering_stage"))
-							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("7"))
-							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("3.5"))
-							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.2"))
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("20000")) //20k
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.002"))
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.CULTIVATION_SPEED, new BigDecimal("0.015"))
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_gathering_stage"),
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_condensation_stage")
+					)
+							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("4"))
+							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("2"))
+							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.1"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("15000")) //20k
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.001"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.CULTIVATION_SPEED, new BigDecimal("0.005"))
 							.addSystemStat(System.BODY, PlayerSystemStat.MAX_ENERGY, new BigDecimal("1.5"))
 							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("1.5"))
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("7"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("4"))
 			);
 
 	public static RegistryObject<CultivationStage> ESSENCE_QI_CONDENSATION_STAGE = STAGE_REGISTER
 			.register("essence_qi_condensation_stage",
-					() -> new CultivationStage("essence_qi_condensation_stage",
+					() -> new CultivationStage(
 							System.ESSENCE,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_gathering_realm"),
-							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_phenomenon_stage"),
-							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_pathways_stage"))
-							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("12"))
-							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("6"))
-							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.4"))
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("45000")) //45k
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.003"))
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.CULTIVATION_SPEED, new BigDecimal("0.02"))
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_pathways_stage"),
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_phenomenon_stage")
+					)
+							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("5"))
+							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("2.5"))
+							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.2"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("20000")) //45k
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.0015"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.CULTIVATION_SPEED, new BigDecimal("0.005"))
 							.addSystemStat(System.BODY, PlayerSystemStat.MAX_ENERGY, new BigDecimal("2"))
 							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("2"))
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("12"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("5"))
 			);
 
 	public static RegistryObject<CultivationStage> ESSENCE_QI_PHENOMENON_STAGE = STAGE_REGISTER
 			.register("essence_qi_phenomenon_stage",
-					() -> new CultivationStage("essence_qi_phenomenon_stage",
+					() -> new CultivationStage(
 							System.ESSENCE,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_gathering_realm"),
-							null,
-							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_condensation_stage"))
-							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("20"))
-							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("10"))
-							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.8"))
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("100000")) //100k
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.005"))
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_condensation_stage"),
+							null
+					)
+							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("7"))
+							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("4"))
+							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.4"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("55000")) //100k
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.002"))
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.CULTIVATION_SPEED, new BigDecimal("0.015"))
 							.addSystemStat(System.BODY, PlayerSystemStat.MAX_ENERGY, new BigDecimal("3"))
 							.addSystemStat(System.BODY, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.01"))
 							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("3"))
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("20"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("7"))
 			);
 }

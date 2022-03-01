@@ -7,7 +7,6 @@ import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.AspectContainer;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
@@ -27,8 +26,7 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	/**
 	 * an empty checkpoint for being the default one
 	 */
-	public final static Checkpoint NO_CHECKPOINT = new Checkpoint("none", BigDecimal.ZERO, (c) -> {
-	});
+	public final static Checkpoint NO_CHECKPOINT = new Checkpoint("none", BigDecimal.ZERO);
 
 	//Class itself
 
@@ -40,7 +38,7 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	/**
 	 * A function to test whether the practitioner have what is required to learn this aspect
 	 */
-	public Predicate<AspectContainer> canLearn;
+	public Predicate<ICultivation> canLearn;
 
 	public TechniqueAspect() {
 		this.checkpoints = new LinkedList<>();
@@ -101,7 +99,7 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	 * @param canLearn the new behavior
 	 * @return this
 	 */
-	public TechniqueAspect setCanLearn(@Nonnull Predicate<AspectContainer> canLearn) {
+	public TechniqueAspect setCanLearn(@Nonnull Predicate<ICultivation> canLearn) {
 		this.canLearn = canLearn;
 		return this;
 	}
@@ -193,17 +191,26 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 
 	/**
 	 * This is the checkpoints for this technique. Take care that when using onReached, make sure you don't add repeated entries
-	 * On reached is going to be called a lot, use {@link AspectContainer#learnAspect(ResourceLocation)} that it's safe
+	 * On reached is going to be called a lot, use {@link AspectContainer#learnAspect)} that it's safe
 	 */
-	public record Checkpoint(String name, BigDecimal proficiencyRequired, Consumer<AspectContainer> onReached,
+	public record Checkpoint(String name, BigDecimal proficiencyRequired, BigDecimal modifier,
+													 Consumer<AspectContainer> onReached,
 													 HashSet<ResourceLocation> skills) {
-		public Checkpoint(String name, BigDecimal proficiencyRequired, Consumer<AspectContainer> onReached) {
-			this(name, proficiencyRequired, onReached, new HashSet<>());
+		public Checkpoint(String name, BigDecimal proficiencyRequired, BigDecimal modifier, Consumer<AspectContainer> onReached) {
+			this(name, proficiencyRequired, modifier, onReached, new HashSet<>());
+		}
+
+		public Checkpoint(String name, BigDecimal proficiency, BigDecimal modifier) {
+			this(name, proficiency, modifier, c -> {
+			});
+		}
+
+		public Checkpoint(String name, BigDecimal proficiency, Consumer<AspectContainer> onReached) {
+			this(name, proficiency, BigDecimal.ZERO, onReached);
 		}
 
 		public Checkpoint(String name, BigDecimal proficiencyRequired) {
-			this(name, proficiencyRequired, c -> {
-			});
+			this(name, proficiencyRequired, BigDecimal.ZERO);
 		}
 
 		public Checkpoint addSkill(ResourceLocation skill) {

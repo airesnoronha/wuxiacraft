@@ -17,6 +17,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.PacketDistributor;
@@ -107,8 +108,8 @@ public class CultivationCommand {
 			String systemName = system.name();
 			message.append(systemName).append(" stats: ").append("\n");
 			SystemContainer systemData = cultivation.getSystemData(system);
-			message.append("Realm:").append(systemData.getRealm().name).append("\n");
-			message.append("Stage:").append(systemData.getStage().name).append("\n");
+			message.append("Realm: ").append(systemData.getRealm().name).append("\n");
+			message.append("Stage: ").append( new TranslatableComponent("wuxiacraft.stage."+systemData.getStage().getRegistryName().getPath())).append("\n");
 			message.append("CultivationBase: ").append(String.format("%.1f", systemData.getStat(PlayerSystemStat.CULTIVATION_BASE))).append("\n");
 			message.append("Foundation: ").append(String.format("%.1f", systemData.getStat(PlayerSystemStat.FOUNDATION))).append("\n");
 			message.append("Energy: ").append(String.format("%.1f", systemData.getStat(PlayerSystemStat.ENERGY))).append("\n\n");
@@ -163,7 +164,7 @@ public class CultivationCommand {
 		ICultivation cultivation = Cultivation.get(target);
 		TextComponent message = new TextComponent("");
 
-		cultivation.getAspects().addAspectProficiency(aspectLocation, new BigDecimal(amount));
+		cultivation.getAspects().addAspectProficiency(aspectLocation, new BigDecimal(amount), cultivation);
 		message.append("Successfully added aspect proficiency to target player");
 		ctx.getSource().sendSuccess(message, true);
 		syncClientCultivation(target);
