@@ -58,7 +58,7 @@ public class WuxiaAspectWidget extends AbstractWidget {
 	public ResourceLocation getTextureLocation() {
 		var techAspect = this.getTechniqueAspect();
 		if(techAspect != null) {
-			return techAspect.textureLocation;
+			return techAspect.getTextureLocation();
 		}
 		var skillAspect = this.getSkillAspectType();
 		if(skillAspect != null) {

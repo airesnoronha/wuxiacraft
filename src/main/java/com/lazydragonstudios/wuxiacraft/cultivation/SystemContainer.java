@@ -1,9 +1,11 @@
 package com.lazydragonstudios.wuxiacraft.cultivation;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.TechniqueContainer;
 
@@ -28,6 +30,11 @@ public class SystemContainer {
 	private final HashMap<PlayerSystemStat, BigDecimal> systemStats;
 
 	/**
+	 * Holds all specific stats of a system for each element
+	 */
+	private final HashMap<ResourceLocation, HashMap<PlayerSystemElementalStat, BigDecimal>> systemElementalStats;
+
+	/**
 	 * Holds all the technique data
 	 */
 	public final TechniqueContainer techniqueData;
@@ -41,6 +48,7 @@ public class SystemContainer {
 		this.system = system;
 		this.currentStage = system.defaultStage;
 		this.systemStats = new HashMap<>();
+		this.systemElementalStats = new HashMap<>();
 		techniqueData = new TechniqueContainer(this.system);
 		for (var stat : PlayerSystemStat.values()) {
 			this.systemStats.put(stat, stat.defaultValue);
@@ -85,6 +93,15 @@ public class SystemContainer {
 		return WuxiaRegistries.CULTIVATION_STAGES.getValue(this.currentStage);
 	}
 
+	public BigDecimal getSystemElementalStat(ResourceLocation element, PlayerSystemElementalStat stat) {
+		return this.systemElementalStats.getOrDefault(element, new HashMap<>()).getOrDefault(stat, BigDecimal.ZERO);
+	}
+
+	public void setSystemElementalStat(ResourceLocation element, PlayerSystemElementalStat stat, BigDecimal value) {
+		this.systemElementalStats.putIfAbsent(element, new HashMap<>());
+		this.systemElementalStats.get(element).put(stat, value);
+	}
+
 	public boolean hasEnergy(BigDecimal amount) {
 		return this.getStat(PlayerSystemStat.ENERGY).compareTo(amount) >= 0;
 	}
@@ -125,6 +142,18 @@ public class SystemContainer {
 			}
 			this.systemStats.put(stat, value);
 		}
+		for (var element : WuxiaRegistries.ELEMENTS.getKeys()) {
+			for (var stat : PlayerSystemElementalStat.values()) {
+				if (stat.isModifiable) continue;
+				var value = BigDecimal.ZERO;
+				//TODO add stage value modifiers in the stage class
+				var stageValue = BigDecimal.ZERO;
+				var techniqueModifier = this.techniqueData.modifier.getSystemElementalStat(this.system, element, stat);
+				value = value.add(stageValue).multiply(BigDecimal.ONE.multiply(techniqueModifier));
+				this.systemElementalStats.putIfAbsent(element, new HashMap<>());
+				this.systemElementalStats.get(element).put(stat, value);
+			}
+		}
 	}
 
 	public CompoundTag serialize() {
@@ -134,7 +163,18 @@ public class SystemContainer {
 			if (!stat.isModifiable) continue;
 			tag.putString("stat-" + stat.name().toLowerCase(), this.getStat(stat).toPlainString());
 		}
+		var elementStatsTag = new CompoundTag();
+		for (var element : this.systemElementalStats.keySet()) {
+			var currentElementStatsTag = new CompoundTag();
+			for (var stat : PlayerSystemElementalStat.values()) {
+				if (!stat.isModifiable) continue;
+				currentElementStatsTag.putString("stat-" + stat.name().toLowerCase(),
+						this.systemElementalStats.get(element).getOrDefault(stat, BigDecimal.ZERO).toPlainString());
+			}
+			elementStatsTag.put("element-stats-" + element, elementStatsTag);
+		}
 		tag.put("technique-data", this.techniqueData.serialize());
+		tag.put("elemental-stats", elementStatsTag);
 		return tag;
 	}
 
@@ -149,6 +189,23 @@ public class SystemContainer {
 				this.systemStats.put(stat, new BigDecimal(tag.getString(statName)));
 			} else {
 				this.systemStats.put(stat, stat.defaultValue);
+			}
+		}
+		if (tag.contains("elemental-stats")) {
+			var rawElementalStatsTag = tag.get("elemental-stats");
+			if (rawElementalStatsTag instanceof CompoundTag elementalStatsTag) {
+				for (var elementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
+					if (!elementalStatsTag.contains("element-stats-" + elementLocation)) continue;
+					var rawCurrentElementalStatsTag = elementalStatsTag.get("element-stats-" + elementLocation);
+					if (!(rawCurrentElementalStatsTag instanceof CompoundTag currentElementStatsTag)) continue;
+					for (var stat : PlayerSystemElementalStat.values()) {
+						if (!stat.isModifiable) continue;
+						if (!(currentElementStatsTag.contains("stat-" + stat.name().toLowerCase()))) continue;
+						var value = currentElementStatsTag.getString("stat-" + stat.name().toLowerCase());
+						this.systemElementalStats.putIfAbsent(elementLocation, new HashMap<>());
+						this.systemElementalStats.get(elementLocation).put(stat, new BigDecimal(value));
+					}
+				}
 			}
 		}
 		CompoundTag techDataTag = (CompoundTag) tag.get("technique-data");

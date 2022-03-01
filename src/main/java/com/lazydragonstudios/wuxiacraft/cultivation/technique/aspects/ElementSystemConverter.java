@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
 
-public class AspectElementSystemConverter extends AspectElementalConverter {
+public class ElementSystemConverter extends ElementalConverter {
 
 	/**
 	 * the system to be converted to
@@ -16,11 +16,11 @@ public class AspectElementSystemConverter extends AspectElementalConverter {
 	private final static HashMap<Class, Integer> priority = new HashMap<>();
 
 	static {
-		priority.put(AspectElementSystemConverter.class, -2);
-		priority.put(AspectSystemGather.class, -1);
+		priority.put(ElementSystemConverter.class, -2);
+		priority.put(SystemGather.class, -1);
 	}
 
-	public AspectElementSystemConverter(double amount, ResourceLocation element, System system) {
+	public ElementSystemConverter(double amount, ResourceLocation element, System system) {
 		super(amount, element);
 		this.system = system;
 	}
@@ -35,10 +35,10 @@ public class AspectElementSystemConverter extends AspectElementalConverter {
 
 	@Override
 	public boolean canConnect(TechniqueAspect aspect) {
-		if (aspect instanceof AspectElementSystemConverter con) {
+		if (aspect instanceof ElementSystemConverter con) {
 			return con.element.equals(this.element);
 		}
-		if (aspect instanceof AspectSystemGather) return true;
+		if (aspect instanceof SystemGather) return true;
 		return super.canConnect(aspect);
 	}
 

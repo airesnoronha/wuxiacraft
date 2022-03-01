@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
-public class AspectElementalGenerator extends TechniqueAspect {
+public class ElementalGenerator extends TechniqueAspect {
 
 	public double generated;
 
@@ -15,12 +15,12 @@ public class AspectElementalGenerator extends TechniqueAspect {
 	private final static HashMap<Class, Integer> priority = new HashMap<>();
 
 	static {
-		priority.put(AspectElementalGenerator.class, -3);
-		priority.put(AspectElementalConverter.class, -2);
-		priority.put(AspectElementalConsumer.class, -1);
+		priority.put(ElementalGenerator.class, -3);
+		priority.put(ElementalConverter.class, -2);
+		priority.put(ElementalConsumer.class, -1);
 	}
 
-	public AspectElementalGenerator(double generated, ResourceLocation element) {
+	public ElementalGenerator(double generated, ResourceLocation element) {
 		super();
 		this.generated = generated;
 		this.element = element;
@@ -35,13 +35,13 @@ public class AspectElementalGenerator extends TechniqueAspect {
 
 	@Override
 	public boolean canConnect(TechniqueAspect aspect) {
-		if (aspect instanceof AspectElementalGenerator gen) {
+		if (aspect instanceof ElementalGenerator gen) {
 			return gen.element.equals(this.element);
 		}
-		if (aspect instanceof AspectElementalConsumer con) {
+		if (aspect instanceof ElementalConsumer con) {
 			return con.element.equals(this.element);
 		}
-		if (aspect instanceof AspectElementalConverter con) {
+		if (aspect instanceof ElementalConverter con) {
 			return con.element.equals(this.element);
 		}
 		return false;

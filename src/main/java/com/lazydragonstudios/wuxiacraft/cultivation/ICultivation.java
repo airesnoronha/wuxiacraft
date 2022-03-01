@@ -4,6 +4,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillContainer;
 import net.minecraft.nbt.CompoundTag;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.AspectContainer;
+import net.minecraft.world.entity.player.Player;
 
 import java.math.BigDecimal;
 
@@ -16,6 +17,8 @@ public interface ICultivation {
 	SystemContainer getSystemData(System system);
 
 	void calculateStats();
+
+	boolean addCultivationBase(Player player, System system, BigDecimal amount);
 
 	CompoundTag serialize();
 

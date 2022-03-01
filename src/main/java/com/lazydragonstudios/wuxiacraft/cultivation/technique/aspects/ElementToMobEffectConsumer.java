@@ -1,22 +1,21 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public abstract class AspectModEffect extends AspectElementalConsumer {
+public class ElementToMobEffectConsumer extends ElementalConsumer {
 
-	public MobEffect effect;
+	public net.minecraft.world.effect.MobEffect effect;
 	public int amplifier;
 	public int duration; //in ticks
 	public boolean ambient;
 	public boolean particles;
 
-	public AspectModEffect(String name, ResourceLocation textureLocation, ResourceLocation element, double cost, MobEffect effect, int amplifier, int duration, boolean ambient, boolean particles) {
-		super(name, textureLocation, element, cost);
+	public ElementToMobEffectConsumer(ResourceLocation element, double cost, net.minecraft.world.effect.MobEffect effect, int amplifier, int duration, boolean ambient, boolean particles) {
+		super(element, cost);
 		this.effect = effect;
 		this.amplifier = amplifier;
 		this.duration = duration;
@@ -24,8 +23,8 @@ public abstract class AspectModEffect extends AspectElementalConsumer {
 		this.particles = particles;
 	}
 
-	public AspectModEffect(String name, ResourceLocation textureLocation, ResourceLocation element, double cost, MobEffectInstance mobEffect) {
-		super(name, textureLocation, element, cost);
+	public ElementToMobEffectConsumer(ResourceLocation element, double cost, MobEffectInstance mobEffect) {
+		super(element, cost);
 		this.effect = mobEffect.getEffect();
 		this.amplifier = mobEffect.getAmplifier();
 		this.duration = mobEffect.getDuration();
@@ -50,9 +49,11 @@ public abstract class AspectModEffect extends AspectElementalConsumer {
 	}
 
 	@Override
-	public abstract void notConsumed(HashMap<String, Object> metaData);
+	public void notConsumed(HashMap<String, Object> metaData) {
 
-	public static MobEffectInstance getMobEffectInstance(AspectModEffect aspect) {
+	}
+
+	public static MobEffectInstance getMobEffectInstance(ElementToMobEffectConsumer aspect) {
 		return new MobEffectInstance(aspect.effect, aspect.amplifier, aspect.duration, aspect.ambient, aspect.particles);
 	}
 }

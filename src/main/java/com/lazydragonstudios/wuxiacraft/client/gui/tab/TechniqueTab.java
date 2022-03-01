@@ -163,7 +163,7 @@ public class TechniqueTab extends IntrospectionTab {
 			if (techAspect != null) {
 				poseStack.pushPose();
 				poseStack.translate(mouseX, mouseY, 0);
-				RenderSystem.setShaderTexture(0, techAspect.textureLocation);
+				RenderSystem.setShaderTexture(0, techAspect.getTextureLocation());
 				GuiComponent.blit(poseStack,
 						-16, -16,
 						32, 32,

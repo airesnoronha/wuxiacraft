@@ -5,13 +5,12 @@ import net.minecraft.resources.ResourceLocation;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
-public abstract class AspectElementalConsumer extends TechniqueAspect {
+public abstract class ElementalConsumer extends TechniqueAspect {
 
 	public ResourceLocation element;
 	public double cost;
 
-	public AspectElementalConsumer(String name, ResourceLocation textureLocation, ResourceLocation element, double cost) {
-		super(name, textureLocation);
+	public ElementalConsumer(ResourceLocation element, double cost) {
 		this.element = element;
 		this.cost = cost;
 	}
@@ -32,16 +31,27 @@ public abstract class AspectElementalConsumer extends TechniqueAspect {
 		}
 	}
 
+	/**
+	 * What happens when there was enough elemental cultivation base
+	 *
+	 * @param metaData the metadata passing through this aspect
+	 */
 	public abstract void consumed(HashMap<String, Object> metaData);
 
+	/**
+	 * Used when the elemental cultivation base is not enough
+	 * Mostly used for punishments
+	 *
+	 * @param metaData the metadata passing through this aspect
+	 */
 	public abstract void notConsumed(HashMap<String, Object> metaData);
 
 	@Override
 	public boolean canConnect(TechniqueAspect aspect) {
-		if (aspect instanceof AspectElementalConsumer con) {
+		if (aspect instanceof ElementalConsumer con) {
 			return con.element.equals(this.element);
 		}
-		if (aspect instanceof AspectElementalConverter con) {
+		if (aspect instanceof ElementalConverter con) {
 			return con.element.equals(this.element);
 		}
 		return false;

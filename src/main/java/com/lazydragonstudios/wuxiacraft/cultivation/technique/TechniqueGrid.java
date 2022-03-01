@@ -85,6 +85,16 @@ public class TechniqueGrid {
 	}
 
 	/**
+	 * Gets a copy of the actual grid so it won't be able to be modified
+	 *
+	 * @return a copy of this aspects grid
+	 */
+	public HashMap<Point, ResourceLocation> getGrid() {
+		//noinspection unchecked
+		return (HashMap<Point, ResourceLocation>) this.grid.clone();
+	}
+
+	/**
 	 * Turn the grid with aspects and deserialize this
 	 */
 	@Nonnull

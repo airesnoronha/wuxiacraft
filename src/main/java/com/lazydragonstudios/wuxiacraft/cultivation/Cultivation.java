@@ -1,11 +1,17 @@
 package com.lazydragonstudios.wuxiacraft.cultivation;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillContainer;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
+import com.lazydragonstudios.wuxiacraft.event.CultivatingEvent;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import com.lazydragonstudios.wuxiacraft.capabilities.CultivationProvider;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.AspectContainer;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -22,6 +28,8 @@ public class Cultivation implements ICultivation {
 	 * Player specific stats
 	 */
 	private final HashMap<PlayerStat, BigDecimal> playerStats;
+
+	private final HashMap<ResourceLocation, HashMap<PlayerElementalStat, BigDecimal>> playerElementalStats;
 
 	/**
 	 * this is for sync with the client and probably vice versa
@@ -48,6 +56,7 @@ public class Cultivation implements ICultivation {
 	public Cultivation() {
 		this.systemCultivation = new HashMap<>();
 		this.playerStats = new HashMap<>();
+		this.playerElementalStats = new HashMap<>();
 		for (var stat : PlayerStat.values()) {
 			this.playerStats.put(stat, stat.defaultValue);
 		}
@@ -104,12 +113,31 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
+	public boolean addCultivationBase(Player player, System system, BigDecimal amount) {
+		if (!MinecraftForge.EVENT_BUS.post(new CultivatingEvent(player, system, amount))) return false;
+		var systemData = this.getSystemData(system);
+		systemData.setStat(PlayerSystemStat.CULTIVATION_BASE, systemData.getStat(PlayerSystemStat.CULTIVATION_BASE).add(amount).max(BigDecimal.ZERO));
+		return true;
+	}
+
+	@Override
 	public CompoundTag serialize() {
 		CompoundTag tag = new CompoundTag();
 		for (var stat : this.playerStats.keySet()) {
 			if (!stat.isModifiable) continue;
 			tag.putString("stat-" + stat.name().toLowerCase(), this.playerStats.get(stat).toPlainString());
 		}
+		var elementStatsTag = new CompoundTag();
+		for (var element : this.playerElementalStats.keySet()) {
+			var currentElementStatsTag = new CompoundTag();
+			for (var stat : PlayerElementalStat.values()) {
+				if (!stat.isModifiable) continue;
+				currentElementStatsTag.putString("stat-" + stat.name().toLowerCase(),
+						this.playerElementalStats.get(element).getOrDefault(stat, BigDecimal.ZERO).toPlainString());
+			}
+			elementStatsTag.put("element-stats-" + element, currentElementStatsTag);
+		}
+		tag.put("elemental-stats", elementStatsTag);
 		tag.put("body-data", getSystemData(System.BODY).serialize());
 		tag.put("divine-data", getSystemData(System.DIVINE).serialize());
 		tag.put("essence-data", getSystemData(System.ESSENCE).serialize());
@@ -128,7 +156,23 @@ public class Cultivation implements ICultivation {
 				this.playerStats.put(stat, new BigDecimal("0"));
 			}
 		}
-		calculateStats();
+		if (tag.contains("elemental-stats")) {
+			var rawElementalStatsTag = tag.get("elemental-stats");
+			if (rawElementalStatsTag instanceof CompoundTag elementalStatsTag) {
+				for (var element : WuxiaRegistries.ELEMENTS.getKeys()) {
+					if (elementalStatsTag.contains("element-stats-" + element)) {
+						for (var stat : PlayerElementalStat.values()) {
+							if (!stat.isModifiable) continue;
+							if (elementalStatsTag.contains("stat-" + stat.name().toLowerCase())) {
+								var value = elementalStatsTag.getString("stat-" + stat.name().toLowerCase());
+								this.playerElementalStats.putIfAbsent(element, new HashMap<>());
+								this.playerElementalStats.get(element).put(stat, new BigDecimal(value));
+							}
+						}
+					}
+				}
+			}
+		}
 		if (tag.contains("body-data")) {
 			getSystemData(System.BODY).deserialize(tag.getCompound("body-data"), this);
 		}
@@ -144,6 +188,7 @@ public class Cultivation implements ICultivation {
 		if (tag.contains("skills-data")) {
 			this.skills.deserialize(tag.getCompound("skills-data"));
 		}
+		calculateStats();
 	}
 
 	@Override

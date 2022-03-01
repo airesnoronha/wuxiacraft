@@ -4,13 +4,13 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
 
-public class AspectElementElementConverter extends AspectElementalConverter {
+public class ElementToElementConverter extends ElementalConverter {
 
 	public final double conversionRate;
 
 	public final ResourceLocation destinationElement;
 
-	public AspectElementElementConverter(double amount, double conversionRate, ResourceLocation elementSource, ResourceLocation elementDestination) {
+	public ElementToElementConverter(double amount, double conversionRate, ResourceLocation elementSource, ResourceLocation elementDestination) {
 		super(amount, elementSource);
 		this.conversionRate = conversionRate;
 		this.destinationElement = elementDestination;

@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
-public abstract class AspectElementalConverter extends TechniqueAspect {
+public abstract class ElementalConverter extends TechniqueAspect {
 
 	/**
 	 * the amount of elemental cultivation base that is going to become raw cultivation base
@@ -17,7 +17,7 @@ public abstract class AspectElementalConverter extends TechniqueAspect {
 	 */
 	public ResourceLocation element;
 
-	public AspectElementalConverter(double amount, ResourceLocation element) {
+	public ElementalConverter(double amount, ResourceLocation element) {
 		this.amount = amount;
 		this.element = element;
 	}
@@ -44,10 +44,10 @@ public abstract class AspectElementalConverter extends TechniqueAspect {
 
 	@Override
 	public boolean canConnect(TechniqueAspect aspect) {
-		if (aspect instanceof AspectElementalConsumer con) {
+		if (aspect instanceof ElementalConsumer con) {
 			return con.element.equals(this.element);
 		}
-		if (aspect instanceof AspectElementalConverter con) {
+		if (aspect instanceof ElementalConverter con) {
 			return con.element.equals(this.element);
 		}
 		return false;

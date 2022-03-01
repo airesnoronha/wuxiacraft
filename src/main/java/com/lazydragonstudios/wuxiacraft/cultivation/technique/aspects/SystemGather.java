@@ -2,16 +2,15 @@ package com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
-import net.minecraft.resources.ResourceLocation;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 
-public class AspectSystemGather extends TechniqueAspect {
+public class SystemGather extends TechniqueAspect {
 
 	public System system;
 
-	public AspectSystemGather(System system) {
+	public SystemGather(System system) {
 		this.system = system;
 	}
 

@@ -132,7 +132,7 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 			if (aspectInPlace != emptyId) {
 				var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspectInPlace);
 				if (techAspect != null) {
-					RenderSystem.setShaderTexture(0, techAspect.textureLocation);
+					RenderSystem.setShaderTexture(0, techAspect.getTextureLocation());
 					GuiComponent.blit(poseStack,
 							-16, -16,
 							32, 32,

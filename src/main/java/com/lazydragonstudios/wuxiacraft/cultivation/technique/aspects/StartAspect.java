@@ -1,20 +1,18 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects;
 
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
 import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabel;
 import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabelBox;
 
 import javax.annotation.Nonnull;
 import java.util.LinkedList;
 
-public class AspectStart extends TechniqueAspect {
+public class StartAspect extends TechniqueAspect {
 
 	@Override
 	public boolean canConnect(TechniqueAspect aspect) {
-		return aspect instanceof AspectElementalGenerator;
+		return aspect instanceof ElementalGenerator;
 	}
 
 	@Override
