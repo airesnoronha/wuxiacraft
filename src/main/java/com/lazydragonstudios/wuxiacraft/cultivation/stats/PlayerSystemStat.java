@@ -19,11 +19,6 @@ public enum PlayerSystemStat {
 	MAX_CULTIVATION_BASE(new BigDecimal("0"), false, new Point(5, 35), "Max Cultivation Base: %s"),
 
 	/**
-	 * This is the foundation of the cultivation stage
-	 */
-	FOUNDATION(new BigDecimal("0"), true, new Point(5, 45), "Foundation: %s"),
-
-	/**
 	 * this is how much energy the player has to use for this system
 	 */
 	ENERGY(new BigDecimal("0"), true, new Point(5, 55), "Energy: %s"),

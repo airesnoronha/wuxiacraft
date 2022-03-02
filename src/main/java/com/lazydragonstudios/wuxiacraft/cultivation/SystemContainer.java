@@ -1,11 +1,11 @@
 package com.lazydragonstudios.wuxiacraft.cultivation;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.TechniqueContainer;
 
@@ -63,13 +63,63 @@ public class SystemContainer {
 	}
 
 	public BigDecimal getStat(PlayerSystemStat stat) {
-		return this.systemStats.getOrDefault(stat, BigDecimal.ZERO);
+		BigDecimal statValue = this.systemStats.getOrDefault(stat, BigDecimal.ZERO);
+		for (var elementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
+			if (!this.systemElementalStats.containsKey(elementLocation)) continue;
+			if (!this.systemElementalStats.get(elementLocation).containsKey(PlayerSystemElementalStat.FOUNDATION)) continue;
+			var element = WuxiaRegistries.ELEMENTS.getValue(elementLocation);
+			if (element == null) continue;
+			var foundation = this.systemElementalStats.get(elementLocation).get(PlayerSystemElementalStat.FOUNDATION);
+			statValue = statValue.add(element.getFoundationStatValue(stat, foundation));
+		}
+		return statValue;
 	}
 
-	public BigDecimal getPlayerStat(PlayerStat stat) {
-		BigDecimal statValue = this.getStage().getPlayerStat(stat);
+	public BigDecimal getStat(ResourceLocation elementLocation, PlayerSystemElementalStat stat) {
+		return this.systemElementalStats.getOrDefault(elementLocation, new HashMap<>()).getOrDefault(stat, BigDecimal.ZERO);
+	}
+
+	/**
+	 * Gets the value of the player stats in this system by getting it from stage, foundation and technique modifier
+	 * This is not saved because this should just be used for the cultivation class to store it's value
+	 *
+	 * @param stat the stat to be queried
+	 * @return the stat value with all modifiers
+	 */
+	public BigDecimal getStat(PlayerStat stat) {
+		BigDecimal statValue = this.getStage().getStat(stat);
 		//this looks like statsValue = statsValue * (1 + techniqueModifier)
 		statValue = statValue.multiply(BigDecimal.ONE.add(this.techniqueData.modifier.stats.getOrDefault(stat, BigDecimal.ZERO)));
+		for (var elementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
+			if (!this.systemElementalStats.containsKey(elementLocation)) continue;
+			if (!this.systemElementalStats.get(elementLocation).containsKey(PlayerSystemElementalStat.FOUNDATION)) continue;
+			var element = WuxiaRegistries.ELEMENTS.getValue(elementLocation);
+			if (element == null) continue;
+			var foundation = this.systemElementalStats.get(elementLocation).get(PlayerSystemElementalStat.FOUNDATION);
+			statValue = statValue.add(element.getFoundationStatValue(stat, foundation));
+		}
+		return statValue;
+	}
+
+	/**
+	 * Gets the value of the player stats in this system by getting it from stage, foundation and technique modifier
+	 * This is not saved because this should just be used for the cultivation class to store its value
+	 *
+	 * @param elementLocation the element of the stat
+	 * @param stat            the stat to be queried
+	 * @return the stat value with all modifiers
+	 */
+	public BigDecimal getStat(ResourceLocation elementLocation, PlayerElementalStat stat) {
+		BigDecimal statValue = this.getStage().getStat(elementLocation, stat);
+		//this looks like statsValue = statsValue * (1 + techniqueModifier)
+		statValue = statValue.multiply(BigDecimal.ONE.add(this.techniqueData.modifier.getStat(elementLocation, stat)));
+		if (!this.systemElementalStats.containsKey(elementLocation)) return statValue;
+		if (!this.systemElementalStats.get(elementLocation).containsKey(PlayerSystemElementalStat.FOUNDATION))
+			return statValue;
+		var element = WuxiaRegistries.ELEMENTS.getValue(elementLocation);
+		if (element == null) return statValue;
+		var foundation = this.systemElementalStats.get(elementLocation).get(PlayerSystemElementalStat.FOUNDATION);
+		statValue = statValue.add(element.getFoundationStatValue(stat, foundation));
 		return statValue;
 	}
 
@@ -91,10 +141,6 @@ public class SystemContainer {
 	 */
 	public CultivationStage getStage() {
 		return WuxiaRegistries.CULTIVATION_STAGES.getValue(this.currentStage);
-	}
-
-	public BigDecimal getSystemElementalStat(ResourceLocation element, PlayerSystemElementalStat stat) {
-		return this.systemElementalStats.getOrDefault(element, new HashMap<>()).getOrDefault(stat, BigDecimal.ZERO);
 	}
 
 	public void setSystemElementalStat(ResourceLocation element, PlayerSystemElementalStat stat, BigDecimal value) {
@@ -130,28 +176,38 @@ public class SystemContainer {
 			var stageValue = BigDecimal.ZERO;
 			for (var system : System.values()) {
 				var systemData = cultivation.getSystemData(system);
-				stageValue = stageValue.add(systemData.getStage().getSystemStat(this.system, stat));
+				stageValue = stageValue.add(systemData.getStage().getStat(this.system, stat));
+			}
+			var foundationValue = BigDecimal.ZERO;
+			for (var elementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
+				var foundation = this.systemElementalStats.getOrDefault(elementLocation, new HashMap<>())
+						.getOrDefault(PlayerSystemElementalStat.FOUNDATION, BigDecimal.ZERO);
+				var element = WuxiaRegistries.ELEMENTS.getValue(elementLocation);
+				if (element == null) continue;
+				if (foundation.compareTo(BigDecimal.ZERO) <= 0) continue;
+				foundationValue = foundationValue.add(element.getFoundationStatValue(stat, foundation));
 			}
 			var techniqueModifier = this.techniqueData.modifier.systemStats.get(this.system).getOrDefault(stat, BigDecimal.ZERO);
+			//value= value + stageValue + foundationValue
+			value = value.add(stageValue).add(foundationValue);
 			if (stat == PlayerSystemStat.CULTIVATION_SPEED) {
-				//value = value + stageValue + techModifier
-				value = value.add(stageValue).add(techniqueModifier);
+				//value = value + techModifier
+				value = value.add(techniqueModifier);
 			} else {
-				//value = value + stageValue * (1 + techModifier)
-				value = value.add(stageValue).multiply(BigDecimal.ONE.add(techniqueModifier));
+				//value = value * (1 + techModifier)
+				value = value.multiply(BigDecimal.ONE.add(techniqueModifier));
 			}
 			this.systemStats.put(stat, value);
 		}
-		for (var element : WuxiaRegistries.ELEMENTS.getKeys()) {
+		for (var elementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
 			for (var stat : PlayerSystemElementalStat.values()) {
 				if (stat.isModifiable) continue;
 				var value = BigDecimal.ZERO;
-				//TODO add stage value modifiers in the stage class
-				var stageValue = BigDecimal.ZERO;
-				var techniqueModifier = this.techniqueData.modifier.getSystemElementalStat(this.system, element, stat);
+				var stageValue = this.getStage().getStat(this.system, elementLocation, stat);
+				var techniqueModifier = this.techniqueData.modifier.getStat(this.system, elementLocation, stat);
 				value = value.add(stageValue).multiply(BigDecimal.ONE.multiply(techniqueModifier));
-				this.systemElementalStats.putIfAbsent(element, new HashMap<>());
-				this.systemElementalStats.get(element).put(stat, value);
+				this.systemElementalStats.putIfAbsent(elementLocation, new HashMap<>());
+				this.systemElementalStats.get(elementLocation).put(stat, value);
 			}
 		}
 	}

@@ -1,123 +1,89 @@
 package com.lazydragonstudios.wuxiacraft.init;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerElementalStat;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.cultivation.Element;
 
+import java.math.BigDecimal;
+
 @SuppressWarnings("unused")
 public class WuxiaElements {
 
 	public static DeferredRegister<Element> ELEMENTS = DeferredRegister.create(Element.class, WuxiaCraft.MOD_ID);
 
-	/**
-	 * elementEntry=elements.physical
-	 * desc="physical manipulation"
-	 */
-	public static RegistryObject<Element> PHYSICAL = ELEMENTS.register("physical", () -> new Element("physical"));
+	public static RegistryObject<Element> PHYSICAL = ELEMENTS.register("physical", Element::new
+	);
 
-	/**
-	 * elementEntry=elements.fire
-	 * desc="fire manipulation"
-	 * image="textures/elements/fire.png"
-	 */
-	public static RegistryObject<Element> FIRE = ELEMENTS.register("fire", () -> new Element("fire")
+	public static RegistryObject<Element> FIRE = ELEMENTS.register("fire", () -> new Element()
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "earth"))
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "metal"))
+			.statModifier(PlayerStat.STRENGTH, new BigDecimal("0.4"))
+			.statModifier(PlayerElementalStat.PIERCE, new BigDecimal("0.6"))
+			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.6"))
+			.statModifier(PlayerSystemStat.MAX_ENERGY, new BigDecimal("-0.05"))
 	);
 
-	/**
-	 * elementEntry=elements.earth
-	 * desc="earth manipulation"
-	 */
-	public static RegistryObject<Element> EARTH = ELEMENTS.register("earth", () -> new Element("earth")
+	public static RegistryObject<Element> EARTH = ELEMENTS.register("earth", () -> new Element()
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "metal"))
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "water"))
+			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "wind"))
+			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "lightning"))
 	);
 
-	/**
-	 * elementEntry=elements.metal
-	 * desc="metal manipulation"
-	 */
-	public static RegistryObject<Element> METAL = ELEMENTS.register("metal", () -> new Element("metal")
+	public static RegistryObject<Element> METAL = ELEMENTS.register("metal", () -> new Element()
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "water"))
+			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "lightning"))
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "wood"))
 	);
 
-	/**
-	 * elementEntry=elements.water
-	 * desc="water manipulation"
-	 * image="textures/elements/water.png"
-	 */
-	public static RegistryObject<Element> WATER = ELEMENTS.register("water", () -> new Element("water")
+	public static RegistryObject<Element> WATER = ELEMENTS.register("water", () -> new Element()
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "wood"))
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "fire"))
 	);
 
-	/**
-	 * elementEntry=elements.wood
-	 * desc="wood manipulation"
-	 * image="textures/elements/wood.png"
-	 */
-	public static RegistryObject<Element> WOOD = ELEMENTS.register("wood", () -> new Element("wood")
+	public static RegistryObject<Element> WOOD = ELEMENTS.register("wood", () -> new Element()
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "fire"))
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "earth"))
+			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "poison"))
 	);
 
-	/**
-	 * elementEntry=elements.lightning
-	 * desc="lightning manipulation"
-	 */
-	public static RegistryObject<Element> LIGHTNING = ELEMENTS.register("lightning", () -> new Element("lightning")
+	public static RegistryObject<Element> LIGHTNING = ELEMENTS.register("lightning", () -> new Element()
+			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "fire"))
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "water"))
 	);
 
-	/**
-	 * elementEntry=elements.wind
-	 * desc="air/wind manipulation"
-	 */
-	public static RegistryObject<Element> WIND = ELEMENTS.register("wind", () -> new Element("wind")
+	public static RegistryObject<Element> WIND = ELEMENTS.register("wind", () -> new Element()
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "fire"))
+			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "lightning"))
+			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "wood"))
 	);
 
-	/**
-	 * elementEntry=elements.light
-	 * desc="light manipulation"
-	 */
-	public static RegistryObject<Element> LIGHT = ELEMENTS.register("light", () -> new Element("light")
+	public static RegistryObject<Element> POISON = ELEMENTS.register("poison", () -> new Element()
+			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "water"))
+	);
+
+	public static RegistryObject<Element> LIGHT = ELEMENTS.register("light", () -> new Element()
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "darkness"))
 	);
 
-	/**
-	 * elementEntry=elements.darkness
-	 * desc="darkness manipulation"
-	 */
-	public static RegistryObject<Element> DARKNESS = ELEMENTS.register("darkness", () -> new Element("darkness")
+	public static RegistryObject<Element> DARKNESS = ELEMENTS.register("darkness", () -> new Element()
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "light"))
 	);
 
-	/**
-	 * elementEntry=elements.space
-	 * desc="space manipulation"
-	 */
-	public static RegistryObject<Element> SPACE = ELEMENTS.register("space", () -> new Element("space")
+	public static RegistryObject<Element> SPACE = ELEMENTS.register("space", () -> new Element()
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "time"))
 	);
 
-	/**
-	 * elementEntry=elements.time
-	 * desc="time manipulation"
-	 */
-	public static RegistryObject<Element> TIME = ELEMENTS.register("time", () -> new Element("time")
+	public static RegistryObject<Element> TIME = ELEMENTS.register("time", () -> new Element()
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "space"))
 	);
 
-	/**
-	 * elementEntry=elements.butt
-	 * desc="Conquer the world with fart"
-	 */
-	public static RegistryObject<Element> BUTT = ELEMENTS.register("butt", () -> new Element("butt")
+	public static RegistryObject<Element> BUTT = ELEMENTS.register("butt", () -> new Element()
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "wind"))
 	);
 

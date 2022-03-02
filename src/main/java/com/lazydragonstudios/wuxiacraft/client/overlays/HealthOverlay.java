@@ -28,8 +28,8 @@ public class HealthOverlay implements IIngameOverlay {
 		RenderSystem.setShaderTexture(0, HEALTH_BAR);
 		GuiComponent.blit(mStack, i, j, 81, 9, 0, 0, 81, 9, 81, 18);
 		//TODO Provide BigDecimal math logic to values
-		double max_hp = cultivation.getPlayerStat(PlayerStat.MAX_HEALTH).doubleValue();
-		double hp = cultivation.getPlayerStat(PlayerStat.HEALTH).doubleValue();
+		double max_hp = cultivation.getStat(PlayerStat.MAX_HEALTH).doubleValue();
+		double hp = cultivation.getStat(PlayerStat.HEALTH).doubleValue();
 		int fill = (int) Math.min(Math.ceil((hp / max_hp) * 81), 81);
 		GuiComponent.blit(mStack, i, j, fill, 9, 0, 9, fill, 9, 81, 18);
 		//text

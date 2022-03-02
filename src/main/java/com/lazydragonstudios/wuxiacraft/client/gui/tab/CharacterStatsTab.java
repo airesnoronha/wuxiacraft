@@ -1,6 +1,5 @@
 package com.lazydragonstudios.wuxiacraft.client.gui.tab;
 
-import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -39,7 +38,7 @@ public class CharacterStatsTab extends IntrospectionTab {
 		systemStats = new HashMap<>();
 		screen.addRenderableWidget(statsPanel);
 		for (var stat : PlayerStat.values()) {
-			var statValue = cultivation.getPlayerStat(stat).toEngineeringString();
+			var statValue = cultivation.getStat(stat).toEngineeringString();
 			int labelX = stat.locationInStatsSheet.x == -1 ? 150 : stat.locationInStatsSheet.x;
 			var label = new WuxiaLabel(labelX, stat.locationInStatsSheet.y, new TranslatableComponent("wuxiacraft.gui." + stat.name().toLowerCase(), statValue), color);
 			displayLabels.put(stat, label);
@@ -72,7 +71,7 @@ public class CharacterStatsTab extends IntrospectionTab {
 		var leftPostX = 0;
 		var secondColumn = new LinkedList<WuxiaLabel>();
 		for (var stat : PlayerStat.values()) {
-			var statValue = cultivation.getPlayerStat(stat).toEngineeringString();
+			var statValue = cultivation.getStat(stat).toEngineeringString();
 			displayLabels.get(stat).setMessage(new TranslatableComponent("wuxiacraft.gui." + stat.name().toLowerCase(), statValue));
 			if (stat.locationInStatsSheet.x == -1) {
 				secondColumn.add(displayLabels.get(stat));

@@ -12,7 +12,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -38,7 +37,9 @@ public class CultivationEventHandler {
 	 * @param player the player to be synchronized
 	 */
 	public static void syncClientCultivation(ServerPlayer player) {
-		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new CultivationSyncMessage(Cultivation.get(player)));
+		ICultivation cultivation = Cultivation.get(player);
+		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new CultivationSyncMessage(cultivation));
+		cultivation.calculateStats();
 	}
 
 	@SubscribeEvent
@@ -100,20 +101,20 @@ public class CultivationEventHandler {
 				killPlayerWithExplosion(player,
 						"wuxiacraft.energy_excess." + system.name().toLowerCase(),
 						//energy * 3 * max_health -> just to guarantee death
-						systemData.getStat(PlayerSystemStat.ENERGY).multiply(new BigDecimal("3")).multiply(cultivation.getPlayerStat(PlayerStat.MAX_HEALTH)));
+						systemData.getStat(PlayerSystemStat.ENERGY).multiply(new BigDecimal("3")).multiply(cultivation.getStat(PlayerStat.MAX_HEALTH)));
 				//or regulate it slowly to 100%
 			} else if (systemData.getStat(PlayerSystemStat.ENERGY).compareTo(systemData.getStat(PlayerSystemStat.MAX_ENERGY)) > 0) {
 				systemData.consumeEnergy(systemData.getStat(PlayerSystemStat.ENERGY_REGEN));
 			}
 		}
 		//Healing part yaay
-		if (cultivation.getPlayerStat(PlayerStat.HEALTH).compareTo(cultivation.getPlayerStat(PlayerStat.MAX_HEALTH)) < 0) {
-			BigDecimal energy_used = cultivation.getPlayerStat(PlayerStat.HEALTH_REGEN_COST);
+		if (cultivation.getStat(PlayerStat.HEALTH).compareTo(cultivation.getStat(PlayerStat.MAX_HEALTH)) < 0) {
+			BigDecimal energy_used = cultivation.getStat(PlayerStat.HEALTH_REGEN_COST);
 			//Won't heal when energy is below 10%
 			if (bodyData.getStat(PlayerSystemStat.ENERGY).subtract(energy_used).compareTo(bodyData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("0.1"))) >= 0) {
-				BigDecimal amount_healed = cultivation.getPlayerStat(PlayerStat.HEALTH_REGEN);
+				BigDecimal amount_healed = cultivation.getStat(PlayerStat.HEALTH_REGEN);
 				if (bodyData.consumeEnergy(energy_used)) { // this is the correct way to use consume energy ever
-					cultivation.setPlayerStat(PlayerStat.HEALTH, cultivation.getPlayerStat(PlayerStat.MAX_HEALTH).min(cultivation.getPlayerStat(PlayerStat.HEALTH).add(amount_healed)));
+					cultivation.setPlayerStat(PlayerStat.HEALTH, cultivation.getStat(PlayerStat.MAX_HEALTH).min(cultivation.getStat(PlayerStat.HEALTH).add(amount_healed)));
 				}
 			}
 		}
@@ -123,8 +124,8 @@ public class CultivationEventHandler {
 				bodyData.techniqueData.modifier.isValidTechnique() ||
 						essenceData.techniqueData.modifier.isValidTechnique()
 		)) {
-			if (bodyData.consumeEnergy(cultivation.getPlayerStat(PlayerStat.EXERCISE_COST))) {
-				essenceData.addEnergy(cultivation.getPlayerStat(PlayerStat.EXERCISE_CONVERSION));
+			if (bodyData.consumeEnergy(cultivation.getStat(PlayerStat.EXERCISE_COST))) {
+				essenceData.addEnergy(cultivation.getStat(PlayerStat.EXERCISE_CONVERSION));
 			}
 		}
 
@@ -278,8 +279,8 @@ public class CultivationEventHandler {
 				event.getPlayer().getPersistentData().putDouble("rtp_to_y", rtpPos.y);
 				event.getPlayer().getPersistentData().putDouble("rtp_to_z", rtpPos.z);
 			}
-			oldCultivation.setPlayerStat(PlayerStat.LIVES, oldCultivation.getPlayerStat(PlayerStat.LIVES).subtract(BigDecimal.ONE));
-			if (oldCultivation.getPlayerStat(PlayerStat.LIVES).compareTo(BigDecimal.ZERO) == 0) {
+			oldCultivation.setPlayerStat(PlayerStat.LIVES, oldCultivation.getStat(PlayerStat.LIVES).subtract(BigDecimal.ONE));
+			if (oldCultivation.getStat(PlayerStat.LIVES).compareTo(BigDecimal.ZERO) == 0) {
 				oldCultivation.deserialize(new Cultivation().serialize());
 			} else {
 				oldCultivation.setPlayerStat(PlayerStat.HEALTH, PlayerStat.HEALTH.defaultValue);

@@ -49,6 +49,11 @@ public class Cultivation implements ICultivation {
 	public AspectContainer aspects;
 
 	/**
+	 * whether the player is in combat mode
+	 */
+	public boolean combat;
+
+	/**
 	 * the skill data for this character
 	 */
 	public SkillContainer skills;
@@ -67,6 +72,7 @@ public class Cultivation implements ICultivation {
 		this.aspects = new AspectContainer();
 		this.skills = new SkillContainer();
 		this.exercising = false;
+		this.combat = false;
 	}
 
 	public static ICultivation get(Player target) {
@@ -75,13 +81,13 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public BigDecimal getPlayerStat(PlayerStat stat) {
-		BigDecimal statValue = this.playerStats.getOrDefault(stat, stat.defaultValue);
-		for (var system : System.values()) {
-			var data = getSystemData(system);
-			statValue = statValue.add(data.getPlayerStat(stat));
-		}
-		return statValue;
+	public BigDecimal getStat(PlayerStat stat) {
+		return this.playerStats.getOrDefault(stat, stat.defaultValue);
+	}
+
+	@Override
+	public BigDecimal getStat(ResourceLocation elementLocation, PlayerElementalStat stat) {
+		return this.playerElementalStats.getOrDefault(elementLocation, new HashMap<>()).getOrDefault(stat, BigDecimal.ZERO);
 	}
 
 	@Override
@@ -102,7 +108,28 @@ public class Cultivation implements ICultivation {
 			if (stat.isModifiable) continue;
 			var statValue = stat.defaultValue;
 			for (var system : System.values()) {
-				statValue = statValue.add(this.getSystemData(system).getPlayerStat(stat));
+				statValue = statValue.add(this.getSystemData(system).getStat(stat));
+			}
+			this.playerStats.put(stat, statValue);
+		}
+		for (var elementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
+			for (var stat : PlayerElementalStat.values()) {
+				//small cleaning, if the value is zero on the stat value then remove from the memory
+				if (this.playerElementalStats.containsKey(elementLocation)) {
+					if (this.playerElementalStats.get(elementLocation).getOrDefault(stat, BigDecimal.ZERO).compareTo(BigDecimal.ZERO) == 0) {
+						this.playerElementalStats.get(elementLocation).remove(stat);
+					}
+				}
+				if (stat.isModifiable) continue;
+				var statValue = BigDecimal.ZERO;
+				for (var system : System.values()) {
+					var systemData = this.getSystemData(system);
+					statValue = statValue.add(systemData.getStat(elementLocation, stat));
+				}
+				if (statValue.compareTo(BigDecimal.ZERO) > 0) {
+					this.playerElementalStats.putIfAbsent(elementLocation, new HashMap<>());
+					this.playerElementalStats.get(elementLocation).put(stat, statValue);
+				}
 			}
 		}
 		this.skills.knownSkills.clear();
@@ -114,9 +141,10 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public boolean addCultivationBase(Player player, System system, BigDecimal amount) {
-		if (!MinecraftForge.EVENT_BUS.post(new CultivatingEvent(player, system, amount))) return false;
+		CultivatingEvent event = new CultivatingEvent(player, system, amount);
+		if (!MinecraftForge.EVENT_BUS.post(event)) return false;
 		var systemData = this.getSystemData(system);
-		systemData.setStat(PlayerSystemStat.CULTIVATION_BASE, systemData.getStat(PlayerSystemStat.CULTIVATION_BASE).add(amount).max(BigDecimal.ZERO));
+		systemData.setStat(PlayerSystemStat.CULTIVATION_BASE, systemData.getStat(PlayerSystemStat.CULTIVATION_BASE).add(event.getAmount()).max(BigDecimal.ZERO));
 		return true;
 	}
 
@@ -209,6 +237,16 @@ public class Cultivation implements ICultivation {
 	@Override
 	public SkillContainer getSkills() {
 		return skills;
+	}
+
+	@Override
+	public boolean isCombat() {
+		return combat;
+	}
+
+	@Override
+	public void setCombat(boolean combat) {
+		this.combat = combat;
 	}
 
 	/**

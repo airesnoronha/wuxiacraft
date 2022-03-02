@@ -112,12 +112,12 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 	 * @param stat The stat to be queried
 	 * @return the stat value or zero if not found
 	 */
-	public BigDecimal getPlayerStat(PlayerStat stat) {
+	public BigDecimal getStat(PlayerStat stat) {
 		BigDecimal stageValue = this.playerStats.getOrDefault(stat, BigDecimal.ZERO);
 		if (this.previousStage == null) return stageValue;
 		var aux = WuxiaRegistries.CULTIVATION_STAGES.getValue(this.previousStage);
 		if (aux == null) return stageValue;
-		stageValue = stageValue.add(aux.getPlayerStat(stat));
+		stageValue = stageValue.add(aux.getStat(stat));
 		return stageValue;
 	}
 
@@ -128,12 +128,12 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 	 * @param stat   the stat to be queried
 	 * @return the stat value or zero if not found
 	 */
-	public BigDecimal getSystemStat(System system, PlayerSystemStat stat) {
+	public BigDecimal getStat(System system, PlayerSystemStat stat) {
 		var stageValue = this.systemStats.get(system).getOrDefault(stat, BigDecimal.ZERO);
 		if (this.previousStage == null) return stageValue;
 		var aux = WuxiaRegistries.CULTIVATION_STAGES.getValue(this.previousStage);
 		if (aux == null) return stageValue;
-		stageValue = stageValue.add(aux.getSystemStat(system, stat));
+		stageValue = stageValue.add(aux.getStat(system, stat));
 		return stageValue;
 	}
 
@@ -144,13 +144,13 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 	 * @param stat    the stat to be queried
 	 * @return the stat value or zero if not found
 	 */
-	public BigDecimal getElementalStat(ResourceLocation element, PlayerElementalStat stat) {
+	public BigDecimal getStat(ResourceLocation element, PlayerElementalStat stat) {
 		var stageValue = this.elementalStats
 				.getOrDefault(element, new HashMap<>()).getOrDefault(stat, BigDecimal.ZERO);
 		if (this.previousStage == null) return stageValue;
 		var aux = WuxiaRegistries.CULTIVATION_STAGES.getValue(this.previousStage);
 		if (aux == null) return stageValue;
-		stageValue = stageValue.add(aux.getElementalStat(element, stat));
+		stageValue = stageValue.add(aux.getStat(element, stat));
 		return stageValue;
 	}
 
@@ -163,13 +163,13 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 	 * @param stat    the stat to be queried
 	 * @return the stat value or zero if not found
 	 */
-	public BigDecimal getSystemElementalStat(System system, ResourceLocation element, PlayerSystemElementalStat stat) {
+	public BigDecimal getStat(System system, ResourceLocation element, PlayerSystemElementalStat stat) {
 		var stageValue = this.systemElementalStats
 				.getOrDefault(system, new HashMap<>()).getOrDefault(element, new HashMap<>()).getOrDefault(stat, BigDecimal.ZERO);
 		if (this.previousStage == null) return stageValue;
 		var aux = WuxiaRegistries.CULTIVATION_STAGES.getValue(this.previousStage);
 		if (aux == null) return stageValue;
-		stageValue = stageValue.add(aux.getSystemElementalStat(system, element, stat));
+		stageValue = stageValue.add(aux.getStat(system, element, stat));
 		return stageValue;
 	}
 }

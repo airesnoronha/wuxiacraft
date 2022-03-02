@@ -111,7 +111,6 @@ public class CultivationCommand {
 			message.append("Realm: ").append(systemData.getRealm().name).append("\n");
 			message.append("Stage: ").append( new TranslatableComponent("wuxiacraft.stage."+systemData.getStage().getRegistryName().getPath())).append("\n");
 			message.append("CultivationBase: ").append(String.format("%.1f", systemData.getStat(PlayerSystemStat.CULTIVATION_BASE))).append("\n");
-			message.append("Foundation: ").append(String.format("%.1f", systemData.getStat(PlayerSystemStat.FOUNDATION))).append("\n");
 			message.append("Energy: ").append(String.format("%.1f", systemData.getStat(PlayerSystemStat.ENERGY))).append("\n\n");
 		}
 		ctx.getSource().sendSuccess(message, true);

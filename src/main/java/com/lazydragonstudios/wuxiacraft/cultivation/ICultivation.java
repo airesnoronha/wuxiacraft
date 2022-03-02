@@ -1,16 +1,20 @@
 package com.lazydragonstudios.wuxiacraft.cultivation;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillContainer;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerElementalStat;
 import net.minecraft.nbt.CompoundTag;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.AspectContainer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 import java.math.BigDecimal;
 
 public interface ICultivation {
 
-	BigDecimal getPlayerStat(PlayerStat stat);
+	BigDecimal getStat(PlayerStat stat);
+
+	BigDecimal getStat(ResourceLocation elementLocation, PlayerElementalStat stat);
 
 	void setPlayerStat(PlayerStat stat, BigDecimal value);
 
@@ -31,6 +35,10 @@ public interface ICultivation {
 	AspectContainer getAspects();
 
 	SkillContainer getSkills();
+
+	boolean isCombat();
+
+	void setCombat(boolean combat);
 
 	/**
 	 * Utility to increment to the tick timer

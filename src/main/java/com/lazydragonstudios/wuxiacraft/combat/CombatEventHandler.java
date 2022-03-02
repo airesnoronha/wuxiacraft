@@ -79,15 +79,15 @@ public class CombatEventHandler {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (!(event.getSource() instanceof WuxiaDamageSource source)) return;
 		var cultivation = Cultivation.get(player);
-		cultivation.setPlayerStat(PlayerStat.HEALTH, cultivation.getPlayerStat(PlayerStat.HEALTH).subtract(source.getDamage()));
+		cultivation.setPlayerStat(PlayerStat.HEALTH, cultivation.getStat(PlayerStat.HEALTH).subtract(source.getDamage()));
 
 		event.getEntityLiving().getCombatTracker().recordDamage(event.getSource(),
-				cultivation.getPlayerStat(PlayerStat.HEALTH).floatValue() + event.getAmount(), event.getAmount());
+				cultivation.getStat(PlayerStat.HEALTH).floatValue() + event.getAmount(), event.getAmount());
 		player.awardStat(Stats.DAMAGE_TAKEN, (int) event.getAmount());
 		//decided that food exhaustion has nothing to do with damage.
 		//and it'll be used anyways to heal the character.
 
-		if (cultivation.getPlayerStat(PlayerStat.HEALTH).compareTo(BigDecimal.ZERO) <= 0) {
+		if (cultivation.getStat(PlayerStat.HEALTH).compareTo(BigDecimal.ZERO) <= 0) {
 			//this is vanilla health
 			player.setHealth(-1);
 		}
@@ -112,13 +112,13 @@ public class CombatEventHandler {
 			return; // Means it was wuxiacraft that came up with this attack, so damage is already calculated
 
 		ICultivation cultivation = Cultivation.get(player);
-		event.setAmount(event.getAmount() + cultivation.getPlayerStat(PlayerStat.STRENGTH).floatValue());
+		event.setAmount(event.getAmount() + cultivation.getStat(PlayerStat.STRENGTH).floatValue());
 		//if it was a punch, then we apply a little of knock back
 		if(player.getItemInHand(InteractionHand.MAIN_HAND) == ItemStack.EMPTY ) return;
 		LivingEntity target = event.getEntityLiving();
 		double maxHP = target.getMaxHealth();
 		if (target instanceof Player targetPlayer)
-			maxHP = Cultivation.get(targetPlayer).getPlayerStat(PlayerStat.MAX_HEALTH).doubleValue();
+			maxHP = Cultivation.get(targetPlayer).getStat(PlayerStat.MAX_HEALTH).doubleValue();
 		double knockSpeed = MathUtil.clamp((event.getAmount() * 0.7 - maxHP) * 0.3, 0, 12);
 		Vec3 diff = Objects.requireNonNull(event.getSource().getSourcePosition()).subtract(event.getEntityLiving().getPosition(0.5f));
 		diff = diff.normalize();

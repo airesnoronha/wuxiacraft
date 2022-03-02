@@ -4,6 +4,7 @@ import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.cultivation.CultivationRealm;
 import com.lazydragonstudios.wuxiacraft.cultivation.CultivationStage;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import net.minecraft.resources.ResourceLocation;
@@ -126,18 +127,21 @@ public class WuxiaRealms {
 					() -> new CultivationStage(
 							System.ESSENCE,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_gathering_realm"),
-							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_realm"),
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_stage"),
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_pathways_stage")
 					)
 							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("3"))
-							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("1.5"))
+							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("0.5"))
 							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.1"))
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("5000")) //5k
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.001"))
+							.addPlayerStat(PlayerStat.DETECTION_RANGE, new BigDecimal("1"))
+							.addPlayerStat(PlayerStat.DETECTION_STRENGTH, new BigDecimal("0.5"))
+							.addPlayerStat(PlayerStat.DETECTION_RESISTANCE, new BigDecimal("0.1"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("4000"))
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.CULTIVATION_SPEED, new BigDecimal("0.01"))
 							.addSystemStat(System.BODY, PlayerSystemStat.MAX_ENERGY, new BigDecimal("1"))
 							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("1"))
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("3"))
+							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.RESISTANCE, new BigDecimal("1"))
 
 			);
 
@@ -152,12 +156,15 @@ public class WuxiaRealms {
 							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("4"))
 							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("2"))
 							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.1"))
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("15000")) //20k
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.001"))
+							.addPlayerStat(PlayerStat.DETECTION_RANGE, new BigDecimal("2"))
+							.addPlayerStat(PlayerStat.DETECTION_STRENGTH, new BigDecimal("0.6"))
+							.addPlayerStat(PlayerStat.DETECTION_RESISTANCE, new BigDecimal("0.2"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("6000")) //20k
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.CULTIVATION_SPEED, new BigDecimal("0.005"))
 							.addSystemStat(System.BODY, PlayerSystemStat.MAX_ENERGY, new BigDecimal("1.5"))
 							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("1.5"))
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("4"))
+							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.RESISTANCE, new BigDecimal("1"))
 			);
 
 	public static RegistryObject<CultivationStage> ESSENCE_QI_CONDENSATION_STAGE = STAGE_REGISTER
@@ -171,12 +178,16 @@ public class WuxiaRealms {
 							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("5"))
 							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("2.5"))
 							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.2"))
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("20000")) //45k
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.0015"))
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.CULTIVATION_SPEED, new BigDecimal("0.005"))
+							.addPlayerStat(PlayerStat.DETECTION_RANGE, new BigDecimal("3"))
+							.addPlayerStat(PlayerStat.DETECTION_STRENGTH, new BigDecimal("0.7"))
+							.addPlayerStat(PlayerStat.DETECTION_RESISTANCE, new BigDecimal("0.2"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("9000"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.CULTIVATION_SPEED, new BigDecimal("0.001"))
 							.addSystemStat(System.BODY, PlayerSystemStat.MAX_ENERGY, new BigDecimal("2"))
 							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("2"))
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("5"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.01"))
+							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.RESISTANCE, new BigDecimal("1.5"))
 			);
 
 	public static RegistryObject<CultivationStage> ESSENCE_QI_PHENOMENON_STAGE = STAGE_REGISTER
@@ -185,17 +196,134 @@ public class WuxiaRealms {
 							System.ESSENCE,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_gathering_realm"),
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_condensation_stage"),
-							null
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_shaping_stage")
 					)
 							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("7"))
 							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("4"))
 							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.4"))
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("55000")) //100k
-							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.002"))
+							.addPlayerStat(PlayerStat.DETECTION_STRENGTH, new BigDecimal("0.5"))
+							.addPlayerStat(PlayerStat.MAX_BARRIER, new BigDecimal("5"))
+							.addPlayerStat(PlayerStat.BARRIER_REGEN, new BigDecimal("0.01"))
+							.addPlayerStat(PlayerStat.BARRIER_REGEN_COST, new BigDecimal("0.03"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("15000"))
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.CULTIVATION_SPEED, new BigDecimal("0.015"))
-							.addSystemStat(System.BODY, PlayerSystemStat.MAX_ENERGY, new BigDecimal("3"))
-							.addSystemStat(System.BODY, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.01"))
-							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("3"))
+							.addSystemStat(System.BODY, PlayerSystemStat.MAX_ENERGY, new BigDecimal("2"))
+							.addSystemStat(System.BODY, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.002"))
+							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("2"))
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("7"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.002"))
+							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.RESISTANCE, new BigDecimal("3"))
+							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.PIERCE, new BigDecimal("2"))
+			);
+
+	//Change realms -> big leap in stats
+	public static RegistryObject<CultivationStage> ESSENCE_QI_SHAPING_STAGE = STAGE_REGISTER
+			.register("essence_qi_shaping_stage",
+					() -> new CultivationStage(
+							System.ESSENCE,
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_consolidation_realm"),
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_phenomenon_stage"),
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_solidification_stage")
+					)
+							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("15"))
+							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("6"))
+							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.6"))
+							.addPlayerStat(PlayerStat.DETECTION_STRENGTH, new BigDecimal("1"))
+							.addPlayerStat(PlayerStat.DETECTION_RANGE, new BigDecimal("5"))
+							.addPlayerStat(PlayerStat.MAX_BARRIER, new BigDecimal("6"))
+							.addPlayerStat(PlayerStat.BARRIER_REGEN, new BigDecimal("0.03"))
+							.addPlayerStat(PlayerStat.BARRIER_REGEN_COST, new BigDecimal("0.07"))
+							.addPlayerStat(PlayerStat.HEALTH_REGEN, new BigDecimal("0.01"))
+							.addPlayerStat(PlayerStat.HEALTH_REGEN_COST, new BigDecimal("0.02"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("25000"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.CULTIVATION_SPEED, new BigDecimal("0.2"))
+							.addSystemStat(System.BODY, PlayerSystemStat.MAX_ENERGY, new BigDecimal("6"))
+							.addSystemStat(System.BODY, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.005"))
+							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("6"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("15"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.005"))
+							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.RESISTANCE, new BigDecimal("6.5"))
+							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.PIERCE, new BigDecimal("1"))
+			);
+
+	public static RegistryObject<CultivationStage> ESSENCE_QI_MOLDING_STAGE = STAGE_REGISTER
+			.register("essence_qi_molding_stage",
+					() -> new CultivationStage(
+							System.ESSENCE,
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_consolidation_realm"),
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_shaping_stage"),
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_solidification_stage")
+					)
+							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("15"))
+							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("6"))
+							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.6"))
+							.addPlayerStat(PlayerStat.MAX_BARRIER, new BigDecimal("8"))
+							.addPlayerStat(PlayerStat.BARRIER_REGEN, new BigDecimal("0.04"))
+							.addPlayerStat(PlayerStat.BARRIER_REGEN_COST, new BigDecimal("0.09"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("100000"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.CULTIVATION_SPEED, new BigDecimal("0.2"))
+							.addSystemStat(System.BODY, PlayerSystemStat.MAX_ENERGY, new BigDecimal("6"))
+							.addSystemStat(System.BODY, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.02"))
+							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("6"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("15"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.007"))
+							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.RESISTANCE, new BigDecimal("8"))
+							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.PIERCE, new BigDecimal("1"))
+			);
+
+	public static RegistryObject<CultivationStage> ESSENCE_QI_SOLIDIFICATION_STAGE = STAGE_REGISTER
+			.register("essence_qi_solidification_stage",
+					() -> new CultivationStage(
+							System.ESSENCE,
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_consolidation_realm"),
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_molding_stage"),
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_core_shaping_stage")
+					)
+							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("15"))
+							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("6"))
+							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.6"))
+							.addPlayerStat(PlayerStat.MAX_BARRIER, new BigDecimal("11"))
+							.addPlayerStat(PlayerStat.BARRIER_REGEN, new BigDecimal("0.05"))
+							.addPlayerStat(PlayerStat.BARRIER_REGEN_COST, new BigDecimal("0.11"))
+							.addPlayerStat(PlayerStat.HEALTH_REGEN, new BigDecimal("0.01"))
+							.addPlayerStat(PlayerStat.HEALTH_REGEN_COST, new BigDecimal("0.02"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("100000"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.CULTIVATION_SPEED, new BigDecimal("0.4"))
+							.addSystemStat(System.BODY, PlayerSystemStat.MAX_ENERGY, new BigDecimal("10"))
+							.addSystemStat(System.BODY, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.03"))
+							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("10"))
+							.addSystemStat(System.DIVINE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.03"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("25"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.012"))
+							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.RESISTANCE, new BigDecimal("10"))
+							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.PIERCE, new BigDecimal("2"))
+			);
+
+	public static RegistryObject<CultivationStage> ESSENCE_CORE_SHAPING_STAGE = STAGE_REGISTER
+			.register("essence_core_shaping_stage",
+					() -> new CultivationStage(
+							System.ESSENCE,
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_consolidation_realm"),
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_solidification_stage"),
+							null
+					)
+							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("15"))
+							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("6"))
+							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.6"))
+							.addPlayerStat(PlayerStat.MAX_BARRIER, new BigDecimal("15"))
+							.addPlayerStat(PlayerStat.BARRIER_REGEN, new BigDecimal("0.07"))
+							.addPlayerStat(PlayerStat.BARRIER_REGEN_COST, new BigDecimal("0.18"))
+							.addPlayerStat(PlayerStat.HEALTH_REGEN, new BigDecimal("0.02"))
+							.addPlayerStat(PlayerStat.HEALTH_REGEN_COST, new BigDecimal("0.03"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("100000"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.CULTIVATION_SPEED, new BigDecimal("0.8"))
+							.addSystemStat(System.BODY, PlayerSystemStat.MAX_ENERGY, new BigDecimal("15"))
+							.addSystemStat(System.BODY, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.05"))
+							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("15"))
+							.addSystemStat(System.DIVINE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.05"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("42"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.023"))
+							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.RESISTANCE, new BigDecimal("12"))
+							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.PIERCE, new BigDecimal("4"))
 			);
 }

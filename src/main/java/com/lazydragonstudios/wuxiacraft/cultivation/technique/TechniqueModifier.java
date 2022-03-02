@@ -4,8 +4,6 @@ import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 
@@ -68,20 +66,29 @@ public class TechniqueModifier {
 		}
 	}
 
-	public BigDecimal getElementStat(ResourceLocation element, PlayerElementalStat stat) {
+	public BigDecimal getStat(ResourceLocation element, PlayerElementalStat stat) {
 		return this.elementalStats.getOrDefault(element, new HashMap<>()).getOrDefault(stat, BigDecimal.ZERO);
 	}
 
-	public void setElementStat(ResourceLocation element, PlayerElementalStat stat, BigDecimal value) {
+	public BigDecimal getStat(System system, ResourceLocation element, PlayerSystemElementalStat stat) {
+		return this.systemElementalStats.getOrDefault(system, new HashMap<>()).getOrDefault(element, new HashMap<>()).getOrDefault(stat, BigDecimal.ZERO);
+	}
+
+	public BigDecimal getStat(PlayerStat stat) {
+		return this.stats.getOrDefault(stat, BigDecimal.ZERO);
+	}
+
+	public BigDecimal getStat(System system, PlayerSystemStat stat) {
+		return this.systemStats.getOrDefault(system, new HashMap<>()).getOrDefault(stat, BigDecimal.ZERO);
+	}
+
+
+	public void setStat(ResourceLocation element, PlayerElementalStat stat, BigDecimal value) {
 		this.elementalStats.putIfAbsent(element, new HashMap<>());
 		this.elementalStats.get(element).put(stat, value);
 	}
 
-	public BigDecimal getSystemElementalStat(System system, ResourceLocation element, PlayerSystemElementalStat stat) {
-		return this.systemElementalStats.getOrDefault(system, new HashMap<>()).getOrDefault(element, new HashMap<>()).getOrDefault(stat, BigDecimal.ZERO);
-	}
-
-	public void setSystemElementalStat(System system, ResourceLocation element, PlayerSystemElementalStat stat, BigDecimal value) {
+	public void setStat(System system, ResourceLocation element, PlayerSystemElementalStat stat, BigDecimal value) {
 		this.systemElementalStats.putIfAbsent(system, new HashMap<>());
 		this.systemElementalStats.get(system).putIfAbsent(element, new HashMap<>());
 		this.systemElementalStats.get(system).get(element).put(stat, value);

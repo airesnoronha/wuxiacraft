@@ -16,7 +16,7 @@ public enum PlayerStat {
 	AGILITY(new BigDecimal("0.0"), false, new Point(5, 55)),
 	EXERCISE_COST(new BigDecimal("0.02"), false, new Point(-1, 45)),
 	EXERCISE_CONVERSION(new BigDecimal("0.01"), false, new Point(-1, 55)),
-	DETECTION_RANGE(new BigDecimal("0.00"), false, new Point(5, 65)),
+	DETECTION_RANGE(new BigDecimal("10.00"), false, new Point(5, 65)),
 	DETECTION_STRENGTH(new BigDecimal("0.00"), false, new Point(5, 75)),
 	DETECTION_RESISTANCE(new BigDecimal("0.00"), false, new Point(5, 85)),
 	LIVES(new BigDecimal("3"), true, new Point(-1, 65)),
