@@ -234,7 +234,7 @@ public class SystemContainer {
 		return tag;
 	}
 
-	public void deserialize(CompoundTag tag, ICultivation cultivation) {
+	public void deserialize(CompoundTag tag) {
 		if (tag.contains("current_stage")) {
 			this.currentStage = new ResourceLocation(tag.getString("current_stage"));
 		}
@@ -268,7 +268,6 @@ public class SystemContainer {
 		if (techDataTag != null) {
 			this.techniqueData.deserialize(techDataTag);
 		}
-		calculateStats(cultivation);
 	}
 
 }

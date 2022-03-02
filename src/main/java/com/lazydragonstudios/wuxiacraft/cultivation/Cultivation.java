@@ -136,6 +136,7 @@ public class Cultivation implements ICultivation {
 		for (var system : System.values()) {
 			var systemData = this.getSystemData(system);
 			this.skills.knownSkills.addAll(systemData.techniqueData.modifier.skills);
+			systemData.calculateStats(this);
 		}
 	}
 
@@ -202,13 +203,13 @@ public class Cultivation implements ICultivation {
 			}
 		}
 		if (tag.contains("body-data")) {
-			getSystemData(System.BODY).deserialize(tag.getCompound("body-data"), this);
+			getSystemData(System.BODY).deserialize(tag.getCompound("body-data"));
 		}
 		if (tag.contains("divine-data")) {
-			getSystemData(System.DIVINE).deserialize(tag.getCompound("divine-data"), this);
+			getSystemData(System.DIVINE).deserialize(tag.getCompound("divine-data"));
 		}
 		if (tag.contains("essence-data")) {
-			getSystemData(System.ESSENCE).deserialize(tag.getCompound("essence-data"), this);
+			getSystemData(System.ESSENCE).deserialize(tag.getCompound("essence-data"));
 		}
 		if (tag.contains("aspect-data")) {
 			this.aspects.deserialize(tag.getCompound("aspect-data"));
