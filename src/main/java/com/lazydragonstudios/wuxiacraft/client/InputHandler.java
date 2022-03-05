@@ -41,57 +41,47 @@ public class InputHandler {
 	public static void onKeyPressed(InputEvent.KeyInputEvent event) {
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player == null) return;
+		if (!(event.getAction() == GLFW.GLFW_RELEASE || event.getAction() == GLFW.GLFW_PRESS)) return;
+		var animationState = ClientAnimationState.get(player);
+		var cultivation = Cultivation.get(player);
 		if (mappings.get(OPEN_INTROSPECTION).consumeClick()) {
 			WuxiaPacketHandler.INSTANCE.sendToServer(new OpenScreenMessage(OpenScreenMessage.ScreenType.INTROSPECTION));
 		}
 		if (event.getKey() == mappings.get(MEDITATE).getKey().getValue()) {
-			var animationState = ClientAnimationState.get(player);
-			if (event.getAction() == GLFW.GLFW_RELEASE || event.getAction() == GLFW.GLFW_PRESS) {
-				if (event.getAction() == GLFW.GLFW_PRESS) {
-					animationState.setMeditating(true);
-				} else if (event.getAction() == GLFW.GLFW_RELEASE) {
-					animationState.setMeditating(false);
-				}
-				WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState));
+			if (event.getAction() == GLFW.GLFW_PRESS) {
+				animationState.setMeditating(true);
+			} else if (event.getAction() == GLFW.GLFW_RELEASE) {
+				animationState.setMeditating(false);
 			}
+			WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState, cultivation.isCombat()));
 		}
 		if (event.getKey() == mappings.get(EXERCISE).getKey().getValue()) {
-			var animationState = ClientAnimationState.get(player);
-			var cultivation = Cultivation.get(player);
-			if (event.getAction() == GLFW.GLFW_RELEASE || event.getAction() == GLFW.GLFW_PRESS) {
-				if (event.getAction() == GLFW.GLFW_PRESS) {
-					animationState.setExercising(true);
-					cultivation.setExercising(true);
-				} else if (event.getAction() == GLFW.GLFW_RELEASE) {
-					animationState.setExercising(false);
-					cultivation.setExercising(false);
-				}
-				WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState));
+			if (event.getAction() == GLFW.GLFW_PRESS) {
+				animationState.setExercising(true);
+				cultivation.setExercising(true);
+			} else if (event.getAction() == GLFW.GLFW_RELEASE) {
+				animationState.setExercising(false);
+				cultivation.setExercising(false);
 			}
+			WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState, cultivation.isCombat()));
 		}
 		if (event.getKey() == mappings.get(CAST_SKILL).getKey().getValue()) {
-			if (event.getAction() == GLFW.GLFW_RELEASE || event.getAction() == GLFW.GLFW_PRESS) {
-				var cultivation = Cultivation.get(player);
-				var skillData = cultivation.getSkills();
-				if (event.getAction() == GLFW.GLFW_PRESS) {
-					skillData.casting = true;
-				} else if (event.getAction() == GLFW.GLFW_RELEASE) {
-					skillData.casting = false;
-				}
-				WuxiaPacketHandler.INSTANCE.sendToServer(new CultivationStateChangeMessage(skillData.selectedSkill, skillData.casting, cultivation.isCombat()));
+			var skillData = cultivation.getSkills();
+			if (event.getAction() == GLFW.GLFW_PRESS) {
+				skillData.casting = true;
+			} else if (event.getAction() == GLFW.GLFW_RELEASE) {
+				skillData.casting = false;
 			}
+			WuxiaPacketHandler.INSTANCE.sendToServer(new CultivationStateChangeMessage(skillData.selectedSkill, skillData.casting));
 		}
 		if (event.getKey() == mappings.get(COMBAT_MODE).getKey().getValue()) {
-			if (event.getAction() == GLFW.GLFW_RELEASE || event.getAction() == GLFW.GLFW_PRESS) {
-				var cultivation = Cultivation.get(player);
-				var skillData = cultivation.getSkills();
-				if (event.getAction() == GLFW.GLFW_PRESS) {
-					cultivation.setCombat(true);
-				} else if (event.getAction() == GLFW.GLFW_RELEASE) {
-					cultivation.setCombat(false);
-				}
-				WuxiaPacketHandler.INSTANCE.sendToServer(new CultivationStateChangeMessage(skillData.selectedSkill, skillData.casting, cultivation.isCombat()));
+			var skillData = cultivation.getSkills();
+			if (event.getAction() == GLFW.GLFW_PRESS) {
+				cultivation.setCombat(true);
+			} else if (event.getAction() == GLFW.GLFW_RELEASE) {
+				cultivation.setCombat(false);
 			}
+			WuxiaPacketHandler.INSTANCE.sendToServer(new CultivationStateChangeMessage(skillData.selectedSkill, skillData.casting));
 		}
 	}
 

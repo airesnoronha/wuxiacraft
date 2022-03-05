@@ -16,7 +16,13 @@ public interface ICultivation {
 
 	BigDecimal getStat(ResourceLocation elementLocation, PlayerElementalStat stat);
 
-	void setPlayerStat(PlayerStat stat, BigDecimal value);
+	void setStat(PlayerStat stat, BigDecimal value);
+
+	void setStat(ResourceLocation element, PlayerElementalStat stat, BigDecimal value);
+
+	void addStat(PlayerStat stat, BigDecimal value);
+
+	void addStat(ResourceLocation element, PlayerElementalStat stat, BigDecimal value);
 
 	SystemContainer getSystemData(System system);
 

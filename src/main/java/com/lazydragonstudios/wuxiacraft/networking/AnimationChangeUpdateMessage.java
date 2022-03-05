@@ -3,6 +3,7 @@ package com.lazydragonstudios.wuxiacraft.networking;
 import com.lazydragonstudios.wuxiacraft.capabilities.ClientAnimationState;
 import com.lazydragonstudios.wuxiacraft.capabilities.IClientAnimationState;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
+import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -15,33 +16,28 @@ import java.util.function.Supplier;
 
 public class AnimationChangeUpdateMessage {
 
-	private UUID playerId;
+	public final UUID playerId;
 
-	private CompoundTag animationState;
+	public final CompoundTag animationState;
 
-	private boolean isValid;
+	public final boolean combat;
 
-	public AnimationChangeUpdateMessage() {
-		this.isValid = false;
-		this.playerId = null;
-		this.animationState = null;
-	}
-
-	public AnimationChangeUpdateMessage(UUID playerId, CompoundTag animationState) {
+	public AnimationChangeUpdateMessage(UUID playerId, CompoundTag animationState, boolean combat) {
 		this.playerId = playerId;
 		this.animationState = animationState;
-		this.isValid = true;
+		this.combat = combat;
 	}
 
 	public static void encode(AnimationChangeUpdateMessage msg, FriendlyByteBuf buf) {
 		buf.writeUUID(msg.playerId);
 		buf.writeNbt(msg.animationState);
+		buf.writeBoolean(msg.combat);
 	}
 
 	public static AnimationChangeUpdateMessage decode(FriendlyByteBuf buf) {
 		UUID playerId = buf.readUUID();
 		CompoundTag animationState = buf.readAnySizeNbt();
-		return new AnimationChangeUpdateMessage(playerId, animationState);
+		return new AnimationChangeUpdateMessage(playerId, animationState, buf.readBoolean());
 	}
 
 	public static void handleMessageCommon(AnimationChangeUpdateMessage msg, Supplier<NetworkEvent.Context> ctxSupplier) {
@@ -63,7 +59,9 @@ public class AnimationChangeUpdateMessage {
 			if (target == null) return;
 			IClientAnimationState animationState = ClientAnimationState.get(target);
 			animationState.deserialize(msg.animationState);
-			Cultivation.get(player).setExercising(animationState.isExercising());
+			ICultivation cultivation = Cultivation.get(player);
+			cultivation.setExercising(animationState.isExercising());
+			cultivation.setCombat(msg.combat);
 		});
 	}
 }

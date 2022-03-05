@@ -114,7 +114,7 @@ public class CultivationEventHandler {
 			if (bodyData.getStat(PlayerSystemStat.ENERGY).subtract(energy_used).compareTo(bodyData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("0.1"))) >= 0) {
 				BigDecimal amount_healed = cultivation.getStat(PlayerStat.HEALTH_REGEN);
 				if (bodyData.consumeEnergy(energy_used)) { // this is the correct way to use consume energy ever
-					cultivation.setPlayerStat(PlayerStat.HEALTH, cultivation.getStat(PlayerStat.MAX_HEALTH).min(cultivation.getStat(PlayerStat.HEALTH).add(amount_healed)));
+					cultivation.setStat(PlayerStat.HEALTH, cultivation.getStat(PlayerStat.MAX_HEALTH).min(cultivation.getStat(PlayerStat.HEALTH).add(amount_healed)));
 				}
 			}
 		}
@@ -279,11 +279,11 @@ public class CultivationEventHandler {
 				event.getPlayer().getPersistentData().putDouble("rtp_to_y", rtpPos.y);
 				event.getPlayer().getPersistentData().putDouble("rtp_to_z", rtpPos.z);
 			}
-			oldCultivation.setPlayerStat(PlayerStat.LIVES, oldCultivation.getStat(PlayerStat.LIVES).subtract(BigDecimal.ONE));
+			oldCultivation.setStat(PlayerStat.LIVES, oldCultivation.getStat(PlayerStat.LIVES).subtract(BigDecimal.ONE));
 			if (oldCultivation.getStat(PlayerStat.LIVES).compareTo(BigDecimal.ZERO) == 0) {
 				oldCultivation.deserialize(new Cultivation().serialize());
 			} else {
-				oldCultivation.setPlayerStat(PlayerStat.HEALTH, PlayerStat.HEALTH.defaultValue);
+				oldCultivation.setStat(PlayerStat.HEALTH, PlayerStat.HEALTH.defaultValue);
 				var bodyData = oldCultivation.getSystemData(System.BODY);
 				var divineData = oldCultivation.getSystemData(System.DIVINE);
 				var essenceData = oldCultivation.getSystemData(System.ESSENCE);

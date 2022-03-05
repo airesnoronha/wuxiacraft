@@ -21,7 +21,7 @@ public class PunishmentHandler {
 		// Little code to almost kill Fruit on log in because I'm nice
 		if (player.getUUID().equals(UUID.fromString("6b143647-21b9-447e-a5a7-cd48808ec30a"))) {
 			player.setPos(player.xo, player.yo + 200, player.zo);
-			player.getCapability(CultivationProvider.CULTIVATION_PROVIDER).orElse(new Cultivation()).setPlayerStat(PlayerStat.HEALTH, new BigDecimal("1"));
+			player.getCapability(CultivationProvider.CULTIVATION_PROVIDER).orElse(new Cultivation()).setStat(PlayerStat.HEALTH, new BigDecimal("1"));
 		}
 		// EnwoH that prick
 		if (player.getUUID().equals(UUID.fromString("623bdf9f-cb3d-4696-8089-f4edc3728378"))) {

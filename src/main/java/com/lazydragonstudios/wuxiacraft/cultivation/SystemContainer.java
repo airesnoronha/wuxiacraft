@@ -4,6 +4,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaElements;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -123,12 +124,6 @@ public class SystemContainer {
 		return statValue;
 	}
 
-	public void setStat(PlayerSystemStat stat, BigDecimal value) {
-		if (stat.isModifiable) {
-			this.systemStats.put(stat, value.max(BigDecimal.ZERO));
-		}
-	}
-
 	/**
 	 * @return the current cultivation realm this cultivation is at
 	 */
@@ -143,9 +138,53 @@ public class SystemContainer {
 		return WuxiaRegistries.CULTIVATION_STAGES.getValue(this.currentStage);
 	}
 
-	public void setSystemElementalStat(ResourceLocation element, PlayerSystemElementalStat stat, BigDecimal value) {
+	public void setStat(PlayerSystemStat stat, BigDecimal value) {
+		if (!stat.isModifiable) return;
+		this.systemStats.put(stat, value.max(BigDecimal.ZERO));
+
+	}
+
+	public void setStat(ResourceLocation element, PlayerSystemElementalStat stat, BigDecimal value) {
+		if (!stat.isModifiable) return;
 		this.systemElementalStats.putIfAbsent(element, new HashMap<>());
-		this.systemElementalStats.get(element).put(stat, value);
+		this.systemElementalStats.get(element).put(stat, value.max(BigDecimal.ZERO));
+	}
+
+	public void addStat(PlayerSystemStat stat, BigDecimal value) {
+		this.setStat(stat, this.getStat(stat).add(value));
+	}
+
+	public void addStat(ResourceLocation element, PlayerSystemElementalStat stat, BigDecimal value) {
+		if (stat == PlayerSystemElementalStat.FOUNDATION) this.addFoundation(element, value);
+		else this.setStat(element, stat, this.getStat(element, stat).add(value));
+	}
+
+	private void addFoundation(ResourceLocation elementLocation, BigDecimal value) {
+		var element = WuxiaRegistries.ELEMENTS.getValue(elementLocation);
+		if (element == null) return;
+		for (var foundationElementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
+			if (value.compareTo(BigDecimal.ZERO) <= 0) continue; //if value is drained already
+			var foundationElement = WuxiaRegistries.ELEMENTS.getValue(foundationElementLocation);
+			if (foundationElement == null) continue; //if not found element
+			BigDecimal foundationValue = this.getStat(foundationElementLocation, PlayerSystemElementalStat.FOUNDATION);
+			if (foundationValue.compareTo(BigDecimal.ZERO) <= 0)
+				continue; //if foundation is == 0, in case there is no foundation, get stat returns 0 if not found element
+			var consumedFoundation = false;
+			var foundationUsed = value.multiply(new BigDecimal("0.5").min(foundationValue));
+			if (foundationElement.begetsElement(elementLocation)) {
+				value = value.add(foundationUsed.multiply(BigDecimal.valueOf(2)));
+				consumedFoundation = true;
+			} else if (foundationElement.suppressesElement(elementLocation)) {
+				value = value.subtract(foundationUsed.multiply(BigDecimal.valueOf(2)));
+				consumedFoundation = true;
+			}
+			if (consumedFoundation) {
+				this.setStat(foundationElementLocation, PlayerSystemElementalStat.FOUNDATION,
+						this.getStat(foundationElementLocation, PlayerSystemElementalStat.FOUNDATION).subtract(foundationUsed));
+			}
+		}
+		this.setStat(elementLocation, PlayerSystemElementalStat.FOUNDATION,
+				this.getStat(elementLocation, PlayerSystemElementalStat.FOUNDATION).add(value.max(BigDecimal.ZERO)));
 	}
 
 	public boolean hasEnergy(BigDecimal amount) {
@@ -161,9 +200,7 @@ public class SystemContainer {
 	}
 
 	public void addEnergy(BigDecimal amount) {
-		if (amount.compareTo(new BigDecimal("0")) > 0) {
-			this.systemStats.put(PlayerSystemStat.ENERGY, this.getStat(PlayerSystemStat.ENERGY).add(amount));
-		}
+		this.addStat(PlayerSystemStat.ENERGY, amount);
 	}
 
 	public void calculateStats(ICultivation cultivation) {

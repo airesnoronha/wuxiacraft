@@ -91,10 +91,26 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
-	public void setPlayerStat(PlayerStat stat, BigDecimal value) {
-		if (stat.isModifiable) {
-			this.playerStats.put(stat, value.max(BigDecimal.ZERO));
-		}
+	public void setStat(PlayerStat stat, BigDecimal value) {
+		if (!stat.isModifiable) return;
+		this.playerStats.put(stat, value.max(BigDecimal.ZERO));
+	}
+
+	@Override
+	public void setStat(ResourceLocation element, PlayerElementalStat stat, BigDecimal value) {
+		if (!stat.isModifiable) return;
+		this.playerElementalStats.putIfAbsent(element, new HashMap<>());
+		this.playerElementalStats.get(element).put(stat, value.max(BigDecimal.ZERO));
+	}
+
+	@Override
+	public void addStat(PlayerStat stat, BigDecimal value) {
+		this.setStat(stat, this.getStat(stat).add(value));
+	}
+
+	@Override
+	public void addStat(ResourceLocation element, PlayerElementalStat stat, BigDecimal value) {
+		this.setStat(element, stat, this.getStat(element, stat).add(value));
 	}
 
 	@Override

@@ -6,16 +6,15 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public record CultivationStateChangeMessage(int slot, boolean casting, boolean combat) {
+public record CultivationStateChangeMessage(int slot, boolean casting) {
 
 	public static void encode(CultivationStateChangeMessage msg, FriendlyByteBuf buf) {
 		buf.writeInt(msg.slot);
 		buf.writeBoolean(msg.casting);
-		buf.writeBoolean(msg.combat);
 	}
 
 	public static CultivationStateChangeMessage decode(FriendlyByteBuf buf) {
-		return new CultivationStateChangeMessage(buf.readInt(), buf.readBoolean(), buf.readBoolean());
+		return new CultivationStateChangeMessage(buf.readInt(), buf.readBoolean());
 	}
 
 	public static void handleMessage(CultivationStateChangeMessage msg, Supplier<NetworkEvent.Context> ctxSupplier) {
@@ -29,7 +28,6 @@ public record CultivationStateChangeMessage(int slot, boolean casting, boolean c
 			var cultivation = Cultivation.get(player);
 			cultivation.getSkills().casting = msg.casting;
 			cultivation.getSkills().selectedSkill = msg.slot;
-			cultivation.setCombat(msg.combat);
 		});
 	}
 }

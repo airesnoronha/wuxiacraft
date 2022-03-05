@@ -79,7 +79,7 @@ public class CombatEventHandler {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (!(event.getSource() instanceof WuxiaDamageSource source)) return;
 		var cultivation = Cultivation.get(player);
-		cultivation.setPlayerStat(PlayerStat.HEALTH, cultivation.getStat(PlayerStat.HEALTH).subtract(source.getDamage()));
+		cultivation.setStat(PlayerStat.HEALTH, cultivation.getStat(PlayerStat.HEALTH).subtract(source.getDamage()));
 
 		event.getEntityLiving().getCombatTracker().recordDamage(event.getSource(),
 				cultivation.getStat(PlayerStat.HEALTH).floatValue() + event.getAmount(), event.getAmount());
