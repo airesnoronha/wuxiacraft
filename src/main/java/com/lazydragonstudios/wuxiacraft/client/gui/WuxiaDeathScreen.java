@@ -45,7 +45,7 @@ public class WuxiaDeathScreen extends Screen {
 		int btnHeight = 96;
 		//this is the random tp btn
 		if (!this.hardcore) {
-			this.exitButtons.add(this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 4 + btnHeight, 200, 20, new TranslatableComponent("wuxiacraft.gui.death.random_teleport"), (p_95925_) -> {
+			this.exitButtons.add(this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 4 + btnHeight, 200, 20, new TranslatableComponent("wuxiacraft.gui.death.random_teleport.name"), (p_95925_) -> {
 				WuxiaPacketHandler.INSTANCE.sendToServer(new RequestRandomTeleportMessage(this.minecraft.player.getUUID()));
 				this.minecraft.player.respawn();
 				this.minecraft.setScreen(null);

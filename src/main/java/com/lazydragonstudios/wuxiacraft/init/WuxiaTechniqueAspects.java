@@ -182,7 +182,7 @@ public class WuxiaTechniqueAspects {
 	//       Metal Transformation ones       //
 	//////////////////////////////////////////
 
-	public static RegistryObject<TechniqueAspect> ORE = ASPECTS.register("seed",
+	public static RegistryObject<TechniqueAspect> ORE = ASPECTS.register("ore",
 			() -> new ElementalGenerator(1d, WuxiaElements.METAL.getId())
 	);
 
@@ -341,7 +341,7 @@ public class WuxiaTechniqueAspects {
 	//       Neutral Generation ones        //
 	//////////////////////////////////////////
 
-	public static RegistryObject<TechniqueAspect> BLOOD_BURNING = ASPECTS.register("leaf",
+	public static RegistryObject<TechniqueAspect> BLOOD_BURNING = ASPECTS.register("blood_burning",
 			() -> new ConditionalElementalGenerator(2d, WuxiaElements.PHYSICAL.getId()) {
 				@Override
 				public void onCultivate(CultivatingEvent event) {
