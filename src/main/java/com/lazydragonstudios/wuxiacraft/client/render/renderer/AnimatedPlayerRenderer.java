@@ -1,6 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.client.render.renderer;
 
 import com.lazydragonstudios.wuxiacraft.capabilities.ClientAnimationState;
+import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
@@ -106,6 +107,12 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 		poseStack.translate(this.position.x(), this.position.y(), this.position.z());
 		float headBob = this.getBob(player, partialTicks);
 		this.setupRotations(player, poseStack, headBob, rotationYaw, partialTicks);
+		var animData = ClientAnimationState.get(player);
+		if (animData.isSemiDead()) {
+			poseStack.translate(0, 0.16f, 0);
+			poseStack.mulPose(Vector3f.XP.rotationDegrees(90f));
+		}
+
 		poseStack.scale(-1, -1, 1);
 		this.scale(player, poseStack, partialTicks);
 		poseStack.translate(0.0D, (double) -1.501F, 0.0D);
@@ -218,6 +225,21 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 			model.rightArm.xRot = (float) Math.toRadians(getFrameRotation(rightArmX, animationFrame, frameTicks));
 			model.rightArm.yRot = (float) Math.toRadians(getFrameRotation(rightArmY, animationFrame, frameTicks));
 			model.rightArm.zRot = (float) Math.toRadians(getFrameRotation(rightArmZ, animationFrame, frameTicks));
+			model.head.xRot = 0;
+		} else if (animationState.isSemiDead()) {
+			float animationFrame = animationState.getAnimationFrame() + partialTicks;
+			model.leftLeg.xRot = 0;
+			model.leftLeg.yRot = 0;
+			model.leftLeg.zRot = 0;
+			model.rightLeg.xRot = 0;
+			model.rightLeg.yRot = 0;
+			model.rightLeg.zRot = 0;
+			model.leftArm.xRot = 0;
+			model.leftArm.yRot = 0;
+			model.leftArm.zRot = 0;
+			model.rightArm.xRot = 0;
+			model.rightArm.yRot = 0;
+			model.rightArm.zRot = 0;
 			model.head.xRot = 0;
 		}
 	}

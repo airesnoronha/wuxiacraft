@@ -2,7 +2,9 @@ package com.lazydragonstudios.wuxiacraft.combat;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
+import com.lazydragonstudios.wuxiacraft.networking.AnimationChangeUpdateMessage;
 import com.lazydragonstudios.wuxiacraft.networking.CultivationSyncMessage;
+import com.lazydragonstudios.wuxiacraft.networking.TurnSemiDeadStateMessage;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -14,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -85,11 +88,14 @@ public class CombatEventHandler {
 				cultivation.getStat(PlayerStat.HEALTH).floatValue() + event.getAmount(), event.getAmount());
 		player.awardStat(Stats.DAMAGE_TAKEN, (int) event.getAmount());
 		//decided that food exhaustion has nothing to do with damage.
-		//and it'll be used anyways to heal the character.
+		//and it'll be used to heal the character anyway.
 
 		if (cultivation.getStat(PlayerStat.HEALTH).compareTo(BigDecimal.ZERO) <= 0) {
-			//this is vanilla health
-			player.setHealth(-1);
+			//Gotta make it show the death screen to the player
+			cultivation.setSemiDeadState(true);
+			WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+					new TurnSemiDeadStateMessage(true, event.getSource().getLocalizedDeathMessage(player),
+							player.getServer().isHardcore()));
 		}
 
 		//this will make players health bar always keep up with
@@ -100,8 +106,8 @@ public class CombatEventHandler {
 
 	/**
 	 * This will add the strength to basic attacks from the player
-	 * This way i guess players won't have a ton of modifiers
-	 * And i can also send mobs flying away
+	 * This way I guess players won't have a ton of modifiers
+	 * And I can also send mobs flying away
 	 *
 	 * @param event A description of what's happening
 	 */
@@ -114,7 +120,7 @@ public class CombatEventHandler {
 		ICultivation cultivation = Cultivation.get(player);
 		event.setAmount(event.getAmount() + cultivation.getStat(PlayerStat.STRENGTH).floatValue());
 		//if it was a punch, then we apply a little of knock back
-		if(player.getItemInHand(InteractionHand.MAIN_HAND) == ItemStack.EMPTY ) return;
+		if (player.getItemInHand(InteractionHand.MAIN_HAND) == ItemStack.EMPTY) return;
 		LivingEntity target = event.getEntityLiving();
 		double maxHP = target.getMaxHealth();
 		if (target instanceof Player targetPlayer)
@@ -123,6 +129,21 @@ public class CombatEventHandler {
 		Vec3 diff = Objects.requireNonNull(event.getSource().getSourcePosition()).subtract(event.getEntityLiving().getPosition(0.5f));
 		diff = diff.normalize();
 		target.knockback((float) knockSpeed, diff.x, diff.z);
+	}
+
+	/**
+	 * Normally when healing from other sources, like different mods
+	 *
+	 * @param event A description of what is happening
+	 */
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void onPlayerHeal(LivingHealEvent event) {
+		if (!(event.getEntity() instanceof Player player)) return;
+		if (event.getAmount() <= 0) return;
+		event.setCanceled(true);
+		var amount = BigDecimal.valueOf(event.getAmount());
+		var cultivation = Cultivation.get(player);
+		cultivation.addStat(PlayerStat.HEALTH, amount);
 	}
 
 }

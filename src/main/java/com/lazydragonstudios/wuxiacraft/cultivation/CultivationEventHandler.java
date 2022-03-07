@@ -4,7 +4,10 @@ import com.lazydragonstudios.wuxiacraft.combat.WuxiaDamageSource;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillActivatorAspect;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaElements;
+import com.lazydragonstudios.wuxiacraft.networking.TurnSemiDeadStateMessage;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -46,6 +49,10 @@ public class CultivationEventHandler {
 	public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		var player = event.getPlayer();
 		syncClientCultivation((ServerPlayer) player);
+		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+				new TurnSemiDeadStateMessage(Cultivation.get(player).isSemiDead(),
+						//since these two are useless when ppl is alive, might as well just leave it there as if dead
+						new TranslatableComponent("wuxiacraft.death.login"), player.getServer().isHardcore()));
 	}
 
 	//TODO add drop back realm when not have stabilized realm
@@ -61,6 +68,35 @@ public class CultivationEventHandler {
 		var divineData = cultivation.getSystemData(System.DIVINE);
 		var essenceData = cultivation.getSystemData(System.ESSENCE);
 
+		//always keep this at max, since our health is gonna be what determines life or death
+		player.setHealth(player.getMaxHealth());
+
+		handleClientSync(player, cultivation);
+
+		if (cultivation.isSemiDead()) {
+			handleSemiDead(player, cultivation);
+		} else {
+			handleSkillCasting(player, cultivation);
+			handleBodyEnergyRegen(player, bodyData);
+			handleEnergyRegen(player, cultivation);
+			handleNaturalHealing(cultivation, bodyData);
+			handleExerciseEnergies(cultivation, bodyData, essenceData);
+			handleLowEnergyPunishments(player, bodyData, divineData);
+		}
+		player.level.getProfiler().pop();
+	}
+
+	private static void handleSemiDead(Player player, ICultivation cultivation) {
+		//TODO add a game rule for the cooldown, it's 5 mins now
+		if (player.level.isClientSide()) return;
+		cultivation.advanceSemiDead(20 * 300);
+		if (!cultivation.isSemiDead()) {
+			WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+					new TurnSemiDeadStateMessage(false, new TextComponent(""), false));
+		}
+	}
+
+	private static void handleClientSync(Player player, ICultivation cultivation) {
 		//Sync the cultivation with the client every so often
 		cultivation.advanceTimer();
 		if (cultivation.getTimer() >= 100) {
@@ -73,9 +109,35 @@ public class CultivationEventHandler {
 				}
 			}
 		}
+	}
 
-		handleSkillCasting(player, cultivation);
+	private static void handleSkillCasting(Player player, ICultivation cultivation) {
+		var skillData = cultivation.getSkills();
+		var selectedSkill = skillData.getSkillAt(skillData.selectedSkill);
+		if (skillData.casting) {
+			if (selectedSkill.getSkillChain().size() > 0) {
+				if (selectedSkill.getSkillChain().getFirst() instanceof SkillActivatorAspect activator) {
+					selectedSkill.addStat(SkillStat.CURRENT_CASTING, BigDecimal.ONE);
+					//casting >= cast_time
+					if (selectedSkill.getStatValue(SkillStat.CURRENT_CASTING)
+							.compareTo(selectedSkill.getStatValue(SkillStat.CAST_TIME)) >= 0) {
+						selectedSkill.setStat(SkillStat.CURRENT_CASTING, BigDecimal.ZERO);
+						selectedSkill.setStat(SkillStat.CURRENT_COOLDOWN, selectedSkill.getStatValue(SkillStat.COOLDOWN));
+						activator.activate.test(player, selectedSkill.getSkillChain());
+					}
+				}
+			}
+		} else {
+			if (selectedSkill.getStatValue(SkillStat.CURRENT_CASTING).compareTo(BigDecimal.ZERO) > 0) {
+				selectedSkill.addStat(SkillStat.CURRENT_CASTING, new BigDecimal("-1"));
+			}
+		}
+		if (selectedSkill.getStatValue(SkillStat.CURRENT_COOLDOWN).compareTo(BigDecimal.ZERO) > 0) {
+			selectedSkill.addStat(SkillStat.CURRENT_COOLDOWN, new BigDecimal("-1"));
+		}
+	}
 
+	private static void handleBodyEnergyRegen(Player player, SystemContainer bodyData) {
 		//Body energy regen depends on food
 		if (player.getFoodData().getFoodLevel() > 15) {
 			BigDecimal hunger_modifier = new BigDecimal("1");
@@ -90,6 +152,9 @@ public class CultivationEventHandler {
 				player.causeFoodExhaustion(finalEnergyRegen.floatValue());
 			}
 		}
+	}
+
+	private static void handleEnergyRegen(Player player, ICultivation cultivation) {
 		//others don't
 		for (var system : System.values()) {
 			var systemData = cultivation.getSystemData(system);
@@ -107,6 +172,9 @@ public class CultivationEventHandler {
 				systemData.consumeEnergy(systemData.getStat(PlayerSystemStat.ENERGY_REGEN));
 			}
 		}
+	}
+
+	private static void handleNaturalHealing(ICultivation cultivation, SystemContainer bodyData) {
 		//Healing part yaay
 		if (cultivation.getStat(PlayerStat.HEALTH).compareTo(cultivation.getStat(PlayerStat.MAX_HEALTH)) < 0) {
 			BigDecimal energy_used = cultivation.getStat(PlayerStat.HEALTH_REGEN_COST);
@@ -118,7 +186,9 @@ public class CultivationEventHandler {
 				}
 			}
 		}
+	}
 
+	private static void handleExerciseEnergies(ICultivation cultivation, SystemContainer bodyData, SystemContainer essenceData) {
 		//if player is exercising, add a little of essence to him
 		if (cultivation.isExercising() && (
 				bodyData.techniqueData.modifier.isValidTechnique() ||
@@ -128,7 +198,9 @@ public class CultivationEventHandler {
 				essenceData.addEnergy(cultivation.getStat(PlayerStat.EXERCISE_CONVERSION));
 			}
 		}
+	}
 
+	private static void handleLowEnergyPunishments(Player player, SystemContainer bodyData, SystemContainer divineData) {
 		// punishment for low energy >>> poor resource management
 		if (!bodyData.hasEnergy(bodyData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("0.1")))) {
 			double relativeAmount = bodyData.getStat(PlayerSystemStat.ENERGY).divide(bodyData.getStat(PlayerSystemStat.MAX_ENERGY), RoundingMode.HALF_UP).doubleValue();
@@ -155,33 +227,6 @@ public class CultivationEventHandler {
 			if (relativeAmount < 0.005) {
 				player.hurt(DamageSource.WITHER, 2);
 			}
-		}
-		player.level.getProfiler().pop();
-	}
-
-	private static void handleSkillCasting(Player player, ICultivation cultivation) {
-		var skillData = cultivation.getSkills();
-		var selectedSkill = skillData.getSkillAt(skillData.selectedSkill);
-		if (skillData.casting) {
-			if (selectedSkill.getSkillChain().size() > 0) {
-				if (selectedSkill.getSkillChain().getFirst() instanceof SkillActivatorAspect activator) {
-					selectedSkill.addStat(SkillStat.CURRENT_CASTING, BigDecimal.ONE);
-					//casting >= cast_time
-					if (selectedSkill.getStatValue(SkillStat.CURRENT_CASTING)
-							.compareTo(selectedSkill.getStatValue(SkillStat.CAST_TIME)) >= 0) {
-						selectedSkill.setStat(SkillStat.CURRENT_CASTING, BigDecimal.ZERO);
-						selectedSkill.setStat(SkillStat.CURRENT_COOLDOWN, selectedSkill.getStatValue(SkillStat.COOLDOWN));
-						activator.activate.test(player, selectedSkill.getSkillChain());
-					}
-				}
-			}
-		} else {
-			if (selectedSkill.getStatValue(SkillStat.CURRENT_CASTING).compareTo(BigDecimal.ZERO) > 0) {
-				selectedSkill.addStat(SkillStat.CURRENT_CASTING, new BigDecimal("-1"));
-			}
-		}
-		if (selectedSkill.getStatValue(SkillStat.CURRENT_COOLDOWN).compareTo(BigDecimal.ZERO) > 0) {
-			selectedSkill.addStat(SkillStat.CURRENT_COOLDOWN, new BigDecimal("-1"));
 		}
 	}
 

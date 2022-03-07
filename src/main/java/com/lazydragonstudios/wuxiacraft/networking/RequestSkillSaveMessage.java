@@ -32,6 +32,7 @@ public class RequestSkillSaveMessage {
 		var ctx = ctxSupplier.get();
 		var side = ctx.getDirection().getReceptionSide();
 		if (!side.isServer()) return;
+		ctx.setPacketHandled(true);
 		ctx.enqueueWork(() -> {
 			var player = ctx.getSender();
 			if (player == null) return;

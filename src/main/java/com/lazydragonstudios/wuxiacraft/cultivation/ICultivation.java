@@ -61,4 +61,10 @@ public interface ICultivation {
 	 * @return the time ticker. It's just for not exposing the ticker.
 	 */
 	int getTimer();
+
+	void setSemiDeadState(boolean state);
+
+	void advanceSemiDead(int cooldown);
+
+	boolean isSemiDead();
 }

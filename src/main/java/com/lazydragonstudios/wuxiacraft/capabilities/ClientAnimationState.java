@@ -14,6 +14,8 @@ public class ClientAnimationState implements IClientAnimationState {
 
 	boolean exercising = false;
 
+	boolean semiDead = false;
+
 	int animationFrame = 0;
 
 	@Override
@@ -48,7 +50,7 @@ public class ClientAnimationState implements IClientAnimationState {
 
 	@Override
 	public void advanceAnimationFrame() {
-		if (this.meditating || this.exercising) {
+		if (this.meditating || this.exercising || this.semiDead) {
 			this.animationFrame++;
 		} else {
 			this.animationFrame = 0;
@@ -61,19 +63,32 @@ public class ClientAnimationState implements IClientAnimationState {
 	}
 
 	@Override
+	public boolean isSemiDead() {
+		return this.semiDead;
+	}
+
+	@Override
+	public void setSemiDead(boolean semiDead) {
+		this.semiDead = semiDead;
+	}
+
+	@Override
 	public CompoundTag serialize() {
 		var tag = new CompoundTag();
 		tag.putBoolean("meditating", this.meditating);
 		tag.putBoolean("exercising", this.exercising);
+		tag.putBoolean("semiDead", this.semiDead);
 		return tag;
 	}
 
 	@Override
 	public void deserialize(CompoundTag tag) {
 		if (tag.contains("meditating"))
-			meditating = tag.getBoolean("meditating");
+			this.meditating = tag.getBoolean("meditating");
 		if (tag.contains("exercising"))
-			exercising = tag.getBoolean("exercising");
+			this.exercising = tag.getBoolean("exercising");
+		if (tag.contains("semiDead"))
+			this.semiDead = tag.getBoolean("semiDead");
 		this.animationFrame = 0;
 	}
 }

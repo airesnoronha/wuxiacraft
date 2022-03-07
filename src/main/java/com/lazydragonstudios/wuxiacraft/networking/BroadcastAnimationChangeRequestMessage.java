@@ -28,8 +28,8 @@ public class BroadcastAnimationChangeRequestMessage {
 	}
 
 	public static void encode(BroadcastAnimationChangeRequestMessage msg, FriendlyByteBuf buf) {
-			buf.writeNbt(msg.animationState);
-			buf.writeBoolean(msg.combat);
+		buf.writeNbt(msg.animationState);
+		buf.writeBoolean(msg.combat);
 	}
 
 	public static BroadcastAnimationChangeRequestMessage decode(FriendlyByteBuf buf) {
@@ -51,9 +51,11 @@ public class BroadcastAnimationChangeRequestMessage {
 				ICultivation cultivation = Cultivation.get(player);
 				cultivation.setExercising(animationStateInstance.isExercising());
 				cultivation.setCombat(msg.combat);
-				cultivation.setCombat(msg.combat);
+				animationStateInstance.setSemiDead(cultivation.isSemiDead());
+				animationState = animationStateInstance.serialize();
 				for (var target : level.players()) {
-					WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) target), new AnimationChangeUpdateMessage(player.getUUID(), animationState, msg.combat));
+					WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) target),
+							new AnimationChangeUpdateMessage(player.getUUID(), animationState, msg.combat));
 				}
 			});
 		}

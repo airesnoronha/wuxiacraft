@@ -6,6 +6,8 @@ import com.lazydragonstudios.wuxiacraft.client.render.aura.ElectricAura;
 import com.lazydragonstudios.wuxiacraft.client.render.renderer.AnimatedPlayerRenderer;
 import com.lazydragonstudios.wuxiacraft.client.render.renderer.AuraRenderer;
 import com.lazydragonstudios.wuxiacraft.client.render.renderer.GhostRenderer;
+import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -17,6 +19,9 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class PlayerEntityRenderEventHandler {
@@ -31,7 +36,7 @@ public class PlayerEntityRenderEventHandler {
 	public static void onSinglePlayerRender(RenderLivingEvent.Pre<AbstractClientPlayer, ? extends Model> event) {
 		if (!(event.getEntity() instanceof Player)) return; //we don't want local players so far
 		var animationState = ClientAnimationState.get((Player) event.getEntity());
-		if (animationState.isMeditating() || animationState.isExercising()) {
+		if (animationState.isMeditating() || animationState.isExercising() || animationState.isSemiDead()) {
 			event.setCanceled(true);
 		}
 		if (!event.isCanceled()) return;
@@ -58,8 +63,17 @@ public class PlayerEntityRenderEventHandler {
 		var player = Minecraft.getInstance().player;
 		if (player == null) return;
 		var renderer = (AuraRenderer) Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(AuraRenderer.auraEntityType);
-		if(renderer == null) return;
+		if (renderer == null) return;
+		var cultivation = Cultivation.get(player);
+		if (!cultivation.isCombat()) return;
+		//rel = max(barrier/maxBarrier, 0.3);
+		if (cultivation.getStat(PlayerStat.BARRIER).compareTo(BigDecimal.ZERO) <= 0) return;
+		var barrierRelative = cultivation.getStat(PlayerStat.BARRIER)
+				.divide(cultivation.getStat(PlayerStat.MAX_BARRIER), RoundingMode.HALF_UP).max(new BigDecimal("0.3")).floatValue();
+		event.getPoseStack().pushPose();
+		event.getPoseStack().scale(barrierRelative, barrierRelative, barrierRelative);
 		renderer.render(target, event.hashCode(), event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
+		event.getPoseStack().popPose();
 	}
 
 	@SubscribeEvent

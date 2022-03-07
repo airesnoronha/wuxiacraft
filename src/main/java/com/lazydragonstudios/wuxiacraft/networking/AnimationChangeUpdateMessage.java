@@ -14,19 +14,8 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class AnimationChangeUpdateMessage {
-
-	public final UUID playerId;
-
-	public final CompoundTag animationState;
-
-	public final boolean combat;
-
-	public AnimationChangeUpdateMessage(UUID playerId, CompoundTag animationState, boolean combat) {
-		this.playerId = playerId;
-		this.animationState = animationState;
-		this.combat = combat;
-	}
+public record AnimationChangeUpdateMessage(UUID playerId, CompoundTag animationState,
+																					 boolean combat) {
 
 	public static void encode(AnimationChangeUpdateMessage msg, FriendlyByteBuf buf) {
 		buf.writeUUID(msg.playerId);
@@ -62,6 +51,7 @@ public class AnimationChangeUpdateMessage {
 			ICultivation cultivation = Cultivation.get(player);
 			cultivation.setExercising(animationState.isExercising());
 			cultivation.setCombat(msg.combat);
+			cultivation.setSemiDeadState(animationState.isSemiDead());
 		});
 	}
 }

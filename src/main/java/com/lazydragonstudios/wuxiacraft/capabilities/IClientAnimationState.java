@@ -16,6 +16,8 @@ public interface IClientAnimationState {
 	 */
 	boolean isExercising();
 
+	boolean isSemiDead();
+
 	/**
 	 * A track to the frames of the animation
 	 *
@@ -31,6 +33,8 @@ public interface IClientAnimationState {
 	void setMeditating(boolean meditating);
 
 	void setExercising(boolean exercising);
+
+	void setSemiDead(boolean semiDead);
 
 	void advanceAnimationFrame();
 

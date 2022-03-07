@@ -63,7 +63,7 @@ public class WuxiaTechniqueAspects {
 			() -> new ElementalGenerator(3d, WuxiaElements.FIRE.getId())
 	);
 
-	public static RegistryObject<TechniqueAspect> BLAZING = ASPECTS.register("blazing",
+	public static RegistryObject<TechniqueAspect> BLAZE = ASPECTS.register("blazing",
 			() -> new ElementalGenerator(9d, WuxiaElements.FIRE.getId())
 	);
 
@@ -377,22 +377,6 @@ public class WuxiaTechniqueAspects {
 
 	/*
 
-devouring -> devours things to turn it into cultivation base. Probably gets different elements from this one
-  image = image.empty
-
-Author = @Vermilion Bird
-space tearing -> creates a hole in space and connects to location through it
-  image = image.empty
-
-Author =  @Vermilion Bird
-Aires — 01/23/2022
-charcoal (fire_aspect) -> converts wood type cultivation base into fire base cultivation base
-  image = image.empty
-Aires — 01/23/2022
-flower (wood aspect) -> gather wood cultivation base and gets a bonus when near flowers
-  image = image.empty
-
-Author = @Zigresho
 snow (water aspect) -> gather water cultivation base and gets a bonus when freezing inside snow powder (probably greater than the next one) or standing on snow as well
   image = image.empty
 

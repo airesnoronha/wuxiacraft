@@ -38,6 +38,10 @@ public class Cultivation implements ICultivation {
 	 */
 	private int tickTimer;
 
+	private boolean semiDead;
+
+	private int semiDeadTime;
+
 	/**
 	 * this is for the server and client to convert body energy into essence energy
 	 */
@@ -73,6 +77,8 @@ public class Cultivation implements ICultivation {
 		this.skills = new SkillContainer();
 		this.exercising = false;
 		this.combat = false;
+		this.semiDead = false;
+		this.semiDeadTime = 0;
 	}
 
 	public static ICultivation get(Player target) {
@@ -188,6 +194,8 @@ public class Cultivation implements ICultivation {
 		tag.put("essence-data", getSystemData(System.ESSENCE).serialize());
 		tag.put("aspect-data", this.aspects.serialize());
 		tag.put("skills-data", this.skills.serialize());
+		tag.putBoolean("semi-dead", this.semiDead);
+		tag.putInt("semi-dead-time", this.semiDeadTime);
 		return tag;
 	}
 
@@ -232,6 +240,12 @@ public class Cultivation implements ICultivation {
 		}
 		if (tag.contains("skills-data")) {
 			this.skills.deserialize(tag.getCompound("skills-data"));
+		}
+		if (tag.contains("semi-dead")) {
+			this.semiDead = tag.getBoolean("semi-dead");
+		}
+		if (tag.contains("semi-dead-time")) {
+			this.semiDeadTime = tag.getInt("semi-dead-time");
 		}
 		calculateStats();
 	}
@@ -291,4 +305,22 @@ public class Cultivation implements ICultivation {
 		return this.tickTimer;
 	}
 
+	@Override
+	public void setSemiDeadState(boolean state) {
+		this.semiDead = state;
+		this.semiDeadTime = 0;
+	}
+
+	@Override
+	public void advanceSemiDead(int cooldown) {
+		this.semiDeadTime++;
+		if (this.semiDeadTime >= cooldown) {
+			this.setSemiDeadState(false);
+		}
+	}
+
+	@Override
+	public boolean isSemiDead() {
+		return this.semiDead;
+	}
 }
