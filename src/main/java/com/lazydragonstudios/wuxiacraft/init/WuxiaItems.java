@@ -27,30 +27,30 @@ public class WuxiaItems {
 			() -> new BlockItem(WuxiaBlocks.TECHNIQUE_INSCRIBER.get(), new Item.Properties().tab(WUXIACRAFT_TAB)));
 
 	public static RegistryObject<Item> SPIRIT_STONE_1 = ITEMS.register("spirit_stone_1",
-			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB)));
+			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB), 0));
 
 	public static RegistryObject<Item> SPIRIT_STONE_2 = ITEMS.register("spirit_stone_2",
-			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB)));
+			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB), 1));
 
 	public static RegistryObject<Item> SPIRIT_STONE_3 = ITEMS.register("spirit_stone_3",
-			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB)));
+			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB), 2));
 
 	public static RegistryObject<Item> SPIRIT_STONE_4 = ITEMS.register("spirit_stone_4",
-			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB)));
+			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB), 3));
 
 	public static RegistryObject<Item> SPIRIT_STONE_5 = ITEMS.register("spirit_stone_5",
-			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB)));
+			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB), 4));
 
 	public static RegistryObject<Item> SPIRIT_STONE_6 = ITEMS.register("spirit_stone_6",
-			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB)));
+			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB), 5));
 
 	public static RegistryObject<Item> SPIRIT_STONE_7 = ITEMS.register("spirit_stone_7",
-			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB)));
+			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB), 6));
 
 	public static RegistryObject<Item> SPIRIT_STONE_8 = ITEMS.register("spirit_stone_8",
-			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB)));
+			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB), 7));
 
 	public static RegistryObject<Item> SPIRIT_STONE_9 = ITEMS.register("spirit_stone_9",
-			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB)));
+			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB), 8));
 
 }

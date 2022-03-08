@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "wuxiacraft:block/technique_inscriber",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "wuxiacraft:block/technique_inscriber",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "wuxiacraft:block/technique_inscriber"
+    },
+    "facing=west": {
+      "model": "wuxiacraft:block/technique_inscriber",
+      "y": 90
+    }
+  }
+}
