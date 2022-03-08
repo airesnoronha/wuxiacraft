@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.cultivation;
 
+import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.combat.WuxiaDamageSource;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillActivatorAspect;
@@ -263,6 +264,7 @@ public class CultivationEventHandler {
 		for (var p : level.players()) {
 			playerPositions.add(new Point(p.getBlockX(), p.getBlockZ()));
 		}
+		WuxiaCraft.LOGGER.info("Player: " + player.getDisplayName() + " is random teleporting!");
 		int attempts = 30;
 		int spawnX = player.level.getLevelData().getXSpawn();
 		int spawnZ = player.level.getLevelData().getZSpawn();

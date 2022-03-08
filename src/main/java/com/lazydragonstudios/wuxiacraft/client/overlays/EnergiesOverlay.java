@@ -8,6 +8,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.client.gui.IIngameOverlay;
@@ -43,6 +44,7 @@ public class EnergiesOverlay implements IIngameOverlay {
 	@Override
 	public void render(ForgeIngameGui gui, PoseStack poseStack, float partialTicks, int width, int height) {
 		Minecraft mc = Minecraft.getInstance();
+		if(mc.screen instanceof ChatScreen) return;
 		if (mc.player == null) return;
 		if (mc.player.isCreative()) return;
 		var cultivation = Cultivation.get(mc.player);

@@ -52,6 +52,13 @@ public class PlayerEntityRenderEventHandler {
 		if (!player.isCrouching()) return;
 		var renderer = (GhostRenderer) Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(GhostRenderer.ghostEntityType);
 		if (renderer == null) return;
+		var cultivation = Cultivation.get(player);
+		var targetCultivation = Cultivation.get(target);
+		var range = cultivation.getStat(PlayerStat.DETECTION_RANGE).doubleValue();
+		if (player.distanceTo(target) > range) return;
+		var detectionStrength = cultivation.getStat(PlayerStat.DETECTION_STRENGTH);
+		var detectionResistance = targetCultivation.getStat(PlayerStat.DETECTION_RESISTANCE);
+		if (detectionStrength.compareTo(detectionResistance) <= 0) return;
 		renderer.render(target, event.hashCode(), event.getPartialTick(), event.getPoseStack(), event.getMultiBufferSource(), event.getPackedLight());
 	}
 

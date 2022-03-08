@@ -178,6 +178,7 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 	public void removeAspectToGrid(Point p) {
 		if (!this.hexagonToCartesianQuickAssess.containsKey(p)) return;
 		this.grid.removeGridNode(p);
+		this.hexagonToCartesianQuickAssess.remove(p);
 		this.recalculateLines();
 	}
 

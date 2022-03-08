@@ -55,5 +55,19 @@
   "wuxiacraft.aspect.divine_gathering.name": "Divinity Gathering",
   "wuxiacraft.aspect.body_releasing.name": "Body Releasing",
   "wuxiacraft.gui.death.random_teleport.name": "Random Teleport",
-  "entity.minecraft.villager.wuxiacraft.cultivator": "Wandering Cultivator"
+  "entity.minecraft.villager.wuxiacraft.cultivator": "Wandering Cultivator",
+  "itemGroup.wuxiacraft": "Wuxiacraft",
+  "effect.wuxiacraft.spiritual_resonance": "Spiritual Resonance",
+  "effect.wuxiacraft.pill_resonance": "Pill Resonance",
+  "effect.wuxiacraft.enlightenment": "Enlightenment",
+  "item.wuxiacraft.technique_inscriber": "Technique Inscriber",
+  "item.wuxiacraft.spirit_stone_1": "Spirit Stone 1",
+  "item.wuxiacraft.spirit_stone_2": "Spirit Stone 2",
+  "item.wuxiacraft.spirit_stone_3": "Spirit Stone 3",
+  "item.wuxiacraft.spirit_stone_4": "Spirit Stone 4",
+  "item.wuxiacraft.spirit_stone_5": "Spirit Stone 5",
+  "item.wuxiacraft.spirit_stone_6": "Spirit Stone 6",
+  "item.wuxiacraft.spirit_stone_7": "Spirit Stone 7",
+  "item.wuxiacraft.spirit_stone_8": "Spirit Stone 8",
+  "item.wuxiacraft.spirit_stone_9": "Spirit Stone 9"
 }
