@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.client;
 
+import com.lazydragonstudios.wuxiacraft.client.gui.InscriberScreen;
 import com.lazydragonstudios.wuxiacraft.client.gui.IntrospectionScreen;
 import com.lazydragonstudios.wuxiacraft.client.overlays.DebugOverlay;
 import com.lazydragonstudios.wuxiacraft.client.overlays.EnergiesOverlay;
@@ -9,6 +10,7 @@ import com.lazydragonstudios.wuxiacraft.client.render.renderer.AuraRenderer;
 import com.lazydragonstudios.wuxiacraft.client.render.renderer.GhostRenderer;
 import com.lazydragonstudios.wuxiacraft.client.render.models.GhostModel;
 import com.lazydragonstudios.wuxiacraft.client.render.renderer.ThrowSkillRenderer;
+import com.lazydragonstudios.wuxiacraft.container.InscriberMenu;
 import com.lazydragonstudios.wuxiacraft.container.IntrospectionMenu;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaEntities;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -50,6 +52,7 @@ public class ClientSetupEventHandler {
 		OverlayRegistry.registerOverlayBelow(ForgeIngameGui.CHAT_PANEL_ELEMENT, "wuxiacraft_energies", new EnergiesOverlay());
 
 		MenuScreens.register(IntrospectionMenu.registryType, IntrospectionScreen::new);
+		MenuScreens.register(InscriberMenu.registryType, InscriberScreen::new);
 	}
 
 	@SubscribeEvent

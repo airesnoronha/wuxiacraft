@@ -1,21 +1,27 @@
 package com.lazydragonstudios.wuxiacraft.blocks;
 
 import com.google.common.collect.ImmutableMap;
+import com.lazydragonstudios.wuxiacraft.blocks.entity.InscriberEntity;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.gameevent.GameEventListener;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -29,7 +35,7 @@ import java.util.function.Function;
 @SuppressWarnings("deprecation")
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class TechniqueInscriber extends Block {
+public class TechniqueInscriber extends BaseEntityBlock {
 
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final VoxelShape SHAPE_BASE_LATITUDINAL = Shapes.or(Block.box(1d, 0d, 3d, 1d + 14d, 3d, 3d + 10d), Block.box(2d, 2d, 5d, 2d + 4d, 2d + 13d, 5d + 6d), Block.box(10d, 2d, 5d, 10d + 4d, 2d + 13d, 5d + 6d));
@@ -46,8 +52,20 @@ public class TechniqueInscriber extends Block {
 
 	@Override
 	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-		//TODO open the menu via player.openMenu
-		return InteractionResult.CONSUME;
+		if (level.isClientSide) {
+			return InteractionResult.SUCCESS;
+		} else {
+			this.openContainer(level, pos, player);
+			return InteractionResult.CONSUME;
+		}
+	}
+
+	protected void openContainer(Level level, BlockPos pos, Player player) {
+		BlockEntity blockentity = level.getBlockEntity(pos);
+		if (blockentity instanceof InscriberEntity) {
+			player.openMenu((MenuProvider) blockentity);
+		}
+
 	}
 
 	@Override
@@ -93,5 +111,26 @@ public class TechniqueInscriber extends Block {
 		return false;
 	}
 
+	@Override
+	public RenderShape getRenderShape(BlockState p_49232_) {
+		return RenderShape.MODEL;
+	}
 
+	@Nullable
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return new InscriberEntity(pos, state);
+	}
+
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153212_, BlockState p_153213_, BlockEntityType<T> p_153214_) {
+		return super.getTicker(p_153212_, p_153213_, p_153214_);
+	}
+
+	@Nullable
+	@Override
+	public <T extends BlockEntity> GameEventListener getListener(Level p_153210_, T p_153211_) {
+		return super.getListener(p_153210_, p_153211_);
+	}
 }

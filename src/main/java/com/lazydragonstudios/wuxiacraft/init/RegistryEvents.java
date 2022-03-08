@@ -1,6 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.init;
 
 
+import com.lazydragonstudios.wuxiacraft.container.InscriberMenu;
 import com.lazydragonstudios.wuxiacraft.container.IntrospectionMenu;
 import com.lazydragonstudios.wuxiacraft.cultivation.CultivationRealm;
 import com.lazydragonstudios.wuxiacraft.cultivation.CultivationStage;
@@ -68,6 +69,9 @@ public class RegistryEvents {
 	public static void onMenuTypeRegister(final RegistryEvent.Register<MenuType<?>> event) {
 		IntrospectionMenu.registryType = IForgeMenuType.create(IntrospectionMenu::create);
 		IntrospectionMenu.registryType.setRegistryName(new ResourceLocation(WuxiaCraft.MOD_ID, "introspection_menu"));
+		InscriberMenu.registryType = IForgeMenuType.create(InscriberMenu::create);
+		InscriberMenu.registryType.setRegistryName(new ResourceLocation(WuxiaCraft.MOD_ID, "inscriber_menu"));
 		event.getRegistry().register(IntrospectionMenu.registryType);
+		event.getRegistry().register(InscriberMenu.registryType);
 	}
 }

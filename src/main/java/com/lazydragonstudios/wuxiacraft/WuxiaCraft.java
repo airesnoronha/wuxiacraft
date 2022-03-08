@@ -58,6 +58,7 @@ public class WuxiaCraft {
 
 		WuxiaBlocks.BLOCKS.register(modEventBus);
 		WuxiaItems.ITEMS.register(modEventBus);
+		WuxiaBlockEntities.BLOCK_ENTITIES.register(modEventBus);
 		WuxiaMobEffects.EFFECTS.register(modEventBus);
 		WuxiaEntities.ENTITY_TYPE_REGISTER.register(modEventBus);
 		WuxiaRealms.REALM_REGISTER.register(modEventBus);
