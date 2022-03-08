@@ -1,8 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.client.render;
 
 import com.lazydragonstudios.wuxiacraft.capabilities.ClientAnimationState;
-import com.lazydragonstudios.wuxiacraft.client.render.aura.BaseAura;
-import com.lazydragonstudios.wuxiacraft.client.render.aura.ElectricAura;
 import com.lazydragonstudios.wuxiacraft.client.render.renderer.AnimatedPlayerRenderer;
 import com.lazydragonstudios.wuxiacraft.client.render.renderer.AuraRenderer;
 import com.lazydragonstudios.wuxiacraft.client.render.renderer.GhostRenderer;

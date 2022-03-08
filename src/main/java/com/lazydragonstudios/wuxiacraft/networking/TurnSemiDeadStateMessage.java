@@ -6,6 +6,8 @@ import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
@@ -34,18 +36,24 @@ public class TurnSemiDeadStateMessage {
 		return new TurnSemiDeadStateMessage(buf.readBoolean(), buf.readComponent(), buf.readBoolean());
 	}
 
-	public static void handleMessage(TurnSemiDeadStateMessage msg, Supplier<NetworkEvent.Context> ctxSupplier) {
+	public static void handleMessageCommon(TurnSemiDeadStateMessage msg, Supplier<NetworkEvent.Context> ctxSupplier) {
 		var ctx = ctxSupplier.get();
 		var direction = ctx.getDirection().getReceptionSide();
 		if (direction.isServer()) return;
 		ctx.setPacketHandled(true);
+		handleMessageClient(msg, ctxSupplier);
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	private static void handleMessageClient(TurnSemiDeadStateMessage msg, Supplier<NetworkEvent.Context> ctxSupplier) {
+		var ctx = ctxSupplier.get();
 		ctx.enqueueWork(() -> {
 			var player = Minecraft.getInstance().player;
 			if (player == null) return;
 
 			var mc = Minecraft.getInstance();
 			if (msg.semiDead) {
-				if (mc.screen == null || !(mc.screen instanceof WuxiaDeathScreen)) {
+				if (!(mc.screen instanceof WuxiaDeathScreen)) {
 					mc.setScreen(new WuxiaDeathScreen(msg.causeOfDeath, msg.hardcore));
 				}
 			} else {

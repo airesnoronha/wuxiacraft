@@ -32,6 +32,6 @@ public class WuxiaPacketHandler {
 		int clientMessagesID = 200;
 		INSTANCE.registerMessage(clientMessagesID++, CultivationSyncMessage.class, CultivationSyncMessage::encode, CultivationSyncMessage::decode, CultivationSyncMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 		INSTANCE.registerMessage(clientMessagesID++, AnimationChangeUpdateMessage.class, AnimationChangeUpdateMessage::encode, AnimationChangeUpdateMessage::decode, AnimationChangeUpdateMessage::handleMessageCommon, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
-		INSTANCE.registerMessage(clientMessagesID++, TurnSemiDeadStateMessage.class, TurnSemiDeadStateMessage::encode, TurnSemiDeadStateMessage::decode, TurnSemiDeadStateMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		INSTANCE.registerMessage(clientMessagesID++, TurnSemiDeadStateMessage.class, TurnSemiDeadStateMessage::encode, TurnSemiDeadStateMessage::decode, TurnSemiDeadStateMessage::handleMessageCommon, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 	}
 }

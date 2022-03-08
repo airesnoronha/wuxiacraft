@@ -12,6 +12,7 @@ import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.client.gui.OverlayRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -41,25 +42,28 @@ public class WuxiaCraft {
 
 	public WuxiaCraft() {
 		// Register the setup method for modloading
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		modEventBus.addListener(this::setup);
 		// Register the enqueueIMC method for modloading
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
+		modEventBus.addListener(this::enqueueIMC);
 		// Register the processIMC method for modloading
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
+		modEventBus.addListener(this::processIMC);
 
-		FMLJavaModLoadingContext.get().getModEventBus().register(CapabilityRegistryHandler.class);
+		modEventBus.register(CapabilityRegistryHandler.class);
 
 		MinecraftForge.EVENT_BUS.register(CapabilityAttachingHandler.class);
 
 		// Register ourselves for server and other game events we are interested in
 		MinecraftForge.EVENT_BUS.register(this);
 
-		WuxiaEntities.ENTITY_TYPE_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-		WuxiaRealms.REALM_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-		WuxiaRealms.STAGE_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
-		WuxiaElements.ELEMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
-		WuxiaTechniqueAspects.ASPECTS.register(FMLJavaModLoadingContext.get().getModEventBus());
-		WuxiaSkillAspects.ASPECTS.register(FMLJavaModLoadingContext.get().getModEventBus());
+		WuxiaBlocks.BLOCKS.register(modEventBus);
+		WuxiaItems.ITEMS.register(modEventBus);
+		WuxiaEntities.ENTITY_TYPE_REGISTER.register(modEventBus);
+		WuxiaRealms.REALM_REGISTER.register(modEventBus);
+		WuxiaRealms.STAGE_REGISTER.register(modEventBus);
+		WuxiaElements.ELEMENTS.register(modEventBus);
+		WuxiaTechniqueAspects.ASPECTS.register(modEventBus);
+		WuxiaSkillAspects.ASPECTS.register(modEventBus);
 	}
 
 
