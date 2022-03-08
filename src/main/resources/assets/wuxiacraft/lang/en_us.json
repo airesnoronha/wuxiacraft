@@ -54,5 +54,6 @@
   "wuxiacraft.aspect.essence_gathering.name": "Essence Gathering",
   "wuxiacraft.aspect.divine_gathering.name": "Divinity Gathering",
   "wuxiacraft.aspect.body_releasing.name": "Body Releasing",
-  "wuxiacraft.gui.death.random_teleport.name": "Random Teleport"
+  "wuxiacraft.gui.death.random_teleport.name": "Random Teleport",
+  "entity.minecraft.villager.wuxiacraft.cultivator": "Wandering Cultivator"
 }

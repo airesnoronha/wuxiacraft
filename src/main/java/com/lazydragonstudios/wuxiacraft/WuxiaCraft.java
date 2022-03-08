@@ -64,6 +64,8 @@ public class WuxiaCraft {
 		WuxiaElements.ELEMENTS.register(modEventBus);
 		WuxiaTechniqueAspects.ASPECTS.register(modEventBus);
 		WuxiaSkillAspects.ASPECTS.register(modEventBus);
+		WuxiaPoiTypes.POI_TYPES.register(modEventBus);
+		WuxiaProfessions.PROFESSIONS.register(modEventBus);
 	}
 
 
