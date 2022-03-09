@@ -61,7 +61,7 @@ public class TechniqueGrid {
 	public void removeGridNode(Point p) {
 		ResourceLocation id = WuxiaTechniqueAspects.START.getId();
 		var aspect = this.grid.get(p);
-		if (aspect.equals(id)) {
+		if (aspect != null && aspect.equals(id)) {
 			this.startNodePoint = null;
 		}
 		this.grid.remove(p);
