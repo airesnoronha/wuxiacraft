@@ -179,9 +179,9 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	public LinkedList<AbstractWidget> getStatsSheetDescriptor() {
 		var nameLocation = this.getRegistryName();
 		if (nameLocation == null) return new LinkedList<>();
-		WuxiaLabel nameLabel = new WuxiaLabel(5, 2, new TranslatableComponent("wuxiacraft.aspects." + nameLocation.getPath() + ".name"), 0xFFAA00);
+		WuxiaLabel nameLabel = new WuxiaLabel(5, 2, new TranslatableComponent("wuxiacraft.aspect." + nameLocation.getPath() + ".name"), 0xFFAA00);
 		WuxiaCheckpointsWidget checkpointsWidget = new WuxiaCheckpointsWidget(5, 12, 190, nameLocation);
-		WuxiaLabelBox descriptionLabel = new WuxiaLabelBox(5, 25, 190, new TranslatableComponent("Description: wuxiacraft.aspects." + nameLocation.getPath() + ".description"));
+		WuxiaLabelBox descriptionLabel = new WuxiaLabelBox(5, 25, 190, new TranslatableComponent("Description: wuxiacraft.aspect." + nameLocation.getPath() + ".description"));
 		LinkedList<AbstractWidget> widgets = new LinkedList<>();
 		widgets.add(nameLabel);
 		widgets.add(checkpointsWidget);

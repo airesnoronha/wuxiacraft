@@ -30,8 +30,8 @@ public class StartAspect extends TechniqueAspect {
 	public LinkedList<AbstractWidget> getStatsSheetDescriptor() {
 		var nameLocation = this.getRegistryName();
 		if (nameLocation == null) return new LinkedList<>();
-		WuxiaLabel nameLabel = new WuxiaLabel(5, 2, new TranslatableComponent("wuxiacraft.technique." + nameLocation.getPath() + ".name"), 0xFFAA00);
-		WuxiaLabelBox descriptionLabel = new WuxiaLabelBox(5, 12, 190, new TranslatableComponent("Description: wuxiacraft.technique." + nameLocation.getPath() + ".description"));
+		WuxiaLabel nameLabel = new WuxiaLabel(5, 2, new TranslatableComponent("wuxiacraft.aspect." + nameLocation.getPath() + ".name"), 0xFFAA00);
+		WuxiaLabelBox descriptionLabel = new WuxiaLabelBox(5, 12, 190, new TranslatableComponent("Description: wuxiacraft.aspect." + nameLocation.getPath() + ".description"));
 		LinkedList<AbstractWidget> widgets = new LinkedList<>();
 		widgets.add(nameLabel);
 		widgets.add(descriptionLabel);
