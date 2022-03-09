@@ -72,5 +72,12 @@
   "item.wuxiacraft.spirit_stone_9": "Spirit Stone 9",
   "wuxiacraft.semi_dead.title": "You're almost dying!",
   "wuxiacraft.semi_dead.time": "You've been unconscious for: %1$s",
-  "wuxiacraft.ask_to_die": "Die already!"
+  "wuxiacraft.ask_to_die": "Die already!",
+  "wuxiacraft.category.main": "WuxiaCraft",
+  "wuxiacraft.key.introspection": "Introspection",
+  "wuxiacraft.key.meditate": "Meditate",
+  "wuxiacraft.key.exercise": "Exercise",
+  "wuxiacraft.key.cast_skill": "Cast Skill",
+  "wuxiacraft.key.combat_mode": "Combat Mode",
+  "wuxiacraft.key.divine_sense": "Divine Sense"
 }

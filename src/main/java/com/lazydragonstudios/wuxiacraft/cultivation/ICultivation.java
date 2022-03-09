@@ -69,4 +69,8 @@ public interface ICultivation {
 	boolean isSemiDead();
 
 	int getSemiDeadTimer();
+
+	boolean isDivineSense();
+
+	void setDivineSense(boolean divineSense);
 }

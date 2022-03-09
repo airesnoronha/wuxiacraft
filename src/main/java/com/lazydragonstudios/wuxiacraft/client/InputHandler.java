@@ -22,6 +22,7 @@ public class InputHandler {
 	public static final int EXERCISE = 2;
 	public static final int CAST_SKILL = 3;
 	public static final int COMBAT_MODE = 4;
+	public static final int DIVINE_SENSE = 5;
 
 	public static HashMap<Integer, KeyMapping> mappings;
 
@@ -32,6 +33,7 @@ public class InputHandler {
 		mappings.put(EXERCISE, new KeyMapping("wuxiacraft.key.exercise", GLFW.GLFW_KEY_X, "wuxiacraft.category.main"));
 		mappings.put(CAST_SKILL, new KeyMapping("wuxiacraft.key.cast_skill", GLFW.GLFW_KEY_C, "wuxiacraft.category.main"));
 		mappings.put(COMBAT_MODE, new KeyMapping("wuxiacraft.key.combat_mode", GLFW.GLFW_KEY_V, "wuxiacraft.category.main"));
+		mappings.put(DIVINE_SENSE, new KeyMapping("wuxiacraft.key.divine_sense", GLFW.GLFW_KEY_V, "wuxiacraft.category.main"));
 		for (var mapping : mappings.values()) {
 			ClientRegistry.registerKeyBinding(mapping);
 		}
@@ -44,6 +46,7 @@ public class InputHandler {
 		if (!(event.getAction() == GLFW.GLFW_RELEASE || event.getAction() == GLFW.GLFW_PRESS)) return;
 		var animationState = ClientAnimationState.get(player);
 		var cultivation = Cultivation.get(player);
+		var skillData = cultivation.getSkills();
 		if (mappings.get(OPEN_INTROSPECTION).consumeClick()) {
 			WuxiaPacketHandler.INSTANCE.sendToServer(new OpenScreenMessage(OpenScreenMessage.ScreenType.INTROSPECTION));
 		}
@@ -66,22 +69,28 @@ public class InputHandler {
 			WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState, cultivation.isCombat()));
 		}
 		if (event.getKey() == mappings.get(CAST_SKILL).getKey().getValue()) {
-			var skillData = cultivation.getSkills();
 			if (event.getAction() == GLFW.GLFW_PRESS) {
 				skillData.casting = true;
 			} else if (event.getAction() == GLFW.GLFW_RELEASE) {
 				skillData.casting = false;
 			}
-			WuxiaPacketHandler.INSTANCE.sendToServer(new CultivationStateChangeMessage(skillData.selectedSkill, skillData.casting));
+			WuxiaPacketHandler.INSTANCE.sendToServer(new CultivationStateChangeMessage(skillData.selectedSkill, skillData.casting, cultivation.isDivineSense()));
 		}
 		if (event.getKey() == mappings.get(COMBAT_MODE).getKey().getValue()) {
-			var skillData = cultivation.getSkills();
 			if (event.getAction() == GLFW.GLFW_PRESS) {
 				cultivation.setCombat(true);
 			} else if (event.getAction() == GLFW.GLFW_RELEASE) {
 				cultivation.setCombat(false);
 			}
-			WuxiaPacketHandler.INSTANCE.sendToServer(new CultivationStateChangeMessage(skillData.selectedSkill, skillData.casting));
+			WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState, cultivation.isCombat()));
+		}
+		if (event.getKey() == mappings.get(DIVINE_SENSE).getKey().getValue()) {
+			if (event.getAction() == GLFW.GLFW_PRESS) {
+				cultivation.setDivineSense(true);
+			} else if (event.getAction() == GLFW.GLFW_RELEASE) {
+				cultivation.setDivineSense(false);
+			}
+			WuxiaPacketHandler.INSTANCE.sendToServer(new CultivationStateChangeMessage(skillData.selectedSkill, skillData.casting, cultivation.isDivineSense()));
 		}
 	}
 

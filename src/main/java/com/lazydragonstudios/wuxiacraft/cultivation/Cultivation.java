@@ -62,6 +62,11 @@ public class Cultivation implements ICultivation {
 	 */
 	public SkillContainer skills;
 
+	/**
+	 * is divine sense on
+	 */
+	private boolean isDivineSense;
+
 	public Cultivation() {
 		this.systemCultivation = new HashMap<>();
 		this.playerStats = new HashMap<>();
@@ -79,6 +84,7 @@ public class Cultivation implements ICultivation {
 		this.combat = false;
 		this.semiDead = false;
 		this.semiDeadTime = 0;
+		this.isDivineSense = false;
 	}
 
 	public static ICultivation get(Player target) {
@@ -327,5 +333,15 @@ public class Cultivation implements ICultivation {
 	@Override
 	public int getSemiDeadTimer() {
 		return this.semiDeadTime;
+	}
+
+	@Override
+	public boolean isDivineSense() {
+		return isDivineSense;
+	}
+
+	@Override
+	public void setDivineSense(boolean divineSense) {
+		isDivineSense = divineSense;
 	}
 }

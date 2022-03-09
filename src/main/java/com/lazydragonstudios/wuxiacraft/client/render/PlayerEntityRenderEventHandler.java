@@ -49,10 +49,10 @@ public class PlayerEntityRenderEventHandler {
 		if (!(event.getEntity() instanceof AbstractClientPlayer target)) return;
 		var player = Minecraft.getInstance().player;
 		if (player == null) return;
-		if (!player.isCrouching()) return;
+		var cultivation = Cultivation.get(player);
+		if (!cultivation.isDivineSense()) return;
 		var renderer = (GhostRenderer) Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(GhostRenderer.ghostEntityType);
 		if (renderer == null) return;
-		var cultivation = Cultivation.get(player);
 		var targetCultivation = Cultivation.get(target);
 		var range = cultivation.getStat(PlayerStat.DETECTION_RANGE).doubleValue();
 		if (player.distanceTo(target) > range) return;
