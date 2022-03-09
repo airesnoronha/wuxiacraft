@@ -37,6 +37,11 @@ public class WuxiaSemiDeadScreen extends Screen {
 	}
 
 	@Override
+	public boolean shouldCloseOnEsc() {
+		return false;
+	}
+
+	@Override
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
 		this.fillGradient(poseStack, 0, 0, this.width, this.height, 1615855616, -1602211792);
 		poseStack.pushPose();
