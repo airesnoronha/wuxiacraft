@@ -11,6 +11,7 @@ import com.lazydragonstudios.wuxiacraft.util.TechniqueUtil;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
+import com.lazydragonstudios.wuxiacraft.blocks.TechniqueInscriber;
 
 import java.math.BigDecimal;
 
@@ -61,6 +62,10 @@ public class WuxiaTechniqueAspects {
 
 	public static RegistryObject<TechniqueAspect> EMBER = ASPECTS.register("ember",
 			() -> new ElementalGenerator(3d, WuxiaElements.FIRE.getId())
+			.addCheckpoint(new TechniqueAspect.Checkpoint("ember_low", new BigDecimal("1000")))
+			.addCheckpoint(new TechniqueAspect.Checkpoint("ember_mid", new BigDecimal("5000")))
+			.addCheckpoint(new TechniqueAspect.Checkpoint("ember_high", new BigDecimal("25000")))
+			.addCheckpoint(new TechniqueAspect.Checkpoint("ember_peak", new BigDecimal("125000")))
 	);
 
 	public static RegistryObject<TechniqueAspect> BLAZE = ASPECTS.register("blazing",
@@ -217,11 +222,6 @@ public class WuxiaTechniqueAspects {
 	public static RegistryObject<TechniqueAspect> WORLD_METAL = ASPECTS.register("world_metal",
 			() -> new ElementalGenerator(6561d, WuxiaElements.METAL.getId())
 	);
-
-	//////////////////////////////////////////
-	//       Wood Generation ones           //
-	//////////////////////////////////////////
-
 
 	//////////////////////////////////////////
 	//       Wooden Special ones            //

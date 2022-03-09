@@ -20,16 +20,6 @@ import java.util.HashMap;
 @ParametersAreNonnullByDefault
 public class WuxiaCheckpointsWidget extends AbstractWidget {
 
-	private final float[][] colors = new float[][]{
-			{1.0f, 0.05f, 0f, 1f}, //red
-			{1.0f, 1.0f, 0.2f, 1f}, // yellow
-			{1.0f, 1.0f, 0.2f, 1f}, // yellow
-			{0.05f, 1.0f, 0.05f, 1f}, // green
-			{0.3f, 0.1f, 1f, 1f}, //blue
-			{0.9f, 0.1f, 1.0f, 1f}, //purple
-			{1.0f, 1.0f, 1.0f, 1f}, // white
-	};
-
 	private BigDecimal proficiency;
 	private ResourceLocation aspectLocation;
 	private TechniqueAspect aspect;
@@ -100,15 +90,17 @@ public class WuxiaCheckpointsWidget extends AbstractWidget {
 		//render the actual fills now
 		var currentCheckpoint = this.aspect.getCurrentCheckpoint(proficiency);
 		int currentFillLeft = 0;
-		BigDecimal requiredProficiency = BigDecimal.ZERO; //keeps track of previous proficiency required
 		int index = 0; //using indexOf while iterating a linked list is rather stupid so just add +1 to each iteration
+
 		for (var checkpoint : this.aspect.checkpoints) {
 			int fillWidth = checkpointsFill.get(checkpoint);
 			if (checkpoint == currentCheckpoint) {
-				int barFill = new BigDecimal(fillWidth)
-						.multiply(this.proficiency.subtract(requiredProficiency.add(checkpoint.proficiencyRequired())))
-						.divide(checkpoint.proficiencyRequired().max(BigDecimal.ONE).subtract(requiredProficiency), RoundingMode.HALF_UP)
-						.intValue();
+				if( this.aspect.checkpoints.getLast() == checkpoint) continue;
+				var nextCheckpoint = this.aspect.checkpoints.get(index+1);
+                int barFill = new BigDecimal(fillWidth)
+                        .multiply(this.proficiency.subtract(checkpoint.proficiencyRequired()))
+                        .divide(nextCheckpoint.proficiencyRequired().subtract(checkpoint.proficiencyRequired()).max(BigDecimal.ONE), RoundingMode.HALF_UP)
+                        .intValue();
 				GuiComponent.blit(poseStack, // poseStack
 						this.x + currentFillLeft + 1, this.y + 1, // in screen coords
 						barFill, 10, //in screen width and height
@@ -126,9 +118,27 @@ public class WuxiaCheckpointsWidget extends AbstractWidget {
 						256, 256
 				);
 			}
+
+			
 			currentFillLeft += fillWidth;
-			requiredProficiency = checkpoint.proficiencyRequired();
 			index++;
+		}
+		
+		currentFillLeft = 0;
+		for (var checkpoint : this.aspect.checkpoints) {
+			int fillWidth = checkpointsFill.get(checkpoint);
+			if( this.aspect.checkpoints.indexOf(checkpoint) < this.aspect.checkpoints.size() -2) {
+
+				GuiComponent.blit(poseStack, // poseStack
+						this.x + currentFillLeft + fillWidth, this.y , // in screen coords
+						2, 11, //in screen width and height
+						11, 25, // in texture coords
+						3, 11, // in texture width and height
+						256, 256 // whole texture size (width and height)
+				);
+			}
+
+			currentFillLeft += fillWidth;
 		}
 		RenderSystem.disableBlend();
 	}
