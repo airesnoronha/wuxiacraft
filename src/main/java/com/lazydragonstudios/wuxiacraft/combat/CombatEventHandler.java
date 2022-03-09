@@ -1,6 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.combat;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.networking.AnimationChangeUpdateMessage;
 import com.lazydragonstudios.wuxiacraft.networking.CultivationSyncMessage;
@@ -55,7 +56,13 @@ public class CombatEventHandler {
 		} else {
 			source = (WuxiaDamageSource) event.getSource();
 		}
-		// TODO add elemental resistance
+		var resistance = cultivation.getStat(source.getElement().getRegistryName(), PlayerElementalStat.RESISTANCE);
+		if (source.getElement() == WuxiaElements.PHYSICAL.get()) {
+			resistance.add(BigDecimal.valueOf(player.getArmorValue()));
+		}
+		source = new WuxiaDamageSource(source.getMsgId(), source.getElement(),
+				source.getDamage().subtract(resistance));
+
 		ForgeHooks.onLivingDamage(event.getEntityLiving(), source, event.getAmount());
 		event.setCanceled(true);
 	}

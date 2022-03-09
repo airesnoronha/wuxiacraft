@@ -1,9 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.client.gui;
 
-import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
-import com.lazydragonstudios.wuxiacraft.combat.WuxiaDamageSource;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
-import com.lazydragonstudios.wuxiacraft.init.WuxiaElements;
 import com.lazydragonstudios.wuxiacraft.networking.AskToDieMessage;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -12,13 +9,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.damagesource.DamageSource;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.math.BigDecimal;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -54,7 +48,6 @@ public class WuxiaSemiDeadScreen extends Screen {
 		var cultivation = Cultivation.get(player);
 		var timer = cultivation.getSemiDeadTimer() / 20;
 		drawCenteredString(poseStack, this.font, new TranslatableComponent("wuxiacraft.semi_dead.time", timer), this.width / 2, 85, 16777215);
-
 		super.render(poseStack, mouseX, mouseY, partialTick);
 	}
 }
