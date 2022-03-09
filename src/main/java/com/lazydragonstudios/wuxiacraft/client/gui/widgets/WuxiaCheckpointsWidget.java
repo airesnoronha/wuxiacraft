@@ -109,12 +109,12 @@ public class WuxiaCheckpointsWidget extends AbstractWidget {
 						.multiply(this.proficiency.subtract(requiredProficiency.add(checkpoint.proficiencyRequired())))
 						.divide(checkpoint.proficiencyRequired().max(BigDecimal.ONE).subtract(requiredProficiency), RoundingMode.HALF_UP)
 						.intValue();
-				GuiComponent.blit(poseStack,
-						this.x + currentFillLeft + 1, this.y + 1,
-						barFill, 10,
-						3 + index, 26,
-						1, 10,
-						256, 256
+				GuiComponent.blit(poseStack, // poseStack
+						this.x + currentFillLeft + 1, this.y + 1, // in screen coords
+						barFill, 10, //in screen width and height
+						3 + index, 26, // in texture coords
+						1, 10, // in texture width and height
+						256, 256 // whole texture size (width and height)
 				);
 				break;
 			} else {
@@ -131,6 +131,11 @@ public class WuxiaCheckpointsWidget extends AbstractWidget {
 			index++;
 		}
 		RenderSystem.disableBlend();
+	}
+
+	@Override
+	public void renderToolTip(PoseStack p_93653_, int p_93654_, int p_93655_) {
+		super.renderToolTip(p_93653_, p_93654_, p_93655_);
 	}
 
 	@Override
