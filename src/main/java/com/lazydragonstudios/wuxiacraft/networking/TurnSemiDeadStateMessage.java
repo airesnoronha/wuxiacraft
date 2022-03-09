@@ -2,6 +2,7 @@ package com.lazydragonstudios.wuxiacraft.networking;
 
 import com.lazydragonstudios.wuxiacraft.capabilities.ClientAnimationState;
 import com.lazydragonstudios.wuxiacraft.client.gui.WuxiaDeathScreen;
+import com.lazydragonstudios.wuxiacraft.client.gui.WuxiaSemiDeadScreen;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -53,13 +54,13 @@ public class TurnSemiDeadStateMessage {
 
 			var mc = Minecraft.getInstance();
 			if (msg.semiDead) {
-				if (!(mc.screen instanceof WuxiaDeathScreen)) {
-					mc.setScreen(new WuxiaDeathScreen(msg.causeOfDeath, msg.hardcore));
+				if (!(mc.screen instanceof WuxiaSemiDeadScreen)) {
+					mc.setScreen(new WuxiaSemiDeadScreen());
 				}
 			} else {
 				if (mc.screen == null) return;
 				var screen = mc.screen;
-				if (screen instanceof WuxiaDeathScreen)
+				if (screen instanceof WuxiaSemiDeadScreen)
 					mc.setScreen(null);
 			}
 			WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(ClientAnimationState.get(player), Cultivation.get(player).isCombat()));

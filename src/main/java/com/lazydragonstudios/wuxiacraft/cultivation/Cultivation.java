@@ -323,4 +323,9 @@ public class Cultivation implements ICultivation {
 	public boolean isSemiDead() {
 		return this.semiDead;
 	}
+
+	@Override
+	public int getSemiDeadTimer() {
+		return this.semiDeadTime;
+	}
 }

@@ -69,14 +69,13 @@ public class CultivationEventHandler {
 		var divineData = cultivation.getSystemData(System.DIVINE);
 		var essenceData = cultivation.getSystemData(System.ESSENCE);
 
-		//always keep this at max, since our health is gonna be what determines life or death
-		player.setHealth(player.getMaxHealth());
 
 		handleClientSync(player, cultivation);
 
 		if (cultivation.isSemiDead()) {
 			handleSemiDead(player, cultivation);
 		} else {
+
 			handleSkillCasting(player, cultivation);
 			handleBodyEnergyRegen(player, bodyData);
 			handleEnergyRegen(player, cultivation);
@@ -89,8 +88,8 @@ public class CultivationEventHandler {
 
 	private static void handleSemiDead(Player player, ICultivation cultivation) {
 		//TODO add a game rule for the cooldown, it's 5 mins now
-		if (player.level.isClientSide()) return;
 		cultivation.advanceSemiDead(20 * 300);
+		if (player.level.isClientSide()) return;
 		if (!cultivation.isSemiDead()) {
 			WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 					new TurnSemiDeadStateMessage(false, new TextComponent(""), false));

@@ -29,6 +29,7 @@ import net.minecraftforge.network.PacketDistributor;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaElements;
 import com.lazydragonstudios.wuxiacraft.util.MathUtil;
+import org.apache.http.util.EntityUtils;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -100,10 +101,6 @@ public class CombatEventHandler {
 			WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
 					new TurnSemiDeadStateMessage(true, event.getSource().getLocalizedDeathMessage(player),
 							player.getServer().isHardcore()));
-			//gotta show server that a certain person is dead
-			ServerPlayer serverPlayer = (ServerPlayer) player;
-			var server = serverPlayer.getServer();
-			server.getPlayerList().broadcastMessage(event.getSource().getLocalizedDeathMessage((LivingEntity) event.getSource().getEntity()), ChatType.SYSTEM, Util.NIL_UUID);
 		}
 
 		//this will make players health bar always keep up with

@@ -69,5 +69,8 @@
   "item.wuxiacraft.spirit_stone_6": "Spirit Stone 6",
   "item.wuxiacraft.spirit_stone_7": "Spirit Stone 7",
   "item.wuxiacraft.spirit_stone_8": "Spirit Stone 8",
-  "item.wuxiacraft.spirit_stone_9": "Spirit Stone 9"
+  "item.wuxiacraft.spirit_stone_9": "Spirit Stone 9",
+  "wuxiacraft.semi_dead.title": "You're almost dying!",
+  "wuxiacraft.semi_dead.time": "You've been unconscious for: %1$s",
+  "wuxiacraft.ask_to_die": "Die already!"
 }

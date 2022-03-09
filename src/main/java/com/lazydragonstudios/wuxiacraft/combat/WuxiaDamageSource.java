@@ -49,14 +49,14 @@ public class WuxiaDamageSource extends DamageSource {
 
 	@Nonnull
 	@Override
-	public Component getLocalizedDeathMessage(@Nonnull LivingEntity directSource) {
-		if (this.trueSource == null) return super.getLocalizedDeathMessage(directSource);
+	public Component getLocalizedDeathMessage(@Nonnull LivingEntity target) {
+		if (this.trueSource == null) return super.getLocalizedDeathMessage(target);
 		Component trueSourceName = this.trueSource.getDisplayName();
 		ItemStack stack = this.trueSource instanceof LivingEntity source ? source.getItemInHand(InteractionHand.MAIN_HAND) : ItemStack.EMPTY;
 		String localizedMessageId = "death.attack." + this.msgId;
 		String aboveButWithItem = localizedMessageId + ".item";
 		return !stack.isEmpty() ?
-						new TranslatableComponent(aboveButWithItem, directSource.getDisplayName(), trueSourceName, stack.getDisplayName()) :
-						new TranslatableComponent(localizedMessageId, directSource.getDisplayName(), trueSourceName);
+						new TranslatableComponent(aboveButWithItem, target.getDisplayName(), trueSourceName, stack.getDisplayName()) :
+						new TranslatableComponent(localizedMessageId, target.getDisplayName(), trueSourceName);
 	}
 }

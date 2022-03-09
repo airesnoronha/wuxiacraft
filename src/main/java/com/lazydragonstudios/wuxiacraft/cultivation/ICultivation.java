@@ -67,4 +67,6 @@ public interface ICultivation {
 	void advanceSemiDead(int cooldown);
 
 	boolean isSemiDead();
+
+	int getSemiDeadTimer();
 }

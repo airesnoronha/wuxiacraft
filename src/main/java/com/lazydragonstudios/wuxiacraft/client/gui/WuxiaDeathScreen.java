@@ -2,6 +2,7 @@ package com.lazydragonstudios.wuxiacraft.client.gui;
 
 import com.google.common.collect.Lists;
 import com.lazydragonstudios.wuxiacraft.networking.AskToDieMessage;
+import com.lazydragonstudios.wuxiacraft.networking.RequestRTPOnDeathMessage;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
@@ -38,7 +39,6 @@ public class WuxiaDeathScreen extends Screen {
 		this.exitButtons.clear();
 		//this is the first btn
 		this.exitButtons.add(this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 4 + 72, 200, 20, this.hardcore ? new TranslatableComponent("deathScreen.spectate") : new TranslatableComponent("deathScreen.respawn"), (p_95930_) -> {
-			WuxiaPacketHandler.INSTANCE.sendToServer(new AskToDieMessage(false));
 			this.minecraft.player.respawn();
 			this.minecraft.setScreen(null);
 		})));
@@ -46,7 +46,7 @@ public class WuxiaDeathScreen extends Screen {
 		//this is the random tp btn
 		if (!this.hardcore) {
 			this.exitButtons.add(this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 4 + btnHeight, 200, 20, new TranslatableComponent("wuxiacraft.gui.death.random_teleport.name"), (p_95925_) -> {
-				WuxiaPacketHandler.INSTANCE.sendToServer(new AskToDieMessage(true));
+				WuxiaPacketHandler.INSTANCE.sendToServer(new RequestRTPOnDeathMessage(true));
 				this.minecraft.player.respawn();
 				this.minecraft.setScreen(null);
 			})));
