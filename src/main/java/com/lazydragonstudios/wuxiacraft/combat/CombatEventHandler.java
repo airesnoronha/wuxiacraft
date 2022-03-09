@@ -15,7 +15,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -60,10 +62,18 @@ public class CombatEventHandler {
 		if (source.getElement() == WuxiaElements.PHYSICAL.get()) {
 			resistance.add(BigDecimal.valueOf(player.getArmorValue()));
 		}
-		source = new WuxiaDamageSource(source.getMsgId(), source.getElement(),
-				source.getDamage().subtract(resistance));
 
-		ForgeHooks.onLivingDamage(event.getEntityLiving(), source, event.getAmount());
+		Entity attacker = source.getEntity();
+		if(attacker instanceof Player) {
+			var pierce = Cultivation.get((Player) attacker).getStat(source.getElement().getRegistryName(), PlayerElementalStat.PIERCE);
+			resistance.subtract(pierce).max(BigDecimal.ZERO);
+		}
+
+		source = new WuxiaDamageSource(source.getMsgId(), source.getElement(),
+				source.getDamage().subtract(resistance).max(BigDecimal.ONE));
+
+		player.getInventory().hurtArmor(source, event.getAmount(), Inventory.ALL_ARMOR_SLOTS);
+		ForgeHooks.onLivingDamage(event.getEntityLiving(), source, source.getDamage().floatValue());
 		event.setCanceled(true);
 	}
 
