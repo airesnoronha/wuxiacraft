@@ -98,18 +98,21 @@ public class MeditateScreen extends Screen {
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		var superResult = super.mouseClicked(mouseX, mouseY, button);
 		for (var system : System.values()) {
-			if (MathUtil.inBounds(mouseX-this.guiLeft, mouseY-this.guiTop, 5 + 63 * system.ordinal(), 6, 63, 18)) {
+			if (MathUtil.inBounds(mouseX - this.guiLeft, mouseY - this.guiTop, 5 + 63 * system.ordinal(), 6, 63, 18)) {
 				var player = Minecraft.getInstance().player;
-				if(player == null) break;
+				if (player == null) break;
 				var cultivation = Cultivation.get(player);
 				var systemData = cultivation.getSystemData(system);
-				if(!systemData.techniqueData.modifier.isValidTechnique()) break;
+				if (!systemData.techniqueData.modifier.isValidTechnique()) break;
+				var minigame = stageMiniGames.get(systemData.currentStage);
+				if (minigame == null) break;
 				this.system = system;
+				this.minigame = minigame.get();
 				break;
 			}
 		}
 		if (this.minigame == null) return superResult;
-		return superResult || minigame.onMouseClick(mouseX, mouseY, button);
+		return superResult || minigame.onMouseClick(mouseX-this.guiLeft, mouseY-this.guiTop, button);
 	}
 
 	@Override

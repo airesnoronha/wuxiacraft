@@ -5,6 +5,8 @@ import com.lazydragonstudios.wuxiacraft.client.gui.MeditateScreen;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
+import com.lazydragonstudios.wuxiacraft.networking.MeditateMessage;
+import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import com.lazydragonstudios.wuxiacraft.util.MathUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -40,7 +42,8 @@ public class MortalEssenceMinigame implements Minigame {
 	public boolean onMouseClick(double x, double y, int button) {
 		for (var strand : this.strands) {
 			if (strand.inBounds(x, y)) {
-				selectedStrand = strand;
+				selectedStrand =
+						strand;
 				break;
 			}
 		}
@@ -99,6 +102,8 @@ public class MortalEssenceMinigame implements Minigame {
 			if (strand.isComplete()) {
 				selectedStrand = null;
 				markedToRemove.add(strand);
+				WuxiaPacketHandler.INSTANCE.sendToServer(new MeditateMessage(System.ESSENCE, true));
+				essenceData.getStage().cultivate(player);
 			}
 		}
 		for (var toRemove : markedToRemove) {
@@ -151,16 +156,17 @@ public class MortalEssenceMinigame implements Minigame {
 		}
 
 		boolean inBounds(double mouseX, double mouseY) {
-			return MathUtil.inBounds(mouseX, mouseY, this.x, this.y, 8, 8);
+			return MathUtil.inBounds(mouseX, mouseY, this.x - 3, this.y - 3, 5, 5);
 		}
 
 		void render(PoseStack stack) {
 			stack.pushPose();
+			stack.translate(this.x, this.y, 0);
 			if (this.grabbedTicks > 0) {
 				var scale = (float) (MAX_GRABBED_TICKS - this.grabbedTicks) / (float) MAX_GRABBED_TICKS;
 				stack.scale(scale, scale, 0);
 			}
-			GuiComponent.blit(stack, (int) this.x - 4, (int) this.y - 4, 4, 4, 60, 0, 8, 8, 256, 256);
+			GuiComponent.blit(stack, -3, -3, 5, 5, 60, 0, 5, 5, 256, 256);
 			stack.popPose();
 		}
 

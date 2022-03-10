@@ -22,6 +22,7 @@ public record MeditateMessage(System system, boolean success) {
 		var ctx = ctxSupplier.get();
 		var side = ctx.getDirection().getReceptionSide();
 		if (side.isClient()) return;
+		ctx.setPacketHandled(true);
 		ctx.enqueueWork(() -> {
 			var serverPlayer = ctx.getSender();
 			if (serverPlayer == null) return;

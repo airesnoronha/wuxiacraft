@@ -57,18 +57,10 @@ public class WuxiaTechniqueAspects {
 
 	public static RegistryObject<TechniqueAspect> CINDER = ASPECTS.register("cinder",
 			() -> new ElementalGenerator(1d, WuxiaElements.FIRE.getId())
-					.addCheckpoint(new TechniqueAspect.Checkpoint("cinder", new BigDecimal("1000")))
-					.addCheckpoint(new TechniqueAspect.Checkpoint("ember", new BigDecimal("5000")))
-					.addCheckpoint(new TechniqueAspect.Checkpoint("blazing", new BigDecimal("15000")))
-					.addCheckpoint(new TechniqueAspect.Checkpoint("earth_scorching", new BigDecimal("50000")))
 	);
 
 	public static RegistryObject<TechniqueAspect> EMBER = ASPECTS.register("ember",
 			() -> new ElementalGenerator(3d, WuxiaElements.FIRE.getId())
-					.addCheckpoint(new TechniqueAspect.Checkpoint("cinder", new BigDecimal("1200")))
-					.addCheckpoint(new TechniqueAspect.Checkpoint("ember", new BigDecimal("7000")))
-					.addCheckpoint(new TechniqueAspect.Checkpoint("blazing", new BigDecimal("25000")))
-					.addCheckpoint(new TechniqueAspect.Checkpoint("earth_scorching", new BigDecimal("80000")))
 	);
 
 	public static RegistryObject<TechniqueAspect> BLAZE = ASPECTS.register("blazing",
@@ -105,6 +97,14 @@ public class WuxiaTechniqueAspects {
 
 	public static RegistryObject<TechniqueAspect> SCORCH = ASPECTS.register("scorch",
 			() -> new ElementSystemConverter(3d, WuxiaElements.FIRE.getId(), System.BODY)
+	);
+
+	public static RegistryObject<TechniqueAspect> MAGIC_BURNING = ASPECTS.register("magic_burning",
+			() -> new ElementSystemConverter(3d, WuxiaElements.FIRE.getId(), System.BODY)
+	);
+
+	public static RegistryObject<TechniqueAspect> MIND_FLARE = ASPECTS.register("mind_flare",
+			() -> new ElementSystemConverter(3d, WuxiaElements.FIRE.getId(), System.DIVINE)
 	);
 
 	//////////////////////////////////////////
@@ -144,6 +144,21 @@ public class WuxiaTechniqueAspects {
 
 	public static RegistryObject<TechniqueAspect> GOD_OF_WATER = ASPECTS.register("god_of_water",
 			() -> new ElementalGenerator(6561d, WuxiaElements.WATER.getId())
+	);
+
+	//////////////////////////////////////////
+	//       Water Transformation ones      //
+	//////////////////////////////////////////
+	public static RegistryObject<TechniqueAspect> SPLASH = ASPECTS.register("splash",
+			() -> new ElementSystemConverter(3d, WuxiaElements.WATER.getId(), System.BODY)
+	);
+
+	public static RegistryObject<TechniqueAspect> STREAM = ASPECTS.register("stream",
+			() -> new ElementSystemConverter(3d, WuxiaElements.WATER.getId(), System.ESSENCE)
+	);
+
+	public static RegistryObject<TechniqueAspect> WAVING = ASPECTS.register("waving",
+			() -> new ElementSystemConverter(3d, WuxiaElements.WATER.getId(), System.DIVINE)
 	);
 
 	//////////////////////////////////////////
@@ -187,7 +202,42 @@ public class WuxiaTechniqueAspects {
 	);
 
 	//////////////////////////////////////////
-	//       Metal Transformation ones       //
+	//       Wood Transformation ones       //
+	//////////////////////////////////////////
+	public static RegistryObject<TechniqueAspect> BARK = ASPECTS.register("bark",
+			() -> new ElementSystemConverter(3d, WuxiaElements.WOOD.getId(), System.BODY)
+	);
+
+	public static RegistryObject<TechniqueAspect> BRANCHING = ASPECTS.register("branching",
+			() -> new ElementSystemConverter(3d, WuxiaElements.WOOD.getId(), System.ESSENCE)
+	);
+
+	public static RegistryObject<TechniqueAspect> SWAYING = ASPECTS.register("swaying",
+			() -> new ElementSystemConverter(3d, WuxiaElements.WOOD.getId(), System.DIVINE)
+	);
+
+	//////////////////////////////////////////
+	//       Wooden Special ones            //
+	//////////////////////////////////////////
+	//TODO make this get stronger by adding a flower factor to it and convert this to special
+	public static RegistryObject<TechniqueAspect> FLOWER = ASPECTS.register("flower",
+			() -> new ElementalGenerator(1d, WuxiaElements.WOOD.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> LICHEN = ASPECTS.register("lichen",
+			() -> new ElementToElementConverter(3d, 1.5d, WuxiaElements.WOOD.getId(), WuxiaElements.WOOD.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> STEM = ASPECTS.register("stem",
+			() -> new ElementToElementConverter(5d, 1.7d, WuxiaElements.WOOD.getId(), WuxiaElements.WOOD.getId())
+	);
+
+	public static RegistryObject<TechniqueAspect> CHARCOAL = ASPECTS.register("charcoal",
+			() -> new ElementToElementConverter(3d, 0.7d, WuxiaElements.WOOD.getId(), WuxiaElements.FIRE.getId())
+	);
+
+	//////////////////////////////////////////
+	//       Metal Transformation ones      //
 	//////////////////////////////////////////
 
 	public static RegistryObject<TechniqueAspect> ORE = ASPECTS.register("ore",
@@ -227,23 +277,18 @@ public class WuxiaTechniqueAspects {
 	);
 
 	//////////////////////////////////////////
-	//       Wooden Special ones            //
+	//       Metal Transformation ones      //
 	//////////////////////////////////////////
-	//TODO make this get stronger by adding a flower factor to it and convert this to special
-	public static RegistryObject<TechniqueAspect> FLOWER = ASPECTS.register("flower",
-			() -> new ElementalGenerator(1d, WuxiaElements.WOOD.getId())
+	public static RegistryObject<TechniqueAspect> METAL_SKIN = ASPECTS.register("metal_skin",
+			() -> new ElementSystemConverter(3d, WuxiaElements.METAL.getId(), System.BODY)
 	);
 
-	public static RegistryObject<TechniqueAspect> LICHEN = ASPECTS.register("lichen",
-			() -> new ElementToElementConverter(3d, 1.5d, WuxiaElements.WOOD.getId(), WuxiaElements.WOOD.getId())
+	public static RegistryObject<TechniqueAspect> SHARPNESS = ASPECTS.register("sharpness",
+			() -> new ElementSystemConverter(3d, WuxiaElements.METAL.getId(), System.ESSENCE)
 	);
 
-	public static RegistryObject<TechniqueAspect> STEM = ASPECTS.register("stem",
-			() -> new ElementToElementConverter(5d, 1.7d, WuxiaElements.WOOD.getId(), WuxiaElements.WOOD.getId())
-	);
-
-	public static RegistryObject<TechniqueAspect> CHARCOAL = ASPECTS.register("charcoal",
-			() -> new ElementToElementConverter(3d, 0.7d, WuxiaElements.WOOD.getId(), WuxiaElements.FIRE.getId())
+	public static RegistryObject<TechniqueAspect> MAGNETIZATION = ASPECTS.register("magnetization",
+			() -> new ElementSystemConverter(3d, WuxiaElements.METAL.getId(), System.DIVINE)
 	);
 
 	//////////////////////////////////////////
@@ -343,6 +388,10 @@ public class WuxiaTechniqueAspects {
 	//////////////////////////////////////////
 	//       Neutral Generation ones        //
 	//////////////////////////////////////////
+
+	public static RegistryObject<TechniqueAspect> QI_STRAND = ASPECTS.register("qi_strand",
+			() -> new ElementalGenerator(0.7d, WuxiaElements.PHYSICAL.getId())
+	);
 
 	public static RegistryObject<TechniqueAspect> BLOOD_BURNING = ASPECTS.register("blood_burning",
 			() -> new ConditionalElementalGenerator(2d, WuxiaElements.PHYSICAL.getId()) {

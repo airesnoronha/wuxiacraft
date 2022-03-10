@@ -1,10 +1,16 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects;
 
+import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabel;
+import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabelBox;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.TranslatableComponent;
 
+import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class SystemGather extends TechniqueAspect {
 
@@ -20,10 +26,11 @@ public class SystemGather extends TechniqueAspect {
 		String statName = this.system.name().toLowerCase() + "-stat-" + PlayerSystemStat.CULTIVATION_SPEED.name().toLowerCase();
 		String systemRawBase = system.name().toLowerCase() + "-raw-cultivation-base";
 		if (metaData.containsKey(systemRawBase)) {
-			double rawBase = (double) metaData.remove(systemRawBase);
+			BigDecimal rawBase = BigDecimal.valueOf((double) metaData.remove(systemRawBase));
+			rawBase = rawBase.add(this.getCurrentCheckpoint(proficiency).modifier());
 			metaData.put(statName,
 					//(value or 0) + (rawBase / 10)
-					((BigDecimal) metaData.getOrDefault(statName, BigDecimal.ZERO)).add(new BigDecimal(rawBase).multiply(new BigDecimal("0.1"))));
+					((BigDecimal) metaData.getOrDefault(statName, BigDecimal.ZERO)).add(rawBase.multiply(new BigDecimal("0.1"))));
 		}
 	}
 
@@ -57,5 +64,18 @@ public class SystemGather extends TechniqueAspect {
 	@Override
 	public boolean canShowForSystem(System system) {
 		return system == this.system;
+	}
+
+	@Nonnull
+	@Override
+	public LinkedList<AbstractWidget> getStatsSheetDescriptor() {
+		var nameLocation = this.getRegistryName();
+		if (nameLocation == null) return new LinkedList<>();
+		WuxiaLabel nameLabel = new WuxiaLabel(5, 2, new TranslatableComponent("wuxiacraft.aspect." + nameLocation.getPath() + ".name"), 0xFFAA00);
+		WuxiaLabelBox descriptionLabel = new WuxiaLabelBox(5, 12, 190, new TranslatableComponent("Description: wuxiacraft.aspect." + nameLocation.getPath() + ".description"));
+		LinkedList<AbstractWidget> widgets = new LinkedList<>();
+		widgets.add(nameLabel);
+		widgets.add(descriptionLabel);
+		return widgets;
 	}
 }
