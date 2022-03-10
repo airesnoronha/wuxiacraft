@@ -48,6 +48,7 @@
   "wuxiacraft.gui.cultivation_speed": "Cultivation Speed: %1$s",
   "wuxiacraft.gui.system_suppression": "System Suppression: %1$s",
   "wuxiacraft.aspect.start.name": "Start",
+  "wuxiacraft.aspect.start.description": "The starting aspect.\nThis is how",
   "wuxiacraft.aspect.ember.name": "Ember",
   "wuxiacraft.aspect.scorch.name": "Scorch",
   "wuxiacraft.aspect.cinder.name": "Cinder",
@@ -133,5 +134,8 @@
   "wuxiacraft.key.exercise": "Exercise",
   "wuxiacraft.key.cast_skill": "Cast Skill",
   "wuxiacraft.key.combat_mode": "Combat Mode",
-  "wuxiacraft.key.divine_sense": "Divine Sense"
+  "wuxiacraft.key.divine_sense": "Divine Sense",
+  "wuxiacraft.system.body": "Body",
+  "wuxiacraft.system.divine": "Divine",
+  "wuxiacraft.system.essence": "Essence"
 }

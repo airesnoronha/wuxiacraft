@@ -53,4 +53,9 @@ public class SystemGather extends TechniqueAspect {
 	public boolean canConnect(TechniqueAspect aspect) {
 		return false;
 	}
+
+	@Override
+	public boolean canShowForSystem(System system) {
+		return system == this.system;
+	}
 }

@@ -19,7 +19,9 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 public class TechniqueTab extends IntrospectionTab {
 
@@ -54,7 +56,8 @@ public class TechniqueTab extends IntrospectionTab {
 		int stretchedSpace = scaledWidth - 36 - 316;
 		aspectWidgets = new HashMap<>();
 
-		searchField = new WuxiaTextField(36 + 3, 36, 110, 20, new TextComponent(""));
+		searchField = new WuxiaTextField(36 + 3, 36, 110, 20);
+		searchField.editBox.setResponder(this::reloadAspects);
 
 		aspectsPanel = new WuxiaFlowPanel(36, 36 + 20 + 3, 116, scaledHeight - 16, new TextComponent(""));
 		aspectsPanel.margin = 5;
@@ -100,6 +103,35 @@ public class TechniqueTab extends IntrospectionTab {
 		screen.addRenderableWidget(searchField);
 		screen.addRenderableWidget(compileBtn);
 		screen.addRenderableWidget(saveBtn);
+		reloadAspects("");
+	}
+
+	private void reloadAspects(String search) {
+		var player = Minecraft.getInstance().player;
+		if (player == null) return;
+		var cultivation = Cultivation.get(player);
+		var aspects = cultivation.getAspects();
+		var mapped = aspects.getKnownAspects().stream()
+				.map(resourceLocation -> {
+					if (resourceLocation.getPath().toLowerCase().contains(search.toLowerCase()) || search.equals(""))
+						return resourceLocation;
+					return null;
+				});
+		var allAspects = mapped.collect(Collectors.toSet());
+		if (this.aspectsPanel.getChildrenCount() != allAspects.size()) {
+			this.aspectsPanel.clearChildren();
+			this.aspectWidgets.clear();
+			for (var aspect : allAspects) {
+				var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspect);
+				if (techAspect == null) continue;
+				if (!techAspect.canShowForSystem(this.system)) continue;
+				var aspectWidget = new WuxiaAspectWidget(0, 0, aspect);
+				aspectWidget.setOnClicked(onAspectClick(aspect));
+				aspectWidget.setOnRelease(onAspectRelease());
+				this.aspectsPanel.addChild(aspectWidget);
+				this.aspectWidgets.put(aspect, aspectWidget);
+			}
+		}
 	}
 
 	private final MouseInputPredicate onGridComposerRelease = (mouseX, mouseY, button) -> {
@@ -145,19 +177,6 @@ public class TechniqueTab extends IntrospectionTab {
 	public void renderBG(PoseStack poseStack, int mouseX, int mouseY) {
 		var player = Minecraft.getInstance().player;
 		if (player == null) return;
-		var cultivation = Cultivation.get(player);
-		var aspects = cultivation.getAspects();
-		if (aspects.getKnownAspectsCount() != this.aspectsPanel.getChildrenCount()) {
-			this.aspectsPanel.clearChildren();
-			this.aspectWidgets.clear();
-			for (var aspect : aspects.getKnownAspects()) {
-				var aspectWidget = new WuxiaAspectWidget(0, 0, aspect);
-				aspectWidget.setOnClicked(onAspectClick(aspect));
-				aspectWidget.setOnRelease(onAspectRelease());
-				this.aspectsPanel.addChild(aspectWidget);
-				this.aspectWidgets.put(aspect, aspectWidget);
-			}
-		}
 		if (this.draggingAspect != null) {
 			var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.draggingAspect);
 			if (techAspect != null) {

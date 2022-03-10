@@ -57,6 +57,8 @@ public class IntrospectionScreen extends AbstractContainerScreen<IntrospectionMe
 
 	@Override
 	protected void init() {
+		this.imageWidth = this.width;
+		this.imageHeight = this.height;
 		super.init();
 		this.tabs.clear();
 		this.tabsOrder.clear();
@@ -74,7 +76,7 @@ public class IntrospectionScreen extends AbstractContainerScreen<IntrospectionMe
 		tabsOrder.add("skills");
 		tabs.put("professions", new ProfessionsTab("professions"));
 		tabsOrder.add("professions");
-		if(this.selectedTab == null) {
+		if (this.selectedTab == null) {
 			selectedTab = "stats";
 		}
 		tabs.get(selectedTab).init(this);
@@ -188,18 +190,18 @@ public class IntrospectionScreen extends AbstractContainerScreen<IntrospectionMe
 			if (barFill > 5) {
 				GuiComponent.blit(poseStack,
 						leftPos.get(system) + 14, 8,
-						Math.min(barFill-10, stretchedSpace), 20,
-						112 + 22 * system.ordinal()+5, 0,
+						Math.min(barFill - 10, stretchedSpace), 20,
+						112 + 22 * system.ordinal() + 5, 0,
 						12, 20,
 						256, 256
 				);
 			}
 			if (barFill > stretchedSpace + 5) {
 				GuiComponent.blit(poseStack,
-						leftPos.get(system) + 14+stretchedSpace, 8,
-						Math.min(barFill-stretchedSpace-5, 5), 20,
-						112 + 22 * system.ordinal()+17, 0,
-						Math.min(barFill-stretchedSpace-5, 5), 20,
+						leftPos.get(system) + 14 + stretchedSpace, 8,
+						Math.min(barFill - stretchedSpace - 5, 5), 20,
+						112 + 22 * system.ordinal() + 17, 0,
+						Math.min(barFill - stretchedSpace - 5, 5), 20,
 						256, 256
 				);
 			}
@@ -208,6 +210,23 @@ public class IntrospectionScreen extends AbstractContainerScreen<IntrospectionMe
 		RenderSystem.disableBlend();
 		//render the tab
 		this.tabs.get(this.selectedTab).renderBG(poseStack, mouseX, mouseY);
+	}
+
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		if (this.getFocused() != null && this.getFocused().keyPressed(keyCode, scanCode, modifiers)) {
+			return true;
+		}
+		if (keyCode == 256 && this.shouldCloseOnEsc()) {
+			this.onClose();
+			return true;
+		} else if (keyCode == 258) {
+			boolean flag = !hasShiftDown();
+			if (!this.changeFocus(flag)) {
+				this.changeFocus(flag);
+			}
+		}
+		return false;
 	}
 
 	@Override

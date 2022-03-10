@@ -4,6 +4,7 @@ import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaCheckpointsWidget;
 import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabelBox;
 import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
+import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.AspectContainer;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -168,6 +169,10 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 			skills.addAll(checkpoint.skills);
 		}
 		return skills;
+	}
+
+	public boolean canShowForSystem(System system) {
+		return true;
 	}
 
 	/**

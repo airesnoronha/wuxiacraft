@@ -1,6 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.init;
 
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
+import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.CultivationRealm;
 import com.lazydragonstudios.wuxiacraft.cultivation.CultivationStage;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
@@ -119,6 +120,17 @@ public class WuxiaRealms {
 							null,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_gathering_stage")
 					)
+							.setOnCultivate(player -> {
+								var cultivation = Cultivation.get(player);
+								var essenceData = cultivation.getSystemData(System.ESSENCE);
+								if (essenceData.consumeEnergy(BigDecimal.ONE)) {
+									cultivation.addCultivationBase(player, System.ESSENCE, BigDecimal.ONE);
+								}
+							}).setOnCultivationFailure(player -> {
+								var cultivation = Cultivation.get(player);
+								var essenceData = cultivation.getSystemData(System.ESSENCE);
+								essenceData.consumeEnergy(BigDecimal.ONE);
+							})
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("1000")) //1k
 			);
 

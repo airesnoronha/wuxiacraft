@@ -173,7 +173,15 @@ public class Cultivation implements ICultivation {
 		CultivatingEvent event = new CultivatingEvent(player, system, amount);
 		if (!MinecraftForge.EVENT_BUS.post(event)) return false;
 		var systemData = this.getSystemData(system);
-		systemData.setStat(PlayerSystemStat.CULTIVATION_BASE, systemData.getStat(PlayerSystemStat.CULTIVATION_BASE).add(event.getAmount()).max(BigDecimal.ZERO));
+		amount = event.getAmount();
+		var grid = systemData.techniqueData.grid.getGrid();
+		for (var aspectLocation : grid.values()) {
+			this.aspects.addAspectProficiency(aspectLocation, amount, this);
+		}
+		systemData.techniqueData.grid.fixProficiencies(this.aspects);
+		var cultSpeed = systemData.getStat(PlayerSystemStat.CULTIVATION_SPEED);
+		amount = amount.multiply(BigDecimal.ONE.multiply(cultSpeed));
+		systemData.addStat(PlayerSystemStat.CULTIVATION_BASE, amount);
 		return true;
 	}
 

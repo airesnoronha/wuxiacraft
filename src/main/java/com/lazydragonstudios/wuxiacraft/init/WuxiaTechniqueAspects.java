@@ -11,7 +11,6 @@ import com.lazydragonstudios.wuxiacraft.util.TechniqueUtil;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
-import com.lazydragonstudios.wuxiacraft.blocks.TechniqueInscriber;
 
 import java.math.BigDecimal;
 
@@ -58,14 +57,18 @@ public class WuxiaTechniqueAspects {
 
 	public static RegistryObject<TechniqueAspect> CINDER = ASPECTS.register("cinder",
 			() -> new ElementalGenerator(1d, WuxiaElements.FIRE.getId())
+					.addCheckpoint(new TechniqueAspect.Checkpoint("cinder", new BigDecimal("1000")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("ember", new BigDecimal("5000")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("blazing", new BigDecimal("15000")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("earth_scorching", new BigDecimal("50000")))
 	);
 
 	public static RegistryObject<TechniqueAspect> EMBER = ASPECTS.register("ember",
 			() -> new ElementalGenerator(3d, WuxiaElements.FIRE.getId())
-			.addCheckpoint(new TechniqueAspect.Checkpoint("ember_low", new BigDecimal("1000")))
-			.addCheckpoint(new TechniqueAspect.Checkpoint("ember_mid", new BigDecimal("5000")))
-			.addCheckpoint(new TechniqueAspect.Checkpoint("ember_high", new BigDecimal("25000")))
-			.addCheckpoint(new TechniqueAspect.Checkpoint("ember_peak", new BigDecimal("125000")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("cinder", new BigDecimal("1200")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("ember", new BigDecimal("7000")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("blazing", new BigDecimal("25000")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("earth_scorching", new BigDecimal("80000")))
 	);
 
 	public static RegistryObject<TechniqueAspect> BLAZE = ASPECTS.register("blazing",

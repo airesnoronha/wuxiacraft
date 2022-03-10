@@ -1,6 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.client;
 
 import com.lazydragonstudios.wuxiacraft.capabilities.ClientAnimationState;
+import com.lazydragonstudios.wuxiacraft.client.gui.MeditateScreen;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.networking.BroadcastAnimationChangeRequestMessage;
 import com.lazydragonstudios.wuxiacraft.networking.CultivationStateChangeMessage;
@@ -50,13 +51,8 @@ public class InputHandler {
 		if (mappings.get(OPEN_INTROSPECTION).consumeClick()) {
 			WuxiaPacketHandler.INSTANCE.sendToServer(new OpenScreenMessage(OpenScreenMessage.ScreenType.INTROSPECTION));
 		}
-		if (event.getKey() == mappings.get(MEDITATE).getKey().getValue()) {
-			if (event.getAction() == GLFW.GLFW_PRESS) {
-				animationState.setMeditating(true);
-			} else if (event.getAction() == GLFW.GLFW_RELEASE) {
-				animationState.setMeditating(false);
-			}
-			WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState, cultivation.isCombat()));
+		if (mappings.get(MEDITATE).consumeClick()) {
+			Minecraft.getInstance().setScreen(new MeditateScreen());
 		}
 		if (event.getKey() == mappings.get(EXERCISE).getKey().getValue()) {
 			if (event.getAction() == GLFW.GLFW_PRESS) {

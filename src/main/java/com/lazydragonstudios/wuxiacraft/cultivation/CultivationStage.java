@@ -6,11 +6,13 @@ import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemElementalS
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.function.Consumer;
 
 public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 
@@ -59,10 +61,15 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 	@Nullable
 	public final ResourceLocation previousStage;
 
+	private Consumer<Player> onCultivate;
+
+	private Consumer<Player> onCultivationFailure;
+
 	/**
 	 * Constructor for this cultivation stage
-	 *  @param system        the Stage Cultivation System
-	 * @param realm the realm this stage is in
+	 *
+	 * @param system        the Stage Cultivation System
+	 * @param realm         the realm this stage is in
 	 * @param previousStage a reference to the previous stage, null if this is the first
 	 * @param nextStage     a reference to the next stage, null if this is the last
 	 */
@@ -77,6 +84,10 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 		for (var s : System.values()) {
 			systemStats.put(s, new HashMap<>());
 		}
+		this.onCultivate = p -> {
+		};
+		this.onCultivationFailure = p -> {
+		};
 	}
 
 	public CultivationStage addSystemStat(System system, PlayerSystemStat stat, BigDecimal value) {
@@ -103,6 +114,16 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 		this.systemElementalStats.putIfAbsent(system, new HashMap<>());
 		this.systemElementalStats.get(system).putIfAbsent(element, new HashMap<>());
 		this.systemElementalStats.get(system).get(element).put(stat, value);
+		return this;
+	}
+
+	public CultivationStage setOnCultivate(Consumer<Player> onCultivate) {
+		this.onCultivate = onCultivate;
+		return this;
+	}
+
+	public CultivationStage setOnCultivationFailure(Consumer<Player> onCultivationFailure) {
+		this.onCultivationFailure = onCultivationFailure;
 		return this;
 	}
 
@@ -171,5 +192,13 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 		if (aux == null) return stageValue;
 		stageValue = stageValue.add(aux.getStat(system, element, stat));
 		return stageValue;
+	}
+
+	public void cultivate(Player player) {
+		this.onCultivate.accept(player);
+	}
+
+	public void cultivationFailure(Player player) {
+		this.onCultivationFailure.accept(player);
 	}
 }

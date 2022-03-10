@@ -49,4 +49,9 @@ public class ElementSystemConverter extends ElementalConverter {
 		int finalPriority = priority1 - priority2;
 		return finalPriority != 0 ? finalPriority / Math.abs(finalPriority) : 0;
 	}
+
+	@Override
+	public boolean canShowForSystem(System system) {
+		return system == this.system;
+	}
 }

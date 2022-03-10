@@ -1,41 +1,38 @@
 package com.lazydragonstudios.wuxiacraft.client.gui.widgets;
 
+import com.google.common.base.Equivalence;
+import com.lazydragonstudios.wuxiacraft.util.MathUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.SharedConstants;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.util.Mth;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 @ParametersAreNonnullByDefault
 public class WuxiaTextField extends AbstractWidget {
 
-	public String value;
+	public EditBox editBox;
 
-	public int caretPosition;
-
-	private Consumer<String> textChanged;
-
-	//TODO Figure out focus logic to apply to TextBox, there is logic for this and has to do with changeFocus
-
-	public WuxiaTextField(int x, int y, int width, int height, Component message) {
-		super(x, y, width, height, message);
-		textChanged = s -> {};
+	public WuxiaTextField(int x, int y, int width, int height) {
+		super(x, y, width, height, new TextComponent(""));
+		this.editBox = new EditBox(Minecraft.getInstance().font, x + 5, y + 5, width - 10, height - 10, new TextComponent(""));
+		this.editBox.setBordered(false);
 	}
 
-	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		setFocused(this.clicked(mouseX, mouseY));
-		return super.mouseClicked(mouseX, mouseY, button);
-	}
-
-	@Override
-	public void onClick(double mouseX, double mouseY) {
-	}
 
 	@Override
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
@@ -43,7 +40,7 @@ public class WuxiaTextField extends AbstractWidget {
 		int texPosY = 0;
 		int nineSliceHeight = 5;
 		int nineSliceWidth = 5;
-		if(this.isFocused()) {
+		if (this.editBox.isFocused()) {
 			texPosX = 45;
 		}
 		RenderSystem.enableBlend();
@@ -129,7 +126,7 @@ public class WuxiaTextField extends AbstractWidget {
 					256, 256); //image size
 		}
 		GuiComponent.blit(poseStack,
-				this.x, this.y + this.height - nineSliceHeight -verticalRemainingFillSpace, //position in screen
+				this.x, this.y + this.height - nineSliceHeight - verticalRemainingFillSpace, //position in screen
 				nineSliceWidth, verticalRemainingFillSpace, // size in screen
 				texPosX, texPosY + nineSliceHeight, // position in texture
 				nineSliceWidth, verticalRemainingFillSpace, //size in texture
@@ -140,21 +137,21 @@ public class WuxiaTextField extends AbstractWidget {
 			GuiComponent.blit(poseStack,
 					this.x + this.width - nineSliceWidth, yPos, //position in screen
 					nineSliceWidth, nineSliceHeight, // size in screen
-					texPosX + nineSliceWidth *2, texPosY + nineSliceHeight, // position in texture
+					texPosX + nineSliceWidth * 2, texPosY + nineSliceHeight, // position in texture
 					nineSliceWidth, nineSliceHeight, //size in texture
 					256, 256); //image size
 		}
 		GuiComponent.blit(poseStack,
 				this.x + this.width - nineSliceWidth, this.y + this.height - nineSliceHeight - verticalRemainingFillSpace, //position in screen
 				nineSliceWidth, verticalRemainingFillSpace, // size in screen
-				texPosX + nineSliceWidth *2, texPosY + nineSliceHeight, // position in texture
+				texPosX + nineSliceWidth * 2, texPosY + nineSliceHeight, // position in texture
 				nineSliceWidth, verticalRemainingFillSpace, //size in texture
 				256, 256); //image size
 
 		//middle
-		for(int j = 0; j < verticalFillSteps; j++) {
+		for (int j = 0; j < verticalFillSteps; j++) {
 			int yPos = this.y + nineSliceHeight + j * nineSliceHeight;
-			for(int i = 0; i < horizontalFillSteps; i++) {
+			for (int i = 0; i < horizontalFillSteps; i++) {
 				int xPos = this.x + nineSliceWidth + i * nineSliceWidth;
 				GuiComponent.blit(poseStack,
 						xPos, yPos, //position in screen
@@ -171,11 +168,11 @@ public class WuxiaTextField extends AbstractWidget {
 					256, 256); //image size
 		}
 		int yPos = this.y + this.height - nineSliceHeight - verticalRemainingFillSpace;
-		for(int i = 0; i < horizontalFillSteps; i++) {
+		for (int i = 0; i < horizontalFillSteps; i++) {
 			int xPos = this.x + nineSliceWidth + i * nineSliceWidth;
 			GuiComponent.blit(poseStack,
 					xPos, yPos, //position in screen
-					nineSliceWidth,verticalRemainingFillSpace, // size in screen
+					nineSliceWidth, verticalRemainingFillSpace, // size in screen
 					texPosX + nineSliceWidth, texPosY + nineSliceHeight, // position in texture
 					nineSliceWidth, verticalRemainingFillSpace, //size in texture
 					256, 256); //image size
@@ -187,27 +184,38 @@ public class WuxiaTextField extends AbstractWidget {
 				horizontalRemainingFillSpace, verticalRemainingFillSpace, //size in texture
 				256, 256); //image size
 		RenderSystem.disableBlend();
-		var font = Minecraft.getInstance().font;
-		//GuiComponent.drawCenteredString(poseStack, font, this.getMessage(), this.x + this.width / 2+1, this.y + (this.height - font.lineHeight) / 2+1, 0x101010);
-		GuiComponent.drawCenteredString(poseStack, font, this.getMessage(), this.x + this.width / 2, this.y + (this.height - font.lineHeight) / 2, 0xFFFFFF);
+		this.editBox.render(poseStack, mouseX, mouseX, partialTicks);
 	}
 
 	@Override
-	public boolean keyPressed(int p_94745_, int p_94746_, int p_94747_) {
-		return false;
+	public boolean changeFocus(boolean focus) {
+		return this.editBox.changeFocus(focus);
+	}
+
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		if (MathUtil.inBounds(mouseX, mouseY, this.x, this.y, this.width, this.height)) {
+			if (MathUtil.inBounds(mouseX, mouseY, this.editBox.x, this.editBox.y, this.editBox.getWidth(), this.editBox.getHeight())) {
+				return this.editBox.mouseClicked(mouseX, mouseY, button);
+			} else {
+				return this.editBox.mouseClicked(this.x + 6, this.y + 6, button);
+			}
+		} else {
+			return this.editBox.mouseClicked(this.x, this.y, button);
+		}
 	}
 
 	@Override
-	public boolean keyReleased(int p_94750_, int p_94751_, int p_94752_) {
-		return false;
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		return this.editBox.keyPressed(keyCode, scanCode, modifiers);
 	}
 
-	public void setTextChanged(Consumer<String> textChanged) {
-		this.textChanged = textChanged;
+	@Override
+	public boolean charTyped(char character, int keyCode) {
+		return this.editBox.charTyped(character, keyCode);
 	}
 
 	@Override
 	public void updateNarration(NarrationElementOutput p_169152_) {
-
+		this.editBox.updateNarration(p_169152_);
 	}
 }
