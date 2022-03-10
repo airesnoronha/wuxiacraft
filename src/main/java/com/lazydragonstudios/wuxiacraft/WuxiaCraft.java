@@ -4,6 +4,7 @@ import com.lazydragonstudios.wuxiacraft.client.RenderHUDEventHandler;
 import com.lazydragonstudios.wuxiacraft.client.overlays.DebugOverlay;
 import com.lazydragonstudios.wuxiacraft.client.overlays.HealthOverlay;
 import com.lazydragonstudios.wuxiacraft.command.CultivationCommand;
+import com.lazydragonstudios.wuxiacraft.command.StatCommand;
 import com.lazydragonstudios.wuxiacraft.container.IntrospectionMenu;
 import com.lazydragonstudios.wuxiacraft.init.*;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
@@ -105,5 +106,6 @@ public class WuxiaCraft {
 	public void onRegisterCommands(RegisterCommandsEvent event) {
 		var dispatcher = event.getDispatcher();
 		CultivationCommand.register(dispatcher);
+		StatCommand.register(dispatcher);
 	}
 }

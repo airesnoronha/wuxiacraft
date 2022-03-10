@@ -1,11 +1,12 @@
 package com.lazydragonstudios.wuxiacraft.command;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
+import com.lazydragonstudios.wuxiacraft.cultivation.SystemContainer;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
-import com.lazydragonstudios.wuxiacraft.init.WuxiaRealms;
+import com.lazydragonstudios.wuxiacraft.cultivation.technique.AspectContainer;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
-import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
 import com.lazydragonstudios.wuxiacraft.networking.CultivationSyncMessage;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import com.mojang.brigadier.CommandDispatcher;
@@ -21,9 +22,6 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.PacketDistributor;
-import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
-import com.lazydragonstudios.wuxiacraft.cultivation.SystemContainer;
-import com.lazydragonstudios.wuxiacraft.cultivation.technique.AspectContainer;
 
 import java.math.BigDecimal;
 
