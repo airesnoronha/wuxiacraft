@@ -1,7 +1,9 @@
 package com.lazydragonstudios.wuxiacraft.init;
 
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
+import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.item.SpiritStone;
+import com.lazydragonstudios.wuxiacraft.item.TechniqueManual;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -52,5 +54,14 @@ public class WuxiaItems {
 
 	public static RegistryObject<Item> SPIRIT_STONE_9 = ITEMS.register("spirit_stone_9",
 			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB), 8));
+
+	public static RegistryObject<Item> BODY_MANUAL = ITEMS.register("body_manual",
+			() -> new TechniqueManual(new Item.Properties(), System.BODY));
+
+	public static RegistryObject<Item> DIVINE_MANUAL = ITEMS.register("divine_manual",
+			() -> new TechniqueManual(new Item.Properties(), System.DIVINE));
+
+	public static RegistryObject<Item> ESSENCE_MANUAL = ITEMS.register("essence_manual",
+			() -> new TechniqueManual(new Item.Properties(), System.ESSENCE));
 
 }

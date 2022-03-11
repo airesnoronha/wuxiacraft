@@ -8,6 +8,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemElementalS
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects.*;
 import com.lazydragonstudios.wuxiacraft.event.CultivatingEvent;
 import com.lazydragonstudios.wuxiacraft.util.TechniqueUtil;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
@@ -26,7 +27,16 @@ public class WuxiaTechniqueAspects {
 	 * but is there to serve as default for when the grid is empty and avoid null pointers
 	 * plus it says it won't connect to anyone
 	 */
-	public static RegistryObject<TechniqueAspect> EMPTY = ASPECTS.register("aspect_empty",
+	public static RegistryObject<TechniqueAspect> EMPTY = ASPECTS.register("empty",
+			() -> new TechniqueAspect() {
+				@Override
+				public boolean canConnect(TechniqueAspect aspect) {
+					return false;
+				}
+			}
+	);
+
+	public static RegistryObject<TechniqueAspect> UNKNOWN = ASPECTS.register("unknown",
 			() -> new TechniqueAspect() {
 				@Override
 				public boolean canConnect(TechniqueAspect aspect) {
@@ -65,30 +75,44 @@ public class WuxiaTechniqueAspects {
 
 	public static RegistryObject<TechniqueAspect> BLAZE = ASPECTS.register("blazing",
 			() -> new ElementalGenerator(9d, WuxiaElements.FIRE.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "cinder")))
 	);
 
 	public static RegistryObject<TechniqueAspect> EARTH_SCORCHING = ASPECTS.register("earth_scorching",
 			() -> new ElementalGenerator(27d, WuxiaElements.FIRE.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "ember")))
 	);
 
 	public static RegistryObject<TechniqueAspect> HEAVEN_BURNING_FIRE = ASPECTS.register("heaven_burning_fire",
 			() -> new ElementalGenerator(81d, WuxiaElements.FIRE.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "blazing")))
 	);
 
 	public static RegistryObject<TechniqueAspect> EVERLASTING_FLAME = ASPECTS.register("everlasting_flame",
 			() -> new ElementalGenerator(243d, WuxiaElements.FIRE.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "earth_scorching")))
 	);
 
 	public static RegistryObject<TechniqueAspect> SOLAR_FLAME = ASPECTS.register("solar_flame",
 			() -> new ElementalGenerator(729d, WuxiaElements.FIRE.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "heaven_burning_fire")))
 	);
 
 	public static RegistryObject<TechniqueAspect> IMMORTAL_FLAME = ASPECTS.register("immortal_flame",
 			() -> new ElementalGenerator(2187d, WuxiaElements.FIRE.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "everlasting_flame")))
 	);
 
 	public static RegistryObject<TechniqueAspect> FLAME_EMPEROR = ASPECTS.register("flame_emperor",
 			() -> new ElementalGenerator(6561d, WuxiaElements.FIRE.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "immortal_flame")))
 	);
 
 	//////////////////////////////////////////
@@ -97,14 +121,26 @@ public class WuxiaTechniqueAspects {
 
 	public static RegistryObject<TechniqueAspect> SCORCH = ASPECTS.register("scorch",
 			() -> new ElementSystemConverter(3d, WuxiaElements.FIRE.getId(), System.BODY)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "cinder"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "ember")))
 	);
 
 	public static RegistryObject<TechniqueAspect> MAGIC_BURNING = ASPECTS.register("magic_burning",
-			() -> new ElementSystemConverter(3d, WuxiaElements.FIRE.getId(), System.BODY)
+			() -> new ElementSystemConverter(3d, WuxiaElements.FIRE.getId(), System.ESSENCE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "cinder"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "ember")))
 	);
 
 	public static RegistryObject<TechniqueAspect> MIND_FLARE = ASPECTS.register("mind_flare",
 			() -> new ElementSystemConverter(3d, WuxiaElements.FIRE.getId(), System.DIVINE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "cinder"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "ember")))
 	);
 
 	//////////////////////////////////////////
@@ -120,30 +156,44 @@ public class WuxiaTechniqueAspects {
 
 	public static RegistryObject<TechniqueAspect> WATERFALL = ASPECTS.register("waterfall",
 			() -> new ElementalGenerator(9d, WuxiaElements.WATER.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "drop")))
 	);
 
 	public static RegistryObject<TechniqueAspect> OCEAN_HEART = ASPECTS.register("ocean_heart",
 			() -> new ElementalGenerator(27d, WuxiaElements.WATER.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "flow")))
 	);
 
 	public static RegistryObject<TechniqueAspect> HEAVENLY_WATER = ASPECTS.register("heavenly_water",
 			() -> new ElementalGenerator(81d, WuxiaElements.WATER.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "waterfall")))
 	);
 
 	public static RegistryObject<TechniqueAspect> OCEAN_TIDE = ASPECTS.register("ocean_tide",
 			() -> new ElementalGenerator(243d, WuxiaElements.WATER.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "ocean_heart")))
 	);
 
 	public static RegistryObject<TechniqueAspect> LUNAR_WATER = ASPECTS.register("lunar_water",
 			() -> new ElementalGenerator(729d, WuxiaElements.WATER.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "heavenly_water")))
 	);
 
 	public static RegistryObject<TechniqueAspect> IMMORTAL_WATER = ASPECTS.register("immortal_water",
 			() -> new ElementalGenerator(2187d, WuxiaElements.WATER.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "ocean_tide")))
 	);
 
 	public static RegistryObject<TechniqueAspect> GOD_OF_WATER = ASPECTS.register("god_of_water",
 			() -> new ElementalGenerator(6561d, WuxiaElements.WATER.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "lunar_water")))
 	);
 
 	//////////////////////////////////////////
@@ -151,14 +201,26 @@ public class WuxiaTechniqueAspects {
 	//////////////////////////////////////////
 	public static RegistryObject<TechniqueAspect> SPLASH = ASPECTS.register("splash",
 			() -> new ElementSystemConverter(3d, WuxiaElements.WATER.getId(), System.BODY)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "drop"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "flow")))
 	);
 
 	public static RegistryObject<TechniqueAspect> STREAM = ASPECTS.register("stream",
 			() -> new ElementSystemConverter(3d, WuxiaElements.WATER.getId(), System.ESSENCE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "drop"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "ember")))
 	);
 
 	public static RegistryObject<TechniqueAspect> WAVING = ASPECTS.register("waving",
 			() -> new ElementSystemConverter(3d, WuxiaElements.WATER.getId(), System.DIVINE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "drop"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "flow")))
 	);
 
 	//////////////////////////////////////////
@@ -175,30 +237,44 @@ public class WuxiaTechniqueAspects {
 
 	public static RegistryObject<TechniqueAspect> SPROUT = ASPECTS.register("sprout",
 			() -> new ElementalGenerator(9d, WuxiaElements.WOOD.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "seed")))
 	);
 
 	public static RegistryObject<TechniqueAspect> HERB = ASPECTS.register("herb",
 			() -> new ElementalGenerator(27d, WuxiaElements.WOOD.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "moss")))
 	);
 
 	public static RegistryObject<TechniqueAspect> BUSH = ASPECTS.register("bush",
 			() -> new ElementalGenerator(81d, WuxiaElements.WOOD.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "sprout")))
 	);
 
 	public static RegistryObject<TechniqueAspect> SAPLING = ASPECTS.register("sapling",
 			() -> new ElementalGenerator(243d, WuxiaElements.WOOD.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "herb")))
 	);
 
 	public static RegistryObject<TechniqueAspect> TREE = ASPECTS.register("tree",
 			() -> new ElementalGenerator(729d, WuxiaElements.WOOD.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "bush")))
 	);
 
 	public static RegistryObject<TechniqueAspect> ANCIENT_TREE = ASPECTS.register("ancient_tree",
 			() -> new ElementalGenerator(2187d, WuxiaElements.WOOD.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "sapling")))
 	);
 
 	public static RegistryObject<TechniqueAspect> WORLD_TREE = ASPECTS.register("world_tree",
 			() -> new ElementalGenerator(6561d, WuxiaElements.WOOD.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "tree")))
 	);
 
 	//////////////////////////////////////////
@@ -206,14 +282,26 @@ public class WuxiaTechniqueAspects {
 	//////////////////////////////////////////
 	public static RegistryObject<TechniqueAspect> BARK = ASPECTS.register("bark",
 			() -> new ElementSystemConverter(3d, WuxiaElements.WOOD.getId(), System.BODY)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "seed"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "moss")))
 	);
 
 	public static RegistryObject<TechniqueAspect> BRANCHING = ASPECTS.register("branching",
 			() -> new ElementSystemConverter(3d, WuxiaElements.WOOD.getId(), System.ESSENCE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "seed"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "moss")))
 	);
 
 	public static RegistryObject<TechniqueAspect> SWAYING = ASPECTS.register("swaying",
 			() -> new ElementSystemConverter(3d, WuxiaElements.WOOD.getId(), System.DIVINE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "seed"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "moss")))
 	);
 
 	//////////////////////////////////////////
@@ -233,7 +321,15 @@ public class WuxiaTechniqueAspects {
 	);
 
 	public static RegistryObject<TechniqueAspect> CHARCOAL = ASPECTS.register("charcoal",
-			() -> new ElementToElementConverter(3d, 0.7d, WuxiaElements.WOOD.getId(), WuxiaElements.FIRE.getId())
+			() -> new ElementToElementConverter(3d, 1.1d, WuxiaElements.WOOD.getId(), WuxiaElements.FIRE.getId())
+					.setCanLearn(cultivation -> (cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "seed"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "moss")))
+							&& (cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "cinder"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "ember"))))
 	);
 
 	//////////////////////////////////////////
@@ -250,30 +346,44 @@ public class WuxiaTechniqueAspects {
 
 	public static RegistryObject<TechniqueAspect> METAL_INGOT = ASPECTS.register("metal_ingot",
 			() -> new ElementalGenerator(9d, WuxiaElements.METAL.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "ore")))
 	);
 
 	public static RegistryObject<TechniqueAspect> METAL_BLOCK = ASPECTS.register("metal_block",
 			() -> new ElementalGenerator(27d, WuxiaElements.METAL.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "metal_nugget")))
 	);
 
 	public static RegistryObject<TechniqueAspect> EARTHLY_METAL = ASPECTS.register("earthly_metal",
 			() -> new ElementalGenerator(81d, WuxiaElements.METAL.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "metal_ingot")))
 	);
 
 	public static RegistryObject<TechniqueAspect> HEAVENLY_METAL = ASPECTS.register("heavenly_metal",
 			() -> new ElementalGenerator(243d, WuxiaElements.METAL.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "metal_block")))
 	);
 
 	public static RegistryObject<TechniqueAspect> GODLY_METAL = ASPECTS.register("godly_metal",
 			() -> new ElementalGenerator(729d, WuxiaElements.METAL.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "earthly_metal")))
 	);
 
 	public static RegistryObject<TechniqueAspect> ANCIENT_METAL = ASPECTS.register("ancient_metal",
 			() -> new ElementalGenerator(2187d, WuxiaElements.METAL.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "heavenly_metal")))
 	);
 
 	public static RegistryObject<TechniqueAspect> WORLD_METAL = ASPECTS.register("world_metal",
 			() -> new ElementalGenerator(6561d, WuxiaElements.METAL.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "godly_metal")))
 	);
 
 	//////////////////////////////////////////
@@ -332,11 +442,27 @@ public class WuxiaTechniqueAspects {
 	);
 
 	//////////////////////////////////////////
+	//       Lightning Generation ones      //
+	//////////////////////////////////////////
+
+	public static RegistryObject<TechniqueAspect> CONDUIT = ASPECTS.register("conduit",
+			() -> new ElementSystemConverter(3d, WuxiaElements.LIGHTNING.getId(), System.BODY)
+	);
+
+	public static RegistryObject<TechniqueAspect> ARC = ASPECTS.register("arc",
+			() -> new ElementSystemConverter(3d, WuxiaElements.LIGHTNING.getId(), System.ESSENCE)
+	);
+
+	public static RegistryObject<TechniqueAspect> FLASH = ASPECTS.register("flash",
+			() -> new ElementSystemConverter(3d, WuxiaElements.LIGHTNING.getId(), System.DIVINE)
+	);
+
+	//////////////////////////////////////////
 	//       Earth Special ones             //
 	//////////////////////////////////////////
 
 	public static RegistryObject<TechniqueAspect> ROOT = ASPECTS.register("root",
-			() -> new ElementToElementConverter(3d, 0.7d, WuxiaElements.FIRE.getId(), WuxiaElements.WOOD.getId())
+			() -> new ElementToElementConverter(3d, 1.1d, WuxiaElements.FIRE.getId(), WuxiaElements.WOOD.getId())
 	);
 
 	//////////////////////////////////////////

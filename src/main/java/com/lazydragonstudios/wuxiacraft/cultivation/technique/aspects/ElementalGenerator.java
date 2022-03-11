@@ -1,9 +1,22 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects;
 
+import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
+import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabel;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class ElementalGenerator extends TechniqueAspect {
 
@@ -45,6 +58,37 @@ public class ElementalGenerator extends TechniqueAspect {
 			return con.element.equals(this.element);
 		}
 		return false;
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public void renderTooltip(PoseStack poseStack, int mouseX, int mouseY) {
+		var nameLocation = this.getRegistryName();
+		if (nameLocation == null) return;
+		var name = new TranslatableComponent("wuxiacraft.aspect." + nameLocation.getPath() + ".name");
+		var amount = String.format("%.1f", this.generated);
+
+		var font = Minecraft.getInstance().font;
+		var nameWidth = font.width(name);
+		var amountWidth = font.width(amount);
+		var tooTipWidth = Math.max(nameWidth + 10, 28 + amountWidth);
+		RenderSystem.enableBlend();
+		GuiComponent.fill(poseStack, mouseX, mouseY, mouseX + tooTipWidth, mouseY + 31, 0x6A8080A0);
+		RenderSystem.setShaderTexture(0, new ResourceLocation(this.element.getNamespace(), "textures/elements/" + this.element.getPath() + ".png"));
+		RenderSystem.enableBlend();
+		GuiComponent.blit(poseStack, mouseX + 5, mouseY + 13, 16, 16, 0, 0, 16, 16, 16, 16);
+		font.drawShadow(poseStack, name, mouseX + 5, mouseY + 2, 0xFFFFFF);
+		font.drawShadow(poseStack, amount, mouseX + 23, mouseY + 18, 0xFFFFFF);
+		RenderSystem.disableBlend();
+	}
+
+	@Nonnull
+	@Override
+	public LinkedList<AbstractWidget> getStatsSheetDescriptor() {
+		var widgets = super.getStatsSheetDescriptor();
+		widgets.get(2).y += 11;//must be the description
+		widgets.add(new WuxiaLabel(5, 25, new TranslatableComponent("wuxiacraft.gui.generates", this.generated), 0xFFAA00));
+		return widgets;
 	}
 
 	@Override

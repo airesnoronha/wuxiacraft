@@ -85,6 +85,25 @@ public class TechniqueGrid {
 	}
 
 	/**
+	 * This is a depth first priority processing in the grid for accepted aspects
+	 * Stops when reached a certain point
+	 *
+	 * @param visiting         the current location in the grid we are accepting
+	 * @param processHierarchy the order in which we are accepting aspects
+	 * @param metaData         the data passed between nodes
+	 */
+	private void processAspectsToPoint(Point visiting, HashMap<Point, HashSet<Point>> processHierarchy, HashMap<String, Object> metaData, Point endPoint) {
+		var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.get(visiting));
+		var proficiency = this.proficiencies.getOrDefault(visiting, BigDecimal.ZERO);
+		if (aspect == null) return;
+		aspect.accept(metaData, proficiency);
+		if (visiting == endPoint) return;
+		for (var nextPoint : processHierarchy.get(visiting)) {
+			processAspectsToPoint(nextPoint, processHierarchy, metaData, endPoint);
+		}
+	}
+
+	/**
 	 * Gets a copy of the actual grid so it won't be able to be modified
 	 *
 	 * @return a copy of this aspects grid
@@ -121,6 +140,35 @@ public class TechniqueGrid {
 				});
 		processAspects(startNodePoint, processHierarchy, metaData);
 		return getModifiersFromMetaData(metaData);
+	}
+
+	/**
+	 * Gets the metadata until a certain point in the grid
+	 */
+	public HashMap<String, Object> compileToPoint(Point endPoint) {
+		if (this.startNodePoint == null) return new HashMap<>();
+		if (!grid.get(startNodePoint).equals(WuxiaTechniqueAspects.START.getId())) return new HashMap<>();
+		final ResourceLocation emptyId = WuxiaTechniqueAspects.EMPTY.getId();
+		if (!grid.containsKey(endPoint)) return new HashMap<>();
+
+		var processHierarchy = new HashMap<Point, HashSet<Point>>();
+
+		// data to be passed between nodes
+		HashMap<String, Object> metaData = new HashMap<>();
+
+		traverseGridFromStart(this,
+				(node) -> processHierarchy.put(node, new HashSet<>()),
+				(node, neighbour) -> processHierarchy.get(node).add(neighbour), (junk, neighbour) -> {
+					var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.getOrDefault(junk, emptyId));
+					if (junkAspect == null) return;
+					junkAspect.reject(metaData);
+				}, (disconnected) -> {
+					var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.getOrDefault(disconnected, emptyId));
+					if (junkAspect == null) return;
+					junkAspect.disconnect(metaData);
+				});
+		processAspectsToPoint(startNodePoint, processHierarchy, metaData, endPoint);
+		return metaData;
 	}
 
 	/**

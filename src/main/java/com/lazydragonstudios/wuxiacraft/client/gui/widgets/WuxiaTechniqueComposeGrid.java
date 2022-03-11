@@ -12,6 +12,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -41,6 +42,8 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 
 	public MouseInputPredicate onRelease;
 
+	private boolean shouldRenderCompiledTooltips = true;
+
 	public WuxiaTechniqueComposeGrid(int x, int y, TechniqueGrid grid) {
 		super(x, y, 0, 0, new TextComponent(""));
 		this.grid = grid;
@@ -52,6 +55,10 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 		onDrag = (mx, my, mb) -> false;
 		onRelease = (mx, my, mb) -> false;
 		recalculateLines();
+	}
+
+	public void setShouldRenderCompiledTooltips(boolean shouldRenderCompiledTooltips) {
+		this.shouldRenderCompiledTooltips = shouldRenderCompiledTooltips;
 	}
 
 	public void setGridRadius(int gridRadius) {
@@ -234,6 +241,28 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 	@Override
 	public void updateNarration(NarrationElementOutput p_169152_) {
 
+	}
+
+	@Override
+	public void renderToolTip(PoseStack poseStack, int mouseX, int mouseY) {
+		int translatedMouseX = mouseX - this.x - this.width / 2;
+		int translatedMouseY = mouseY - this.y - this.height / 2;
+		var hexC = getHexPointFromCartesian(new Point(translatedMouseX, translatedMouseY));
+		if (!this.hexagonCoordinates.contains(hexC)) return;
+		var aspectLocation = grid.getAspectAtGrid(hexC);
+		var meta = grid.compileToPoint(hexC);
+		var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspectLocation);
+		if (techAspect == null) return;
+
+		poseStack.pushPose();
+		var name = new TranslatableComponent("wuxiacraft.aspect." + aspectLocation.getPath() + ".name");
+		var font = Minecraft.getInstance().font;
+		var width = font.width(name);
+		var tooTipWidth = width + 10;
+		var toolTipHeight = 13 + meta.size() * 11;
+		GuiComponent.fill(poseStack, mouseX, mouseY, mouseX + tooTipWidth, mouseY + toolTipHeight, 0x6A8080A0);
+		font.drawShadow(poseStack, name, mouseX + 5, mouseY + 2, 0xFFFFFF);
+		poseStack.popPose();
 	}
 
 	/**

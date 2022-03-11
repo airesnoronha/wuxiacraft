@@ -11,6 +11,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -233,10 +234,20 @@ public class IntrospectionScreen extends AbstractContainerScreen<IntrospectionMe
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
 		this.renderBackground(poseStack);
 		super.render(poseStack, mouseX, mouseY, partialTicks);
-		super.renderTooltip(poseStack, mouseX, mouseY);
+		this.renderTooltip(poseStack, mouseX, mouseY);
 	}
 
 	@Override
 	protected void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
+	}
+
+	@Override
+	protected void renderTooltip(PoseStack poseStack, int mouseX, int mouseY) {
+		super.renderTooltip(poseStack, mouseX, mouseY);
+		for (var child : this.renderables) {
+			if(child instanceof AbstractWidget widget) {
+				widget.renderToolTip(poseStack, mouseX, mouseY);
+			}
+		}
 	}
 }

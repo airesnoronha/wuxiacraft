@@ -283,6 +283,16 @@ public class WuxiaScrollPanel extends AbstractWidget {
 		RenderSystem.disableBlend();
 	}
 
+	@Override
+	public void renderToolTip(PoseStack poseStack, int mouseX, int mouseY) {
+		poseStack.pushPose();
+		poseStack.translate(this.x, this.y, 0);
+		for (var widget : this.children) {
+			widget.renderToolTip(poseStack, mouseX + this.currentScrollX - this.x, mouseY + this.currentScrollY - this.y);
+		}
+		poseStack.popPose();
+	}
+
 	public void addChild(AbstractWidget child) {
 		this.children.add(child);
 		if (child.x + child.getWidth() > this.contentWidth) {
@@ -300,7 +310,7 @@ public class WuxiaScrollPanel extends AbstractWidget {
 		this.contentHeight = 0;
 		this.totalScrollHeight = 0;
 		this.totalScrollWidth = 0;
-		for(var child : children) {
+		for (var child : children) {
 			if (child.x + child.getWidth() > this.contentWidth) {
 				this.contentWidth = child.x + child.getWidth();
 				this.totalScrollWidth = Math.max(0, this.contentWidth - this.width + scrollBarWidth);
@@ -490,14 +500,12 @@ public class WuxiaScrollPanel extends AbstractWidget {
 
 	@Override
 	public boolean mouseDragged(double mouseX, double mouseY, int button, double mouseDeltaX, double mouseDeltaY) {
-		int innerWidth = isShowingVerticalScroll() ? this.width - scrollBarWidth : this.width;
-		int innerHeight = isShowingHorizontalScroll() ? this.height - scrollBarHeight : this.height;
 		boolean somethingClicked = false;
 		for (var widget : this.children) {
-				somethingClicked = somethingClicked ||
-						widget.mouseDragged(mouseX + this.currentScrollX - this.x, mouseY + this.currentScrollY - this.y,
-								button,
-								mouseDeltaX + this.currentScrollX - this.x, mouseDeltaY + this.currentScrollY - this.y);
+			somethingClicked = somethingClicked ||
+					widget.mouseDragged(mouseX + this.currentScrollX - this.x, mouseY + this.currentScrollY - this.y,
+							button,
+							mouseDeltaX + this.currentScrollX - this.x, mouseDeltaY + this.currentScrollY - this.y);
 		}
 		if (!somethingClicked && this.isValidClickButton(button)) {
 			var deltaX = mouseX - innerPartGrabbed[0];
@@ -520,7 +528,7 @@ public class WuxiaScrollPanel extends AbstractWidget {
 		int innerHeight = isShowingHorizontalScroll() ? this.height - scrollBarHeight : this.height;
 		boolean somethingClicked = false;
 		for (var widget : this.children) {
-				somethingClicked = somethingClicked || widget.mouseReleased(mouseX + this.currentScrollX - this.x, mouseY + this.currentScrollY - this.y, button);
+			somethingClicked = somethingClicked || widget.mouseReleased(mouseX + this.currentScrollX - this.x, mouseY + this.currentScrollY - this.y, button);
 		}
 		if (this.isValidClickButton(button)) {
 			this.onRelease(mouseX, mouseY);

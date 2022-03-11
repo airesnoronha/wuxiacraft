@@ -20,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -116,7 +117,8 @@ public class TechniqueTab extends IntrospectionTab {
 					if (resourceLocation.getPath().toLowerCase().contains(search.toLowerCase()) || search.equals(""))
 						return resourceLocation;
 					return null;
-				});
+				})
+				.filter(Objects::nonNull);
 		var allAspects = mapped.collect(Collectors.toSet());
 		if (this.aspectsPanel.getChildrenCount() != allAspects.size()) {
 			this.aspectsPanel.clearChildren();

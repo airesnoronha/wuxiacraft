@@ -6,10 +6,17 @@ import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabelBox;
 import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.AspectContainer;
+import com.lazydragonstudios.wuxiacraft.util.MathUtil;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabel;
 
@@ -192,6 +199,20 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 		widgets.add(checkpointsWidget);
 		widgets.add(descriptionLabel);
 		return widgets;
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public void renderTooltip(PoseStack poseStack, int mouseX, int mouseY) {
+		var nameLocation = this.getRegistryName();
+		if (nameLocation == null) return;
+		var name = new TranslatableComponent("wuxiacraft.aspect." + nameLocation.getPath() + ".name");
+		var font = Minecraft.getInstance().font;
+		var width = font.width(name);
+		var tooTipWidth = width + 10;
+		RenderSystem.enableBlend();
+		GuiComponent.fill(poseStack, mouseX, mouseY, mouseX + tooTipWidth, mouseY + 13, 0x6A8080A0);
+		font.drawShadow(poseStack, name, mouseX + 5, mouseY + 2, 0xFFFFFF);
+		RenderSystem.disableBlend();
 	}
 
 	/**

@@ -5,6 +5,7 @@ import com.lazydragonstudios.wuxiacraft.client.gui.minigames.Minigame;
 import com.lazydragonstudios.wuxiacraft.client.gui.minigames.MortalEssenceMinigame;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRealms;
 import com.lazydragonstudios.wuxiacraft.util.MathUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -35,6 +36,8 @@ public class MeditateScreen extends Screen {
 	private Minigame minigame = null;
 
 	private System system = System.ESSENCE;
+
+	private boolean canBreakThrough = false;
 
 	private static HashMap<ResourceLocation, Supplier<Minigame>> stageMiniGames = new HashMap<>();
 
@@ -83,6 +86,9 @@ public class MeditateScreen extends Screen {
 		this.renderLabels(poseStack, mouseX, mouseY, partialTicks);
 		if (this.minigame == null) return;
 		minigame.render(poseStack, mouseX - this.guiLeft, mouseY - this.guiTop, partialTicks);
+		if (this.canBreakThrough) {
+			blit(poseStack, 69, 170, 0, 170, 63, 14);
+		}
 		poseStack.popPose();
 	}
 
@@ -91,6 +97,11 @@ public class MeditateScreen extends Screen {
 			var message = new TranslatableComponent("wuxiacraft.system." + system.name().toLowerCase());
 			int messageWidth = this.font.width(message);
 			this.font.drawShadow(poseStack, message, 5 + 63 * system.ordinal() + (63 - messageWidth) / 2f, 9, 0xFFAA00);
+		}
+		if (this.canBreakThrough) {
+			var component = new TranslatableComponent("wuxiacraft.gui.breakthrough");
+			var width = this.font.width(component);
+			this.font.drawShadow(poseStack, component, 100 - width / 2f, 172, 0xFFAA00);
 		}
 	}
 
@@ -112,7 +123,7 @@ public class MeditateScreen extends Screen {
 			}
 		}
 		if (this.minigame == null) return superResult;
-		return superResult || minigame.onMouseClick(mouseX-this.guiLeft, mouseY-this.guiTop, button);
+		return superResult || minigame.onMouseClick(mouseX - this.guiLeft, mouseY - this.guiTop, button);
 	}
 
 	@Override
@@ -134,6 +145,12 @@ public class MeditateScreen extends Screen {
 		super.tick();
 		if (this.minigame == null) return;
 		this.minigame.tick();
+		var player = Minecraft.getInstance().player;
+		if (player == null) return;
+		var cultivation = Cultivation.get(player);
+		var systemData = cultivation.getSystemData(this.system);
+		this.canBreakThrough = systemData.getStat(PlayerSystemStat.CULTIVATION_BASE)
+				.compareTo(systemData.getStat(PlayerSystemStat.MAX_CULTIVATION_BASE)) >= 0;
 	}
 
 	@Override
