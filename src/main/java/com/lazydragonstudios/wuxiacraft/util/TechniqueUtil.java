@@ -1,9 +1,11 @@
 package com.lazydragonstudios.wuxiacraft.util;
 
 import com.lazydragonstudios.wuxiacraft.init.WuxiaElements;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 import javax.annotation.Nonnull;
@@ -13,6 +15,8 @@ import java.util.HashMap;
 public class TechniqueUtil {
 
 	private static final HashMap<Item, HashMap<ResourceLocation, BigDecimal>> DEVOURING_ITEM_TO_REWARD = new HashMap<>();
+
+	private static final HashMap<Block, HashMap<ResourceLocation, Double>> BLOCK_TO_CHANCED_ASPECT = new HashMap<>();
 
 	public static void initDevouringData() {
 		addDevouringData(Items.DIRT, WuxiaElements.EARTH.getId(), new BigDecimal("0.9"));
@@ -57,7 +61,70 @@ public class TechniqueUtil {
 		addDevouringData(Items.EMERALD, WuxiaElements.EARTH.getId(), new BigDecimal("38"));
 	}
 
-	private static void addDevouringData(Item item, ResourceLocation element, BigDecimal value) {
+	public static void initChancedAspectsBlocks() {
+		addBlockToAspectChanced(Blocks.IRON_ORE, WuxiaTechniqueAspects.ORE.getId(), 10000d);
+		addBlockToAspectChanced(Blocks.IRON_ORE, WuxiaTechniqueAspects.MAGNETIZATION.getId(), 100000d);
+		addBlockToAspectChanced(Blocks.IRON_ORE, WuxiaTechniqueAspects.SHARPNESS.getId(), 100000d);
+		addBlockToAspectChanced(Blocks.IRON_ORE, WuxiaTechniqueAspects.METAL_SKIN.getId(), 100000d);
+		addBlockToAspectChanced(Blocks.COPPER_ORE, WuxiaTechniqueAspects.ORE.getId(), 50000d);
+		addBlockToAspectChanced(Blocks.COPPER_ORE, WuxiaTechniqueAspects.MAGNETIZATION.getId(), 100000d);
+		addBlockToAspectChanced(Blocks.COPPER_ORE, WuxiaTechniqueAspects.SHARPNESS.getId(), 100000d);
+		addBlockToAspectChanced(Blocks.COPPER_ORE, WuxiaTechniqueAspects.METAL_SKIN.getId(), 100000d);
+		addBlockToAspectChanced(Blocks.MOSS_BLOCK, WuxiaTechniqueAspects.MOSS.getId(), 10000d);
+		addBlockToAspectChanced(Blocks.MOSS_BLOCK, WuxiaTechniqueAspects.BRANCHING.getId(), 100000d);
+		addBlockToAspectChanced(Blocks.MOSS_BLOCK, WuxiaTechniqueAspects.BARK.getId(), 100000d);
+		addBlockToAspectChanced(Blocks.MOSS_BLOCK, WuxiaTechniqueAspects.SWAYING.getId(), 100000d);
+		addBlockToAspectChanced(Blocks.MOSSY_COBBLESTONE, WuxiaTechniqueAspects.MOSS.getId(), 5000000d);
+		addBlockToAspectChanced(Blocks.MOSSY_COBBLESTONE, WuxiaTechniqueAspects.BRANCHING.getId(), 5000000d);
+		addBlockToAspectChanced(Blocks.MOSSY_COBBLESTONE, WuxiaTechniqueAspects.BARK.getId(), 5000000d);
+		addBlockToAspectChanced(Blocks.MOSSY_COBBLESTONE, WuxiaTechniqueAspects.SWAYING.getId(), 5000000d);
+		addBlockToAspectChanced(Blocks.MOSSY_COBBLESTONE, WuxiaTechniqueAspects.MOSS.getId(), 10000d);
+		addBlockToAspectChanced(Blocks.INFESTED_MOSSY_STONE_BRICKS, WuxiaTechniqueAspects.MOSS.getId(), 20000d);
+		addBlockToAspectChanced(Blocks.OXEYE_DAISY, WuxiaTechniqueAspects.FLOWER.getId(), 30000d);
+		addBlockToAspectChanced(Blocks.OXEYE_DAISY, WuxiaTechniqueAspects.STEM.getId(), 5000000d);
+		addBlockToAspectChanced(Blocks.DANDELION, WuxiaTechniqueAspects.FLOWER.getId(), 30000d);
+		addBlockToAspectChanced(Blocks.DANDELION, WuxiaTechniqueAspects.STEM.getId(), 5000000d);
+		addBlockToAspectChanced(Blocks.POPPY, WuxiaTechniqueAspects.FLOWER.getId(), 30000d);
+		addBlockToAspectChanced(Blocks.POPPY, WuxiaTechniqueAspects.STEM.getId(), 5000000d);
+		addBlockToAspectChanced(Blocks.ORANGE_TULIP, WuxiaTechniqueAspects.FLOWER.getId(), 30000d);
+		addBlockToAspectChanced(Blocks.ORANGE_TULIP, WuxiaTechniqueAspects.STEM.getId(), 5000000d);
+		addBlockToAspectChanced(Blocks.PINK_TULIP, WuxiaTechniqueAspects.FLOWER.getId(), 30000d);
+		addBlockToAspectChanced(Blocks.PINK_TULIP, WuxiaTechniqueAspects.STEM.getId(), 5000000d);
+		addBlockToAspectChanced(Blocks.SUNFLOWER, WuxiaTechniqueAspects.FLOWER.getId(), 30000d);
+		addBlockToAspectChanced(Blocks.SUNFLOWER, WuxiaTechniqueAspects.STEM.getId(), 5000000d);
+		addBlockToAspectChanced(Blocks.NETHERRACK, WuxiaTechniqueAspects.CINDER.getId(), 10000d);
+		addBlockToAspectChanced(Blocks.NETHERRACK, WuxiaTechniqueAspects.SCORCH.getId(), 10000d);
+		addBlockToAspectChanced(Blocks.NETHERRACK, WuxiaTechniqueAspects.MAGIC_BURNING.getId(), 10000d);
+		addBlockToAspectChanced(Blocks.NETHERRACK, WuxiaTechniqueAspects.MIND_FLARE.getId(), 10000d);
+		addBlockToAspectChanced(Blocks.SOUL_SAND, WuxiaTechniqueAspects.CINDER.getId(), 10000d);
+		addBlockToAspectChanced(Blocks.SOUL_SAND, WuxiaTechniqueAspects.CINDER.getId(), 50000d);
+		addBlockToAspectChanced(Blocks.SOUL_SAND, WuxiaTechniqueAspects.SCORCH.getId(), 1000000d);
+		addBlockToAspectChanced(Blocks.SOUL_SAND, WuxiaTechniqueAspects.MAGIC_BURNING.getId(), 1000000d);
+		addBlockToAspectChanced(Blocks.SOUL_SAND, WuxiaTechniqueAspects.MIND_FLARE.getId(), 1000000d);
+		addBlockToAspectChanced(Blocks.MAGMA_BLOCK, WuxiaTechniqueAspects.CINDER.getId(), 10000d);
+		addBlockToAspectChanced(Blocks.MAGMA_BLOCK, WuxiaTechniqueAspects.EMBER.getId(), 50000d);
+		addBlockToAspectChanced(Blocks.MAGMA_BLOCK, WuxiaTechniqueAspects.SCORCH.getId(), 1200000d);
+		addBlockToAspectChanced(Blocks.MAGMA_BLOCK, WuxiaTechniqueAspects.MAGIC_BURNING.getId(), 1200000d);
+		addBlockToAspectChanced(Blocks.MAGMA_BLOCK, WuxiaTechniqueAspects.MIND_FLARE.getId(), 400000d);
+		addBlockToAspectChanced(Blocks.REDSTONE_ORE, WuxiaTechniqueAspects.SPARK.getId(), 25000d);
+		addBlockToAspectChanced(Blocks.REDSTONE_ORE, WuxiaTechniqueAspects.CONDUIT.getId(), 1000000d);
+		addBlockToAspectChanced(Blocks.REDSTONE_ORE, WuxiaTechniqueAspects.FLASH.getId(), 1000000d);
+		addBlockToAspectChanced(Blocks.REDSTONE_ORE, WuxiaTechniqueAspects.ARC.getId(), 1000000d);
+		//TODO glowstone for light
+		//TODO any crystal to earth aspects
+
+	}
+
+	public static void addBlockToAspectChanced(Block block, ResourceLocation aspect, double chance) {
+		BLOCK_TO_CHANCED_ASPECT.putIfAbsent(block, new HashMap<>());
+		BLOCK_TO_CHANCED_ASPECT.get(block).put(aspect, chance);
+	}
+
+	public static HashMap<ResourceLocation, Double> getAspectChancePerBlock(Block block) {
+		return BLOCK_TO_CHANCED_ASPECT.getOrDefault(block, new HashMap<>());
+	}
+
+	public static void addDevouringData(Item item, ResourceLocation element, BigDecimal value) {
 		DEVOURING_ITEM_TO_REWARD.putIfAbsent(item, new HashMap<>());
 		DEVOURING_ITEM_TO_REWARD.get(item).put(element, value);
 	}

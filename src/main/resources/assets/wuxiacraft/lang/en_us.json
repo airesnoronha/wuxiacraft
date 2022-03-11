@@ -146,6 +146,7 @@
   "item.wuxiacraft.body_manual": "Body Manual",
   "item.wuxiacraft.divine_manual": "Divine Manual",
   "item.wuxiacraft.essence_manual": "Essence Manual",
+  "block.wuxiacraft.technique_inscriber": "Technique Inscriber",
   "wuxiacraft.semi_dead.title": "You're almost dying!",
   "wuxiacraft.semi_dead.time": "You've been unconscious for: %1$s",
   "wuxiacraft.ask_to_die": "Die already!",
@@ -162,5 +163,7 @@
   "wuxiacraft.learn_successful": "You learned a new aspect: ",
   "wuxiacraft.technique.fire_manipulation": "Fire Manipulation",
   "wuxiacraft.technique.legends_of_water": "Legends Of Water",
-  "wuxiacraft.technique.nature_observation": "Nature Observation"
+  "wuxiacraft.technique.nature_observation": "Nature Observation",
+  "wuxiacraft.technique.metallic_reinforcement": "Metallic Reinforcement",
+  "wuxiacraft.technique.lightning_replication": "Lightning Replication"
 }

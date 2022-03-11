@@ -3,12 +3,16 @@ package com.lazydragonstudios.wuxiacraft.client.gui;
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.container.InscriberMenu;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
+import com.lazydragonstudios.wuxiacraft.networking.RenameItemInInscriberMessage;
+import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import com.lazydragonstudios.wuxiacraft.util.MathUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -24,6 +28,8 @@ public class InscriberScreen extends AbstractContainerScreen<InscriberMenu> {
 
 	private System selectedSystem = System.ESSENCE;
 
+	private EditBox nameBox;
+
 	private static final HashMap<System, Rectangle> buttons = new HashMap<>();
 
 	static {//x, y, texX, texY
@@ -32,7 +38,7 @@ public class InscriberScreen extends AbstractContainerScreen<InscriberMenu> {
 		buttons.put(System.ESSENCE, new Rectangle(59, 27, 68, 134));
 	}
 
-	private static final Rectangle writeBtn = new Rectangle(103, 23, 18, 18);
+	private static final Rectangle writeBtn = new Rectangle(103, 23, 84, 134);
 
 	public InscriberScreen(InscriberMenu inscriberMenu, Inventory inventory, Component title) {
 		super(inscriberMenu, inventory, title);
@@ -43,6 +49,16 @@ public class InscriberScreen extends AbstractContainerScreen<InscriberMenu> {
 	@Override
 	protected void init() {
 		super.init();
+		this.nameBox = new EditBox(this.font, this.leftPos + 19, this.topPos + 5, 102, 10, new TextComponent(""));
+		this.nameBox.setBordered(false);
+		this.nameBox.setMaxLength(120);
+		this.nameBox.setResponder(this::onNameChanged);
+		this.addRenderableWidget(this.nameBox);
+	}
+
+	private void onNameChanged(String name) {
+		WuxiaPacketHandler.INSTANCE.sendToServer(new RenameItemInInscriberMessage(name));
+		this.menu.setItemName(name);
 	}
 
 	@Override
@@ -65,10 +81,53 @@ public class InscriberScreen extends AbstractContainerScreen<InscriberMenu> {
 		if (MathUtil.inBounds(mouseX - this.leftPos, mouseY - this.topPos, writeBtn.x, writeBtn.y, 18, 18)) {
 			blit(poseStack, writeBtn.x, writeBtn.y, 0, 134, 18, 18);
 		}
+		blit(poseStack, writeBtn.x + 1, writeBtn.y + 1, writeBtn.width, writeBtn.height, 16, 16);
 		poseStack.popPose();
 	}
 
 	@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		var consumed = false;
+		if (this.minecraft == null) return false;
+		if (this.minecraft.gameMode == null) return false;
+		for (var system : System.values()) {
+			var btn = buttons.get(system);
+			if (MathUtil.inBounds(mouseX - this.leftPos, mouseY - this.topPos, btn.x, btn.y, 18, 18)) {
+				consumed = true;
+				this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, system.ordinal());
+				this.selectedSystem = system;
+			}
+		}
+		if (MathUtil.inBounds(mouseX - this.leftPos, mouseY - this.topPos, writeBtn.x, writeBtn.y, 18, 18)) {
+			this.minecraft.gameMode.handleInventoryButtonClick(this.menu.containerId, 3);
+		}
+		return consumed || super.mouseClicked(mouseX, mouseY, button);
+	}
+
+	@Override
 	protected void renderLabels(PoseStack p_97808_, int p_97809_, int p_97810_) {
+	}
+
+	@Override
+	public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+		super.render(poseStack, mouseX, mouseY, partialTick);
+		this.renderTooltip(poseStack, mouseX, mouseY);
+	}
+
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		if (this.getFocused() != null && this.getFocused().keyPressed(keyCode, scanCode, modifiers)) {
+			return true;
+		}
+		if (keyCode == 256 && this.shouldCloseOnEsc()) {
+			this.onClose();
+			return true;
+		} else if (keyCode == 258) {
+			boolean flag = !hasShiftDown();
+			if (!this.changeFocus(flag)) {
+				this.changeFocus(flag);
+			}
+		}
+		return false;
 	}
 }
