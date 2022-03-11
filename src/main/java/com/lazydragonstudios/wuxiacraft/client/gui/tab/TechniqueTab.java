@@ -6,7 +6,7 @@ import com.lazydragonstudios.wuxiacraft.client.gui.widgets.*;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.TechniqueContainer;
-import com.lazydragonstudios.wuxiacraft.cultivation.technique.TechniqueGrid;
+import com.lazydragonstudios.wuxiacraft.cultivation.technique.TechniqueModifier;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import com.lazydragonstudios.wuxiacraft.networking.RequestTechniqueDataChange;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
@@ -14,12 +14,14 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
 import java.util.HashMap;
-import java.util.Locale;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -35,6 +37,8 @@ public class TechniqueTab extends IntrospectionTab {
 	private WuxiaButton saveBtn;
 	private WuxiaTechniqueComposeGrid gridComposer;
 	private WuxiaTextField searchField;
+
+	private TechniqueModifier modifier;
 
 	private boolean isCompiled = false;
 
@@ -57,6 +61,9 @@ public class TechniqueTab extends IntrospectionTab {
 		int stretchedSpace = scaledWidth - 36 - 316;
 		aspectWidgets = new HashMap<>();
 
+		var systemData = cultivation.getSystemData(this.system);
+		this.modifier = systemData.techniqueData.modifier;
+
 		searchField = new WuxiaTextField(36 + 3, 36, 110, 20);
 		searchField.editBox.setResponder(this::reloadAspects);
 
@@ -78,6 +85,8 @@ public class TechniqueTab extends IntrospectionTab {
 		compileBtn = new WuxiaButton(scaledWidth - 190, scaledHeight - 50, 180, 20, new TextComponent("Compile"), () -> {
 			try {
 				var modifiers = this.gridComposer.gridCompile();
+				this.modifier = modifiers;
+				this.reloadStatsPanel();
 				this.isCompiled = true;
 			} catch (Exception e) {
 				WuxiaCraft.LOGGER.error(e.getMessage());
@@ -105,6 +114,15 @@ public class TechniqueTab extends IntrospectionTab {
 		screen.addRenderableWidget(compileBtn);
 		screen.addRenderableWidget(saveBtn);
 		reloadAspects("");
+		reloadStatsPanel();
+	}
+
+	private void reloadStatsPanel() {
+		this.techniqueStatsPanel.clearChildren();
+		var statsWidgets = this.displayModifiersFromTechnique();
+		for (var widget : statsWidgets) {
+			this.techniqueStatsPanel.addChild(widget);
+		}
 	}
 
 	private void reloadAspects(String search) {
@@ -194,6 +212,58 @@ public class TechniqueTab extends IntrospectionTab {
 				poseStack.popPose();
 			}
 		}
+	}
+
+	private LinkedList<AbstractWidget> displayModifiersFromTechnique() {
+		LinkedList<AbstractWidget> widgets = new LinkedList<>();
+		if (this.modifier == null) return widgets;
+		int currentTop = 2;
+		for (var stat : this.modifier.stats.keySet()) {
+			var value = this.modifier.getStat(stat);
+			var label = new WuxiaLabel(2, currentTop, new TranslatableComponent("wuxiacraft.gui." + stat.name().toLowerCase(), value), 0xFFFFFF);
+			widgets.add(label);
+			currentTop += 11;
+		}
+		for (var system : System.values()) {
+			for (var stat : this.modifier.systemStats.get(system).keySet()) {
+				var value = this.modifier.getStat(system, stat);
+				var label = new WuxiaLabel(2, currentTop, new TranslatableComponent("wuxiacraft.gui." + stat.name().toLowerCase(), value), 0xFFFFFF);
+				widgets.add(label);
+				currentTop += 11;
+			}
+		}
+		for (var element : this.modifier.elementalStats.keySet()) {
+			for (var stat : this.modifier.elementalStats.get(element).keySet()) {
+				var value = this.modifier.getStat(element, stat);
+				var label = new WuxiaLabel(2, currentTop, new TranslatableComponent("wuxiacraft.gui." + stat.name().toLowerCase(), value), 0xFFFFFF);
+				widgets.add(label);
+				currentTop += 11;
+			}
+		}
+		for (var system : this.modifier.systemElementalStats.keySet()) {
+			for (var element : this.modifier.systemElementalStats.get(system).keySet()) {
+				for (var stat : this.modifier.systemElementalStats.get(system).get(element).keySet()) {
+					var value = this.modifier.getStat(system, element, stat);
+					var label = new WuxiaLabel(2, currentTop, new TranslatableComponent("wuxiacraft.gui." + stat.name().toLowerCase(), value), 0xFFFFFF);
+					widgets.add(label);
+					currentTop += 11;
+				}
+			}
+		}
+		for (var element : this.modifier.elements.keySet()) {
+			var value = this.modifier.elements.get(element);
+			var label = new WuxiaLabel(2, currentTop, new TranslatableComponent(element.getNamespace() + ".element." + element.getPath())
+					.append(new TextComponent(": "))
+					.append(new TextComponent(String.format("%.1f", value))), 0xFFFFFF);
+			widgets.add(label);
+			currentTop += 11;
+		}
+		for (var skill : this.modifier.skills) {
+			var label = new WuxiaLabel(2, currentTop, new TranslatableComponent("wuxiacraft.gui.skill").append(new TranslatableComponent(skill.getNamespace() + ".aspect." + skill.getPath())), 0xFFFFFF);
+			widgets.add(label);
+			currentTop += 11;
+		}
+		return widgets;
 	}
 
 	@Override

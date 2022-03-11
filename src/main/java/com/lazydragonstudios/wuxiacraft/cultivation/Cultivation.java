@@ -3,8 +3,8 @@ package com.lazydragonstudios.wuxiacraft.cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillContainer;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
-import com.lazydragonstudios.wuxiacraft.effects.WuxiaEffect;
 import com.lazydragonstudios.wuxiacraft.event.CultivatingEvent;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaMobEffects;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
@@ -133,6 +133,46 @@ public class Cultivation implements ICultivation {
 	}
 
 	@Override
+	public void addCultivationBase(Player player, System system, BigDecimal amount) {
+		CultivatingEvent event = new CultivatingEvent(player, system, amount);
+		if (MinecraftForge.EVENT_BUS.post(event)) return;
+		var systemData = this.getSystemData(system);
+		amount = event.getAmount();
+		var grid = systemData.techniqueData.grid.getGrid();
+		for (var aspectLocation : grid.values()) {
+			this.aspects.addAspectProficiency(aspectLocation, amount, this);
+		}
+		systemData.techniqueData.grid.fixProficiencies(this.aspects);
+		if (player.hasEffect(WuxiaMobEffects.PILL_RESONANCE.get())) {
+			var instance = player.getEffect(WuxiaMobEffects.PILL_RESONANCE.get());
+			var amplifier = instance.getAmplifier();
+			//amount = amount * multiply
+			amount = amount.multiply(BigDecimal.ONE.add(new BigDecimal("0.1").multiply(BigDecimal.valueOf(amplifier))));
+		}
+		var elements = systemData.techniqueData.modifier.elements;
+		for (var elementLocation : elements.keySet()) {
+			systemData.addStat(elementLocation, PlayerSystemElementalStat.FOUNDATION, BigDecimal.valueOf(elements.get(elementLocation) * 0.1));
+		}
+		var cultSpeed = systemData.getStat(PlayerSystemStat.CULTIVATION_SPEED);
+		amount = amount.multiply(BigDecimal.ONE.add(cultSpeed));
+		systemData.addStat(PlayerSystemStat.CULTIVATION_BASE, amount);
+	}
+
+	@Override
+	public boolean attemptBreakthrough(System system) {
+		var systemData = this.getSystemData(system);
+		var initialStage = systemData.currentStage;
+		var cultBase = systemData.getStat(PlayerSystemStat.CULTIVATION_BASE);
+		var maxCultBase = systemData.getStat(PlayerSystemStat.MAX_CULTIVATION_BASE);
+		if (cultBase.compareTo(maxCultBase) < 0) return false;
+		//TODO logic for chanced breakthrough
+		var stage = systemData.getStage();
+		if (stage.nextStage == null) return false;
+		systemData.currentStage = stage.nextStage;
+		return !systemData.currentStage.equals(initialStage);
+	}
+
+	@Override
 	public void calculateStats() {
 		for (var stat : PlayerStat.values()) {
 			if (stat.isModifiable) continue;
@@ -168,29 +208,6 @@ public class Cultivation implements ICultivation {
 			this.skills.knownSkills.addAll(systemData.techniqueData.modifier.skills);
 			systemData.calculateStats(this);
 		}
-	}
-
-	@Override
-	public boolean addCultivationBase(Player player, System system, BigDecimal amount) {
-		CultivatingEvent event = new CultivatingEvent(player, system, amount);
-		if (MinecraftForge.EVENT_BUS.post(event)) return false;
-		var systemData = this.getSystemData(system);
-		amount = event.getAmount();
-		var grid = systemData.techniqueData.grid.getGrid();
-		for (var aspectLocation : grid.values()) {
-			this.aspects.addAspectProficiency(aspectLocation, amount, this);
-		}
-		systemData.techniqueData.grid.fixProficiencies(this.aspects);
-		if(player.hasEffect(WuxiaMobEffects.PILL_RESONANCE.get())) {
-			var instance = player.getEffect(WuxiaMobEffects.PILL_RESONANCE.get());
-			var amplifier = instance.getAmplifier();
-			//amount = amount * multiply
-			amount = amount.multiply(BigDecimal.ONE.add(new BigDecimal("0.1").multiply(BigDecimal.valueOf(amplifier))));
-		}
-		var cultSpeed = systemData.getStat(PlayerSystemStat.CULTIVATION_SPEED);
-		amount = amount.multiply(BigDecimal.ONE.add(cultSpeed));
-		systemData.addStat(PlayerSystemStat.CULTIVATION_BASE, amount);
-		return true;
 	}
 
 	@Override

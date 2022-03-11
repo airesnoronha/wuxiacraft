@@ -13,17 +13,17 @@ import java.util.HashSet;
 
 public class TechniqueModifier {
 
-	public HashMap<PlayerStat, BigDecimal> stats = new HashMap<>();
+	public final HashMap<PlayerStat, BigDecimal> stats = new HashMap<>();
 
-	public HashMap<System, HashMap<PlayerSystemStat, BigDecimal>> systemStats = new HashMap<>();
+	public final HashMap<System, HashMap<PlayerSystemStat, BigDecimal>> systemStats = new HashMap<>();
 
-	private HashMap<ResourceLocation, HashMap<PlayerElementalStat, BigDecimal>> elementalStats = new HashMap<>();
+	public final HashMap<ResourceLocation, HashMap<PlayerElementalStat, BigDecimal>> elementalStats = new HashMap<>();
 
-	private HashMap<System, HashMap<ResourceLocation, HashMap<PlayerSystemElementalStat, BigDecimal>>> systemElementalStats = new HashMap<>();
+	public final HashMap<System, HashMap<ResourceLocation, HashMap<PlayerSystemElementalStat, BigDecimal>>> systemElementalStats = new HashMap<>();
 
-	public HashMap<ResourceLocation, Double> elements = new HashMap<>();
+	public final HashMap<ResourceLocation, Double> elements = new HashMap<>();
 
-	public HashSet<ResourceLocation> skills = new HashSet<>();
+	public final HashSet<ResourceLocation> skills = new HashSet<>();
 
 	public boolean validTechnique;
 

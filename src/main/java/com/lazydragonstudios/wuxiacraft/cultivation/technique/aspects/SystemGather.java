@@ -30,7 +30,9 @@ public class SystemGather extends TechniqueAspect {
 			rawBase = rawBase.add(this.getCurrentCheckpoint(proficiency).modifier());
 			metaData.put(statName,
 					//(value or 0) + (rawBase / 10)
-					((BigDecimal) metaData.getOrDefault(statName, BigDecimal.ZERO)).add(rawBase.multiply(new BigDecimal("0.1"))));
+					((BigDecimal) metaData.getOrDefault(statName, BigDecimal.ZERO))
+							.add(rawBase.multiply(new BigDecimal("0.1")))
+			);
 		}
 	}
 

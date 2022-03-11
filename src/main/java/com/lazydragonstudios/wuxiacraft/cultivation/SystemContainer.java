@@ -152,6 +152,11 @@ public class SystemContainer {
 
 	public void addStat(PlayerSystemStat stat, BigDecimal value) {
 		this.setStat(stat, this.getStat(stat).add(value));
+		if (stat == PlayerSystemStat.CULTIVATION_BASE) {
+			//this cult_base = min (max_cult_base, cult_base)
+			this.setStat(stat, this.getStat(PlayerSystemStat.MAX_CULTIVATION_BASE)
+					.min(this.getStat(PlayerSystemStat.CULTIVATION_BASE)));
+		}
 	}
 
 	public void addStat(ResourceLocation element, PlayerSystemElementalStat stat, BigDecimal value) {
