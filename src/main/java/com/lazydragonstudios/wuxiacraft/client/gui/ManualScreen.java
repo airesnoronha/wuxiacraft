@@ -45,6 +45,7 @@ public class ManualScreen extends Screen {
 		this.panel = new WuxiaScrollPanel(this.guiLeft, this.guiTop, 210, 210, new TextComponent(""));
 		this.gridComposer = new WuxiaTechniqueComposeGrid(0, 0, this.grid);
 		this.gridComposer.setGridRadius(this.radius);
+		this.gridComposer.setShouldRenderCompiledTooltips(false);
 		this.panel.addChild(this.gridComposer);
 		this.addRenderableWidget(this.panel);
 	}
@@ -56,8 +57,8 @@ public class ManualScreen extends Screen {
 		blit(poseStack, 0, 0, 0, 0, 200, 200);
 		poseStack.popPose();
 		super.render(poseStack, mouseX, mouseY, partialTick);
-		for(var child: this.renderables) {
-			if(child instanceof AbstractWidget widget) {
+		for (var child : this.renderables) {
+			if (child instanceof AbstractWidget widget) {
 				widget.renderToolTip(poseStack, mouseX, mouseY);
 			}
 		}

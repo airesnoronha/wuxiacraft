@@ -1,22 +1,15 @@
 package com.lazydragonstudios.wuxiacraft;
 
-import com.lazydragonstudios.wuxiacraft.client.RenderHUDEventHandler;
-import com.lazydragonstudios.wuxiacraft.client.overlays.DebugOverlay;
-import com.lazydragonstudios.wuxiacraft.client.overlays.HealthOverlay;
+import com.lazydragonstudios.wuxiacraft.command.CreateDefaultManualCommand;
 import com.lazydragonstudios.wuxiacraft.command.CultivationCommand;
 import com.lazydragonstudios.wuxiacraft.command.StatCommand;
-import com.lazydragonstudios.wuxiacraft.container.IntrospectionMenu;
 import com.lazydragonstudios.wuxiacraft.init.*;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
-import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraftforge.client.gui.ForgeIngameGui;
-import net.minecraftforge.client.gui.OverlayRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
@@ -26,9 +19,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.lazydragonstudios.wuxiacraft.capabilities.CapabilityAttachingHandler;
 import com.lazydragonstudios.wuxiacraft.capabilities.CapabilityRegistryHandler;
-import com.lazydragonstudios.wuxiacraft.client.InputHandler;
-import com.lazydragonstudios.wuxiacraft.client.gui.IntrospectionScreen;
-import com.lazydragonstudios.wuxiacraft.client.overlays.EnergiesOverlay;
 
 import java.util.stream.Collectors;
 
@@ -69,6 +59,7 @@ public class WuxiaCraft {
 		WuxiaSkillAspects.ASPECTS.register(modEventBus);
 		WuxiaPoiTypes.POI_TYPES.register(modEventBus);
 		WuxiaProfessions.PROFESSIONS.register(modEventBus);
+
 	}
 
 
@@ -76,6 +67,8 @@ public class WuxiaCraft {
 		// some preinit code
 		LOGGER.info("Registering messages. Check your transmission talisman!");
 		WuxiaPacketHandler.registerMessages();
+
+		WuxiaDefaultTechniqueManuals.init();
 		TestRun.testStuff();
 	}
 
@@ -107,5 +100,6 @@ public class WuxiaCraft {
 		var dispatcher = event.getDispatcher();
 		CultivationCommand.register(dispatcher);
 		StatCommand.register(dispatcher);
+		CreateDefaultManualCommand.register(dispatcher);
 	}
 }

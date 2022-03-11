@@ -28,56 +28,67 @@ public class WuxiaProfessions {
 	public static final DeferredRegister<VillagerProfession> PROFESSIONS = DeferredRegister.create(ForgeRegistries.PROFESSIONS, WuxiaCraft.MOD_ID);
 
 	public static RegistryObject<VillagerProfession> CULTIVATOR = PROFESSIONS
-		.register("cultivator",
-			() -> new VillagerProfession("cultivator",
-				WuxiaPoiTypes.TECHNIQUE_INSCRIBER.get(),
-				ImmutableSet.of(),
-				ImmutableSet.of(),
-				SoundEvents.VILLAGER_WORK_CARTOGRAPHER
-			)
-		);
-	
+			.register("cultivator",
+					() -> new VillagerProfession("cultivator",
+							WuxiaPoiTypes.TECHNIQUE_INSCRIBER.get(),
+							ImmutableSet.of(),
+							ImmutableSet.of(),
+							SoundEvents.VILLAGER_WORK_CARTOGRAPHER
+					)
+			);
 
 
 	@SubscribeEvent
 	public static void registerTrades(VillagerTradesEvent event) {
 
 		if (event.getType() == WuxiaProfessions.CULTIVATOR.get()) {
+			for (var manualLocation : WuxiaDefaultTechniqueManuals.getAllKeys()) {
+				var manualSupplier = WuxiaDefaultTechniqueManuals.getDefaultManual(manualLocation);
+				if (manualSupplier == null) continue;
+				event.getTrades().get(1).add(
+						new ItemTrade(
+								new ItemStack(Items.EMERALD, 10),
+								manualSupplier.get(),
+								2,
+								15
+						)
+				);
+			}
 			event.getTrades().get(1).add(
-				new ItemTrade(
-					new ItemStack(Items.PRISMARINE_CRYSTALS, 25),
-					new ItemStack(Items.MAP),
-					1,
-					10
-				)
+					new ItemTrade(
+							new ItemStack(Items.EMERALD, 1),
+							new ItemStack(Items.BOOK, 1),
+							15,
+							5
+					)
 			);
 			event.getTrades().get(1).add(
-				new ItemTrade(
-					new ItemStack(Items.PRISMARINE_CRYSTALS, 10),
-					new ItemStack(Items.PAPER, 5),
-					10, 
-					1
-				)
+					new ItemTrade(
+							new ItemStack(Items.EMERALD, 1),
+							new ItemStack(Items.INK_SAC, 1),
+							15,
+							5
+					)
 			);
 		}
-		
+
 	}
 
-	static class ItemTrade implements ItemListing{
+	static class ItemTrade implements ItemListing {
 
 		private ItemStack cost;
 		private ItemStack product;
-		
+
 		private int xpGained;
 		private int stock;
-		
+
 		public ItemTrade(ItemStack cost, ItemStack product, int stock, int xpGained) {
 			this.cost = cost;
 			this.product = product;
 			this.stock = stock;
 			this.xpGained = xpGained;
 		}
-		
+
 		@Override
 		public MerchantOffer getOffer(Entity trader, Random rand) {
 			return new MerchantOffer(cost, product, stock, xpGained, 0F);

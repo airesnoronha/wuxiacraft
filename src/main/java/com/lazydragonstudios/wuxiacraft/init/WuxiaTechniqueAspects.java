@@ -391,14 +391,26 @@ public class WuxiaTechniqueAspects {
 	//////////////////////////////////////////
 	public static RegistryObject<TechniqueAspect> METAL_SKIN = ASPECTS.register("metal_skin",
 			() -> new ElementSystemConverter(3d, WuxiaElements.METAL.getId(), System.BODY)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "ore"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "metal_nugget")))
 	);
 
 	public static RegistryObject<TechniqueAspect> SHARPNESS = ASPECTS.register("sharpness",
 			() -> new ElementSystemConverter(3d, WuxiaElements.METAL.getId(), System.ESSENCE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "ore"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "metal_nugget")))
 	);
 
 	public static RegistryObject<TechniqueAspect> MAGNETIZATION = ASPECTS.register("magnetization",
 			() -> new ElementSystemConverter(3d, WuxiaElements.METAL.getId(), System.DIVINE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "ore"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "metal_nugget")))
 	);
 
 	//////////////////////////////////////////
@@ -415,30 +427,44 @@ public class WuxiaTechniqueAspects {
 
 	public static RegistryObject<TechniqueAspect> THUNDERING = ASPECTS.register("thundering",
 			() -> new ElementalGenerator(9d, WuxiaElements.LIGHTNING.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "spark")))
 	);
 
 	public static RegistryObject<TechniqueAspect> EARTHEN_THUNDER = ASPECTS.register("earthen_thunder",
 			() -> new ElementalGenerator(27d, WuxiaElements.LIGHTNING.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "circuit")))
 	);
 
 	public static RegistryObject<TechniqueAspect> HEAVENLY_LIGHTNING = ASPECTS.register("heavenly_lightning",
 			() -> new ElementalGenerator(81d, WuxiaElements.LIGHTNING.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "thundering")))
 	);
 
 	public static RegistryObject<TechniqueAspect> IMMORTAL_STORM = ASPECTS.register("immortal_storm",
 			() -> new ElementalGenerator(243d, WuxiaElements.LIGHTNING.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "earthen_thunder")))
 	);
 
 	public static RegistryObject<TechniqueAspect> ENDLESS_LIGHTNING = ASPECTS.register("endless_lightning",
 			() -> new ElementalGenerator(729d, WuxiaElements.LIGHTNING.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "heavenly_lightning")))
 	);
 
 	public static RegistryObject<TechniqueAspect> EMBODIMENT_OF_LIGHTNING = ASPECTS.register("embodiment_of_lightning",
 			() -> new ElementalGenerator(2187d, WuxiaElements.LIGHTNING.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "immortal_storm")))
 	);
 
 	public static RegistryObject<TechniqueAspect> GOD_OF_LIGHTNING = ASPECTS.register("god_of_lightning",
 			() -> new ElementalGenerator(6561d, WuxiaElements.LIGHTNING.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "endless_lightning")))
 	);
 
 	//////////////////////////////////////////
@@ -447,14 +473,26 @@ public class WuxiaTechniqueAspects {
 
 	public static RegistryObject<TechniqueAspect> CONDUIT = ASPECTS.register("conduit",
 			() -> new ElementSystemConverter(3d, WuxiaElements.LIGHTNING.getId(), System.BODY)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "spark"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "circuit")))
 	);
 
 	public static RegistryObject<TechniqueAspect> ARC = ASPECTS.register("arc",
 			() -> new ElementSystemConverter(3d, WuxiaElements.LIGHTNING.getId(), System.ESSENCE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "spark"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "circuit")))
 	);
 
 	public static RegistryObject<TechniqueAspect> FLASH = ASPECTS.register("flash",
 			() -> new ElementSystemConverter(3d, WuxiaElements.LIGHTNING.getId(), System.DIVINE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "spark"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "circuit")))
 	);
 
 	//////////////////////////////////////////

@@ -259,7 +259,7 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 		var font = Minecraft.getInstance().font;
 		var width = font.width(name);
 		var tooTipWidth = width + 10;
-		var toolTipHeight = 13 + meta.size() * 11;
+		var toolTipHeight = this.shouldRenderCompiledTooltips ? 13 + meta.size() * 18 : 13;
 		GuiComponent.fill(poseStack, mouseX, mouseY, mouseX + tooTipWidth, mouseY + toolTipHeight, 0x6A8080A0);
 		font.drawShadow(poseStack, name, mouseX + 5, mouseY + 2, 0xFFFFFF);
 		poseStack.popPose();

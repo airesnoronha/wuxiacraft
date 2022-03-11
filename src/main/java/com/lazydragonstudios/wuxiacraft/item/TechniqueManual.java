@@ -7,12 +7,14 @@ import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.TechniqueGrid;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects.TechniqueAspect;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -24,6 +26,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.awt.*;
+import java.math.BigDecimal;
+import java.util.LinkedList;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -47,7 +52,9 @@ public class TechniqueManual extends Item {
 		techGrid.deserialize(itemTag.getCompound("technique-grid"));
 		ICultivation cultivation = Cultivation.get(player);
 		var aspectData = cultivation.getAspects();
-		for (var aspectLocation : techGrid.getGrid().values()) {
+		var toBecomeUnknown = new LinkedList<Point>();
+		for (var hexC : techGrid.getGrid().keySet()) {
+			var aspectLocation = techGrid.getAspectAtGrid(hexC);
 			var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspectLocation);
 			if (techAspect == null) continue;
 			if (!aspectData.knowsAspect(aspectLocation)) {
@@ -55,12 +62,18 @@ public class TechniqueManual extends Item {
 					if (!level.isClientSide()) {
 						if (player instanceof ServerPlayer serverPlayer) {
 							serverPlayer.sendMessage(new TranslatableComponent("wuxiacraft.learn_successful")
-											.append(new TranslatableComponent("wuxiacraft.aspect." + aspectLocation + ".location")),
+											.append(new TranslatableComponent("wuxiacraft.aspect." + aspectLocation.getPath() + ".name")),
 									Util.NIL_UUID);
 						}
 					}
+				} else {
+					toBecomeUnknown.add(hexC);
 				}
 			}
+		}
+		for (var hexC : toBecomeUnknown) {
+			techGrid.removeGridNode(hexC);
+			techGrid.addGridNode(hexC, WuxiaTechniqueAspects.UNKNOWN.getId(), BigDecimal.TEN);
 		}
 		if (level.isClientSide()) {
 			int radius = 5;
@@ -76,7 +89,7 @@ public class TechniqueManual extends Item {
 	public Component getName(ItemStack itemStack) {
 		if (itemStack.getTag() == null) return super.getName(itemStack);
 		if (itemStack.getTag().contains("name")) {
-			return new TextComponent(itemStack.getTag().getString("name"));
+			return new TranslatableComponent(itemStack.getTag().getString("name"));
 		}
 		return super.getName(itemStack);
 	}

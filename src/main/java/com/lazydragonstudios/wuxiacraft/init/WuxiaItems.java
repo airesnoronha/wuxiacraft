@@ -56,12 +56,12 @@ public class WuxiaItems {
 			() -> new SpiritStone(new Item.Properties().tab(WUXIACRAFT_TAB), 8));
 
 	public static RegistryObject<Item> BODY_MANUAL = ITEMS.register("body_manual",
-			() -> new TechniqueManual(new Item.Properties(), System.BODY));
+			() -> new TechniqueManual(new Item.Properties().stacksTo(1), System.BODY));
 
 	public static RegistryObject<Item> DIVINE_MANUAL = ITEMS.register("divine_manual",
-			() -> new TechniqueManual(new Item.Properties(), System.DIVINE));
+			() -> new TechniqueManual(new Item.Properties().stacksTo(1), System.DIVINE));
 
 	public static RegistryObject<Item> ESSENCE_MANUAL = ITEMS.register("essence_manual",
-			() -> new TechniqueManual(new Item.Properties(), System.ESSENCE));
+			() -> new TechniqueManual(new Item.Properties().stacksTo(1), System.ESSENCE));
 
 }
