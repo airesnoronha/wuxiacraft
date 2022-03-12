@@ -10,6 +10,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.gameevent.GameEventListener;
 import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -30,6 +32,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 import java.util.function.Function;
 
 @SuppressWarnings("deprecation")
@@ -65,8 +68,9 @@ public class TechniqueInscriber extends BaseEntityBlock {
 		if (blockentity instanceof InscriberEntity) {
 			player.openMenu((MenuProvider) blockentity);
 		}
-
 	}
+
+
 
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter getter, BlockPos pos, CollisionContext ctx) {
@@ -88,6 +92,11 @@ public class TechniqueInscriber extends BaseEntityBlock {
 			case WEST -> SHAPE_TABLE_WEST;
 			default -> SHAPE_BASE_LONGITUDINAL;
 		};
+	}
+
+	@Override
+	public List<ItemStack> getDrops(BlockState p_60537_, LootContext.Builder p_60538_) {
+		return super.getDrops(p_60537_, p_60538_);
 	}
 
 	@Override
