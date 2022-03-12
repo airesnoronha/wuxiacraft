@@ -169,6 +169,7 @@ public class Cultivation implements ICultivation {
 		var stage = systemData.getStage();
 		if (stage.nextStage == null) return false;
 		systemData.currentStage = stage.nextStage;
+		systemData.setStat(PlayerSystemStat.CULTIVATION_BASE, BigDecimal.ZERO);
 		return !systemData.currentStage.equals(initialStage);
 	}
 

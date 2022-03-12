@@ -142,6 +142,17 @@ public class WuxiaRealms {
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_stage"),
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_pathways_stage")
 					)
+							.setOnCultivate(player -> {
+								var cultivation = Cultivation.get(player);
+								var essenceData = cultivation.getSystemData(System.ESSENCE);
+								if (essenceData.consumeEnergy(new BigDecimal("2.5"))) {
+									cultivation.addCultivationBase(player, System.ESSENCE, BigDecimal.ONE);
+								}
+							}).setOnCultivationFailure(player -> {
+								var cultivation = Cultivation.get(player);
+								var essenceData = cultivation.getSystemData(System.ESSENCE);
+								essenceData.consumeEnergy(new BigDecimal("2.5"));
+							})
 							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("4"))
 							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("2"))
 							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.01"))
@@ -353,30 +364,30 @@ public class WuxiaRealms {
 			);
 	//TODO finish golden core stage
 	public static RegistryObject<CultivationStage> ESSENCE_GOLDEN_CORE_STAGE = STAGE_REGISTER
-	.register("essence_golden_core_stage",
-			() -> new CultivationStage(
-					System.ESSENCE,
-					new ResourceLocation(WuxiaCraft.MOD_ID, "essence_revolving_core_realm"),
-					new ResourceLocation(WuxiaCraft.MOD_ID, "essence_core_shaping_stage"),
-					null
-			)
-					.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("33"))
-					.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("6"))
-					.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.04"))
-					.addPlayerStat(PlayerStat.MAX_BARRIER, new BigDecimal("15"))
-					.addPlayerStat(PlayerStat.BARRIER_REGEN, new BigDecimal("0.07"))
-					.addPlayerStat(PlayerStat.BARRIER_REGEN_COST, new BigDecimal("0.18"))
-					.addPlayerStat(PlayerStat.HEALTH_REGEN, new BigDecimal("0.004"))
-					.addPlayerStat(PlayerStat.HEALTH_REGEN_COST, new BigDecimal("0.009"))
-					.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("100000"))
-					.addSystemStat(System.ESSENCE, PlayerSystemStat.CULTIVATION_SPEED, new BigDecimal("0.8"))
-					.addSystemStat(System.BODY, PlayerSystemStat.MAX_ENERGY, new BigDecimal("15"))
-					.addSystemStat(System.BODY, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.05"))
-					.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("15"))
-					.addSystemStat(System.DIVINE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.05"))
-					.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("42"))
-					.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.023"))
-					.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.RESISTANCE, new BigDecimal("6"))
-					.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.PIERCE, new BigDecimal("10"))
+			.register("essence_golden_core_stage",
+					() -> new CultivationStage(
+							System.ESSENCE,
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_revolving_core_realm"),
+							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_core_shaping_stage"),
+							null
+					)
+							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("33"))
+							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("6"))
+							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.04"))
+							.addPlayerStat(PlayerStat.MAX_BARRIER, new BigDecimal("15"))
+							.addPlayerStat(PlayerStat.BARRIER_REGEN, new BigDecimal("0.07"))
+							.addPlayerStat(PlayerStat.BARRIER_REGEN_COST, new BigDecimal("0.18"))
+							.addPlayerStat(PlayerStat.HEALTH_REGEN, new BigDecimal("0.004"))
+							.addPlayerStat(PlayerStat.HEALTH_REGEN_COST, new BigDecimal("0.009"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("100000"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.CULTIVATION_SPEED, new BigDecimal("0.8"))
+							.addSystemStat(System.BODY, PlayerSystemStat.MAX_ENERGY, new BigDecimal("15"))
+							.addSystemStat(System.BODY, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.05"))
+							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("15"))
+							.addSystemStat(System.DIVINE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.05"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("42"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.023"))
+							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.RESISTANCE, new BigDecimal("6"))
+							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.PIERCE, new BigDecimal("10"))
 			);
 }

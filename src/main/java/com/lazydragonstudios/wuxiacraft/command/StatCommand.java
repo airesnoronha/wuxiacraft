@@ -2,7 +2,10 @@ package com.lazydragonstudios.wuxiacraft.command;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
+import com.lazydragonstudios.wuxiacraft.cultivation.System;
+import com.lazydragonstudios.wuxiacraft.cultivation.SystemContainer;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.networking.CultivationSyncMessage;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import com.mojang.brigadier.CommandDispatcher;
@@ -20,55 +23,82 @@ import java.math.BigDecimal;
 
 public class StatCommand {
 
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("stat")
-                .requires(commandSourceStack -> commandSourceStack.hasPermission(2))
-                .then(Commands.argument("target", EntityArgument.player())
-                        .then(Commands.literal("get")
-                                .executes(StatCommand::getStats)
-                        )
-                        .then(Commands.literal("set")
-                                .then(Commands.argument("stat", StatArgument.id())
-                                        .then(Commands.argument("amount", IntegerArgumentType.integer())
-                                                .executes(StatCommand::setStat)
-                                        )
-                                )
-                        )
-                )
-        );
-    }
+	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+		dispatcher.register(Commands.literal("stat")
+				.requires(commandSourceStack -> commandSourceStack.hasPermission(2))
+				.then(Commands.argument("target", EntityArgument.player())
+						.then(Commands.literal("get")
+								.executes(StatCommand::getStats)
+						)
+						.then(Commands.literal("set")
+								.then(Commands.argument("stat", StatArgument.id())
+										.then(Commands.argument("amount", IntegerArgumentType.integer())
+												.executes(StatCommand::setStat)
+										)
+								)
+								.then(Commands.argument("system", SystemArgument.system())
+										.then(Commands.argument("stat", SystemStatArgument.stat())
+												.then(Commands.argument("amount", IntegerArgumentType.integer())
+														.executes(StatCommand::setSystemStat)
+												)
+										)
+								)
+						)
+				)
+		);
+	}
 
-    public static void syncClientCultivation(ServerPlayer player) {
-        WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new CultivationSyncMessage(Cultivation.get(player)));
-    }
+	public static void syncClientCultivation(ServerPlayer player) {
+		ICultivation cultivation = Cultivation.get(player);
+		WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new CultivationSyncMessage(cultivation));
+		cultivation.calculateStats();
+	}
 
-    public static int getStats(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        ServerPlayer target = EntityArgument.getPlayer(ctx, "target");
-        ICultivation cultivation = Cultivation.get(target);
-        TextComponent message = new TextComponent("");
-        message.append("Player Stats: ").append("\n");
-        for (var stat : PlayerStat.values()) {
-            String statName = stat.name();
-            message.append(statName).append(": ").append(String.format("%.1f", cultivation.getStat(stat))).append("\n");
-        }
-        ctx.getSource().sendSuccess(message, true);
-        return 1;
-    }
+	public static int getStats(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		ServerPlayer target = EntityArgument.getPlayer(ctx, "target");
+		ICultivation cultivation = Cultivation.get(target);
+		TextComponent message = new TextComponent("");
+		message.append("Player Stats: ").append("\n");
+		for (var stat : PlayerStat.values()) {
+			String statName = stat.name();
+			message.append(statName).append(": ").append(String.format("%.1f", cultivation.getStat(stat))).append("\n");
+		}
+		ctx.getSource().sendSuccess(message, true);
+		return 1;
+	}
 
-    public static int setStat(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        ServerPlayer target = EntityArgument.getPlayer(ctx, "target");
-        String stat = ctx.getArgument("stat", String.class);
-        int amount = IntegerArgumentType.getInteger(ctx, "amount");
+	public static int setStat(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		ServerPlayer target = EntityArgument.getPlayer(ctx, "target");
+		String stat = ctx.getArgument("stat", String.class);
+		int amount = IntegerArgumentType.getInteger(ctx, "amount");
 
-        ICultivation cultivation = Cultivation.get(target);
-        TextComponent message = new TextComponent("");
+		ICultivation cultivation = Cultivation.get(target);
+		TextComponent message = new TextComponent("");
 
-        PlayerStat playerStat = PlayerStat.valueOf(stat);
-        cultivation.setStat(playerStat, BigDecimal.valueOf(amount));
+		PlayerStat playerStat = PlayerStat.valueOf(stat);
+		cultivation.setStat(playerStat, BigDecimal.valueOf(amount));
 
-        message.append("Successfully set the target's " + stat + " stat.");
-        ctx.getSource().sendSuccess(message, true);
-        syncClientCultivation(target);
-        return 1;
-    }
+		message.append("Successfully set the target's " + stat + " stat.");
+		ctx.getSource().sendSuccess(message, true);
+		syncClientCultivation(target);
+		return 1;
+	}
+
+	public static int setSystemStat(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		ServerPlayer target = EntityArgument.getPlayer(ctx, "target");
+		System system = SystemArgument.getSystem(ctx, "system");
+		PlayerSystemStat stat = SystemStatArgument.getStat(ctx, "stat");
+		int amount = IntegerArgumentType.getInteger(ctx, "amount");
+
+		ICultivation cultivation = Cultivation.get(target);
+		SystemContainer systemData = cultivation.getSystemData(system);
+		TextComponent message = new TextComponent("");
+
+		systemData.setStat(stat, BigDecimal.valueOf(amount));
+
+		message.append("Successfully set the target's " + stat + " stat.");
+		ctx.getSource().sendSuccess(message, true);
+		syncClientCultivation(target);
+		return 1;
+	}
 }

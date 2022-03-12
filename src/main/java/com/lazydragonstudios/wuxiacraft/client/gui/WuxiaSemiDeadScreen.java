@@ -55,4 +55,9 @@ public class WuxiaSemiDeadScreen extends Screen {
 		drawCenteredString(poseStack, this.font, new TranslatableComponent("wuxiacraft.semi_dead.time", timer), this.width / 2, 85, 16777215);
 		super.render(poseStack, mouseX, mouseY, partialTick);
 	}
+
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifier) {
+		return false;
+	}
 }
