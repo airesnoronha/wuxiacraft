@@ -100,7 +100,7 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 		this.checkpoints.add(checkpoint);
 		return this;
 	}
-
+	
 	/**
 	 * Changes the behavior to seek whether this aspect can be learned by a player
 	 *
@@ -220,9 +220,9 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	 * On reached is going to be called a lot, use {@link AspectContainer#learnAspect)} that it's safe
 	 */
 	public record Checkpoint(String name, BigDecimal proficiencyRequired, BigDecimal modifier,
-													 Consumer<AspectContainer> onReached,
+													 Consumer<ICultivation> onReached,
 													 HashSet<ResourceLocation> skills) {
-		public Checkpoint(String name, BigDecimal proficiencyRequired, BigDecimal modifier, Consumer<AspectContainer> onReached) {
+		public Checkpoint(String name, BigDecimal proficiencyRequired, BigDecimal modifier, Consumer<ICultivation> onReached) {
 			this(name, proficiencyRequired, modifier, onReached, new HashSet<>());
 		}
 
@@ -231,7 +231,7 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 			});
 		}
 
-		public Checkpoint(String name, BigDecimal proficiency, Consumer<AspectContainer> onReached) {
+		public Checkpoint(String name, BigDecimal proficiency, Consumer<ICultivation> onReached) {
 			this(name, proficiency, BigDecimal.ZERO, onReached);
 		}
 

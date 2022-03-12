@@ -177,9 +177,7 @@ public class Cultivation implements ICultivation {
 		var systemData = this.getSystemData(system);
 		amount = event.getAmount();
 		var grid = systemData.techniqueData.grid.getGrid();
-		for (var aspectLocation : grid.values()) {
-			this.aspects.addAspectProficiency(aspectLocation, amount, this);
-		}
+		
 		systemData.techniqueData.grid.fixProficiencies(this.aspects);
 		if(player.hasEffect(WuxiaMobEffects.PILL_RESONANCE.get())) {
 			var instance = player.getEffect(WuxiaMobEffects.PILL_RESONANCE.get());
@@ -189,6 +187,9 @@ public class Cultivation implements ICultivation {
 		}
 		var cultSpeed = systemData.getStat(PlayerSystemStat.CULTIVATION_SPEED);
 		amount = amount.multiply(BigDecimal.ONE.add(cultSpeed));
+		for (var aspectLocation : grid.values()) {
+			this.aspects.addAspectProficiency(aspectLocation, amount, this);
+		}
 		systemData.addStat(PlayerSystemStat.CULTIVATION_BASE, amount);
 		return true;
 	}
@@ -258,7 +259,7 @@ public class Cultivation implements ICultivation {
 			getSystemData(System.ESSENCE).deserialize(tag.getCompound("essence-data"));
 		}
 		if (tag.contains("aspect-data")) {
-			this.aspects.deserialize(tag.getCompound("aspect-data"));
+			this.aspects.deserialize(tag.getCompound("aspect-data"), this);
 		}
 		if (tag.contains("skills-data")) {
 			this.skills.deserialize(tag.getCompound("skills-data"));
