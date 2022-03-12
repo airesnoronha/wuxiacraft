@@ -182,5 +182,8 @@
   "wuxiacraft.technique.legends_of_water": "Legends Of Water",
   "wuxiacraft.technique.nature_observation": "Nature Observation",
   "wuxiacraft.technique.metallic_reinforcement": "Metallic Reinforcement",
-  "wuxiacraft.technique.lightning_replication": "Lightning Replication"
+  "wuxiacraft.technique.lightning_replication": "Lightning Replication",
+  "wuxiacraft.system_not_found": "Couldn't find specified system: %1$s",
+  "wuxiacraft.aspect_not_found": "Couldn't find specified aspect: $1$s",
+  "wuxiacraft.system_stat_not_found": "Couldn't find specified stat: $1$s"
 }

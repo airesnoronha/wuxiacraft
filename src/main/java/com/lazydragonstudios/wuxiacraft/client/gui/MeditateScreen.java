@@ -1,12 +1,15 @@
 package com.lazydragonstudios.wuxiacraft.client.gui;
 
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
+import com.lazydragonstudios.wuxiacraft.client.gui.minigames.EssenceQiGatheringMinigame;
 import com.lazydragonstudios.wuxiacraft.client.gui.minigames.Minigame;
 import com.lazydragonstudios.wuxiacraft.client.gui.minigames.MortalEssenceMinigame;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRealms;
+import com.lazydragonstudios.wuxiacraft.networking.AttemptBreakthroughMessage;
+import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import com.lazydragonstudios.wuxiacraft.util.MathUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -43,6 +46,7 @@ public class MeditateScreen extends Screen {
 
 	static {
 		stageMiniGames.put(WuxiaRealms.ESSENCE_MORTAL_STAGE.getId(), MortalEssenceMinigame::new);
+		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_GATHERING_STAGE.getId(), EssenceQiGatheringMinigame::new);
 	}
 
 	private int guiTop = 0;
@@ -83,12 +87,12 @@ public class MeditateScreen extends Screen {
 			if (system == this.system) texX = 63;
 			blit(poseStack, 5 + 63 * system.ordinal(), 6, texX, 170, 63, 14);
 		}
-		this.renderLabels(poseStack, mouseX, mouseY, partialTicks);
-		if (this.minigame == null) return;
-		minigame.render(poseStack, mouseX - this.guiLeft, mouseY - this.guiTop, partialTicks);
 		if (this.canBreakThrough) {
 			blit(poseStack, 69, 170, 0, 170, 63, 14);
 		}
+		this.renderLabels(poseStack, mouseX, mouseY, partialTicks);
+		if (this.minigame == null) return;
+		minigame.render(poseStack, mouseX - this.guiLeft, mouseY - this.guiTop, partialTicks);
 		poseStack.popPose();
 	}
 
@@ -108,12 +112,12 @@ public class MeditateScreen extends Screen {
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		var superResult = super.mouseClicked(mouseX, mouseY, button);
+		var player = Minecraft.getInstance().player;
+		if (player == null) return superResult;
+		var cultivation = Cultivation.get(player);
+		var systemData = cultivation.getSystemData(system);
 		for (var system : System.values()) {
 			if (MathUtil.inBounds(mouseX - this.guiLeft, mouseY - this.guiTop, 5 + 63 * system.ordinal(), 6, 63, 18)) {
-				var player = Minecraft.getInstance().player;
-				if (player == null) break;
-				var cultivation = Cultivation.get(player);
-				var systemData = cultivation.getSystemData(system);
 				if (!systemData.techniqueData.modifier.isValidTechnique()) break;
 				var minigame = stageMiniGames.get(systemData.currentStage);
 				if (minigame == null) break;
@@ -122,13 +126,19 @@ public class MeditateScreen extends Screen {
 				break;
 			}
 		}
+		if (this.canBreakThrough) {
+			if (MathUtil.inBounds(mouseX - this.guiLeft, mouseY - this.guiTop, 69, 170, 63, 14)) {
+				WuxiaPacketHandler.INSTANCE.sendToServer(new AttemptBreakthroughMessage(this.system));
+				return true;
+			}
+		}
 		if (this.minigame == null) return superResult;
 		return superResult || minigame.onMouseClick(mouseX - this.guiLeft, mouseY - this.guiTop, button);
 	}
 
 	@Override
 	public boolean mouseReleased(double mouseX, double mouseY, int button) {
-		var superResult = super.mouseReleased(mouseX, mouseY, button);
+		var superResult = super.mouseReleased(mouseX - this.guiLeft, mouseY - this.guiTop, button);
 		if (this.minigame == null) return superResult;
 		return superResult || minigame.onMouseRelease(mouseX, mouseY, button);
 	}
@@ -137,18 +147,26 @@ public class MeditateScreen extends Screen {
 	public void mouseMoved(double mouseX, double mouseY) {
 		super.mouseMoved(mouseX, mouseY);
 		if (this.minigame == null) return;
-		minigame.onMouseMove(mouseX, mouseY);
+		minigame.onMouseMove(mouseX - this.guiLeft, mouseY - this.guiTop);
 	}
 
 	@Override
 	public void tick() {
 		super.tick();
-		if (this.minigame == null) return;
-		this.minigame.tick();
 		var player = Minecraft.getInstance().player;
 		if (player == null) return;
 		var cultivation = Cultivation.get(player);
 		var systemData = cultivation.getSystemData(this.system);
+		var expectedMinigame = stageMiniGames.get(systemData.currentStage);
+		if (expectedMinigame != null) {
+			if (!expectedMinigame.get().getClass().isInstance(this.minigame)) {
+				this.minigame = expectedMinigame.get();
+			}
+		} else {
+			this.minigame = null;
+		}
+		if (this.minigame == null) return;
+		this.minigame.tick();
 		this.canBreakThrough = systemData.getStat(PlayerSystemStat.CULTIVATION_BASE)
 				.compareTo(systemData.getStat(PlayerSystemStat.MAX_CULTIVATION_BASE)) >= 0;
 	}

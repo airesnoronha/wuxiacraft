@@ -50,7 +50,7 @@ public class SystemGather extends TechniqueAspect {
 	public void reject(HashMap<String, Object> metaData) {
 		String statName = this.system.name().toLowerCase() + "-stat-" + PlayerSystemStat.CULTIVATION_SPEED.name().toLowerCase();
 		metaData.put(statName,
-				(double) metaData.getOrDefault(statName, 0d) - 1d);
+				((BigDecimal) metaData.getOrDefault(statName, BigDecimal.ZERO)).subtract(BigDecimal.ONE));
 	}
 
 	@Override

@@ -69,7 +69,7 @@ public class CombatEventHandler {
 			resistance.subtract(pierce).max(BigDecimal.ZERO);
 		}
 
-		source = new WuxiaDamageSource(source.getMsgId(), source.getElement(),
+		source = new WuxiaDamageSource(source.getMsgId(), source.getElement(), source.getEntity(),
 				source.getDamage().subtract(resistance).max(BigDecimal.ONE));
 
 		player.getInventory().hurtArmor(source, event.getAmount(), Inventory.ALL_ARMOR_SLOTS);
