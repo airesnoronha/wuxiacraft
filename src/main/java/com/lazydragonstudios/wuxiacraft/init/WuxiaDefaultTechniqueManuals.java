@@ -58,7 +58,7 @@ public class WuxiaDefaultTechniqueManuals {
 		metallic_reinforcement.addGridNode(new Point(-1, 1), WuxiaTechniqueAspects.SHARPNESS.getId(), BigDecimal.TEN);
 		metallic_reinforcement.addGridNode(new Point(-1, 1), WuxiaTechniqueAspects.SHARPNESS.getId(), BigDecimal.TEN);
 		metallic_reinforcement.addGridNode(new Point(0, 1), WuxiaTechniqueAspects.ESSENCE_GATHERING.getId(), BigDecimal.TEN);
-		registerNewManual(new ResourceLocation(WuxiaCraft.MOD_ID, "metallic_reinforcement"), 1, lightning_replication);
+		registerNewManual(new ResourceLocation(WuxiaCraft.MOD_ID, "metallic_reinforcement"), 1, metallic_reinforcement);
 	}
 
 	public static void registerNewManual(ResourceLocation resourceLocation, Supplier<ItemStack> stackSupplier) {
