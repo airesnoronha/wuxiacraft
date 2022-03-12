@@ -53,14 +53,16 @@ public class EssenceQiGatheringMinigame implements Minigame {
 
 	@Override
 	public boolean onMouseRelease(double x, double y, int button) {
-		WuxiaPacketHandler.INSTANCE.sendToServer(new MeditateMessage(System.ESSENCE, false));
-		var player = Minecraft.getInstance().player;
-		if (player == null) return false;
-		var cultivation = Cultivation.get(player);
-		var essenceData = cultivation.getSystemData(System.ESSENCE);
-		essenceData.getStage().cultivationFailure(player);
-		this.strands.remove(this.selectedStrand);
-		this.selectedStrand = null;
+		if (this.selectedStrand != null) {
+			WuxiaPacketHandler.INSTANCE.sendToServer(new MeditateMessage(System.ESSENCE, false));
+			var player = Minecraft.getInstance().player;
+			if (player == null) return false;
+			var cultivation = Cultivation.get(player);
+			var essenceData = cultivation.getSystemData(System.ESSENCE);
+			essenceData.getStage().cultivationFailure(player);
+			this.strands.remove(this.selectedStrand);
+			this.selectedStrand = null;
+		}
 		return false;
 	}
 
