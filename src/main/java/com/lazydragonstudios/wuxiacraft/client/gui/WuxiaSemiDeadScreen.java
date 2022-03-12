@@ -28,6 +28,10 @@ public class WuxiaSemiDeadScreen extends Screen {
 		this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 4 + 72, 200, 20, new TranslatableComponent("wuxiacraft.ask_to_die"),
 				(btn) -> {
 					WuxiaPacketHandler.INSTANCE.sendToServer(new AskToDieMessage());
+					var player = Minecraft.getInstance().player;
+					if(player == null) return;
+					player.setHealth(-1);
+					Cultivation.get(player).setSemiDeadState(false);
 				}));
 	}
 
@@ -44,6 +48,8 @@ public class WuxiaSemiDeadScreen extends Screen {
 	@Override
 	public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
 		this.fillGradient(poseStack, 0, 0, this.width, this.height, 1615855616, -1602211792);
+		//noinspection ConstantConditions
+		if(this.font == null) return;
 		poseStack.pushPose();
 		poseStack.scale(2.0F, 2.0F, 2.0F);
 		drawCenteredString(poseStack, this.font, new TranslatableComponent("wuxiacraft.semi_dead.title"), this.width / 2 / 2, 30, 16777215);
@@ -54,5 +60,10 @@ public class WuxiaSemiDeadScreen extends Screen {
 		var timer = cultivation.getSemiDeadTimer() / 20;
 		drawCenteredString(poseStack, this.font, new TranslatableComponent("wuxiacraft.semi_dead.time", timer), this.width / 2, 85, 16777215);
 		super.render(poseStack, mouseX, mouseY, partialTick);
+	}
+
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifier) {
+		return false;
 	}
 }

@@ -30,6 +30,8 @@ public class WuxiaPacketHandler {
 		INSTANCE.registerMessage(serverMessagesID++, CultivationStateChangeMessage.class, CultivationStateChangeMessage::encode, CultivationStateChangeMessage::decode, CultivationStateChangeMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 		INSTANCE.registerMessage(serverMessagesID++, RequestRTPOnDeathMessage.class, RequestRTPOnDeathMessage::encode, RequestRTPOnDeathMessage::decode, RequestRTPOnDeathMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 		INSTANCE.registerMessage(serverMessagesID++, MeditateMessage.class, MeditateMessage::encode, MeditateMessage::decode, MeditateMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+		INSTANCE.registerMessage(serverMessagesID++, RenameItemInInscriberMessage.class, RenameItemInInscriberMessage::encode, RenameItemInInscriberMessage::decode, RenameItemInInscriberMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+		INSTANCE.registerMessage(serverMessagesID++, AttemptBreakthroughMessage.class, AttemptBreakthroughMessage::encode, AttemptBreakthroughMessage::decode, AttemptBreakthroughMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_SERVER));
 
 		int clientMessagesID = 200;
 		INSTANCE.registerMessage(clientMessagesID++, CultivationSyncMessage.class, CultivationSyncMessage::encode, CultivationSyncMessage::decode, CultivationSyncMessage::handleMessage, Optional.of(NetworkDirection.PLAY_TO_CLIENT));

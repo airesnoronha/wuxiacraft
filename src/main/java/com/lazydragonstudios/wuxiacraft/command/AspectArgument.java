@@ -22,7 +22,7 @@ public class AspectArgument extends ResourceLocationArgument {
 	private static final Collection<String> EXAMPLES = Arrays.asList("wuxiacraft:aspect_start", "wuxiacraft:body_gathering");
 
 	private static final DynamicCommandExceptionType ERROR_UNKNOWN_ASPECT = new DynamicCommandExceptionType(
-			(aspectLocation) -> new TranslatableComponent("wuxiacraft.aspectNotFound", aspectLocation)
+			(aspectLocation) -> new TranslatableComponent("wuxiacraft.aspect_not_found", aspectLocation)
 	);
 
 	public static ResourceLocation getAspectLocation(CommandContext<CommandSourceStack> ctx, String argName) throws CommandSyntaxException {

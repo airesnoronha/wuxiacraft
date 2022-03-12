@@ -22,10 +22,10 @@ public class WuxiaElements {
 	public static RegistryObject<Element> FIRE = ELEMENTS.register("fire", () -> new Element()
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "earth"))
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "metal"))
-			.statModifier(PlayerStat.STRENGTH, new BigDecimal("0.4"))
-			.statModifier(PlayerElementalStat.PIERCE, new BigDecimal("0.6"))
-			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.6"))
-			.statModifier(PlayerSystemStat.MAX_ENERGY, new BigDecimal("-0.05"))
+			.statModifier(PlayerStat.STRENGTH, new BigDecimal("0.04"))
+			.statModifier(PlayerElementalStat.PIERCE, new BigDecimal("0.06"))
+			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.06"))
+			.statModifier(PlayerSystemStat.MAX_ENERGY, new BigDecimal("-0.005"))
 	);
 
 	public static RegistryObject<Element> EARTH = ELEMENTS.register("earth", () -> new Element()
@@ -33,46 +33,82 @@ public class WuxiaElements {
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "water"))
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "wind"))
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "lightning"))
+			.statModifier(PlayerStat.MAX_HEALTH, new BigDecimal("0.04"))
+			.statModifier(PlayerSystemStat.MAX_ENERGY, new BigDecimal("0.04"))
+			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.08"))
+			.statModifier(PlayerStat.AGILITY, new BigDecimal("-0.005"))
 	);
 
 	public static RegistryObject<Element> METAL = ELEMENTS.register("metal", () -> new Element()
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "water"))
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "lightning"))
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "wood"))
+			.statModifier(PlayerStat.STRENGTH, new BigDecimal("0.02"))
+			.statModifier(PlayerElementalStat.PIERCE, new BigDecimal("0.06"))
+			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.02"))
+			.statModifier(PlayerStat.HEALTH_REGEN_COST, new BigDecimal("0.001"))
 	);
 
 	public static RegistryObject<Element> WATER = ELEMENTS.register("water", () -> new Element()
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "wood"))
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "fire"))
+			.statModifier(PlayerStat.MAX_BARRIER, new BigDecimal("0.04"))
+			.statModifier(PlayerSystemStat.MAX_ENERGY, new BigDecimal("0.08"))
+			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.03"))
+			.statModifier(PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("0.04"))
 	);
 
 	public static RegistryObject<Element> WOOD = ELEMENTS.register("wood", () -> new Element()
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "fire"))
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "earth"))
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "poison"))
+			.statModifier(PlayerStat.HEALTH_REGEN, new BigDecimal("0.00006"))
+			.statModifier(PlayerStat.MAX_HEALTH, new BigDecimal("0.03"))
+			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.04"))
+			.statModifier(PlayerStat.STRENGTH, new BigDecimal("-0.001"))
 	);
 
 	public static RegistryObject<Element> LIGHTNING = ELEMENTS.register("lightning", () -> new Element()
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "fire"))
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "water"))
+			.statModifier(PlayerStat.STRENGTH, new BigDecimal("0.06"))
+			.statModifier(PlayerStat.AGILITY, new BigDecimal("0.04"))
+			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.01"))
+			.statModifier(PlayerSystemStat.MAX_ENERGY, new BigDecimal("-0.003"))
 	);
 
 	public static RegistryObject<Element> WIND = ELEMENTS.register("wind", () -> new Element()
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "fire"))
 			.begets(new ResourceLocation(WuxiaCraft.MOD_ID, "lightning"))
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "wood"))
+			.statModifier(PlayerStat.AGILITY, new BigDecimal("0.6"))
+			.statModifier(PlayerStat.DETECTION_RANGE, new BigDecimal("0.6"))
+			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.1"))
+			.statModifier(PlayerStat.STRENGTH, new BigDecimal("-0.03"))
 	);
 
 	public static RegistryObject<Element> POISON = ELEMENTS.register("poison", () -> new Element()
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "water"))
+			.statModifier(PlayerStat.AGILITY, new BigDecimal("0.06"))
+			.statModifier(PlayerStat.DETECTION_RANGE, new BigDecimal("0.06"))
+			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.01"))
+			.statModifier(PlayerStat.STRENGTH, new BigDecimal("-0.003"))
 	);
 
 	public static RegistryObject<Element> LIGHT = ELEMENTS.register("light", () -> new Element()
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "darkness"))
+			.statModifier(PlayerStat.AGILITY, new BigDecimal("0.06"))
+			.statModifier(PlayerStat.DETECTION_STRENGTH, new BigDecimal("0.06"))
+			.statModifier(PlayerStat.HEALTH_REGEN, new BigDecimal("0.00001"))
+			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("-0.003"))
 	);
 
 	public static RegistryObject<Element> DARKNESS = ELEMENTS.register("darkness", () -> new Element()
 			.suppresses(new ResourceLocation(WuxiaCraft.MOD_ID, "light"))
+			.statModifier(PlayerStat.STRENGTH, new BigDecimal("0.06"))
+			.statModifier(PlayerStat.DETECTION_RESISTANCE, new BigDecimal("0.06"))
+			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.01"))
+			.statModifier(PlayerStat.HEALTH_REGEN, new BigDecimal("-0.0000001"))
 	);
 
 	public static RegistryObject<Element> SPACE = ELEMENTS.register("space", () -> new Element()

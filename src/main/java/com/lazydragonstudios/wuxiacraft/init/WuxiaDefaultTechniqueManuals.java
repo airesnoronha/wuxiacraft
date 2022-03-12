@@ -18,7 +18,6 @@ public class WuxiaDefaultTechniqueManuals {
 	private static HashMap<ResourceLocation, Supplier<ItemStack>> DEFAULT_MANUALS = new HashMap<>();
 
 	public static void init() {
-
 		TechniqueGrid fire_manipulation = new TechniqueGrid();
 		fire_manipulation.addGridNode(new Point(0, 0), WuxiaTechniqueAspects.START.getId(), BigDecimal.TEN);
 		fire_manipulation.addGridNode(new Point(-1, 0), WuxiaTechniqueAspects.CINDER.getId(), BigDecimal.TEN);
@@ -44,6 +43,22 @@ public class WuxiaDefaultTechniqueManuals {
 		nature_observation.addGridNode(new Point(1, 0), WuxiaTechniqueAspects.BRANCHING.getId(), BigDecimal.TEN);
 		nature_observation.addGridNode(new Point(1, -1), WuxiaTechniqueAspects.ESSENCE_GATHERING.getId(), BigDecimal.TEN);
 		registerNewManual(new ResourceLocation(WuxiaCraft.MOD_ID, "nature_observation"), 1, nature_observation);
+
+		TechniqueGrid lightning_replication = new TechniqueGrid();
+		lightning_replication.addGridNode(new Point(1, -1), WuxiaTechniqueAspects.START.getId(), BigDecimal.TEN);
+		lightning_replication.addGridNode(new Point(1, 0), WuxiaTechniqueAspects.SPARK.getId(), BigDecimal.TEN);
+		lightning_replication.addGridNode(new Point(0, 0), WuxiaTechniqueAspects.ARC.getId(), BigDecimal.TEN);
+		lightning_replication.addGridNode(new Point(-1, 1), WuxiaTechniqueAspects.ESSENCE_GATHERING.getId(), BigDecimal.TEN);
+		registerNewManual(new ResourceLocation(WuxiaCraft.MOD_ID, "lightning_replication"), 1, lightning_replication);
+
+		TechniqueGrid metallic_reinforcement = new TechniqueGrid();
+		metallic_reinforcement.addGridNode(new Point(0, -1), WuxiaTechniqueAspects.START.getId(), BigDecimal.TEN);
+		metallic_reinforcement.addGridNode(new Point(1, 0), WuxiaTechniqueAspects.ORE.getId(), BigDecimal.TEN);
+		metallic_reinforcement.addGridNode(new Point(1, 0), WuxiaTechniqueAspects.ORE.getId(), BigDecimal.TEN);
+		metallic_reinforcement.addGridNode(new Point(-1, 1), WuxiaTechniqueAspects.SHARPNESS.getId(), BigDecimal.TEN);
+		metallic_reinforcement.addGridNode(new Point(-1, 1), WuxiaTechniqueAspects.SHARPNESS.getId(), BigDecimal.TEN);
+		metallic_reinforcement.addGridNode(new Point(0, 1), WuxiaTechniqueAspects.ESSENCE_GATHERING.getId(), BigDecimal.TEN);
+		registerNewManual(new ResourceLocation(WuxiaCraft.MOD_ID, "metallic_reinforcement"), 1, metallic_reinforcement);
 	}
 
 	public static void registerNewManual(ResourceLocation resourceLocation, Supplier<ItemStack> stackSupplier) {

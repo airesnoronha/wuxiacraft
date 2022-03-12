@@ -5,6 +5,7 @@ import com.lazydragonstudios.wuxiacraft.command.CultivationCommand;
 import com.lazydragonstudios.wuxiacraft.command.StatCommand;
 import com.lazydragonstudios.wuxiacraft.init.*;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
+import com.lazydragonstudios.wuxiacraft.util.TechniqueUtil;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -69,6 +70,8 @@ public class WuxiaCraft {
 		WuxiaPacketHandler.registerMessages();
 
 		WuxiaDefaultTechniqueManuals.init();
+		TechniqueUtil.initDevouringData();
+		TechniqueUtil.initChancedAspectsBlocks();
 		TestRun.testStuff();
 	}
 

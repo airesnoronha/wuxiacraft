@@ -30,7 +30,9 @@ public class SystemGather extends TechniqueAspect {
 			rawBase = rawBase.add(this.getCurrentCheckpoint(proficiency).modifier());
 			metaData.put(statName,
 					//(value or 0) + (rawBase / 10)
-					((BigDecimal) metaData.getOrDefault(statName, BigDecimal.ZERO)).add(rawBase.multiply(new BigDecimal("0.1"))));
+					((BigDecimal) metaData.getOrDefault(statName, BigDecimal.ZERO))
+							.add(rawBase.multiply(new BigDecimal("0.1")))
+			);
 		}
 	}
 
@@ -48,7 +50,7 @@ public class SystemGather extends TechniqueAspect {
 	public void reject(HashMap<String, Object> metaData) {
 		String statName = this.system.name().toLowerCase() + "-stat-" + PlayerSystemStat.CULTIVATION_SPEED.name().toLowerCase();
 		metaData.put(statName,
-				(double) metaData.getOrDefault(statName, 0d) - 1d);
+				((BigDecimal) metaData.getOrDefault(statName, BigDecimal.ZERO)).subtract(BigDecimal.ONE));
 	}
 
 	@Override

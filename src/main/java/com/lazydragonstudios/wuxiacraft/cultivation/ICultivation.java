@@ -26,9 +26,24 @@ public interface ICultivation {
 
 	SystemContainer getSystemData(System system);
 
-	void calculateStats();
+	/**
+	 * Adds cultivation base to the player, it should only be used in cultivate handlers from each stage
+	 *
+	 * @param player the player that is cultivating
+	 * @param system the system that is being cultivated
+	 * @param amount the amount to be added in the cultivation
+	 */
+	void addCultivationBase(Player player, System system, BigDecimal amount);
 
-	boolean addCultivationBase(Player player, System system, BigDecimal amount);
+	/**
+	 * Attempts to break through the next stage in the specified system
+	 *
+	 * @param system the system of the stage to break through
+	 * @return true if successful in the breakthrough
+	 */
+	boolean attemptBreakthrough(System system);
+
+	void calculateStats();
 
 	CompoundTag serialize();
 

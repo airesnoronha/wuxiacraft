@@ -14,17 +14,21 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.resources.ResourceLocation;
 
+import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.LinkedList;
 
-public class MortalEssenceMinigame implements Minigame {
+public class EssenceQiGatheringMinigame implements Minigame {
 
 	private static final ResourceLocation MINIGAME_TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/minigames/mortal_essence_minigame.png");
 
 	private final LinkedList<Strand> strands = new LinkedList<>();
 
 	private Strand selectedStrand = null;
+
+	//the size is actually the tex coordinates
+	private final Rectangle dantian = new Rectangle(96, 104, 60, 5);
 
 	@Override
 	public void init(MeditateScreen screen) {
@@ -33,9 +37,6 @@ public class MortalEssenceMinigame implements Minigame {
 		var cultivation = Cultivation.get(player);
 		var essenceData = cultivation.getSystemData(System.ESSENCE);
 		if (!essenceData.techniqueData.modifier.isValidTechnique()) return;
-		//gonna create a ball for each energy unit
-		var energy = essenceData.getStat(PlayerSystemStat.ENERGY).intValue();
-		this.keepCorrectStrandCount(energy);
 	}
 
 	@Override
@@ -52,12 +53,25 @@ public class MortalEssenceMinigame implements Minigame {
 
 	@Override
 	public boolean onMouseRelease(double x, double y, int button) {
-		selectedStrand = null;
+		if (this.selectedStrand != null) {
+			WuxiaPacketHandler.INSTANCE.sendToServer(new MeditateMessage(System.ESSENCE, false));
+			var player = Minecraft.getInstance().player;
+			if (player == null) return false;
+			var cultivation = Cultivation.get(player);
+			var essenceData = cultivation.getSystemData(System.ESSENCE);
+			essenceData.getStage().cultivationFailure(player);
+			this.strands.remove(this.selectedStrand);
+			this.selectedStrand = null;
+		}
 		return false;
 	}
 
 	@Override
 	public void onMouseMove(double x, double y) {
+		if (this.selectedStrand != null) {
+			this.selectedStrand.x = x;
+			this.selectedStrand.y = y;
+		}
 	}
 
 	@Override
@@ -76,7 +90,7 @@ public class MortalEssenceMinigame implements Minigame {
 				essenceData.getStat(PlayerSystemStat.CULTIVATION_BASE)
 						.divide(essenceData.getStat(PlayerSystemStat.MAX_CULTIVATION_BASE), RoundingMode.HALF_UP)).intValue();
 		GuiComponent.blit(poseStack, imageX, imageY + 60 - barFill, 60, barFill, 0, 60 + 60 - barFill, 60, barFill, 256, 256); //the person cross-legged fill
-
+		GuiComponent.blit(poseStack, dantian.x, dantian.y, 8, 8, dantian.width, dantian.height, 8, 8, 256, 256);
 		for (var strand : this.strands) {
 			strand.render(poseStack);
 		}
@@ -93,13 +107,13 @@ public class MortalEssenceMinigame implements Minigame {
 		if (player == null) return;
 		var cultivation = Cultivation.get(player);
 		var essenceData = cultivation.getSystemData(System.ESSENCE);
-		var energy = essenceData.getStat(PlayerSystemStat.ENERGY).intValue();
-		this.keepCorrectStrandCount(energy);
+		var strandCount = essenceData.getStat(PlayerSystemStat.ENERGY).divide(new BigDecimal("2.5"), RoundingMode.HALF_UP).intValue();
+		this.keepCorrectStrandCount(strandCount);
 		var markedToRemove = new LinkedList<Strand>();
 		for (var strand : this.strands) {
 			strand.tick();
 			strand.setGrabbed(strand == selectedStrand);
-			if (strand.isComplete()) {
+			if (MathUtil.inBounds(strand.x, strand.y, dantian.x, dantian.y, 8, 8)) {
 				selectedStrand = null;
 				markedToRemove.add(strand);
 				WuxiaPacketHandler.INSTANCE.sendToServer(new MeditateMessage(System.ESSENCE, true));
@@ -134,7 +148,6 @@ public class MortalEssenceMinigame implements Minigame {
 		private double movX;
 		private double movY;
 		private boolean grabbed;
-		private int grabbedTicks;
 
 		Strand() {
 			this.x = MIN_X + Math.random() * (MAX_X - MIN_X);
@@ -144,11 +157,7 @@ public class MortalEssenceMinigame implements Minigame {
 		}
 
 		void tick() {
-			if (this.grabbed) {
-				this.grabbedTicks = Math.min(MAX_GRABBED_TICKS, this.grabbedTicks + 1);
-				return;
-			}
-			this.grabbedTicks = 0;
+			if (this.grabbed) return;
 			this.x += movX;
 			this.y += movY;
 			if (this.x <= MIN_X || this.x >= MAX_X) {
@@ -166,20 +175,12 @@ public class MortalEssenceMinigame implements Minigame {
 		void render(PoseStack stack) {
 			stack.pushPose();
 			stack.translate(this.x, this.y, 0);
-			if (this.grabbedTicks > 0) {
-				var scale = (float) (MAX_GRABBED_TICKS - this.grabbedTicks) / (float) MAX_GRABBED_TICKS;
-				stack.scale(scale, scale, 0);
-			}
 			GuiComponent.blit(stack, -3, -3, 5, 5, 60, 0, 5, 5, 256, 256);
 			stack.popPose();
 		}
 
 		public void setGrabbed(boolean grabbed) {
 			this.grabbed = grabbed;
-		}
-
-		public boolean isComplete() {
-			return this.grabbedTicks >= MAX_GRABBED_TICKS;
 		}
 	}
 
