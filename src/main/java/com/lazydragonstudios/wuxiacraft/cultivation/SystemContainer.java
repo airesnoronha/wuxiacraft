@@ -239,6 +239,7 @@ public class SystemContainer {
 				//value = value * (1 + techModifier)
 				value = value.multiply(BigDecimal.ONE.add(techniqueModifier));
 			}
+			value = value.max(BigDecimal.ZERO);
 			this.systemStats.put(stat, value);
 		}
 		for (var elementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
@@ -248,6 +249,7 @@ public class SystemContainer {
 				var stageValue = this.getStage().getStat(this.system, elementLocation, stat);
 				var techniqueModifier = this.techniqueData.modifier.getStat(this.system, elementLocation, stat);
 				value = value.add(stageValue).multiply(BigDecimal.ONE.multiply(techniqueModifier));
+				value = value.max(BigDecimal.ZERO);
 				this.systemElementalStats.putIfAbsent(elementLocation, new HashMap<>());
 				this.systemElementalStats.get(elementLocation).put(stat, value);
 			}
@@ -269,7 +271,7 @@ public class SystemContainer {
 				currentElementStatsTag.putString("stat-" + stat.name().toLowerCase(),
 						this.systemElementalStats.get(element).getOrDefault(stat, BigDecimal.ZERO).toPlainString());
 			}
-			elementStatsTag.put("element-stats-" + element, elementStatsTag);
+			elementStatsTag.put("element-stats-" + element, currentElementStatsTag);
 		}
 		tag.put("technique-data", this.techniqueData.serialize());
 		tag.put("elemental-stats", elementStatsTag);

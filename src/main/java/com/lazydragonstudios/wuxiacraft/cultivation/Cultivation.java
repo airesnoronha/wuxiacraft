@@ -180,6 +180,7 @@ public class Cultivation implements ICultivation {
 			for (var system : System.values()) {
 				statValue = statValue.add(this.getSystemData(system).getStat(stat));
 			}
+			statValue = statValue.max(BigDecimal.ZERO);
 			this.playerStats.put(stat, statValue);
 		}
 		for (var elementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
