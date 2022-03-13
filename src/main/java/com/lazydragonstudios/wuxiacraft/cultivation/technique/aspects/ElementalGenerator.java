@@ -41,7 +41,9 @@ public class ElementalGenerator extends TechniqueAspect {
 	public void accept(HashMap<String, Object> metaData, BigDecimal proficiency) {
 		super.accept(metaData, proficiency);
 		String elementBase = "element-base-" + element.getPath();
-		metaData.put(elementBase, (double) metaData.getOrDefault(elementBase, 0d) + this.generated);
+		var modifier = this.getCurrentCheckpoint(proficiency).modifier();
+		var generated = this.generated * (1 + modifier.doubleValue());
+		metaData.put(elementBase, (double) metaData.getOrDefault(elementBase, 0d) + generated);
 	}
 
 	@Override

@@ -41,7 +41,7 @@
   "wuxiacraft.gui.lives": "Lives: %1$s",
   "wuxiacraft.gui.cultivation_base": "Cultivation Base: %1$s",
   "wuxiacraft.gui.max_cultivation_base": "Max Cultivation Base: %1$s",
-  "wuxiacraft.gui.foundation": "Foundation: %1$s",
+  "wuxiacraft.gui.foundation": "%1$s Foundation: %2$s",
   "wuxiacraft.gui.energy": "Energy: %1$s",
   "wuxiacraft.gui.energy_regen": "Energy Regen: %1$s",
   "wuxiacraft.gui.max_energy": "Max Energy: %1$s",

@@ -11,43 +11,43 @@ public enum PlayerSystemStat {
 	/**
 	 * This is the cultivation base of the current stage
 	 */
-	CULTIVATION_BASE(new BigDecimal("0"), true, new Point(5, 25), "Cultivation Base: %s"),
+	CULTIVATION_BASE(new BigDecimal("0"), true),
 
 	/**
 	 * This is the cultivation base of the current stage
 	 */
-	MAX_CULTIVATION_BASE(new BigDecimal("0"), false, new Point(5, 35), "Max Cultivation Base: %s"),
+	MAX_CULTIVATION_BASE(new BigDecimal("0"), false),
 
 	/**
 	 * this is how much energy the player has to use for this system
 	 */
-	ENERGY(new BigDecimal("0"), true, new Point(5, 55), "Energy: %s"),
+	ENERGY(new BigDecimal("0"), true),
 
 	/**
 	 * this is how much energy will regenerate for this system per tick
 	 */
-	ENERGY_REGEN(new BigDecimal("0.01"), false, new Point(5, 65), "Energy Regeneration: %s"),
+	ENERGY_REGEN(new BigDecimal("0.01"), false),
 
 	/**
 	 * this is how much energy the player has available for this system
 	 */
-	MAX_ENERGY(new BigDecimal("10"), false, new Point(5, 75), "Max Energy: %s"),
+	MAX_ENERGY(new BigDecimal("10"), false),
 
 	/**
 	 * This is an additional radius for the grid based on your stage
 	 * This comes from the fact that cultivation a system might get comprehension just from cultivating it
 	 */
-	ADDITIONAL_GRID_RADIUS(new BigDecimal("0"), false, new Point(5, 85), "Additional Grid Radius: %s"),
+	ADDITIONAL_GRID_RADIUS(new BigDecimal("0"), false),
 
 	/**
 	 * This is how fast a player cultivate in this system
 	 */
-	CULTIVATION_SPEED(new BigDecimal("0"), false, new Point(5, 95), "Cultivation Speed: %s"),
+	CULTIVATION_SPEED(new BigDecimal("0"), false),
 
 	/**
 	 * this is what will influence how this system will make other systems' cultivation speed slower
 	 */
-	SYSTEM_SUPPRESSION(new BigDecimal("0"), false, new Point(5, 105), "System Suppression: %s");
+	SYSTEM_SUPPRESSION(new BigDecimal("0"), false);
 
 	public final BigDecimal defaultValue;
 
@@ -57,14 +57,8 @@ public enum PlayerSystemStat {
 	 */
 	public final boolean isModifiable;
 
-	/**
-	 * This is where the label for displaying this stat will appear in the character stats sheet
-	 */
-	public final Point locationInStatsSheet;
-
-	PlayerSystemStat(BigDecimal defaultValue, boolean isModifiable, Point locationInStatsSheet, String displayFormat) {
+	PlayerSystemStat(BigDecimal defaultValue, boolean isModifiable) {
 		this.defaultValue = defaultValue;
 		this.isModifiable = isModifiable;
-		this.locationInStatsSheet = locationInStatsSheet;
 	}
 }

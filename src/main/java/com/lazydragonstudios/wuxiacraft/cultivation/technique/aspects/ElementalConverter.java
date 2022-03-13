@@ -37,10 +37,10 @@ public abstract class ElementalConverter extends TechniqueAspect {
 		elementBaseAmount -= converted;
 		if(elementBaseAmount == 0) metaData.remove(elementBase);
 		else metaData.put(elementBase, elementBaseAmount);
-		convert(converted, metaData);
+		convert(converted, metaData, proficiency);
 	}
 
-	public abstract void convert(double converted, HashMap<String, Object> metaData);
+	public abstract void convert(double converted, HashMap<String, Object> metaData, BigDecimal proficiency);
 
 	@Override
 	public boolean canConnect(TechniqueAspect aspect) {

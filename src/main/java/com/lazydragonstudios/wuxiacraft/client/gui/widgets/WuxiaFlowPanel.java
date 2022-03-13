@@ -45,7 +45,7 @@ public class WuxiaFlowPanel extends WuxiaScrollPanel {
 		;
 	}
 
-	private void rearrangeItems() {
+	protected void rearrangeItems() {
 		int currentLeftPos = 0;
 		int currentTopPos = margin;
 		int currentLineHeight = 0;

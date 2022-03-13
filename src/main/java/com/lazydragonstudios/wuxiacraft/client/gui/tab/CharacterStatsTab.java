@@ -1,6 +1,9 @@
 package com.lazydragonstudios.wuxiacraft.client.gui.tab;
 
+import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaVerticalFlowPanel;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
+import com.lazydragonstudios.wuxiacraft.cultivation.SystemContainer;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemElementalStat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TextComponent;
@@ -11,8 +14,11 @@ import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -20,9 +26,10 @@ public class CharacterStatsTab extends IntrospectionTab {
 
 	private final HashMap<PlayerStat, WuxiaLabel> displayLabels = new HashMap<>();
 	private final HashMap<System, HashMap<PlayerSystemStat, WuxiaLabel>> displaySystemLabels = new HashMap<>();
+	private final HashMap<System, HashMap<ResourceLocation, HashMap<PlayerSystemElementalStat, WuxiaLabel>>> displaySystemElementalLabels = new HashMap<>();
 
 	private WuxiaScrollPanel statsPanel;
-	private HashMap<System, WuxiaScrollPanel> systemStats;
+	private HashMap<System, WuxiaVerticalFlowPanel> systemStats;
 
 	public CharacterStatsTab(String name) {
 		super(name, new Point(0, 36));
@@ -46,19 +53,31 @@ public class CharacterStatsTab extends IntrospectionTab {
 		}
 		for (var system : System.values()) {
 			displaySystemLabels.put(system, new HashMap<>());
-			WuxiaScrollPanel systemStatPanel = new WuxiaScrollPanel(0, 0, 100, 100, new TextComponent(""));
+			WuxiaVerticalFlowPanel systemStatPanel = new WuxiaVerticalFlowPanel(0, 0, 100, 100, new TextComponent(""));
+			systemStatPanel.margin = 2;
 			systemStats.put(system, systemStatPanel);
-			var realmNameLabel = new WuxiaLabel(5, 5, new TranslatableComponent("wuxiacraft.realm." + cultivation.getSystemData(system).getStage().realm.getPath()), color);
-			var stageNameLabel = new WuxiaLabel(5, 15, new TranslatableComponent("wuxiacraft.stage." + cultivation.getSystemData(system).currentStage.getPath()), color);
+			SystemContainer systemData = cultivation.getSystemData(system);
+			var realmNameLabel = new WuxiaLabel(0, 0, new TranslatableComponent("wuxiacraft.realm." + systemData.getStage().realm.getPath()), color);
+			var stageNameLabel = new WuxiaLabel(0, 0, new TranslatableComponent("wuxiacraft.stage." + systemData.currentStage.getPath()), color);
+			systemStatPanel.addChild(realmNameLabel);
+			systemStatPanel.addChild(stageNameLabel);
 			for (var stat : PlayerSystemStat.values()) {
-				var statValue = cultivation.getSystemData(system).getStat(stat).toEngineeringString();
-				var label = new WuxiaLabel(stat.locationInStatsSheet.x, stat.locationInStatsSheet.y, new TranslatableComponent("wuxiacraft.gui." + stat.name().toLowerCase(), statValue), color);
+				var statValue = systemData.getStat(stat).toEngineeringString();
+				var label = new WuxiaLabel(0, 0, new TranslatableComponent("wuxiacraft.gui." + stat.name().toLowerCase(), statValue), color);
 				displaySystemLabels.get(system).put(stat, label);
 				systemStats.get(system).addChild(label);
 			}
+			for (var element : systemData.getStatElements()) {
+				for (var stat : systemData.getElementalStatsForElement(element)) {
+					var statValue = systemData.getStat(element, stat).toEngineeringString();
+					var label = new WuxiaLabel(0, 0, new TranslatableComponent("wuxiacraft.gui." + stat.name().toLowerCase(), statValue), color);
+					displaySystemElementalLabels.putIfAbsent(system, new HashMap<>());
+					displaySystemElementalLabels.get(system).putIfAbsent(element, new HashMap<>());
+					displaySystemElementalLabels.get(system).get(element).putIfAbsent(stat, label);
+					systemStats.get(system).addChild(label);
+				}
+			}
 			statsPanel.recalculateContentSpace();
-			systemStatPanel.addChild(realmNameLabel);
-			systemStatPanel.addChild(stageNameLabel);
 			screen.addRenderableWidget(systemStats.get(system));
 		}
 	}
@@ -71,7 +90,8 @@ public class CharacterStatsTab extends IntrospectionTab {
 		var leftPostX = 0;
 		var secondColumn = new LinkedList<WuxiaLabel>();
 		for (var stat : PlayerStat.values()) {
-			var statValue = cultivation.getStat(stat).toEngineeringString();
+			BigDecimal statDecimal = cultivation.getStat(stat);
+			var statValue = statDecimal.setScale(Math.min(5, statDecimal.scale()), RoundingMode.HALF_UP).toEngineeringString();
 			displayLabels.get(stat).setMessage(new TranslatableComponent("wuxiacraft.gui." + stat.name().toLowerCase(), statValue));
 			if (stat.locationInStatsSheet.x == -1) {
 				secondColumn.add(displayLabels.get(stat));
@@ -85,8 +105,23 @@ public class CharacterStatsTab extends IntrospectionTab {
 		statsPanel.recalculateContentSpace();
 		for (var system : System.values()) {
 			for (var stat : PlayerSystemStat.values()) {
-				var statValue = cultivation.getSystemData(system).getStat(stat).toEngineeringString();
+				BigDecimal statDecimal = cultivation.getSystemData(system).getStat(stat);
+				var statValue = statDecimal.setScale(Math.min(statDecimal.scale(), 5), RoundingMode.HALF_UP).toEngineeringString();
 				displaySystemLabels.get(system).get(stat).setMessage(new TranslatableComponent("wuxiacraft.gui." + stat.name().toLowerCase(), statValue));
+			}
+			if (displaySystemElementalLabels.containsKey(system)) {
+				if (!displaySystemElementalLabels.get(system).isEmpty()) {
+					for (var element : displaySystemElementalLabels.get(system).keySet()) {
+						for (var stat : displaySystemElementalLabels.get(system).get(element).keySet()) {
+							BigDecimal statDecimal = cultivation.getSystemData(system).getStat(element, stat);
+							var statValue = statDecimal.setScale(Math.min(statDecimal.scale(), 5), RoundingMode.HALF_UP).toEngineeringString();
+							displaySystemElementalLabels.get(system).get(element).get(stat)
+									.setMessage(new TranslatableComponent("wuxiacraft.gui." + stat.name().toLowerCase(),
+											new TranslatableComponent(element.getNamespace() + ".element." + element.getPath()),
+											statValue));
+						}
+					}
+				}
 			}
 		}
 		var scaledWidth = Minecraft.getInstance().getWindow().getGuiScaledWidth();

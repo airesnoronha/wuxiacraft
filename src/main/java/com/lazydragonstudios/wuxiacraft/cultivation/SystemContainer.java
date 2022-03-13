@@ -12,6 +12,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.technique.TechniqueContainer
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Set;
 
 public class SystemContainer {
 
@@ -314,4 +315,11 @@ public class SystemContainer {
 		}
 	}
 
+	public Set<ResourceLocation> getStatElements() {
+		return this.systemElementalStats.keySet();
+	}
+
+	public Set<PlayerSystemElementalStat> getElementalStatsForElement(ResourceLocation elementLocation) {
+		return this.systemElementalStats.getOrDefault(elementLocation, new HashMap<>()).keySet();
+	}
 }

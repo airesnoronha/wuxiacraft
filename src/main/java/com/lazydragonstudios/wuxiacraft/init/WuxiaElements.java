@@ -25,7 +25,7 @@ public class WuxiaElements {
 			.statModifier(PlayerStat.STRENGTH, new BigDecimal("0.04"))
 			.statModifier(PlayerElementalStat.PIERCE, new BigDecimal("0.06"))
 			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.06"))
-			.statModifier(PlayerSystemStat.MAX_ENERGY, new BigDecimal("-0.005"))
+			.statModifier(PlayerSystemStat.MAX_ENERGY, new BigDecimal("-0.0005"))
 	);
 
 	public static RegistryObject<Element> EARTH = ELEMENTS.register("earth", () -> new Element()
@@ -36,7 +36,7 @@ public class WuxiaElements {
 			.statModifier(PlayerStat.MAX_HEALTH, new BigDecimal("0.04"))
 			.statModifier(PlayerSystemStat.MAX_ENERGY, new BigDecimal("0.04"))
 			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.08"))
-			.statModifier(PlayerStat.AGILITY, new BigDecimal("-0.005"))
+			.statModifier(PlayerStat.AGILITY, new BigDecimal("-0.0005"))
 	);
 
 	public static RegistryObject<Element> METAL = ELEMENTS.register("metal", () -> new Element()
@@ -65,7 +65,7 @@ public class WuxiaElements {
 			.statModifier(PlayerStat.HEALTH_REGEN, new BigDecimal("0.00006"))
 			.statModifier(PlayerStat.MAX_HEALTH, new BigDecimal("0.03"))
 			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.04"))
-			.statModifier(PlayerStat.STRENGTH, new BigDecimal("-0.001"))
+			.statModifier(PlayerStat.STRENGTH, new BigDecimal("-0.0001"))
 	);
 
 	public static RegistryObject<Element> LIGHTNING = ELEMENTS.register("lightning", () -> new Element()
@@ -74,7 +74,7 @@ public class WuxiaElements {
 			.statModifier(PlayerStat.STRENGTH, new BigDecimal("0.06"))
 			.statModifier(PlayerStat.AGILITY, new BigDecimal("0.04"))
 			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.01"))
-			.statModifier(PlayerSystemStat.MAX_ENERGY, new BigDecimal("-0.003"))
+			.statModifier(PlayerSystemStat.MAX_ENERGY, new BigDecimal("-0.0003"))
 	);
 
 	public static RegistryObject<Element> WIND = ELEMENTS.register("wind", () -> new Element()
@@ -84,7 +84,7 @@ public class WuxiaElements {
 			.statModifier(PlayerStat.AGILITY, new BigDecimal("0.6"))
 			.statModifier(PlayerStat.DETECTION_RANGE, new BigDecimal("0.6"))
 			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.1"))
-			.statModifier(PlayerStat.STRENGTH, new BigDecimal("-0.03"))
+			.statModifier(PlayerStat.STRENGTH, new BigDecimal("-0.0003"))
 	);
 
 	public static RegistryObject<Element> POISON = ELEMENTS.register("poison", () -> new Element()

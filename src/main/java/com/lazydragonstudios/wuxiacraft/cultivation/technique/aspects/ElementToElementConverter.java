@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class ElementToElementConverter extends ElementalConverter {
@@ -24,10 +25,12 @@ public class ElementToElementConverter extends ElementalConverter {
 	}
 
 	@Override
-	public void convert(double converted, HashMap<String, Object> metaData) {
+	public void convert(double converted, HashMap<String, Object> metaData, BigDecimal proficiency) {
 		String elementBase = "element-base-" + this.element.getPath();
 		double finalValue = converted * this.conversionRate;
 		double initialValue = (double) metaData.getOrDefault(elementBase, 0d);
+		var modifier = this.getCurrentCheckpoint(proficiency).modifier().doubleValue();
+		finalValue = finalValue * (1 + modifier);
 		finalValue += initialValue;
 		metaData.put(elementBase, finalValue);
 	}

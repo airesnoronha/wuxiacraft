@@ -63,6 +63,7 @@ public class EnergiesOverlay implements IIngameOverlay {
 			int index = system.ordinal();
 			int maxFillAmount = system == System.BODY ? barFillsHeight[index] : barFillsWidth[index];
 			int fillAmount = (int) ((float) maxFillAmount * systemData.getStat(PlayerSystemStat.ENERGY).divide(systemData.getStat(PlayerSystemStat.MAX_ENERGY), RoundingMode.HALF_UP).floatValue());
+			fillAmount = Math.min(fillAmount, maxFillAmount);
 			RenderSystem.setShaderTexture(0, ENERGY_BAR);
 			int x, y, bWidth, bHeight;
 			int texX, texY;
@@ -105,12 +106,15 @@ public class EnergiesOverlay implements IIngameOverlay {
 
 		poseStack.popPose();
 		poseStack.pushPose();
-		//body energy
+		//render labels
 		poseStack.translate(5, height - 75, 0);
 		poseStack.scale(0.7f, 0.7f, 1);
 		for (var system : System.values()) {
 			var systemData = cultivation.getSystemData(system);
-			int relativeAmount = new BigDecimal("100.0").multiply(systemData.getStat(PlayerSystemStat.ENERGY)).divide(systemData.getStat(PlayerSystemStat.MAX_ENERGY), RoundingMode.HALF_UP).intValue();
+			int relativeAmount = new BigDecimal("100.0")
+					.multiply(systemData.getStat(PlayerSystemStat.ENERGY))
+					.divide(systemData.getStat(PlayerSystemStat.MAX_ENERGY), RoundingMode.HALF_UP)
+					.intValue();
 			gui.getFont().drawShadow(poseStack, String.format("%d%%", relativeAmount),
 					indicatorPositionX[system.ordinal()], indicatorPositionY[system.ordinal()],
 					0xFFAA00);
