@@ -164,6 +164,8 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 	private static float getFrameRotation(float[] keyFrames, float animationFrame, int keyFrameTicks) {
 		float animationStep = animationFrame / (float) keyFrameTicks;
 		int keyFrame = (int) (animationStep);
+		if(keyFrames.length == 0) return 0f;
+		if(keyFrame >= keyFrames.length) return keyFrames[0];
 		float interpolationFactor = animationStep - keyFrame;
 		float initRotation = keyFrames[keyFrame];
 		float endRotation = keyFrames[keyFrame + 1];
