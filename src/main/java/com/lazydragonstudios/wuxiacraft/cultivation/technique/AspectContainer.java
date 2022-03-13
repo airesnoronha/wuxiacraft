@@ -69,7 +69,6 @@ public class AspectContainer {
 				}
 			}
 		}
-		calculateAspects(cultivation);
 		countKnownAspects();
 	}
 
