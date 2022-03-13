@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.technique;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects.TechniqueAspect;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
@@ -10,7 +11,10 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class AspectContainer {
 
@@ -99,15 +103,19 @@ public class AspectContainer {
 	}
 
 	public void calculateAspects(ICultivation cultivation) {
-		for (var aspectLocation : aspectAndProficiency.keySet()) {
+		LinkedList<Consumer<ICultivation>> onReachedSuppliers = new LinkedList<>();
+		for (var aspectLocation : this.aspectAndProficiency.keySet()) {
 			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspectLocation);
 			if (aspect == null) continue;
 			for (var checkpoint : aspect.checkpoints) {
 				var proficiency = this.aspectAndProficiency.get(aspectLocation);
 				if (proficiency.compareTo(checkpoint.proficiencyRequired()) > 0) {
-					checkpoint.onReached().accept(cultivation);
+					onReachedSuppliers.add(checkpoint.onReached());
 				}
 			}
+		}
+		for (var reached : onReachedSuppliers) {
+			reached.accept(cultivation);
 		}
 	}
 
