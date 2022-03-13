@@ -156,6 +156,7 @@ public class Cultivation implements ICultivation {
 		var cultSpeed = systemData.getStat(PlayerSystemStat.CULTIVATION_SPEED);
 		amount = amount.multiply(BigDecimal.ONE.add(cultSpeed));
 		systemData.addStat(PlayerSystemStat.CULTIVATION_BASE, amount);
+		this.getSystemData(System.DIVINE).consumeEnergy(amount.multiply(new BigDecimal("0.1")));
 	}
 
 	@Override

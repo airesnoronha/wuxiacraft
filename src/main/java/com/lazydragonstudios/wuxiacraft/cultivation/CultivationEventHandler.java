@@ -5,6 +5,7 @@ import com.lazydragonstudios.wuxiacraft.combat.WuxiaDamageSource;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillActivatorAspect;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaElements;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaMobEffects;
 import com.lazydragonstudios.wuxiacraft.networking.TurnSemiDeadStateMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
@@ -75,15 +76,25 @@ public class CultivationEventHandler {
 		if (cultivation.isSemiDead()) {
 			handleSemiDead(player, cultivation);
 		} else {
-
 			handleSkillCasting(player, cultivation);
 			handleBodyEnergyRegen(player, bodyData);
 			handleEnergyRegen(player, cultivation);
+			handleEnergyOverflow(player, cultivation);
 			handleNaturalHealing(cultivation, bodyData);
 			handleExerciseEnergies(cultivation, bodyData, essenceData);
 			handleLowEnergyPunishments(player, bodyData, divineData);
+			handleCustomPotionEffects(player, essenceData);
 		}
 		player.level.getProfiler().pop();
+	}
+
+	private static void handleCustomPotionEffects(Player player, SystemContainer essenceContainer) {
+		if (player.hasEffect(WuxiaMobEffects.SPIRITUAL_RESONANCE.get())) {
+			var effectInstance = player.getEffect(WuxiaMobEffects.SPIRITUAL_RESONANCE.get());
+			if (effectInstance == null) return;
+			essenceContainer.addEnergy(new BigDecimal("0.001").multiply(BigDecimal.TEN.pow(effectInstance.getAmplifier())));
+		}
+
 	}
 
 	private static void handleSemiDead(Player player, ICultivation cultivation) {
@@ -170,6 +181,19 @@ public class CultivationEventHandler {
 				//or regulate it slowly to 100%
 			} else if (systemData.getStat(PlayerSystemStat.ENERGY).compareTo(systemData.getStat(PlayerSystemStat.MAX_ENERGY)) > 0) {
 				systemData.consumeEnergy(systemData.getStat(PlayerSystemStat.ENERGY_REGEN));
+			}
+		}
+	}
+
+	private static void handleEnergyOverflow(Player player, ICultivation cultivation) {
+		for (var system : System.values()) {
+			var systemData = cultivation.getSystemData(system);
+			var energy = systemData.getStat(PlayerSystemStat.ENERGY);
+			var max_energy = systemData.getStat(PlayerSystemStat.MAX_ENERGY);
+			if (energy.compareTo(max_energy) > 0) {
+				var energy_regen = systemData.getStat(PlayerSystemStat.ENERGY_REGEN);
+				energy = energy.subtract(energy_regen).max(max_energy);
+				systemData.setStat(PlayerSystemStat.ENERGY, energy);
 			}
 		}
 	}

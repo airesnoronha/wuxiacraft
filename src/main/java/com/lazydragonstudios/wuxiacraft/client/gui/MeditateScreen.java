@@ -1,6 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.client.gui;
 
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
+import com.lazydragonstudios.wuxiacraft.capabilities.ClientAnimationState;
 import com.lazydragonstudios.wuxiacraft.client.gui.minigames.EssenceQiGatheringMinigame;
 import com.lazydragonstudios.wuxiacraft.client.gui.minigames.Minigame;
 import com.lazydragonstudios.wuxiacraft.client.gui.minigames.MortalEssenceMinigame;
@@ -9,6 +10,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRealms;
 import com.lazydragonstudios.wuxiacraft.networking.AttemptBreakthroughMessage;
+import com.lazydragonstudios.wuxiacraft.networking.BroadcastAnimationChangeRequestMessage;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import com.lazydragonstudios.wuxiacraft.util.MathUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -169,6 +171,17 @@ public class MeditateScreen extends Screen {
 		this.minigame.tick();
 		this.canBreakThrough = systemData.getStat(PlayerSystemStat.CULTIVATION_BASE)
 				.compareTo(systemData.getStat(PlayerSystemStat.MAX_CULTIVATION_BASE)) >= 0;
+	}
+
+	@Override
+	public void onClose() {
+		var player = Minecraft.getInstance().player;
+		if (player == null) return;
+		var animationState = ClientAnimationState.get(player);
+		var cultivation = Cultivation.get(player);
+		animationState.setMeditating(false);
+		WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState, cultivation.isCombat()));
+		super.onClose();
 	}
 
 	@Override
