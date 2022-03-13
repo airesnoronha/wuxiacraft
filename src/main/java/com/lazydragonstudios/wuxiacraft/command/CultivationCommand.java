@@ -203,7 +203,7 @@ public class CultivationCommand {
 		ICultivation cultivation = Cultivation.get(target);
 		TextComponent message = new TextComponent("");
 		var aspects = new AspectContainer();
-		cultivation.getAspects().deserialize(aspects.serialize());
+		cultivation.getAspects().deserialize(aspects.serialize(), cultivation);
 		message.append("Successfully cleared all technique aspects from target player");
 		ctx.getSource().sendSuccess(message, true);
 		syncClientCultivation(target);

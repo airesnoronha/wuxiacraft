@@ -1,8 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects;
 
-import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabel;
-import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;

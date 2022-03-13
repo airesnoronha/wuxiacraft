@@ -69,7 +69,7 @@ public class AspectContainer {
 				}
 			}
 		}
-		calculateAspects();
+		calculateAspects(cultivation);
 		countKnownAspects();
 	}
 
@@ -99,14 +99,14 @@ public class AspectContainer {
 		return false;
 	}
 
-	public void calculateAspects() {
+	public void calculateAspects(ICultivation cultivation) {
 		for (var aspectLocation : aspectAndProficiency.keySet()) {
 			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspectLocation);
 			if (aspect == null) continue;
 			for (var checkpoint : aspect.checkpoints) {
 				var proficiency = this.aspectAndProficiency.get(aspectLocation);
 				if (proficiency.compareTo(checkpoint.proficiencyRequired()) > 0) {
-					checkpoint.onReached().accept(this);
+					checkpoint.onReached().accept(cultivation);
 				}
 			}
 		}
@@ -125,7 +125,7 @@ public class AspectContainer {
 		return tag;
 	}
 
-	public void deserialize(CompoundTag tag) {
+	public void deserialize(CompoundTag tag, ICultivation cultivation) {
 		var listTag = (ListTag) tag.get("aspect-list");
 		if (listTag == null) return;
 		this.aspectAndProficiency.clear();
@@ -135,7 +135,7 @@ public class AspectContainer {
 			var proficiency = aspectTag.getString("aspect-proficiency");
 			this.aspectAndProficiency.put(new ResourceLocation(location), new BigDecimal(proficiency));
 		}
-		calculateAspects();
+		calculateAspects(cultivation);
 		countKnownAspects();
 	}
 

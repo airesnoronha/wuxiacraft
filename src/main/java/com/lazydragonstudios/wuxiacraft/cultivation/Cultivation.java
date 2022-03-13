@@ -277,7 +277,7 @@ public class Cultivation implements ICultivation {
 			getSystemData(System.ESSENCE).deserialize(tag.getCompound("essence-data"));
 		}
 		if (tag.contains("aspect-data")) {
-			this.aspects.deserialize(tag.getCompound("aspect-data"));
+			this.aspects.deserialize(tag.getCompound("aspect-data"), this);
 		}
 		if (tag.contains("skills-data")) {
 			this.skills.deserialize(tag.getCompound("skills-data"));
