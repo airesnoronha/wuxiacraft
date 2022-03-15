@@ -1,11 +1,12 @@
 package com.lazydragonstudios.wuxiacraft;
 
-import com.lazydragonstudios.wuxiacraft.command.CreateDefaultManualCommand;
-import com.lazydragonstudios.wuxiacraft.command.CultivationCommand;
-import com.lazydragonstudios.wuxiacraft.command.StatCommand;
+import com.lazydragonstudios.wuxiacraft.command.*;
+import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.init.*;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import com.lazydragonstudios.wuxiacraft.util.TechniqueUtil;
+import net.minecraft.commands.synchronization.ArgumentTypes;
+import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.server.command.EnumArgument;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.lazydragonstudios.wuxiacraft.capabilities.CapabilityAttachingHandler;
@@ -72,6 +74,7 @@ public class WuxiaCraft {
 		WuxiaDefaultTechniqueManuals.init();
 		TechniqueUtil.initDevouringData();
 		TechniqueUtil.initChancedAspectsBlocks();
+		registerArgumentTypes();
 		TestRun.testStuff();
 	}
 
@@ -96,6 +99,11 @@ public class WuxiaCraft {
 	public void onServerStarting(ServerStartingEvent event) {
 		// do something when the server starts
 		LOGGER.info("HELLO from server starting");
+	}
+
+	public void registerArgumentTypes() {
+		ArgumentTypes.register("wuxiacraft:aspect_type", AspectArgument.class, new EmptyArgumentSerializer<>(AspectArgument::id));
+		ArgumentTypes.register("wuxiacraft:stage_type", StageArgument.class, new EmptyArgumentSerializer<>(StageArgument::id));
 	}
 
 	@SubscribeEvent

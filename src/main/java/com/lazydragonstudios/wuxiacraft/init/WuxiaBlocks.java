@@ -16,13 +16,13 @@ public class WuxiaBlocks {
 	public static RegistryObject<Block> TECHNIQUE_INSCRIBER = BLOCKS.register("technique_inscriber",
 			() -> new TechniqueInscriber(BlockBehaviour.Properties.of(Material.WOOD).strength(3f)));
 
-	public static RegistryObject<Block> WOOD_FORMATION_CORE = BLOCKS.register("iron_formation_core",
+	public static RegistryObject<Block> WOOD_FORMATION_CORE = BLOCKS.register("wood_formation_core",
 			() -> new FormationCoreBlock(BlockBehaviour.Properties.of(Material.METAL).strength(2f)));
 
 	public static RegistryObject<Block> IRON_FORMATION_CORE = BLOCKS.register("iron_formation_core",
 			() -> new FormationCoreBlock(BlockBehaviour.Properties.of(Material.METAL).strength(2f)));
 
-	public static RegistryObject<Block> _FORMATION_CORE = BLOCKS.register("iron_formation_core",
+	public static RegistryObject<Block> GOLD_FORMATION_CORE = BLOCKS.register("gold_formation_core",
 			() -> new FormationCoreBlock(BlockBehaviour.Properties.of(Material.METAL).strength(2f)));
 
 }

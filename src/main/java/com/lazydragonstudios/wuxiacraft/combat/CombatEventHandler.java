@@ -60,13 +60,13 @@ public class CombatEventHandler {
 		}
 		var resistance = cultivation.getStat(source.getElement().getRegistryName(), PlayerElementalStat.RESISTANCE);
 		if (source.getElement() == WuxiaElements.PHYSICAL.get()) {
-			resistance.add(BigDecimal.valueOf(player.getArmorValue()));
+			resistance = resistance.add(BigDecimal.valueOf(player.getArmorValue()));
 		}
 
 		Entity attacker = source.getEntity();
 		if(attacker instanceof Player) {
 			var pierce = Cultivation.get((Player) attacker).getStat(source.getElement().getRegistryName(), PlayerElementalStat.PIERCE);
-			resistance.subtract(pierce).max(BigDecimal.ZERO);
+			resistance = resistance.subtract(pierce).max(BigDecimal.ZERO);
 		}
 
 		source = new WuxiaDamageSource(source.getMsgId(), source.getElement(), source.getEntity(),

@@ -11,17 +11,19 @@ import com.lazydragonstudios.wuxiacraft.networking.CultivationSyncMessage;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.server.command.EnumArgument;
 
 import java.math.BigDecimal;
 
@@ -47,8 +49,8 @@ public class CultivationCommand {
 								)
 						)
 						.then(Commands.literal("set")
-								.then(Commands.argument("system", StringArgumentType.string())
-										.then(Commands.argument("stage", StringArgumentType.string())
+								.then(Commands.argument("system", EnumArgument.enumArgument(System.class))
+										.then(Commands.argument("stage", StageArgument.id())
 												.executes(CultivationCommand::setCultivation)
 										)
 								)
@@ -107,7 +109,7 @@ public class CultivationCommand {
 			message.append(systemName).append(" stats: ").append("\n");
 			SystemContainer systemData = cultivation.getSystemData(system);
 			message.append("Realm: ").append(systemData.getRealm().name).append("\n");
-			message.append("Stage: ").append( new TranslatableComponent("wuxiacraft.stage."+systemData.getStage().getRegistryName().getPath())).append("\n");
+			message.append("Stage: ").append(new TranslatableComponent(systemData.currentStage.getNamespace() + ".stage." + systemData.currentStage.getPath())).append("\n");
 			message.append("CultivationBase: ").append(String.format("%.1f", systemData.getStat(PlayerSystemStat.CULTIVATION_BASE))).append("\n");
 			message.append("Energy: ").append(String.format("%.1f", systemData.getStat(PlayerSystemStat.ENERGY))).append("\n\n");
 		}
@@ -127,27 +129,14 @@ public class CultivationCommand {
 
 	public static int setCultivation(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
 		ServerPlayer target = EntityArgument.getPlayer(ctx, "target");
-		String systemName = StringArgumentType.getString(ctx, "system").toUpperCase();
-		String stageName = StringArgumentType.getString(ctx, "stage").toLowerCase();
-		System system;
-		ResourceLocation stageLocation = new ResourceLocation(stageName);
-		if(!stageName.contains(":")) {
-			stageLocation = new ResourceLocation("wuxiacraft", stageName);
-		}
-		var stage = WuxiaRegistries.CULTIVATION_STAGES.getValue(stageLocation);
-		try {
-			system = System.valueOf(systemName);
-		} catch (IllegalArgumentException e) {
-			throw new CommandSyntaxException(CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument(), () -> ("Unknown specified system" + systemName));
-		}
-		if (stage == null) {
-			throw new CommandSyntaxException(CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument(), () -> ("Unknown specified stage " + stageName));
-		}
+		System system = ctx.getArgument("system", System.class);
+		ResourceLocation stageLocation = StageArgument.getStageLocation(ctx, "stage");
 		ICultivation cultivation = Cultivation.get(target);
 		var systemData = cultivation.getSystemData(system);
 		systemData.currentStage = stageLocation;
 		systemData.calculateStats(cultivation);
-		TextComponent message = new TextComponent("Successfully changed the stage of the target to " + stageLocation);
+		Component message = new TranslatableComponent("wuxiacraft.command.set_stage",
+				new TranslatableComponent(stageLocation.getNamespace() + ".stage." + stageLocation.getPath()));
 		ctx.getSource().sendSuccess(message, true);
 		syncClientCultivation(target);
 		return 1;
@@ -159,10 +148,10 @@ public class CultivationCommand {
 		int amount = IntegerArgumentType.getInteger(ctx, "amount");
 
 		ICultivation cultivation = Cultivation.get(target);
-		TextComponent message = new TextComponent("");
 
 		cultivation.getAspects().addAspectProficiency(aspectLocation, new BigDecimal(amount), cultivation);
-		message.append("Successfully added aspect proficiency to target player");
+		var message = new TranslatableComponent("wuxiacraft.command.add_proficiency",
+				new TranslatableComponent(aspectLocation.getNamespace() + "aspect" + aspectLocation.getPath() + ".name"));
 		ctx.getSource().sendSuccess(message, true);
 		syncClientCultivation(target);
 		return 1;

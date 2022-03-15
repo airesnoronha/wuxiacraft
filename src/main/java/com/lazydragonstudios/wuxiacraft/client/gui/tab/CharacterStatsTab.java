@@ -57,8 +57,10 @@ public class CharacterStatsTab extends IntrospectionTab {
 			systemStatPanel.margin = 2;
 			systemStats.put(system, systemStatPanel);
 			SystemContainer systemData = cultivation.getSystemData(system);
-			var realmNameLabel = new WuxiaLabel(0, 0, new TranslatableComponent("wuxiacraft.realm." + systemData.getStage().realm.getPath()), color);
-			var stageNameLabel = new WuxiaLabel(0, 0, new TranslatableComponent("wuxiacraft.stage." + systemData.currentStage.getPath()), color);
+			ResourceLocation realmLocation = systemData.getStage().realm;
+			var realmNameLabel = new WuxiaLabel(0, 0, new TranslatableComponent(realmLocation.getNamespace() + ".realm." + realmLocation.getPath()), color);
+			ResourceLocation currentStageLocation = systemData.currentStage;
+			var stageNameLabel = new WuxiaLabel(0, 0, new TranslatableComponent(currentStageLocation.getNamespace() + ".stage." + currentStageLocation.getPath()), color);
 			systemStatPanel.addChild(realmNameLabel);
 			systemStatPanel.addChild(stageNameLabel);
 			for (var stat : PlayerSystemStat.values()) {

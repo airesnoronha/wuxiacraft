@@ -18,6 +18,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.server.command.EnumArgument;
 
 import java.math.BigDecimal;
 
@@ -31,13 +32,13 @@ public class StatCommand {
 								.executes(StatCommand::getStats)
 						)
 						.then(Commands.literal("set")
-								.then(Commands.argument("stat", StatArgument.id())
+								.then(Commands.argument("stat", EnumArgument.enumArgument(PlayerStat.class))
 										.then(Commands.argument("amount", IntegerArgumentType.integer())
 												.executes(StatCommand::setStat)
 										)
 								)
-								.then(Commands.argument("system", SystemArgument.system())
-										.then(Commands.argument("stat", SystemStatArgument.stat())
+								.then(Commands.argument("system", EnumArgument.enumArgument(System.class))
+										.then(Commands.argument("stat", EnumArgument.enumArgument(PlayerSystemStat.class))
 												.then(Commands.argument("amount", IntegerArgumentType.integer())
 														.executes(StatCommand::setSystemStat)
 												)
@@ -69,16 +70,14 @@ public class StatCommand {
 
 	public static int setStat(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
 		ServerPlayer target = EntityArgument.getPlayer(ctx, "target");
-		String stat = ctx.getArgument("stat", String.class);
 		int amount = IntegerArgumentType.getInteger(ctx, "amount");
+		var playerStat = ctx.getArgument("stat", PlayerStat.class);
 
 		ICultivation cultivation = Cultivation.get(target);
 		TextComponent message = new TextComponent("");
-
-		PlayerStat playerStat = PlayerStat.valueOf(stat);
 		cultivation.setStat(playerStat, BigDecimal.valueOf(amount));
 
-		message.append("Successfully set the target's " + stat + " stat.");
+		message.append("Successfully set the target's " + playerStat.name() + " stat.");
 		ctx.getSource().sendSuccess(message, true);
 		syncClientCultivation(target);
 		return 1;
@@ -86,8 +85,8 @@ public class StatCommand {
 
 	public static int setSystemStat(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
 		ServerPlayer target = EntityArgument.getPlayer(ctx, "target");
-		System system = SystemArgument.getSystem(ctx, "system");
-		PlayerSystemStat stat = SystemStatArgument.getStat(ctx, "stat");
+		System system = ctx.getArgument("system", System.class);
+		PlayerSystemStat stat = ctx.getArgument("stat", PlayerSystemStat.class);
 		int amount = IntegerArgumentType.getInteger(ctx, "amount");
 
 		ICultivation cultivation = Cultivation.get(target);
