@@ -292,6 +292,7 @@ public class SystemContainer {
 				this.systemStats.put(stat, stat.defaultValue);
 			}
 		}
+		this.systemElementalStats.clear();
 		if (tag.contains("elemental-stats")) {
 			var rawElementalStatsTag = tag.get("elemental-stats");
 			if (rawElementalStatsTag instanceof CompoundTag elementalStatsTag) {

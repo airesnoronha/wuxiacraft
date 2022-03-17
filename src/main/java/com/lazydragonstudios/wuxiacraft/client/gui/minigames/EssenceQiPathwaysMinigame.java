@@ -19,16 +19,81 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.LinkedList;
 
-public class EssenceQiGatheringMinigame implements Minigame {
+public class EssenceQiPathwaysMinigame implements Minigame {
 
-	private static final ResourceLocation MINIGAME_TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/minigames/mortal_essence_minigame.png");
+	private static final ResourceLocation MINIGAME_TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/minigames/qi_pathways.png");
+
+	private static final Point[][] pathways = new Point[][]{
+			new Point[]{
+					new Point(3, 22),
+					new Point(8, 23),
+					new Point(22, 25),
+					new Point(34, 26),
+					new Point(46, 25),
+					new Point(57, 25),
+					new Point(62, 27),
+					new Point(66, 30),
+					new Point(67, 40),
+					new Point(67, 48),
+					new Point(70, 55),
+					new Point(73, 61)
+			},
+			new Point[]{
+					new Point(144, 22),
+					new Point(139, 23),
+					new Point(125, 25),
+					new Point(113, 26),
+					new Point(101, 25),
+					new Point(90, 25),
+					new Point(85, 27),
+					new Point(81, 30),
+					new Point(80, 40),
+					new Point(80, 48),
+					new Point(77, 55),
+					new Point(74, 61)
+			},
+			new Point[]{
+					new Point(33, 130),
+					new Point(37, 127),
+					new Point(41, 122),
+					new Point(47, 110),
+					new Point(52, 100),
+					new Point(57, 90),
+					new Point(60, 80),
+					new Point(63, 75),
+					new Point(66, 71),
+					new Point(68, 68),
+					new Point(70, 65),
+					new Point(73, 61)
+			},
+			new Point[]{
+					new Point(114, 130),
+					new Point(110, 127),
+					new Point(106, 122),
+					new Point(100, 110),
+					new Point(95, 100),
+					new Point(90, 90),
+					new Point(87, 80),
+					new Point(84, 75),
+					new Point(81, 71),
+					new Point(79, 68),
+					new Point(77, 65),
+					new Point(74, 61)
+			}
+	};
+	private static final int imageX = 19;
+	private static final int imageY = 26;
 
 	private final LinkedList<Strand> strands = new LinkedList<>();
 
 	private Strand selectedStrand = null;
 
 	//the size is actually the tex coordinates
-	private final Rectangle dantian = new Rectangle(96, 104, 60, 5);
+	private final Rectangle dantian = new Rectangle(73, 61, 148, 5);
+
+	int chosenPathway = -1;
+	int currentPoint = 0;
+	boolean isGrabbed = false;
 
 	@Override
 	public void init(MeditateScreen screen) {
@@ -82,16 +147,27 @@ public class EssenceQiGatheringMinigame implements Minigame {
 		var essenceData = cultivation.getSystemData(System.ESSENCE);
 		if (!essenceData.techniqueData.modifier.isValidTechnique()) return;
 		RenderSystem.setShaderTexture(0, MINIGAME_TEXTURE);
-		int imageX = 70;
-		int imageY = 66;
-		GuiComponent.blit(poseStack, imageX, imageY, 60, 60, 0, 0, 60, 60, 256, 256); //the person cross-legged
+		GuiComponent.blit(poseStack, imageX, imageY, 148, 135, 0, 0, 148, 135, 512, 512); //the white body
 		//fill = 60 * cult_base/max_cult_base
-		int barFill = BigDecimal.valueOf(60).multiply(
-						essenceData.getStat(PlayerSystemStat.CULTIVATION_BASE)
-								.divide(essenceData.getStat(PlayerSystemStat.MAX_CULTIVATION_BASE), RoundingMode.HALF_UP))
-				.min(BigDecimal.valueOf(60)).intValue();
-		GuiComponent.blit(poseStack, imageX, imageY + 60 - barFill, 60, barFill, 0, 60 + 60 - barFill, 60, barFill, 256, 256); //the person cross-legged fill
-		GuiComponent.blit(poseStack, dantian.x, dantian.y, 8, 8, dantian.width, dantian.height, 8, 8, 256, 256);
+		int barFill = BigDecimal.valueOf(135).multiply(
+				essenceData.getStat(PlayerSystemStat.CULTIVATION_BASE)
+						.divide(essenceData.getStat(PlayerSystemStat.MAX_CULTIVATION_BASE), RoundingMode.HALF_UP)).intValue();
+		GuiComponent.blit(poseStack, imageX, imageY + 135 - barFill, 148, barFill, 0, 135 + 135 - barFill, 148, barFill, 512, 512); //the green body fill
+		GuiComponent.blit(poseStack, imageX + 2, imageY + 21, 144, 111, 0, 135, 144, 111, 512, 512); //the pathways
+		GuiComponent.blit(poseStack, imageX + dantian.x-4, imageY +  dantian.y-4, 8, 8, dantian.width, dantian.height, 8, 8, 512, 512);
+		if (this.selectedStrand != null) {
+			if (this.chosenPathway == -1) {
+				for (int i = 0; i < 4; i++) {
+					Point point = pathways[i][0];
+					GuiComponent.blit(poseStack, imageX + point.x - 3, imageY + point.y - 3, 5, 148, 13, 5, 5, 512, 512);
+				}
+			} else if (this.chosenPathway < 4) {
+				if (this.currentPoint < pathways[this.chosenPathway].length) {
+					Point point = pathways[this.chosenPathway][this.currentPoint];
+					GuiComponent.blit(poseStack, imageX + point.x - 3, imageY + point.y - 3, 5, 148, 13, 5, 5, 512, 512);
+				}
+			}
+		}
 		for (var strand : this.strands) {
 			strand.render(poseStack);
 		}
@@ -108,17 +184,36 @@ public class EssenceQiGatheringMinigame implements Minigame {
 		if (player == null) return;
 		var cultivation = Cultivation.get(player);
 		var essenceData = cultivation.getSystemData(System.ESSENCE);
-		var strandCount = essenceData.getStat(PlayerSystemStat.ENERGY).divide(new BigDecimal("2.5"), RoundingMode.HALF_UP).intValue();
+		var strandCount = essenceData.getStat(PlayerSystemStat.ENERGY).divide(new BigDecimal("4"), RoundingMode.HALF_UP).intValue();
 		this.keepCorrectStrandCount(strandCount);
 		var markedToRemove = new LinkedList<Strand>();
 		for (var strand : this.strands) {
 			strand.tick();
 			strand.setGrabbed(strand == selectedStrand);
-			if (MathUtil.inBounds(strand.x, strand.y, dantian.x, dantian.y, 8, 8)) {
-				selectedStrand = null;
-				markedToRemove.add(strand);
-				WuxiaPacketHandler.INSTANCE.sendToServer(new MeditateMessage(System.ESSENCE, true));
-				essenceData.getStage().cultivate(player);
+			if (selectedStrand == strand) {
+				if (chosenPathway == -1) {
+					for (int i = 0; i < 4; i++) {
+						Point currentPoint = pathways[i][0];
+						if (MathUtil.inBounds(strand.x, strand.y, imageX + currentPoint.x - 3, imageY + currentPoint.y - 3, 5, 5)) {
+							chosenPathway = i;
+							this.currentPoint = 1;
+						}
+					}
+				} else if (this.chosenPathway < 4) {
+					if (this.currentPoint >= pathways[this.chosenPathway].length) return;
+					Point currentPoint = pathways[this.chosenPathway][this.currentPoint];
+					if (MathUtil.inBounds(strand.x, strand.y, imageX + currentPoint.x - 3, imageY + currentPoint.y - 3, 5, 5)) {
+						this.currentPoint++;
+					}
+					if (this.currentPoint >= pathways[this.chosenPathway].length) {
+						selectedStrand = null;
+						markedToRemove.add(strand);
+						WuxiaPacketHandler.INSTANCE.sendToServer(new MeditateMessage(System.ESSENCE, true));
+						essenceData.getStage().cultivate(player);
+						this.chosenPathway = -1;
+						this.currentPoint = 0;
+					}
+				}
 			}
 		}
 		for (var toRemove : markedToRemove) {
@@ -143,7 +238,6 @@ public class EssenceQiGatheringMinigame implements Minigame {
 		private static final int MAX_X = 192;
 		private static final int MIN_Y = 24;
 		private static final int MAX_Y = 162;
-		private static final int MAX_GRABBED_TICKS = 25;
 		private double x;
 		private double y;
 		private double movX;
@@ -176,7 +270,7 @@ public class EssenceQiGatheringMinigame implements Minigame {
 		void render(PoseStack stack) {
 			stack.pushPose();
 			stack.translate(this.x, this.y, 0);
-			GuiComponent.blit(stack, -3, -3, 5, 5, 60, 0, 5, 5, 256, 256);
+			GuiComponent.blit(stack, -3, -3, 5, 5, 148, 0, 5, 5, 512, 512);
 			stack.popPose();
 		}
 

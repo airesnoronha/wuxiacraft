@@ -49,7 +49,7 @@ public class InputHandler {
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player == null) return;
 		if (!(event.getAction() == GLFW.GLFW_RELEASE || event.getAction() == GLFW.GLFW_PRESS)) return;
-		var animationState = ClientAnimationState.get(player);
+		var animationState = new ClientAnimationState();
 		var cultivation = Cultivation.get(player);
 		var skillData = cultivation.getSkills();
 		if (mappings.get(OPEN_INTROSPECTION).consumeClick()) {

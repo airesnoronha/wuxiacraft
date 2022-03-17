@@ -5,6 +5,7 @@ import com.lazydragonstudios.wuxiacraft.client.gui.IntrospectionScreen;
 import com.lazydragonstudios.wuxiacraft.client.gui.widgets.*;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.TechniqueContainer;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.TechniqueModifier;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
@@ -105,6 +106,8 @@ public class TechniqueTab extends IntrospectionTab {
 		gridComposer = new WuxiaTechniqueComposeGrid(5, 5, renderGrid);
 		gridComposer.onClicked = onGridComposerClick;
 		gridComposer.onRelease = onGridComposerRelease;
+		var radius = systemData.getStat(PlayerSystemStat.ADDITIONAL_GRID_RADIUS).intValue();
+		gridComposer.setGridRadius(1 + radius);
 		composerPanel.addChild(gridComposer);
 
 		screen.addRenderableWidget(aspectsPanel);

@@ -152,6 +152,7 @@ public class Cultivation implements ICultivation {
 		var elements = systemData.techniqueData.modifier.elements;
 		for (var elementLocation : elements.keySet()) {
 			systemData.addStat(elementLocation, PlayerSystemElementalStat.FOUNDATION, BigDecimal.valueOf(elements.get(elementLocation) * 0.1));
+			this.addStat(elementLocation, PlayerElementalStat.COMPREHENSION, BigDecimal.valueOf(elements.get(elementLocation)));
 		}
 		var cultSpeed = systemData.getStat(PlayerSystemStat.CULTIVATION_SPEED);
 		amount = amount.multiply(BigDecimal.ONE.add(cultSpeed));
@@ -206,9 +207,22 @@ public class Cultivation implements ICultivation {
 			}
 		}
 		this.skills.knownSkills.clear();
+		for (var elementLocation : this.playerElementalStats.keySet()) {
+			var element = WuxiaRegistries.ELEMENTS.getValue(elementLocation);
+			if (element == null) continue;
+			if (this.playerElementalStats.get(elementLocation).containsKey(PlayerElementalStat.COMPREHENSION)) {
+				var comprehension = this.playerElementalStats.get(elementLocation).get(PlayerElementalStat.COMPREHENSION);
+				for (var skillAspect : element.skillAspects.keySet()) {
+					var comprehensionRequired = element.skillAspects.get(skillAspect);
+					if (comprehension.compareTo(comprehensionRequired) < 0) continue;
+					this.skills.knownSkills.add(skillAspect);
+				}
+			}
+		}
 		for (var system : System.values()) {
 			var systemData = this.getSystemData(system);
 			this.skills.knownSkills.addAll(systemData.techniqueData.modifier.skills);
+			this.skills.knownSkills.addAll(systemData.getStage().getSkillsAspects());
 			systemData.calculateStats(this);
 		}
 	}
@@ -251,6 +265,7 @@ public class Cultivation implements ICultivation {
 				this.playerStats.put(stat, new BigDecimal("0"));
 			}
 		}
+		this.playerElementalStats.clear();
 		if (tag.contains("elemental-stats")) {
 			var rawElementalStatsTag = tag.get("elemental-stats");
 			if (rawElementalStatsTag instanceof CompoundTag elementalStatsTag) {

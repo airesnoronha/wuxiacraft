@@ -25,7 +25,7 @@ public class SkillHitAspect extends SkillAspect {
 
 	@Override
 	public SkillAspectType getType() {
-		return WuxiaSkillAspects.HIT_ASPECT.get();
+		return WuxiaSkillAspects.PUNCH.get();
 	}
 
 	public boolean activate(Player player, LinkedList<SkillAspect> aspectsChain, HitResult result) {

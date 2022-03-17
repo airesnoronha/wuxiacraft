@@ -30,6 +30,6 @@ public class SkillAttackAspect extends SkillHitAspect {
 
 	@Override
 	public SkillAspectType getType() {
-		return WuxiaSkillAspects.ATTACK_ASPECT.get();
+		return WuxiaSkillAspects.ATTACK.get();
 	}
 }

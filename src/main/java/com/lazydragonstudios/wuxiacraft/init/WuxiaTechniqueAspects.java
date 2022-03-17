@@ -9,7 +9,6 @@ import com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects.*;
 import com.lazydragonstudios.wuxiacraft.event.CultivatingEvent;
 import com.lazydragonstudios.wuxiacraft.util.TechniqueUtil;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
@@ -809,7 +808,7 @@ public class WuxiaTechniqueAspects {
 	//////////////////////////////////////////
 
 	public static RegistryObject<TechniqueAspect> SPACE_TEARING = ASPECTS.register("space_tearing",
-			() -> new ElementToSkillConsumer(WuxiaElements.SPACE.getId(), 10d, WuxiaSkillAspects.SPACE_TEAR_ASPECT.getId())
+			() -> new ElementToSkillConsumer(WuxiaElements.SPACE.getId(), 10d, WuxiaSkillAspects.SPACE_TEAR.getId())
 	);
 
 	//////////////////////////////////////////

@@ -73,8 +73,9 @@ public class MortalEssenceMinigame implements Minigame {
 		GuiComponent.blit(poseStack, imageX, imageY, 60, 60, 0, 0, 60, 60, 256, 256); //the person cross-legged
 		//fill = 60 * cult_base/max_cult_base
 		int barFill = BigDecimal.valueOf(60).multiply(
-				essenceData.getStat(PlayerSystemStat.CULTIVATION_BASE)
-						.divide(essenceData.getStat(PlayerSystemStat.MAX_CULTIVATION_BASE), RoundingMode.HALF_UP)).intValue();
+						essenceData.getStat(PlayerSystemStat.CULTIVATION_BASE)
+								.divide(essenceData.getStat(PlayerSystemStat.MAX_CULTIVATION_BASE), RoundingMode.HALF_UP))
+				.min(BigDecimal.valueOf(60)).intValue();
 		GuiComponent.blit(poseStack, imageX, imageY + 60 - barFill, 60, barFill, 0, 60 + 60 - barFill, 60, barFill, 256, 256); //the person cross-legged fill
 
 		for (var strand : this.strands) {

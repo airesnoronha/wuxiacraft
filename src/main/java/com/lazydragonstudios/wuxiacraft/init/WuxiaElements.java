@@ -26,6 +26,7 @@ public class WuxiaElements {
 			.statModifier(PlayerElementalStat.PIERCE, new BigDecimal("0.06"))
 			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.06"))
 			.statModifier(PlayerSystemStat.MAX_ENERGY, new BigDecimal("-0.0005"))
+			.addSkill(WuxiaSkillAspects.EXPLOSION.getId(), new BigDecimal("5000"))
 	);
 
 	public static RegistryObject<Element> EARTH = ELEMENTS.register("earth", () -> new Element()
@@ -66,6 +67,7 @@ public class WuxiaElements {
 			.statModifier(PlayerStat.MAX_HEALTH, new BigDecimal("0.03"))
 			.statModifier(PlayerElementalStat.RESISTANCE, new BigDecimal("0.04"))
 			.statModifier(PlayerStat.STRENGTH, new BigDecimal("-0.0001"))
+			.addSkill(WuxiaSkillAspects.HEAL.getId(), new BigDecimal("5000"))
 	);
 
 	public static RegistryObject<Element> LIGHTNING = ELEMENTS.register("lightning", () -> new Element()

@@ -351,7 +351,7 @@ public class CultivationEventHandler {
 			}
 			oldCultivation.setStat(PlayerStat.LIVES, oldCultivation.getStat(PlayerStat.LIVES).subtract(BigDecimal.ONE));
 			if (oldCultivation.getStat(PlayerStat.LIVES).compareTo(BigDecimal.ZERO) == 0) {
-				oldCultivation.deserialize(new Cultivation().serialize());
+				oldCultivation = new Cultivation();
 			} else {
 				oldCultivation.setStat(PlayerStat.HEALTH, PlayerStat.HEALTH.defaultValue);
 				var bodyData = oldCultivation.getSystemData(System.BODY);

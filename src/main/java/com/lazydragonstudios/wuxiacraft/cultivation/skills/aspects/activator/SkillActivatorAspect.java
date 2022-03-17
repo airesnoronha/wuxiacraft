@@ -24,7 +24,7 @@ public class SkillActivatorAspect extends SkillAspect {
 
 	@Override
 	public SkillAspectType getType() {
-		return WuxiaSkillAspects.HIT_ASPECT.get();
+		return WuxiaSkillAspects.PUNCH.get();
 	}
 
 	public SkillActivatorAspect setActivate(BiPredicate<Player, LinkedList<SkillAspect>> activate) {

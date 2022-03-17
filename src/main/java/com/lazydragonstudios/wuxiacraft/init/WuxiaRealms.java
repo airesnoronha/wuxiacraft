@@ -9,10 +9,12 @@ import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.math.BigDecimal;
+import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 public class WuxiaRealms {
@@ -120,17 +122,8 @@ public class WuxiaRealms {
 							null,
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_gathering_stage")
 					)
-							.setOnCultivate(player -> {
-								var cultivation = Cultivation.get(player);
-								var essenceData = cultivation.getSystemData(System.ESSENCE);
-								if (essenceData.consumeEnergy(BigDecimal.ONE)) {
-									cultivation.addCultivationBase(player, System.ESSENCE, BigDecimal.ONE);
-								}
-							}).setOnCultivationFailure(player -> {
-								var cultivation = Cultivation.get(player);
-								var essenceData = cultivation.getSystemData(System.ESSENCE);
-								essenceData.consumeEnergy(BigDecimal.ONE);
-							})
+							.setOnCultivate(cultivateFlatAmounts(BigDecimal.ONE, BigDecimal.ONE))
+							.setOnCultivationFailure(cultivateFailureEnergy(BigDecimal.ONE))
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_CULTIVATION_BASE, new BigDecimal("1000")) //1k
 			);
 
@@ -142,17 +135,8 @@ public class WuxiaRealms {
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_mortal_stage"),
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_pathways_stage")
 					)
-							.setOnCultivate(player -> {
-								var cultivation = Cultivation.get(player);
-								var essenceData = cultivation.getSystemData(System.ESSENCE);
-								if (essenceData.consumeEnergy(new BigDecimal("2.5"))) {
-									cultivation.addCultivationBase(player, System.ESSENCE, BigDecimal.ONE);
-								}
-							}).setOnCultivationFailure(player -> {
-								var cultivation = Cultivation.get(player);
-								var essenceData = cultivation.getSystemData(System.ESSENCE);
-								essenceData.consumeEnergy(new BigDecimal("2.5"));
-							})
+							.setOnCultivate(cultivateFlatAmounts(new BigDecimal("2.5"), BigDecimal.ONE))
+							.setOnCultivationFailure(cultivateFailureEnergy(BigDecimal.ONE))
 							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("4"))
 							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("2"))
 							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.01"))
@@ -179,6 +163,8 @@ public class WuxiaRealms {
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_gathering_stage"),
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_condensation_stage")
 					)
+							.setOnCultivate(cultivateFlatAmounts(new BigDecimal("4"), BigDecimal.ONE))
+							.setOnCultivationFailure(cultivateFailureEnergy(BigDecimal.ONE))
 							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("1"))
 							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("0"))
 							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.01"))
@@ -194,6 +180,8 @@ public class WuxiaRealms {
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("4"))
 							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.RESISTANCE, new BigDecimal("1"))
 							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.PIERCE, new BigDecimal("1"))
+							.addSkill(WuxiaSkillAspects.PUNCH.getId())
+							.addSkill(WuxiaSkillAspects.ATTACK.getId())
 			);
 
 	public static RegistryObject<CultivationStage> ESSENCE_QI_CONDENSATION_STAGE = STAGE_REGISTER
@@ -220,6 +208,7 @@ public class WuxiaRealms {
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.01"))
 							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.RESISTANCE, new BigDecimal("1"))
 							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.PIERCE, new BigDecimal("1"))
+							.addSkill(WuxiaSkillAspects.BREAK.getId())
 			);
 
 	public static RegistryObject<CultivationStage> ESSENCE_QI_PHENOMENON_STAGE = STAGE_REGISTER
@@ -246,8 +235,10 @@ public class WuxiaRealms {
 							.addSystemStat(System.DIVINE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("2"))
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("7"))
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.002"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.ADDITIONAL_GRID_RADIUS, new BigDecimal("1"))
 							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.RESISTANCE, new BigDecimal("1"))
 							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.PIERCE, new BigDecimal("1"))
+							.addSkill(WuxiaSkillAspects.SHOOT.getId())
 			);
 
 	//Change realms -> big leap in stats
@@ -359,6 +350,7 @@ public class WuxiaRealms {
 							.addSystemStat(System.DIVINE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.05"))
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.MAX_ENERGY, new BigDecimal("42"))
 							.addSystemStat(System.ESSENCE, PlayerSystemStat.ENERGY_REGEN, new BigDecimal("0.023"))
+							.addSystemStat(System.ESSENCE, PlayerSystemStat.ADDITIONAL_GRID_RADIUS, new BigDecimal("1"))
 							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.RESISTANCE, new BigDecimal("1"))
 							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.PIERCE, new BigDecimal("4"))
 			);
@@ -390,4 +382,23 @@ public class WuxiaRealms {
 							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.RESISTANCE, new BigDecimal("6"))
 							.addElementalStat(WuxiaElements.PHYSICAL.getId(), PlayerElementalStat.PIERCE, new BigDecimal("10"))
 			);
+
+	public static Consumer<Player> cultivateFlatAmounts(BigDecimal energy, BigDecimal cultivationBase) {
+		return player -> {
+			var cultivation = Cultivation.get(player);
+			var essenceData = cultivation.getSystemData(System.ESSENCE);
+			if (essenceData.consumeEnergy(energy)) {
+				cultivation.addCultivationBase(player, System.ESSENCE, cultivationBase);
+			}
+		};
+	}
+
+	public static Consumer<Player> cultivateFailureEnergy(BigDecimal energy) {
+		return player -> {
+			var cultivation = Cultivation.get(player);
+			var essenceData = cultivation.getSystemData(System.ESSENCE);
+			essenceData.consumeEnergy(energy);
+		};
+	}
+
 }

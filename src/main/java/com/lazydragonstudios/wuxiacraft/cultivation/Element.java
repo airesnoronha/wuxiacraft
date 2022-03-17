@@ -40,6 +40,11 @@ public class Element extends ForgeRegistryEntry<Element> {
 	private final HashMap<PlayerElementalStat, BigDecimal> elementalStatModifier;
 
 	/**
+	 * The skill aspects the cultivator com learn from this aspect
+	 */
+	public final HashMap<ResourceLocation, BigDecimal> skillAspects;
+
+	/**
 	 * Default constructor of element
 	 */
 	public Element() {
@@ -48,6 +53,7 @@ public class Element extends ForgeRegistryEntry<Element> {
 		this.statsModifier = new HashMap<>();
 		this.systemStatModifier = new HashMap<>();
 		this.elementalStatModifier = new HashMap<>();
+		this.skillAspects = new HashMap<>();
 	}
 
 	/**
@@ -116,6 +122,11 @@ public class Element extends ForgeRegistryEntry<Element> {
 	public Element statModifier(PlayerElementalStat stat, BigDecimal value) {
 		if (stat.isModifiable) return this;
 		this.elementalStatModifier.put(stat, value);
+		return this;
+	}
+
+	public Element addSkill(ResourceLocation aspectLocation, BigDecimal value) {
+		this.skillAspects.put(aspectLocation, value);
 		return this;
 	}
 

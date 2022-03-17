@@ -3,6 +3,7 @@ package com.lazydragonstudios.wuxiacraft.client.gui;
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.capabilities.ClientAnimationState;
 import com.lazydragonstudios.wuxiacraft.client.gui.minigames.EssenceQiGatheringMinigame;
+import com.lazydragonstudios.wuxiacraft.client.gui.minigames.EssenceQiPathwaysMinigame;
 import com.lazydragonstudios.wuxiacraft.client.gui.minigames.Minigame;
 import com.lazydragonstudios.wuxiacraft.client.gui.minigames.MortalEssenceMinigame;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
@@ -49,6 +50,7 @@ public class MeditateScreen extends Screen {
 	static {
 		stageMiniGames.put(WuxiaRealms.ESSENCE_MORTAL_STAGE.getId(), MortalEssenceMinigame::new);
 		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_GATHERING_STAGE.getId(), EssenceQiGatheringMinigame::new);
+		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_PATHWAYS_STAGE.getId(), EssenceQiPathwaysMinigame::new);
 	}
 
 	private int guiTop = 0;

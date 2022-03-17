@@ -12,6 +12,7 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.function.Consumer;
 
 public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
@@ -40,6 +41,11 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 	 * Adds system elemental stats to this stage
 	 */
 	private final HashMap<System, HashMap<ResourceLocation, HashMap<PlayerSystemElementalStat, BigDecimal>>> systemElementalStats;
+
+	/**
+	 * The skill aspects this stage is going to unlock
+	 */
+	private final HashSet<ResourceLocation> skillsAspects;
 
 	/**
 	 * This is the realm this stage belongs to
@@ -81,6 +87,7 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 		this.systemStats = new HashMap<>();
 		this.elementalStats = new HashMap<>();
 		this.systemElementalStats = new HashMap<>();
+		this.skillsAspects = new HashSet<>();
 		for (var s : System.values()) {
 			systemStats.put(s, new HashMap<>());
 		}
@@ -114,6 +121,11 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 		this.systemElementalStats.putIfAbsent(system, new HashMap<>());
 		this.systemElementalStats.get(system).putIfAbsent(element, new HashMap<>());
 		this.systemElementalStats.get(system).get(element).put(stat, value);
+		return this;
+	}
+
+	public CultivationStage addSkill(ResourceLocation aspectLocation) {
+		this.skillsAspects.add(aspectLocation);
 		return this;
 	}
 
@@ -192,6 +204,15 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 		if (aux == null) return stageValue;
 		stageValue = stageValue.add(aux.getStat(system, element, stat));
 		return stageValue;
+	}
+
+	public HashSet<ResourceLocation> getSkillsAspects() {
+		HashSet<ResourceLocation> skills = new HashSet<>(this.skillsAspects);
+		if (this.previousStage == null) return skills;
+		var aux = WuxiaRegistries.CULTIVATION_STAGES.getValue(this.previousStage);
+		if (aux == null) return skills;
+		skills.addAll(aux.getSkillsAspects());
+		return skills;
 	}
 
 	public void cultivate(Player player) {
