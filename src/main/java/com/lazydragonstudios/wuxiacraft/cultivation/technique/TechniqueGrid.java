@@ -269,7 +269,7 @@ public class TechniqueGrid {
 			for (var stat : PlayerSystemStat.values()) {
 				String statName = system.name().toLowerCase() + "-stat-" + stat.name().toLowerCase();
 				if (metaData.containsKey(statName)) {
-					tMod.systemStats.get(system).put(stat, (BigDecimal) metaData.get(statName));
+					tMod.systemStats.get(system).put(stat, ((BigDecimal) metaData.get(statName)).max(BigDecimal.ZERO));
 					if (stat == PlayerSystemStat.CULTIVATION_SPEED) {
 						tMod.setValidTechnique(true);
 					}

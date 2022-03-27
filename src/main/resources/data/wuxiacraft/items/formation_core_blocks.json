@@ -1,0 +1,18 @@
+{
+	"replace": false,
+	"values": [
+		"minecraft:oak_log",
+		"minecraft:birch_log",
+		"minecraft:spruce_log",
+		"minecraft:jungle_log",
+		"minecraft:acacia_log",
+		"minecraft:dark_oak_log",
+		"minecraft:copper_block",
+		"minecraft:iron_block",
+		"minecraft:gold_block",
+		"minecraft:diamond_block",
+		"minecraft:emerald_block",
+		"minecraft:netherite_block",
+		"minecraft:lapis_block"
+	]
+}

@@ -30,6 +30,11 @@ public class SkillDescriptor {
 	 * @param skillAspect the aspect to placed at the position
 	 */
 	public void insertSkillAt(int position, SkillAspect skillAspect) {
+		if (position > 0) {
+			var skillAtPosition = this.skillChain.get(position - 1);
+			if (skillAtPosition == null) return;
+			if (!skillAtPosition.canConnect(skillAspect)) return;
+		}
 		if (position < this.skillChain.size()) {
 			this.skillChain.set(position, skillAspect);
 		} else if (position >= 0) {
@@ -51,7 +56,7 @@ public class SkillDescriptor {
 	}
 
 	public BigDecimal getStatValue(SkillStat stat) {
-		return this.skillStats.getOrDefault(stat, BigDecimal.ZERO);
+		return this.skillStats.getOrDefault(stat, stat.defaultValue);
 	}
 
 	public void addStat(SkillStat stat, BigDecimal value) {
@@ -64,6 +69,10 @@ public class SkillDescriptor {
 
 	public void compile() {
 		for (var skill : skillChain) {
+			for (var stat : SkillStat.values()) {
+				if (stat.isModifiable) return;
+				this.skillStats.put(stat, this.skillStats.get(stat).add(skill.getSkillStat(stat)).max(BigDecimal.ONE));
+			}
 		}
 	}
 

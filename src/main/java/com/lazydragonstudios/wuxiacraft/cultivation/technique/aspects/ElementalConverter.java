@@ -33,9 +33,10 @@ public abstract class ElementalConverter extends TechniqueAspect {
 		String elementBase = "element-base-" + element.getPath();
 		if (!metaData.containsKey(elementBase)) return;
 		double elementBaseAmount = (double) metaData.get(elementBase);
-		var converted = Math.min(elementBaseAmount, this.amount);
+		var modifier = this.getCurrentCheckpoint(proficiency).modifier().doubleValue();
+		var converted = Math.min(elementBaseAmount, this.amount * (1 + modifier));
 		elementBaseAmount -= converted;
-		if(elementBaseAmount == 0) metaData.remove(elementBase);
+		if (elementBaseAmount == 0) metaData.remove(elementBase);
 		else metaData.put(elementBase, elementBaseAmount);
 		convert(converted, metaData, proficiency);
 	}

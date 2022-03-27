@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -70,6 +71,42 @@ public class InscriberMenu extends AbstractContainerMenu {
 			inscriber.createTechnique(this.itemName, player, this.system);
 		}
 		return false;
+	}
+
+	@Override
+	public ItemStack quickMoveStack(Player player, int slot) {
+		var resultStack = ItemStack.EMPTY;
+		var selectedSlot = this.slots.get(slot);
+		if (!selectedSlot.hasItem()) return resultStack;
+		var slotStack = selectedSlot.getItem();
+		resultStack = slotStack.copy();
+		if (slot == 2) {
+			if (!this.moveItemStackTo(slotStack, 3, 39, true)) return ItemStack.EMPTY;
+			selectedSlot.onQuickCraft(slotStack, resultStack);
+		} else if (slot != 0 && slot != 1) {
+			if (slotStack.getItem() == Items.BOOK) {
+				if (!this.moveItemStackTo(slotStack, 0, 1, false)) return ItemStack.EMPTY;
+			} else if (slotStack.getItem() == Items.INK_SAC) {
+				if (!this.moveItemStackTo(slotStack, 1, 2, false)) return ItemStack.EMPTY;
+			} else if (slot >= 30 && slot < 39 && !this.moveItemStackTo(slotStack, 3, 30, false)) {
+				return ItemStack.EMPTY;
+			}
+		} else if (!this.moveItemStackTo(slotStack, 3, 39, true)) return ItemStack.EMPTY;
+
+
+		if (slotStack.isEmpty()) {
+			selectedSlot.set(ItemStack.EMPTY);
+		} else {
+			selectedSlot.setChanged();
+		}
+
+		if (slotStack.getCount() == resultStack.getCount()) {
+			return ItemStack.EMPTY;
+		}
+
+		selectedSlot.onTake(player, slotStack);
+
+		return resultStack;
 	}
 
 	@Override

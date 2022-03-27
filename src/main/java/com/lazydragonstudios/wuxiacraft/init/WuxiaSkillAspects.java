@@ -5,6 +5,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.*;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillActivatorAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillTouchAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillAttackAspect;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillBreakAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillExplosionAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillHitAspect;
 import net.minecraftforge.registries.DeferredRegister;
@@ -112,7 +113,7 @@ public class WuxiaSkillAspects {
 	/**
 	 * Breaks blocks on hit
 	 */
-	public static RegistryObject<SkillAspectType> BREAK = ASPECTS.register("break", () -> SkillAspectType.build(SkillHitAspect::new));
+	public static RegistryObject<SkillAspectType> BREAK = ASPECTS.register("break", () -> SkillAspectType.build(SkillBreakAspect::new));
 
 	/**
 	 * Opens a portal on hit, continuing on the direction of the hit

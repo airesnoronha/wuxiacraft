@@ -2,6 +2,7 @@ package com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspectType;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillHitModifierAspect;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaSkillAspects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
@@ -34,7 +35,7 @@ public class SkillHitAspect extends SkillAspect {
 
 	@Override
 	public boolean canConnect(SkillAspect aspect) {
-		return false;
+		return aspect instanceof SkillHitModifierAspect;
 	}
 
 	@Override

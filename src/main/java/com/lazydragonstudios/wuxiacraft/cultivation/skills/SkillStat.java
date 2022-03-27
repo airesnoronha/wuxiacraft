@@ -6,8 +6,8 @@ public enum SkillStat {
 	COST(BigDecimal.ONE, false),
 	COOLDOWN(BigDecimal.ONE, false),
 	CAST_TIME(BigDecimal.ONE, false),
-	CURRENT_COOLDOWN(BigDecimal.ONE, true),
-	CURRENT_CASTING(BigDecimal.ONE, true);
+	CURRENT_COOLDOWN(BigDecimal.ZERO, true),
+	CURRENT_CASTING(BigDecimal.ZERO, true);
 
 	public final BigDecimal defaultValue;
 

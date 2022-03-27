@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -37,8 +38,6 @@ public class ElementSystemConverter extends ElementalConverter {
 	public void convert(double converted, HashMap<String, Object> metaData, BigDecimal proficiency) {
 		String systemRawBase = system.name().toLowerCase() + "-raw-cultivation-base";
 		String elementBonus = "element-" + this.element.getPath();
-		var modifier = this.getCurrentCheckpoint(proficiency).modifier().doubleValue();
-		converted = converted * (1 + modifier);
 		metaData.put(systemRawBase, (double) metaData.getOrDefault(systemRawBase, 0d) + converted);
 		metaData.put(elementBonus, (double) metaData.getOrDefault(elementBonus, 0d) + converted);
 	}
@@ -58,7 +57,14 @@ public class ElementSystemConverter extends ElementalConverter {
 		var nameLocation = this.getRegistryName();
 		if (nameLocation == null) return;
 		var name = new TranslatableComponent("wuxiacraft.aspect." + nameLocation.getPath() + ".name");
-		var amount = String.format(" ->     (%.1f)", this.amount);
+		var convertCap = this.amount;
+		var player = Minecraft.getInstance().player;
+		if (player != null) {
+			var cultivation = Cultivation.get(player);
+			var proficiency = cultivation.getAspects().getAspectProficiency(nameLocation);
+			convertCap *= 1d + proficiency.doubleValue();
+		}
+		var amount = String.format(" ->     (%.1f)", convertCap);
 
 		var font = Minecraft.getInstance().font;
 		var nameWidth = font.width(name);

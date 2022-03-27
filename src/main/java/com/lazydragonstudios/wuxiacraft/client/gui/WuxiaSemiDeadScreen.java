@@ -64,11 +64,11 @@ public class WuxiaSemiDeadScreen extends Screen {
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifier) {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean charTyped(char p_94683_, int p_94684_) {
-		return false;
+		return true;
 	}
 }

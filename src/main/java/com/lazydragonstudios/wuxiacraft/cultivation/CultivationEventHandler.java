@@ -69,10 +69,7 @@ public class CultivationEventHandler {
 		var bodyData = cultivation.getSystemData(System.BODY);
 		var divineData = cultivation.getSystemData(System.DIVINE);
 		var essenceData = cultivation.getSystemData(System.ESSENCE);
-
-
 		handleClientSync(player, cultivation);
-
 		if (cultivation.isSemiDead()) {
 			handleSemiDead(player, cultivation);
 		} else {
@@ -124,6 +121,7 @@ public class CultivationEventHandler {
 
 	private static void handleSkillCasting(Player player, ICultivation cultivation) {
 		var skillData = cultivation.getSkills();
+		var systemData = cultivation.getSystemData(System.ESSENCE);
 		var selectedSkill = skillData.getSkillAt(skillData.selectedSkill);
 		if (skillData.casting) {
 			if (selectedSkill.getSkillChain().size() > 0) {
@@ -132,9 +130,12 @@ public class CultivationEventHandler {
 					//casting >= cast_time
 					if (selectedSkill.getStatValue(SkillStat.CURRENT_CASTING)
 							.compareTo(selectedSkill.getStatValue(SkillStat.CAST_TIME)) >= 0) {
-						selectedSkill.setStat(SkillStat.CURRENT_CASTING, BigDecimal.ZERO);
-						selectedSkill.setStat(SkillStat.CURRENT_COOLDOWN, selectedSkill.getStatValue(SkillStat.COOLDOWN));
-						activator.activate.test(player, selectedSkill.getSkillChain());
+						if (systemData.hasEnergy(selectedSkill.getStatValue(SkillStat.COST))) {
+							selectedSkill.setStat(SkillStat.CURRENT_CASTING, BigDecimal.ZERO);
+							selectedSkill.setStat(SkillStat.CURRENT_COOLDOWN, selectedSkill.getStatValue(SkillStat.COOLDOWN));
+							activator.activate.test(player, selectedSkill.getSkillChain());
+							systemData.consumeEnergy(selectedSkill.getStatValue(SkillStat.COST));
+						}
 					}
 				}
 			}
@@ -192,7 +193,7 @@ public class CultivationEventHandler {
 			var max_energy = systemData.getStat(PlayerSystemStat.MAX_ENERGY);
 			if (energy.compareTo(max_energy) > 0) {
 				var energy_regen = systemData.getStat(PlayerSystemStat.ENERGY_REGEN);
-				energy = energy.subtract(energy_regen).max(max_energy);
+				energy = energy.subtract(energy_regen.multiply(new BigDecimal("2"))).max(max_energy);
 				systemData.setStat(PlayerSystemStat.ENERGY, energy);
 			}
 		}

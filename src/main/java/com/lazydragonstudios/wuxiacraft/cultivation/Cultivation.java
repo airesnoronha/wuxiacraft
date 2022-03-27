@@ -8,6 +8,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.event.CultivatingEvent;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaMobEffects;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -15,6 +16,7 @@ import com.lazydragonstudios.wuxiacraft.capabilities.CultivationProvider;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.AspectContainer;
 import net.minecraftforge.common.MinecraftForge;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
@@ -65,6 +67,12 @@ public class Cultivation implements ICultivation {
 	public SkillContainer skills;
 
 	/**
+	 * this formation core block position
+	 */
+	@Nullable
+	private BlockPos formationCore;
+
+	/**
 	 * is divine sense on
 	 */
 	private boolean isDivineSense;
@@ -87,11 +95,23 @@ public class Cultivation implements ICultivation {
 		this.semiDead = false;
 		this.semiDeadTime = 0;
 		this.isDivineSense = false;
+		this.formationCore = null;
 	}
 
 	public static ICultivation get(Player target) {
 		var cultOpt = target.getCapability(CultivationProvider.CULTIVATION_PROVIDER).resolve();
 		return cultOpt.orElseGet(Cultivation::new);
+	}
+
+	@Override
+	public void setFormation(@Nullable BlockPos blockPos) {
+		this.formationCore = blockPos;
+	}
+
+	@Override
+	@Nullable
+	public BlockPos getFormation() {
+		return this.formationCore;
 	}
 
 	@Override
@@ -137,6 +157,7 @@ public class Cultivation implements ICultivation {
 		CultivatingEvent event = new CultivatingEvent(player, system, amount);
 		if (MinecraftForge.EVENT_BUS.post(event)) return;
 		var systemData = this.getSystemData(system);
+		this.getSystemData(System.DIVINE).consumeEnergy(amount.multiply(amount));
 		amount = event.getAmount();
 		var grid = systemData.techniqueData.grid.getGrid();
 		for (var aspectLocation : grid.values()) {
@@ -157,7 +178,6 @@ public class Cultivation implements ICultivation {
 		var cultSpeed = systemData.getStat(PlayerSystemStat.CULTIVATION_SPEED);
 		amount = amount.multiply(BigDecimal.ONE.add(cultSpeed));
 		systemData.addStat(PlayerSystemStat.CULTIVATION_BASE, amount);
-		this.getSystemData(System.DIVINE).consumeEnergy(amount.multiply(new BigDecimal("0.1")));
 	}
 
 	@Override
@@ -273,8 +293,9 @@ public class Cultivation implements ICultivation {
 					if (elementalStatsTag.contains("element-stats-" + element)) {
 						for (var stat : PlayerElementalStat.values()) {
 							if (!stat.isModifiable) continue;
-							if (elementalStatsTag.contains("stat-" + stat.name().toLowerCase())) {
-								var value = elementalStatsTag.getString("stat-" + stat.name().toLowerCase());
+							CompoundTag elementTag = elementalStatsTag.getCompound("element-stats-" + element);
+							if (elementTag.contains("stat-" + stat.name().toLowerCase())) {
+								var value = elementTag.getString("stat-" + stat.name().toLowerCase());
 								this.playerElementalStats.putIfAbsent(element, new HashMap<>());
 								this.playerElementalStats.get(element).put(stat, new BigDecimal(value));
 							}

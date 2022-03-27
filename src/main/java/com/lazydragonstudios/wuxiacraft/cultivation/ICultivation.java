@@ -2,12 +2,14 @@ package com.lazydragonstudios.wuxiacraft.cultivation;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillContainer;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerElementalStat;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.AspectContainer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 
 public interface ICultivation {
@@ -88,4 +90,9 @@ public interface ICultivation {
 	boolean isDivineSense();
 
 	void setDivineSense(boolean divineSense);
+
+	void setFormation(BlockPos blockPos);
+
+	@Nullable
+	BlockPos getFormation();
 }

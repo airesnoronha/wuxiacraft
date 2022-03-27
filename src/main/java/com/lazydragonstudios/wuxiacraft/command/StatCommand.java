@@ -4,6 +4,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.SystemContainer;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.networking.CultivationSyncMessage;
@@ -16,6 +17,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.server.command.EnumArgument;
@@ -35,6 +37,13 @@ public class StatCommand {
 								.then(Commands.argument("stat", EnumArgument.enumArgument(PlayerStat.class))
 										.then(Commands.argument("amount", IntegerArgumentType.integer())
 												.executes(StatCommand::setStat)
+										)
+								)
+								.then(Commands.argument("element", ElementArgument.id())
+										.then(Commands.argument("stat", EnumArgument.enumArgument(PlayerElementalStat.class))
+												.then(Commands.argument("amount", IntegerArgumentType.integer())
+														.executes(StatCommand::setElementalStat)
+												)
 										)
 								)
 								.then(Commands.argument("system", EnumArgument.enumArgument(System.class))
@@ -78,6 +87,24 @@ public class StatCommand {
 		cultivation.setStat(playerStat, BigDecimal.valueOf(amount));
 
 		message.append("Successfully set the target's " + playerStat.name() + " stat.");
+		ctx.getSource().sendSuccess(message, true);
+		syncClientCultivation(target);
+		return 1;
+	}
+
+	public static int setElementalStat(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		ServerPlayer target = EntityArgument.getPlayer(ctx, "target");
+		var element = ElementArgument.getAspectLocation(ctx, "element");
+		var stat = ctx.getArgument("stat", PlayerElementalStat.class);
+		int amount = IntegerArgumentType.getInteger(ctx, "amount");
+
+		ICultivation cultivation = Cultivation.get(target);
+		TextComponent message = new TextComponent("");
+		cultivation.setStat(element, stat, BigDecimal.valueOf(amount));
+
+		message.append(new TranslatableComponent("wuxiacraft.command.elemental_stat",
+				stat.name(),
+				new TranslatableComponent(element.getNamespace() + ".element." + element.getPath())));
 		ctx.getSource().sendSuccess(message, true);
 		syncClientCultivation(target);
 		return 1;

@@ -23,7 +23,19 @@ public class WuxiaBlockEntities {
 
 	public static RegistryObject<BlockEntityType<FormationCore>> FORMATION_CORE = BLOCK_ENTITIES.register("formation_core",
 			() -> BlockEntityType.Builder
-					.of(FormationCore::new, WuxiaBlocks.WOOD_FORMATION_CORE.get())
+					.of(FormationCore::new,
+							WuxiaBlocks.OAK_FORMATION_CORE.get(),
+							WuxiaBlocks.BIRCH_FORMATION_CORE.get(),
+							WuxiaBlocks.ACACIA_FORMATION_CORE.get(),
+							WuxiaBlocks.JUNGLE_FORMATION_CORE.get(),
+							WuxiaBlocks.SPRUCE_FORMATION_CORE.get(),
+							WuxiaBlocks.DARK_OAK_FORMATION_CORE.get(),
+							WuxiaBlocks.STONE_FORMATION_CORE.get(),
+							WuxiaBlocks.IRON_FORMATION_CORE.get(),
+							WuxiaBlocks.GOLD_FORMATION_CORE.get(),
+							WuxiaBlocks.LAPIS_FORMATION_CORE.get(),
+							WuxiaBlocks.DIAMOND_FORMATION_CORE.get(),
+							WuxiaBlocks.EMERALD_FORMATION_CORE.get())
 					.build(Util.fetchChoiceType(References.BLOCK_ENTITY, "formation_core"))
 			);
 

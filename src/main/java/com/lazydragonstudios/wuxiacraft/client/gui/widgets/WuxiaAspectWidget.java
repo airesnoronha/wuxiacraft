@@ -62,8 +62,9 @@ public class WuxiaAspectWidget extends AbstractWidget {
 	public void renderToolTip(PoseStack poseStack, int mouseX, int mouseY) {
 		if (!MathUtil.inBounds(mouseX, mouseY, this.x, this.y, this.width, this.height)) return;
 		var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.aspect);
-		if (techAspect == null) return;
-		techAspect.renderTooltip(poseStack, mouseX, mouseY);
+		var skillAspect = WuxiaRegistries.SKILL_ASPECT.getValue(this.aspect);
+		if (techAspect != null) techAspect.renderTooltip(poseStack, mouseX, mouseY);
+		if (skillAspect != null) skillAspect.renderTooltip(poseStack, mouseX, mouseY);
 	}
 
 	@Nullable

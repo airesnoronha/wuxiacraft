@@ -1,6 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects;
 
 import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabel;
+import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -66,7 +67,14 @@ public class ElementalGenerator extends TechniqueAspect {
 		var nameLocation = this.getRegistryName();
 		if (nameLocation == null) return;
 		var name = new TranslatableComponent("wuxiacraft.aspect." + nameLocation.getPath() + ".name");
-		var amount = String.format("%.1f", this.generated);
+		var generated = this.generated;
+		var player = Minecraft.getInstance().player;
+		if (player != null) {
+			var cultivation = Cultivation.get(player);
+			var proficiency = cultivation.getAspects().getAspectProficiency(nameLocation);
+			generated *= 1d + proficiency.doubleValue();
+		}
+		var amount = String.format("%.1f", generated);
 
 		var font = Minecraft.getInstance().font;
 		var nameWidth = font.width(name);

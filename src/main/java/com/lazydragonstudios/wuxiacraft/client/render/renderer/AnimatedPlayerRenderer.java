@@ -48,7 +48,7 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 	private static float[] rightLegY = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	private static float[] rightLegZ = new float[]{0, 0, 0, 5, 10, 10, 10, 10, 10, 10, 10, 5, 0};
 
-	private Vector3f position = Vector3f.ZERO;
+	private Vector3f position = new Vector3f(0,0,0);
 
 	public AnimatedPlayerRenderer(EntityRendererProvider.Context ctx, boolean slim) {
 		super(ctx, slim);
@@ -152,7 +152,7 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 			}
 		}
 		poseStack.popPose();
-		this.position = Vector3f.ZERO;
+		this.position.set(0,0,0);
 		net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Post(player, this, partialTicks, poseStack, multiBufferSource, packedLightIn));
 		net.minecraftforge.client.event.RenderNameplateEvent renderNameplateEvent = new net.minecraftforge.client.event.RenderNameplateEvent(player, player.getDisplayName(), this, poseStack, multiBufferSource, packedLightIn, partialTicks);
 		net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(renderNameplateEvent);

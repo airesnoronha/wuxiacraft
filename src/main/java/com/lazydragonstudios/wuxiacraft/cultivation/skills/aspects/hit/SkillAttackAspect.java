@@ -14,9 +14,9 @@ public class SkillAttackAspect extends SkillHitAspect {
 
 	public SkillAttackAspect() {
 		super();
-		setSkillStat(SkillStat.COST, BigDecimal.ONE);
-		setSkillStat(SkillStat.COOLDOWN, BigDecimal.ONE);
-		setSkillStat(SkillStat.CAST_TIME, BigDecimal.ONE);
+		setSkillStat(SkillStat.COST, new BigDecimal("0.5"));
+		setSkillStat(SkillStat.COOLDOWN, new BigDecimal("5"));
+		setSkillStat(SkillStat.CAST_TIME, new BigDecimal("15"));
 		this.activation = (caster, chain, result) -> {
 			if (result instanceof EntityHitResult entityResult) {
 				if (entityResult.getEntity() instanceof LivingEntity target) {

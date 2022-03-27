@@ -28,6 +28,7 @@ public class InputHandler {
 	public static final int CAST_SKILL = 3;
 	public static final int COMBAT_MODE = 4;
 	public static final int DIVINE_SENSE = 5;
+	public static final int SKILL_WHEEL = 6;
 
 	public static HashMap<Integer, KeyMapping> mappings;
 
@@ -39,6 +40,7 @@ public class InputHandler {
 		mappings.put(CAST_SKILL, new KeyMapping("wuxiacraft.key.cast_skill", GLFW.GLFW_KEY_C, "wuxiacraft.category.main"));
 		mappings.put(COMBAT_MODE, new KeyMapping("wuxiacraft.key.combat_mode", GLFW.GLFW_KEY_V, "wuxiacraft.category.main"));
 		mappings.put(DIVINE_SENSE, new KeyMapping("wuxiacraft.key.divine_sense", GLFW.GLFW_KEY_V, "wuxiacraft.category.main"));
+		mappings.put(SKILL_WHEEL, new KeyMapping("wuxiacraft.key.skill_wheel", GLFW.GLFW_KEY_TAB, "wuxiacraft.category.main"));
 		for (var mapping : mappings.values()) {
 			ClientRegistry.registerKeyBinding(mapping);
 		}
@@ -54,11 +56,11 @@ public class InputHandler {
 		var skillData = cultivation.getSkills();
 		if (mappings.get(OPEN_INTROSPECTION).consumeClick()) {
 			WuxiaPacketHandler.INSTANCE.sendToServer(new OpenScreenMessage(OpenScreenMessage.ScreenType.INTROSPECTION));
-			animationState.setMeditating(true);
-			WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState, cultivation.isCombat()));
 		}
 		if (mappings.get(MEDITATE).consumeClick()) {
 			Minecraft.getInstance().setScreen(new MeditateScreen());
+			animationState.setMeditating(true);
+			WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState, cultivation.isCombat()));
 		}
 		if (event.getKey() == mappings.get(EXERCISE).getKey().getValue()) {
 			if (event.getAction() == GLFW.GLFW_PRESS) {

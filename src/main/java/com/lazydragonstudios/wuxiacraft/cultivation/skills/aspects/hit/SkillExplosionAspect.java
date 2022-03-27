@@ -6,6 +6,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspectTy
 import com.lazydragonstudios.wuxiacraft.init.WuxiaElements;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaSkillAspects;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.phys.HitResult;
 
 import java.math.BigDecimal;
 
@@ -13,8 +14,8 @@ public class SkillExplosionAspect extends SkillHitAspect {
 
 	public SkillExplosionAspect() {
 		super();
-		this.skillStats.put(SkillStat.CAST_TIME, new BigDecimal("1.2"));
-		this.skillStats.put(SkillStat.COOLDOWN, new BigDecimal("1.5"));
+		this.skillStats.put(SkillStat.CAST_TIME, new BigDecimal("40"));
+		this.skillStats.put(SkillStat.COOLDOWN, new BigDecimal("80"));
 		this.skillStats.put(SkillStat.COST, new BigDecimal("2"));
 		this.activation = (player, chain, result) -> {
 			if (result == null) return false;
