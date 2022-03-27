@@ -6,12 +6,17 @@
 			"bonus_rolls": 0.0,
 			"entries": [
 				{
-					"type": "minecraft:item",
-					"name": "wuxiacraft:formation_core_base"
-				},
-				{
-					"type": "minecraft:item",
-					"name": "minecraft:iron_block"
+					"type": "minecraft:group",
+					"children": [
+						{
+							"type": "minecraft:item",
+							"name": "wuxiacraft:formation_core_base"
+						},
+						{
+							"type": "minecraft:item",
+							"name": "minecraft:iron_block"
+						}
+					]
 				}
 			],
 			"conditions": [

@@ -5,12 +5,22 @@ import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.event.CultivatingEvent;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.LevelEvent;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.math.BigDecimal;
+import java.util.LinkedList;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class FormationEventHandler {
@@ -61,6 +71,74 @@ public class FormationEventHandler {
 			}
 		}
 		event.player.level.getProfiler().pop();
+	}
+
+	@SubscribeEvent
+	public static void onPlayerMayPlace(BlockEvent.EntityPlaceEvent event) {
+		var placer = event.getEntity();
+		if (placer == null) return;
+		int chunkRadius = 4;
+		Level level = placer.level;
+		var chunk = level.getChunkAt(event.getPos());
+		var activeFormationCores = new LinkedList<FormationCore>();
+		for (int cx = -chunkRadius; cx <= chunkRadius; cx++) {
+			for (int cz = -chunkRadius; cz <= chunkRadius; cz++) {
+				var currentChunkPos = new ChunkPos(chunk.getPos().x + cx, chunk.getPos().z + cz);
+				var currentChunk = level.getChunk(currentChunkPos.x, currentChunkPos.z);
+				var blockEntities = currentChunk.getBlockEntities();
+				for (var blockEntity : blockEntities.values()) {
+					if (!(blockEntity instanceof FormationCore core)) continue;
+					if (core.isActive()) {
+						activeFormationCores.add(core);
+					}
+				}
+			}
+		}
+		for (var core : activeFormationCores) {
+			if (placer == core.getOwner()) continue;
+			var barrierAmount = core.getStat(FormationStat.BARRIER_AMOUNT);
+			if (barrierAmount.compareTo(BigDecimal.ZERO) <= 0) continue;
+			var barrierRange = core.getStat(FormationStat.BARRIER_RANGE).doubleValue();
+			var distSqr = event.getPos().distSqr(core.getBlockPos());
+			if (distSqr <= barrierRange * barrierRange) {
+				event.setCanceled(true);
+				break;
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void onPlayerMayBreak(BlockEvent.BreakEvent event) {
+		var breaker = event.getPlayer();
+		if (breaker == null) return;
+		int chunkRadius = 4;
+		Level level = breaker.level;
+		var chunk = level.getChunkAt(event.getPos());
+		var activeFormationCores = new LinkedList<FormationCore>();
+		for (int cx = -chunkRadius; cx <= chunkRadius; cx++) {
+			for (int cz = -chunkRadius; cz <= chunkRadius; cz++) {
+				var currentChunkPos = new ChunkPos(chunk.getPos().x + cx, chunk.getPos().z + cz);
+				var currentChunk = level.getChunk(currentChunkPos.x, currentChunkPos.z);
+				var blockEntities = currentChunk.getBlockEntities();
+				for (var blockEntity : blockEntities.values()) {
+					if (!(blockEntity instanceof FormationCore core)) continue;
+					if (core.isActive()) {
+						activeFormationCores.add(core);
+					}
+				}
+			}
+		}
+		for (var core : activeFormationCores) {
+			if (breaker == core.getOwner()) continue;
+			var barrierAmount = core.getStat(FormationStat.BARRIER_AMOUNT);
+			if (barrierAmount.compareTo(BigDecimal.ZERO) <= 0) continue;
+			var barrierRange = core.getStat(FormationStat.BARRIER_RANGE).doubleValue();
+			var distSqr = event.getPos().distSqr(core.getBlockPos());
+			if (distSqr <= barrierRange * barrierRange) {
+				event.setCanceled(true);
+				break;
+			}
+		}
 	}
 
 }

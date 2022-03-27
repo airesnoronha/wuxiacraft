@@ -22,6 +22,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.UUID;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -37,7 +38,9 @@ public class FormationCore extends BlockEntity {
 
 	private boolean active;
 
-	private Player owner;
+	public boolean scheduleActivation;
+
+	public UUID owner;
 
 	public FormationCore(BlockPos pos, BlockState blockState) {
 		super(WuxiaBlockEntities.FORMATION_CORE.get(), pos, blockState);
@@ -46,6 +49,7 @@ public class FormationCore extends BlockEntity {
 		this.formationSystemStats = new HashMap<>();
 		this.runePositions = new HashSet<>();
 		this.owner = null;
+		this.scheduleActivation = false;
 	}
 
 	public int getRuneRange() {
@@ -63,7 +67,7 @@ public class FormationCore extends BlockEntity {
 		tag.putInt("rune-range", this.runeRange);
 		tag.putBoolean("active", this.active);
 		if (this.owner != null) {
-			tag.putUUID("owner", this.owner.getUUID());
+			tag.putUUID("owner", this.owner);
 		}
 	}
 
@@ -73,14 +77,16 @@ public class FormationCore extends BlockEntity {
 		if (tag.contains("rune-range")) {
 			this.runeRange = tag.getInt("rune-range");
 		}
-		if (tag.contains("active")) {
-			this.active = tag.getBoolean("active");
+		if (tag.contains("owner")) {
+			this.owner = tag.getUUID("owner");
 		}
-		if (tag.contains("owner") && this.level != null && this.active) {
-			var owner = this.level.getPlayerByUUID(tag.getUUID("owner"));
-			this.active = false;
-			this.owner = null;
-			if (owner != null) this.activate(owner);
+		if (tag.contains("active")) {
+			if (tag.getBoolean("active")) {
+				this.scheduleActivation = true;
+			}
+			else {
+				this.deactivate();
+			}
 		}
 	}
 
@@ -106,10 +112,10 @@ public class FormationCore extends BlockEntity {
 		return this.runePositions.contains(pos);
 	}
 
-	public boolean activate(Player player) {
-		if (this.active) return false;
-		if (this.owner != null) return false;
-		if (this.level == null) return false;
+	public void activate(UUID playerId) {
+		if (this.active) return;
+		if (this.level == null) return;
+		this.scheduleActivation = false;
 		var centerPos = this.getBlockPos();
 		for (int i = -this.runeRange; i <= this.runeRange; i++) {
 			for (int j = -this.runeRange; j <= this.runeRange; j++) {
@@ -141,9 +147,12 @@ public class FormationCore extends BlockEntity {
 		var energyCost = this.getStat(FormationStat.ENERGY_COST);
 		var energyGeneration = this.getStat(FormationStat.ENERGY_GENERATION);
 		if (energyCost.compareTo(energyGeneration) <= 0) {
-			this.owner = player;
-			var cultivation = Cultivation.get(player);
-			cultivation.setFormation(this.getBlockPos());
+			this.owner = playerId;
+			var player = this.getOwner();
+			if (player != null) {
+				var cultivation = Cultivation.get(player);
+				cultivation.setFormation(this.getBlockPos());
+			}
 			this.active = true;
 		} else {
 			deactivate();
@@ -152,7 +161,6 @@ public class FormationCore extends BlockEntity {
 		if (!this.level.isClientSide) {
 			this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 2);
 		}
-		return this.active;
 	}
 
 	public void deactivate() {
@@ -161,8 +169,13 @@ public class FormationCore extends BlockEntity {
 		this.formationStats.clear();
 		this.formationSystemStats.clear();
 		if (this.owner != null) {
-			var cultivation = Cultivation.get(this.owner);
-			cultivation.setFormation(null);
+			if (this.level != null) {
+				var owner = this.level.getPlayerByUUID(this.owner);
+				if (owner != null) {
+					var cultivation = Cultivation.get(owner);
+					cultivation.setFormation(null);
+				}
+			}
 			this.owner = null;
 		}
 		this.setChanged();
@@ -192,7 +205,8 @@ public class FormationCore extends BlockEntity {
 
 	@Nullable
 	public Player getOwner() {
-		return owner;
+		if (this.level == null) return null;
+		return this.level.getPlayerByUUID(this.owner);
 	}
 
 	public boolean isActive() {

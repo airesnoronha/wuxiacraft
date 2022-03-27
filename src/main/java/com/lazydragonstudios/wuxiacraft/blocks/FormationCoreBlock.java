@@ -85,7 +85,7 @@ public class FormationCoreBlock extends BaseEntityBlock {
 			level.setBlockAndUpdate(pos, WuxiaBlocks.FORMATION_CORE_BASE.get().defaultBlockState());
 		} else {
 			if (core.isActive()) core.deactivate();
-			else core.activate(player);
+			else core.activate(player.getUUID());
 		}
 		return InteractionResult.CONSUME;
 	}
