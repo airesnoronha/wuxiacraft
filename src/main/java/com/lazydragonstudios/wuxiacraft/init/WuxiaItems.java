@@ -2,6 +2,7 @@ package com.lazydragonstudios.wuxiacraft.init;
 
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
+import com.lazydragonstudios.wuxiacraft.item.SpatialItem;
 import com.lazydragonstudios.wuxiacraft.formation.FormationMaterialTier;
 import com.lazydragonstudios.wuxiacraft.item.SpiritStone;
 import com.lazydragonstudios.wuxiacraft.item.TechniqueManual;
@@ -142,5 +143,9 @@ public class WuxiaItems {
 			}
 		}
 	}
+
+	// Test Item
+	public static RegistryObject<Item> SPATIAL_RING = ITEMS.register("spatial_ring",
+			() -> new SpatialItem(new Item.Properties().tab(WUXIACRAFT_TAB), 3, 9));
 
 }

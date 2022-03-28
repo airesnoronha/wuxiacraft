@@ -10,7 +10,7 @@
 					"children": [
 						{
 							"type": "minecraft:item",
-							"name": "minecraft:acacia_log"
+							"name": "wuxiacraft:formation_core_base"
 						},
 						{
 							"type": "minecraft:item",

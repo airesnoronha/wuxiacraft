@@ -12,7 +12,8 @@ import java.util.function.Supplier;
 public class OpenScreenMessage {
 
 	public enum ScreenType {
-		INTROSPECTION;
+		INTROSPECTION,
+		SPATIAL_ITEM
 	}
 
 	public ScreenType screen;
@@ -49,10 +50,11 @@ public class OpenScreenMessage {
 											(id, inv, player) -> new IntrospectionMenu(IntrospectionMenu.registryType, id),
 											new TextComponent("")));
 							break;
+						case SPATIAL_ITEM:
+							break;
 					}
 				}
 			});
 		}
 	}
-
 }
