@@ -86,8 +86,7 @@ public class FormationCore extends BlockEntity {
 		if (tag.contains("active")) {
 			if (tag.getBoolean("active")) {
 				this.scheduleActivation = true;
-			}
-			else {
+			} else {
 				this.deactivate();
 			}
 		}
@@ -115,10 +114,11 @@ public class FormationCore extends BlockEntity {
 		return this.runePositions.contains(pos);
 	}
 
-	public void activate(UUID playerId) {
+	public void activate(@Nullable UUID playerId) {
+		this.scheduleActivation = false;
 		if (this.active) return;
 		if (this.level == null) return;
-		this.scheduleActivation = false;
+		if (playerId == null) return;
 		var centerPos = this.getBlockPos();
 		for (int i = -this.runeRange; i <= this.runeRange; i++) {
 			for (int j = -this.runeRange; j <= this.runeRange; j++) {

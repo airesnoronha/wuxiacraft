@@ -2,10 +2,7 @@ package com.lazydragonstudios.wuxiacraft.client.gui;
 
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.capabilities.ClientAnimationState;
-import com.lazydragonstudios.wuxiacraft.client.gui.minigames.EssenceQiGatheringMinigame;
-import com.lazydragonstudios.wuxiacraft.client.gui.minigames.EssenceQiPathwaysMinigame;
-import com.lazydragonstudios.wuxiacraft.client.gui.minigames.Minigame;
-import com.lazydragonstudios.wuxiacraft.client.gui.minigames.MortalEssenceMinigame;
+import com.lazydragonstudios.wuxiacraft.client.gui.minigames.*;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
@@ -45,12 +42,13 @@ public class MeditateScreen extends Screen {
 
 	private boolean canBreakThrough = false;
 
-	private static HashMap<ResourceLocation, Supplier<Minigame>> stageMiniGames = new HashMap<>();
+	private static final HashMap<ResourceLocation, Supplier<Minigame>> stageMiniGames = new HashMap<>();
 
 	static {
 		stageMiniGames.put(WuxiaRealms.ESSENCE_MORTAL_STAGE.getId(), MortalEssenceMinigame::new);
 		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_GATHERING_STAGE.getId(), EssenceQiGatheringMinigame::new);
 		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_PATHWAYS_STAGE.getId(), EssenceQiPathwaysMinigame::new);
+		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_CONDENSATION_STAGE.getId(), EssenceQiCondensationMinigame::new);
 	}
 
 	private int guiTop = 0;

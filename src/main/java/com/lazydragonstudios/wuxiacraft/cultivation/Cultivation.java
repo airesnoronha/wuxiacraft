@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import com.lazydragonstudios.wuxiacraft.capabilities.CultivationProvider;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.AspectContainer;
 import net.minecraftforge.common.MinecraftForge;
+import org.checkerframework.checker.units.qual.C;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -272,6 +273,13 @@ public class Cultivation implements ICultivation {
 		tag.put("skills-data", this.skills.serialize());
 		tag.putBoolean("semi-dead", this.semiDead);
 		tag.putInt("semi-dead-time", this.semiDeadTime);
+		if (this.formationCore != null) {
+			var formationTag = new CompoundTag();
+			formationTag.putInt("x", this.formationCore.getX());
+			formationTag.putInt("y", this.formationCore.getY());
+			formationTag.putInt("z", this.formationCore.getZ());
+			tag.put("formation", formationTag);
+		}
 		return tag;
 	}
 
@@ -324,6 +332,16 @@ public class Cultivation implements ICultivation {
 		}
 		if (tag.contains("semi-dead-time")) {
 			this.semiDeadTime = tag.getInt("semi-dead-time");
+		}
+		if (tag.contains("formation")) {
+			var formationTag = tag.getCompound("formation");
+			int x = formationTag.getInt("x");
+			int y = formationTag.getInt("y");
+			int z = formationTag.getInt("z");
+			this.formationCore = new BlockPos(x, y, z);
+		}
+		else {
+			this.formationCore = null;
 		}
 		calculateStats();
 	}

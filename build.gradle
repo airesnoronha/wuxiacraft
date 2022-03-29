@@ -55,20 +55,6 @@ minecraft {
 				}
 			}
 		}
-		network {
-			workingDirectory project.file('run/network')
-
-			property 'forge.logging.markers', 'REGISTRIES'
-			property 'forge.logging.console.level', 'debug'
-
-			args '--username', 'Network'
-
-			mods {
-				wuxiacraft {
-					source sourceSets.main
-				}
-			}
-		}
 
 		server {
 			workingDirectory project.file('run/server')

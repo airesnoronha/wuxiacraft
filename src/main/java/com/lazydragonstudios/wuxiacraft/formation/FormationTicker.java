@@ -51,7 +51,7 @@ public class FormationTicker implements BlockEntityTicker<FormationCore> {
 		var owner = core.getOwner();
 		if (owner != null && !level.isClientSide()) {
 			var cultivation = Cultivation.get(owner);
-			if (cultivation.getFormation() != pos) {
+			if (cultivation.getFormation().compareTo(pos) != 0) {
 				core.deactivate();
 				return;
 			}
