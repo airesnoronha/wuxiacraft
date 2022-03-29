@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:diamond",
+	"rune": 5,
+	"ingredient": {
+		"item": "minecraft:diamond_block"
+	},
+	"result": {
+		"item": "wuxiacraft:divine_diamond_energy_rune"
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:diamond",
+	"rune": 1,
+	"ingredient": {
+		"item": "minecraft:diamond_block"
+	},
+	"result": {
+		"item": "wuxiacraft:diamond_barrier_rune"
+	}
+}

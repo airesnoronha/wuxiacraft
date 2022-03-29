@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"  S",
+		"NI ",
+		"NN "
+	],
+	"key": {
+		"I": {
+			"item": "minecraft:netherite_ingot"
+		},
+		"N": {
+			"item": "minecraft:netherite_scrap"
+		},
+		"S": {
+			"item": "minecraft:stick"
+		}
+	},
+	"result": {
+		"item": "wuxiacraft:netherite_rune_stencil",
+		"count": 1
+	}
+}

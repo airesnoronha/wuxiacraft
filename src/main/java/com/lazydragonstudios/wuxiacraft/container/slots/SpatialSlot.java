@@ -1,4 +1,4 @@
-package com.lazydragonstudios.wuxiacraft.container;
+package com.lazydragonstudios.wuxiacraft.container.slots;
 
 import com.lazydragonstudios.wuxiacraft.item.SpatialItem;
 import net.minecraft.world.item.ItemStack;

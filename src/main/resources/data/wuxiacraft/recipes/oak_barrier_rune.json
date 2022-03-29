@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:wood",
+	"rune": 1,
+	"ingredient": {
+		"item": "minecraft:oak_log"
+	},
+	"result": {
+		"item": "wuxiacraft:oak_barrier_rune"
+	}
+}

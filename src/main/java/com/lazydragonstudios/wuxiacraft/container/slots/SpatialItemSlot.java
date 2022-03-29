@@ -1,4 +1,4 @@
-package com.lazydragonstudios.wuxiacraft.container;
+package com.lazydragonstudios.wuxiacraft.container.slots;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;

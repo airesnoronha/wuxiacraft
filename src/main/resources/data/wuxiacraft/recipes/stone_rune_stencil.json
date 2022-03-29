@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"  S",
+		"NI ",
+		"NN "
+	],
+	"key": {
+		"I": {
+			"item": "minecraft:stone"
+		},
+		"N": {
+			"item": "minecraft:cobblestone"
+		},
+		"S": {
+			"item": "minecraft:stick"
+		}
+	},
+	"result": {
+		"item": "wuxiacraft:stone_rune_stencil",
+		"count": 1
+	}
+}

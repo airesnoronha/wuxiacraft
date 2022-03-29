@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"  S",
+		"NI ",
+		"NN "
+	],
+	"key": {
+		"I": {
+			"item": "minecraft:gold_ingot"
+		},
+		"N": {
+			"item": "minecraft:gold_nugget"
+		},
+		"S": {
+			"item": "minecraft:stick"
+		}
+	},
+	"result": {
+		"item": "wuxiacraft:gold_rune_stencil",
+		"count": 1
+	}
+}

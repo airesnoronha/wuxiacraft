@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"  S",
+		"NI ",
+		"NN "
+	],
+	"key": {
+		"I": {
+			"tag": "minecraft:planks"
+		},
+		"N": {
+			"item": "minecraft:stick"
+		},
+		"S": {
+			"item": "minecraft:stick"
+		}
+	},
+	"result": {
+		"item": "wuxiacraft:wood_rune_stencil",
+		"count": 1
+	}
+}

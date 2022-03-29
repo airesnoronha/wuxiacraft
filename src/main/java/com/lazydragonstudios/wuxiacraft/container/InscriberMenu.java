@@ -1,6 +1,9 @@
 package com.lazydragonstudios.wuxiacraft.container;
 
 import com.lazydragonstudios.wuxiacraft.blocks.entity.InscriberEntity;
+import com.lazydragonstudios.wuxiacraft.container.slots.InscriberBookSlot;
+import com.lazydragonstudios.wuxiacraft.container.slots.InscriberPaintSlot;
+import com.lazydragonstudios.wuxiacraft.container.slots.OutputSlot;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.util.MathUtil;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -13,7 +16,6 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
@@ -47,7 +49,7 @@ public class InscriberMenu extends AbstractContainerMenu {
 
 		this.addSlot(new InscriberBookSlot(this.container, 0, 128, 31)); //this accepts book
 		this.addSlot(new InscriberPaintSlot(this.container, 1, 128, 12)); //this accepts ink
-		this.addSlot(new InscriberResultSlot(this.container, 2, 177, 20)); //this is the output
+		this.addSlot(new OutputSlot(this.container, 2, 177, 20)); //this is the output
 
 		//inventory
 		for (int i = 0; i < 3; ++i) {

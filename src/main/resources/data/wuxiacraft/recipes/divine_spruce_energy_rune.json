@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:wood",
+	"rune": 5,
+	"ingredient": {
+		"item": "minecraft:spruce_log"
+	},
+	"result": {
+		"item": "wuxiacraft:divine_spruce_energy_rune"
+	}
+}

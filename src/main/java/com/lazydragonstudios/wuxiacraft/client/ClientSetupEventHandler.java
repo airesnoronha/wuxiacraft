@@ -2,6 +2,7 @@ package com.lazydragonstudios.wuxiacraft.client;
 
 import com.lazydragonstudios.wuxiacraft.client.gui.InscriberScreen;
 import com.lazydragonstudios.wuxiacraft.client.gui.IntrospectionScreen;
+import com.lazydragonstudios.wuxiacraft.client.gui.RunemakingScreen;
 import com.lazydragonstudios.wuxiacraft.client.overlays.DebugOverlay;
 import com.lazydragonstudios.wuxiacraft.client.overlays.EnergiesOverlay;
 import com.lazydragonstudios.wuxiacraft.client.overlays.HealthOverlay;
@@ -14,6 +15,7 @@ import com.lazydragonstudios.wuxiacraft.client.render.models.GhostModel;
 import com.lazydragonstudios.wuxiacraft.client.render.renderer.ThrowSkillRenderer;
 import com.lazydragonstudios.wuxiacraft.container.InscriberMenu;
 import com.lazydragonstudios.wuxiacraft.container.IntrospectionMenu;
+import com.lazydragonstudios.wuxiacraft.container.RunemakingMenu;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaEntities;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaParticleTypes;
@@ -64,6 +66,7 @@ public class ClientSetupEventHandler {
 
 		MenuScreens.register(IntrospectionMenu.registryType, IntrospectionScreen::new);
 		MenuScreens.register(InscriberMenu.registryType, InscriberScreen::new);
+		MenuScreens.register(RunemakingMenu.registryType, RunemakingScreen::new);
 	}
 
 	@SubscribeEvent

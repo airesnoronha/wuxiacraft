@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:diamond",
+	"rune": 6,
+	"ingredient": {
+		"item": "minecraft:diamond_block"
+	},
+	"result": {
+		"item": "wuxiacraft:essence_diamond_cultivation_rune"
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:stone",
+	"rune": 6,
+	"ingredient": {
+		"item": "minecraft:copper_block"
+	},
+	"result": {
+		"item": "wuxiacraft:essence_copper_cultivation_rune"
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:wood",
+	"rune": 7,
+	"ingredient": {
+		"item": "minecraft:dark_oak_log"
+	},
+	"result": {
+		"item": "wuxiacraft:essence_dark_oak_energy_rune"
+	}
+}

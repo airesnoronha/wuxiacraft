@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:iron",
+	"rune": 3,
+	"ingredient": {
+		"item": "minecraft:gold_block"
+	},
+	"result": {
+		"item": "wuxiacraft:body_gold_energy_rune"
+	}
+}

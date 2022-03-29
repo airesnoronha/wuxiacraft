@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"  S",
+		"NI ",
+		"NN "
+	],
+	"key": {
+		"I": {
+			"item": "minecraft:iron_block"
+		},
+		"N": {
+			"item": "minecraft:iron_nugget"
+		},
+		"S": {
+			"item": "minecraft:stick"
+		}
+	},
+	"result": {
+		"item": "wuxiacraft:iron_rune_stencil",
+		"count": 1
+	}
+}

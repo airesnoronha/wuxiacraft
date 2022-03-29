@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:stone",
+	"rune": 1,
+	"ingredient": {
+		"item": "minecraft:stone"
+	},
+	"result": {
+		"item": "wuxiacraft:stone_barrier_rune"
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:netherite",
+	"rune": 7,
+	"ingredient": {
+		"item": "minecraft:netherite_block"
+	},
+	"result": {
+		"item": "wuxiacraft:essence_netherite_energy_rune"
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"  S",
+		"NI ",
+		" N "
+	],
+	"key": {
+		"I": {
+			"item": "minecraft:copper_ingot"
+		},
+		"N": {
+			"item": "minecraft:copper_ingot"
+		},
+		"S": {
+			"item": "minecraft:stick"
+		}
+	},
+	"result": {
+		"item": "wuxiacraft:copper_rune_stencil",
+		"count": 1
+	}
+}

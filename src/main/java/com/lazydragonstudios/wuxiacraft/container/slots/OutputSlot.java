@@ -1,4 +1,4 @@
-package com.lazydragonstudios.wuxiacraft.container;
+package com.lazydragonstudios.wuxiacraft.container.slots;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.Container;
@@ -9,9 +9,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class InscriberResultSlot extends Slot {
+public class OutputSlot extends Slot {
 
-	public InscriberResultSlot(Container container, int id, int x, int y) {
+	public OutputSlot(Container container, int id, int x, int y) {
 		super(container, id, x, y);
 	}
 

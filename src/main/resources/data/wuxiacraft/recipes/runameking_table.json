@@ -1,0 +1,19 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"IFI",
+		"I I"
+	],
+	"key": {
+		"I": {
+			"item": "minecraft:iron_ingot"
+		},
+		"F": {
+			"item": "wuxiacraft:formation_core_base"
+		}
+	},
+	"result": {
+		"item": "wuxiacraft:runemaking_table",
+		"count": 1
+	}
+}

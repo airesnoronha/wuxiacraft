@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:wood",
+	"rune": 1,
+	"ingredient": {
+		"item": "minecraft:birch_log"
+	},
+	"result": {
+		"item": "wuxiacraft:birch_barrier_rune"
+	}
+}

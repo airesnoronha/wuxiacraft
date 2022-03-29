@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:stone",
+	"rune": 4,
+	"ingredient": {
+		"item": "minecraft:stone"
+	},
+	"result": {
+		"item": "wuxiacraft:divine_stone_cultivation_rune"
+	}
+}

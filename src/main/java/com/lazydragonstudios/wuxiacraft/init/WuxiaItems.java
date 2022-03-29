@@ -4,12 +4,10 @@ import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.item.SpatialItem;
 import com.lazydragonstudios.wuxiacraft.formation.FormationMaterialTier;
+import com.lazydragonstudios.wuxiacraft.item.RuneStencil;
 import com.lazydragonstudios.wuxiacraft.item.SpiritStone;
 import com.lazydragonstudios.wuxiacraft.item.TechniqueManual;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -75,6 +73,30 @@ public class WuxiaItems {
 
 	public static RegistryObject<Item> ESSENCE_MANUAL = ITEMS.register("essence_manual",
 			() -> new TechniqueManual(new Item.Properties().stacksTo(1), System.ESSENCE));
+
+	public static RegistryObject<Item> WOOD_RUNE_STENCIL = ITEMS.register("wood_rune_stencil",
+			() -> new RuneStencil(Tiers.WOOD, new Item.Properties().tab(WUXIACRAFT_TAB)));
+
+	public static RegistryObject<Item> STONE_RUNE_STENCIL = ITEMS.register("stone_rune_stencil",
+			() -> new RuneStencil(Tiers.STONE, new Item.Properties().tab(WUXIACRAFT_TAB)));
+
+	public static RegistryObject<Item> COPPER_RUNE_STENCIL = ITEMS.register("copper_rune_stencil",
+			() -> new RuneStencil(Tiers.IRON, new Item.Properties().tab(WUXIACRAFT_TAB)));
+
+	public static RegistryObject<Item> IRON_RUNE_STENCIL = ITEMS.register("iron_rune_stencil",
+			() -> new RuneStencil(Tiers.IRON, new Item.Properties().tab(WUXIACRAFT_TAB)));
+
+	public static RegistryObject<Item> GOLD_RUNE_STENCIL = ITEMS.register("gold_rune_stencil",
+			() -> new RuneStencil(Tiers.GOLD, new Item.Properties().tab(WUXIACRAFT_TAB)));
+
+	public static RegistryObject<Item> DIAMOND_RUNE_STENCIL = ITEMS.register("diamond_rune_stencil",
+			() -> new RuneStencil(Tiers.DIAMOND, new Item.Properties().tab(WUXIACRAFT_TAB)));
+
+	public static RegistryObject<Item> NETHERITE_RUNE_STENCIL = ITEMS.register("netherite_rune_stencil",
+			() -> new RuneStencil(Tiers.NETHERITE, new Item.Properties().tab(WUXIACRAFT_TAB)));
+
+	public static RegistryObject<Item> RUNEMAKING_TABLE = ITEMS.register("runemaking_table",
+			() -> new BlockItem(WuxiaBlocks.RUNEMAKING_TABLE.get(), new Item.Properties().tab(WUXIACRAFT_TAB)));
 
 	public static RegistryObject<Item> FORMATION_CORE_BASE = ITEMS.register("formation_core_base",
 			() -> new BlockItem(WuxiaBlocks.FORMATION_CORE_BASE.get(), new Item.Properties().tab(FORMATIONS_TAB)));

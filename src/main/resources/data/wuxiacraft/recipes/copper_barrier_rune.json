@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:stone",
+	"rune": 1,
+	"ingredient": {
+		"item": "minecraft:copper_block"
+	},
+	"result": {
+		"item": "wuxiacraft:copper_barrier_rune"
+	}
+}

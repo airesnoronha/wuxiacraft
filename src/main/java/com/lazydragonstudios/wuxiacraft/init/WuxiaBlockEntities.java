@@ -21,6 +21,12 @@ public class WuxiaBlockEntities {
 					.build(Util.fetchChoiceType(References.BLOCK_ENTITY, "inscriber_type"))
 	);
 
+	public static RegistryObject<BlockEntityType<InscriberEntity>> RUNEMAKING_TABLE_TYPE = BLOCK_ENTITIES.register("runemaking_table_type",
+			() -> BlockEntityType.Builder
+					.of(InscriberEntity::new, WuxiaBlocks.RUNEMAKING_TABLE.get())
+					.build(Util.fetchChoiceType(References.BLOCK_ENTITY, "runemaking_table_type"))
+	);
+
 	public static RegistryObject<BlockEntityType<FormationCore>> FORMATION_CORE = BLOCK_ENTITIES.register("formation_core",
 			() -> BlockEntityType.Builder
 					.of(FormationCore::new,

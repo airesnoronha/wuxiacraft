@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:iron",
+	"rune": 4,
+	"ingredient": {
+		"item": "minecraft:gold_block"
+	},
+	"result": {
+		"item": "wuxiacraft:divine_gold_cultivation_rune"
+	}
+}

@@ -3,12 +3,15 @@ package com.lazydragonstudios.wuxiacraft.init;
 
 import com.lazydragonstudios.wuxiacraft.container.InscriberMenu;
 import com.lazydragonstudios.wuxiacraft.container.IntrospectionMenu;
+import com.lazydragonstudios.wuxiacraft.container.RunemakingMenu;
+import com.lazydragonstudios.wuxiacraft.crafting.RuneMakingRecipe;
 import com.lazydragonstudios.wuxiacraft.cultivation.CultivationRealm;
 import com.lazydragonstudios.wuxiacraft.cultivation.CultivationStage;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspectType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.RegistryEvent;
@@ -71,7 +74,11 @@ public class RegistryEvents {
 		IntrospectionMenu.registryType.setRegistryName(new ResourceLocation(WuxiaCraft.MOD_ID, "introspection_menu"));
 		InscriberMenu.registryType = IForgeMenuType.create(InscriberMenu::create);
 		InscriberMenu.registryType.setRegistryName(new ResourceLocation(WuxiaCraft.MOD_ID, "inscriber_menu"));
+		RunemakingMenu.registryType = IForgeMenuType.create(RunemakingMenu::create);
+		RunemakingMenu.registryType.setRegistryName(new ResourceLocation(WuxiaCraft.MOD_ID, "runemaking_menu"));
+
 		event.getRegistry().register(IntrospectionMenu.registryType);
 		event.getRegistry().register(InscriberMenu.registryType);
+		event.getRegistry().register(RunemakingMenu.registryType);
 	}
 }

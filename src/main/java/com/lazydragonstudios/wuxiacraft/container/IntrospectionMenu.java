@@ -7,6 +7,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
+import java.util.LinkedList;
+
 public class IntrospectionMenu extends AbstractContainerMenu {
 
 	public static MenuType<IntrospectionMenu> registryType;

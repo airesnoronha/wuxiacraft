@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:wood",
+	"rune": 6,
+	"ingredient": {
+		"item": "minecraft:jungle_log"
+	},
+	"result": {
+		"item": "wuxiacraft:essence_jungle_cultivation_rune"
+	}
+}

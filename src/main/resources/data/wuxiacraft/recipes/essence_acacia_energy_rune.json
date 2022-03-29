@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:wood",
+	"rune": 7,
+	"ingredient": {
+		"item": "minecraft:acacia_log"
+	},
+	"result": {
+		"item": "wuxiacraft:essence_acacia_energy_rune"
+	}
+}

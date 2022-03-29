@@ -1,12 +1,14 @@
 package com.lazydragonstudios.wuxiacraft;
 
 import com.lazydragonstudios.wuxiacraft.command.*;
+import com.lazydragonstudios.wuxiacraft.crafting.RuneMakingRecipe;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.init.*;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import com.lazydragonstudios.wuxiacraft.util.TechniqueUtil;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -63,6 +65,7 @@ public class WuxiaCraft {
 		WuxiaPoiTypes.POI_TYPES.register(modEventBus);
 		WuxiaProfessions.PROFESSIONS.register(modEventBus);
 		WuxiaParticleTypes.PARTICLE_TYPES.register(modEventBus);
+		WuxiaRecipeTypes.RECIPE_TYPE_SERIALIZERS.register(modEventBus);
 
 	}
 
@@ -75,7 +78,8 @@ public class WuxiaCraft {
 		WuxiaDefaultTechniqueManuals.init();
 		TechniqueUtil.initDevouringData();
 		TechniqueUtil.initChancedAspectsBlocks();
-		registerArgumentTypes();
+		//registerArgumentTypes();
+		RuneMakingRecipe.recipeType = RecipeType.register("runemaking");
 		TestRun.testStuff();
 	}
 

@@ -1,10 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.init;
 
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
-import com.lazydragonstudios.wuxiacraft.blocks.FormationCoreBaseBlock;
-import com.lazydragonstudios.wuxiacraft.blocks.FormationCoreBlock;
-import com.lazydragonstudios.wuxiacraft.blocks.StatRuneBlock;
-import com.lazydragonstudios.wuxiacraft.blocks.TechniqueInscriber;
+import com.lazydragonstudios.wuxiacraft.blocks.*;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.formation.FormationMaterialTier;
 import com.lazydragonstudios.wuxiacraft.formation.FormationStat;
@@ -28,6 +25,9 @@ public class WuxiaBlocks {
 
 	public static RegistryObject<Block> FORMATION_CORE_BASE = BLOCKS.register("formation_core_base",
 			() -> new FormationCoreBaseBlock(BlockBehaviour.Properties.of(Material.METAL).strength(2f)));
+
+	public static RegistryObject<Block> RUNEMAKING_TABLE = BLOCKS.register("runemaking_table",
+			() -> new RunemakingTableBlock(BlockBehaviour.Properties.of(Material.METAL).strength(2f)));
 
 	public static RegistryObject<Block> OAK_FORMATION_CORE = BLOCKS.register("oak_formation_core",
 			() -> new FormationCoreBlock(BlockBehaviour.Properties.of(Material.METAL).strength(2f), Blocks.OAK_LOG));

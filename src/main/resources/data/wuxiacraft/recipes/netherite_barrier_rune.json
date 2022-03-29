@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:netherite",
+	"rune": 1,
+	"ingredient": {
+		"item": "minecraft:netherite_block"
+	},
+	"result": {
+		"item": "wuxiacraft:netherite_barrier_rune"
+	}
+}

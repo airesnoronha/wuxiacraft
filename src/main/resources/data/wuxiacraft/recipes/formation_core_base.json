@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"DGD",
+		"GIG",
+		"DGD"
+	],
+	"key": {
+		"I": {
+			"item": "minecraft:iron_block"
+		},
+		"G": {
+			"item": "minecraft:gold_ingot"
+		},
+		"D": {
+			"item": "minecraft:diamond"
+		}
+	},
+	"result": {
+		"item": "wuxiacraft:formation_core_base",
+		"count": 1
+	}
+}

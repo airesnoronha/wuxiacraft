@@ -87,6 +87,7 @@ public class InscriberEntity extends BaseContainerBlockEntity {
 
 	@Override
 	public boolean stillValid(Player player) {
+		if(this.level == null) return false;
 		if (this.level.getBlockEntity(this.worldPosition) != this) {
 			return false;
 		} else {

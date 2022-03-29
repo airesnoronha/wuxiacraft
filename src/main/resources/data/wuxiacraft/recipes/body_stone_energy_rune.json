@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:stone",
+	"rune": 3,
+	"ingredient": {
+		"item": "minecraft:stone"
+	},
+	"result": {
+		"item": "wuxiacraft:body_stone_energy_rune"
+	}
+}

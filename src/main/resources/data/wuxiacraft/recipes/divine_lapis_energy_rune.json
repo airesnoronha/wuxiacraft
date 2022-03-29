@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:stone",
+	"rune": 5,
+	"ingredient": {
+		"item": "minecraft:lapis_block"
+	},
+	"result": {
+		"item": "wuxiacraft:divine_lapis_energy_rune"
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"type":"wuxiacraft:runemaking",
+	"mining_level":"minecraft:stone",
+	"rune": 6,
+	"ingredient": {
+		"item": "minecraft:stone"
+	},
+	"result": {
+		"item": "wuxiacraft:essence_stone_cultivation_rune"
+	}
+}

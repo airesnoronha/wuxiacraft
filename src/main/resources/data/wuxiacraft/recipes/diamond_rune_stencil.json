@@ -1,0 +1,23 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"  S",
+		"NI ",
+		" N "
+	],
+	"key": {
+		"I": {
+			"item": "minecraft:diamond"
+		},
+		"N": {
+			"item": "minecraft:diamond"
+		},
+		"S": {
+			"item": "minecraft:stick"
+		}
+	},
+	"result": {
+		"item": "wuxiacraft:diamond_rune_stencil",
+		"count": 1
+	}
+}
