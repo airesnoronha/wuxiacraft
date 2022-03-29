@@ -40,7 +40,7 @@ public class RuneMakingRecipe implements Recipe<Container> {
 	@Override
 	public boolean matches(Container pContainer, Level pLevel) {
 		if(!(pContainer instanceof RunemakingTable table)) return false;
-		if(table.getSelectedRune() == this.rune) return false;
+		if(table.getSelectedRune() != this.rune) return false;
 		ItemStack stencilItemStack = pContainer.getItem(0);
 		if (!(stencilItemStack.getItem() instanceof RuneStencil stencil)) return false;
 		var stencilTier = stencil.getTier();

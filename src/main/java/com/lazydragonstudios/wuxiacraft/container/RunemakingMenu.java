@@ -4,6 +4,7 @@ import com.lazydragonstudios.wuxiacraft.blocks.entity.InscriberEntity;
 import com.lazydragonstudios.wuxiacraft.blocks.entity.RunemakingTable;
 import com.lazydragonstudios.wuxiacraft.container.slots.OutputSlot;
 import com.lazydragonstudios.wuxiacraft.container.slots.RunemakingBlockSlot;
+import com.lazydragonstudios.wuxiacraft.container.slots.RunemakingResultSlot;
 import com.lazydragonstudios.wuxiacraft.container.slots.RunemakingStencilSlot;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.formation.FormationMaterialTier;
@@ -47,7 +48,7 @@ public class RunemakingMenu extends AbstractContainerMenu {
 
 		this.addSlot(new RunemakingStencilSlot(this.container, 0, 177, 7)); //this accepts stencil
 		this.addSlot(new RunemakingBlockSlot(this.container, 1, 177, 27)); //this accepts blocks
-		this.addSlot(new OutputSlot(this.container, 2, 177, 71)); //this is the output
+		this.addSlot(new RunemakingResultSlot(this.container, 2, 177, 71)); //this is the output
 
 		//inventory
 		for (int i = 0; i < 3; ++i) {
@@ -76,6 +77,14 @@ public class RunemakingMenu extends AbstractContainerMenu {
 		var slotStack = selectedSlot.getItem();
 		resultStack = slotStack.copy();
 		if (slot == 2) {
+			var stencilSlot = this.slots.get(0);
+			var blockSlot = this.slots.get(1);
+			if (blockSlot.hasItem() && stencilSlot.hasItem()) {
+				int count = blockSlot.getItem().getCount();
+				count = Math.min(count, stencilSlot.getItem().getMaxDamage() - stencilSlot.getItem().getDamageValue());
+				slotStack.setCount(count);
+				slotStack = this.container.removeItem(2, count);
+			}
 			if (!this.moveItemStackTo(slotStack, 3, 39, true)) return ItemStack.EMPTY;
 			selectedSlot.onQuickCraft(slotStack, resultStack);
 		} else if (slot != 0 && slot != 1) {
@@ -111,9 +120,7 @@ public class RunemakingMenu extends AbstractContainerMenu {
 	public void slotsChanged(Container pInventory) {
 		if (!(pInventory instanceof RunemakingTable table)) return;
 		var resultStack = table.getResultItemStack();
-		if (resultStack != null) {
-			table.setItem(2, resultStack);
-		}
+		table.setItem(2, resultStack);
 		super.slotsChanged(pInventory);
 	}
 }

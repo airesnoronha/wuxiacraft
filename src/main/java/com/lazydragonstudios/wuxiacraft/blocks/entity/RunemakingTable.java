@@ -9,6 +9,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -66,11 +67,43 @@ public class RunemakingTable extends BaseContainerBlockEntity {
 
 	@Override
 	public ItemStack removeItem(int id, int count) {
+		if (id == 2 && this.level != null) {
+			if (this.items.get(0).isDamageableItem()) {
+				if (this.items.get(0).hurt(count, this.level.random, null)) {
+					this.items.get(0).shrink(count);
+				}
+			} else {
+				this.items.get(0).shrink(count);
+			}
+			if (this.items.get(1).isDamageableItem()) {
+				if (this.items.get(1).hurt(count, this.level.random, null)) {
+					this.items.get(1).shrink(count);
+				}
+			} else {
+				this.items.get(1).shrink(count);
+			}
+		}
 		return ContainerHelper.removeItem(this.items, id, count);
 	}
 
 	@Override
 	public ItemStack removeItemNoUpdate(int slot) {
+		if (slot == 2 && this.level != null) {
+			if (this.items.get(0).isDamageableItem()) {
+				if (this.items.get(0).hurt(1, this.level.random, null)) {
+					this.items.get(0).shrink(1);
+				}
+			} else {
+				this.items.get(0).shrink(1);
+			}
+			if (this.items.get(1).isDamageableItem()) {
+				if (this.items.get(1).hurt(1, this.level.random, null)) {
+					this.items.get(1).shrink(1);
+				}
+			} else {
+				this.items.get(1).shrink(1);
+			}
+		}
 		return ContainerHelper.takeItem(this.items, slot);
 	}
 
@@ -79,6 +112,9 @@ public class RunemakingTable extends BaseContainerBlockEntity {
 		this.items.set(slot, stack);
 		if (stack.getCount() > this.getMaxStackSize()) {
 			stack.setCount(this.getMaxStackSize());
+		}
+		if (slot == 0 || slot == 1) {
+			this.setItem(2, this.getResultItemStack());
 		}
 	}
 
@@ -97,12 +133,11 @@ public class RunemakingTable extends BaseContainerBlockEntity {
 		}
 	}
 
-	@Nullable
 	public ItemStack getResultItemStack() {
 		if (this.level == null) return ItemStack.EMPTY;
-		Recipe<?> recipe = this.level.getRecipeManager().getRecipeFor(RuneMakingRecipe.recipeType, this, this.level).orElse(null);
+		Recipe<Container> recipe = this.level.getRecipeManager().getRecipeFor(RuneMakingRecipe.recipeType, this, this.level).orElse(null);
 		if (recipe == null) return ItemStack.EMPTY;
-		return recipe.getResultItem();
+		return recipe.assemble(this);
 	}
 
 	public int getSelectedRune() {
@@ -111,6 +146,7 @@ public class RunemakingTable extends BaseContainerBlockEntity {
 
 	public void setSelectedRune(int selectedRune) {
 		this.selectedRune = selectedRune;
+		this.setItem(2, this.getResultItemStack());
 	}
 
 	@Override
@@ -133,4 +169,9 @@ public class RunemakingTable extends BaseContainerBlockEntity {
 		this.selectedRune = tag.getInt("selectedRune");
 	}
 
+	@Override
+	public void startOpen(Player pPlayer) {
+		super.startOpen(pPlayer);
+		this.setItem(2, this.getResultItemStack());
+	}
 }

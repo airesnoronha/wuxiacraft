@@ -3,6 +3,7 @@ package com.lazydragonstudios.wuxiacraft.init;
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.blocks.entity.FormationCore;
 import com.lazydragonstudios.wuxiacraft.blocks.entity.InscriberEntity;
+import com.lazydragonstudios.wuxiacraft.blocks.entity.RunemakingTable;
 import net.minecraft.Util;
 import net.minecraft.util.datafix.fixes.References;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -21,9 +22,9 @@ public class WuxiaBlockEntities {
 					.build(Util.fetchChoiceType(References.BLOCK_ENTITY, "inscriber_type"))
 	);
 
-	public static RegistryObject<BlockEntityType<InscriberEntity>> RUNEMAKING_TABLE_TYPE = BLOCK_ENTITIES.register("runemaking_table_type",
+	public static RegistryObject<BlockEntityType<RunemakingTable>> RUNEMAKING_TABLE_TYPE = BLOCK_ENTITIES.register("runemaking_table_type",
 			() -> BlockEntityType.Builder
-					.of(InscriberEntity::new, WuxiaBlocks.RUNEMAKING_TABLE.get())
+					.of(RunemakingTable::new, WuxiaBlocks.RUNEMAKING_TABLE.get())
 					.build(Util.fetchChoiceType(References.BLOCK_ENTITY, "runemaking_table_type"))
 	);
 

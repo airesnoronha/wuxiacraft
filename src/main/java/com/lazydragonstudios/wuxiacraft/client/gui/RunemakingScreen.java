@@ -65,6 +65,7 @@ public class RunemakingScreen extends AbstractContainerScreen<RunemakingMenu> {
 		RenderSystem.setShaderTexture(0, RUNEMAKING_SCREEN);
 		blit(poseStack, 0,0, 0, 0, 200, 172);
 		poseStack.popPose();
+		this.renderTooltip(poseStack, mouseX, mouseY);
 	}
 
 }
