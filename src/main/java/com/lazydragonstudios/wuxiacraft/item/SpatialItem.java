@@ -65,28 +65,28 @@ public class SpatialItem extends Item {
         return 0;
     }
 
-    @Nullable
-    @Override
-    public CompoundTag getShareTag(ItemStack stack) {
-        var inventoryCapability = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        var inventory = (ItemStackHandler) inventoryCapability.orElse(new ItemStackHandler());
-        CompoundTag tag = super.getShareTag(stack);
-        if (tag == null) {
-            tag = new CompoundTag();
-        }
-        tag.put("clientSyncInventory", inventory.serializeNBT());
-        return tag;
-    }
-
-    @Override
-    public void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
-        super.readShareTag(stack, nbt);
-        var inventoryCapability = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        var inventory = (ItemStackHandler) inventoryCapability.orElse(new ItemStackHandler());
-        if (nbt != null && nbt.contains("clientSyncInventory")) {
-            inventory.deserializeNBT(nbt.getCompound("clientSyncInventory"));
-        }
-    }
+//    @Nullable
+//    @Override
+//    public CompoundTag getShareTag(ItemStack stack) {
+//        var inventoryCapability = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+//        var inventory = (ItemStackHandler) inventoryCapability.orElse(new ItemStackHandler());
+//        CompoundTag tag = super.getShareTag(stack);
+//        if (tag == null) {
+//            tag = new CompoundTag();
+//        }
+//        tag.put("clientSyncInventory", inventory.serializeNBT());
+//        return tag;
+//    }
+//
+//    @Override
+//    public void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
+//        super.readShareTag(stack, nbt);
+//        var inventoryCapability = stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+//        var inventory = (ItemStackHandler) inventoryCapability.orElse(new ItemStackHandler());
+//        if (nbt != null && nbt.contains("clientSyncInventory")) {
+//            inventory.deserializeNBT(nbt.getCompound("clientSyncInventory"));
+//        }
+//    }
 
     @Nullable
     @Override
