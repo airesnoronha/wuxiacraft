@@ -2,13 +2,11 @@ package com.lazydragonstudios.wuxiacraft.formation;
 
 import com.lazydragonstudios.wuxiacraft.blocks.entity.FormationCore;
 import com.lazydragonstudios.wuxiacraft.client.WorldRenderHandler;
-import com.lazydragonstudios.wuxiacraft.client.render.WuxiaRenderTypes;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaParticleTypes;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 import net.minecraft.client.Camera;
@@ -17,7 +15,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
@@ -56,6 +53,9 @@ public class FormationTicker implements BlockEntityTicker<FormationCore> {
 					core.deactivate();
 					return;
 				}
+			} else {
+				core.deactivate();
+				return;
 			}
 		}
 		var barrierAmount = core.getStat(FormationStat.BARRIER_AMOUNT);

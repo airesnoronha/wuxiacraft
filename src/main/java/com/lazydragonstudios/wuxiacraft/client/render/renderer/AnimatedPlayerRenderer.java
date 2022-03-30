@@ -168,6 +168,7 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 		if(keyFrame >= keyFrames.length) return keyFrames[0];
 		float interpolationFactor = animationStep - keyFrame;
 		float initRotation = keyFrames[keyFrame];
+		if(keyFrame + 1 >= keyFrames.length) keyFrame = -1; //then with +1 becomes 0
 		float endRotation = keyFrames[keyFrame + 1];
 		return initRotation + (endRotation - initRotation) * interpolationFactor;
 	}
