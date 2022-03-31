@@ -193,6 +193,7 @@ public class Cultivation implements ICultivation {
 		if (stage.nextStage == null) return false;
 		systemData.currentStage = stage.nextStage;
 		systemData.setStat(PlayerSystemStat.CULTIVATION_BASE, BigDecimal.ZERO);
+		this.setStat(PlayerStat.LIVES, this.getStat(PlayerStat.LIVES).add(BigDecimal.ONE).max(BigDecimal.valueOf(3)));
 		return !systemData.currentStage.equals(initialStage);
 	}
 
@@ -339,8 +340,7 @@ public class Cultivation implements ICultivation {
 			int y = formationTag.getInt("y");
 			int z = formationTag.getInt("z");
 			this.formationCore = new BlockPos(x, y, z);
-		}
-		else {
+		} else {
 			this.formationCore = null;
 		}
 		calculateStats();

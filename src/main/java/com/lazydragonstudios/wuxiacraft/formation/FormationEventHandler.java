@@ -54,15 +54,22 @@ public class FormationEventHandler {
 
 		for (var system : System.values()) {
 			var regenDist = core.getStat(system, FormationSystemStat.ENERGY_REGEN_RANGE).doubleValue();
-			var regenAmount = core.getStat(system, FormationSystemStat.ENERGY_REGEN);
+			var formationRegenAmount = core.getStat(system, FormationSystemStat.ENERGY_REGEN);
+			var formationEnergyRunes = core.getStat(system, FormationSystemStat.ENERGY_REGEN_RUNE_COUNT);
 			var systemData = cultivation.getSystemData(system);
+			var currentEnergy = systemData.getStat(PlayerSystemStat.ENERGY);
+			var maxEnergy = systemData.getStat(PlayerSystemStat.MAX_ENERGY);
+			var energyRegen = systemData.getStat(PlayerSystemStat.ENERGY_REGEN);
+			var regenAmount = formationRegenAmount.min(energyRegen.multiply(formationEnergyRunes));
 			if (distToFormation <= regenDist * regenDist) {
-				if (systemData.getStat(PlayerSystemStat.ENERGY_REGEN).compareTo(new BigDecimal("0.005")) >= 0) {
-					systemData.addEnergy(regenAmount);
+				if (energyRegen.compareTo(new BigDecimal("0.005")) >= 0 &&
+						//currentEnergy + regenAmount <= 110% of maxEnergy
+						currentEnergy.add(regenAmount).compareTo(maxEnergy.multiply(new BigDecimal("1.1"))) <= 0) {
+					systemData.addEnergy(formationRegenAmount);
 				}
 				if (system == System.ESSENCE) {
 					if (cultivation.isExercising()) {
-						systemData.addEnergy(regenAmount);
+						systemData.addEnergy(formationRegenAmount);
 					}
 				}
 			}

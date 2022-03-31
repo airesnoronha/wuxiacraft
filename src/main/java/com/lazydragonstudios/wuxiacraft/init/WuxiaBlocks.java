@@ -94,6 +94,7 @@ public class WuxiaBlocks {
 						() -> new StatRuneBlock(BlockBehaviour.Properties.of(material.blockMaterial).strength(material.blockStrength))
 								.addStat(FormationStat.ENERGY_COST, material.materialModifier.multiply(new BigDecimal("4")))
 								.addStat(system, FormationSystemStat.ENERGY_REGEN, material.materialModifier.multiply(new BigDecimal("0.005")))
+								.addStat(system, FormationSystemStat.ENERGY_REGEN_RUNE_COUNT, BigDecimal.ONE)
 								.addStat(system, FormationSystemStat.ENERGY_REGEN_RANGE, new BigDecimal("4").add(material.materialModifier))
 				));
 				CULTIVATION_RUNES.get(system).put(material, BLOCKS.register(system.name().toLowerCase() + "_" + material.name().toLowerCase() + "_cultivation_rune",

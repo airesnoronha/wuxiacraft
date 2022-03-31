@@ -65,6 +65,8 @@
 	"wuxiacraft.gui.formation.energy_regen": "%1$s Energy Generation: %2$s",
 	"wuxiacraft.gui.formation.energy_regen_range": "%1$s Energy Regen Range: %2$s",
 	"wuxiacraft.gui.death.random_teleport.name": "Random Teleport",
+	"wuxiacraft.gui.checkpoint": "Checkpoint: %1$s",
+	"wuxiacraft.gui.proficiency": "Proficiency: %1$s",
 	"wuxiacraft.aspect.empty.name": "Empty",
 	"wuxiacraft.aspect.unknown.name": "Unknown",
 	"wuxiacraft.aspect.start.name": "Start",

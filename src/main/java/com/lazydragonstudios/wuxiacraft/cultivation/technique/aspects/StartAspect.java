@@ -6,6 +6,7 @@ import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabel;
 import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabelBox;
 
 import javax.annotation.Nonnull;
+import java.math.BigDecimal;
 import java.util.LinkedList;
 
 public class StartAspect extends TechniqueAspect {
@@ -27,7 +28,7 @@ public class StartAspect extends TechniqueAspect {
 
 	@Nonnull
 	@Override
-	public LinkedList<AbstractWidget> getStatsSheetDescriptor() {
+	public LinkedList<AbstractWidget> getStatsSheetDescriptor(BigDecimal proficiency) {
 		var nameLocation = this.getRegistryName();
 		if (nameLocation == null) return new LinkedList<>();
 		WuxiaLabel nameLabel = new WuxiaLabel(5, 2, new TranslatableComponent("wuxiacraft.aspect." + nameLocation.getPath() + ".name"), 0xFFAA00);
