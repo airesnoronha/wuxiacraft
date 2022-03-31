@@ -81,6 +81,7 @@ public class StatRuneBlock extends Block {
 		}
 		for (var system : this.formationSystemStats.keySet()) {
 			for (var stat : this.formationSystemStats.get(system).keySet()) {
+				if (!stat.displayTooltip) continue;
 				var comp = new TranslatableComponent("wuxiacraft.gui.formation." + stat.name().toLowerCase(),
 						new TranslatableComponent("wuxiacraft.system." + system.name().toLowerCase()),
 						this.formationSystemStats.get(system).get(stat).toPlainString()

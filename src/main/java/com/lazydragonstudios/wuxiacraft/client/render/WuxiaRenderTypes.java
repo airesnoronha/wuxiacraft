@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class WuxiaRenderTypes extends RenderType {
 
@@ -38,6 +39,20 @@ public class WuxiaRenderTypes extends RenderType {
 					.setShaderState(RenderStateShard.NEW_ENTITY_SHADER)
 					.setWriteMaskState(RenderStateShard.COLOR_WRITE)
 					.setTextureState(new TextureStateShard(location, false, false))
+					.createCompositeState(false));
+
+	public static final Supplier<RenderType> getTranslucentNoTexture = () -> create("translucent_no_texture",
+			DefaultVertexFormat.POSITION_COLOR,
+			VertexFormat.Mode.QUADS,
+			DefaultVertexFormat.POSITION_COLOR.getVertexSize(),
+			false, false,
+			CompositeState.builder()
+					.setCullState(CULL)
+					.setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
+					.setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+					.setLightmapState(LIGHTMAP)
+					.setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
+					.setWriteMaskState(RenderStateShard.COLOR_WRITE)
 					.createCompositeState(false));
 
 	public WuxiaRenderTypes(String nameIn, VertexFormat formatIn, VertexFormat.Mode drawModeIn, int bufferSizeIn, boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn, Runnable clearTaskIn) {

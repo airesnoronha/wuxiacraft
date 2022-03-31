@@ -77,7 +77,7 @@ public class CultivationEventHandler {
 			handleSkillCasting(player, cultivation);
 			handleBodyEnergyRegen(player, bodyData);
 			handleEnergyRegen(player, cultivation);
-			handleEnergyOverflow(player, cultivation);
+			handleEnergyOverflow(cultivation);
 			handleNaturalHealing(cultivation, bodyData);
 			handleExerciseEnergies(cultivation, bodyData, essenceData);
 			handleLowEnergyPunishments(player, bodyData, divineData);
@@ -124,19 +124,17 @@ public class CultivationEventHandler {
 		var skillData = cultivation.getSkills();
 		var systemData = cultivation.getSystemData(System.ESSENCE);
 		var selectedSkill = skillData.getSkillAt(skillData.selectedSkill);
-		if (skillData.casting) {
+		if (!cultivation.isCombat()) return;
+		if (skillData.casting && selectedSkill.getStatValue(SkillStat.CURRENT_COOLDOWN).compareTo(BigDecimal.ZERO) <= 0) {
 			if (selectedSkill.getSkillChain().size() > 0) {
 				if (selectedSkill.getSkillChain().getFirst() instanceof SkillActivatorAspect activator) {
 					selectedSkill.addStat(SkillStat.CURRENT_CASTING, BigDecimal.ONE);
 					//casting >= cast_time
 					if (selectedSkill.getStatValue(SkillStat.CURRENT_CASTING)
 							.compareTo(selectedSkill.getStatValue(SkillStat.CAST_TIME)) >= 0) {
-						if (systemData.hasEnergy(selectedSkill.getStatValue(SkillStat.COST))) {
-							selectedSkill.setStat(SkillStat.CURRENT_CASTING, BigDecimal.ZERO);
-							selectedSkill.setStat(SkillStat.CURRENT_COOLDOWN, selectedSkill.getStatValue(SkillStat.COOLDOWN));
-							activator.activate.test(player, selectedSkill.getSkillChain());
-							systemData.consumeEnergy(selectedSkill.getStatValue(SkillStat.COST));
-						}
+						selectedSkill.setStat(SkillStat.CURRENT_CASTING, BigDecimal.ZERO);
+						selectedSkill.setStat(SkillStat.CURRENT_COOLDOWN, selectedSkill.getStatValue(SkillStat.COOLDOWN));
+						activator.activate.test(player, selectedSkill.getSkillChain());
 					}
 				}
 			}
@@ -176,7 +174,7 @@ public class CultivationEventHandler {
 			}
 			//kill if above 150%
 			if (systemData.getStat(PlayerSystemStat.ENERGY).compareTo(systemData.getStat(PlayerSystemStat.MAX_ENERGY).multiply(new BigDecimal("1.5"))) > 0) {
-				killPlayerWithExplosion(player,
+				killPlayerWithExplosion(player, systemData,
 						"wuxiacraft.energy_excess." + system.name().toLowerCase(),
 						//energy * 3 * max_health -> just to guarantee death
 						systemData.getStat(PlayerSystemStat.ENERGY).multiply(new BigDecimal("3")).multiply(cultivation.getStat(PlayerStat.MAX_HEALTH)));
@@ -187,7 +185,7 @@ public class CultivationEventHandler {
 		}
 	}
 
-	private static void handleEnergyOverflow(Player player, ICultivation cultivation) {
+	private static void handleEnergyOverflow(ICultivation cultivation) {
 		for (var system : System.values()) {
 			var systemData = cultivation.getSystemData(system);
 			var energy = systemData.getStat(PlayerSystemStat.ENERGY);
@@ -256,7 +254,8 @@ public class CultivationEventHandler {
 		}
 	}
 
-	private static void killPlayerWithExplosion(Player player, String deathMessage, BigDecimal amount) {
+	private static void killPlayerWithExplosion(Player player, SystemContainer systemData, String deathMessage, BigDecimal amount) {
+		systemData.setStat(PlayerSystemStat.ENERGY, BigDecimal.ZERO);
 		player.level.explode(null, player.getX(), player.getY(), player.getZ(), 5f, true, Explosion.BlockInteraction.DESTROY);
 		player.hurt(new WuxiaDamageSource(deathMessage, WuxiaElements.PHYSICAL.get(), player, amount).setInstantDeath(), amount.floatValue());
 	}

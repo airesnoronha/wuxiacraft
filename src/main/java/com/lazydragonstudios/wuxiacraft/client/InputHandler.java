@@ -81,10 +81,8 @@ public class InputHandler {
 			WuxiaPacketHandler.INSTANCE.sendToServer(new CultivationStateChangeMessage(skillData.selectedSkill, skillData.casting, cultivation.isDivineSense()));
 		}
 		if (event.getKey() == mappings.get(COMBAT_MODE).getKey().getValue()) {
-			if (event.getAction() == GLFW.GLFW_PRESS) {
-				cultivation.setCombat(true);
-			} else if (event.getAction() == GLFW.GLFW_RELEASE) {
-				cultivation.setCombat(false);
+			if (event.getAction() == GLFW.GLFW_RELEASE) {
+				cultivation.setCombat(!cultivation.isCombat());
 			}
 			WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState, cultivation.isCombat()));
 		}

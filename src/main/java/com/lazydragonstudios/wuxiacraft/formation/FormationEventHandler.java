@@ -35,9 +35,10 @@ public class FormationEventHandler {
 		if (!(blockEntity instanceof FormationCore core)) return;
 		if (!core.isActive()) return;
 		var formationSpeed = core.getStat(system, FormationSystemStat.CULTIVATION_SPEED);
+		var formationRuneCount = core.getStat(event.getSystem(), FormationSystemStat.CULTIVATION_RUNE_COUNT);
 		var cultivationSpeed = BigDecimal.ONE.add(cultivation.getSystemData(system).getStat(PlayerSystemStat.CULTIVATION_SPEED));
-		//amount = amount + min(formationSpeed, 2.5 * player_cult_speed);
-		event.setAmount(event.getAmount().add(formationSpeed.min(new BigDecimal("4").multiply(cultivationSpeed))));
+		//amount = amount + min(formationSpeed, (3 + 0.5 * runeCount) * player_cult_speed);
+		event.setAmount(event.getAmount().add(formationSpeed.min(new BigDecimal("3").add(new BigDecimal("0.5").multiply(formationRuneCount)).multiply(cultivationSpeed))));
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)

@@ -2,7 +2,6 @@ package com.lazydragonstudios.wuxiacraft.entity;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillHitAspect;
-import com.lazydragonstudios.wuxiacraft.init.WuxiaEntities;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -19,8 +18,20 @@ public class ThrowSkill extends ThrowableProjectile {
 
 	protected LinkedList<SkillAspect> skillChain;
 
-	protected ThrowSkill(Level level) {
-		super(WuxiaEntities.THROW_SKILL_TYPE.get(), level);
+	public ThrowSkill(EntityType<ThrowSkill> type, Level level) {
+		this(type, level, new LinkedList<>());
+	}
+
+	public ThrowSkill(EntityType<ThrowSkill> type, Level level, LinkedList<SkillAspect> skillChain) {
+		super(type, level);
+		this.skillChain = skillChain;
+	}
+
+	@Override
+	public void tick() {
+		var deltaMovement = this.getDeltaMovement();
+		super.tick();
+		this.setDeltaMovement(deltaMovement.x, deltaMovement.y, deltaMovement.z);
 	}
 
 	@Override
@@ -32,6 +43,7 @@ public class ThrowSkill extends ThrowableProjectile {
 				break;
 			}
 		}
+		this.kill();
 	}
 
 	@Override
@@ -46,4 +58,5 @@ public class ThrowSkill extends ThrowableProjectile {
 	public LinkedList<SkillAspect> getSkillChain() {
 		return skillChain;
 	}
+
 }

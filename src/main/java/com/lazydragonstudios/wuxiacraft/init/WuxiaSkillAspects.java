@@ -1,8 +1,10 @@
 package com.lazydragonstudios.wuxiacraft.init;
 
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.*;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillActivatorAspect;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillShootAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillTouchAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillAttackAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillBreakAspect;
@@ -10,6 +12,8 @@ import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillExpl
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillHitAspect;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
+
+import java.math.BigDecimal;
 
 @SuppressWarnings("unused")
 public class WuxiaSkillAspects {
@@ -19,12 +23,22 @@ public class WuxiaSkillAspects {
 	/**
 	 * Directly hit ahead the caster, where the caster is looking at
 	 */
-	public static RegistryObject<SkillAspectType> PUNCH = ASPECTS.register("punch", () -> SkillAspectType.build(SkillTouchAspect::new));
+	public static RegistryObject<SkillAspectType> PUNCH = ASPECTS.register("punch", () -> SkillAspectType.build(
+			() -> new SkillTouchAspect()
+					.setSkillStat(SkillStat.COST, BigDecimal.ZERO)
+					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("6"))
+					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("2"))
+	));
 
 	/**
 	 * Throw in the direction caster is looking at
 	 */
-	public static RegistryObject<SkillAspectType> SHOOT = ASPECTS.register("shoot", () -> SkillAspectType.build(SkillActivatorAspect::new));
+	public static RegistryObject<SkillAspectType> SHOOT = ASPECTS.register("shoot", () -> SkillAspectType.build(
+			() -> new SkillShootAspect()
+					.setSkillStat(SkillStat.COST, new BigDecimal("8"))
+					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("40"))
+					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("30"))
+	));
 
 	/**
 	 * Hits the caster

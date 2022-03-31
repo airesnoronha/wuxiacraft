@@ -1,5 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
+import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspectType;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillHitAspect;
@@ -15,12 +17,12 @@ public class SkillTouchAspect extends SkillActivatorAspect {
 	 */
 	public SkillTouchAspect() {
 		super();
-		this.skillStats.put(SkillStat.CAST_TIME, new BigDecimal("6"));
-		this.skillStats.put(SkillStat.COOLDOWN, new BigDecimal("2"));
-		this.skillStats.put(SkillStat.COST, new BigDecimal("0"));
 		this.setActivate((player, chain) -> {
+			var cultivation = Cultivation.get(player);
+			var essenceData = cultivation.getSystemData(System.ESSENCE);
 			var result = SkillUtil.getHitResult(player, 2, e -> e != player);
 			if (result.getType() == HitResult.Type.MISS) return false;
+			if (!essenceData.consumeEnergy(this.getSkillStat(SkillStat.COST))) return false;
 			player.swinging = true;
 			for (var link : chain) {
 				if (link instanceof SkillHitAspect) {

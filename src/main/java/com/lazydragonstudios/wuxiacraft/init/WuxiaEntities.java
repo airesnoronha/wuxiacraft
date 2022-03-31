@@ -13,6 +13,8 @@ public class WuxiaEntities {
 
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPE_REGISTER = DeferredRegister.create(ForgeRegistries.ENTITIES, WuxiaCraft.MOD_ID);
 
-	public static final RegistryObject<EntityType<ThrowSkill>> THROW_SKILL_TYPE = ENTITY_TYPE_REGISTER.register("throw_skill_type", () -> EntityType.Builder.<ThrowSkill>createNothing(MobCategory.MISC).build("throw_skill_type"));
+	public static final RegistryObject<EntityType<ThrowSkill>> THROW_SKILL_TYPE = ENTITY_TYPE_REGISTER.register("throw_skill",
+			() -> EntityType.Builder.<ThrowSkill>of(ThrowSkill::new, MobCategory.MISC).sized(0.6f, 0.6f).build("throw_skill")
+	);
 
 }

@@ -2,6 +2,7 @@ package com.lazydragonstudios.wuxiacraft.client.overlays;
 
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.client.InputHandler;
+import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
@@ -20,6 +21,10 @@ public class SkillWheel implements IIngameOverlay {
 	@Override
 	public void render(ForgeIngameGui gui, PoseStack poseStack, float partialTicks, int width, int height) {
 		if (!InputHandler.mappings.get(InputHandler.SKILL_WHEEL).isDown()) return;
+		var player = Minecraft.getInstance().player;
+		if (player == null) return;
+		var cultivation = Cultivation.get(player);
+		if (!cultivation.isCombat()) return;
 		var window = Minecraft.getInstance().getWindow();
 		var scaledX = window.getGuiScaledWidth();
 		var scaledY = window.getGuiScaledHeight();

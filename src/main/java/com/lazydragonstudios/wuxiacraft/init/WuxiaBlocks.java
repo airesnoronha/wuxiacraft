@@ -101,6 +101,7 @@ public class WuxiaBlocks {
 						() -> new StatRuneBlock(BlockBehaviour.Properties.of(material.blockMaterial).strength(material.blockStrength))
 								.addStat(FormationStat.ENERGY_COST, material.materialModifier.multiply(new BigDecimal("3")))
 								.addStat(system, FormationSystemStat.CULTIVATION_SPEED, material.materialModifier.multiply(new BigDecimal("0.5")))
+								.addStat(system, FormationSystemStat.CULTIVATION_RUNE_COUNT, BigDecimal.ONE)
 				));
 			}
 		}
