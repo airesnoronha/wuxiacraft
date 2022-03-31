@@ -48,7 +48,7 @@ public record AnimationChangeUpdateMessage(UUID playerId, CompoundTag animationS
 			if (target == null) return;
 			IClientAnimationState animationState = ClientAnimationState.get(target);
 			animationState.deserialize(msg.animationState);
-			ICultivation cultivation = Cultivation.get(player);
+			ICultivation cultivation = Cultivation.get(target);
 			cultivation.setExercising(animationState.isExercising());
 			cultivation.setCombat(msg.combat);
 			cultivation.setSemiDeadState(animationState.isSemiDead());
