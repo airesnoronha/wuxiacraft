@@ -3,14 +3,9 @@ package com.lazydragonstudios.wuxiacraft.combat;
 import com.lazydragonstudios.wuxiacraft.cultivation.ICultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
-import com.lazydragonstudios.wuxiacraft.networking.AnimationChangeUpdateMessage;
 import com.lazydragonstudios.wuxiacraft.networking.CultivationSyncMessage;
 import com.lazydragonstudios.wuxiacraft.networking.TurnSemiDeadStateMessage;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
-import net.minecraft.Util;
-import net.minecraft.network.chat.ChatType;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -32,7 +27,6 @@ import net.minecraftforge.network.PacketDistributor;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaElements;
 import com.lazydragonstudios.wuxiacraft.util.MathUtil;
-import org.apache.http.util.EntityUtils;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -64,13 +58,16 @@ public class CombatEventHandler {
 		}
 
 		Entity attacker = source.getEntity();
-		if(attacker instanceof Player) {
+		if (attacker instanceof Player) {
 			var pierce = Cultivation.get((Player) attacker).getStat(source.getElement().getRegistryName(), PlayerElementalStat.PIERCE);
 			resistance = resistance.subtract(pierce).max(BigDecimal.ZERO);
 		}
-
+		boolean isInstantDeath = source.isInstantDeath();
 		source = new WuxiaDamageSource(source.getMsgId(), source.getElement(), source.getEntity(),
 				source.getDamage().subtract(resistance).max(BigDecimal.ONE));
+		if (isInstantDeath) {
+			source = source.setInstantDeath();
+		}
 
 		player.getInventory().hurtArmor(source, event.getAmount(), Inventory.ALL_ARMOR_SLOTS);
 		ForgeHooks.onLivingDamage(event.getEntityLiving(), source, source.getDamage().floatValue());
@@ -84,12 +81,22 @@ public class CombatEventHandler {
 	 * @return the wuxia damage source with an element
 	 */
 	private static WuxiaDamageSource getElementalSourceFromVanillaSource(DamageSource source, float amount) {
-		if (source.isFire())
+		if (source.isFire()) {
+			if (source == DamageSource.LAVA) {
+				return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.FIRE.get(), new BigDecimal(amount)).setInstantDeath();
+			}
 			return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.FIRE.get(), new BigDecimal(amount));
+		}
 		if (source == DamageSource.LIGHTNING_BOLT)
-			return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.LIGHTNING.get(), new BigDecimal(amount));
-		if (source == DamageSource.FREEZE)
+			return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.LIGHTNING.get(), new BigDecimal(amount)).setInstantDeath();
+		if (source == DamageSource.FREEZE || source == DamageSource.DROWN)
 			return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.WATER.get(), new BigDecimal(amount));
+		if (source == DamageSource.WITHER)
+			return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.TIME.get(), new BigDecimal(amount));
+		if (source == DamageSource.MAGIC)
+			return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.POISON.get(), new BigDecimal(amount));
+		if (source == DamageSource.OUT_OF_WORLD)
+			return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.PHYSICAL.get(), new BigDecimal(amount)).setInstantDeath();
 		return new WuxiaDamageSource(source.getMsgId(), WuxiaElements.PHYSICAL.get(), source.getEntity(), new BigDecimal(amount));
 	}
 
@@ -113,11 +120,14 @@ public class CombatEventHandler {
 		//and it'll be used to heal the character anyway.
 
 		if (cultivation.getStat(PlayerStat.HEALTH).compareTo(BigDecimal.ZERO) <= 0) {
-			//Gotta make it show the death screen to the player
-			cultivation.setSemiDeadState(true);
-			WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-					new TurnSemiDeadStateMessage(true, event.getSource().getLocalizedDeathMessage(player),
-							player.getServer().isHardcore()));
+			if (source.isInstantDeath()) {
+				player.setHealth(-1);
+			} else {
+				cultivation.setSemiDeadState(true);
+				WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+						new TurnSemiDeadStateMessage(true, event.getSource().getLocalizedDeathMessage(player),
+								player.getServer() != null && player.getServer().isHardcore()));
+			}
 		}
 
 		//this will make players health bar always keep up with

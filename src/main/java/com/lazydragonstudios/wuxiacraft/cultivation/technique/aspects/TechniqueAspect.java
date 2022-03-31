@@ -100,7 +100,7 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 		this.checkpoints.add(checkpoint);
 		return this;
 	}
-	
+
 	/**
 	 * Changes the behavior to seek whether this aspect can be learned by a player
 	 *
@@ -188,15 +188,21 @@ public abstract class TechniqueAspect extends ForgeRegistryEntry<TechniqueAspect
 	 * @return widgets describing this aspect
 	 */
 	@Nonnull
-	public LinkedList<AbstractWidget> getStatsSheetDescriptor() {
+	public LinkedList<AbstractWidget> getStatsSheetDescriptor(BigDecimal proficiency) {
 		var nameLocation = this.getRegistryName();
 		if (nameLocation == null) return new LinkedList<>();
 		WuxiaLabel nameLabel = new WuxiaLabel(5, 2, new TranslatableComponent("wuxiacraft.aspect." + nameLocation.getPath() + ".name"), 0xFFAA00);
-		WuxiaCheckpointsWidget checkpointsWidget = new WuxiaCheckpointsWidget(5, 12, 190, nameLocation);
+		WuxiaCheckpointsWidget checkpointsWidget = new WuxiaCheckpointsWidget(0, 0, 190, nameLocation);
+		var checkpoint = this.getCurrentCheckpoint(proficiency);
+		WuxiaLabel currentCheckpoint = new WuxiaLabel(0, 0, new TranslatableComponent("wuxiacraft.gui.checkpoint",
+				new TranslatableComponent("wuxiacraft.checkpoint." + checkpoint.name)), 0xFFAA00);
+		WuxiaLabel currentProficiency = new WuxiaLabel(0, 0, new TranslatableComponent("wuxiacraft.gui.proficiency", proficiency.toEngineeringString()), 0xFFAA00);
 		WuxiaLabelBox descriptionLabel = new WuxiaLabelBox(5, 25, 190, new TranslatableComponent("Description: wuxiacraft.aspect." + nameLocation.getPath() + ".description"));
 		LinkedList<AbstractWidget> widgets = new LinkedList<>();
 		widgets.add(nameLabel);
 		widgets.add(checkpointsWidget);
+		widgets.add(currentCheckpoint);
+		widgets.add(currentProficiency);
 		widgets.add(descriptionLabel);
 		return widgets;
 	}

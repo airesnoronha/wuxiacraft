@@ -1,7 +1,10 @@
 package com.lazydragonstudios.wuxiacraft.client.particle;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -21,8 +24,14 @@ public class QiFogParticle extends TextureSheetParticle {
 		this.xd = deltaX * (Math.random() * 2.0D - 1.0D);
 		this.yd = deltaY * Math.random();
 		this.zd = deltaZ * (Math.random() * 2.0D - 1.0D);
-		setLifetime(40);
+		setLifetime(20);
 
+	}
+
+	@Override
+	public void render(VertexConsumer pBuffer, Camera pRenderInfo, float pPartialTicks) {
+		RenderSystem.depthMask(false);
+		super.render(pBuffer, pRenderInfo, pPartialTicks);
 	}
 
 	@Override

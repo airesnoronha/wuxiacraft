@@ -132,6 +132,7 @@ public class WuxiaSkillComposer extends AbstractWidget {
 	}
 
 	public void removeSkillAtPosition(int pos) {
+		if (pos >= this.skill.getSkillChain().size()) return;
 		this.skill.getSkillChain().remove(pos);
 	}
 

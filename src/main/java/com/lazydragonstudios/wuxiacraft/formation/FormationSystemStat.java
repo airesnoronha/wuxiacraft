@@ -5,7 +5,8 @@ import java.math.BigDecimal;
 public enum FormationSystemStat {
 	CULTIVATION_SPEED(false),
 	ENERGY_REGEN_RANGE(false, StatJoinOperation.maxOp),
-	ENERGY_REGEN(false);
+	ENERGY_REGEN(false),
+	ENERGY_REGEN_RUNE_COUNT(false);
 
 	public final boolean isModifiable;
 

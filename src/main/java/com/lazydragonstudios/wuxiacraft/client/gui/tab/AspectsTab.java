@@ -18,7 +18,7 @@ import java.util.HashMap;
 public class AspectsTab extends IntrospectionTab {
 
 	private WuxiaFlowPanel aspectsPanel;
-	private WuxiaScrollPanel aspectsStatsPanel;
+	private WuxiaVerticalFlowPanel aspectsStatsPanel;
 
 	@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 	private HashMap<ResourceLocation, WuxiaAspectWidget> aspectWidgets;
@@ -26,14 +26,15 @@ public class AspectsTab extends IntrospectionTab {
 	private ResourceLocation selectedAspectWidget = null;
 
 	public AspectsTab(String name) {
-		super(name, new Point(32,36));
+		super(name, new Point(32, 36));
 	}
 
 	@Override
 	public void init(IntrospectionScreen screen) {
 		aspectWidgets = new HashMap<>();
 		aspectsPanel = new WuxiaFlowPanel(36, 36, 120, 30, new TextComponent(""));
-		aspectsStatsPanel = new WuxiaScrollPanel(36, 36, 200, 30, new TextComponent(""));
+		aspectsStatsPanel = new WuxiaVerticalFlowPanel(36, 36, 200, 30, new TextComponent(""));
+		aspectsStatsPanel.setMargin(1);
 		screen.addRenderableWidget(aspectsPanel);
 		screen.addRenderableWidget(aspectsStatsPanel);
 	}
@@ -41,17 +42,15 @@ public class AspectsTab extends IntrospectionTab {
 	@Override
 	public void renderBG(PoseStack poseStack, int mouseX, int mouseY) {
 		var player = Minecraft.getInstance().player;
-		if(player == null) return;
+		if (player == null) return;
 		var cultivation = Cultivation.get(player);
 		var aspects = cultivation.getAspects();
-		if(aspects.getKnownAspectsCount() != this.aspectsPanel.getChildrenCount()) {
+		if (aspects.getKnownAspectsCount() != this.aspectsPanel.getChildrenCount()) {
 			this.aspectsPanel.clearChildren();
 			this.aspectWidgets.clear();
-			for(var aspect : aspects.getKnownAspects()) {
-				var aspectWidget = new WuxiaAspectWidget(0,0,aspect);
-				aspectWidget.setOnClicked((mx, my) -> {
-					changeSelected(aspect);
-				});
+			for (var aspect : aspects.getKnownAspects()) {
+				var aspectWidget = new WuxiaAspectWidget(0, 0, aspect);
+				aspectWidget.setOnClicked((mx, my) -> changeSelected(aspect));
 				this.aspectsPanel.addChild(aspectWidget);
 				this.aspectWidgets.put(aspect, aspectWidget);
 			}
@@ -61,12 +60,12 @@ public class AspectsTab extends IntrospectionTab {
 		var stretchedSpace = freeXSpace - 200;
 		this.aspectsPanel.setWidth(stretchedSpace);
 		this.aspectsPanel.setHeight(freeYSpace);
-		this.aspectsStatsPanel.x = 36+stretchedSpace;
+		this.aspectsStatsPanel.x = 36 + stretchedSpace;
 		this.aspectsStatsPanel.setHeight(freeYSpace);
 	}
 
 	private void changeSelected(ResourceLocation location) {
-		if(this.aspectWidgets.containsKey(location)) {
+		if (this.aspectWidgets.containsKey(location)) {
 			this.selectedAspectWidget = location;
 			changeSelectedAspectStats();
 		}
@@ -74,9 +73,13 @@ public class AspectsTab extends IntrospectionTab {
 
 	private void changeSelectedAspectStats() {
 		var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.selectedAspectWidget);
-		if(aspect == null) return;
+		if (aspect == null) return;
 		this.aspectsStatsPanel.clearChildren();
-		for(var widget : aspect.getStatsSheetDescriptor()) {
+		var player = Minecraft.getInstance().player;
+		if (player == null) return;
+		var cultivation = Cultivation.get(player);
+		var proficiency = cultivation.getAspects().getAspectProficiency(this.selectedAspectWidget);
+		for (var widget : aspect.getStatsSheetDescriptor(proficiency)) {
 			this.aspectsStatsPanel.addChild(widget);
 		}
 	}

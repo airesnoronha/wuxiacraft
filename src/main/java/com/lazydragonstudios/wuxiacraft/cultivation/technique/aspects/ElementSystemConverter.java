@@ -1,18 +1,22 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.technique.aspects;
 
+import com.lazydragonstudios.wuxiacraft.client.gui.widgets.WuxiaLabel;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class ElementSystemConverter extends ElementalConverter {
 
@@ -62,7 +66,8 @@ public class ElementSystemConverter extends ElementalConverter {
 		if (player != null) {
 			var cultivation = Cultivation.get(player);
 			var proficiency = cultivation.getAspects().getAspectProficiency(nameLocation);
-			convertCap *= 1d + proficiency.doubleValue();
+			var modifier = this.getCurrentCheckpoint(proficiency).modifier();
+			convertCap *= 1d + modifier.doubleValue();
 		}
 		var amount = String.format(" ->     (%.1f)", convertCap);
 
@@ -80,6 +85,17 @@ public class ElementSystemConverter extends ElementalConverter {
 		font.drawShadow(poseStack, name, mouseX + 5, mouseY + 2, 0xFFFFFF);
 		font.drawShadow(poseStack, amount, mouseX + 23, mouseY + 18, 0xFFFFFF);
 		RenderSystem.disableBlend();
+	}
+
+	@Nonnull
+	@Override
+	public LinkedList<AbstractWidget> getStatsSheetDescriptor(BigDecimal proficiency) {
+		var widgets = super.getStatsSheetDescriptor(proficiency);
+		var checkpoint = this.getCurrentCheckpoint(proficiency);
+		var amount = this.amount;
+		amount *= 1 + checkpoint.modifier().doubleValue();
+		widgets.add(4, new WuxiaLabel(0, 0, new TranslatableComponent("wuxiacraft.gui.generates", amount), 0xFFAA00));
+		return widgets;
 	}
 
 	@Override

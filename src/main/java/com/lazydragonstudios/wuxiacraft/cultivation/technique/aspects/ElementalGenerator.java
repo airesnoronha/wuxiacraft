@@ -72,7 +72,8 @@ public class ElementalGenerator extends TechniqueAspect {
 		if (player != null) {
 			var cultivation = Cultivation.get(player);
 			var proficiency = cultivation.getAspects().getAspectProficiency(nameLocation);
-			generated *= 1d + proficiency.doubleValue();
+			var modifier = this.getCurrentCheckpoint(proficiency).modifier();
+			generated *= 1d + modifier.doubleValue();
 		}
 		var amount = String.format("%.1f", generated);
 
@@ -92,10 +93,12 @@ public class ElementalGenerator extends TechniqueAspect {
 
 	@Nonnull
 	@Override
-	public LinkedList<AbstractWidget> getStatsSheetDescriptor() {
-		var widgets = super.getStatsSheetDescriptor();
-		widgets.get(2).y += 11;//must be the description
-		widgets.add(new WuxiaLabel(5, 25, new TranslatableComponent("wuxiacraft.gui.generates", this.generated), 0xFFAA00));
+	public LinkedList<AbstractWidget> getStatsSheetDescriptor(BigDecimal proficiency) {
+		var widgets = super.getStatsSheetDescriptor(proficiency);
+		var checkpoint = this.getCurrentCheckpoint(proficiency);
+		var generated = this.generated;
+		generated *= 1 + checkpoint.modifier().doubleValue();
+		widgets.add(4, new WuxiaLabel(0, 0, new TranslatableComponent("wuxiacraft.gui.generates", generated), 0xFFAA00));
 		return widgets;
 	}
 
