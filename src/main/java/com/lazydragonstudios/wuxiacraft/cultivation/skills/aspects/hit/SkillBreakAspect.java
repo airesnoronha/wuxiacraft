@@ -46,7 +46,7 @@ public class SkillBreakAspect extends SkillHitAspect {
 				if (target instanceof LivingEntity livingEntity) {
 					var damage = skill.getStatValue(SkillStat.STRENGTH).multiply(systemData.getStat(PlayerStat.STRENGTH).multiply(new BigDecimal("0.5")));
 					var damageSource = new WuxiaDamageSource("wuxiacraft.skill.break", WuxiaElements.PHYSICAL.get(), livingEntity, damage);
-					target.hurt(damageSource, 1f);
+					target.hurt(damageSource, damageSource.getDamage().floatValue());
 				}
 				return true;
 			}

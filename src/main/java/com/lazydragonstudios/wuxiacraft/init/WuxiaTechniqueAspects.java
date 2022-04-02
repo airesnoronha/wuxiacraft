@@ -184,7 +184,20 @@ public class WuxiaTechniqueAspects {
 					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("10000"), new BigDecimal("0.1")))
 					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("50000"), new BigDecimal("0.2")))
 					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("150000"), new BigDecimal("0.4")))
-					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("350000"), new BigDecimal("0.6")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("350000"), new BigDecimal("0.6"),
+							cultivation -> cultivation.getAspects().learnAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "magical_incineration"), cultivation)))
+	);
+
+	public static RegistryObject<TechniqueAspect> MAGICAL_INCINERATION = ASPECTS.register("magical_incineration",
+			() -> new ElementSystemConverter(12d, WuxiaElements.FIRE.getId(), System.ESSENCE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "magic_burning"))
+							&& cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "blazing")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("100000"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("500000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("1500000"), new BigDecimal("0.4")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("3500000"), new BigDecimal("0.6")))
 	);
 
 	public static RegistryObject<TechniqueAspect> MIND_FLARE = ASPECTS.register("mind_flare",
@@ -320,7 +333,20 @@ public class WuxiaTechniqueAspects {
 					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("10000"), new BigDecimal("0.1")))
 					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("50000"), new BigDecimal("0.2")))
 					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("150000"), new BigDecimal("0.4")))
-					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("350000"), new BigDecimal("0.6")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("350000"), new BigDecimal("0.6"),
+							cultivation -> cultivation.getAspects().learnAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "magical_flow"), cultivation)))
+	);
+
+	public static RegistryObject<TechniqueAspect> MAGICAL_FLOW = ASPECTS.register("magical_flow",
+			() -> new ElementSystemConverter(12d, WuxiaElements.WATER.getId(), System.ESSENCE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "stream"))
+							&& cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "waterfall")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("100000"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("500000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("1500000"), new BigDecimal("0.4")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("3500000"), new BigDecimal("0.6")))
 	);
 
 	public static RegistryObject<TechniqueAspect> WAVING = ASPECTS.register("waving",
@@ -477,7 +503,20 @@ public class WuxiaTechniqueAspects {
 					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("10000"), new BigDecimal("0.1")))
 					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("50000"), new BigDecimal("0.2")))
 					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("150000"), new BigDecimal("0.4")))
-					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("350000"), new BigDecimal("0.6")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("350000"), new BigDecimal("0.6"),
+							cultivation -> cultivation.getAspects().learnAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "magical_growth"), cultivation)))
+	);
+
+	public static RegistryObject<TechniqueAspect> MAGICAL_GROWTH = ASPECTS.register("magical_growth",
+			() -> new ElementSystemConverter(12d, WuxiaElements.WOOD.getId(), System.ESSENCE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "sprout"))
+							&& cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "branching")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("100000"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("500000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("1500000"), new BigDecimal("0.4")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("3500000"), new BigDecimal("0.6")))
 	);
 
 	public static RegistryObject<TechniqueAspect> SWAYING = ASPECTS.register("swaying",
@@ -642,7 +681,20 @@ public class WuxiaTechniqueAspects {
 					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("10000"), new BigDecimal("0.1")))
 					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("50000"), new BigDecimal("0.2")))
 					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("150000"), new BigDecimal("0.4")))
-					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("350000"), new BigDecimal("0.6")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("350000"), new BigDecimal("0.6"),
+							cultivation -> cultivation.getAspects().learnAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "magical_sharpness"), cultivation)))
+	);
+
+	public static RegistryObject<TechniqueAspect> MAGICAL_SHARPNESS = ASPECTS.register("magical_sharpness",
+			() -> new ElementSystemConverter(12d, WuxiaElements.METAL.getId(), System.ESSENCE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "metal_ingot"))
+							&& cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "sharpness")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("100000"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("500000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("1500000"), new BigDecimal("0.4")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("3500000"), new BigDecimal("0.6")))
 	);
 
 	public static RegistryObject<TechniqueAspect> MAGNETIZATION = ASPECTS.register("magnetization",
@@ -780,7 +832,20 @@ public class WuxiaTechniqueAspects {
 					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("10000"), new BigDecimal("0.1")))
 					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("50000"), new BigDecimal("0.2")))
 					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("150000"), new BigDecimal("0.4")))
-					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("350000"), new BigDecimal("0.6")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("350000"), new BigDecimal("0.6"),
+							cultivation -> cultivation.getAspects().learnAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "magical_conduction"), cultivation)))
+	);
+
+	public static RegistryObject<TechniqueAspect> MAGICAL_CONDUCTION = ASPECTS.register("magical_conduction",
+			() -> new ElementSystemConverter(12d, WuxiaElements.LIGHTNING.getId(), System.ESSENCE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "thundering"))
+							&& cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "arc")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("100000"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("500000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("1500000"), new BigDecimal("0.4")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("3500000"), new BigDecimal("0.6")))
 	);
 
 	public static RegistryObject<TechniqueAspect> FLASH = ASPECTS.register("flash",

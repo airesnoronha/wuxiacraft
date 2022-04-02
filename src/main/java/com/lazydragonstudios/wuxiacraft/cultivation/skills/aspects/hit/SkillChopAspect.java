@@ -46,7 +46,7 @@ public class SkillChopAspect extends SkillHitAspect {
 				if (target instanceof LivingEntity livingEntity) {
 					var damage = skill.getStatValue(SkillStat.STRENGTH).multiply(systemData.getStat(PlayerStat.STRENGTH).multiply(new BigDecimal("3")));
 					var damageSource = new WuxiaDamageSource("wuxiacraft.skill.chop", WuxiaElements.PHYSICAL.get(), livingEntity, damage).setInstantDeath();
-					target.hurt(damageSource, 1f);
+					target.hurt(damageSource, damageSource.getDamage().floatValue());
 				}
 				return true;
 			}

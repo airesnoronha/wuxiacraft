@@ -23,7 +23,7 @@ public class SkillAttackAspect extends SkillHitAspect {
 					var cultivation = Cultivation.get(caster);
 					var damage = skill.getStatValue(SkillStat.STRENGTH).multiply(cultivation.getSystemData(System.ESSENCE).getStat(PlayerStat.STRENGTH).multiply(new BigDecimal("1.5")));
 					var damageSource = new WuxiaDamageSource("wuxiacraft.skill.attack", WuxiaElements.PHYSICAL.get(), caster, damage);
-					target.hurt(damageSource, 1f);
+					target.hurt(damageSource, damageSource.getDamage().floatValue());
 				}
 			}
 			return false;
