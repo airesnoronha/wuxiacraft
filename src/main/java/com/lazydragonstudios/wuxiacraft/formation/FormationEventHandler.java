@@ -5,6 +5,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.event.CultivatingEvent;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaConfigs;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -36,7 +37,8 @@ public class FormationEventHandler {
 		if (!core.isActive()) return;
 		var formationSpeed = core.getStat(system, FormationSystemStat.CULTIVATION_SPEED);
 		var formationRuneCount = core.getStat(event.getSystem(), FormationSystemStat.CULTIVATION_RUNE_COUNT);
-		var cultivationSpeed = BigDecimal.ONE.add(cultivation.getSystemData(system).getStat(PlayerSystemStat.CULTIVATION_SPEED));
+		var cultivationSpeed = BigDecimal.ONE.add(cultivation.getSystemData(system).getStat(PlayerSystemStat.CULTIVATION_SPEED))
+				.multiply(BigDecimal.valueOf(WuxiaConfigs.CULTIVATION_SPEED_MULTIPLIER.get()));
 		//amount = amount + min(formationSpeed, (3 + 0.5 * runeCount) * player_cult_speed);
 		event.setAmount(event.getAmount().add(formationSpeed.min(new BigDecimal("3").add(new BigDecimal("0.5").multiply(formationRuneCount)).multiply(cultivationSpeed))));
 	}

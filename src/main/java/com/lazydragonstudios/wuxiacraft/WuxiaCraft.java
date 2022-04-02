@@ -66,7 +66,7 @@ public class WuxiaCraft {
 		WuxiaProfessions.PROFESSIONS.register(modEventBus);
 		WuxiaParticleTypes.PARTICLE_TYPES.register(modEventBus);
 		WuxiaRecipeTypes.RECIPE_TYPE_SERIALIZERS.register(modEventBus);
-
+		WuxiaConfigs.registerConfigs();
 	}
 
 
