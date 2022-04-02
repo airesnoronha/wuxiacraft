@@ -4,32 +4,32 @@ import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspectType;
-import com.lazydragonstudios.wuxiacraft.entity.ThrowSkill;
-import com.lazydragonstudios.wuxiacraft.init.WuxiaEntities;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillHitAspect;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaSkillAspects;
+import net.minecraft.world.phys.EntityHitResult;
 
-public class SkillShootAspect extends SkillActivatorAspect {
+public class SkillSelfAspect extends SkillActivatorAspect {
 
-	public SkillShootAspect() {
+	public SkillSelfAspect() {
 		super();
-		this.activate = (player, skillAspects) -> {
-			if (player.level.isClientSide()) return false;
+		this.setActivate((player, skill) -> {
 			var cultivation = Cultivation.get(player);
 			var essenceData = cultivation.getSystemData(System.ESSENCE);
 			if (!essenceData.consumeEnergy(this.getSkillStat(SkillStat.COST))) return false;
-			var level = player.level;
-			var lookAngle = player.getLookAngle();
-			var entity = new ThrowSkill(WuxiaEntities.THROW_SKILL_TYPE.get(), level, skillAspects);
-			entity.setPos(player.getEyePosition());
-			entity.setOwner(player);
-			entity.shoot(lookAngle.x, lookAngle.y, lookAngle.z, 0.86f, 0.05f);
-			level.addFreshEntity(entity);
+			var result = new EntityHitResult(player, player.getEyePosition());
+			player.swinging = true;
+			for (var link : skill.getSkillChain()) {
+				if (link instanceof SkillHitAspect) {
+					((SkillHitAspect) link).activate(player, skill, result);
+					break;
+				}
+			}
 			return true;
-		};
+		});
 	}
 
 	@Override
 	public SkillAspectType getType() {
-		return WuxiaSkillAspects.SHOOT.get();
+		return WuxiaSkillAspects.SELF.get();
 	}
 }

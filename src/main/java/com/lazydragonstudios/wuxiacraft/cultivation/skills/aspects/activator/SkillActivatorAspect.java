@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillDescriptor;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillActivationModifierAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspectType;
@@ -13,7 +14,7 @@ import java.util.function.BiPredicate;
 
 public class SkillActivatorAspect extends SkillAspect {
 
-	public BiPredicate<Player, LinkedList<SkillAspect>> activate;
+	public BiPredicate<Player, SkillDescriptor> activate;
 
 	public SkillActivatorAspect() {
 		super();
@@ -27,7 +28,7 @@ public class SkillActivatorAspect extends SkillAspect {
 		return WuxiaSkillAspects.PUNCH.get();
 	}
 
-	public SkillActivatorAspect setActivate(BiPredicate<Player, LinkedList<SkillAspect>> activate) {
+	public SkillActivatorAspect setActivate(BiPredicate<Player, SkillDescriptor> activate) {
 		this.activate = activate;
 		return this;
 	}

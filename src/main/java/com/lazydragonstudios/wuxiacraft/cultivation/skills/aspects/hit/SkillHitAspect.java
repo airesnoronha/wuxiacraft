@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillDescriptor;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspectType;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillHitModifierAspect;
@@ -29,8 +30,8 @@ public class SkillHitAspect extends SkillAspect {
 		return WuxiaSkillAspects.PUNCH.get();
 	}
 
-	public boolean activate(Player player, LinkedList<SkillAspect> aspectsChain, HitResult result) {
-		return this.activation.hit(player, aspectsChain, result);
+	public boolean activate(Player player, SkillDescriptor skill, HitResult result) {
+		return this.activation.hit(player, skill, result);
 	}
 
 	@Override

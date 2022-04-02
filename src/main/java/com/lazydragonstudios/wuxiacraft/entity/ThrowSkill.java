@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.entity;
 
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillDescriptor;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillHitAspect;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -16,15 +17,15 @@ import java.util.LinkedList;
 @MethodsReturnNonnullByDefault
 public class ThrowSkill extends ThrowableProjectile {
 
-	protected LinkedList<SkillAspect> skillChain;
+	protected SkillDescriptor skill;
 
 	public ThrowSkill(EntityType<ThrowSkill> type, Level level) {
-		this(type, level, new LinkedList<>());
+		this(type, level, new SkillDescriptor());
 	}
 
-	public ThrowSkill(EntityType<ThrowSkill> type, Level level, LinkedList<SkillAspect> skillChain) {
+	public ThrowSkill(EntityType<ThrowSkill> type, Level level, SkillDescriptor skill) {
 		super(type, level);
-		this.skillChain = skillChain;
+		this.skill = skill;
 	}
 
 	@Override
@@ -37,9 +38,9 @@ public class ThrowSkill extends ThrowableProjectile {
 	@Override
 	protected void onHit(HitResult hitResult) {
 		super.onHit(hitResult);
-		for (var skill : skillChain) {
+		for (var skill : skill.getSkillChain()) {
 			if (skill instanceof SkillHitAspect hitSkill) {
-				hitSkill.activate((Player) this.getOwner(), this.skillChain, hitResult);
+				hitSkill.activate((Player) this.getOwner(), this.skill, hitResult);
 				break;
 			}
 		}
@@ -53,10 +54,6 @@ public class ThrowSkill extends ThrowableProjectile {
 
 	@Override
 	protected void defineSynchedData() {
-	}
-
-	public LinkedList<SkillAspect> getSkillChain() {
-		return skillChain;
 	}
 
 }

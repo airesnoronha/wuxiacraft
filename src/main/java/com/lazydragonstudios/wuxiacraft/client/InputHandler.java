@@ -96,22 +96,4 @@ public class InputHandler {
 		}
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onMeditatingIgnoreInputs(TickEvent.PlayerTickEvent event) {
-		if (!(event.player instanceof LocalPlayer)) return;
-		if (event.phase != TickEvent.Phase.END) return;
-		var animationState = ClientAnimationState.get(event.player);
-		if (animationState.isExercising()) {
-			List<KeyMapping> movementInputs = ImmutableList.of(
-					Minecraft.getInstance().options.keyUp,
-					Minecraft.getInstance().options.keyLeft,
-					Minecraft.getInstance().options.keyRight,
-					Minecraft.getInstance().options.keyDown
-			);
-			for (var input : movementInputs) {
-				input.consumeClick();
-			}
-		}
-	}
-
 }

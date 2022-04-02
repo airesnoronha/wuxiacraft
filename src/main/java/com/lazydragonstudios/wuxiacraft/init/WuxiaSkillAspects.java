@@ -4,12 +4,10 @@ import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.*;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillActivatorAspect;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillSelfAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillShootAspect;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillTouchAspect;
-import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillAttackAspect;
-import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillBreakAspect;
-import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillExplosionAspect;
-import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillHitAspect;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.*;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -25,7 +23,8 @@ public class WuxiaSkillAspects {
 	 */
 	public static RegistryObject<SkillAspectType> PUNCH = ASPECTS.register("punch", () -> SkillAspectType.build(
 			() -> new SkillTouchAspect()
-					.setSkillStat(SkillStat.COST, BigDecimal.ZERO)
+					.setSkillStat(SkillStat.COST, new BigDecimal("0.1"))
+					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("1"))
 					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("6"))
 					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("2"))
 	));
@@ -35,7 +34,8 @@ public class WuxiaSkillAspects {
 	 */
 	public static RegistryObject<SkillAspectType> SHOOT = ASPECTS.register("shoot", () -> SkillAspectType.build(
 			() -> new SkillShootAspect()
-					.setSkillStat(SkillStat.COST, new BigDecimal("8"))
+					.setSkillStat(SkillStat.COST, new BigDecimal("1.5"))
+					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("0.7"))
 					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("40"))
 					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("30"))
 	));
@@ -43,7 +43,13 @@ public class WuxiaSkillAspects {
 	/**
 	 * Hits the caster
 	 */
-	public static RegistryObject<SkillAspectType> SELF = ASPECTS.register("self", () -> SkillAspectType.build(SkillActivatorAspect::new));
+	public static RegistryObject<SkillAspectType> SELF = ASPECTS.register("self", () -> SkillAspectType.build(
+			() -> new SkillSelfAspect()
+					.setSkillStat(SkillStat.COST, new BigDecimal("1"))
+					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("1"))
+					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("1"))
+					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("10"))
+	));
 
 	/**
 	 * Sword flight, when hit something, activates hit
@@ -112,12 +118,24 @@ public class WuxiaSkillAspects {
 	/**
 	 * Creates an explosion on hit
 	 */
-	public static RegistryObject<SkillAspectType> EXPLOSION = ASPECTS.register("explosion", () -> SkillAspectType.build(SkillExplosionAspect::new));
+	public static RegistryObject<SkillAspectType> EXPLOSION = ASPECTS.register("explosion", () -> SkillAspectType.build(
+			() -> new SkillExplosionAspect()
+					.setSkillStat(SkillStat.COST, new BigDecimal("2"))
+					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("1"))
+					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("40"))
+					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("80"))
+	));
 
 	/**
 	 * Directly dealing damage
 	 */
-	public static RegistryObject<SkillAspectType> ATTACK = ASPECTS.register("attack", () -> SkillAspectType.build(SkillAttackAspect::new));
+	public static RegistryObject<SkillAspectType> ATTACK = ASPECTS.register("attack", () -> SkillAspectType.build(
+			() -> new SkillAttackAspect()
+					.setSkillStat(SkillStat.COST, new BigDecimal("0.5"))
+					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("1"))
+					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("5"))
+					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("15"))
+	));
 
 	/**
 	 * Fertilize plants
@@ -127,7 +145,24 @@ public class WuxiaSkillAspects {
 	/**
 	 * Breaks blocks on hit
 	 */
-	public static RegistryObject<SkillAspectType> BREAK = ASPECTS.register("break", () -> SkillAspectType.build(SkillBreakAspect::new));
+	public static RegistryObject<SkillAspectType> BREAK = ASPECTS.register("break", () -> SkillAspectType.build(
+			() -> new SkillBreakAspect()
+					.setSkillStat(SkillStat.COST, new BigDecimal("1"))
+					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("1"))
+					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("10"))
+					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("20"))
+	));
+
+	/**
+	 * Chops a tree instantly
+	 */
+	public static RegistryObject<SkillAspectType> CHOP = ASPECTS.register("chop", () -> SkillAspectType.build(
+			() -> new SkillChopAspect()
+					.setSkillStat(SkillStat.COST, new BigDecimal("6"))
+					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("1"))
+					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("10"))
+					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("20"))
+	));
 
 	/**
 	 * Opens a portal on hit, continuing on the direction of the hit
@@ -147,7 +182,13 @@ public class WuxiaSkillAspects {
 	/**
 	 * Heals the target on hit
 	 */
-	public static RegistryObject<SkillAspectType> HEAL = ASPECTS.register("heal", () -> SkillAspectType.build(SkillHitAspect::new));
+	public static RegistryObject<SkillAspectType> HEAL = ASPECTS.register("heal", () -> SkillAspectType.build(
+			() -> new SkillHealAspect()
+					.setSkillStat(SkillStat.COST, new BigDecimal("4"))
+					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("1"))
+					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("20"))
+					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("40"))
+	));
 
 	/**
 	 * Drains life from target on hit

@@ -64,6 +64,7 @@ public class SkillDescriptor {
 	}
 
 	public void setStat(SkillStat stat, BigDecimal value) {
+		if (!stat.isModifiable) return;
 		this.skillStats.put(stat, value.max(BigDecimal.ZERO));
 	}
 
@@ -71,7 +72,7 @@ public class SkillDescriptor {
 		for (var skill : skillChain) {
 			for (var stat : SkillStat.values()) {
 				if (stat.isModifiable) return;
-				this.skillStats.put(stat, this.skillStats.get(stat).add(skill.getSkillStat(stat)).max(BigDecimal.ONE));
+				this.skillStats.put(stat, this.skillStats.getOrDefault(stat, stat.defaultValue).multiply(skill.getSkillStat(stat)).max(BigDecimal.ZERO));
 			}
 		}
 	}

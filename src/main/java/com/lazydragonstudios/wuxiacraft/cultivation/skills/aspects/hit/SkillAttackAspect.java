@@ -1,8 +1,11 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit;
 
 import com.lazydragonstudios.wuxiacraft.combat.WuxiaDamageSource;
+import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
+import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.SkillAspectType;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaElements;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaSkillAspects;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,13 +17,12 @@ public class SkillAttackAspect extends SkillHitAspect {
 
 	public SkillAttackAspect() {
 		super();
-		setSkillStat(SkillStat.COST, new BigDecimal("0.5"));
-		setSkillStat(SkillStat.COOLDOWN, new BigDecimal("5"));
-		setSkillStat(SkillStat.CAST_TIME, new BigDecimal("15"));
-		this.activation = (caster, chain, result) -> {
+		this.activation = (caster, skill, result) -> {
 			if (result instanceof EntityHitResult entityResult) {
 				if (entityResult.getEntity() instanceof LivingEntity target) {
-					var damageSource = new WuxiaDamageSource("wuxiacraft.skill.attack", WuxiaElements.PHYSICAL.get(), caster, new BigDecimal("10"));
+					var cultivation = Cultivation.get(caster);
+					var damage = skill.getStatValue(SkillStat.STRENGTH).multiply(cultivation.getSystemData(System.ESSENCE).getStat(PlayerStat.STRENGTH).multiply(new BigDecimal("1.5")));
+					var damageSource = new WuxiaDamageSource("wuxiacraft.skill.attack", WuxiaElements.PHYSICAL.get(), caster, damage);
 					target.hurt(damageSource, 1f);
 				}
 			}

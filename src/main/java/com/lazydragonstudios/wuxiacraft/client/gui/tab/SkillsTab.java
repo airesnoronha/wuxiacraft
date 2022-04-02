@@ -5,6 +5,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillDescriptor;
 import com.lazydragonstudios.wuxiacraft.networking.RequestSkillSaveMessage;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
+import com.lazydragonstudios.wuxiacraft.util.MathUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.lazydragonstudios.wuxiacraft.client.gui.IntrospectionScreen;
@@ -15,6 +16,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
+import java.util.LinkedList;
 import java.util.function.BiConsumer;
 
 public class SkillsTab extends IntrospectionTab {
@@ -27,7 +29,11 @@ public class SkillsTab extends IntrospectionTab {
 
 	private WuxiaButton saveBtn;
 
+	private final LinkedList<WuxiaTexturedButton> skillsSelectionButtons = new LinkedList<>();
+
 	private ResourceLocation draggingAspect = null;
+
+	private int selectedSkill = 0;
 
 	public SkillsTab(String name) {
 		super(name, new Point(64, 68));
@@ -35,16 +41,16 @@ public class SkillsTab extends IntrospectionTab {
 
 	@Override
 	public void init(IntrospectionScreen screen) {
-		skillAspectsPanel = new WuxiaFlowPanel(36, 72, 116, 200, new TextComponent(""));
-		skillChainPanel = new WuxiaScrollPanel(36 + 116, 72, 100, 200, new TextComponent(""));
-		skillStatsPanel = new WuxiaScrollPanel(36 + 116 + 100, 72, 150, 200, new TextComponent(""));
+		skillAspectsPanel = new WuxiaFlowPanel(36, 74, 116, 200, new TextComponent(""));
+		skillChainPanel = new WuxiaScrollPanel(36 + 116, 74, 100, 200, new TextComponent(""));
+		skillStatsPanel = new WuxiaScrollPanel(36 + 116 + 100, 74, 150, 200, new TextComponent(""));
 		screen.addRenderableWidget(skillAspectsPanel);
 		screen.addRenderableWidget(skillChainPanel);
 		screen.addRenderableWidget(skillStatsPanel);
 		var player = Minecraft.getInstance().player;
 		if (player == null) return;
 		var cultivation = Cultivation.get(player);
-		var skillSlot0 = cultivation.getSkills().getSkillAt(0);
+		var skillSlot0 = cultivation.getSkills().getSkillAt(this.selectedSkill);
 		this.skillComposer = new WuxiaSkillComposer(0, 0, new TextComponent(""), skillSlot0);
 		this.skillComposer.onClick = onComposerClick;
 		this.skillComposer.onRelease = onComposerRelease;
@@ -55,10 +61,18 @@ public class SkillsTab extends IntrospectionTab {
 			aspectWidget.setOnRelease(onAspectRelease());
 			skillAspectsPanel.addChild(aspectWidget);
 		}
+		for (int i = 0; i < 10; i++) {
+			int finalI = i;
+			var btn = new WuxiaTexturedButton(36 + i * 38, 36, 38, 38,
+					new TextComponent("" + (i+1)),
+					() -> this.changeSkill(finalI), new ResourceLocation[]{WuxiaButton.UI_CONTROLS}, new Rectangle[]{new Rectangle(116, 0, 256, 256)});
+			skillsSelectionButtons.add(btn);
+			screen.addRenderableWidget(btn);
+		}
 		this.saveBtn = new WuxiaButton(32 + 116 + 100, 72, 150, 20, new TranslatableComponent("Save"), () -> {
 			var skillTag = this.skillComposer.getSkill().serialize();
-			//TODO change to the active slot
-			WuxiaPacketHandler.INSTANCE.sendToServer(new RequestSkillSaveMessage(0, skillTag));
+			WuxiaPacketHandler.INSTANCE.sendToServer(new RequestSkillSaveMessage(this.selectedSkill, skillTag));
+			cultivation.getSkills().setSkillAt(this.selectedSkill, this.skillComposer.getSkill());
 		});
 		screen.addRenderableWidget(saveBtn);
 	}
@@ -119,6 +133,14 @@ public class SkillsTab extends IntrospectionTab {
 		this.saveBtn.y = totalYSpace - 26;
 		this.saveBtn.x = totalXSpace - 150;
 
+		for (var btn : this.skillsSelectionButtons) {
+			if (MathUtil.inBounds(mouseX, mouseY, btn.x, btn.y, btn.getWidth(), btn.getHeight())) {
+				btn.setTex(new Rectangle[]{new Rectangle(154, 0, 256, 256)});
+			} else {
+				btn.setTex(new Rectangle[]{new Rectangle(116, 0, 256, 256)});
+			}
+		}
+
 
 		if (this.draggingAspect != null) {
 			var textureLocation = new ResourceLocation(this.draggingAspect.getNamespace(), "textures/skills/" + this.draggingAspect.getPath() + ".png");
@@ -133,5 +155,15 @@ public class SkillsTab extends IntrospectionTab {
 	@Override
 	public void renderLabels(PoseStack poseStack, int mouseX, int mouseY) {
 
+	}
+
+	public void changeSkill(int skill) {
+		if (skill < 0 || skill > 10) return;
+		var player = Minecraft.getInstance().player;
+		if (player == null) return;
+		var cultivation = Cultivation.get(player);
+		this.selectedSkill = skill;
+		var skillSlot = cultivation.getSkills().getSkillAt(this.selectedSkill);
+		this.skillComposer.changeSkill(skillSlot);
 	}
 }

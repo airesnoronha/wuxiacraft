@@ -139,4 +139,8 @@ public class WuxiaSkillComposer extends AbstractWidget {
 	public SkillDescriptor getSkill() {
 		return skill;
 	}
+
+	public void changeSkill(SkillDescriptor skill) {
+		this.skill = skill;
+	}
 }

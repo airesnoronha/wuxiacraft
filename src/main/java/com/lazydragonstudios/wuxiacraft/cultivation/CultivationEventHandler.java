@@ -122,29 +122,32 @@ public class CultivationEventHandler {
 
 	private static void handleSkillCasting(Player player, ICultivation cultivation) {
 		var skillData = cultivation.getSkills();
-		var systemData = cultivation.getSystemData(System.ESSENCE);
 		var selectedSkill = skillData.getSkillAt(skillData.selectedSkill);
-		if (!cultivation.isCombat()) return;
-		if (skillData.casting && selectedSkill.getStatValue(SkillStat.CURRENT_COOLDOWN).compareTo(BigDecimal.ZERO) <= 0) {
-			if (selectedSkill.getSkillChain().size() > 0) {
-				if (selectedSkill.getSkillChain().getFirst() instanceof SkillActivatorAspect activator) {
-					selectedSkill.addStat(SkillStat.CURRENT_CASTING, BigDecimal.ONE);
-					//casting >= cast_time
-					if (selectedSkill.getStatValue(SkillStat.CURRENT_CASTING)
-							.compareTo(selectedSkill.getStatValue(SkillStat.CAST_TIME)) >= 0) {
-						selectedSkill.setStat(SkillStat.CURRENT_CASTING, BigDecimal.ZERO);
-						selectedSkill.setStat(SkillStat.CURRENT_COOLDOWN, selectedSkill.getStatValue(SkillStat.COOLDOWN));
-						activator.activate.test(player, selectedSkill.getSkillChain());
+		if (cultivation.isCombat()) {
+			if (skillData.casting && selectedSkill.getStatValue(SkillStat.CURRENT_COOLDOWN).compareTo(BigDecimal.ZERO) <= 0) {
+				if (selectedSkill.getSkillChain().size() > 0) {
+					if (selectedSkill.getSkillChain().getFirst() instanceof SkillActivatorAspect activator) {
+						selectedSkill.addStat(SkillStat.CURRENT_CASTING, BigDecimal.ONE);
+						//casting >= cast_time
+						if (selectedSkill.getStatValue(SkillStat.CURRENT_CASTING)
+								.compareTo(selectedSkill.getStatValue(SkillStat.CAST_TIME)) >= 0) {
+							selectedSkill.setStat(SkillStat.CURRENT_CASTING, BigDecimal.ZERO);
+							selectedSkill.setStat(SkillStat.CURRENT_COOLDOWN, selectedSkill.getStatValue(SkillStat.COOLDOWN));
+							activator.activate.test(player, selectedSkill);
+						}
 					}
 				}
-			}
-		} else {
-			if (selectedSkill.getStatValue(SkillStat.CURRENT_CASTING).compareTo(BigDecimal.ZERO) > 0) {
-				selectedSkill.addStat(SkillStat.CURRENT_CASTING, new BigDecimal("-1"));
+			} else {
+				if (selectedSkill.getStatValue(SkillStat.CURRENT_CASTING).compareTo(BigDecimal.ZERO) > 0) {
+					selectedSkill.addStat(SkillStat.CURRENT_CASTING, new BigDecimal("-1"));
+				}
 			}
 		}
-		if (selectedSkill.getStatValue(SkillStat.CURRENT_COOLDOWN).compareTo(BigDecimal.ZERO) > 0) {
-			selectedSkill.addStat(SkillStat.CURRENT_COOLDOWN, new BigDecimal("-1"));
+		for (int i = 0; i < 10; i++) {
+			var skill = skillData.getSkillAt(i);
+			if (skill.getStatValue(SkillStat.CURRENT_COOLDOWN).compareTo(BigDecimal.ZERO) > 0) {
+				skill.addStat(SkillStat.CURRENT_COOLDOWN, new BigDecimal("-1"));
+			}
 		}
 	}
 
@@ -256,7 +259,8 @@ public class CultivationEventHandler {
 
 	private static void killPlayerWithExplosion(Player player, SystemContainer systemData, String deathMessage, BigDecimal amount) {
 		systemData.setStat(PlayerSystemStat.ENERGY, BigDecimal.ZERO);
-		player.level.explode(null, player.getX(), player.getY(), player.getZ(), 5f, true, Explosion.BlockInteraction.DESTROY);
+		var interaction = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level, player) ? Explosion.BlockInteraction.BREAK : Explosion.BlockInteraction.NONE;
+		player.level.explode(null, player.getX(), player.getY(), player.getZ(), 5f, false, interaction);
 		player.hurt(new WuxiaDamageSource(deathMessage, WuxiaElements.PHYSICAL.get(), player, amount).setInstantDeath(), amount.floatValue());
 	}
 
@@ -342,6 +346,7 @@ public class CultivationEventHandler {
 		event.getOriginal().reviveCaps();
 		ICultivation oldCultivation = Cultivation.get(event.getOriginal());
 		ICultivation newCultivation = Cultivation.get(event.getPlayer());
+		oldCultivation.setSemiDeadState(false);
 		if (event.isWasDeath()) {
 			//oldCultivation.setSkillCooldown(0);
 			if (event.getOriginal().getTags().contains("PLEASE_RTP_ME")) {
@@ -363,8 +368,8 @@ public class CultivationEventHandler {
 				divineData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("10"));
 				essenceData.setStat(PlayerSystemStat.ENERGY, new BigDecimal("0"));
 			}
-			event.getOriginal().invalidateCaps();
 		}
+		event.getOriginal().invalidateCaps();
 		newCultivation.deserialize(oldCultivation.serialize());
 	}
 

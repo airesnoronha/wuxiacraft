@@ -3,6 +3,7 @@ package com.lazydragonstudios.wuxiacraft.cultivation.skills;
 import java.math.BigDecimal;
 
 public enum SkillStat {
+	STRENGTH(BigDecimal.ONE, false),
 	COST(BigDecimal.ONE, false),
 	COOLDOWN(BigDecimal.ONE, false),
 	CAST_TIME(BigDecimal.ONE, false),
