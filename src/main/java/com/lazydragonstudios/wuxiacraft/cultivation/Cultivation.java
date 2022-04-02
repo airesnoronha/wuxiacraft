@@ -6,6 +6,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.event.CultivatingEvent;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaConfigs;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaMobEffects;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import net.minecraft.core.BlockPos;
@@ -177,7 +178,7 @@ public class Cultivation implements ICultivation {
 			this.addStat(elementLocation, PlayerElementalStat.COMPREHENSION, BigDecimal.valueOf(elements.get(elementLocation)));
 		}
 		var cultSpeed = systemData.getStat(PlayerSystemStat.CULTIVATION_SPEED);
-		amount = amount.multiply(BigDecimal.ONE.add(cultSpeed));
+		amount = amount.multiply(BigDecimal.ONE.add(cultSpeed).multiply(BigDecimal.valueOf(WuxiaConfigs.CULTIVATION_SPEED_MULTIPLIER.get())));
 		systemData.addStat(PlayerSystemStat.CULTIVATION_BASE, amount);
 	}
 
@@ -193,7 +194,7 @@ public class Cultivation implements ICultivation {
 		if (stage.nextStage == null) return false;
 		systemData.currentStage = stage.nextStage;
 		systemData.setStat(PlayerSystemStat.CULTIVATION_BASE, BigDecimal.ZERO);
-		this.setStat(PlayerStat.LIVES, this.getStat(PlayerStat.LIVES).add(BigDecimal.ONE).max(BigDecimal.valueOf(3)));
+		this.setStat(PlayerStat.LIVES, this.getStat(PlayerStat.LIVES).add(BigDecimal.ONE).max(BigDecimal.valueOf(WuxiaConfigs.MAX_LIVES.get())));
 		return !systemData.currentStage.equals(initialStage);
 	}
 

@@ -1,5 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.cultivation.stats;
 
+import com.lazydragonstudios.wuxiacraft.init.WuxiaConfigs;
+
 import java.awt.*;
 import java.math.BigDecimal;
 
@@ -19,7 +21,7 @@ public enum PlayerStat {
 	DETECTION_RANGE(new BigDecimal("10.00"), false, new Point(5, 65)),
 	DETECTION_STRENGTH(new BigDecimal("0.00"), false, new Point(5, 75)),
 	DETECTION_RESISTANCE(new BigDecimal("0.00"), false, new Point(5, 85)),
-	LIVES(new BigDecimal("3"), true, new Point(-1, 65)),
+	LIVES(new BigDecimal(WuxiaConfigs.INITIAL_LIVES.get()), true, new Point(-1, 65)),
 	;
 	/**
 	 * the default value of the stat

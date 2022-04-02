@@ -4,6 +4,7 @@ import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.combat.WuxiaDamageSource;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillActivatorAspect;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaConfigs;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaElements;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaMobEffects;
 import com.lazydragonstudios.wuxiacraft.networking.TurnSemiDeadStateMessage;
@@ -97,7 +98,7 @@ public class CultivationEventHandler {
 
 	private static void handleSemiDead(Player player, ICultivation cultivation) {
 		//TODO add a game rule for the cooldown, it's 5 mins now
-		cultivation.advanceSemiDead(20 * 300);
+		cultivation.advanceSemiDead(20 * WuxiaConfigs.SEMI_DEAD_TIMER.get());
 		if (player.level.isClientSide()) return;
 		if (!cultivation.isSemiDead()) {
 			WuxiaPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
