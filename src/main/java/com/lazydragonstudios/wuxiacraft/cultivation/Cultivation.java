@@ -194,7 +194,7 @@ public class Cultivation implements ICultivation {
 		if (stage.nextStage == null) return false;
 		systemData.currentStage = stage.nextStage;
 		systemData.setStat(PlayerSystemStat.CULTIVATION_BASE, BigDecimal.ZERO);
-		this.setStat(PlayerStat.LIVES, this.getStat(PlayerStat.LIVES).add(BigDecimal.ONE).max(BigDecimal.valueOf(WuxiaConfigs.MAX_LIVES.get())));
+		this.setStat(PlayerStat.LIVES, this.getStat(PlayerStat.LIVES).add(BigDecimal.ONE).min(BigDecimal.valueOf(WuxiaConfigs.MAX_LIVES.get())));
 		return !systemData.currentStage.equals(initialStage);
 	}
 
