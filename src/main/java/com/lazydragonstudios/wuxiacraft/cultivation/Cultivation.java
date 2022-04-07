@@ -20,6 +20,7 @@ import org.checkerframework.checker.units.qual.C;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 
 //TODO add a lives counter
@@ -172,6 +173,12 @@ public class Cultivation implements ICultivation {
 			//amount = amount * multiply
 			amount = amount.multiply(BigDecimal.ONE.add(new BigDecimal("0.1").multiply(BigDecimal.valueOf(amplifier))));
 		}
+		if (player.hasEffect(WuxiaMobEffects.SPIRITUAL_RESONANCE.get())) {
+			var instance = player.getEffect(WuxiaMobEffects.SPIRITUAL_RESONANCE.get());
+			var amplifier = instance.getAmplifier();
+			//amount = amount * (1 + (8 * amplifier))
+			amount = amount.multiply(BigDecimal.ONE.add(new BigDecimal("8").multiply(BigDecimal.valueOf(amplifier))));
+		}
 		var elements = systemData.techniqueData.modifier.elements;
 		for (var elementLocation : elements.keySet()) {
 			systemData.addStat(elementLocation, PlayerSystemElementalStat.FOUNDATION, BigDecimal.valueOf(elements.get(elementLocation) * 0.1));
@@ -255,15 +262,23 @@ public class Cultivation implements ICultivation {
 		CompoundTag tag = new CompoundTag();
 		for (var stat : this.playerStats.keySet()) {
 			if (!stat.isModifiable) continue;
-			tag.putString("stat-" + stat.name().toLowerCase(), this.playerStats.get(stat).toPlainString());
+			BigDecimal statValue = this.playerStats.get(stat);
+			int scale = statValue.scale();
+			statValue = statValue.setScale(Math.min(10, scale), RoundingMode.DOWN);
+			tag.putString("stat-" + stat.name().toLowerCase(), statValue.toPlainString());
+			this.playerStats.put(stat, statValue);
 		}
 		var elementStatsTag = new CompoundTag();
 		for (var element : this.playerElementalStats.keySet()) {
 			var currentElementStatsTag = new CompoundTag();
 			for (var stat : PlayerElementalStat.values()) {
 				if (!stat.isModifiable) continue;
+				BigDecimal statValue = this.playerElementalStats.get(element).getOrDefault(stat, BigDecimal.ZERO);
+				int scale = statValue.scale();
+				statValue = statValue.setScale(Math.min(10, scale), RoundingMode.DOWN);
 				currentElementStatsTag.putString("stat-" + stat.name().toLowerCase(),
-						this.playerElementalStats.get(element).getOrDefault(stat, BigDecimal.ZERO).toPlainString());
+						statValue.toPlainString());
+				this.playerElementalStats.get(element).put(stat, statValue);
 			}
 			elementStatsTag.put("element-stats-" + element, currentElementStatsTag);
 		}

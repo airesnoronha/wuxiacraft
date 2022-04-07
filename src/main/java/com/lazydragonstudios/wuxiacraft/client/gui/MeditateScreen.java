@@ -49,6 +49,7 @@ public class MeditateScreen extends Screen {
 		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_GATHERING_STAGE.getId(), EssenceQiGatheringMinigame::new);
 		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_PATHWAYS_STAGE.getId(), EssenceQiPathwaysMinigame::new);
 		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_CONDENSATION_STAGE.getId(), EssenceQiCondensationMinigame::new);
+		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_PHENOMENON_STAGE.getId(), EssenceQiPhenomenonMinigame::new);
 	}
 
 	private int guiTop = 0;

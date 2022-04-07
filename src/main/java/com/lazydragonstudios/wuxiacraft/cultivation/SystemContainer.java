@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.TechniqueContainer;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -181,7 +182,7 @@ public class SystemContainer {
 				value = value.add(foundationUsed.multiply(BigDecimal.valueOf(2)));
 				consumedFoundation = true;
 			} else if (foundationElement.suppressesElement(elementLocation)) {
-				value = value.subtract(foundationUsed.multiply(BigDecimal.valueOf(2)));
+				value = value.subtract(foundationUsed);
 				consumedFoundation = true;
 			}
 			if (consumedFoundation) {
@@ -262,15 +263,23 @@ public class SystemContainer {
 		tag.putString("current_stage", this.currentStage.toString());
 		for (var stat : PlayerSystemStat.values()) {
 			if (!stat.isModifiable) continue;
-			tag.putString("stat-" + stat.name().toLowerCase(), this.getStat(stat).toPlainString());
+			BigDecimal statValue = this.getStat(stat);
+			int scale = statValue.scale();
+			statValue = statValue.setScale(Math.min(10, scale), RoundingMode.DOWN);
+			tag.putString("stat-" + stat.name().toLowerCase(), statValue.toPlainString());
+			this.systemStats.put(stat, statValue);
 		}
 		var elementStatsTag = new CompoundTag();
 		for (var element : this.systemElementalStats.keySet()) {
 			var currentElementStatsTag = new CompoundTag();
 			for (var stat : PlayerSystemElementalStat.values()) {
 				if (!stat.isModifiable) continue;
+				BigDecimal statValue = this.systemElementalStats.get(element).getOrDefault(stat, BigDecimal.ZERO);
+				var scale = statValue.scale();
+				statValue = statValue.setScale(Math.min(10, scale), RoundingMode.DOWN);
 				currentElementStatsTag.putString("stat-" + stat.name().toLowerCase(),
-						this.systemElementalStats.get(element).getOrDefault(stat, BigDecimal.ZERO).toPlainString());
+						statValue.toPlainString());
+				this.systemElementalStats.get(element).put(stat, statValue);
 			}
 			elementStatsTag.put("element-stats-" + element, currentElementStatsTag);
 		}

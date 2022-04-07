@@ -213,6 +213,157 @@ public class WuxiaTechniqueAspects {
 	);
 
 	//////////////////////////////////////////
+	//           Earth Generation ones      //
+	//////////////////////////////////////////
+
+	public static RegistryObject<TechniqueAspect> DUST = ASPECTS.register("dust",
+			() -> new ElementalGenerator(1d, WuxiaElements.EARTH.getId())
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("1000")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("2500"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("5000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("10000"), new BigDecimal("0.4"),
+							cultivation -> cultivation.getAspects().learnAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "dirt"), cultivation)))
+	);
+
+	public static RegistryObject<TechniqueAspect> DIRT = ASPECTS.register("dirt",
+			() -> new ElementalGenerator(3d, WuxiaElements.EARTH.getId())
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("3000")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("7500"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("15000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("30000"), new BigDecimal("0.4"),
+							cultivation -> cultivation.getAspects().learnAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "pebbles"), cultivation)))
+	);
+
+	public static RegistryObject<TechniqueAspect> PEBBLES = ASPECTS.register("pebbles",
+			() -> new ElementalGenerator(9d, WuxiaElements.EARTH.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "dust")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("9000")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("22500"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("45000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("90000"), new BigDecimal("0.4"),
+							cultivation -> cultivation.getAspects().learnAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "stone"), cultivation)))
+	);
+
+	public static RegistryObject<TechniqueAspect> STONE = ASPECTS.register("stone",
+			() -> new ElementalGenerator(27d, WuxiaElements.EARTH.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "dirt")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("27000")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("67500"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("135000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("270000"), new BigDecimal("0.4"),
+							cultivation -> cultivation.getAspects().learnAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "crystal"), cultivation)))
+	);
+
+	public static RegistryObject<TechniqueAspect> CRYSTAL = ASPECTS.register("crystal",
+			() -> new ElementalGenerator(81d, WuxiaElements.EARTH.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "pebbles")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("81000")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("202500"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("405000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("810000"), new BigDecimal("0.4"),
+							cultivation -> cultivation.getAspects().learnAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "earth_crystal"), cultivation)))
+	);
+
+	public static RegistryObject<TechniqueAspect> EARTH_CRYSTAL = ASPECTS.register("earth_crystal",
+			() -> new ElementalGenerator(243d, WuxiaElements.EARTH.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "stone")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("243000")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("607500"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("1215000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("2430000"), new BigDecimal("0.4"),
+							cultivation -> cultivation.getAspects().learnAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "heavenly_crystal"), cultivation)))
+	);
+
+	public static RegistryObject<TechniqueAspect> HEAVENLY_CRYSTAL = ASPECTS.register("heavenly_crystal",
+			() -> new ElementalGenerator(729d, WuxiaElements.EARTH.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "crystal")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("729000")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("1822500"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("3645000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("7290000"), new BigDecimal("0.4"),
+							cultivation -> cultivation.getAspects().learnAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "immortal_crystal"), cultivation)))
+	);
+
+	public static RegistryObject<TechniqueAspect> IMMORTAL_CRYSTAL = ASPECTS.register("immortal_crystal",
+			() -> new ElementalGenerator(2187d, WuxiaElements.EARTH.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "earth_crystal")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("2187000")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("5647500"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("10935000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("21870000"), new BigDecimal("0.4"),
+							cultivation -> cultivation.getAspects().learnAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "diamond_god"), cultivation)))
+	);
+
+	public static RegistryObject<TechniqueAspect> DIAMOND_GOD = ASPECTS.register("diamond_god",
+			() -> new ElementalGenerator(6561d, WuxiaElements.EARTH.getId())
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "heavenly_crystal")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("6561000")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("16402500"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("32805000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("65610000"), new BigDecimal("0.4")))
+	);
+
+	//////////////////////////////////////////
+	//       Earth Transformation ones      //
+	//////////////////////////////////////////
+
+	public static RegistryObject<TechniqueAspect> HARDENING = ASPECTS.register("hardening",
+			() -> new ElementSystemConverter(3d, WuxiaElements.EARTH.getId(), System.BODY)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "cinder"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "ember")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("10000"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("50000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("150000"), new BigDecimal("0.4")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("350000"), new BigDecimal("0.6")))
+	);
+
+	public static RegistryObject<TechniqueAspect> TREMOR = ASPECTS.register("tremor",
+			() -> new ElementSystemConverter(3d, WuxiaElements.EARTH.getId(), System.ESSENCE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "cinder"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "ember")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("10000"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("50000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("150000"), new BigDecimal("0.4")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("350000"), new BigDecimal("0.6"),
+							cultivation -> cultivation.getAspects().learnAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "magical_incineration"), cultivation)))
+	);
+
+	public static RegistryObject<TechniqueAspect> MAGICAL_TREMOR = ASPECTS.register("magical_tremor",
+			() -> new ElementSystemConverter(12d, WuxiaElements.EARTH.getId(), System.ESSENCE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "magic_burning"))
+							&& cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "blazing")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("100000"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("500000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("1500000"), new BigDecimal("0.4")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("3500000"), new BigDecimal("0.6")))
+	);
+
+	public static RegistryObject<TechniqueAspect> STILLNESS = ASPECTS.register("stillness",
+			() -> new ElementSystemConverter(3d, WuxiaElements.EARTH.getId(), System.DIVINE)
+					.setCanLearn(cultivation -> cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "cinder"))
+							|| cultivation.getAspects()
+							.knowsAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "ember")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("basic", new BigDecimal("10000"), new BigDecimal("0.1")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("50000"), new BigDecimal("0.2")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("150000"), new BigDecimal("0.4")))
+					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("350000"), new BigDecimal("0.6")))
+	);
+
+	//////////////////////////////////////////
 	//           Water Generation ones      //
 	//////////////////////////////////////////
 	public static RegistryObject<TechniqueAspect> DROP = ASPECTS.register("drop",

@@ -1,0 +1,12 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"ingredients": [
+		{
+			"item": "wuxiacraft:spirit_stone_2"
+		}
+	],
+	"result": {
+		"item": "wuxiacraft:spirit_stone_1",
+		"count": 9
+	}
+}

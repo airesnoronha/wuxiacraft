@@ -223,6 +223,8 @@ public class WuxiaRealms {
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_condensation_stage"),
 							new ResourceLocation(WuxiaCraft.MOD_ID, "essence_qi_shaping_stage")
 					)
+							.setOnCultivate(cultivateFlatAmounts(new BigDecimal("8"), new BigDecimal("4")))
+							.setOnCultivationFailure(cultivateFailureEnergy(new BigDecimal("8")))
 							.addPlayerStat(PlayerStat.MAX_HEALTH, new BigDecimal("3"))
 							.addPlayerStat(PlayerStat.STRENGTH, new BigDecimal("2"))
 							.addPlayerStat(PlayerStat.AGILITY, new BigDecimal("0.02"))

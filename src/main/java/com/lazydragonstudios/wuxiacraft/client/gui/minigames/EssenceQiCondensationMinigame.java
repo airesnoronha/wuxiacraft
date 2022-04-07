@@ -134,8 +134,8 @@ public class EssenceQiCondensationMinigame implements Minigame {
 		if (player == null) return;
 		var cultivation = Cultivation.get(player);
 		var essenceData = cultivation.getSystemData(System.ESSENCE);
-		int energy = essenceData.getStat(PlayerSystemStat.ENERGY).multiply(new BigDecimal("0.20")).intValue();
-		var strandCount = energy > 0 ? 5 : 0;
+		int energy = essenceData.getStat(PlayerSystemStat.ENERGY).intValue();
+		var strandCount = energy > 4 ? 5 : 0;
 		this.keepCorrectStrandCount(strandCount);
 		var markedToRemove = new LinkedList<Strand>();
 		for (var strand : this.strands) {
