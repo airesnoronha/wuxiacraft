@@ -3,10 +3,7 @@ package com.lazydragonstudios.wuxiacraft.init;
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.*;
-import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillActivatorAspect;
-import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillSelfAspect;
-import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillShootAspect;
-import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillTouchAspect;
+import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.*;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.*;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -54,7 +51,13 @@ public class WuxiaSkillAspects {
 	/**
 	 * Sword flight, when hit something, activates hit
 	 */
-	public static RegistryObject<SkillAspectType> SWORD_FLIGHT = ASPECTS.register("sword_flight", () -> SkillAspectType.build(SkillActivatorAspect::new));
+	public static RegistryObject<SkillAspectType> SWORD_FLIGHT = ASPECTS.register("sword_flight", () -> SkillAspectType.build(
+			() -> new SkillSwordFlightActivator()
+					.setSkillStat(SkillStat.COST, new BigDecimal("0.09"))
+					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("1"))
+					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("0"))
+					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("0"))
+	));
 
 	/**
 	 * Cast a wave ahead of the caster, hitting everything ahead of it

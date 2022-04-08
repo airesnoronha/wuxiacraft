@@ -34,7 +34,7 @@ public class PlayerEntityRenderEventHandler {
 	public static void onSinglePlayerRender(RenderLivingEvent.Pre<AbstractClientPlayer, ? extends Model> event) {
 		if (!(event.getEntity() instanceof Player)) return; //we don't want local players so far
 		var animationState = ClientAnimationState.get((Player) event.getEntity());
-		if (animationState.isMeditating() || animationState.isExercising() || animationState.isSemiDead()) {
+		if (animationState.isMeditating() || animationState.isExercising() || animationState.isSemiDead() || animationState.isSwordFlight()) {
 			event.setCanceled(true);
 		}
 		if (!event.isCanceled()) return;

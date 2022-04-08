@@ -18,6 +18,10 @@ public interface IClientAnimationState {
 
 	boolean isSemiDead();
 
+	boolean isSwordFlight();
+
+	void setSwordFlight(boolean swordFlight);
+
 	/**
 	 * A track to the frames of the animation
 	 *

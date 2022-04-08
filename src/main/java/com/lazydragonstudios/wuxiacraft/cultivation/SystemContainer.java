@@ -177,7 +177,7 @@ public class SystemContainer {
 			if (foundationValue.compareTo(BigDecimal.ZERO) <= 0)
 				continue; //if foundation is == 0, in case there is no foundation, get stat returns 0 if not found element
 			var consumedFoundation = false;
-			var foundationUsed = value.multiply(new BigDecimal("0.5").min(foundationValue));
+			var foundationUsed = value.multiply(new BigDecimal("0.5")).min(foundationValue);
 			if (foundationElement.begetsElement(elementLocation)) {
 				value = value.add(foundationUsed.multiply(BigDecimal.valueOf(2)));
 				consumedFoundation = true;

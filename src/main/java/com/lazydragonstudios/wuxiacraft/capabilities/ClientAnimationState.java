@@ -16,6 +16,8 @@ public class ClientAnimationState implements IClientAnimationState {
 
 	boolean semiDead = false;
 
+	boolean swordFlight = false;
+
 	int animationFrame = 0;
 
 	@Override
@@ -26,6 +28,16 @@ public class ClientAnimationState implements IClientAnimationState {
 	@Override
 	public boolean isExercising() {
 		return this.exercising;
+	}
+
+	@Override
+	public boolean isSwordFlight() {
+		return swordFlight;
+	}
+
+	@Override
+	public void setSwordFlight(boolean swordFlight) {
+		this.swordFlight = swordFlight;
 	}
 
 	@Override
@@ -78,6 +90,7 @@ public class ClientAnimationState implements IClientAnimationState {
 		tag.putBoolean("meditating", this.meditating);
 		tag.putBoolean("exercising", this.exercising);
 		tag.putBoolean("semiDead", this.semiDead);
+		tag.putBoolean("swordFlight", this.swordFlight);
 		return tag;
 	}
 
@@ -89,6 +102,8 @@ public class ClientAnimationState implements IClientAnimationState {
 			this.exercising = tag.getBoolean("exercising");
 		if (tag.contains("semiDead"))
 			this.semiDead = tag.getBoolean("semiDead");
+		if (tag.contains("swordFlight"))
+			this.swordFlight = tag.getBoolean("swordFlight");
 		this.animationFrame = 0;
 	}
 }

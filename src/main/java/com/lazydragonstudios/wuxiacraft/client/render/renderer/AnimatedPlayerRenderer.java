@@ -11,6 +11,7 @@ import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.layers.PlayerItemInHandLayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -48,7 +49,7 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 	private static float[] rightLegY = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	private static float[] rightLegZ = new float[]{0, 0, 0, 5, 10, 10, 10, 10, 10, 10, 10, 5, 0};
 
-	private Vector3f position = new Vector3f(0,0,0);
+	private Vector3f position = new Vector3f(0, 0, 0);
 
 	public AnimatedPlayerRenderer(EntityRendererProvider.Context ctx, boolean slim) {
 		super(ctx, slim);
@@ -148,11 +149,21 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 		}
 		if (!player.isSpectator()) {
 			for (var renderLayer : this.layers) {
-				renderLayer.render(poseStack, multiBufferSource, packedLightIn, player, limbSwing, limbSwingAmount, partialTicks, headBob, netHeadYaw, headPitch);
+				if (renderLayer instanceof PlayerItemInHandLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> && animData.isSwordFlight()) {
+					poseStack.pushPose();
+					poseStack.translate(-0.65D, 1.15D, 0.5D);
+					poseStack.mulPose(Vector3f.YP.rotationDegrees(9));
+					poseStack.mulPose(Vector3f.ZP.rotationDegrees(-90));
+					//poseStack.mulPose(Vector3f.XP.rotationDegrees(-90));
+					renderLayer.render(poseStack, multiBufferSource, packedLightIn, player, limbSwing, limbSwingAmount, partialTicks, headBob, netHeadYaw, headPitch);
+					poseStack.popPose();
+				} else {
+					renderLayer.render(poseStack, multiBufferSource, packedLightIn, player, limbSwing, limbSwingAmount, partialTicks, headBob, netHeadYaw, headPitch);
+				}
 			}
 		}
 		poseStack.popPose();
-		this.position.set(0,0,0);
+		this.position.set(0, 0, 0);
 		net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Post(player, this, partialTicks, poseStack, multiBufferSource, packedLightIn));
 		net.minecraftforge.client.event.RenderNameplateEvent renderNameplateEvent = new net.minecraftforge.client.event.RenderNameplateEvent(player, player.getDisplayName(), this, poseStack, multiBufferSource, packedLightIn, partialTicks);
 		net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(renderNameplateEvent);
@@ -164,11 +175,11 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 	private static float getFrameRotation(float[] keyFrames, float animationFrame, int keyFrameTicks) {
 		float animationStep = animationFrame / (float) keyFrameTicks;
 		int keyFrame = (int) (animationStep);
-		if(keyFrames.length == 0) return 0f;
-		if(keyFrame >= keyFrames.length) return keyFrames[0];
+		if (keyFrames.length == 0) return 0f;
+		if (keyFrame >= keyFrames.length) return keyFrames[0];
 		float interpolationFactor = animationStep - keyFrame;
 		float initRotation = keyFrames[keyFrame];
-		if(keyFrame + 1 >= keyFrames.length) keyFrame = -1; //then with +1 becomes 0
+		if (keyFrame + 1 >= keyFrames.length) keyFrame = -1; //then with +1 becomes 0
 		float endRotation = keyFrames[keyFrame + 1];
 		return initRotation + (endRotation - initRotation) * interpolationFactor;
 	}
@@ -231,6 +242,20 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 			model.head.xRot = 0;
 		} else if (animationState.isSemiDead()) {
 			float animationFrame = animationState.getAnimationFrame() + partialTicks;
+			model.leftLeg.xRot = 0;
+			model.leftLeg.yRot = 0;
+			model.leftLeg.zRot = 0;
+			model.rightLeg.xRot = 0;
+			model.rightLeg.yRot = 0;
+			model.rightLeg.zRot = 0;
+			model.leftArm.xRot = 0;
+			model.leftArm.yRot = 0;
+			model.leftArm.zRot = 0;
+			model.rightArm.xRot = 0;
+			model.rightArm.yRot = 0;
+			model.rightArm.zRot = 0;
+			model.head.xRot = 0;
+		} else if (animationState.isSwordFlight()) {
 			model.leftLeg.xRot = 0;
 			model.leftLeg.yRot = 0;
 			model.leftLeg.zRot = 0;

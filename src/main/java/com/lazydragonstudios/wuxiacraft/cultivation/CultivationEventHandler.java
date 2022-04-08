@@ -1,12 +1,14 @@
 package com.lazydragonstudios.wuxiacraft.cultivation;
 
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
+import com.lazydragonstudios.wuxiacraft.capabilities.ClientAnimationState;
 import com.lazydragonstudios.wuxiacraft.combat.WuxiaDamageSource;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.SkillActivatorAspect;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaConfigs;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaElements;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaMobEffects;
+import com.lazydragonstudios.wuxiacraft.networking.BroadcastAnimationChangeRequestMessage;
 import com.lazydragonstudios.wuxiacraft.networking.TurnSemiDeadStateMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
@@ -148,6 +150,13 @@ public class CultivationEventHandler {
 			var skill = skillData.getSkillAt(i);
 			if (skill.getStatValue(SkillStat.CURRENT_COOLDOWN).compareTo(BigDecimal.ZERO) > 0) {
 				skill.addStat(SkillStat.CURRENT_COOLDOWN, new BigDecimal("-1"));
+			}
+		}
+		if (player.level.isClientSide) {
+			var animationState = ClientAnimationState.get(player);
+			if (!skillData.casting && animationState.isSwordFlight()) {
+				animationState.setSwordFlight(false);
+				WuxiaPacketHandler.INSTANCE.sendToServer(new BroadcastAnimationChangeRequestMessage(animationState, cultivation.isCombat()));
 			}
 		}
 	}
