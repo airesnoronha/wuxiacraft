@@ -2,11 +2,8 @@ package com.lazydragonstudios.wuxiacraft.init;
 
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
-import com.lazydragonstudios.wuxiacraft.item.SpatialItem;
+import com.lazydragonstudios.wuxiacraft.item.*;
 import com.lazydragonstudios.wuxiacraft.formation.FormationMaterialTier;
-import com.lazydragonstudios.wuxiacraft.item.RuneStencil;
-import com.lazydragonstudios.wuxiacraft.item.SpiritStone;
-import com.lazydragonstudios.wuxiacraft.item.TechniqueManual;
 import net.minecraft.world.item.*;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
@@ -94,6 +91,27 @@ public class WuxiaItems {
 
 	public static RegistryObject<Item> NETHERITE_RUNE_STENCIL = ITEMS.register("netherite_rune_stencil",
 			() -> new RuneStencil(Tiers.NETHERITE, new Item.Properties().tab(WUXIACRAFT_TAB)));
+
+	public static RegistryObject<Item> COPPER_FORMATION_BADGE = ITEMS.register("copper_formation_badge",
+			() -> new FormationBarrierBadge(new Item.Properties().tab(WUXIACRAFT_TAB)));
+
+	public static RegistryObject<Item> IRON_FORMATION_BADGE = ITEMS.register("iron_formation_badge",
+			() -> new FormationBarrierBadge(new Item.Properties().tab(WUXIACRAFT_TAB)));
+
+	public static RegistryObject<Item> GOLD_FORMATION_BADGE = ITEMS.register("gold_formation_badge",
+			() -> new FormationBarrierBadge(new Item.Properties().tab(WUXIACRAFT_TAB)));
+
+	public static RegistryObject<Item> LAPIS_FORMATION_BADGE = ITEMS.register("lapis_formation_badge",
+			() -> new FormationBarrierBadge(new Item.Properties().tab(WUXIACRAFT_TAB)));
+
+	public static RegistryObject<Item> DIAMOND_FORMATION_BADGE = ITEMS.register("diamond_formation_badge",
+			() -> new FormationBarrierBadge(new Item.Properties().tab(WUXIACRAFT_TAB)));
+
+	public static RegistryObject<Item> EMERALD_FORMATION_BADGE = ITEMS.register("emerald_formation_badge",
+			() -> new FormationBarrierBadge(new Item.Properties().tab(WUXIACRAFT_TAB)));
+
+	public static RegistryObject<Item> NETHERITE_FORMATION_BADGE = ITEMS.register("netherite_formation_badge",
+			() -> new FormationBarrierBadge(new Item.Properties().tab(WUXIACRAFT_TAB)));
 
 	public static RegistryObject<Item> RUNEMAKING_TABLE = ITEMS.register("runemaking_table",
 			() -> new BlockItem(WuxiaBlocks.RUNEMAKING_TABLE.get(), new Item.Properties().tab(WUXIACRAFT_TAB)));

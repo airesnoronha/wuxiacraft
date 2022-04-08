@@ -4,6 +4,7 @@ import com.lazydragonstudios.wuxiacraft.blocks.entity.FormationCore;
 import com.lazydragonstudios.wuxiacraft.formation.FormationGameEventListener;
 import com.lazydragonstudios.wuxiacraft.formation.FormationTicker;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaBlocks;
+import com.lazydragonstudios.wuxiacraft.item.FormationBarrierBadge;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -77,6 +78,7 @@ public class FormationCoreBlock extends BaseEntityBlock {
 		var blockEntity = level.getBlockEntity(pos);
 		if (!(blockEntity instanceof FormationCore core)) return InteractionResult.PASS;
 		if (level.isClientSide) return InteractionResult.SUCCESS;
+		if(player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof FormationBarrierBadge) return InteractionResult.PASS;
 		if (player.isCrouching()) {
 			var entity = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(BlockItem.byBlock(this.coreBlock), 1));
 			core.deactivate();

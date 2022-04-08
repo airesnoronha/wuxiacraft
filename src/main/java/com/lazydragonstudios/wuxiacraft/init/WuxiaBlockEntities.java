@@ -38,6 +38,7 @@ public class WuxiaBlockEntities {
 							WuxiaBlocks.SPRUCE_FORMATION_CORE.get(),
 							WuxiaBlocks.DARK_OAK_FORMATION_CORE.get(),
 							WuxiaBlocks.STONE_FORMATION_CORE.get(),
+							WuxiaBlocks.COPPER_FORMATION_CORE.get(),
 							WuxiaBlocks.IRON_FORMATION_CORE.get(),
 							WuxiaBlocks.GOLD_FORMATION_CORE.get(),
 							WuxiaBlocks.LAPIS_FORMATION_CORE.get(),

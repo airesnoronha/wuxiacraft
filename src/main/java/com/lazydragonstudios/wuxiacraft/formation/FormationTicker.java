@@ -5,6 +5,7 @@ import com.lazydragonstudios.wuxiacraft.client.WorldRenderHandler;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaParticleTypes;
+import com.lazydragonstudios.wuxiacraft.item.FormationBarrierBadge;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Vector3f;
@@ -16,6 +17,7 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -72,7 +74,25 @@ public class FormationTicker implements BlockEntityTicker<FormationCore> {
 							pos.distSqr(entity.getX(), entity.getY(), entity.getZ(), true) < barrierRange * barrierRange &&
 									(entity instanceof LivingEntity ||
 											(entity instanceof Projectile proj && proj.getOwner() != core.getOwner())));
+			entityLoop:
 			for (var entity : entities) {
+				if (entity instanceof Player targetPlayer) {
+					var inv = targetPlayer.getInventory();
+					for (var itemStack : inv.items) {
+						if (!(itemStack.getItem() instanceof FormationBarrierBadge)) continue;
+						var tag = itemStack.getTag();
+						if (tag == null) continue;
+						if (!tag.contains("formation")) continue;
+						var formationTag = tag.getCompound("formation");
+						var x = formationTag.getInt("x");
+						var y = formationTag.getInt("y");
+						var z = formationTag.getInt("z");
+						var blockPos = new BlockPos(x, y, z);
+						if (blockPos.compareTo(pos) == 0) {
+							continue entityLoop;
+						}
+					}
+				}
 				Vector3f movement = new Vector3f((float) (entity.getX() - pos.getX()), (float) (entity.getY() - pos.getY()), (float) (entity.getZ() - pos.getZ()));
 				movement.normalize();
 				movement.mul(0.6f);
