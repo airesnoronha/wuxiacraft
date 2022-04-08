@@ -176,6 +176,7 @@ public class CombatEventHandler {
 		var amount = BigDecimal.valueOf(event.getAmount());
 		var cultivation = Cultivation.get(player);
 		cultivation.addStat(PlayerStat.HEALTH, amount);
+		cultivation.setStat(PlayerStat.HEALTH, cultivation.getStat(PlayerStat.HEALTH).min(cultivation.getStat(PlayerStat.MAX_HEALTH)));
 	}
 
 }
