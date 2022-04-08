@@ -78,7 +78,7 @@ public class WuxiaCraft {
 		WuxiaDefaultTechniqueManuals.init();
 		TechniqueUtil.initDevouringData();
 		TechniqueUtil.initChancedAspectsBlocks();
-		//registerArgumentTypes();
+		registerArgumentTypes();
 		RuneMakingRecipe.recipeType = RecipeType.register("runemaking");
 		TestRun.testStuff();
 	}

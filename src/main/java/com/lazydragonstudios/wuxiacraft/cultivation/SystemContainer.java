@@ -169,6 +169,7 @@ public class SystemContainer {
 	private void addFoundation(ResourceLocation elementLocation, BigDecimal value) {
 		var element = WuxiaRegistries.ELEMENTS.getValue(elementLocation);
 		if (element == null) return;
+		var foundationUsed = value.multiply(new BigDecimal("0.5"));
 		for (var foundationElementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
 			if (value.compareTo(BigDecimal.ZERO) <= 0) continue; //if value is drained already
 			var foundationElement = WuxiaRegistries.ELEMENTS.getValue(foundationElementLocation);
@@ -177,17 +178,17 @@ public class SystemContainer {
 			if (foundationValue.compareTo(BigDecimal.ZERO) <= 0)
 				continue; //if foundation is == 0, in case there is no foundation, get stat returns 0 if not found element
 			var consumedFoundation = false;
-			var foundationUsed = value.multiply(new BigDecimal("0.5")).min(foundationValue);
+			BigDecimal usedValue = foundationUsed.min(foundationValue);
 			if (foundationElement.begetsElement(elementLocation)) {
-				value = value.add(foundationUsed.multiply(BigDecimal.valueOf(2)));
+				value = value.add(usedValue.multiply(BigDecimal.valueOf(2)));
 				consumedFoundation = true;
 			} else if (foundationElement.suppressesElement(elementLocation)) {
-				value = value.subtract(foundationUsed);
+				value = value.subtract(usedValue);
 				consumedFoundation = true;
 			}
 			if (consumedFoundation) {
 				this.setStat(foundationElementLocation, PlayerSystemElementalStat.FOUNDATION,
-						this.getStat(foundationElementLocation, PlayerSystemElementalStat.FOUNDATION).subtract(foundationUsed));
+						this.getStat(foundationElementLocation, PlayerSystemElementalStat.FOUNDATION).subtract(usedValue));
 			}
 		}
 		this.setStat(elementLocation, PlayerSystemElementalStat.FOUNDATION,

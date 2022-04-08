@@ -160,7 +160,7 @@ public class Cultivation implements ICultivation {
 		CultivatingEvent event = new CultivatingEvent(player, system, amount);
 		if (MinecraftForge.EVENT_BUS.post(event)) return;
 		var systemData = this.getSystemData(system);
-		this.getSystemData(System.DIVINE).consumeEnergy(amount.multiply(amount));
+		this.getSystemData(System.DIVINE).consumeEnergy(amount);
 		amount = event.getAmount();
 		var grid = systemData.techniqueData.grid.getGrid();
 		for (var aspectLocation : grid.values()) {

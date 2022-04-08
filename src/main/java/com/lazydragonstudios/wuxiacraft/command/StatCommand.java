@@ -6,6 +6,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.SystemContainer;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
+import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemElementalStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.networking.CultivationSyncMessage;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
@@ -50,6 +51,15 @@ public class StatCommand {
 										.then(Commands.argument("stat", EnumArgument.enumArgument(PlayerSystemStat.class))
 												.then(Commands.argument("amount", IntegerArgumentType.integer())
 														.executes(StatCommand::setSystemStat)
+												)
+										)
+								)
+								.then(Commands.argument("system", EnumArgument.enumArgument(System.class))
+										.then(Commands.argument("element", ElementArgument.id())
+												.then(Commands.argument("stat", EnumArgument.enumArgument(PlayerSystemElementalStat.class))
+														.then(Commands.argument("amount", IntegerArgumentType.integer())
+																.executes(StatCommand::setSystemElementalStat)
+														)
 												)
 										)
 								)
@@ -121,6 +131,25 @@ public class StatCommand {
 		TextComponent message = new TextComponent("");
 
 		systemData.setStat(stat, BigDecimal.valueOf(amount));
+
+		message.append("Successfully set the target's " + stat + " stat.");
+		ctx.getSource().sendSuccess(message, true);
+		syncClientCultivation(target);
+		return 1;
+	}
+
+	public static int setSystemElementalStat(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		ServerPlayer target = EntityArgument.getPlayer(ctx, "target");
+		System system = ctx.getArgument("system", System.class);
+		PlayerSystemElementalStat stat = ctx.getArgument("stat", PlayerSystemElementalStat.class);
+		var element = ElementArgument.getAspectLocation(ctx, "element");
+		int amount = IntegerArgumentType.getInteger(ctx, "amount");
+
+		ICultivation cultivation = Cultivation.get(target);
+		SystemContainer systemData = cultivation.getSystemData(system);
+		TextComponent message = new TextComponent("");
+
+		systemData.setStat(element, stat, BigDecimal.valueOf(amount));
 
 		message.append("Successfully set the target's " + stat + " stat.");
 		ctx.getSource().sendSuccess(message, true);

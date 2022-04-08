@@ -67,7 +67,7 @@ public class EssenceQiPhenomenonMinigame implements Minigame {
 	public void onMouseMove(double x, double y) {
 		if (isGrabbed) {
 			for (var strand : this.strands) {
-				if (strand.inBounds(x, y)) {
+				if (strand.inBounds(x, y) && !this.selectedStrands.contains(strand)) {
 					this.selectedStrands.add(strand);
 				}
 			}
