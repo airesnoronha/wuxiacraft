@@ -1,0 +1,9 @@
+{
+	"replace": false,
+	"values": [
+		"wuxiacraft:gold_formation_badge",
+		"wuxiacraft:diamond_formation_badge",
+		"wuxiacraft:emerald_formation_badge",
+		"wuxiacraft:netherite_formation_badge"
+	]
+}

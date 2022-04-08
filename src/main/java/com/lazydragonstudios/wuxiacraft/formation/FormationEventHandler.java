@@ -1,12 +1,20 @@
 package com.lazydragonstudios.wuxiacraft.formation;
 
+import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.blocks.entity.FormationCore;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerSystemStat;
 import com.lazydragonstudios.wuxiacraft.event.CultivatingEvent;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaConfigs;
+import com.lazydragonstudios.wuxiacraft.item.FormationBarrierBadge;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
@@ -22,6 +30,9 @@ import java.util.LinkedList;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class FormationEventHandler {
+
+	public static final Tag.Named<Item> INTERACT_TAG = ItemTags.createOptional(new ResourceLocation(WuxiaCraft.MOD_ID, "interact_badge"));
+	public static final Tag.Named<Item> BREAK_TAG = ItemTags.createOptional(new ResourceLocation(WuxiaCraft.MOD_ID, "break_badge"));
 
 	@SubscribeEvent
 	public static void onPlayerCultivate(CultivatingEvent event) {
@@ -108,6 +119,8 @@ public class FormationEventHandler {
 			var barrierRange = core.getStat(FormationStat.BARRIER_RANGE).doubleValue();
 			var distSqr = event.getPos().distSqr(core.getBlockPos());
 			if (distSqr <= barrierRange * barrierRange) {
+				var badge = getItemBadge(breaker, core.getBlockPos());
+				if (badge.is(BREAK_TAG)) continue;
 				event.setCanceled(true);
 				break;
 			}
@@ -142,10 +155,31 @@ public class FormationEventHandler {
 			var barrierRange = core.getStat(FormationStat.BARRIER_RANGE).doubleValue();
 			var distSqr = event.getPos().distSqr(core.getBlockPos());
 			if (distSqr <= barrierRange * barrierRange) {
+				var badge = getItemBadge(interactive, core.getBlockPos());
+				if (badge.is(INTERACT_TAG)) continue;
 				event.setCanceled(true);
 				break;
 			}
 		}
+	}
+
+	private static ItemStack getItemBadge(Player player, BlockPos formationPos) {
+		var inv = player.getInventory();
+		for (var itemStack : inv.items) {
+			if (!(itemStack.getItem() instanceof FormationBarrierBadge)) continue;
+			var tag = itemStack.getTag();
+			if (tag == null) continue;
+			if (!tag.contains("formation")) continue;
+			var formationTag = tag.getCompound("formation");
+			var x = formationTag.getInt("x");
+			var y = formationTag.getInt("y");
+			var z = formationTag.getInt("z");
+			var blockPos = new BlockPos(x, y, z);
+			if (blockPos.compareTo(formationPos) == 0) {
+				return itemStack;
+			}
+		}
+		return ItemStack.EMPTY;
 	}
 
 	@SubscribeEvent
