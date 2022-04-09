@@ -17,6 +17,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -91,14 +92,9 @@ public class FormationEventHandler {
 		event.player.level.getProfiler().pop();
 	}
 
-	@SubscribeEvent
-	public static void onPlayerMayBreak(BlockEvent.BreakEvent event) {
-		var breaker = event.getPlayer();
-		if (breaker == null) return;
-		int chunkRadius = 4;
-		Level level = breaker.level;
-		var chunk = level.getChunkAt(event.getPos());
-		var activeFormationCores = new LinkedList<FormationCore>();
+	private static LinkedList<FormationCore> getActiveFormationCoresNearby(LevelChunk chunk, Level level) {
+		int chunkRadius = 5;
+		LinkedList<FormationCore> activeFormationCores = new LinkedList<>();
 		for (int cx = -chunkRadius; cx <= chunkRadius; cx++) {
 			for (int cz = -chunkRadius; cz <= chunkRadius; cz++) {
 				var currentChunkPos = new ChunkPos(chunk.getPos().x + cx, chunk.getPos().z + cz);
@@ -112,6 +108,16 @@ public class FormationEventHandler {
 				}
 			}
 		}
+		return activeFormationCores;
+	}
+
+	@SubscribeEvent
+	public static void onPlayerMayBreak(BlockEvent.BreakEvent event) {
+		var breaker = event.getPlayer();
+		if (breaker == null) return;
+		Level level = breaker.level;
+		var chunk = level.getChunkAt(event.getPos());
+		var activeFormationCores = getActiveFormationCoresNearby(chunk, level);
 		for (var core : activeFormationCores) {
 			if (breaker == core.getOwner()) continue;
 			var barrierAmount = core.getStat(FormationStat.BARRIER_AMOUNT);
@@ -131,23 +137,9 @@ public class FormationEventHandler {
 	public static void onPlayerInteract(PlayerInteractEvent.RightClickBlock event) {
 		var interactive = event.getPlayer();
 		if (interactive == null) return;
-		int chunkRadius = 4;
 		Level level = interactive.level;
 		var chunk = level.getChunkAt(event.getPos());
-		var activeFormationCores = new LinkedList<FormationCore>();
-		for (int cx = -chunkRadius; cx <= chunkRadius; cx++) {
-			for (int cz = -chunkRadius; cz <= chunkRadius; cz++) {
-				var currentChunkPos = new ChunkPos(chunk.getPos().x + cx, chunk.getPos().z + cz);
-				var currentChunk = level.getChunk(currentChunkPos.x, currentChunkPos.z);
-				var blockEntities = currentChunk.getBlockEntities();
-				for (var blockEntity : blockEntities.values()) {
-					if (!(blockEntity instanceof FormationCore core)) continue;
-					if (core.isActive()) {
-						activeFormationCores.add(core);
-					}
-				}
-			}
-		}
+		var activeFormationCores = getActiveFormationCoresNearby(chunk, level);
 		for (var core : activeFormationCores) {
 			if (interactive == core.getOwner()) continue;
 			var barrierAmount = core.getStat(FormationStat.BARRIER_AMOUNT);

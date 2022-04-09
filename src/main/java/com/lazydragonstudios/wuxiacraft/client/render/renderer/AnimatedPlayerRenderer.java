@@ -276,6 +276,18 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 			model.rightArm.zRot = 0;
 			model.head.xRot = 0;
 		}
+		//this must solve the sleeves and pants properly
+		model.leftPants.setPos(model.leftLeg.x, model.leftLeg.y, model.leftLeg.z);
+		model.rightPants.setPos(model.rightLeg.x, model.rightLeg.y, model.rightLeg.z);
+		model.leftSleeve.setPos(model.leftArm.x, model.leftArm.y, model.leftArm.z);
+		model.rightSleeve.setPos(model.rightArm.x, model.rightArm.y, model.rightArm.z);
+		model.hat.setPos(model.head.x, model.head.y, model.head.z);
+
+		model.leftPants.setRotation(model.leftLeg.xRot, model.leftLeg.yRot, model.leftLeg.zRot);
+		model.rightPants.setRotation(model.rightLeg.xRot, model.rightLeg.yRot, model.rightLeg.zRot);
+		model.leftSleeve.setRotation(model.leftArm.xRot, model.leftArm.yRot, model.leftArm.zRot);
+		model.rightSleeve.setRotation(model.rightArm.xRot, model.rightArm.yRot, model.rightArm.zRot);
+		model.hat.setRotation(model.head.xRot, model.head.yRot, model.head.zRot);
 	}
 
 

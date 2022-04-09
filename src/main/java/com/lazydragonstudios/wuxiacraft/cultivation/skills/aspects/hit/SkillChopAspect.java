@@ -29,7 +29,12 @@ public class SkillChopAspect extends SkillHitAspect {
 			var server = player.level.getServer();
 			if (server == null) return false;
 			if (result == null) return false;
+			var cultivation = Cultivation.get(player);
+			var systemData = cultivation.getSystemData(System.ESSENCE);
+			var systemStrength = systemData.getStat(PlayerStat.STRENGTH);
+			var skillStrength = systemStrength.multiply(BigDecimal.valueOf(cultivation.getStrengthRegulator()));
 			if (result instanceof BlockHitResult blockHitResult) {
+				if (skillStrength.compareTo(BigDecimal.valueOf(8)) <= 0) return false;
 				var blockPos = blockHitResult.getBlockPos();
 				var treeBlocks = SkillUtil.getLogsToBreak(blockPos, player.level, new HashSet<>());
 				for (var pos : treeBlocks) {
@@ -41,10 +46,8 @@ public class SkillChopAspect extends SkillHitAspect {
 				return true;
 			} else if (result instanceof EntityHitResult entityHitResult) {
 				var target = entityHitResult.getEntity();
-				var cultivation = Cultivation.get(player);
-				var systemData = cultivation.getSystemData(System.ESSENCE);
 				if (target instanceof LivingEntity livingEntity) {
-					var damage = skill.getStatValue(SkillStat.STRENGTH).multiply(systemData.getStat(PlayerStat.STRENGTH).multiply(new BigDecimal("3")));
+					var damage = skill.getStatValue(SkillStat.STRENGTH).multiply(skillStrength.multiply(new BigDecimal("3")));
 					var damageSource = new WuxiaDamageSource("wuxiacraft.skill.chop", WuxiaElements.PHYSICAL.get(), livingEntity, damage).setInstantDeath();
 					target.hurt(damageSource, damageSource.getDamage().floatValue());
 				}

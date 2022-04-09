@@ -49,6 +49,7 @@ public class InputHandler {
 	@SubscribeEvent
 	public static void onKeyPressed(InputEvent.KeyInputEvent event) {
 		LocalPlayer player = Minecraft.getInstance().player;
+		if(Minecraft.getInstance().screen != null) return;
 		if (player == null) return;
 		if (!(event.getAction() == GLFW.GLFW_RELEASE || event.getAction() == GLFW.GLFW_PRESS)) return;
 		var animationState = new ClientAnimationState();

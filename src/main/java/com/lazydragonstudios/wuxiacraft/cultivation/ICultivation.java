@@ -16,6 +16,8 @@ public interface ICultivation {
 
 	BigDecimal getStat(PlayerStat stat);
 
+	BigDecimal getStat(PlayerStat stat, boolean fullValue);
+
 	BigDecimal getStat(ResourceLocation elementLocation, PlayerElementalStat stat);
 
 	void setStat(PlayerStat stat, BigDecimal value);
@@ -95,4 +97,12 @@ public interface ICultivation {
 
 	@Nullable
 	BlockPos getFormation();
+
+	double getAgilityRegulator();
+
+	void setAgilityRegulator(double agilityRegulator);
+
+	double getStrengthRegulator();
+
+	void setStrengthRegulator(double strengthRegulator);
 }

@@ -8,6 +8,8 @@ import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillHitA
 import com.lazydragonstudios.wuxiacraft.init.WuxiaSkillAspects;
 import net.minecraft.world.phys.EntityHitResult;
 
+import java.math.BigDecimal;
+
 public class SkillSelfAspect extends SkillActivatorAspect {
 
 	public SkillSelfAspect() {
@@ -15,7 +17,8 @@ public class SkillSelfAspect extends SkillActivatorAspect {
 		this.setActivate((player, skill) -> {
 			var cultivation = Cultivation.get(player);
 			var essenceData = cultivation.getSystemData(System.ESSENCE);
-			if (!essenceData.consumeEnergy(this.getSkillStat(SkillStat.COST))) return false;
+			BigDecimal cost = this.getSkillStat(SkillStat.COST).multiply(BigDecimal.valueOf(cultivation.getStrengthRegulator()));
+			if (!essenceData.consumeEnergy(cost)) return false;
 			var result = new EntityHitResult(player, player.getEyePosition());
 			player.swinging = true;
 			for (var link : skill.getSkillChain()) {

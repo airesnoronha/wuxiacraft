@@ -8,6 +8,8 @@ import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.SkillHitA
 import com.lazydragonstudios.wuxiacraft.util.SkillUtil;
 import net.minecraft.world.phys.HitResult;
 
+import java.math.BigDecimal;
+
 public class SkillTouchAspect extends SkillActivatorAspect {
 
 	/**
@@ -18,7 +20,8 @@ public class SkillTouchAspect extends SkillActivatorAspect {
 		this.setActivate((player, skill) -> {
 			var cultivation = Cultivation.get(player);
 			var essenceData = cultivation.getSystemData(System.ESSENCE);
-			if (!essenceData.consumeEnergy(this.getSkillStat(SkillStat.COST))) return false;
+			BigDecimal cost = this.getSkillStat(SkillStat.COST).multiply(BigDecimal.valueOf(cultivation.getStrengthRegulator()));
+			if (!essenceData.consumeEnergy(cost)) return false;
 			var result = SkillUtil.getHitResult(player, 2, e -> e != player);
 			if (result.getType() == HitResult.Type.MISS) return false;
 			player.swinging = true;

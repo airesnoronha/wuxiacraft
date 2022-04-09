@@ -21,7 +21,10 @@ public class SkillAttackAspect extends SkillHitAspect {
 			if (result instanceof EntityHitResult entityResult) {
 				if (entityResult.getEntity() instanceof LivingEntity target) {
 					var cultivation = Cultivation.get(caster);
-					var damage = skill.getStatValue(SkillStat.STRENGTH).multiply(cultivation.getSystemData(System.ESSENCE).getStat(PlayerStat.STRENGTH).multiply(new BigDecimal("1.5")));
+					var systemData = cultivation.getSystemData(System.ESSENCE);
+					var systemStrength = systemData.getStat(PlayerStat.STRENGTH);
+					var skillStrength = systemStrength.multiply(BigDecimal.valueOf(cultivation.getStrengthRegulator()));
+					var damage = skill.getStatValue(SkillStat.STRENGTH).multiply(skillStrength.multiply(new BigDecimal("1.5")));
 					var damageSource = new WuxiaDamageSource("wuxiacraft.skill.attack", WuxiaElements.PHYSICAL.get(), caster, damage);
 					target.hurt(damageSource, damageSource.getDamage().floatValue());
 				}

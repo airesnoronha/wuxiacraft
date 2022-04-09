@@ -8,6 +8,8 @@ import com.lazydragonstudios.wuxiacraft.entity.ThrowSkill;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaEntities;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaSkillAspects;
 
+import java.math.BigDecimal;
+
 public class SkillShootAspect extends SkillActivatorAspect {
 
 	public SkillShootAspect() {
@@ -16,7 +18,8 @@ public class SkillShootAspect extends SkillActivatorAspect {
 			if (player.level.isClientSide()) return false;
 			var cultivation = Cultivation.get(player);
 			var essenceData = cultivation.getSystemData(System.ESSENCE);
-			if (!essenceData.consumeEnergy(this.getSkillStat(SkillStat.COST))) return false;
+			BigDecimal cost = this.getSkillStat(SkillStat.COST).multiply(BigDecimal.valueOf(cultivation.getStrengthRegulator()));
+			if (!essenceData.consumeEnergy(cost)) return false;
 			var level = player.level;
 			var lookAngle = player.getLookAngle();
 			var entity = new ThrowSkill(WuxiaEntities.THROW_SKILL_TYPE.get(), level, skillAspects);

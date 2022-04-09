@@ -24,7 +24,12 @@ public class SkillBreakAspect extends SkillHitAspect {
 		this.activation = (player, skill, result) -> {
 			if (player.level.isClientSide) return false;
 			if (result == null) return false;
+			var cultivation = Cultivation.get(player);
+			var systemData = cultivation.getSystemData(System.ESSENCE);
+			var systemStrength = systemData.getStat(PlayerStat.STRENGTH);
+			var skillStrength = systemStrength.multiply(BigDecimal.valueOf(cultivation.getStrengthRegulator()));
 			if (result instanceof BlockHitResult blockHitResult) {
+				if (skillStrength.compareTo(BigDecimal.valueOf(2)) <= 0) return false;
 				var blockPos = blockHitResult.getBlockPos();
 				if (!player.mayInteract(player.level, blockPos)) return false;
 				var blockState = player.level.getBlockState(blockPos);
@@ -41,10 +46,8 @@ public class SkillBreakAspect extends SkillHitAspect {
 				return true;
 			} else if (result instanceof EntityHitResult entityHitResult) {
 				var target = entityHitResult.getEntity();
-				var cultivation = Cultivation.get(player);
-				var systemData = cultivation.getSystemData(System.ESSENCE);
 				if (target instanceof LivingEntity livingEntity) {
-					var damage = skill.getStatValue(SkillStat.STRENGTH).multiply(systemData.getStat(PlayerStat.STRENGTH).multiply(new BigDecimal("0.5")));
+					var damage = skill.getStatValue(SkillStat.STRENGTH).multiply(skillStrength.multiply(new BigDecimal("0.5")));
 					var damageSource = new WuxiaDamageSource("wuxiacraft.skill.break", WuxiaElements.PHYSICAL.get(), livingEntity, damage);
 					target.hurt(damageSource, damageSource.getDamage().floatValue());
 				}

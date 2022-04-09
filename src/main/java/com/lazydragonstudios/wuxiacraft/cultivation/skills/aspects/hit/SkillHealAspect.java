@@ -24,7 +24,9 @@ public class SkillHealAspect extends SkillHitAspect {
 			var target = result.getEntity();
 			var casterCultivation = Cultivation.get(caster);
 			var casterSystemData = casterCultivation.getSystemData(System.ESSENCE);
-			BigDecimal healedAmount = this.getSkillStat(SkillStat.STRENGTH).multiply(casterSystemData.getStat(PlayerStat.STRENGTH).multiply(new BigDecimal("0.8")));
+			var systemStrength = casterSystemData.getStat(PlayerStat.STRENGTH);
+			var skillStrength = systemStrength.multiply(BigDecimal.valueOf(casterCultivation.getStrengthRegulator()));
+			BigDecimal healedAmount = this.getSkillStat(SkillStat.STRENGTH).multiply(skillStrength.multiply(new BigDecimal("0.8")));
 			if (target instanceof Player targetPlayer) {
 				var targetCultivation = Cultivation.get(targetPlayer);
 				targetCultivation.addStat(PlayerStat.HEALTH, healedAmount);

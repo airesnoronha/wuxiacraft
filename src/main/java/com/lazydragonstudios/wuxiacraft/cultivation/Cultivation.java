@@ -16,7 +16,6 @@ import net.minecraft.world.entity.player.Player;
 import com.lazydragonstudios.wuxiacraft.capabilities.CultivationProvider;
 import com.lazydragonstudios.wuxiacraft.cultivation.technique.AspectContainer;
 import net.minecraftforge.common.MinecraftForge;
-import org.checkerframework.checker.units.qual.C;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -80,6 +79,10 @@ public class Cultivation implements ICultivation {
 	 */
 	private boolean isDivineSense;
 
+	private double agilityRegulator;
+
+	private double strengthRegulator;
+
 	public Cultivation() {
 		this.systemCultivation = new HashMap<>();
 		this.playerStats = new HashMap<>();
@@ -119,6 +122,19 @@ public class Cultivation implements ICultivation {
 
 	@Override
 	public BigDecimal getStat(PlayerStat stat) {
+		return this.getStat(stat, false);
+	}
+
+	@Override
+	public BigDecimal getStat(PlayerStat stat, boolean fullValue) {
+		if (!fullValue) {
+			var statValue = this.playerStats.getOrDefault(stat, stat.defaultValue);
+			if (stat == PlayerStat.STRENGTH) {
+				return statValue.multiply(BigDecimal.valueOf(this.strengthRegulator));
+			} else if (stat == PlayerStat.AGILITY) {
+				return statValue.multiply(BigDecimal.valueOf(this.agilityRegulator));
+			}
+		}
 		return this.playerStats.getOrDefault(stat, stat.defaultValue);
 	}
 
@@ -170,14 +186,20 @@ public class Cultivation implements ICultivation {
 		if (player.hasEffect(WuxiaMobEffects.PILL_RESONANCE.get())) {
 			var instance = player.getEffect(WuxiaMobEffects.PILL_RESONANCE.get());
 			var amplifier = instance.getAmplifier();
-			//amount = amount * multiply
-			amount = amount.multiply(BigDecimal.ONE.add(new BigDecimal("0.1").multiply(BigDecimal.valueOf(amplifier))));
+			//amount = amount * (1 + (6 * amplifier))
+			amount = amount.multiply(BigDecimal.ONE.add(new BigDecimal("6").multiply(BigDecimal.valueOf(amplifier))));
 		}
 		if (player.hasEffect(WuxiaMobEffects.SPIRITUAL_RESONANCE.get())) {
 			var instance = player.getEffect(WuxiaMobEffects.SPIRITUAL_RESONANCE.get());
 			var amplifier = instance.getAmplifier();
 			//amount = amount * (1 + (8 * amplifier))
 			amount = amount.multiply(BigDecimal.ONE.add(new BigDecimal("8").multiply(BigDecimal.valueOf(amplifier))));
+		}
+		if (player.hasEffect(WuxiaMobEffects.ENLIGHTENMENT.get())) {
+			var instance = player.getEffect(WuxiaMobEffects.SPIRITUAL_RESONANCE.get());
+			var amplifier = instance.getAmplifier();
+			//amount = amount * (1 + (3 * amplifier))
+			amount = amount.multiply(BigDecimal.ONE.add(new BigDecimal("3").multiply(BigDecimal.valueOf(amplifier))));
 		}
 		var elements = systemData.techniqueData.modifier.elements;
 		for (var elementLocation : elements.keySet()) {
@@ -359,6 +381,15 @@ public class Cultivation implements ICultivation {
 		} else {
 			this.formationCore = null;
 		}
+		if (tag.contains("regulators")) {
+			var regulatorsTag = tag.getCompound("regulators");
+			if (regulatorsTag.contains("strength")) {
+				this.strengthRegulator = regulatorsTag.getDouble("strength");
+			}
+			if (regulatorsTag.contains("agility")) {
+				this.agilityRegulator = regulatorsTag.getDouble("agility");
+			}
+		}
 		calculateStats();
 	}
 
@@ -449,5 +480,25 @@ public class Cultivation implements ICultivation {
 	@Override
 	public void setDivineSense(boolean divineSense) {
 		isDivineSense = divineSense;
+	}
+
+	@Override
+	public double getAgilityRegulator() {
+		return agilityRegulator;
+	}
+
+	@Override
+	public void setAgilityRegulator(double agilityRegulator) {
+		this.agilityRegulator = agilityRegulator;
+	}
+
+	@Override
+	public double getStrengthRegulator() {
+		return strengthRegulator;
+	}
+
+	@Override
+	public void setStrengthRegulator(double strengthRegulator) {
+		this.strengthRegulator = strengthRegulator;
 	}
 }
