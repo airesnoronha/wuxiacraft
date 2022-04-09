@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.formation;
 
+import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.blocks.entity.FormationCore;
 import com.lazydragonstudios.wuxiacraft.client.WorldRenderHandler;
 import com.lazydragonstudios.wuxiacraft.cultivation.Cultivation;
@@ -16,7 +17,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
@@ -32,6 +38,8 @@ import java.util.HashMap;
 
 @ParametersAreNonnullByDefault
 public class FormationTicker implements BlockEntityTicker<FormationCore> {
+
+	public static final Tag.Named<EntityType<?>> ALLOWED_INSIDE_BARRIER = EntityTypeTags.createOptional(new ResourceLocation(WuxiaCraft.MOD_ID, "allowed_inside_barrier"));
 
 	public static HashMap<System, ParticleType<SimpleParticleType>> PARTICLE_BY_SYSTEM = new HashMap<>();
 
@@ -71,8 +79,8 @@ public class FormationTicker implements BlockEntityTicker<FormationCore> {
 			var aabb = new AABB(core.getBlockPos()).inflate(barrierRange);
 			var entities = level.getEntities(core.getOwner(),
 					aabb, entity ->
-							pos.distSqr(entity.getX(), entity.getY(), entity.getZ(), true) < barrierRange * barrierRange &&
-									(entity instanceof LivingEntity ||
+							pos.distSqr(entity.getX(), entity.getY(), entity.getZ(), true) < barrierRange * barrierRange && !entity.getType().is(ALLOWED_INSIDE_BARRIER) &&
+									((entity instanceof LivingEntity && !(entity instanceof Animal)) ||
 											(entity instanceof Projectile proj && proj.getOwner() != core.getOwner())));
 			entityLoop:
 			for (var entity : entities) {
