@@ -26,7 +26,7 @@ public class SkillExplosionAspect extends SkillHitAspect {
 			var systemData = cultivation.getSystemData(System.ESSENCE);
 			BigDecimal damage = skill.getStatValue(SkillStat.STRENGTH).multiply(systemData.getStat(PlayerStat.STRENGTH).multiply(new BigDecimal("3")));
 			var damageSource = new WuxiaDamageSource("wuxiacraft.explosion_skill", WuxiaElements.PHYSICAL.get(), player, damage);
-			player.level.explode(player, damageSource, null, pos.x, pos.y, pos.z, damage.floatValue() * 0.4f, fire, interaction);
+			player.level.explode(player, damageSource, null, pos.x, pos.y, pos.z, damage.floatValue() * 0.1f, fire, interaction);
 			return false;
 		};
 	}

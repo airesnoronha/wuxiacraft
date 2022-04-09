@@ -152,9 +152,9 @@ public class EssenceQiPathwaysMinigame implements Minigame {
 		int barFill = BigDecimal.valueOf(135).multiply(
 				essenceData.getStat(PlayerSystemStat.CULTIVATION_BASE)
 						.divide(essenceData.getStat(PlayerSystemStat.MAX_CULTIVATION_BASE), RoundingMode.HALF_UP)).intValue();
-		GuiComponent.blit(poseStack, imageX, imageY + 135 - barFill, 148, barFill, 0, 135 + 135 - barFill, 148, barFill, 512, 512); //the green body fill
+		GuiComponent.blit(poseStack, imageX, imageY + 135 - barFill, 148, barFill, 148, 135 - barFill, 148, barFill, 512, 512); //the green body fill
 		GuiComponent.blit(poseStack, imageX + 2, imageY + 21, 144, 111, 0, 135, 144, 111, 512, 512); //the pathways
-		GuiComponent.blit(poseStack, imageX + dantian.x-4, imageY +  dantian.y-4, 8, 8, dantian.width, dantian.height, 8, 8, 512, 512);
+		GuiComponent.blit(poseStack, imageX + dantian.x - 4, imageY + dantian.y - 4, 8, 8, dantian.width, dantian.height, 8, 8, 512, 512);
 		if (this.selectedStrand != null) {
 			if (this.chosenPathway == -1) {
 				for (int i = 0; i < 4; i++) {

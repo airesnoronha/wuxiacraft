@@ -28,6 +28,7 @@ public class SkillHealAspect extends SkillHitAspect {
 			if (target instanceof Player targetPlayer) {
 				var targetCultivation = Cultivation.get(targetPlayer);
 				targetCultivation.addStat(PlayerStat.HEALTH, healedAmount);
+				targetCultivation.setStat(PlayerStat.HEALTH, targetCultivation.getStat(PlayerStat.HEALTH).min(targetCultivation.getStat(PlayerStat.MAX_HEALTH)));
 			} else if (target instanceof LivingEntity targetLiving) {
 				targetLiving.heal(healedAmount.floatValue());
 			}

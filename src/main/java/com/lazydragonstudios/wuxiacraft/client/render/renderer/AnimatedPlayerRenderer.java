@@ -256,6 +256,12 @@ public class AnimatedPlayerRenderer extends PlayerRenderer {
 			model.rightArm.zRot = 0;
 			model.head.xRot = 0;
 		} else if (animationState.isSwordFlight()) {
+			model.leftLeg.x = 1.9f;
+			model.leftLeg.y = 12f;
+			model.leftLeg.z = 0;
+			model.rightLeg.x = -1.9f;
+			model.rightLeg.y = 12f;
+			model.rightLeg.z = 0;
 			model.leftLeg.xRot = 0;
 			model.leftLeg.yRot = 0;
 			model.leftLeg.zRot = 0;
