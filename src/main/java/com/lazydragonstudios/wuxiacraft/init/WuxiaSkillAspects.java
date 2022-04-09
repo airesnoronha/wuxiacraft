@@ -53,7 +53,7 @@ public class WuxiaSkillAspects {
 	 */
 	public static RegistryObject<SkillAspectType> SWORD_FLIGHT = ASPECTS.register("sword_flight", () -> SkillAspectType.build(
 			() -> new SkillSwordFlightActivator()
-					.setSkillStat(SkillStat.COST, new BigDecimal("0.15"))
+					.setSkillStat(SkillStat.COST, new BigDecimal("0.35"))
 					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("1"))
 					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("0"))
 					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("0"))
