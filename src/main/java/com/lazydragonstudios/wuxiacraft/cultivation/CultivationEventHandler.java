@@ -123,6 +123,7 @@ public class CultivationEventHandler {
 		}
 	}
 
+	// TODO change CAST SPEED and COOLDOWN SPEED to their respective systems later on
 	private static void handleSkillCasting(Player player, ICultivation cultivation) {
 		var skillData = cultivation.getSkills();
 		var selectedSkill = skillData.getSkillAt(skillData.selectedSkill);
@@ -130,7 +131,7 @@ public class CultivationEventHandler {
 			if (skillData.casting && selectedSkill.getStatValue(SkillStat.CURRENT_COOLDOWN).compareTo(BigDecimal.ZERO) <= 0) {
 				if (selectedSkill.getSkillChain().size() > 0) {
 					if (selectedSkill.getSkillChain().getFirst() instanceof SkillActivatorAspect activator) {
-						selectedSkill.addStat(SkillStat.CURRENT_CASTING, BigDecimal.ONE);
+						selectedSkill.addStat(SkillStat.CURRENT_CASTING, cultivation.getSystemData(System.ESSENCE).getStat(PlayerSystemStat.CAST_SPEED));
 						//casting >= cast_time
 						if (selectedSkill.getStatValue(SkillStat.CURRENT_CASTING)
 								.compareTo(selectedSkill.getStatValue(SkillStat.CAST_TIME)) >= 0) {
@@ -149,7 +150,7 @@ public class CultivationEventHandler {
 		for (int i = 0; i < 10; i++) {
 			var skill = skillData.getSkillAt(i);
 			if (skill.getStatValue(SkillStat.CURRENT_COOLDOWN).compareTo(BigDecimal.ZERO) > 0) {
-				skill.addStat(SkillStat.CURRENT_COOLDOWN, new BigDecimal("-1"));
+				skill.addStat(SkillStat.CURRENT_COOLDOWN, new BigDecimal("-1").multiply(cultivation.getSystemData(System.ESSENCE).getStat(PlayerSystemStat.COOLDOWN_SPEED)));
 			}
 		}
 		if (player.level.isClientSide) {

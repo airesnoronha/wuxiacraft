@@ -22,16 +22,17 @@ public class SkillSwordFlightActivator extends SkillActivatorAspect {
 			var cultivation = Cultivation.get(player);
 			var systemData = cultivation.getSystemData(System.ESSENCE);
 			if (!(player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof SwordItem)) return false;
-			var cost = skill.getStatValue(SkillStat.COST);
 			var max_speed = cultivation.getStat(PlayerStat.STRENGTH, true).multiply(skill.getStatValue(SkillStat.STRENGTH)).multiply(new BigDecimal("0.3"));
 			var speed = max_speed.multiply(BigDecimal.valueOf(cultivation.getStrengthRegulator()));
+			var cost = skill.getStatValue(SkillStat.COST);
+			//cost = (cost*0.5)*(1+strength_regulator) --> had to add this or ppl could fly for free if strength was low
+			cost = cost.multiply(new BigDecimal("0.5")).multiply(BigDecimal.ONE.add(BigDecimal.valueOf(cultivation.getStrengthRegulator())));
 			//consumed energy = cost*(strengthRegulator)
-			if (!systemData.consumeEnergy(cost.multiply(BigDecimal.valueOf(cultivation.getStrengthRegulator())))) {
+			if (!systemData.consumeEnergy(cost)) {
 				skill.setStat(SkillStat.CURRENT_COOLDOWN, new BigDecimal("300"));
 				return false;
 			}
-			var direction = player.getLookAngle();
-			direction.scale(speed.floatValue());
+			var direction = player.getLookAngle().scale(speed.floatValue());
 			player.setDeltaMovement(direction.x, direction.y, direction.z);
 			player.fallDistance = 0f;
 			if (player.level.isClientSide) {

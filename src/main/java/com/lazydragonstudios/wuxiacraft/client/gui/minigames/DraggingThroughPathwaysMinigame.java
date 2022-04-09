@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.LinkedList;
 
-public class EssenceQiPathwaysMinigame implements Minigame {
+public class DraggingThroughPathwaysMinigame implements Minigame {
 
 	private static final ResourceLocation MINIGAME_TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/minigames/qi_pathways.png");
 

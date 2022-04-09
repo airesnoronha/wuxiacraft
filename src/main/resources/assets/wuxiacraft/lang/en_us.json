@@ -48,6 +48,8 @@
 	"wuxiacraft.gui.additional_grid_radius": "Additional Grid Radius: %1$s",
 	"wuxiacraft.gui.cultivation_speed": "Cultivation Speed: %1$s",
 	"wuxiacraft.gui.system_suppression": "System Suppression: %1$s",
+	"wuxiacraft.gui.cast_speed": "Cast Speed: %1$s",
+	"wuxiacraft.gui.cooldown_speed": "Cooldown Speed: %1$s",
 	"wuxiacraft.gui.breakthrough": "Breakthrough",
 	"wuxiacraft.gui.generates": "Generate: %1$s",
 	"wuxiacraft.gui.element": "Element",

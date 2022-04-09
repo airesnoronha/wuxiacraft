@@ -47,7 +47,19 @@ public enum PlayerSystemStat {
 	/**
 	 * this is what will influence how this system will make other systems' cultivation speed slower
 	 */
-	SYSTEM_SUPPRESSION(new BigDecimal("0"), false);
+	SYSTEM_SUPPRESSION(new BigDecimal("0"), false),
+
+	/**
+	 * this is how fast the cast speed for the skill cast is
+	 */
+	CAST_SPEED(new BigDecimal("1"), false),
+
+	/**
+	 * this is how fast a skill can recover to be used again
+	 */
+	COOLDOWN_SPEED(new BigDecimal("1"), false),
+
+	;
 
 	public final BigDecimal defaultValue;
 

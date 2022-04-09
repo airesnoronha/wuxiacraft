@@ -16,13 +16,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.awt.*;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
@@ -45,11 +43,15 @@ public class MeditateScreen extends Screen {
 	private static final HashMap<ResourceLocation, Supplier<Minigame>> stageMiniGames = new HashMap<>();
 
 	static {
-		stageMiniGames.put(WuxiaRealms.ESSENCE_MORTAL_STAGE.getId(), MortalEssenceMinigame::new);
-		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_GATHERING_STAGE.getId(), EssenceQiGatheringMinigame::new);
-		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_PATHWAYS_STAGE.getId(), EssenceQiPathwaysMinigame::new);
-		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_CONDENSATION_STAGE.getId(), EssenceQiCondensationMinigame::new);
-		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_PHENOMENON_STAGE.getId(), EssenceQiPhenomenonMinigame::new);
+		stageMiniGames.put(WuxiaRealms.ESSENCE_MORTAL_STAGE.getId(), HoldingClickMinigame::new);
+		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_GATHERING_STAGE.getId(), DraggingToDanTianMinigame::new);
+		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_PATHWAYS_STAGE.getId(), DraggingThroughPathwaysMinigame::new);
+		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_CONDENSATION_STAGE.getId(), ClosingTheCircleMinigame::new);
+		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_PHENOMENON_STAGE.getId(), DraggingAllAspectsToDantianMinigame::new);
+		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_SHAPING_STAGE.getId(), DraggingToDanTianMinigame::new);
+		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_MOLDING_STAGE.getId(), DraggingToDanTianMinigame::new);
+		stageMiniGames.put(WuxiaRealms.ESSENCE_QI_SOLIDIFICATION_STAGE.getId(), DraggingToDanTianMinigame::new);
+		stageMiniGames.put(WuxiaRealms.ESSENCE_CORE_SHAPING_STAGE.getId(), DraggingToDanTianMinigame::new);
 	}
 
 	private int guiTop = 0;

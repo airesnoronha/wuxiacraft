@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.LinkedList;
 
-public class EssenceQiPhenomenonMinigame implements Minigame {
+public class DraggingAllAspectsToDantianMinigame implements Minigame {
 
 	private static final ResourceLocation MINIGAME_TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/gui/minigames/mortal_essence_minigame.png");
 
