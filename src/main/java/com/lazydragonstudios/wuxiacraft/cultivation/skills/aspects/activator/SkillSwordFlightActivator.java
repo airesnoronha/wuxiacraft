@@ -22,7 +22,7 @@ public class SkillSwordFlightActivator extends SkillActivatorAspect {
 			var cultivation = Cultivation.get(player);
 			var systemData = cultivation.getSystemData(System.ESSENCE);
 			if (!(player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof SwordItem)) return false;
-			var max_speed = cultivation.getStat(PlayerStat.STRENGTH, true).multiply(skill.getStatValue(SkillStat.STRENGTH)).multiply(new BigDecimal("0.3"));
+			var max_speed = cultivation.getStat(PlayerStat.STRENGTH, true).multiply(skill.getStatValue(SkillStat.STRENGTH)).multiply(new BigDecimal("0.03"));
 			var speed = max_speed.multiply(BigDecimal.valueOf(cultivation.getStrengthRegulator()));
 			var cost = skill.getStatValue(SkillStat.COST);
 			//cost = (cost*0.5)*(1+strength_regulator) --> had to add this or ppl could fly for free if strength was low

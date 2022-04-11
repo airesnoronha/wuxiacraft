@@ -109,6 +109,7 @@ public class WuxiaCraft {
 	public void registerArgumentTypes() {
 		ArgumentTypes.register("wuxiacraft:aspect_type", AspectArgument.class, new EmptyArgumentSerializer<>(AspectArgument::id));
 		ArgumentTypes.register("wuxiacraft:stage_type", StageArgument.class, new EmptyArgumentSerializer<>(StageArgument::id));
+		ArgumentTypes.register("wuxiacraft:element_type", ElementArgument.class, new EmptyArgumentSerializer<>(ElementArgument::id));
 	}
 
 	@SubscribeEvent

@@ -93,14 +93,14 @@ public class WuxiaBlocks {
 				ENERGY_RUNES.get(system).put(material, BLOCKS.register(system.name().toLowerCase() + "_" + material.name().toLowerCase() + "_energy_rune",
 						() -> new StatRuneBlock(BlockBehaviour.Properties.of(material.blockMaterial).strength(material.blockStrength))
 								.addStat(FormationStat.ENERGY_COST, material.materialModifier.multiply(new BigDecimal("4")))
-								.addStat(system, FormationSystemStat.ENERGY_REGEN, material.materialModifier.multiply(new BigDecimal("0.005")))
+								.addStat(system, FormationSystemStat.ENERGY_REGEN, material.materialModifier.multiply(new BigDecimal("0.0005")))
 								.addStat(system, FormationSystemStat.ENERGY_REGEN_RUNE_COUNT, BigDecimal.ONE)
 								.addStat(system, FormationSystemStat.ENERGY_REGEN_RANGE, new BigDecimal("8").add(material.materialModifier))
 				));
 				CULTIVATION_RUNES.get(system).put(material, BLOCKS.register(system.name().toLowerCase() + "_" + material.name().toLowerCase() + "_cultivation_rune",
 						() -> new StatRuneBlock(BlockBehaviour.Properties.of(material.blockMaterial).strength(material.blockStrength))
 								.addStat(FormationStat.ENERGY_COST, material.materialModifier.multiply(new BigDecimal("3")))
-								.addStat(system, FormationSystemStat.CULTIVATION_SPEED, material.materialModifier.multiply(new BigDecimal("0.5")))
+								.addStat(system, FormationSystemStat.CULTIVATION_SPEED, material.materialModifier.multiply(new BigDecimal("0.01")))
 								.addStat(system, FormationSystemStat.CULTIVATION_RUNE_COUNT, BigDecimal.ONE)
 				));
 			}

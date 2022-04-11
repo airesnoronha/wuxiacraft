@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 
 public class WuxiaDefaultTechniqueManuals {
 
-	private static HashMap<ResourceLocation, Supplier<ItemStack>> DEFAULT_MANUALS = new HashMap<>();
+	private static final HashMap<ResourceLocation, Supplier<ItemStack>> DEFAULT_MANUALS = new HashMap<>();
 
 	public static void init() {
 		TechniqueGrid fire_manipulation = new TechniqueGrid();
@@ -59,10 +59,13 @@ public class WuxiaDefaultTechniqueManuals {
 		metallic_reinforcement.addGridNode(new Point(-1, 1), WuxiaTechniqueAspects.SHARPNESS.getId(), BigDecimal.TEN);
 		metallic_reinforcement.addGridNode(new Point(0, 1), WuxiaTechniqueAspects.ESSENCE_GATHERING.getId(), BigDecimal.TEN);
 		registerNewManual(new ResourceLocation(WuxiaCraft.MOD_ID, "metallic_reinforcement"), 1, metallic_reinforcement);
-	}
 
-	public static void registerNewManual(ResourceLocation resourceLocation, Supplier<ItemStack> stackSupplier) {
-		DEFAULT_MANUALS.put(resourceLocation, stackSupplier);
+		TechniqueGrid earth_motion = new TechniqueGrid();
+		earth_motion.addGridNode(new Point(0, 0), WuxiaTechniqueAspects.START.getId(), BigDecimal.TEN);
+		earth_motion.addGridNode(new Point(1, 0), WuxiaTechniqueAspects.DUST.getId(), BigDecimal.TEN);
+		earth_motion.addGridNode(new Point(0, 1), WuxiaTechniqueAspects.TREMOR.getId(), BigDecimal.TEN);
+		earth_motion.addGridNode(new Point(-1, 1), WuxiaTechniqueAspects.ESSENCE_GATHERING.getId(), BigDecimal.TEN);
+		registerNewManual(new ResourceLocation(WuxiaCraft.MOD_ID, "earth_motion"), 1, earth_motion);
 	}
 
 	public static void registerNewManual(ResourceLocation resourceLocation, int radius, TechniqueGrid grid) {

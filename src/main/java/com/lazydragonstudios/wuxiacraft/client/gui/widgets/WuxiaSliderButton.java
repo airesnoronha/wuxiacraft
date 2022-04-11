@@ -1,5 +1,6 @@
 package com.lazydragonstudios.wuxiacraft.client.gui.widgets;
 
+import com.lazydragonstudios.wuxiacraft.util.MathUtil;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.TextComponent;
 
@@ -26,5 +27,11 @@ public class WuxiaSliderButton extends AbstractSliderButton {
 
 	public double getValue() {
 		return this.value;
+	}
+
+	@Override
+	protected void onDrag(double pMouseX, double pMouseY, double pDragX, double pDragY) {
+		if (!MathUtil.inBounds(pMouseX, pMouseY, this.x, this.y, this.getWidth(), this.getHeight())) return;
+		super.onDrag(pMouseX, pMouseY, pDragX, pDragY);
 	}
 }

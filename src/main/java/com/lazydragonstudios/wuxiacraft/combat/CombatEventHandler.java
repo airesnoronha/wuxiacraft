@@ -137,6 +137,7 @@ public class CombatEventHandler {
 
 
 	/**
+	 * Only works in combat mode
 	 * This will add the strength to basic attacks from the player
 	 * This way I guess players won't have a ton of modifiers
 	 * And I can also send mobs flying away
@@ -150,6 +151,7 @@ public class CombatEventHandler {
 			return; // Means it was wuxiacraft that came up with this attack, so damage is already calculated
 
 		ICultivation cultivation = Cultivation.get(player);
+		if (!cultivation.isCombat()) return;
 		event.setAmount(event.getAmount() + cultivation.getStat(PlayerStat.STRENGTH).floatValue());
 		//if it was a punch, then we apply a little of knock back
 		if (player.getItemInHand(InteractionHand.MAIN_HAND) == ItemStack.EMPTY) return;
