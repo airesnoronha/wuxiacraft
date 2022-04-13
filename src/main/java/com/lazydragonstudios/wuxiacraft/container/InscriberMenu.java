@@ -5,6 +5,7 @@ import com.lazydragonstudios.wuxiacraft.container.slots.InscriberBookSlot;
 import com.lazydragonstudios.wuxiacraft.container.slots.InscriberPaintSlot;
 import com.lazydragonstudios.wuxiacraft.container.slots.OutputSlot;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaMenuTypes;
 import com.lazydragonstudios.wuxiacraft.util.MathUtil;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.network.FriendlyByteBuf;
@@ -22,13 +23,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class InscriberMenu extends AbstractContainerMenu {
 
-	public static MenuType<InscriberMenu> registryType;
-
+	@SuppressWarnings("unused")
 	public static InscriberMenu create(int id, Inventory inventory, FriendlyByteBuf buf) {
 		return new InscriberMenu(id, inventory);
 	}
 
-	private Container container;
+	private final Container container;
 
 	private String itemName;
 
@@ -43,7 +43,7 @@ public class InscriberMenu extends AbstractContainerMenu {
 	}
 
 	public InscriberMenu(int id, Inventory playerInventory, Container container) {
-		super(registryType, id);
+		super(WuxiaMenuTypes.INTROSPECTION_MENU.get(), id);
 
 		this.container = container;
 

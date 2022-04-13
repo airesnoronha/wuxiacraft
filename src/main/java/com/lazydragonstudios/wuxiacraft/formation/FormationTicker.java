@@ -14,12 +14,14 @@ import com.mojang.math.Vector4f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Animal;
@@ -39,7 +41,7 @@ import java.util.HashMap;
 @ParametersAreNonnullByDefault
 public class FormationTicker implements BlockEntityTicker<FormationCore> {
 
-	public static final Tag.Named<EntityType<?>> ALLOWED_INSIDE_BARRIER = EntityTypeTags.createOptional(new ResourceLocation(WuxiaCraft.MOD_ID, "allowed_inside_barrier"));
+	public static final TagKey<EntityType<?>> ALLOWED_INSIDE_BARRIER = TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation(WuxiaCraft.MOD_ID, "allowed_inside_barrier"));
 
 	public static HashMap<System, ParticleType<SimpleParticleType>> PARTICLE_BY_SYSTEM = new HashMap<>();
 
@@ -79,7 +81,7 @@ public class FormationTicker implements BlockEntityTicker<FormationCore> {
 			var aabb = new AABB(core.getBlockPos()).inflate(barrierRange);
 			var entities = level.getEntities(core.getOwner(),
 					aabb, entity ->
-							pos.distSqr(entity.getX(), entity.getY(), entity.getZ(), true) < barrierRange * barrierRange && !entity.getType().is(ALLOWED_INSIDE_BARRIER) &&
+							pos.distToCenterSqr(entity.getX(), entity.getY(), entity.getZ()) < barrierRange * barrierRange && !entity.getType().is(ALLOWED_INSIDE_BARRIER) &&
 									((entity instanceof LivingEntity && !(entity instanceof Animal)) ||
 											(entity instanceof Projectile proj && proj.getOwner() != core.getOwner())));
 			entityLoop:
@@ -146,7 +148,7 @@ public class FormationTicker implements BlockEntityTicker<FormationCore> {
 			RenderSystem.enableTexture();
 			//RenderSystem.disableCull();
 			var barrierRange = core.getStat(FormationStat.BARRIER_RANGE).intValue();
-			var distSqr = pos.distSqr(player.getX(), player.getY(), player.getZ(), true);
+			var distSqr = pos.distToCenterSqr(player.getX(), player.getY(), player.getZ());
 			if (distSqr <= barrierRange * barrierRange) {
 				RenderSystem.disableCull();
 			}

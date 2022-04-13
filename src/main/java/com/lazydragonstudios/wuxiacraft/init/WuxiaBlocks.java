@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.math.BigDecimal;
@@ -18,7 +19,7 @@ import java.util.HashMap;
 
 public class WuxiaBlocks {
 
-	public static DeferredRegister<Block> BLOCKS = DeferredRegister.create(Block.class, WuxiaCraft.MOD_ID);
+	public static DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, WuxiaCraft.MOD_ID);
 
 	public static RegistryObject<Block> TECHNIQUE_INSCRIBER = BLOCKS.register("technique_inscriber",
 			() -> new TechniqueInscriber(BlockBehaviour.Properties.of(Material.WOOD).strength(3f)));

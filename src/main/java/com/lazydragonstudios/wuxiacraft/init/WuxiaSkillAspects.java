@@ -5,6 +5,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillStat;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.*;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.activator.*;
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects.hit.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 @SuppressWarnings("unused")
 public class WuxiaSkillAspects {
 
-	public static DeferredRegister<SkillAspectType> ASPECTS = DeferredRegister.create(SkillAspectType.class, WuxiaCraft.MOD_ID);
+	public static DeferredRegister<SkillAspectType> ASPECTS = DeferredRegister.create(new ResourceLocation(WuxiaCraft.MOD_ID, "skill_aspects"), WuxiaCraft.MOD_ID);
 
 	/**
 	 * Directly hit ahead the caster, where the caster is looking at

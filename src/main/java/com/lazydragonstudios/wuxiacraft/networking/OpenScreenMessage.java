@@ -1,6 +1,7 @@
 package com.lazydragonstudios.wuxiacraft.networking;
 
 import com.lazydragonstudios.wuxiacraft.container.IntrospectionMenu;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaMenuTypes;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.SimpleMenuProvider;
@@ -47,7 +48,7 @@ public class OpenScreenMessage {
 						case INTROSPECTION:
 							NetworkHooks.openGui(ctx.getSender(),
 									new SimpleMenuProvider(
-											(id, inv, player) -> new IntrospectionMenu(IntrospectionMenu.registryType, id),
+											(id, inv, player) -> new IntrospectionMenu(WuxiaMenuTypes.INTROSPECTION_MENU.get(), id),
 											new TextComponent("")));
 							break;
 						case SPATIAL_ITEM:

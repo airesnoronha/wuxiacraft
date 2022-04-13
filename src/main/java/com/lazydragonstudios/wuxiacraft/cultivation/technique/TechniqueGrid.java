@@ -9,8 +9,6 @@ import net.minecraft.resources.ResourceLocation;
 import com.lazydragonstudios.wuxiacraft.cultivation.stats.PlayerStat;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaTechniqueAspects;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -75,7 +73,7 @@ public class TechniqueGrid {
 	 * @param metaData         the data passed between nodes
 	 */
 	private void processAspects(Point visiting, HashMap<Point, HashSet<Point>> processHierarchy, HashMap<String, Object> metaData) {
-		var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.get(visiting));
+		var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(this.grid.get(visiting));
 		var proficiency = this.proficiencies.getOrDefault(visiting, BigDecimal.ZERO);
 		if (aspect == null) return;
 		aspect.accept(metaData, proficiency);
@@ -93,7 +91,7 @@ public class TechniqueGrid {
 	 * @param metaData         the data passed between nodes
 	 */
 	private void processAspectsToPoint(Point visiting, HashMap<Point, HashSet<Point>> processHierarchy, HashMap<String, Object> metaData, Point endPoint) {
-		var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.get(visiting));
+		var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(this.grid.get(visiting));
 		var proficiency = this.proficiencies.getOrDefault(visiting, BigDecimal.ZERO);
 		if (aspect == null) return;
 		aspect.accept(metaData, proficiency);
@@ -130,11 +128,11 @@ public class TechniqueGrid {
 		traverseGridFromStart(this,
 				(node) -> processHierarchy.put(node, new HashSet<>()),
 				(node, neighbour) -> processHierarchy.get(node).add(neighbour), (junk, neighbour) -> {
-					var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.getOrDefault(junk, emptyId));
+					var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(this.grid.getOrDefault(junk, emptyId));
 					if (junkAspect == null) return;
 					junkAspect.reject(metaData);
 				}, (disconnected) -> {
-					var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.getOrDefault(disconnected, emptyId));
+					var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(this.grid.getOrDefault(disconnected, emptyId));
 					if (junkAspect == null) return;
 					junkAspect.disconnect(metaData);
 				});
@@ -159,11 +157,11 @@ public class TechniqueGrid {
 		traverseGridFromStart(this,
 				(node) -> processHierarchy.put(node, new HashSet<>()),
 				(node, neighbour) -> processHierarchy.get(node).add(neighbour), (junk, neighbour) -> {
-					var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.getOrDefault(junk, emptyId));
+					var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(this.grid.getOrDefault(junk, emptyId));
 					if (junkAspect == null) return;
 					junkAspect.reject(metaData);
 				}, (disconnected) -> {
-					var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.grid.getOrDefault(disconnected, emptyId));
+					var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(this.grid.getOrDefault(disconnected, emptyId));
 					if (junkAspect == null) return;
 					junkAspect.disconnect(metaData);
 				});
@@ -191,7 +189,7 @@ public class TechniqueGrid {
 		while (!toVisit.isEmpty()) { // layer wide iteration aka Breadth first
 			var visiting = toVisit.removeFirst();
 			if (visited.contains(visiting)) continue;
-			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(grid.grid.getOrDefault(visiting, emptyId));
+			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(grid.grid.getOrDefault(visiting, emptyId));
 			if (aspect == null) continue;
 			grid.grid.get(visiting);
 			visited.add(visiting);
@@ -204,7 +202,7 @@ public class TechniqueGrid {
 				var neighbourAspect = grid.grid.getOrDefault(visitingNeighbour, emptyId);
 				if (visited.contains(visitingNeighbour)) continue;
 				connectedFrom.putIfAbsent(visitingNeighbour, new HashSet<>());
-				TechniqueAspect neighbourTechAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(neighbourAspect);
+				TechniqueAspect neighbourTechAspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(neighbourAspect);
 				if (neighbourTechAspect == null) continue;
 				if (aspect.canConnect(neighbourTechAspect)) {
 					connectCandidates.add(visitingNeighbour);
@@ -215,13 +213,13 @@ public class TechniqueGrid {
 				}
 			}
 			connectCandidates.sort((p1, p2) -> {
-				TechniqueAspect aspect1 = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(grid.grid.getOrDefault(p1, emptyId));
-				TechniqueAspect aspect2 = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(grid.grid.getOrDefault(p2, emptyId));
+				TechniqueAspect aspect1 = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(grid.grid.getOrDefault(p1, emptyId));
+				TechniqueAspect aspect2 = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(grid.grid.getOrDefault(p2, emptyId));
 				return aspect.connectPrioritySorter(aspect1, aspect2);
 			});
 			for (var candidate : connectCandidates) {
 				var candidateLocation = grid.grid.getOrDefault(candidate, emptyId);
-				TechniqueAspect candidateTechAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(candidateLocation);
+				TechniqueAspect candidateTechAspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(candidateLocation);
 				if (candidateTechAspect == null) continue;
 				int cFrom = connectedFrom.get(candidate).size();
 				int cTo = connectedTo.get(visiting).size();
@@ -238,14 +236,14 @@ public class TechniqueGrid {
 			}
 		}
 		for (var point : junkNotExpected.keySet()) {
-			var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(grid.grid.getOrDefault(point, emptyId));
+			var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(grid.grid.getOrDefault(point, emptyId));
 			if (junkAspect == null) continue;
 			onJunked.accept(junkNotExpected.get(point), point);
 			visited.add(point);
 		}
 		for (var key : grid.grid.keySet()) {
 			if (!visited.contains(key)) {
-				var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(grid.grid.getOrDefault(key, emptyId));
+				var junkAspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(grid.grid.getOrDefault(key, emptyId));
 				if (junkAspect == null) continue;
 				onDisconnected.accept(key);
 			}
@@ -276,7 +274,7 @@ public class TechniqueGrid {
 				}
 			}
 		}
-		for (var element : WuxiaRegistries.ELEMENTS.getValues()) {
+		for (var element : WuxiaRegistries.ELEMENTS.get().getValues()) {
 			if (metaData.containsKey("element-" + element.getName())) {
 				tMod.elements.put(element.getRegistryName(), (Double) metaData.get("element-" + element.getName()));
 			}

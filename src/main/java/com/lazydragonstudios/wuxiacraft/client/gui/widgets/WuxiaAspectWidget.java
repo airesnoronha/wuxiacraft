@@ -8,12 +8,10 @@ import com.lazydragonstudios.wuxiacraft.util.MathUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -61,20 +59,20 @@ public class WuxiaAspectWidget extends AbstractWidget {
 	@Override
 	public void renderToolTip(PoseStack poseStack, int mouseX, int mouseY) {
 		if (!MathUtil.inBounds(mouseX, mouseY, this.x, this.y, this.width, this.height)) return;
-		var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.aspect);
-		var skillAspect = WuxiaRegistries.SKILL_ASPECT.getValue(this.aspect);
+		var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(this.aspect);
+		var skillAspect = WuxiaRegistries.SKILL_ASPECT.get().getValue(this.aspect);
 		if (techAspect != null) techAspect.renderTooltip(poseStack, mouseX, mouseY);
 		if (skillAspect != null) skillAspect.renderTooltip(poseStack, mouseX, mouseY);
 	}
 
 	@Nullable
 	public TechniqueAspect getTechniqueAspect() {
-		return WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.aspect);
+		return WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(this.aspect);
 	}
 
 	@Nullable
 	public SkillAspectType getSkillAspectType() {
-		return WuxiaRegistries.SKILL_ASPECT.getValue(this.aspect);
+		return WuxiaRegistries.SKILL_ASPECT.get().getValue(this.aspect);
 	}
 
 	public ResourceLocation getTextureLocation() {

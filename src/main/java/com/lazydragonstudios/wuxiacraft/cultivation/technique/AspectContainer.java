@@ -63,7 +63,7 @@ public class AspectContainer {
 
 	public void addAspectProficiency(ResourceLocation aspect, BigDecimal amount, ICultivation cultivation) {
 		if (this.aspectAndProficiency.containsKey(aspect)) {
-			TechniqueAspect aspectInstance = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspect);
+			TechniqueAspect aspectInstance = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(aspect);
 			if (aspectInstance == null) return;
 			this.aspectAndProficiency.put(aspect, this.aspectAndProficiency.get(aspect).add(amount).max(BigDecimal.ZERO));
 		} else {
@@ -92,7 +92,7 @@ public class AspectContainer {
 
 	public boolean learnAspect(ResourceLocation location, ICultivation cultivation) {
 		if (!this.knowsAspect(location)) {
-			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(location);
+			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(location);
 			if (aspect == null) return false;
 			if (aspect.canLearn.test(cultivation)) {
 				this.aspectAndProficiency.put(location, BigDecimal.TEN);
@@ -105,7 +105,7 @@ public class AspectContainer {
 	public void calculateAspects(ICultivation cultivation) {
 		LinkedList<Consumer<ICultivation>> onReachedSuppliers = new LinkedList<>();
 		for (var aspectLocation : this.aspectAndProficiency.keySet()) {
-			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspectLocation);
+			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(aspectLocation);
 			if (aspect == null) continue;
 			for (var checkpoint : aspect.checkpoints) {
 				var proficiency = this.aspectAndProficiency.get(aspectLocation);

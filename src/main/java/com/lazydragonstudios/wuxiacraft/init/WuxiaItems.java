@@ -6,6 +6,7 @@ import com.lazydragonstudios.wuxiacraft.item.*;
 import com.lazydragonstudios.wuxiacraft.formation.FormationMaterialTier;
 import net.minecraft.world.item.*;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 import javax.annotation.Nonnull;
@@ -14,7 +15,7 @@ import java.util.HashMap;
 @SuppressWarnings("unused")
 public class WuxiaItems {
 
-	public static DeferredRegister<Item> ITEMS = DeferredRegister.create(Item.class, WuxiaCraft.MOD_ID);
+	public static DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, WuxiaCraft.MOD_ID);
 
 	public static CreativeModeTab WUXIACRAFT_TAB = new CreativeModeTab("wuxiacraft") {
 		@Nonnull

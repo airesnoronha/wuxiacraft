@@ -148,7 +148,7 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 	public BigDecimal getStat(PlayerStat stat) {
 		BigDecimal stageValue = this.playerStats.getOrDefault(stat, BigDecimal.ZERO);
 		if (this.previousStage == null) return stageValue;
-		var aux = WuxiaRegistries.CULTIVATION_STAGES.getValue(this.previousStage);
+		var aux = WuxiaRegistries.CULTIVATION_STAGES.get().getValue(this.previousStage);
 		if (aux == null) return stageValue;
 		stageValue = stageValue.add(aux.getStat(stat));
 		return stageValue;
@@ -164,7 +164,7 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 	public BigDecimal getStat(System system, PlayerSystemStat stat) {
 		var stageValue = this.systemStats.get(system).getOrDefault(stat, BigDecimal.ZERO);
 		if (this.previousStage == null) return stageValue;
-		var aux = WuxiaRegistries.CULTIVATION_STAGES.getValue(this.previousStage);
+		var aux = WuxiaRegistries.CULTIVATION_STAGES.get().getValue(this.previousStage);
 		if (aux == null) return stageValue;
 		stageValue = stageValue.add(aux.getStat(system, stat));
 		return stageValue;
@@ -181,7 +181,7 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 		var stageValue = this.elementalStats
 				.getOrDefault(element, new HashMap<>()).getOrDefault(stat, BigDecimal.ZERO);
 		if (this.previousStage == null) return stageValue;
-		var aux = WuxiaRegistries.CULTIVATION_STAGES.getValue(this.previousStage);
+		var aux = WuxiaRegistries.CULTIVATION_STAGES.get().getValue(this.previousStage);
 		if (aux == null) return stageValue;
 		stageValue = stageValue.add(aux.getStat(element, stat));
 		return stageValue;
@@ -200,7 +200,7 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 		var stageValue = this.systemElementalStats
 				.getOrDefault(system, new HashMap<>()).getOrDefault(element, new HashMap<>()).getOrDefault(stat, BigDecimal.ZERO);
 		if (this.previousStage == null) return stageValue;
-		var aux = WuxiaRegistries.CULTIVATION_STAGES.getValue(this.previousStage);
+		var aux = WuxiaRegistries.CULTIVATION_STAGES.get().getValue(this.previousStage);
 		if (aux == null) return stageValue;
 		stageValue = stageValue.add(aux.getStat(system, element, stat));
 		return stageValue;
@@ -209,7 +209,7 @@ public class CultivationStage extends ForgeRegistryEntry<CultivationStage> {
 	public HashSet<ResourceLocation> getSkillsAspects() {
 		HashSet<ResourceLocation> skills = new HashSet<>(this.skillsAspects);
 		if (this.previousStage == null) return skills;
-		var aux = WuxiaRegistries.CULTIVATION_STAGES.getValue(this.previousStage);
+		var aux = WuxiaRegistries.CULTIVATION_STAGES.get().getValue(this.previousStage);
 		if (aux == null) return skills;
 		skills.addAll(aux.getSkillsAspects());
 		return skills;

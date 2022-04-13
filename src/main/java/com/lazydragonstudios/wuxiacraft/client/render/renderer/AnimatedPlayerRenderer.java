@@ -31,8 +31,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class AnimatedPlayerRenderer extends PlayerRenderer {
 
-	public static EntityType<AbstractClientPlayer> animatedEntityType;
-
 	private static float[] leftArmX = new float[]{0, -45, -90, -90, -90, 0, 0, 0, -90, -135, -180, -90, 0};
 	private static float[] leftArmY = new float[]{0, 0, 0, 0, -45, -90, -45, 0, 0, 0, 0, 0, 0};
 	private static float[] leftArmZ = new float[]{0, 0, 0, 0, 0, 0, 0, 45, 90, 60, 45, 0, 0};

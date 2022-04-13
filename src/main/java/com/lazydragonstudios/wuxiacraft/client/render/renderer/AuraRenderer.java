@@ -24,8 +24,6 @@ public class AuraRenderer extends EntityRenderer<AbstractClientPlayer> {
 
 	public static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/aura/base_aura.png");
 
-	public static EntityType<AbstractClientPlayer> auraEntityType;
-
 	private Aura aura;
 
 	public AuraRenderer(EntityRendererProvider.Context p_174008_) {

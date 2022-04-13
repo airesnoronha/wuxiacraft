@@ -33,7 +33,7 @@ public class WuxiaCheckpointsWidget extends AbstractWidget {
 	}
 
 	public void setAspectLocation(ResourceLocation aspectLocation) throws IllegalArgumentException {
-		var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspectLocation);
+		var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(aspectLocation);
 		if (aspect == null)
 			throw new IllegalArgumentException("Wrong aspect location. No aspect found for '" + aspectLocation.toString() + "'!");
 		this.aspectLocation = aspectLocation;

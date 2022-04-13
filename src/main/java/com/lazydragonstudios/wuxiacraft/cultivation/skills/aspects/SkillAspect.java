@@ -2,11 +2,9 @@ package com.lazydragonstudios.wuxiacraft.cultivation.skills.aspects;
 
 import com.lazydragonstudios.wuxiacraft.cultivation.skills.SkillStat;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaRegistries;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -76,7 +74,7 @@ public abstract class SkillAspect {
 	public static SkillAspect readAspect(CompoundTag tag) {
 		if (tag.contains("skill-type")) {
 			var skillTypeName = tag.getString("skill-type");
-			var skillType = WuxiaRegistries.SKILL_ASPECT.getValue(new ResourceLocation(skillTypeName));
+			var skillType = WuxiaRegistries.SKILL_ASPECT.get().getValue(new ResourceLocation(skillTypeName));
 			if (skillType == null) return null;
 			var skillAspect = skillType.creator.create();
 			skillAspect.deserialize(tag);

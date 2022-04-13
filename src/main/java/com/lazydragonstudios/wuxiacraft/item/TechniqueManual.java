@@ -55,7 +55,7 @@ public class TechniqueManual extends Item {
 		var toBecomeUnknown = new LinkedList<Point>();
 		for (var hexC : techGrid.getGrid().keySet()) {
 			var aspectLocation = techGrid.getAspectAtGrid(hexC);
-			var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspectLocation);
+			var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(aspectLocation);
 			if (techAspect == null) continue;
 			if (!aspectData.knowsAspect(aspectLocation)) {
 				if (aspectData.learnAspect(aspectLocation, cultivation)) {

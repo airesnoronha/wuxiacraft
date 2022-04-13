@@ -18,6 +18,7 @@ import com.lazydragonstudios.wuxiacraft.container.IntrospectionMenu;
 import com.lazydragonstudios.wuxiacraft.container.RunemakingMenu;
 import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaEntities;
+import com.lazydragonstudios.wuxiacraft.init.WuxiaMenuTypes;
 import com.lazydragonstudios.wuxiacraft.init.WuxiaParticleTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -64,19 +65,16 @@ public class ClientSetupEventHandler {
 		OverlayRegistry.registerOverlayTop("wuxiacraft_skill_wheel", new SkillWheel());
 		OverlayRegistry.registerOverlayTop("wuxiacraft_debug", new DebugOverlay());
 
-		MenuScreens.register(IntrospectionMenu.registryType, IntrospectionScreen::new);
-		MenuScreens.register(InscriberMenu.registryType, InscriberScreen::new);
-		MenuScreens.register(RunemakingMenu.registryType, RunemakingScreen::new);
+		MenuScreens.register(WuxiaMenuTypes.INTROSPECTION_MENU.get(), IntrospectionScreen::new);
+		MenuScreens.register(WuxiaMenuTypes.INSCRIBER_MENU.get(), InscriberScreen::new);
+		MenuScreens.register(WuxiaMenuTypes.RUNEMAKING_MENU.get(), RunemakingScreen::new);
 	}
 
 	@SubscribeEvent
 	public static void onRenderingRegistry(EntityRenderersEvent.RegisterRenderers event) {
-		AnimatedPlayerRenderer.animatedEntityType = EntityType.Builder.<AbstractClientPlayer>createNothing(MobCategory.MISC).build("animated_player_entity");
-		GhostRenderer.ghostEntityType = EntityType.Builder.<AbstractClientPlayer>createNothing(MobCategory.MISC).build("ghost_entity");
-		AuraRenderer.auraEntityType = EntityType.Builder.<AbstractClientPlayer>createNothing(MobCategory.MISC).build("aura_entity");
-		event.registerEntityRenderer(AnimatedPlayerRenderer.animatedEntityType, ctx -> new AnimatedPlayerRenderer(ctx, false));
-		event.registerEntityRenderer(GhostRenderer.ghostEntityType, GhostRenderer::new);
-		event.registerEntityRenderer(AuraRenderer.auraEntityType, AuraRenderer::new);
+		event.registerEntityRenderer(WuxiaEntities.ANIMATED_PLAYER_ENTITY.get(), ctx -> new AnimatedPlayerRenderer(ctx, false));
+		event.registerEntityRenderer(WuxiaEntities.GHOST_ENTITY.get(), GhostRenderer::new);
+		event.registerEntityRenderer(WuxiaEntities.AURA_ENTITY.get(), AuraRenderer::new);
 		event.registerEntityRenderer(WuxiaEntities.THROW_SKILL_TYPE.get(), ThrowSkillRenderer::new);
 	}
 

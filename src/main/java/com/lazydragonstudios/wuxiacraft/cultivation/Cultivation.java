@@ -238,7 +238,7 @@ public class Cultivation implements ICultivation {
 			statValue = statValue.max(BigDecimal.ZERO);
 			this.playerStats.put(stat, statValue);
 		}
-		for (var elementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
+		for (var elementLocation : WuxiaRegistries.ELEMENTS.get().getKeys()) {
 			for (var stat : PlayerElementalStat.values()) {
 				//small cleaning, if the value is zero on the stat value then remove from the memory
 				if (this.playerElementalStats.containsKey(elementLocation)) {
@@ -260,7 +260,7 @@ public class Cultivation implements ICultivation {
 		}
 		this.skills.knownSkills.clear();
 		for (var elementLocation : this.playerElementalStats.keySet()) {
-			var element = WuxiaRegistries.ELEMENTS.getValue(elementLocation);
+			var element = WuxiaRegistries.ELEMENTS.get().getValue(elementLocation);
 			if (element == null) continue;
 			if (this.playerElementalStats.get(elementLocation).containsKey(PlayerElementalStat.COMPREHENSION)) {
 				var comprehension = this.playerElementalStats.get(elementLocation).get(PlayerElementalStat.COMPREHENSION);
@@ -336,7 +336,7 @@ public class Cultivation implements ICultivation {
 		if (tag.contains("elemental-stats")) {
 			var rawElementalStatsTag = tag.get("elemental-stats");
 			if (rawElementalStatsTag instanceof CompoundTag elementalStatsTag) {
-				for (var element : WuxiaRegistries.ELEMENTS.getKeys()) {
+				for (var element : WuxiaRegistries.ELEMENTS.get().getKeys()) {
 					if (elementalStatsTag.contains("element-stats-" + element)) {
 						for (var stat : PlayerElementalStat.values()) {
 							if (!stat.isModifiable) continue;

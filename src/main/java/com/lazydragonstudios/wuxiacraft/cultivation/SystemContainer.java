@@ -67,10 +67,10 @@ public class SystemContainer {
 
 	public BigDecimal getStat(PlayerSystemStat stat) {
 		BigDecimal statValue = this.systemStats.getOrDefault(stat, BigDecimal.ZERO);
-		for (var elementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
+		for (var elementLocation : WuxiaRegistries.ELEMENTS.get().getKeys()) {
 			if (!this.systemElementalStats.containsKey(elementLocation)) continue;
 			if (!this.systemElementalStats.get(elementLocation).containsKey(PlayerSystemElementalStat.FOUNDATION)) continue;
-			var element = WuxiaRegistries.ELEMENTS.getValue(elementLocation);
+			var element = WuxiaRegistries.ELEMENTS.get().getValue(elementLocation);
 			if (element == null) continue;
 			var foundation = this.systemElementalStats.get(elementLocation).get(PlayerSystemElementalStat.FOUNDATION);
 			statValue = statValue.add(element.getFoundationStatValue(stat, foundation));
@@ -93,10 +93,10 @@ public class SystemContainer {
 		BigDecimal statValue = this.getStage().getStat(stat);
 		//this looks like statsValue = statsValue * (1 + techniqueModifier)
 		statValue = statValue.multiply(BigDecimal.ONE.add(this.techniqueData.modifier.stats.getOrDefault(stat, BigDecimal.ZERO)));
-		for (var elementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
+		for (var elementLocation : WuxiaRegistries.ELEMENTS.get().getKeys()) {
 			if (!this.systemElementalStats.containsKey(elementLocation)) continue;
 			if (!this.systemElementalStats.get(elementLocation).containsKey(PlayerSystemElementalStat.FOUNDATION)) continue;
-			var element = WuxiaRegistries.ELEMENTS.getValue(elementLocation);
+			var element = WuxiaRegistries.ELEMENTS.get().getValue(elementLocation);
 			if (element == null) continue;
 			var foundation = this.systemElementalStats.get(elementLocation).get(PlayerSystemElementalStat.FOUNDATION);
 			statValue = statValue.add(element.getFoundationStatValue(stat, foundation));
@@ -119,7 +119,7 @@ public class SystemContainer {
 		if (!this.systemElementalStats.containsKey(elementLocation)) return statValue;
 		if (!this.systemElementalStats.get(elementLocation).containsKey(PlayerSystemElementalStat.FOUNDATION))
 			return statValue;
-		var element = WuxiaRegistries.ELEMENTS.getValue(elementLocation);
+		var element = WuxiaRegistries.ELEMENTS.get().getValue(elementLocation);
 		if (element == null) return statValue;
 		var foundation = this.systemElementalStats.get(elementLocation).get(PlayerSystemElementalStat.FOUNDATION);
 		statValue = statValue.add(element.getFoundationStatValue(stat, foundation));
@@ -130,14 +130,14 @@ public class SystemContainer {
 	 * @return the current cultivation realm this cultivation is at
 	 */
 	public CultivationRealm getRealm() {
-		return WuxiaRegistries.CULTIVATION_REALMS.getValue(this.getStage().realm);
+		return WuxiaRegistries.CULTIVATION_REALMS.get().getValue(this.getStage().realm);
 	}
 
 	/**
 	 * @return the current cultivation stage this cultivation is at
 	 */
 	public CultivationStage getStage() {
-		return WuxiaRegistries.CULTIVATION_STAGES.getValue(this.currentStage);
+		return WuxiaRegistries.CULTIVATION_STAGES.get().getValue(this.currentStage);
 	}
 
 	public void setStat(PlayerSystemStat stat, BigDecimal value) {
@@ -167,12 +167,12 @@ public class SystemContainer {
 	}
 
 	private void addFoundation(ResourceLocation elementLocation, BigDecimal value) {
-		var element = WuxiaRegistries.ELEMENTS.getValue(elementLocation);
+		var element = WuxiaRegistries.ELEMENTS.get().getValue(elementLocation);
 		if (element == null) return;
 		var foundationUsed = value.multiply(new BigDecimal("0.5"));
-		for (var foundationElementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
+		for (var foundationElementLocation : WuxiaRegistries.ELEMENTS.get().getKeys()) {
 			if (value.compareTo(BigDecimal.ZERO) <= 0) continue; //if value is drained already
-			var foundationElement = WuxiaRegistries.ELEMENTS.getValue(foundationElementLocation);
+			var foundationElement = WuxiaRegistries.ELEMENTS.get().getValue(foundationElementLocation);
 			if (foundationElement == null) continue; //if not found element
 			BigDecimal foundationValue = this.getStat(foundationElementLocation, PlayerSystemElementalStat.FOUNDATION);
 			if (foundationValue.compareTo(BigDecimal.ZERO) <= 0)
@@ -224,10 +224,10 @@ public class SystemContainer {
 				stageValue = stageValue.add(systemData.getStage().getStat(this.system, stat));
 			}
 			var foundationValue = BigDecimal.ZERO;
-			for (var elementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
+			for (var elementLocation : WuxiaRegistries.ELEMENTS.get().getKeys()) {
 				var foundation = this.systemElementalStats.getOrDefault(elementLocation, new HashMap<>())
 						.getOrDefault(PlayerSystemElementalStat.FOUNDATION, BigDecimal.ZERO);
-				var element = WuxiaRegistries.ELEMENTS.getValue(elementLocation);
+				var element = WuxiaRegistries.ELEMENTS.get().getValue(elementLocation);
 				if (element == null) continue;
 				if (foundation.compareTo(BigDecimal.ZERO) <= 0) continue;
 				foundationValue = foundationValue.add(element.getFoundationStatValue(stat, foundation));
@@ -245,7 +245,7 @@ public class SystemContainer {
 			value = value.max(BigDecimal.ZERO);
 			this.systemStats.put(stat, value);
 		}
-		for (var elementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
+		for (var elementLocation : WuxiaRegistries.ELEMENTS.get().getKeys()) {
 			for (var stat : PlayerSystemElementalStat.values()) {
 				if (stat.isModifiable) continue;
 				var value = BigDecimal.ZERO;
@@ -306,7 +306,7 @@ public class SystemContainer {
 		if (tag.contains("elemental-stats")) {
 			var rawElementalStatsTag = tag.get("elemental-stats");
 			if (rawElementalStatsTag instanceof CompoundTag elementalStatsTag) {
-				for (var elementLocation : WuxiaRegistries.ELEMENTS.getKeys()) {
+				for (var elementLocation : WuxiaRegistries.ELEMENTS.get().getKeys()) {
 					if (!elementalStatsTag.contains("element-stats-" + elementLocation)) continue;
 					var rawCurrentElementalStatsTag = elementalStatsTag.get("element-stats-" + elementLocation);
 					if (!(rawCurrentElementalStatsTag instanceof CompoundTag currentElementStatsTag)) continue;

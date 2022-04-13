@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,8 +33,8 @@ import java.util.LinkedList;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class FormationEventHandler {
 
-	public static final Tag.Named<Item> INTERACT_TAG = ItemTags.createOptional(new ResourceLocation(WuxiaCraft.MOD_ID, "interact_badge"));
-	public static final Tag.Named<Item> BREAK_TAG = ItemTags.createOptional(new ResourceLocation(WuxiaCraft.MOD_ID, "break_badge"));
+	public static final TagKey<Item> INTERACT_TAG = ItemTags.create(new ResourceLocation(WuxiaCraft.MOD_ID, "interact_badge"));
+	public static final TagKey<Item> BREAK_TAG = ItemTags.create(new ResourceLocation(WuxiaCraft.MOD_ID, "break_badge"));
 
 	@SubscribeEvent
 	public static void onPlayerCultivate(CultivatingEvent event) {
@@ -42,7 +43,7 @@ public class FormationEventHandler {
 		var system = event.getSystem();
 		var formationPos = cultivation.getFormation();
 		if (formationPos == null) return;
-		var distSqr = formationPos.distSqr(player.getX(), player.getY(), player.getZ(), true);
+		var distSqr = formationPos.distToCenterSqr(player.getX(), player.getY(), player.getZ());
 		if (distSqr > 16d * 16d) return;
 		var blockEntity = player.level.getBlockEntity(formationPos);
 		if (!(blockEntity instanceof FormationCore core)) return;
@@ -65,7 +66,7 @@ public class FormationEventHandler {
 		var blockEntity = event.player.level.getBlockEntity(formationPos);
 		if (!(blockEntity instanceof FormationCore core)) return;
 		if (!core.isActive()) return;
-		var distToFormation = formationPos.distSqr(event.player.getX(), event.player.getY(), event.player.getZ(), true);
+		var distToFormation = formationPos.distToCenterSqr(event.player.getX(), event.player.getY(), event.player.getZ());
 
 		for (var system : System.values()) {
 			var regenDist = core.getStat(system, FormationSystemStat.ENERGY_REGEN_RANGE).doubleValue();
@@ -185,7 +186,7 @@ public class FormationEventHandler {
 		if (!(blockEntity instanceof FormationCore core)) return;
 		if (core.getStat(FormationStat.BARRIER_AMOUNT).compareTo(BigDecimal.ZERO) <= 0) return;
 		var barrierRange = core.getStat(FormationStat.BARRIER_RANGE).doubleValue();
-		var distSqr = formationPos.distSqr(targetPlayer.getPosition(0), true);
+		var distSqr = formationPos.distToCenterSqr(targetPlayer.getPosition(0));
 		if (distSqr <= barrierRange * barrierRange) {
 			event.setCanceled(true);
 		}

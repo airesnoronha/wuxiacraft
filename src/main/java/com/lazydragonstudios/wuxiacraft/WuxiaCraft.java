@@ -52,20 +52,22 @@ public class WuxiaCraft {
 		// Register ourselves for server and other game events we are interested in
 		MinecraftForge.EVENT_BUS.register(this);
 
+		WuxiaElements.ELEMENTS.register(modEventBus);
 		WuxiaBlocks.BLOCKS.register(modEventBus);
 		WuxiaItems.ITEMS.register(modEventBus);
+		WuxiaMenuTypes.MENU_TYPES.register(modEventBus);
 		WuxiaBlockEntities.BLOCK_ENTITIES.register(modEventBus);
 		WuxiaMobEffects.EFFECTS.register(modEventBus);
-		WuxiaEntities.ENTITY_TYPE_REGISTER.register(modEventBus);
-		WuxiaRealms.REALM_REGISTER.register(modEventBus);
-		WuxiaRealms.STAGE_REGISTER.register(modEventBus);
-		WuxiaElements.ELEMENTS.register(modEventBus);
-		WuxiaTechniqueAspects.ASPECTS.register(modEventBus);
-		WuxiaSkillAspects.ASPECTS.register(modEventBus);
 		WuxiaPoiTypes.POI_TYPES.register(modEventBus);
 		WuxiaProfessions.PROFESSIONS.register(modEventBus);
 		WuxiaParticleTypes.PARTICLE_TYPES.register(modEventBus);
 		WuxiaRecipeTypes.RECIPE_TYPE_SERIALIZERS.register(modEventBus);
+		WuxiaRealms.REALM_REGISTER.register(modEventBus);
+		WuxiaRealms.STAGE_REGISTER.register(modEventBus);
+		WuxiaEntities.ENTITY_TYPE_REGISTER.register(modEventBus);
+		WuxiaTechniqueAspects.ASPECTS.register(modEventBus);
+		WuxiaSkillAspects.ASPECTS.register(modEventBus);
+
 		WuxiaConfigs.registerConfigs();
 	}
 

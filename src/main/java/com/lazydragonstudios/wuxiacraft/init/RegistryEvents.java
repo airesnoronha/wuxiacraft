@@ -12,8 +12,12 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegistryBuilder;
 import com.lazydragonstudios.wuxiacraft.WuxiaCraft;
 import com.lazydragonstudios.wuxiacraft.cultivation.Element;
@@ -31,52 +35,33 @@ public class RegistryEvents {
 	}
 
 	@SubscribeEvent
-	public static void onCreateNewRegistries(final RegistryEvent.NewRegistry event) {
+	public static void onCreateNewRegistries(final NewRegistryEvent event) {
 		WuxiaCraft.LOGGER.info("Creating registries");
 
 		WuxiaCraft.LOGGER.debug("Creating the registry for the Cultivation Realms");
-		WuxiaRegistries.CULTIVATION_REALMS = new RegistryBuilder<CultivationRealm>()
+		WuxiaRegistries.CULTIVATION_REALMS = event.create(new RegistryBuilder<CultivationRealm>()
 				.setName(new ResourceLocation(WuxiaCraft.MOD_ID, "cultivation_realms"))
-				.setType(CultivationRealm.class)
-				.create();
+				.setType(CultivationRealm.class));
 
 		WuxiaCraft.LOGGER.debug("Creating the registry for the Cultivation Stages");
-		WuxiaRegistries.CULTIVATION_STAGES = new RegistryBuilder<CultivationStage>()
+		WuxiaRegistries.CULTIVATION_STAGES = event.create(new RegistryBuilder<CultivationStage>()
 				.setName(new ResourceLocation(WuxiaCraft.MOD_ID, "cultivation_stages"))
-				.setType(CultivationStage.class)
-				.create();
+				.setType(CultivationStage.class));
 
 		WuxiaCraft.LOGGER.debug("Creating the registry for the Elements");
-		WuxiaRegistries.ELEMENTS = new RegistryBuilder<Element>()
+		WuxiaRegistries.ELEMENTS = event.create(new RegistryBuilder<Element>()
 				.setName(new ResourceLocation(WuxiaCraft.MOD_ID, "elements"))
-				.setType(Element.class)
-				.create();
+				.setType(Element.class));
 
 		WuxiaCraft.LOGGER.debug("Creating the registry for the Technique Aspects");
-		WuxiaRegistries.TECHNIQUE_ASPECT = new RegistryBuilder<TechniqueAspect>()
+		WuxiaRegistries.TECHNIQUE_ASPECT = event.create(new RegistryBuilder<TechniqueAspect>()
 				.setName(new ResourceLocation(WuxiaCraft.MOD_ID, "technique_aspects"))
-				.setType(TechniqueAspect.class)
-				.create();
+				.setType(TechniqueAspect.class));
 
 		WuxiaCraft.LOGGER.debug("Creating the registry for the Skills Aspects");
-		WuxiaRegistries.SKILL_ASPECT = new RegistryBuilder<SkillAspectType>()
+		WuxiaRegistries.SKILL_ASPECT = event.create(new RegistryBuilder<SkillAspectType>()
 				.setName(new ResourceLocation(WuxiaCraft.MOD_ID, "skill_aspects"))
-				.setType(SkillAspectType.class)
-				.create();
-	}
-
-	@SubscribeEvent
-	public static void onMenuTypeRegister(final RegistryEvent.Register<MenuType<?>> event) {
-		IntrospectionMenu.registryType = IForgeMenuType.create(IntrospectionMenu::create);
-		IntrospectionMenu.registryType.setRegistryName(new ResourceLocation(WuxiaCraft.MOD_ID, "introspection_menu"));
-		InscriberMenu.registryType = IForgeMenuType.create(InscriberMenu::create);
-		InscriberMenu.registryType.setRegistryName(new ResourceLocation(WuxiaCraft.MOD_ID, "inscriber_menu"));
-		RunemakingMenu.registryType = IForgeMenuType.create(RunemakingMenu::create);
-		RunemakingMenu.registryType.setRegistryName(new ResourceLocation(WuxiaCraft.MOD_ID, "runemaking_menu"));
-
-		event.getRegistry().register(IntrospectionMenu.registryType);
-		event.getRegistry().register(InscriberMenu.registryType);
-		event.getRegistry().register(RunemakingMenu.registryType);
+				.setType(SkillAspectType.class));
 	}
 
 }

@@ -72,7 +72,7 @@ public class AspectsTab extends IntrospectionTab {
 	}
 
 	private void changeSelectedAspectStats() {
-		var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.selectedAspectWidget);
+		var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(this.selectedAspectWidget);
 		if (aspect == null) return;
 		this.aspectsStatsPanel.clearChildren();
 		var player = Minecraft.getInstance().player;

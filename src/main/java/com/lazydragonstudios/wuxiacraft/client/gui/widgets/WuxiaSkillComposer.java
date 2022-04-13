@@ -125,7 +125,7 @@ public class WuxiaSkillComposer extends AbstractWidget {
 	}
 
 	public void addSkillToPosition(ResourceLocation aspectLocation, int pos) {
-		var skillAspectType = WuxiaRegistries.SKILL_ASPECT.getValue(aspectLocation);
+		var skillAspectType = WuxiaRegistries.SKILL_ASPECT.get().getValue(aspectLocation);
 		if (skillAspectType == null) return;
 		var skillAspect = skillAspectType.creator.create();
 		this.skill.insertSkillAt(pos, skillAspect);

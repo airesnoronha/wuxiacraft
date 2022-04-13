@@ -30,7 +30,7 @@ public class StageArgument extends ResourceLocationArgument {
 
 	public static ResourceLocation getStageLocation(CommandContext<CommandSourceStack> ctx, String argName) throws CommandSyntaxException {
 		ResourceLocation resourcelocation = ctx.getArgument(argName, ResourceLocation.class);
-		if (!WuxiaRegistries.CULTIVATION_STAGES.containsKey(resourcelocation)) {
+		if (!WuxiaRegistries.CULTIVATION_STAGES.get().containsKey(resourcelocation)) {
 			throw ERROR_UNKNOWN_STAGE.create(resourcelocation);
 		}
 		return resourcelocation;
@@ -43,7 +43,7 @@ public class StageArgument extends ResourceLocationArgument {
 
 	@Override
 	public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-		return SharedSuggestionProvider.suggestResource(WuxiaRegistries.CULTIVATION_STAGES.getKeys(), builder);
+		return SharedSuggestionProvider.suggestResource(WuxiaRegistries.CULTIVATION_STAGES.get().getKeys(), builder);
 	}
 
 	public static StageArgument id() {

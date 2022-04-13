@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @SuppressWarnings("unused")
 public class WuxiaElements {
 
-	public static DeferredRegister<Element> ELEMENTS = DeferredRegister.create(Element.class, WuxiaCraft.MOD_ID);
+	public static DeferredRegister<Element> ELEMENTS = DeferredRegister.create(new ResourceLocation(WuxiaCraft.MOD_ID, "elements"), WuxiaCraft.MOD_ID);
 
 	public static RegistryObject<Element> PHYSICAL = ELEMENTS.register("physical", Element::new
 	);

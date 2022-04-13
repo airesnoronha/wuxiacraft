@@ -29,7 +29,7 @@ public class TechniqueEventHandler {
 		var techniqueData = Cultivation.get(event.getPlayer()).getSystemData(event.getSystem()).techniqueData;
 		var grid = techniqueData.grid;
 		for (var aspectLocation : grid.getGrid().values()) {
-			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspectLocation);
+			var aspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(aspectLocation);
 			if (aspect == null) continue;
 			if (event.isCanceled()) break;
 			if (aspect instanceof ConditionalElementalGenerator generator) {

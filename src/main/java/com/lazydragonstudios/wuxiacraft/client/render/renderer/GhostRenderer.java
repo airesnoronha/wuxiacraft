@@ -28,8 +28,6 @@ public class GhostRenderer extends LivingEntityRenderer<AbstractClientPlayer, Gh
 
 	private final static ResourceLocation GHOST_TEXTURE = new ResourceLocation(WuxiaCraft.MOD_ID, "textures/entity/ghost.png");
 
-	public static EntityType<AbstractClientPlayer> ghostEntityType;
-
 	public GhostRenderer(EntityRendererProvider.Context ctx) {
 		super(ctx, new GhostModel(ctx.bakeLayer(GhostModel.LOCATION)), 0.5F);
 	}

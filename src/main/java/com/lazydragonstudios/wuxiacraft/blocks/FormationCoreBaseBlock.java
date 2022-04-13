@@ -7,7 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -32,7 +32,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class FormationCoreBaseBlock extends Block {
 
-	public static Tag.Named<Item> FORMATION_CORE_BLOCKS = ItemTags.createOptional(new ResourceLocation(WuxiaCraft.MOD_ID, "formation_core_blocks"));
+	public static TagKey<Item> FORMATION_CORE_BLOCKS = ItemTags.create(new ResourceLocation(WuxiaCraft.MOD_ID, "formation_core_blocks"));
 
 	public static final VoxelShape VOXEL_SHAPE = Shapes.or(
 			Block.box(0d, 0d, 0d, 4d, 4d, 4d),

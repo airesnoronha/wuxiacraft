@@ -33,7 +33,7 @@ public class AspectArgument extends ResourceLocationArgument {
 
 	public static ResourceLocation getAspectLocation(CommandContext<CommandSourceStack> ctx, String argName) throws CommandSyntaxException {
 		ResourceLocation resourcelocation = ctx.getArgument(argName, ResourceLocation.class);
-		if (!WuxiaRegistries.TECHNIQUE_ASPECT.containsKey(resourcelocation)) {
+		if (!WuxiaRegistries.TECHNIQUE_ASPECT.get().containsKey(resourcelocation)) {
 			throw ERROR_UNKNOWN_ASPECT.create(resourcelocation);
 		}
 		return resourcelocation;
@@ -41,7 +41,7 @@ public class AspectArgument extends ResourceLocationArgument {
 
 	@Override
 	public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-		return SharedSuggestionProvider.suggestResource(WuxiaRegistries.TECHNIQUE_ASPECT.getKeys(), builder);
+		return SharedSuggestionProvider.suggestResource(WuxiaRegistries.TECHNIQUE_ASPECT.get().getKeys(), builder);
 	}
 
 	public static AspectArgument id() {

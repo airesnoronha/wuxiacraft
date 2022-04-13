@@ -137,7 +137,7 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 			);
 			var aspectInPlace = this.grid.getAspectAtGrid(hexC);
 			if (aspectInPlace != emptyId) {
-				var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspectInPlace);
+				var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(aspectInPlace);
 				if (techAspect != null) {
 					RenderSystem.setShaderTexture(0, techAspect.getTextureLocation());
 					GuiComponent.blit(poseStack,
@@ -251,7 +251,7 @@ public class WuxiaTechniqueComposeGrid extends AbstractWidget {
 		if (!this.hexagonCoordinates.contains(hexC)) return;
 		var aspectLocation = grid.getAspectAtGrid(hexC);
 		var meta = grid.compileToPoint(hexC);
-		var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspectLocation);
+		var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(aspectLocation);
 		if (techAspect == null) return;
 
 		poseStack.pushPose();

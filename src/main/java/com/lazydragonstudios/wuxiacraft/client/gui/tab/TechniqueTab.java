@@ -145,7 +145,7 @@ public class TechniqueTab extends IntrospectionTab {
 			this.aspectsPanel.clearChildren();
 			this.aspectWidgets.clear();
 			for (var aspect : allAspects) {
-				var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(aspect);
+				var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(aspect);
 				if (techAspect == null) continue;
 				if (!techAspect.canShowForSystem(this.system)) continue;
 				var aspectWidget = new WuxiaAspectWidget(0, 0, aspect);
@@ -201,7 +201,7 @@ public class TechniqueTab extends IntrospectionTab {
 		var player = Minecraft.getInstance().player;
 		if (player == null) return;
 		if (this.draggingAspect != null) {
-			var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.getValue(this.draggingAspect);
+			var techAspect = WuxiaRegistries.TECHNIQUE_ASPECT.get().getValue(this.draggingAspect);
 			if (techAspect != null) {
 				poseStack.pushPose();
 				poseStack.translate(mouseX, mouseY, 0);

@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 @SuppressWarnings("unused")
 public class WuxiaTechniqueAspects {
 
-	public static DeferredRegister<TechniqueAspect> ASPECTS = DeferredRegister.create(TechniqueAspect.class, WuxiaCraft.MOD_ID);
+	public static DeferredRegister<TechniqueAspect> ASPECTS = DeferredRegister.create(new ResourceLocation(WuxiaCraft.MOD_ID, "technique_aspects"), WuxiaCraft.MOD_ID);
 
 	public static RegistryObject<TechniqueAspect> START = ASPECTS.register("start", StartAspect::new);
 

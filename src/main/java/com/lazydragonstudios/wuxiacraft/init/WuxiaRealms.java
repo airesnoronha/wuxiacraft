@@ -19,8 +19,8 @@ import java.util.function.Consumer;
 @SuppressWarnings("unused")
 public class WuxiaRealms {
 
-	public static DeferredRegister<CultivationRealm> REALM_REGISTER = DeferredRegister.create(CultivationRealm.class, WuxiaCraft.MOD_ID);
-	public static DeferredRegister<CultivationStage> STAGE_REGISTER = DeferredRegister.create(CultivationStage.class, WuxiaCraft.MOD_ID);
+	public static DeferredRegister<CultivationRealm> REALM_REGISTER = DeferredRegister.create(new ResourceLocation(WuxiaCraft.MOD_ID, "cultivation_realms"), WuxiaCraft.MOD_ID);
+	public static DeferredRegister<CultivationStage> STAGE_REGISTER = DeferredRegister.create(new ResourceLocation(WuxiaCraft.MOD_ID, "cultivation_stages"), WuxiaCraft.MOD_ID);
 
 	//************************************
 	// body realms
