@@ -34,8 +34,8 @@ public class WuxiaSkillAspects {
 			() -> new SkillShootAspect()
 					.setSkillStat(SkillStat.COST, new BigDecimal("1.5"))
 					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("0.7"))
-					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("40"))
-					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("30"))
+					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("3"))
+					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("2"))
 	));
 
 	/**
@@ -46,7 +46,7 @@ public class WuxiaSkillAspects {
 					.setSkillStat(SkillStat.COST, new BigDecimal("1"))
 					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("1"))
 					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("1"))
-					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("10"))
+					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("1"))
 	));
 
 	/**
@@ -124,10 +124,10 @@ public class WuxiaSkillAspects {
 	 */
 	public static RegistryObject<SkillAspectType> EXPLOSION = ASPECTS.register("explosion", () -> SkillAspectType.build(
 			() -> new SkillExplosionAspect()
-					.setSkillStat(SkillStat.COST, new BigDecimal("2"))
+					.setSkillStat(SkillStat.COST, new BigDecimal("4"))
 					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("1"))
-					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("40"))
-					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("80"))
+					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("150"))
+					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("100"))
 	));
 
 	/**
@@ -135,10 +135,10 @@ public class WuxiaSkillAspects {
 	 */
 	public static RegistryObject<SkillAspectType> ATTACK = ASPECTS.register("attack", () -> SkillAspectType.build(
 			() -> new SkillAttackAspect()
-					.setSkillStat(SkillStat.COST, new BigDecimal("0.5"))
+					.setSkillStat(SkillStat.COST, new BigDecimal("1.5"))
 					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("1"))
-					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("5"))
-					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("15"))
+					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("20"))
+					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("50"))
 	));
 
 	/**
@@ -153,8 +153,8 @@ public class WuxiaSkillAspects {
 			() -> new SkillBreakAspect()
 					.setSkillStat(SkillStat.COST, new BigDecimal("1"))
 					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("1"))
-					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("10"))
-					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("20"))
+					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("60"))
+					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("80"))
 	));
 
 	/**
@@ -164,8 +164,8 @@ public class WuxiaSkillAspects {
 			() -> new SkillChopAspect()
 					.setSkillStat(SkillStat.COST, new BigDecimal("6"))
 					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("1"))
-					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("10"))
-					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("20"))
+					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("120"))
+					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("150"))
 	));
 
 	/**
@@ -190,8 +190,8 @@ public class WuxiaSkillAspects {
 			() -> new SkillHealAspect()
 					.setSkillStat(SkillStat.COST, new BigDecimal("4"))
 					.setSkillStat(SkillStat.STRENGTH, new BigDecimal("1"))
-					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("20"))
-					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("40"))
+					.setSkillStat(SkillStat.CAST_TIME, new BigDecimal("90"))
+					.setSkillStat(SkillStat.COOLDOWN, new BigDecimal("60"))
 	));
 
 	/**
