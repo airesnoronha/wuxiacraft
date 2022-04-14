@@ -40,16 +40,16 @@ public class OreGeneration {
 				CountPlacement.of(10),
 				InSquarePlacement.spread(),
 				BiomeFilter.biome(),
-				HeightRangePlacement.triangle(VerticalAnchor.absolute(-10),
-						VerticalAnchor.absolute(-50))
+				HeightRangePlacement.triangle(VerticalAnchor.absolute(-50),
+						VerticalAnchor.absolute(-10))
 		);
 		SPIRIT_GEN_3 = registerPlacedOreFeature("overworld_spirit_vein_3",
 				new ConfiguredFeature<>(Feature.ORE, spirit_vein_3),
 				CountPlacement.of(5),
 				InSquarePlacement.spread(),
 				BiomeFilter.biome(),
-				HeightRangePlacement.triangle(VerticalAnchor.absolute(-40),
-						VerticalAnchor.absolute(-60))
+				HeightRangePlacement.triangle(VerticalAnchor.absolute(-60),
+						VerticalAnchor.absolute(-40))
 		);
 	}
 

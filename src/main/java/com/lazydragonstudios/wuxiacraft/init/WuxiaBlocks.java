@@ -70,13 +70,13 @@ public class WuxiaBlocks {
 			() -> new FormationCoreBlock(BlockBehaviour.Properties.of(Material.METAL).strength(2f), 5, Blocks.EMERALD_BLOCK));
 
 	public static RegistryObject<Block> SPIRIT_STONE_VEIN_1 = BLOCKS.register("spirit_stone_vein_1",
-			() -> new Block(BlockBehaviour.Properties.of(Material.STONE).strength(20f)));
+			() -> new Block(BlockBehaviour.Properties.of(Material.STONE).strength(20f).requiresCorrectToolForDrops()));
 
 	public static RegistryObject<Block> SPIRIT_STONE_VEIN_2 = BLOCKS.register("spirit_stone_vein_2",
-			() -> new Block(BlockBehaviour.Properties.of(Material.STONE).strength(30f)));
+			() -> new Block(BlockBehaviour.Properties.of(Material.STONE).strength(30f).requiresCorrectToolForDrops()));
 
 	public static RegistryObject<Block> SPIRIT_STONE_VEIN_3 = BLOCKS.register("spirit_stone_vein_3",
-			() -> new Block(BlockBehaviour.Properties.of(Material.STONE).strength(50f)));
+			() -> new Block(BlockBehaviour.Properties.of(Material.STONE).strength(50f).requiresCorrectToolForDrops()));
 
 	public static HashMap<FormationMaterialTier, RegistryObject<Block>> GENERATION_RUNES = new HashMap<>();
 	public static HashMap<FormationMaterialTier, RegistryObject<Block>> BARRIER_RUNES = new HashMap<>();

@@ -39,7 +39,7 @@
 									"function": "minecraft:explosion_decay"
 								}
 							],
-							"name": "minecraft:spirit_stone_1"
+							"name": "wuxiacraft:spirit_stone_1"
 						}
 					]
 				}
