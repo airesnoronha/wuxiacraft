@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:block/cube",
+	"textures": {
+		"all": "wuxiacraft:blocks/spirit_stone_1"
+	}
+}

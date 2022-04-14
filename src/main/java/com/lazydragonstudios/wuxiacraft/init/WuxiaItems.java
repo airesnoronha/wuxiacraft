@@ -114,6 +114,16 @@ public class WuxiaItems {
 	public static RegistryObject<Item> NETHERITE_FORMATION_BADGE = ITEMS.register("netherite_formation_badge",
 			() -> new FormationBarrierBadge(new Item.Properties().tab(WUXIACRAFT_TAB)));
 
+
+	public static RegistryObject<Item> SPIRIT_STONE_VEIN_1 = ITEMS.register("spirit_stone_vein_1",
+			() -> new BlockItem(WuxiaBlocks.SPIRIT_STONE_VEIN_1.get(), new Item.Properties().tab(WUXIACRAFT_TAB)));
+
+	public static RegistryObject<Item> SPIRIT_STONE_VEIN_2 = ITEMS.register("spirit_stone_vein_2",
+			() -> new BlockItem(WuxiaBlocks.SPIRIT_STONE_VEIN_2.get(), new Item.Properties().tab(WUXIACRAFT_TAB)));
+	
+	public static RegistryObject<Item> SPIRIT_STONE_VEIN_3 = ITEMS.register("spirit_stone_vein_3",
+			() -> new BlockItem(WuxiaBlocks.SPIRIT_STONE_VEIN_3.get(), new Item.Properties().tab(WUXIACRAFT_TAB)));
+
 	public static RegistryObject<Item> RUNEMAKING_TABLE = ITEMS.register("runemaking_table",
 			() -> new BlockItem(WuxiaBlocks.RUNEMAKING_TABLE.get(), new Item.Properties().tab(WUXIACRAFT_TAB)));
 

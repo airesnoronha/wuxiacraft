@@ -6,6 +6,7 @@ import com.lazydragonstudios.wuxiacraft.cultivation.System;
 import com.lazydragonstudios.wuxiacraft.init.*;
 import com.lazydragonstudios.wuxiacraft.networking.WuxiaPacketHandler;
 import com.lazydragonstudios.wuxiacraft.util.TechniqueUtil;
+import com.lazydragonstudios.wuxiacraft.world.OreGeneration;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -82,6 +83,7 @@ public class WuxiaCraft {
 		TechniqueUtil.initChancedAspectsBlocks();
 		registerArgumentTypes();
 		RuneMakingRecipe.recipeType = RecipeType.register("runemaking");
+		OreGeneration.registerOres();
 		TestRun.testStuff();
 	}
 
