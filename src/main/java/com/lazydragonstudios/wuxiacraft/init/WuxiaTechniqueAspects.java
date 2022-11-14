@@ -336,7 +336,7 @@ public class WuxiaTechniqueAspects {
 					.addCheckpoint(new TechniqueAspect.Checkpoint("intermediate", new BigDecimal("50000"), new BigDecimal("0.2")))
 					.addCheckpoint(new TechniqueAspect.Checkpoint("advanced", new BigDecimal("150000"), new BigDecimal("0.4")))
 					.addCheckpoint(new TechniqueAspect.Checkpoint("expert", new BigDecimal("350000"), new BigDecimal("0.6"),
-							cultivation -> cultivation.getAspects().learnAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "magical_incineration"), cultivation)))
+							cultivation -> cultivation.getAspects().learnAspect(new ResourceLocation(WuxiaCraft.MOD_ID, "magical_tremor"), cultivation)))
 	);
 
 	public static RegistryObject<TechniqueAspect> MAGICAL_TREMOR = ASPECTS.register("magical_tremor",
